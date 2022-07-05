@@ -1,0 +1,8 @@
+# textdomain: bones
+Bones=Ostatky
+@1's old bones=Staré ostatky @1
+@1 died at @2.=@1 zemřel/a na pozici @2.
+@1 died at @2, and dropped their inventory.=@1 zemřel/a na pozici @2 a její/jeho inventář se vysypal.
+@1 died at @2, and bones were placed.=@1 zemřel/a na pozici @2 a zůstaly tam její/jeho ostatky.
+@1's fresh bones=Čerstvé ostatky @1
+@1's bones=Ostatky @1

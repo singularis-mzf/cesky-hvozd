@@ -1818,7 +1818,7 @@ function default.register_decorations()
 		place_on = {"default:dirt_with_grass"},
 		sidelen = 16,
 		noise_params = {
-			offset = 0.024,
+			offset = 0.01,
 			scale = 0.015,
 			spread = {x = 250, y = 250, z = 250},
 			seed = 2,
@@ -1951,8 +1951,8 @@ function default.register_decorations()
 		place_on = {"default:dirt_with_snow", "default:dirt_with_coniferous_litter"},
 		sidelen = 16,
 		noise_params = {
-			offset = 0.010,
-			scale = 0.048,
+			offset = 0.005,
+			scale = 0.015,
 			spread = {x = 250, y = 250, z = 250},
 			seed = 2,
 			octaves = 3,
@@ -1971,8 +1971,8 @@ function default.register_decorations()
 		place_on = {"default:dirt_with_snow", "default:dirt_with_coniferous_litter"},
 		sidelen = 16,
 		noise_params = {
-			offset = 0.010,
-			scale = -0.048,
+			offset = 0.006,
+			scale = -0.015,
 			spread = {x = 250, y = 250, z = 250},
 			seed = 2,
 			octaves = 3,

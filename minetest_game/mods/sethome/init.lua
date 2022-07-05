@@ -82,7 +82,7 @@ minetest.register_privilege("home", {
 	give_to_singleplayer = false
 })
 
-minetest.register_chatcommand("home", {
+local def = {
 	description = S("Teleport you to your home point"),
 	privs = {home = true},
 	func = function(name)
@@ -91,9 +91,11 @@ minetest.register_chatcommand("home", {
 		end
 		return false, S("Set a home using /sethome")
 	end,
-})
+}
+minetest.register_chatcommand("domu", def)
+minetest.register_chatcommand("domů", def)
 
-minetest.register_chatcommand("sethome", {
+def = {
 	description = S("Set your home point"),
 	privs = {home = true},
 	func = function(name)
@@ -104,4 +106,5 @@ minetest.register_chatcommand("sethome", {
 		end
 		return false, S("Player not found!")
 	end,
-})
+}
+minetest.register_chatcommand("doma", def)

@@ -55,7 +55,7 @@ resp. *ostatní\_zdroje*.
 * Zdroj: [https://github.com/runsy/cool\_trees/](https://github.com/runsy/cool\_trees/), revize af8e445c475efb050c1291da459336812b84591e
 * Původní licence: GPL v3
 * Licence úprav: GPL v3
-* [ContentDB](https://github.com/runsy/cool\_trees/)
+* [ContentDB](https://content.minetest.net/packages/runs/cool\_trees/)
 * Použity jen některé mody
 
 ## Display (display\_modpack)

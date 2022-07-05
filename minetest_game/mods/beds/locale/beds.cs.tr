@@ -1,0 +1,10 @@
+# textdomain: beds
+Fancy Bed=Hezká postel
+Simple Bed=Obyčejná postel
+This bed is already occupied!=
+You have to stop moving before going to bed!=
+Good morning.=Dobré ráno.
+@1 of @2 players are in bed=@1 z @2 hráčů/ek jsou v posteli
+Force night skip=Vynutit přeskočení noci
+You can only sleep at night.=V postelích lze spát jen v noci.
+Leave Bed=Vstát

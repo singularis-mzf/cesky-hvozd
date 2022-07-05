@@ -5,6 +5,10 @@ screwdriver = {}
 -- Load support for MT game translation.
 local S = minetest.get_translator("screwdriver")
 
+screwdriver.rightclick_override_list = {
+	["anvil:anvil"] = 1,
+	["technic:switching_station"] = 1,
+}
 
 screwdriver.ROTATE_FACE = 1
 screwdriver.ROTATE_AXIS = 2
@@ -157,6 +161,14 @@ minetest.register_tool("screwdriver:screwdriver", {
 		return itemstack
 	end,
 	on_place = function(itemstack, user, pointed_thing)
+		if pointed_thing.type == "node" then
+			local node = minetest.get_node(pointed_thing.under)
+			local name = node.name
+			local node_def = minetest.registered_nodes[name]
+			if node_def and node_def.on_rightclick and (screwdriver.rightclick_override_list[name] or doors.registered_doors[name]) then
+				return node_def.on_rightclick(pointed_thing.under, node, user, itemstack, pointed_thing)
+			end
+		end
 		screwdriver.handler(itemstack, user, pointed_thing, screwdriver.ROTATE_AXIS, 200)
 		return itemstack
 	end,

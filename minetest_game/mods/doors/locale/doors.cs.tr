@@ -1,0 +1,19 @@
+# textdomain: doors
+Hidden Door Segment=Skrytá část dveří
+Owned by @1=Vlastník/ice: @1
+You do not own this locked door.=Dveře jsou zamčené a nemáš k nim klíč.
+a locked door=zamčené dveře
+Wooden Door=Dřevěné dveře (standardní)
+Steel Door=Ocelové dveře (zamykatelné)
+Glass Door=Skleněné dveře
+Obsidian Glass Door=Obsidiánové skleněné dveře
+You do not own this trapdoor.=Padací dveře jsou zamčené a nemáš k nim klíč.
+a locked trapdoor=zamčené padací dveře
+Wooden Trapdoor=Dřevěné padací dveře
+Steel Trapdoor=Ocelové padací dveře (zamykatelné)
+Apple Wood Fence Gate=Jabloňový plot: brána
+Acacia Wood Fence Gate=Akáciový plot: brána
+Jungle Wood Fence Gate=Džunglovníkový plot: brána
+Pine Wood Fence Gate=Borovicový plot: brána
+Aspen Wood Fence Gate=Osikový plot: brána
+centered=vystředěné

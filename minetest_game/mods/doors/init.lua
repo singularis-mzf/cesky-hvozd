@@ -9,6 +9,10 @@ doors.registered_trapdoors = {}
 -- Load support for MT game translation.
 local S = minetest.get_translator("doors")
 
+local normal_door_box = {type = "fixed", fixed = {-1/2,-1/2,-1/2,1/2,3/2,-6/16}}
+local centered_door_box_ab = {type = "fixed", fixed = {-1/2,-1/2,0,1/2,3/2,2/16}}
+local centered_door_box_c = {type = "fixed", fixed = {-1,-1/2,-1/2,0,3/2,-6/16}}
+local centered_door_box_d = {type = "fixed", fixed = {0,-1/2,-1/2,1,3/2,-6/16}}
 
 local function replace_old_owner_information(pos)
 	local meta = minetest.get_meta(pos)
@@ -217,6 +221,25 @@ function doors.register(name, def)
 		name = "doors:" .. name
 	end
 
+	local mesh_prefix, mesh_level
+	-- mesh_level 1: single mesh (currently not supported)
+	-- mesh_level 2: _a, _b; (custom meshes)
+	-- mesh_level 4: _a, _a2, _b, _b2 (currently only "door")
+	if not def.mesh then
+		mesh_prefix = "door"
+		mesh_level = def.mesh_level or 4
+	elseif string.sub(def.mesh, #def.mesh - 3, #def.mesh) == ".obj" then
+		mesh_prefix = string.sub(def.mesh, 1, #def.mesh - 4)
+		mesh_level = def.mesh_level or 2
+	else
+		mesh_prefix = def.mesh
+		mesh_level = def.mesh_level or 2
+	end
+
+	if mesh_level == 1 then
+		minetest.log("warning", "mesh level 1: " .. def.mesh .. "!")
+	end
+
 	-- replace old doors of this type automatically
 	minetest.register_lbm({
 		name = ":doors:replace_" .. name:gsub(":", "_"),
@@ -252,14 +275,16 @@ function doors.register(name, def)
 		end
 	})
 
-	minetest.register_craftitem(":" .. name, {
+	local craftitem_def = {
 		description = def.description,
 		inventory_image = def.inventory_image,
 		groups = table.copy(def.groups),
 
 		on_place = function(itemstack, placer, pointed_thing)
 			local pos
+			local itemstack_name = itemstack:get_name() or name
 
+			print("onplace called for " .. name)
 			if not pointed_thing.type == "node" then
 				return itemstack
 			end
@@ -315,10 +340,12 @@ function doors.register(name, def)
 			local state = 0
 			if minetest.get_item_group(minetest.get_node(aside).name, "door") == 1 then
 				state = state + 2
-				minetest.set_node(pos, {name = name .. "_b", param2 = dir})
+				print("Will place node '"..itemstack_name.."_b'")
+				minetest.set_node(pos, {name = itemstack_name .. "_b", param2 = dir})
 				minetest.set_node(above, {name = "doors:hidden", param2 = (dir + 3) % 4})
 			else
-				minetest.set_node(pos, {name = name .. "_a", param2 = dir})
+				print("Will place node '"..itemstack_name.."_a'")
+				minetest.set_node(pos, {name = itemstack_name .. "_a", param2 = dir})
 				minetest.set_node(above, {name = "doors:hidden", param2 = dir})
 			end
 
@@ -341,7 +368,14 @@ function doors.register(name, def)
 
 			return itemstack
 		end
-	})
+	}
+	minetest.register_craftitem(":" .. name, table.copy(craftitem_def))
+	
+	if mesh_prefix == "door" then -- centering support
+		craftitem_def.description = craftitem_def.description .. " (" .. S("centered") ..")"
+		minetest.register_craftitem(":" .. name .. "_cd", craftitem_def)
+	end
+
 	def.inventory_image = nil
 
 	if def.recipe then
@@ -434,26 +468,63 @@ function doors.register(name, def)
 	def.walkable = true
 	def.is_ground_content = false
 	def.buildable_to = false
-	def.selection_box = {type = "fixed", fixed = {-1/2,-1/2,-1/2,1/2,3/2,-6/16}}
-	def.collision_box = {type = "fixed", fixed = {-1/2,-1/2,-1/2,1/2,3/2,-6/16}}
-	def.use_texture_alpha = "clip"
+	def.selection_box = normal_door_box
+	def.collision_box = normal_door_box
+	if not def.use_texture_alpha then
+		def.use_texture_alpha = "clip"
+	end
 
-	def.mesh = "door_a.obj"
+	def.mesh = mesh_prefix .. "_a.obj"
 	minetest.register_node(":" .. name .. "_a", def)
 
-	def.mesh = "door_b.obj"
+	def.mesh = mesh_prefix .. "_b.obj"
 	minetest.register_node(":" .. name .. "_b", def)
 
-	def.mesh = "door_a2.obj"
+	def.mesh = mesh_prefix .. (mesh_level > 2 and "_a2.obj" or "_b.obj")
 	minetest.register_node(":" .. name .. "_c", def)
 
-	def.mesh = "door_b2.obj"
+	def.mesh = mesh_prefix .. (mesh_level > 2 and "_b2.obj" or "_a.obj")
 	minetest.register_node(":" .. name .. "_d", def)
+
+	if mesh_prefix == "door" then
+		def = table.copy(def)
+		def.description = def.description
+		def.selection_box = centered_door_box_ab
+		def.collision_box = centered_door_box_ab
+		def.drop = name .. "_cd"
+		def.door = table.copy(def.door)
+		def.door.name = name .. "_cd"
+
+		def.mesh = "doors_cdoor_a.obj"
+		minetest.register_node(":" .. name .. "_cd_a", def)
+
+		def.mesh = "doors_cdoor_b.obj"
+		minetest.register_node(":" .. name .. "_cd_b", def)
+
+		-- def = table.copy(def) -- ?
+		def.selection_box = centered_door_box_c
+		def.collision_box = centered_door_box_c
+		def.mesh = "doors_cdoor_a2.obj"
+		minetest.register_node(":" .. name .. "_cd_c", def)
+
+		def.selection_box = centered_door_box_d
+		def.collision_box = centered_door_box_d
+		def.mesh = "doors_cdoor_b2.obj"
+		minetest.register_node(":" .. name .. "_cd_d", def)
+	end
 
 	doors.registered_doors[name .. "_a"] = true
 	doors.registered_doors[name .. "_b"] = true
-	doors.registered_doors[name .. "_c"] = true
-	doors.registered_doors[name .. "_d"] = true
+	if mesh_level > 2 then
+		doors.registered_doors[name .. "_c"] = true
+		doors.registered_doors[name .. "_d"] = true
+	end
+	if mesh_prefix == "door" then
+		doors.registered_doors[name .. "_cd_a"] = true
+		doors.registered_doors[name .. "_cd_b"] = true
+		doors.registered_doors[name .. "_cd_c"] = true
+		doors.registered_doors[name .. "_cd_d"] = true
+	end
 end
 
 doors.register("door_wood", {
