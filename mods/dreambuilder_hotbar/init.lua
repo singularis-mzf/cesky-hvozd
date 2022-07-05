@@ -1,5 +1,7 @@
 local themename = ""
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 if minetest.global_exists("dreambuilder_theme") then
 	themename = dreambuilder_theme.name.."_"
 end
@@ -42,12 +44,12 @@ minetest.register_on_joinplayer(function(player)
 end)
 
 minetest.register_chatcommand("hotbar", {
-	params = "[size]",
-	description = "Sets the size of your hotbar, from 1 to 32 slots, default 16",
+	params = "[délka]",
+	description = "Nastaví délku vaší výběrové lišty, od 1 do 32 slotů, výchozí délka je 16",
 	func = function(name, slots)
 		local size = set_hotbar_size(minetest.get_player_by_name(name), slots)
 		player_hotbar_settings[name] = size
-		minetest.chat_send_player(name, "[_] Hotbar size set to " ..size.. ".")
+		minetest.chat_send_player(name, "[_] Délka výběrové lišty nastavena na " ..size.. ".")
 
 		f = io.open(minetest.get_worldpath()..DIR_DELIM.."hotbar_settings","w")
 		if not f then
@@ -58,3 +60,4 @@ minetest.register_chatcommand("hotbar", {
 		end
 	end,
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
