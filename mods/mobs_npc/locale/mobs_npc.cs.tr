@@ -1,0 +1,12 @@
+# textdomain:mobs_npc
+NPC dropped you an item for gold!=Postava vám něco prodala za zlato!
+NPC stands still.=Postava stojí na místě.
+NPC will follow you.=Postava půjde s vámi.
+NPC will wander.=Postava se bude procházet po okolí.
+
+Npc=Nehráčská postava
+#Trader=
+#Trader @1=
+#Trader @1's stock:=
+# [MOD] Mobs Redo NPCs loaded=
+# [NPC] <Trader @1> Hello, @2, have a look at my wares.=

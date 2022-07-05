@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local path = minetest.get_modpath(minetest.get_current_modname()) .. "/"
 
@@ -39,18 +40,10 @@ end
 
 -- NPCs
 dofile(path .. "npc.lua") -- TenPlus1
-dofile(path .. "trader.lua")
-dofile(path .. "igor.lua")
-
 
 -- Load custom spawning
 if mobs.custom_spawn_npc then
 	dofile(path .. "spawn.lua")
 end
 
-
--- Lucky Blocks
-dofile(path .. "/lucky_block.lua")
-
-
-print ("[MOD] Mobs Redo NPCs loaded")
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

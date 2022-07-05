@@ -222,13 +222,13 @@ function get_npc_controls_formspec(name,self)
 	end
 
 	-- Make npc controls formspec
-	local text = "NPC Controls"
+	local text = "Ovládací panel nehráčské postavy"
 	local size = useDialogs == "Y" and "size[15,10]" or "size[3.85,2.8]"
 	local formspec = {
 		size,
 		"label[0.375,0.5;", minetest.formspec_escape(text), "]",
-		"dropdown[0.375,1.25; 3,0.6;ordermode;wander,stand,follow;", currentorderidx, "]",
-		"button[0.375,2;3,0.8;exit;Exit]"
+		"dropdown[0.375,1.25; 3,0.6;ordermode;procházet se,stát na místě,následovat mě;", currentorderidx, "]",
+		"button[0.375,2;3,0.8;exit;Zavřít]"
 	}
 
 	if useDialogs == "Y" then
@@ -272,12 +272,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 			npcself.order = fields["ordermode"]
 
-			if npcself.order == "wander" then
-
+			if fields["ordermode"] == "procházet se" then
+                npcself.order = "wander"
 				minetest.chat_send_player(pname, S("NPC will wander."))
 
-			elseif npcself.order == "stand" then
-
+			elseif fields["ordermode"] == "stát na místě" then
+                npcself.order = "stand"
 				npcself.state = "stand"
 				npcself.attack = nil
 				npcself:set_animation("stand")
@@ -285,7 +285,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 				minetest.chat_send_player(pname, S("NPC stands still."))
 
-			elseif npcself.order == "follow" then
+			elseif fields["ordermode"] == "následovat mě" then
+                npcself.order = "follow"
 				minetest.chat_send_player(pname, S("NPC will follow you."))
 			end
 		end
