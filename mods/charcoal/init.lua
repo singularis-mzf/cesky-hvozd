@@ -21,6 +21,8 @@
 -- Mod Version 0.1
 --
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 charcoal = {}
 
 -- Get Translator
@@ -93,3 +95,4 @@ minetest.register_craft({
   },  
 })
 
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
