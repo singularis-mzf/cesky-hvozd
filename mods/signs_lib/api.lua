@@ -943,11 +943,12 @@ function signs_lib.after_place_node(pos, placer, itemstack, pointed_thing, locke
 		minetest.swap_node(pos, {name = signname, param2 = 4})
 	end
 
+	local meta = minetest.get_meta(pos)
 	if locked then
-		local meta = minetest.get_meta(pos)
 		meta:set_string("owner", playername)
 		meta:set_string("infotext", S("Locked sign, owned by @1\n", playername))
 	end
+	meta:set_string("unifont", 1)
 end
 
 function signs_lib.register_fence_with_sign()
@@ -1251,7 +1252,7 @@ minetest.register_lbm({
 minetest.register_chatcommand("regen_signs", {
 	params = "",
 	privs = {server = true},
-	description = "Skims through all currently-loaded sign-bearing mapblocks, clears away any entities within each sign's node space, and regenerates their text entities, if any.",
+	description = S("Skims through all currently-loaded sign-bearing mapblocks, clears away any entities within each sign's node space, and regenerates their text entities, if any."),
 	func = function(player_name, params)
 		local allsigns = {}
 		local totalsigns = 0
@@ -1270,13 +1271,13 @@ minetest.register_chatcommand("regen_signs", {
 		end
 		if signs_lib.totalblocks < 0 then signs_lib.totalblocks = 0 end
 		if totalsigns == 0 then
-			minetest.chat_send_player(player_name, "There are no signs in the currently-loaded terrain.")
+			minetest.chat_send_player(player_name, S("There are no signs in the currently-loaded terrain."))
 			signs_lib.block_list = {}
 			return
 		end
 
-		minetest.chat_send_player(player_name, "Found a total of "..totalsigns.." sign nodes across "..signs_lib.totalblocks.." blocks.")
-		minetest.chat_send_player(player_name, "Regenerating sign entities...")
+		minetest.chat_send_player(player_name, S("Found a total of @1 sign nodes across @2 blocks.", totalsigns, signs_lib.totalblocks))
+		minetest.chat_send_player(player_name, S("Regenerating sign entities..."))
 
 		for _, b in pairs(allsigns) do
 			for _, pos in ipairs(b) do
@@ -1288,7 +1289,7 @@ minetest.register_chatcommand("regen_signs", {
 				end
 			end
 		end
-		minetest.chat_send_player(player_name, "Finished.")
+		minetest.chat_send_player(player_name, S("Finished."))
 	end
 })
 
@@ -1304,7 +1305,7 @@ function get_sign_formspec(pos, nodename)
 
 	local meta = minetest.get_meta(pos)
 	local txt = meta:get_string("text")
-	local state = meta:get_int("unifont") == 1 and "on" or "off"
+	local state = meta:get_int("unifont") ~= 1 and "off" or "on"
 
 	local formspec = {
 		"size[6,4]",
@@ -1312,14 +1313,14 @@ function get_sign_formspec(pos, nodename)
 		"image[0.1,2.4;7,1;signs_lib_sign_color_palette.png]",
 		"textarea[0.15,-0.2;6.3,2.8;text;;" .. minetest.formspec_escape(txt) .. "]",
 		"button_exit[3.7,3.4;2,1;ok;" .. S("Write") .. "]",
-		"label[0.3,3.4;Unicode font]",
+		"label[0.3,3.4;"..S("Unicode font").."]",
 		"image_button[0.6,3.7;1,0.6;signs_lib_switch_" .. state .. ".png;uni_"
 			.. state .. ";;;false;signs_lib_switch_interm.png]",
 	}
 
 	if minetest.registered_nodes[nodename].allow_widefont then
 		state = meta:get_int("widefont") == 1 and "on" or "off"
-		formspec[#formspec+1] = "label[2.1,3.4;Wide font]"
+		formspec[#formspec+1] = "label[2.1,3.4;" ..S("Wide font") .. "]"
 		formspec[#formspec+1] = "image_button[2.3,3.7;1,0.6;signs_lib_switch_" .. state .. ".png;wide_"
 				.. state .. ";;;false;signs_lib_switch_interm.png]"
 	end

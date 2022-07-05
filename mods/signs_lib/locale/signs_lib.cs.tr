@@ -1,0 +1,34 @@
+# textdomain:signs_lib
+# Czech translation for the signs_lib mod by Singularis <singularis@volny.cz>
+# This file is distributed under the same license as the signs_lib package.
+#
+
+Unicode font=Mezinárodní písmo
+Wide font=Široké písmo
+Write=Napsat
+Locked sign, owned by @1@n=Zamčená cedule (vlastní: @1)@n
+locked =zamčená 
+# @1 wrote "@2" to @3sign at @4=@1 napsal/a "@2" na @3ceduli v @4
+Sign=Cedule
+Can edit all locked signs=Může upravovat všechny zamčené cedule
+Locked Sign=Zamčená cedule
+green=zelená
+yellow=žlutá
+red=červená
+white_red=bílá s červeným písmem
+white_black=bílá s černým písmem
+orange=oranžová
+blue=modrá
+brown=hnědá
+Sign (@1, metal)=Cedule (@1, kovová)
+Attempt to register unknown node as fence=Pokus registrovat neznámý uzel jako plot
+Registered @1 and @2=Registrováno @1 a @2
+[MOD] signs loaded=[MOD] signs načten
+Wooden wall sign=Dřevěná cedule (6 řádek)
+Steel wall sign=Kovová cedule (6 řádek)
+
+Skims through all currently-loaded sign-bearing mapblocks, clears away any entities within each sign's node space, and regenerates their text entities, if any.=Projde všechny cedule ve všech načtených mapových blocích, smaže je a znovu vytvoří jejich text.
+There are no signs in the currently-loaded terrain.=V načtených mapových blocích nejsou žádné cedule spravované módem sings_lib.
+Found a total of @1 sign nodes across @2 blocks.=V @2 mapových blocích nalezeno @1 cedulí.
+Regenerating sign entities...=Znovu vytvářím entity cedulí...
+Finished.=Hotovo.
