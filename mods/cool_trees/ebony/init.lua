@@ -2,6 +2,8 @@
 -- Ebony
 --
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local modname = "ebony"
 local modpath = minetest.get_modpath(modname)
 local mg_name = minetest.get_mapgen_setting("mg_name")
@@ -54,7 +56,7 @@ end
 -- Nodes
 --
 
-minetest.register_node("ebony:sapling", {
+sapling_def = {
 	description = S("Ebony Tree Sapling"),
 	drawtype = "plantlike",
 	tiles = {"ebony_sapling.png"},
@@ -74,7 +76,7 @@ minetest.register_node("ebony:sapling", {
 	sounds = default.node_sound_leaves_defaults(),
 
 	on_construct = function(pos)
-		minetest.get_node_timer(pos):start(math.random(2400,4800))
+		minetest.get_node_timer(pos):start(math.random(300,1500))
 	end,
 
 	on_place = function(itemstack, placer, pointed_thing)
@@ -89,7 +91,27 @@ minetest.register_node("ebony:sapling", {
 
 		return itemstack
 	end,
-})
+}
+
+minetest.register_node("ebony:sapling", sapling_def)
+sapling_def = table.copy(sapling_def)
+sapling_def.description = S("Ebony Tree Sapling (ongen)")
+sapling_def.on_construct = function(pos)
+		minetest.get_node_timer(pos):start(2)
+end
+sapling_def.on_place = function(itemstack, placer, pointed_thing)
+		itemstack = default.sapling_on_place(itemstack, placer, pointed_thing,
+		"ebony:sapling_ongen",
+		-- minp, maxp to be checked, relative to sapling pos
+		-- minp_relative.y = 1 because sapling pos has been checked
+		{x = -2, y = 1, z = -2},
+		{x = 2, y = 6, z = 2},
+		-- maximum interval of interior volume check
+		4)
+	return itemstack
+end
+sapling_def.drop = "ebony:sapling"
+minetest.register_node("ebony:sapling_ongen", sapling_def)
 
 minetest.register_node("ebony:trunk", {
 	description = S("Ebony Trunk"),
@@ -195,7 +217,7 @@ minetest.register_node("ebony:liana", {
 		fixed = {-0.5, -0.5, 0.0, 0.5, 0.5, 0.0}
 	},
 	groups = {
-		snappy = 2, flammable = 3, oddly_breakable_by_hand = 3, choppy = 2, carpet = 1, leafdecay = 3, leaves = 1,
+		snappy = 2, flammable = 3, oddly_breakable_by_hand = 3, choppy = 2, carpet = 1, leafdecay = 3, leaves = 1, attached_node = 1
 	},
 	sounds = default.node_sound_leaves_defaults(),
 })
@@ -279,8 +301,8 @@ end
 
 if minetest.get_modpath("stairs") ~= nil then
 	stairs.register_stair_and_slab(
-		"ebony_trunk",
-		"ebony:trunk",
+		"ebony_wood",
+		"ebony:wood",
 		{choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
 		{"ebony_wood.png"},
 		S("Ebony Stair"),
@@ -292,7 +314,7 @@ end
 -- stairsplus/moreblocks
 if minetest.get_modpath("moreblocks") then
 	stairsplus:register_all("ebony", "wood", "ebony:wood", {
-		description = "Ebony",
+		description = S("Ebony Wood"),
 		tiles = {"ebony_wood.png"},
 		groups = {choppy = 2, oddly_breakable_by_hand = 1, flammable = 3},
 		sounds = default.node_sound_wood_defaults(),
@@ -309,3 +331,5 @@ end
 if minetest.global_exists("flowerpot") then
 	flowerpot.register_node("ebony:sapling")
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

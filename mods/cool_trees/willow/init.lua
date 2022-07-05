@@ -2,6 +2,8 @@
 -- Willow
 --
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local modname = "willow"
 local modpath = minetest.get_modpath(modname)
 local mg_name = minetest.get_mapgen_setting("mg_name")
@@ -53,7 +55,7 @@ end
 -- Nodes
 --
 
-minetest.register_node("willow:sapling", {
+local sapling_def = {
 	description = S("Willow Tree Sapling"),
 	drawtype = "plantlike",
 	tiles = {"willow_sapling.png"},
@@ -72,7 +74,7 @@ minetest.register_node("willow:sapling", {
 	sounds = default.node_sound_leaves_defaults(),
 
 	on_construct = function(pos)
-		minetest.get_node_timer(pos):start(math.random(2400, 4800))
+		minetest.get_node_timer(pos):start(math.random(300, 1500))
 	end,
 
 	on_place = function(itemstack, placer, pointed_thing)
@@ -87,7 +89,29 @@ minetest.register_node("willow:sapling", {
 
 		return itemstack
 	end,
-})
+}
+
+minetest.register_node("willow:sapling", sapling_def)
+
+sapling_def = table.copy(sapling_def)
+sapling_def.description = S("Willow Tree Sapling (ongen)")
+sapling_def.on_construct = function(pos)
+		minetest.get_node_timer(pos):start(1)
+end
+sapling_def.on_place = function(itemstack, placer, pointed_thing)
+	itemstack = default.sapling_on_place(itemstack, placer, pointed_thing,
+		"willow:sapling_ongen",
+		-- minp, maxp to be checked, relative to sapling pos
+		-- minp_relative.y = 1 because sapling pos has been checked
+		{x = -2, y = 1, z = -2},
+		{x = 2, y = 6, z = 2},
+		-- maximum interval of interior volume check
+		4)
+
+	return itemstack
+end
+sapling_def.drop = "willow:sapling"
+minetest.register_node("willow:sapling_ongen", sapling_def)
 
 minetest.register_node("willow:trunk", {
 	description = S("Willow Trunk"),
@@ -201,7 +225,7 @@ end
 -- stairsplus/moreblocks
 if minetest.get_modpath("moreblocks") then
 	stairsplus:register_all("willow", "wood", "willow:wood", {
-		description = "Willow",
+		description = S("Willow Wood"),
 		tiles = {"willow_wood.png"},
 		groups = {choppy = 2, oddly_breakable_by_hand = 1, flammable = 3},
 		sounds = default.node_sound_wood_defaults(),
@@ -218,3 +242,5 @@ end
 if minetest.global_exists("flowerpot") then
 	flowerpot.register_node("willow:sapling")
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

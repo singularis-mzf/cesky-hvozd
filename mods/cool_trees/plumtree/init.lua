@@ -1,6 +1,8 @@
 --
 -- Plumtree
 --
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local modname = "plumtree"
 local modpath = minetest.get_modpath(modname)
 local mg_name = minetest.get_mapgen_setting("mg_name")
@@ -113,7 +115,7 @@ end
 -- Nodes
 --
 
-minetest.register_node("plumtree:sapling", {
+local sapling_def = {
 	description = S("Plumtree Tree Sapling"),
 	drawtype = "plantlike",
 	tiles = {"plumtree_sapling.png"},
@@ -132,7 +134,7 @@ minetest.register_node("plumtree:sapling", {
 	sounds = default.node_sound_leaves_defaults(),
 
 	on_construct = function(pos)
-		minetest.get_node_timer(pos):start(math.random(2400,4800))
+		minetest.get_node_timer(pos):start(math.random(300,1500))
 	end,
 
 	on_place = function(itemstack, placer, pointed_thing)
@@ -147,7 +149,28 @@ minetest.register_node("plumtree:sapling", {
 
 		return itemstack
 	end,
-})
+}
+minetest.register_node("plumtree:sapling", sapling_def)
+sapling_def = table.copy(sapling_def)
+sapling_def.description = S("Plumtree Tree Sapling (ongen)")
+sapling_def.on_construct = function(pos)
+		minetest.get_node_timer(pos):start(1)
+end
+sapling_def.on_place = function(itemstack, placer, pointed_thing)
+	itemstack = default.sapling_on_place(itemstack, placer, pointed_thing,
+		"plumtree:sapling_ongen",
+		-- minp, maxp to be checked, relative to sapling pos
+		-- minp_relative.y = 1 because sapling pos has been checked
+		{x = -2, y = 1, z = -2},
+		{x = 2, y = 6, z = 2},
+		-- maximum interval of interior volume check
+		4)
+
+	return itemstack
+end
+sapling_def.drop = "plumtree:sapling"
+minetest.register_node("plumtree:sapling_ongen", sapling_def)
+sapling_def = nil
 
 minetest.register_node("plumtree:trunk", {
 	description = S("Plumtree Trunk"),
@@ -263,7 +286,7 @@ end
 -- stairsplus/moreblocks
 if minetest.get_modpath("moreblocks") then
 	stairsplus:register_all("plumtree", "wood", "plumtree:wood", {
-		description = "Plum Tree",
+		description = S("Plum Tree"),
 		tiles = {"plumtree_wood.png"},
 		groups = {choppy = 2, oddly_breakable_by_hand = 1, flammable = 3},
 		sounds = default.node_sound_wood_defaults(),
@@ -282,3 +305,5 @@ end
 if minetest.global_exists("flowerpot") then
 	flowerpot.register_node("plumtree:sapling")
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -2,12 +2,14 @@
 -- Chestnuttree
 --
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local modname = "chestnuttree"
 local modpath = minetest.get_modpath(modname)
 local mg_name = minetest.get_mapgen_setting("mg_name")
 
 -- internationalization boilerplate
-local S = minetest.get_translator(minetest.get_current_modname())
+local S = minetest.get_translator("chestnuttree")
 
 --Chesnut Bur
 
@@ -112,7 +114,7 @@ end
 -- Nodes
 --
 
-minetest.register_node("chestnuttree:sapling", {
+local sapling_def = {
 	description = S("Chestnut Tree Sapling"),
 	drawtype = "plantlike",
 	tiles = {"chestnuttree_sapling.png"},
@@ -131,7 +133,7 @@ minetest.register_node("chestnuttree:sapling", {
 	sounds = default.node_sound_leaves_defaults(),
 
 	on_construct = function(pos)
-		minetest.get_node_timer(pos):start(math.random(2400,4800))
+		minetest.get_node_timer(pos):start(math.random(300,1500))
 	end,
 
 	on_place = function(itemstack, placer, pointed_thing)
@@ -146,7 +148,29 @@ minetest.register_node("chestnuttree:sapling", {
 
 		return itemstack
 	end,
-})
+}
+minetest.register_node("chestnuttree:sapling", sapling_def)
+
+sapling_def = table.copy(sapling_def)
+sapling_def.description = S("Chestnut Tree Sapling (ongen)")
+sapling_def.on_construct = function(pos)
+		minetest.get_node_timer(pos):start(1)
+end
+sapling_def.on_place = function(itemstack, placer, pointed_thing)
+	itemstack = default.sapling_on_place(itemstack, placer, pointed_thing,
+		"chestnuttree:sapling_ongen",
+		-- minp, maxp to be checked, relative to sapling pos
+		-- minp_relative.y = 1 because sapling pos has been checked
+		{x = -2, y = 1, z = -2},
+		{x = 2, y = 6, z = 2},
+		-- maximum interval of interior volume check
+		4)
+
+	return itemstack
+end
+sapling_def.drop = "chestnuttree:sapling"
+minetest.register_node("chestnuttree:sapling_ongen", sapling_def)
+sapling_def = nil
 
 minetest.register_node("chestnuttree:trunk", {
 	description = S("Chestnut Tree Trunk"),
@@ -257,7 +281,7 @@ end
 -- stairsplus/moreblocks
 if minetest.get_modpath("moreblocks") then
 	stairsplus:register_all("chestnuttree", "wood", "chestnuttree:wood", {
-		description = "Chestnut Tree",
+		description = S("Chestnut Tree Wood"),
 		tiles = {"chestnuttree_wood.png"},
 		groups = {choppy = 2, oddly_breakable_by_hand = 1, flammable = 3},
 		sounds = default.node_sound_wood_defaults(),
@@ -290,3 +314,5 @@ end
 if minetest.global_exists("flowerpot") then
 	flowerpot.register_node("chestnuttree:sapling")
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
