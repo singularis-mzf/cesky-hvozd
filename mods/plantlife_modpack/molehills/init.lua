@@ -2,6 +2,7 @@
 -- Idea by Sokomine
 -- Code & textures by Mossmanikin
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 abstract_molehills = {}
 
 local molehills_rarity = tonumber(minetest.settings:get("molehills_rarity")) or 99.5
@@ -26,6 +27,7 @@ minetest.register_node("molehills:molehill",{
 	description = S("Mole Hill"),
 	inventory_image = "molehills_side.png",
 	tiles = { "molehills_dirt.png" },
+	use_texture_alpha = "opaque",
 	paramtype = "light",
 	selection_box = mh_cbox,
 	collision_box = mh_cbox,
@@ -47,6 +49,23 @@ minetest.register_craft({ -- molehills --> dirt
 -----------------------------------------------------------------------------------------------
 -- GeNeRaTiNG
 -----------------------------------------------------------------------------------------------
+
+minetest.register_decoration({
+	deco_type = "simple",
+	place_on = { "default:dirt_with_grass", "default:dirt" },
+	sidelen = 16,
+	fill_ratio = 0.001,
+	y_min = 1,
+	y_max = 40,
+	flags = "",
+	decoration = "molehills:molehill",
+	height = 1,
+	height_max = 0,
+	param2 = 0,
+	param2_max = 3,
+});
+
+--[[
 abstract_molehills.place_molehill = function(pos)
 	local right_here	= {x=pos.x	, y=pos.y+1, z=pos.z	}
 	if	minetest.get_node({x=pos.x+1, y=pos.y, z=pos.z	}).name ~= "air"
@@ -68,8 +87,10 @@ biome_lib.register_on_generate({
 		plantlife_limit = molehills_fertility,
 		min_elevation = 1,
 		max_elevation = 40,
-		avoid_nodes = {"group:tree","group:liquid","group:stone","group:falling_node"--[[,"air"]]},
+		avoid_nodes = {"group:tree","group:liquid","group:stone","group:falling_node"},
 		avoid_radius = 4,
 	},
 	abstract_molehills.place_molehill
 )
+]]
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

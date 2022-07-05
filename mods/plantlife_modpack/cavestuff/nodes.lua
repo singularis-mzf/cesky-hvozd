@@ -15,7 +15,7 @@ minetest.register_node("cavestuff:pebble_1",{
 	 tiles = {"undergrowth_pebble.png"},
 	 paramtype = "light",
 	paramtype2 = "facedir",
-	 groups = {cracky=3, stone=1, attached_node=1},
+	 groups = {cracky=3, stone=1, attached_node=1, oddly_breakable_by_hand=2},
 	 selection_box = cbox,
 	 collision_box = cbox,
 	 on_place = function(itemstack, placer, pointed_thing)
@@ -35,7 +35,7 @@ minetest.register_node("cavestuff:pebble_2",{
 	 tiles = {"undergrowth_pebble.png"},
 	 paramtype = "light",
 	paramtype2 = "facedir",
-	 groups = {cracky=3, stone=1, attached_node=1, not_in_creative_inventory=1},
+	 groups = {cracky=3, stone=1, attached_node=1, oddly_breakable_by_hand=2, not_in_creative_inventory=1},
 	selection_box = cbox,
 	collision_box = cbox,
 	 sounds = default.node_sound_stone_defaults(),
@@ -48,7 +48,7 @@ minetest.register_node("cavestuff:desert_pebble_1",{
 	 tiles = {"default_desert_stone.png"},
 	 paramtype = "light",
 	paramtype2 = "facedir",
-	 groups = {cracky=3, stone=1, attached_node=1},
+	 groups = {cracky=3, stone=1, attached_node=1,oddly_breakable_by_hand=2},
 	selection_box = cbox,
 	collision_box = cbox,
 	 on_place = function(itemstack, placer, pointed_thing)
@@ -67,7 +67,7 @@ minetest.register_node("cavestuff:desert_pebble_2",{
 	 tiles = {"default_desert_stone.png"},
 	 paramtype = "light",
 	paramtype2 = "facedir",
-	 groups = {cracky=3, stone=1, attached_node=1, not_in_creative_inventory=1},
+	 groups = {cracky=3, stone=1, attached_node=1, not_in_creative_inventory=1,oddly_breakable_by_hand=2},
 	selection_box = cbox,
 	collision_box = cbox,
 	 sounds = default.node_sound_stone_defaults(),
@@ -113,7 +113,7 @@ minetest.register_node("cavestuff:stalactite_1",{
 				name = "cavestuff:stalactite_"..math.random(1,3),
 				param2 = minetest.dir_to_wallmounted(vector.multiply(dir, -1))
 			})
-			if not minetest.setting_getbool("creative_mode") then
+			if not minetest.settings:get_bool("creative_mode", false) then
 				itemstack:take_item()
 			end
 		end
