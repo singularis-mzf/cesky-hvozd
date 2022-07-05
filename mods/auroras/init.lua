@@ -1,5 +1,6 @@
 auroras = {}
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 --[[
     Various constants and defaults. Will be overridden by settings, if present.
 ]]
@@ -469,3 +470,5 @@ do
 
     minetest.after(auroras.UPDATE_INTERVAL, auroras.update)
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
