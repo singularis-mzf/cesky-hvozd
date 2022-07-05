@@ -1,0 +1,19 @@
+# textdomain: palm
+
+
+### init.lua ###
+
+Coconut=
+Coconut Slice=
+Coconut Wax Candle=
+Palm Door=
+Palm Leaves=
+Palm Sapling=
+Palm Tree Fence Gate=
+Palm Tree Fence Rail=
+Palm Tree Slab=
+Palm Tree Stair=
+Palm Tree Wood Fence=
+Palm Trunk=
+Palm Wax=
+Palm Wood=

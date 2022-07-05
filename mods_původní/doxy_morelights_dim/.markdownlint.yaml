@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2021 David Hurka <doxydoxy@mailbox.org>
+#
+# SPDX-License-Identifier: CC0-1.0 OR MIT
+
+# Disable line length checking.
+# I prefer line break after sentences instead of a fixed line width.
+MD013: false

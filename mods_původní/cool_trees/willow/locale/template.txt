@@ -1,0 +1,14 @@
+# textdomain: willow
+
+
+### init.lua ###
+
+Willow Fence Gate=
+Willow Fence Rail=
+Willow Leaves=
+Willow Slab=
+Willow Stair=
+Willow Tree Sapling=
+Willow Trunk=
+Willow Wood=
+Willow Wood Fence=

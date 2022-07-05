@@ -1,0 +1,16 @@
+# textdomain: baldcypress
+
+
+### init.lua ###
+
+Bald Cypress Dry Branches=
+Bald Cypress Fence Gate=
+Bald Cypress Fence Rail=
+Bald Cypress Leaves=
+Bald Cypress Liana=
+Bald Cypress Slab=
+Bald Cypress Stair=
+Bald Cypress Tree Sapling=
+Bald Cypress Trunk=
+Bald Cypress Wood=
+Bald Cypress Wood Fence=

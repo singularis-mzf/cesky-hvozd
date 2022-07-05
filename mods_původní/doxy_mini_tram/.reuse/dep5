@@ -1,0 +1,10 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: doxy_mini_tram
+Upstream-Contact: David Hurka <doxydoxy@mailbox.org>
+Source: https://invent.kde.org/davidhurka/doxy_mini_tram
+
+# Sample paragraph, commented out:
+#
+# Files: src/*
+# Copyright: $YEAR $NAME <$CONTACT>
+# License: ...

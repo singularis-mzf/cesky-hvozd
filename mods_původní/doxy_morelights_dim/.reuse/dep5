@@ -1,0 +1,21 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: morelights_dim
+Upstream-Contact: David Hurka <doxydoxy@mailbox.org>
+Source: https://invent.kde.org/davidhurka/doxy_morelights_dim
+
+# Sample paragraph, commented out:
+#
+# Files: src/*
+# Copyright: $YEAR $NAME <$CONTACT>
+# License: ...
+
+Files: screenshot.png screenshots/screenshot_*.png
+Comment: Screenshots depict artwork from `minetest_game` and `morelights` Minetest mods.
+Copyright: 2021 David Hurka <doxydoxy@mailbox.org>
+           Artists of minetest_game and morelights Minetest mods.
+License: CC-BY-SA-4.0
+
+Files: .cdb.json
+Comment: ContentDB wants this file, which can not be made REUSE compliant itself.
+Copyright: 2021 David Hurka <doxydoxy@mailbox.org>
+License: CC0-1.0 OR MIT

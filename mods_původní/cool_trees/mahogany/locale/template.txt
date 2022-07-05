@@ -1,0 +1,17 @@
+# textdomain: mahogany
+
+
+### init.lua ###
+
+Mahogany Creeper=
+Mahogany Fence Gate=
+Mahogany Fence Rail=
+Mahogany Flower Creeper=
+Mahogany Hanging Creeper=
+Mahogany Leaves=
+Mahogany Slab=
+Mahogany Stair=
+Mahogany Tree Sapling=
+Mahogany Trunk=
+Mahogany Wood=
+Mahogany Wood Fence=
