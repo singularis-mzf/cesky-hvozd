@@ -1,6 +1,8 @@
 -- Basic wall/yard/metal signs
 -- these were originally part of signs_lib
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 basic_signs = {}
 basic_signs.path = minetest.get_modpath(minetest.get_current_modname())
 
@@ -114,7 +116,7 @@ local cbox = signs_lib.make_selection_boxes(35, 25, true, 0, 0, 0, true)
 
 for i, color in ipairs(sign_colors) do
 	signs_lib.register_sign("basic_signs:sign_wall_steel_"..color[1], {
-		description = S("Sign (@1, steel)", color[2]),
+		description = S("Sign (" .. color[1] .. ", steel)"),
 		paramtype2 = "facedir",
 		selection_box = cbox,
 		mesh = "signs_lib_standard_facedir_sign_wall.obj",
@@ -154,3 +156,36 @@ for i, color in ipairs(sign_colors) do
 	minetest.register_alias("signs:sign_"..color[1].."_hanging",      "basic_signs:sign_steel_"..color[1].."_hanging")
 	minetest.register_alias("signs:sign_"..color[1].."_yard",         "basic_signs:sign_steel_"..color[1].."_yard")
 end
+
+	signs_lib.register_sign("basic_signs:test", {
+		description = "Testovací cedule",
+		paramtype2 = "facedir",
+		selection_box = cbox,
+		mesh = "signs_lib_standard_facedir_sign_wall.obj",
+		tiles = {
+			"basic_signs_steel_red.png",
+			"signs_lib_sign_wall_steel_edges.png",
+			nil,
+			nil,
+			"default_steel_block.png"
+		},
+		inventory_image = "basic_signs_steel_red_inv.png",
+		groups = signs_lib.standard_steel_groups,
+		sounds = signs_lib.standard_steel_sign_sounds,
+		default_color = "0",
+		entity_info = {
+			mesh = "signs_lib_standard_sign_entity_wall.obj",
+			yaw = signs_lib.standard_yaw
+		},
+		allow_hanging = true,
+		allow_widefont = true,
+		allow_onpole = true,
+		allow_onpole_horizontal = true,
+		allow_yard = true,
+		use_texture_alpha = "clip",
+		font_size = 32,
+		horiz_scaling = 0.25,
+		vert_scaling = 0.25,
+	})
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
