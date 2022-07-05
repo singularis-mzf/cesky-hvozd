@@ -2,6 +2,7 @@
 --
 -- SPDX-License-Identifier: CC0-1.0 OR MIT
 --
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 for _, name in ipairs({
     "morelights_modern:barlight_c", "morelights_modern:streetpost_d",
     "morelights_modern:streetpost_l",
@@ -49,3 +50,5 @@ morelights_dim.register_dim_variants("morelights_modern:tablelamp_d");
 morelights_dim.register_dim_variants("morelights_modern:tablelamp_l");
 morelights_dim.register_dim_variants("morelights_modern:pathlight_d");
 morelights_dim.register_dim_variants("morelights_modern:pathlight_l");
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
