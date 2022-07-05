@@ -1,6 +1,8 @@
 -- Minetest 0.4 mod: bucket
 -- See README.txt for licensing and other information.
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 minetest.register_craft({
 	output = 'bucket_wooden:bucket_empty 1',
 	recipe = {
@@ -130,7 +132,7 @@ function bucket_wooden.register_liquid(source, flowing, itemname, inventory_imag
 end
 
 minetest.register_craftitem("bucket_wooden:bucket_empty", {
-	description = "Empty Wooden Bucket",
+	description = "Prázdné vědro",
 	inventory_image = "bucket_wooden.png",
 	stack_max = 99,
 	liquids_pointable = true,
@@ -152,7 +154,7 @@ minetest.register_craftitem("bucket_wooden:bucket_empty", {
 		and node.name == liquiddef.source then
 			if check_protection(pointed_thing.under,
 					user:get_player_name(),
-					"take ".. node.name) then
+					"vzít ".. node.name) then
 				return
 			end
 
@@ -204,7 +206,7 @@ bucket_wooden.register_liquid(
 	"default:water_flowing",
 	"bucket_wooden:bucket_water",
 	"bucket_wooden_water.png",
-	"Water Bucket",
+	"Vědro vody",
 	{water_bucket_wooden = 1}
 )
 
@@ -219,8 +221,9 @@ bucket_wooden.register_liquid(
 	"default:river_water_flowing",
 	"bucket_wooden:bucket_river_water",
 	"bucket_wooden_river_water.png",
-	"River Water Bucket",
+	"Vědro říční vody",
 	{water_bucket_wooden = 1},
 	true
 )
 
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
