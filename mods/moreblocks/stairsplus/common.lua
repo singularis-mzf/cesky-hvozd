@@ -121,8 +121,14 @@ end
 stairsplus.register_single = function(category, alternate, info, modname, subname, recipeitem, fields)
 
 	local src_def = minetest.registered_nodes[recipeitem] or {}
-	local desc_base = S("@1 "..descriptions[category], fields.description)
+	local desc_base = fields.description
+	local readable_alternate = alternate:gsub("_", " "):gsub("^%s*(.-)%s*$", "%1");
+	-- TO DELETE: -- .." ("..S(descriptions[category])..", "..subname..")"
 	local def = {}
+
+	if readable_alternate == "" then
+		readable_alternate = "normal";
+	end
 
 	if category ~= "slab" then
 		def = table.copy(info)
@@ -155,16 +161,16 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 				type = "fixed",
 				fixed = {-0.5, -0.5, -0.5, 0.5, (info/16)-0.5, 0.5},
 			}
-			def.description = ("%s (%d/16)"):format(desc_base, info)
+			def.description = ("%s (%s, %d/16)"):format(desc_base, S("Slab"), info)
 		else
 			def.node_box = {
 				type = "fixed",
 				fixed = info,
 			}
-			def.description = desc_base .. alternate:gsub("_", " "):gsub("(%a)(%S*)", function(a, b) return a:upper() .. b end)
+			def.description = desc_base .. " (" .. S(descriptions[category]) .. ", " .. S(readable_alternate) .. ")"
 		end
 	else
-		def.description = desc_base
+		def.description = ("%s (%s, %s)"):format(desc_base, S(descriptions[category]), S(readable_alternate))
 		if category == "slope" then
 			def.drawtype = "mesh"
 		elseif category == "stair" and alternate == "" then

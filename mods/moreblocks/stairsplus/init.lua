@@ -12,7 +12,12 @@ local modpath = minetest.get_modpath("moreblocks").. "/stairsplus"
 stairsplus = {}
 stairsplus.expect_infinite_stacks = false
 
+stairsplus.recipeitems_list = {}
 stairsplus.shapes_list = {}
+
+if minetest.get_modpath("unified_inventory") then
+	unified_inventory.virtual_groups.na_kp = stairsplus.recipeitems_list
+end
 
 if
 	not minetest.get_modpath("unified_inventory")
@@ -42,6 +47,8 @@ function stairsplus:register_all(modname, subname, recipeitem, fields)
 	self:register_slope(modname, subname, recipeitem, fields)
 	self:register_panel(modname, subname, recipeitem, fields)
 	self:register_micro(modname, subname, recipeitem, fields)
+
+	stairsplus.recipeitems_list[recipeitem] = modname .. ":" .. subname
 end
 
 function stairsplus:register_alias_all(modname_old, subname_old, modname_new, subname_new)
@@ -69,6 +76,29 @@ local function register_stair_slab_panel_micro(modname, subname, recipeitem, gro
 		light_source = light
 	})
 end
+
+local function on_mods_loaded()
+	local i = 0
+	for name, _ in pairs(stairsplus.recipeitems_list)
+	do
+		local node = minetest.registered_nodes[name]
+		if node then
+			local g = node.groups
+			if g then
+				g = table.copy(g)
+				g.na_kp = 1
+			else
+				g = {na_kp = 1}
+			end
+			i = i + 1
+		else
+			minetest.log("error", "In recipeitems list there is " .. name .. " that is not a registered node!")
+		end
+	end
+	minetest.log("info", "stairsplus: " .. i .. " nodes")
+end
+
+-- minetest.register_on_mods_loaded(on_mods_loaded)
 
 dofile(modpath .. "/defs.lua")
 dofile(modpath .. "/recipes.lua")

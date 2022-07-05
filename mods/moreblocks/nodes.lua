@@ -194,7 +194,7 @@ local nodes = {
 		description = S("Iron Glass"),
 		drawtype = "glasslike_framed_optional",
 		tiles = {"default_glass.png^[colorize:#DEDEDE", "default_glass_detail.png^[colorize:#DEDEDE"},
-		use_texture_alpha = "clip",
+		use_texture_alpha = "blend",
 		paramtype = "light",
 		sunlight_propagates = true,
 		is_ground_content = false,
@@ -205,7 +205,7 @@ local nodes = {
 		description = S("Coal Glass"),
 		drawtype = "glasslike_framed_optional",
 		tiles = {"default_glass.png^[colorize:#828282", "default_glass_detail.png^[colorize:#828282"},
-		use_texture_alpha = "clip",
+		use_texture_alpha = "blend",
 		paramtype = "light",
 		sunlight_propagates = true,
 		is_ground_content = false,
@@ -316,7 +316,7 @@ local nodes = {
 		description = S("Trap Glass"),
 		drawtype = "glasslike_framed_optional",
 		tiles = {"default_glass.png^moreblocks_trap_box_glass.png", "default_glass_detail.png"},
-		use_texture_alpha = "clip",
+		use_texture_alpha = "blend",
 		paramtype = "light",
 		sunlight_propagates = true,
 		is_ground_content = false,
@@ -412,7 +412,7 @@ local nodes = {
 		description = S("Glow Glass"),
 		drawtype = "glasslike_framed_optional",
 		tiles = {"default_glass.png^[colorize:#E9CD61", "default_glass_detail.png^[colorize:#E9CD61"},
-		use_texture_alpha = "clip",
+		use_texture_alpha = "blend",
 		paramtype = "light",
 		sunlight_propagates = true,
 		is_ground_content = false,
@@ -436,7 +436,7 @@ local nodes = {
 		description = S("Trap Glow Glass"),
 		drawtype = "glasslike_framed_optional",
 		tiles = {"default_glass.png^[colorize:#E9CD61^moreblocks_trap_box_glass.png", "default_glass_detail.png^[colorize:#E9CD61"},
-		use_texture_alpha = "clip",
+		use_texture_alpha = "blend",
 		paramtype = "light",
 		sunlight_propagates = true,
 		is_ground_content = false,
@@ -464,7 +464,7 @@ local nodes = {
 		description = S("Super Glow Glass"),
 		drawtype = "glasslike_framed_optional",
 		tiles = {"default_glass.png^[colorize:#FFFF78", "default_glass_detail.png^[colorize:#FFFF78"},
-		use_texture_alpha = "clip",
+		use_texture_alpha = "blend",
 		paramtype = "light",
 		sunlight_propagates = true,
 		is_ground_content = false,
@@ -488,7 +488,7 @@ local nodes = {
 		description = S("Trap Super Glow Glass"),
 		drawtype = "glasslike_framed_optional",
 		tiles = {"default_glass.png^[colorize:#FFFF78^moreblocks_trap_box_glass.png", "default_glass_detail.png^[colorize:#FFFF78"},
-		use_texture_alpha = "clip",
+		use_texture_alpha = "blend",
 		paramtype = "light",
 		sunlight_propagates = true,
 		is_ground_content = false,
@@ -541,19 +541,17 @@ for name, def in pairs(nodes) do
 	minetest.register_node("moreblocks:" ..name, def)
 	minetest.register_alias(name, "moreblocks:" ..name)
 
-	def_copy = table.copy(def)
+	local stairs_tiles = def.tiles
 
 	-- Use the primary tile for all sides of cut glasslike nodes.
 	-- This makes them easier to see
 	if
-		#def_copy.tiles > 1 and
-		def_copy.drawtype and
-		def_copy.drawtype == "glasslike_framed" or
-		def_copy.drawtype == "glasslike_framed_optional"
+		#stairs_tiles > 1 and
+		def.drawtype and
+		(def.drawtype == "glasslike_framed" or def.drawtype == "glasslike_framed_optional")
 	then
-		def.tiles = {def_copy.tiles[1]}
+		stairs_tiles = {def.tiles[1]}
 	end
-
 
 	if not def.no_stairs then
 		local groups = {}
@@ -561,7 +559,7 @@ for name, def in pairs(nodes) do
 		stairsplus:register_all("moreblocks", name, "moreblocks:" ..name, {
 			description = def.description,
 			groups = groups,
-			tiles = def.tiles,
+			tiles = stairs_tiles,
 			sunlight_propagates = def.sunlight_propagates,
 			light_source = def.light_source,
 			sounds = def.sounds,

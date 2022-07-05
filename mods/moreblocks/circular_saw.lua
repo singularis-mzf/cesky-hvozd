@@ -97,7 +97,7 @@ function circular_saw:get_cost(inv, stackname)
 end
 
 function circular_saw:get_output_inv(modname, material, amount, max)
-	if (not max or max < 1 or max > 99) then max = 99 end
+	if (not max or max < 1 or max > 100) then max = 100 end
 
 	local list = {}
 	local pos = #list
@@ -399,7 +399,7 @@ function circular_saw.on_construct(pos)
 	)
 
 	meta:set_int("anz", 0) -- No microblocks inside yet.
-	meta:set_string("max_offered", 99) -- How many items of this kind are offered by default?
+	meta:set_string("max_offered", 10) -- How many items of this kind are offered by default?
 	meta:set_string("infotext", S("Circular Saw is empty"))
 
 	local inv = meta:get_inventory()

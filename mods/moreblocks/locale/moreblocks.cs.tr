@@ -1,0 +1,120 @@
+# textdomain: moreblocks
+
+# Czech translation for MOREBLOCKS minetest mod.
+# Copyright (C) 2022 Singularis
+# This file is distributed under the same license as the MOREBLOCKS package.
+
+# circular_saw.lua
+
+Circular Saw=Kotoučová pila (cirkulárka)
+Input material=Vstupní@nmateriál
+Left-over=Přebytky
+Max=Max.
+Recycle output=Recyklace@nvýstupu
+Set=Nastavit
+owned by @1=kterou postavil/a: @1
+Circular Saw is empty=Kotoučová pila je prázdná
+Circular Saw is working on @1=Kotoučová pila obsahuje: @1
+
+# init.lua
+
+[MOD] moreblocks loaded.=[MOD] moreblocks načten.
+
+# nodes.lua
+
+Deprecated=zastaralý
+All-faces Acacia Tree=Všestranný kmen akácie
+All-faces Aspen Tree=Všestranný kmen osiky
+All-faces Jungle Tree=Všestranný kmen džunglovníku
+All-faces Pine Tree=Všestranný kmen borovice
+All-faces Tree=Všestranný kmen jabloně
+Cactus Brick=Kaktusové cihly
+Cactus Checker=Kaktuso-kamenná mozaika
+Centered Wooden Tile=Dřevěná mozaika zarovnaná na střed
+Checker Stone Tile=Kamenná mozaika
+Circle Stone Bricks=Kamenné cihly zdobené čtvercem
+Clean Glass=Čisté sklo
+Coal Checker=Uhelno-kamenná mozaika
+Coal Glass=Uhelné sklo
+Clean Super Glow Glass=Čísté supersvítící sklo
+Trap Clean Super Glow Glass=Iluze čistého supersvítícího skla
+Trap Clean Glass=Iluze čistého skla
+Clean Glow Glass=Čisté svítící sklo
+Trap Clean Glow Glass=Iluze čistého svítícího skla
+Coal Stone=Uhelný kámen
+Coal Stone Bricks=Cihly z uhelného kamene
+Compressed Cobblestone=Slisovaný dlažební kámen
+Compressed Desert Cobblestone=Slisovaný pouštní dlažební kámen
+Compressed Dirt=Slisovaná hlína
+Copper Patina Block=Blok mědi s patinou
+Empty Shelf=Prázdná skříňka
+Full Wooden Tile=Dřevěná mozaika (harmonická)
+Glow Glass=Svítící sklo
+Iron Checker=Železno-kamenná mozaika
+Iron Glass=Sklo s železem v rámu
+Iron Stone=Železitý kámen
+Iron Stone Bricks=Cihly z železitého kamene
+Plankstone=Dřevěno-kamenná mozaika
+Rope=Liána
+Split Stone Tile=Kamenná mozaika (dělená)
+Stone Bricks=Kamenné cihly
+Stone Tile=Kamenné dlaždice (světlé)
+Super Glow Glass=Supersvítící sklo
+Sweeper=Štětka na sklo
+Tar=Asfalt
+Trap Desert Stone=Iluze pouštního kamene
+Trap Glass=Iluze skla
+Trap Glow Glass=Iluze svítícího skla
+Trap Obsidian=Iluze obsidiánu
+Trap Obsidian Glass=Iluze obsidiánového skla
+Trap Sandstone=Iluze žlutého pískovce
+Trap Stone=Iluze skalního kamene
+Trap Super Glow Glass=Iluze supersvítícího skla
+Wooden Tile=Dřevěná mozaika (obyčejná)
+Offset Wooden Tile=Dřevěná mozaika (zarovnaná na hranu)
+# @deprecated
+Downwards Wooden Tile=Dřevěná mozaika (zastaralá)
+# @deprecated
+Leftwards Wooden Tile=Dřevěná mozaika (zastaralá)
+# @deprecated
+Rightwards Wooden Tile=Dřevěná mozaika (zastaralá)
+
+# ownership.lua
+Sorry, @1 owns that spot.=Promiňte, toto místo patří: @1.
+someone=někomu
+
+# stairsplus/common.lua
+
+@1 Microblock=@1 (mikroblok)
+@1 Slab=@1 (deska)
+@1 Slope=@1 (svah)
+@1 Panel=@1 (panel)
+@1 Stairs=@1 (schody)
+Microblock=mikroblok
+Slab=deska
+Slope=svah
+Panel=panel
+Stairs=schody
+two sides=dvě strany
+three sides=tři strany
+three sides u=tři strany do U
+normal=normální
+inner=vnitřní
+outer=vnější
+half=polovina (spodní)
+alt 1=samostatné 1
+alt 2=samostatné 2
+alt 4=samostatné 4
+alt=samostatné 8
+half raised=polovina horní
+inner half=vnitřní poloviční spodní
+inner half raised=vnitřní poloviční horní
+inner cut=vnitřní řez
+inner cut half=vnitřní řez poloviční spodní
+inner cut half raised=vnitřní řez poloviční horní
+outer half=vnější poloviční spodní
+outer half raised=vnější poloviční horní
+outer cut=vnější řez
+outer cut half=vnější řez poloviční spodní
+outer cut half raised=vnější řez poloviční horní
+cut=řez

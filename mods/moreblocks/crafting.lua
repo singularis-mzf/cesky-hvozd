@@ -5,10 +5,12 @@ Copyright © 2011-2020 Hugo Locurcio and contributors.
 Licensed under the zlib license. See LICENSE.md for more information.
 --]]
 
+--[[ -- conflict with Baked Clay
 minetest.register_craft({
 	output = "default:stick",
 	recipe = {{"default:dry_shrub"},}
 })
+]]
 
 minetest.register_craft({
 	output = "default:stick",
@@ -150,7 +152,7 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
-	output = "moreblocks:sweeper 4",
+	output = "moreblocks:sweeper 16",
 	recipe = {
 		{"default:junglegrass"},
 		{"default:stick"},

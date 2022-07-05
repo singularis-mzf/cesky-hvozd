@@ -11,7 +11,7 @@ if minetest.get_modpath("default") then
 		"stone",
 		"stone_block",
 		"cobble",
-		"mossycobble",
+		-- "mossycobble",
 		"brick",
 		"sandstone",
 		"steelblock",
@@ -51,6 +51,10 @@ if minetest.get_modpath("default") then
 		"sandstone_block",
 		"coral_skeleton",
 		"ice",
+		"snowblock",
+		"desert_sand",
+		"sand",
+		"silver_sand",
 	}
 
 	for _, name in pairs(default_nodes) do
@@ -81,19 +85,21 @@ end
 
 -- farming registrations
 if minetest.get_modpath("farming") then
-	local farming_nodes = {"straw"}
+	local farming_nodes = {"hemp_block", "straw"}
 	for _, name in pairs(farming_nodes) do
 		local mod = "farming"
 		local nodename = mod .. ":" .. name
-		local ndef = table.copy(minetest.registered_nodes[nodename])
-		ndef.sunlight_propagates = true
+		if minetest.registered_nodes[nodename] then
+			local ndef = table.copy(minetest.registered_nodes[nodename])
+			ndef.sunlight_propagates = true
 
-		mod = "moreblocks"
-		stairsplus:register_all(mod, name, nodename, ndef)
-		minetest.register_alias_force("stairs:stair_" .. name, mod .. ":stair_" .. name)
-		minetest.register_alias_force("stairs:stair_outer_" .. name, mod .. ":stair_" .. name .. "_outer")
-		minetest.register_alias_force("stairs:stair_inner_" .. name, mod .. ":stair_" .. name .. "_inner")
-		minetest.register_alias_force("stairs:slab_"  .. name, mod .. ":slab_"  .. name)
+			mod = "moreblocks"
+			stairsplus:register_all(mod, name, nodename, ndef)
+			minetest.register_alias_force("stairs:stair_" .. name, mod .. ":stair_" .. name)
+			minetest.register_alias_force("stairs:stair_outer_" .. name, mod .. ":stair_" .. name .. "_outer")
+			minetest.register_alias_force("stairs:stair_inner_" .. name, mod .. ":stair_" .. name .. "_inner")
+			minetest.register_alias_force("stairs:slab_"  .. name, mod .. ":slab_"  .. name)
+		end
 	end
 end
 
