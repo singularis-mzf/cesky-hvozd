@@ -1,5 +1,7 @@
 digtron = {}
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 digtron.auto_controller_colorize = "#88000030"
 digtron.pusher_controller_colorize = "#00880030"
 digtron.soft_digger_colorize = "#88880030"
@@ -114,3 +116,5 @@ if minetest.get_modpath("catacomb") and catacomb ~= nil and catacomb.chamber_pro
 		catacomb.passage_protected_nodes[node_id] = true
 	end
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

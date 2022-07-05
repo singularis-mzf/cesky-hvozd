@@ -383,7 +383,7 @@ end
 -- away. safe_add_entity causes these attempts to be ignored rather than crashing the game.
 -- returns the entity if successful, nil otherwise
 function safe_add_entity(pos, name)
-	success, ret = pcall(minetest.add_entity, pos, name)
+	local success, ret = pcall(minetest.add_entity, pos, name)
 	if success then return ret else return nil end
 end
 
@@ -410,14 +410,14 @@ digtron.show_offset_markers = function(pos, offset, period)
 	local z_pos = math.floor((buildpos.z+offset)/period)*period - offset
 
 	local entity = safe_add_entity({x=buildpos.x, y=buildpos.y, z=z_pos}, "digtron:marker")
-	if entity ~= nil then entity:setyaw(1.5708) end
+	if entity ~= nil then entity:set_yaw(1.5708) end
 	
 	if z_pos >= buildpos.z then
 		local entity = safe_add_entity({x=buildpos.x, y=buildpos.y, z=z_pos - period}, "digtron:marker")
-		if entity ~= nil then entity:setyaw(1.5708) end
+		if entity ~= nil then entity:set_yaw(1.5708) end
 	end
 	if z_pos <= buildpos.z then
 		local entity = safe_add_entity({x=buildpos.x, y=buildpos.y, z=z_pos + period}, "digtron:marker")
-		if entity ~= nil then entity:setyaw(1.5708) end
+		if entity ~= nil then entity:set_yaw(1.5708) end
 	end
 end
