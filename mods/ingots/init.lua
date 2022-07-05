@@ -19,6 +19,8 @@
 
 ingots = {}
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local conf = dofile(minetest.get_modpath("ingots").."/conf.lua")
 dofile(minetest.get_modpath("ingots").."/api.lua")
 
@@ -66,3 +68,4 @@ end
 if minetest.get_modpath("mcl_nether") then
 		ingots.register_ingots("mcl_nether:netherite_ingot", "ingot_netherite.png", conf.is_big)
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

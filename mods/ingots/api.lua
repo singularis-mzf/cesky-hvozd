@@ -99,7 +99,7 @@ function ingots.register_ingots(ingot_item, texture, is_big)
 					},
 				}
 		minetest.register_node(mod_prefix .. ingot_name .. "_" .. i,{
-			description = "ingots",
+			description = "Ingoty",
 			drawtype = "mesh",
 			tiles = {texture},
 			mesh = texture_prefix .. i .. ".obj",
