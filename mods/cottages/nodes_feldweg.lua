@@ -395,7 +395,7 @@ elseif( cottages_feldweg_mode == "mesh" ) then
 	                                          
 end
 
-
+--[[
 -- create stairs if possible
 if( minetest.get_modpath("stairs") and stairs and stairs.register_stair_and_slab) then
    stairs.register_stair_and_slab("feldweg", "cottages:feldweg",
@@ -405,6 +405,7 @@ if( minetest.get_modpath("stairs") and stairs and stairs.register_stair_and_slab
 		S("Dirt Road, half height"),
 		cottages.sounds.dirt)
 end
+]]
 
 if( cottages_feldweg_mode == "nodebox" or cottages_feldweg_mode == "mesh" ) then
         local box_slope = {

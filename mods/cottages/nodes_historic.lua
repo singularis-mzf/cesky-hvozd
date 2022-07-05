@@ -41,6 +41,7 @@ minetest.register_node("cottages:loam", {
 	is_ground_content = false,
 })
 
+--[[
 -- create stairs if possible
 if( minetest.get_modpath("stairs") and stairs and stairs.register_stair_and_slab) then
 
@@ -60,7 +61,7 @@ if( minetest.get_modpath("stairs") and stairs and stairs.register_stair_and_slab
 		cottages.sounds.dirt)
    end
 end
-
+]]
 
 -- straw is a common material for places where animals are kept indoors
 -- right now, this block mostly serves as a placeholder
@@ -80,6 +81,7 @@ minetest.register_node("cottages:glass_pane", {
 		drawtype = "nodebox",
                 -- top, bottom, side1, side2, inner, outer
 		tiles = {"cottages_glass_pane.png"},
+		use_texture_alpha = "blend",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2},
@@ -104,6 +106,7 @@ minetest.register_node("cottages:glass_pane_side", {
 		drawtype = "nodebox",
                 -- top, bottom, side1, side2, inner, outer
 		tiles = {"cottages_glass_pane.png"},
+		use_texture_alpha = "blend",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2},

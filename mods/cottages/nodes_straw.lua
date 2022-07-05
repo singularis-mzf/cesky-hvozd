@@ -137,10 +137,10 @@ minetest.register_node("cottages:threshing_floor", {
 	after_place_node = function(pos, placer)
 		local meta = minetest.get_meta(pos);
 		meta:set_string("owner", placer:get_player_name() or "");
-		meta:set_string("infotext", S("Private threshing floor (owned by %s)"):format(meta:get_string("owner") or ""));
+		meta:set_string("infotext", S("Private threshing floor (owned by @1)", meta:get_string("owner") or ""));
 		meta:set_string("formspec",
 				cottages_formspec_treshing_floor..
-				"label[2.5,-0.5;"..S("Owner: %s"):format(meta:get_string("owner") or "").."]" );
+				"label[2.5,-0.5;"..S("Owner: @1", meta:get_string("owner") or "").."]" );
 		meta:set_string("public", "private")
         end,
 
@@ -228,7 +228,7 @@ minetest.register_node("cottages:threshing_floor", {
 			-- update the formspec
 			meta:set_string("formspec",
 				cottages_formspec_treshing_floor..
-				"label[2.5,-0.5;"..S("Owner: %s"):format(meta:get_string("owner") or "").."]" );
+				"label[2.5,-0.5;"..S("Owner: @1", meta:get_string("owner") or "").."]" );
 			return;
 		end
 
@@ -261,9 +261,9 @@ minetest.register_node("cottages:threshing_floor", {
 
 			local anz_left = found_wheat - anz_wheat;
 			if( anz_left > 0 ) then
---				minetest.chat_send_player( name, S('You have threshed %s wheat (%s are left).'):format(anz_wheat,anz_left));
+--				minetest.chat_send_player( name, S('You have threshed @1 wheat (@2 are left).', anz_wheat,anz_left));
 			else
---				minetest.chat_send_player( name, S('You have threshed the last %s wheat.'):format(anz_wheat));
+--				minetest.chat_send_player( name, S('You have threshed the last @1 wheat.', anz_wheat));
 				overlay1 = "";
 			end
 		end	
@@ -309,8 +309,8 @@ minetest.register_node("cottages:threshing_floor", {
 		if( not( anz_straw )) then
 			anz_straw = "0";
 		end
-		if( not( anz_seed )) then
-			anz_seed = "0";
+		if( not( anz_seeds )) then
+			anz_seeds = "0";
 		end
 		local hud5 = puncher:hud_add({
 			hud_elem_type = "text",
@@ -322,7 +322,7 @@ minetest.register_node("cottages:threshing_floor", {
 		});
 		local hud6 = puncher:hud_add({
 			hud_elem_type = "text",
-			text = '+ '..tostring( anz_seed )..' seeds',
+			text = '+ '..tostring( anz_seeds )..' seeds',
 			number = 0x00CC00,
 			alignment = {x = 0, y = 0},
 			scale = {x = 100, y = 100}, -- bounding rectangle of the text
@@ -392,10 +392,10 @@ minetest.register_node("cottages:handmill", {
 	after_place_node = function(pos, placer)
 		local meta = minetest.get_meta(pos);
 		meta:set_string("owner", placer:get_player_name() or "");
-		meta:set_string("infotext", S("Private mill, powered by punching (owned by %s)"):format(meta:get_string("owner") or ""));
+		meta:set_string("infotext", S("Private mill, powered by punching (owned by @1)", meta:get_string("owner") or ""));
 		meta:set_string("formspec",
 				cottages_handmill_formspec..
-				"label[2.5,-0.5;"..S("Owner: %s"):format(meta:get_string('owner') or "").."]" );
+				"label[2.5,-0.5;"..S("Owner: @1", meta:get_string('owner') or "").."]" );
 		meta:set_string("public", "private")
         end,
 
@@ -501,9 +501,9 @@ minetest.register_node("cottages:handmill", {
 
 			local anz_left = found - anz;
 			if( anz_left > 0 ) then
-				minetest.chat_send_player( name, S('You have ground a %s (%s are left).'):format(stack1:get_definition().description,(anz_left)));
+				minetest.chat_send_player( name, S('You have ground a @1 wheat seeds (@2 are left).', stack1:get_count(),(anz_left)));
 			else
-				minetest.chat_send_player( name, S('You have ground the last %s.'):format(stack1:get_definition().description));
+				minetest.chat_send_player( name, S('You have ground the last @1 wheat seeds.', stack1:get_count()));
 			end
 
 			-- if the version of MT is recent enough, rotate the mill a bit

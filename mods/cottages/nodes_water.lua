@@ -87,7 +87,7 @@ cottages.water_gen_fill_bucket = function(pos)
 	end
 	-- abort if the water has not been running long enough
 	-- (the player may have removed a bucket before it was full)
-	start = meta:get_string("fillstarttime")
+	local start = meta:get_string("fillstarttime")
 	if( (minetest.get_us_time()/1000000) - tonumber(start) < cottages.water_fill_time -2) then
 		return
 	end
@@ -111,7 +111,7 @@ end
 
 
 minetest.register_node("cottages:water_gen", {
-	description = "Tree Trunk Well",
+	description = S("Tree Trunk Well"),
 	tiles = {"default_tree_top.png", "default_tree.png^[transformR90", "default_tree.png^[transformR90"},
 	drawtype = "nodebox",
 	paramtype  = "light",
@@ -149,14 +149,14 @@ minetest.register_node("cottages:water_gen", {
 		local spos = pos.x .. "," .. pos.y .. "," .. pos.z
 		meta:set_string("formspec",
 			"size[8,9]" ..
-			"label[3.0,0.0;Tree trunk well]"..
-			"label[1.5,0.7;Punch the well while wielding an empty bucket.]"..
-			"label[1.5,1.0;Your bucket will slowly be filled with river water.]"..
-			"label[1.5,1.3;Punch again to get the bucket back when it is full.]"..
-			"label[1.0,2.9;Internal bucket storage (passive storage only):]"..
+			"label[3.0,0.0;" .. S("Tree trunk well") .. "]"..
+			"label[1.5,0.7;" .. S("Punch the well while wielding an empty bucket.") .. "]"..
+			"label[1.5,1.0;" .. S("Your bucket will slowly be filled with river water.") .. "]"..
+			"label[1.5,1.3;" .. S("Punch again to get the bucket back when it is full.") .."]"..
+			"label[1.0,2.9;" .. S("Internal bucket storage (passive storage only):").."]"..
 			"item_image[0.2,0.7;1.0,1.0;bucket:bucket_empty]"..
 			"item_image[0.2,1.7;1.0,1.0;bucket:bucket_river_water]"..
-			"label[1.5,1.9;Punch well with full water bucket in order to empty bucket.]"..
+			"label[1.5,1.9;" .. S("Punch well with full water bucket in order to empty bucket.") .. "]"..
 			"button_exit[6.0,0.0;2,0.5;public;"..S("Public?").."]"..
 			"list[nodemeta:" .. spos .. ";main;1,3.3;8,1;]" ..
 			"list[current_player;main;0,4.85;8,1;]" ..
@@ -170,7 +170,7 @@ minetest.register_node("cottages:water_gen", {
 	after_place_node = function(pos, placer)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("owner", placer:get_player_name() or "")
-		meta:set_string("infotext", S("Public tree trunk well (owned by %s)"):format(meta:get_string("owner")))
+		meta:set_string("infotext", S("Public tree trunk well (owned by @1)", meta:get_string("owner")))
 		-- no bucket loaded
 		meta:set_string("bucket", "")
 		meta:set_string("public", "public")
@@ -229,8 +229,8 @@ minetest.register_node("cottages:water_gen", {
 		local owner = meta:get_string("owner")
 		local public = meta:get_string("public")
 		if( name ~= owner and public~="public") then
-			minetest.chat_send_player( name,
-				S("This tree trunk well is owned by %s. You can't use it."):format(owner))
+			minetest.chat_send_player(name,
+				S("This tree trunk well is owned by @1. You can't use it.", owner))
 			return
 		end
 

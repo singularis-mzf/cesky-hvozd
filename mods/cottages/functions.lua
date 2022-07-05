@@ -27,13 +27,13 @@ cottages.switch_public = function(pos, formname, fields, sender, name_of_the_thi
 		if( public ~= "public") then
 			meta:set_string("public", "public")
 			meta:set_string("infotext",
-				S("Public "..name_of_the_thing.." (owned by %s)"):format(owner))
+				S("Public "..name_of_the_thing.." (owned by @1)", owner))
 			minetest.chat_send_player(owner,
 				S("Your "..name_of_the_thing.." can now be used by other players as well."))
 		else
 			meta:set_string("public", "")
 			meta:set_string("infotext",
-				S("Private "..name_of_the_thing.." (owned by %s)"):format(owner))
+				S("Private "..name_of_the_thing.." (owned by @1)", owner))
 			minetest.chat_send_player(owner,
 				S("Your "..name_of_the_thing.." can only be used by yourself."))
 		end

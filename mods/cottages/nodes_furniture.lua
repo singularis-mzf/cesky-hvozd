@@ -431,7 +431,7 @@ cottages.sleep_in_bed = function( pos, node, clicker, itemstack, pointed_thing )
 
 	local p_above = minetest.get_node( {x=pos.x, y=pos.y+1, z=pos.z});
 	if( not( p_above) or not( p_above.name ) or p_above.name ~= 'air' ) then
-		minetest.chat_send_player( pname, "This place is too narrow for sleeping. At least for you!");
+		minetest.chat_send_player( pname, "Zde je na spaní příliš těsno.");
 		return;
 	end
 
@@ -448,7 +448,7 @@ cottages.sleep_in_bed = function( pos, node, clicker, itemstack, pointed_thing )
 		clicker:set_eye_offset({x=0,y=0,z=0}, {x=0,y=0,z=0})
 		clicker:set_physics_override(1, 1, 1)
 		default.player_set_animation(clicker, "stand", 30)
-		minetest.chat_send_player( pname, 'That was enough sleep for now. You stand up again.');
+		minetest.chat_send_player( pname, 'Dost bylo spaní. Znovu jste vzhůru.');
 		return;
 	end
 
@@ -509,7 +509,7 @@ cottages.sleep_in_bed = function( pos, node, clicker, itemstack, pointed_thing )
 		-- search for a second mat right next to this one
 		local offset = {{x=0,z=-1}, {x=-1,z=0}, {x=0,z=1}, {x=1,z=0}};
 		for i,off in ipairs( offset ) do
-			node2 = minetest.get_node( {x=pos.x+off.x, y=pos.y, z=pos.z+off.z} );
+			local node2 = minetest.get_node( {x=pos.x+off.x, y=pos.y, z=pos.z+off.z} );
 			if( node2.name == 'cottages:sleeping_mat' or node2.name=='cottages:straw_mat' or node.name=='cottages:sleeping_mat_head' ) then
 				-- if a second mat is found, sleeping is possible
 				allow_sleep = true;
@@ -534,13 +534,13 @@ cottages.sleep_in_bed = function( pos, node, clicker, itemstack, pointed_thing )
 			p.x = p.x+0.5;
 		end
 	end
-	
+
 	if( default.player_attached[pname] and animation.animation=="sit") then
 		-- just changing the animation...
 		if( allow_sleep==true ) then
 			default.player_set_animation(clicker, "lay", 30)
 			clicker:set_eye_offset({x=0,y=-14,z=2}, {x=0,y=0,z=0})
-			minetest.chat_send_player( pname, 'You lie down and take a nap. A right-click will wake you up.');
+			minetest.chat_send_player( pname, 'Lehnuvši si, dáváte si šlofíka. Dalším kliknutím pravým tlačítkem vstanete.');
 			return;
 		-- no sleeping on this place
 		else
@@ -549,7 +549,7 @@ cottages.sleep_in_bed = function( pos, node, clicker, itemstack, pointed_thing )
 			clicker:set_eye_offset({x=0,y=0,z=0}, {x=0,y=0,z=0})
 			clicker:set_physics_override(1, 1, 1)
 			default.player_set_animation(clicker, "stand", 30)
-			minetest.chat_send_player( pname, 'That was enough sitting around for now. You stand up again.');
+			minetest.chat_send_player( pname, 'Znovu stojíte.');
 			return;
 		end
 	end
@@ -562,9 +562,9 @@ cottages.sleep_in_bed = function( pos, node, clicker, itemstack, pointed_thing )
 	default.player_attached[pname] = true
 
 	if( allow_sleep==true) then
-		minetest.chat_send_player( pname, 'Aaah! What a comftable '..place_name..'. A second right-click will let you sleep.');
+		minetest.chat_send_player( pname, 'Á! Jaká pohodlná '..S(place_name)..'. A druhým kliknutím pravým tlačítkem půjdete spát.');
 	else
-		minetest.chat_send_player( pname, 'Comftable, but not good enough for a nap. Right-click again if you want to get back up.');
+		minetest.chat_send_player( pname, 'Pohodlná, ale ne dost. Dalším kliknutím pravým tlačítkem vstanete.');
 	end
 end
 

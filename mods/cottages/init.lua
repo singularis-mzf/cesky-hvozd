@@ -22,14 +22,11 @@
 --          Added threshing floor.
 --          Added hand-driven mill.
 
-cottages = {}
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
--- Boilerplate to support localized strings if intllib mod is installed.
-if minetest.get_modpath( "intllib" ) and intllib then
-	cottages.S = intllib.Getter()
-else
-	cottages.S = function(s) return s end
-end
+cottages = {
+	S = minetest.get_translator("cottages"),
+}
 
 cottages.sounds = {}
 -- MineClone2 needs special treatment; default is only needed for
@@ -89,11 +86,11 @@ dofile(minetest.get_modpath("cottages").."/nodes_feldweg.lua");
 dofile(minetest.get_modpath("cottages").."/nodes_pitchfork.lua");
 dofile(minetest.get_modpath("cottages").."/nodes_straw.lua");
 dofile(minetest.get_modpath("cottages").."/nodes_hay.lua");
-dofile(minetest.get_modpath("cottages").."/nodes_anvil.lua");
+-- dofile(minetest.get_modpath("cottages").."/nodes_anvil.lua");
 dofile(minetest.get_modpath("cottages").."/nodes_doorlike.lua");
 dofile(minetest.get_modpath("cottages").."/nodes_fences.lua");
 dofile(minetest.get_modpath("cottages").."/nodes_roof.lua");
-dofile(minetest.get_modpath("cottages").."/nodes_barrel.lua");
+-- dofile(minetest.get_modpath("cottages").."/nodes_barrel.lua");
 dofile(minetest.get_modpath("cottages").."/nodes_mining.lua");
 dofile(minetest.get_modpath("cottages").."/nodes_water.lua");
 --dofile(minetest.get_modpath("cottages").."/nodes_chests.lua");
@@ -103,3 +100,5 @@ dofile(minetest.get_modpath("cottages").."/alias.lua");
 
 -- variable no longer needed
 cottages.S = nil;
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

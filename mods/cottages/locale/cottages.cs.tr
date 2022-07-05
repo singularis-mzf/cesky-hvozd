@@ -1,0 +1,180 @@
+# textdomain:cottages
+
+### alias.lua ###
+
+### init.lua ###
+
+### nodes_anvil.lua ###
+Steel hammer for repairing tools on the anvil=Kladivo na opravování nářadí na kovadlině
+anvil=kovadlina
+Anvil=Kovadlina
+The workpiece slot is for damaged tools only.=Kovadlina je jen na poškozené nářadí.
+Your tool has been repaired successfully.=Nástroj byl úspěšně opraven.
+Your workpiece improves.=Nářadí je čím dál lepší.
+Anvil (owned by @1)=Soukromá kovadlina (vlastník/ce: @1)
+Workpiece:=Nářadí:
+Optional=Volitelný/á
+storage for=úložný prostor pro
+your hammer=vaše kladivo
+Owner: @1=Vlastník/ce: @1
+Punch anvil with hammer to=Klikejte levým tlačítkem na kovadlinu,
+repair tool in workpiece-slot.=abyste opravil/a vložené nářadí.
+
+### nodes_barrel.lua ###
+#Pour:=
+#Fill:=
+#barrel (closed)=
+#barrel (open)=
+#barrel (closed), lying somewhere=
+#barrel (opened), lying somewhere=
+#tub=
+
+### nodes_chests.lua ###
+#private NPC chest = Private NSC-Truhe
+#chest for work utils and kitchens = NSC-Truhe fuer Arbeitsutensilien und Kuechen
+#storage chest = NSC-Lagertruhe
+
+### nodes_doorlike.lua ###
+opened window shutters=Otevřené okenice
+closed window shutters=Zavřené okenice
+half door=Vrátka
+half door inverted=Vrátka (na opačné straně)
+closed fence gate=Zavřená plotní branka (podivná)
+opened fence gate=Otevřená plotní branka (podivná)
+wooden hatch=Dřevěná padací dvířka
+metal hatch=Kovová padací dvířka
+
+### nodes_fences.lua ###
+small fence=Malý plot
+small fence corner=Roh malého plotu
+small fence end=Malý plot (tři strany)
+
+### nodes_furniture.lua ###
+bed=postel
+mat=podložka
+Bed (foot region)=Postel (část pod nohama)
+Bed (head region)=Postel (část pod hlavou)
+sleeping mat=Spací podložka
+sleeping mat with pillow=Spací podložka s polštářem pod hlavu
+simple wooden bench=Dřevěná lavička
+table=Jednonohý dřevěný stůl
+open storage shelf=Skříň
+open storage shelf (in use)=Skříň (používána)
+open storage shelf (empty)=Skřín (prázdná)
+stovepipe=Roura od kamen
+washing place=Historické umývadlo
+Sorry. This washing place is out of water. Please place it above water!=Promiňte, ale toto umývadlo nemá vodu. Umístěte ho někam nad vodu!
+You feel much cleaner after some washing.=Po zběžném umytí se cítíte mnohem čistější.
+
+### nodes_historic.lua ###
+wagon wheel=Kolo vozu
+dirt road=Vyježděná cesta
+dirt road crossing=Vyježděná cesta: křižovatka
+dirt road curve=Vyježděná cesta: zatáčka
+dirt road end=Vyježděná cesta: konec
+dirt road slope=Vyježděná cesta: prudké stoupání
+dirt road slope long=Vyježděná cesta: pozvolné stoupání
+dirt road t junction=Vyježděná cesta: křižovatka do T
+loam=Mleté vepřovice (na stavby)
+Dirt Road Stairs=Prašná cesta (schody)
+Dirt Road, half height=Prašná cesta (deska)
+Loam Stairs=Hlína (schody)
+Loam Slab=Hlína (deska)
+Clay Stairs=Jíl (schody)
+Clay Slab=Jíl (deska)
+straw ground for animals=Slaměná výstelka pro zvířata
+simple glass pane=Okno s tlustým rámem
+simple glass pane (centered)=Okno s tlustým rámem (vystředěné)
+
+### nodes_roof.lua ###
+Roof straw=Slaměná střecha
+Roof wood=Dřevěná střecha
+Roof black=Černá střecha
+Roof red=Červená střecha
+Roof brown=Hnědá střecha
+Roof reet=Reet(?) střecha
+Roof slate=Břidlicová střecha
+#Roof connector straw=
+#Roof connector wood=
+#Roof connector black=
+#Roof connector red=
+#Roof connector brown=
+#Roof connector reet=
+#Roof connector slate=
+#Roof (flat) straw=
+#Roof (flat) wood=
+#Roof (flat) black=
+#Roof (flat) red=
+#Roof (flat) brown=
+#Roof (flat) reet=
+#Roof (flat) slate=
+Vertical Slate=Vertikální břidlice(?)
+Reet for thatching=Reet(?)
+
+### nodes_straw.lua ###
+layer of straw=Vrstva slámy
+straw bale=Žok slámy
+straw=Sláma
+threshing floor=Mlat
+Threshing floor=Mlat
+Threshing floor (owned by @1)=Mlat (patří: @1)
+Public threshing floor (owned by @1)=Veřejný mlat (patří: @1)
+Private threshing floor (owned by @1)=Soukromý mlat (patří: @1)
+Harvested wheat:=Sklizená pšenice:
+Straw:=Sláma:
+Seeds:=Semena:
+Owner: @1=Vlastník/ce: @1
+Punch threshing floor with a stick=Mlaťte do mlatu tyčkou,
+to get straw and seeds from wheat.=abyste získal/a z pšenice slámu a zrní.
+You have threshed @1 wheat (@1 are left)=
+You have threshed the last @1 wheat.=Du hast die letzten @1 Weizenaehren gedroschen.
+mill, powered by punching=Ruční mlýn
+Mill, powered by punching=Ruční mlýn
+Mill, powered by punching (owned by @1)=Ruční mlýn (patří: @1)
+Public mill, powered by punching (owned by @1)=Veřejný ruční mlýn (patří: @1)
+Private mill, powered by punching (owned by @1)=Soukromý ruční mlýn (patří: @1)
+Wheat seeds:=Zrna pšenice:
+Flour:=Mouka:
+Mill=Mlýn
+Owner: @1=Vlastník/ce: @1
+Punch this hand-driven mill=Klikejte na tento ruční mlýn levým tlačítkem myši,
+to convert wheat seeds into flour.=abyste tak z pšeničných zrn získal/a mouku.
+You have ground a @1 wheat seeds (@2 are left).=Mlel/a jste @1 zrn pšenice (@2 zbývá).
+You have ground the last @1 wheat seeds.=Pomlel/a jste posledních @1 zrn pšenice.
+#You have grinded @1 wheat seeds (@2 are left).=Získal/a jste @1 zrn pšenice (@2 zbývá).
+#You have grinded the last @1 wheat seeds.=Získal/a jste posledních @1 zrn pšenice.
+
+Your threshing floor can now be used by other players as well.=Váš mlat mohou nyní používat i ostatní.
+Your mill, powered by punching can now be used by other players as well.=Váš ruční mlýn mohou nyní používat i ostatní.
+
+Your threshing floor can only be used by yourself.=Váš mlat nyní můžete používat jen vy.
+Your mill, powered by punching can only be used by yourself.=Váš ruční mlýn nyní můžete používat jen vy.
+
+Public?=Veřejná/ý?
+
+Public tree trunk well=Veřejná studna
+Public tree trunk well (owned by @1)=Veřejná studna (vlastník/ce: @1)
+Private tree trunk well (owned by @1)=Soukromá studna (vlastník/ce: @1)
+This tree trunk well is owned by @1. You can't use it.=Tuto studnu nemůžete použít, protože je soukromá a vlastní ji @1!
+Sorry. You have no room for the bucket. Please free some space in your inventory first!=V inventáři vám došlo místo!
+Your tree trunk well can now be used by other players as well.=Z vaší studny si nyní mohou nabírat vodu i ostatní.
+Your tree trunk well can only be used by yourself.=Z vaší studny si nyní můžete nabírat vodu jen vy.
+
+pitchfork (dig dirt with grass to get hay, place with right-click)=Vidle@n(levým tlačíkem získáte z hlíny s trávou seno, pravým tlačítkem vidle zabodnete)
+pitchfork (for hay and straw)=Vidle (na seno a slámu)
+
+Some hay=Trocha sena
+Hay=Seno
+Hay bale=Stoh sena
+
+Tree Trunk Well=Dřevěná studna
+Tree trunk well=Dřevěná studna
+Punch the well while wielding an empty bucket.=Klikněte levým tlačítkem na studnu, držíc prázdný kbelík.
+Your bucket will slowly be filled with river water.=Váš kbelík bude pomalu naplněn říční vodou.
+Punch again to get the bucket back when it is full.=Plný kbelík odeberte rovněž levým tlačítkem.
+Internal bucket storage (passive storage only):=Vnitřní inventář (jen pasivní uložení):
+Punch well with full water bucket in order to empty bucket.=K vyprázdnění kbelíku na studnu klikněte levým tlačítkem,@ndržíc prázdný kbelík.
+Please wait until your bucket has been filled.=Počkejte prosím, než bude váš kbelík naplněn.
+
+flat wooden planks=Lakovaná dřevěná deska
+wool for tents=Vlna na stan
