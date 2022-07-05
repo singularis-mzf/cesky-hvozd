@@ -141,7 +141,24 @@ BlockMen (CC BY-SA 3.0):
   default_gold_ingot.png
   default_tool_steelsword.png
   default_diamond.png
-  default_tool_*.png
+  default_tool_bronzeaxe.png
+  default_tool_bronzepick.png
+  default_tool_bronzesword.png
+  default_tool_diamondaxe.png
+  default_tool_diamondpick.png
+  default_tool_diamondsword.png
+  default_tool_meseaxe.png
+  default_tool_mesepick.png
+  default_tool_mesesword.png
+  default_tool_steelaxe.png
+  default_tool_steelpick.png
+  default_tool_steelsword.png
+  default_tool_stoneaxe.png
+  default_tool_stonepick.png
+  default_tool_stonesword.png
+  default_tool_woodaxe.png
+  default_tool_woodpick.png
+  default_tool_woodsword.png
   default_lava_source_animated.png
   default_lava_flowing_animated.png
   default_stick.png
@@ -155,6 +172,14 @@ BlockMen (CC BY-SA 3.0):
   gui_furnace_arrow_bg.png
   gui_furnace_arrow_fg.png
   gui_hb_bg.png
+
+BlockMen, wsor4035 (CC BY-SA 3.0 — from texturepack at https://github.com/wsor4035/tool_tweaks):
+  default_tool_bronzeshovel.png
+  default_tool_diamondshovel.png
+  default_tool_meseshovel.png
+  default_tool_steelshovel.png
+  default_tool_stoneshovel.png
+  default_tool_woodshovel.png
 
 sofar (CC BY-SA 3.0):
   default_aspen_sapling

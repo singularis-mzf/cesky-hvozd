@@ -1,0 +1,6 @@
+Tool Tweaks texture pack
+------------------------
+
+textures in /default/ are modified versions of textures from minetest game
+found at: https://github.com/minetest/minetest_game/blob/master/mods/default/README.txt
+by: celeron55, Perttu Ahola <celeron55@gmail.com> (CC BY-SA 3.0)

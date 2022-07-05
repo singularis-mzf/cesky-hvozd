@@ -633,6 +633,12 @@ resp. *ostatní\_zdroje*.
 * Původní licence (není-li uvedeno jinak v README.md): concrete, extranodes, technic, technic\_worldgen: WTFPL; technic\_cnc, technic\_chests, wrench: LGPLv2+
 * [ContentDB](https://content.minetest.net/packages/mt-mods/technic\_plus/)
 
+## Tool Tweaks (tool\_tweaks)
+
+* Zdroj: [https://github.com/wsor4035/tool\_tweaks](https://github.com/wsor4035/tool\_tweaks), revize 72e180102e84879bee9f00e5f0b47fb1691b0723
+* Původní licence:CC-BY-SA-3.0
+* [ContentDB](https://content.minetest.net/packages/wsor4035/tool\_tweaks/)
+
 ## Wardrobe Outfits (wardrobe\_outfits)
 
 * Mod není použit na serveru přímo, ale textury z něj jsou vloženy do modu SkinsDB.

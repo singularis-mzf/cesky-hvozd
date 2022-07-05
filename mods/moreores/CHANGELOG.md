@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 - Localization for use on a Czech server. Some changes to code were necessary.
+- Textures moreores_tool_mithrilshovel.png and moreores_tool_silvershovel.png
+modified according to textures at https://github.com/wsor4035/tool_tweaks;
+license remains CC-BY-SA-3.0.
 
 ### Changed
 
