@@ -23,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ]]--
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 wield3d = {}
 
@@ -205,3 +206,4 @@ minetest.register_item("wield3d:hand", {
 minetest.register_on_joinplayer(function(player)
 	minetest.after(2, add_wield_entity, player)
 end)
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
