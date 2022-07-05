@@ -8,6 +8,7 @@ Licensed under the zlib license. See LICENSE.md for more information.
 =====================================================================
 --]]
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 moreores = {}
 
 local modpath = minetest.get_modpath("moreores")
@@ -85,7 +86,7 @@ local function add_ore(modname, description, mineral_name, oredef)
 
 	if oredef.makes.ore then
 		minetest.register_node(modname .. ":mineral_" .. mineral_name, {
-			description = S("@1 Ore", S(description)),
+			description = S(description .. " Ore"),
 			tiles = {"default_stone.png^" .. modname .. "_mineral_" .. mineral_name .. ".png"},
 			groups = {cracky = 2},
 			sounds = default_stone_sounds,
@@ -100,7 +101,7 @@ local function add_ore(modname, description, mineral_name, oredef)
 	if oredef.makes.block then
 		local block_item = item_base .. "_block"
 		minetest.register_node(block_item, {
-			description = S("@1 Block", S(description)),
+			description = S(description .. " Block"),
 			tiles = {img_base .. "_block.png"},
 			groups = {snappy = 1, bendy = 2, cracky = 1, melty = 2, level = 2},
 			sounds = default_metal_sounds,
@@ -125,7 +126,7 @@ local function add_ore(modname, description, mineral_name, oredef)
 
 	if oredef.makes.lump then
 		minetest.register_craftitem(lump_item, {
-			description = S("@1 Lump", S(description)),
+			description = S(description .. " Lump"),
 			inventory_image = img_base .. "_lump.png",
 		})
 		minetest.register_alias(mineral_name .. "_lump", lump_item)
@@ -143,7 +144,7 @@ local function add_ore(modname, description, mineral_name, oredef)
 
 	if oredef.makes.ingot then
 		minetest.register_craftitem(ingot, {
-			description = S("@1 Ingot", S(description)),
+			description = S(description .. " Ingot"),
 			inventory_image = img_base .. "_ingot.png",
 		})
 		minetest.register_alias(mineral_name .. "_ingot", ingot)
@@ -196,19 +197,19 @@ local function add_ore(modname, description, mineral_name, oredef)
 		}
 
 		if tool_name == "sword" then
-			tdef.description = S("@1 Sword", S(description))
+			tdef.description = S(description .. " Sword")
 		end
 
 		if tool_name == "pick" then
-			tdef.description = S("@1 Pickaxe", S(description))
+			tdef.description = S(description .. " Pickaxe")
 		end
 
 		if tool_name == "axe" then
-			tdef.description = S("@1 Axe", S(description))
+			tdef.description = S(description .. " Axe")
 		end
 
 		if tool_name == "shovel" then
-			tdef.description = S("@1 Shovel", S(description))
+			tdef.description = S(description .. " Shovel")
 			tdef.wield_image = toolimg_base .. tool_name .. ".png^[transformR90"
 		end
 
@@ -216,7 +217,7 @@ local function add_ore(modname, description, mineral_name, oredef)
 
 		if tool_name == "hoe" and minetest.get_modpath("farming") then
 			tdef.max_uses = tooldef.max_uses
-			tdef.description = S("@1 Hoe", S(description))
+			tdef.description = S(description .. " Hoe")
 			farming.register_hoe(fulltool_name, tdef)
 		end
 
@@ -451,3 +452,4 @@ for orename, def in pairs(oredefs) do
 	-- Register everything
 	add_ore("moreores", def.description, orename, def)
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -1,0 +1,73 @@
+# textdomain: moreores
+
+[moreores] loaded.=Mod [moreores] načten.
+
+@1 Ore=Ložisko @1
+@1 Lump=@1 ruda
+@1 Ingot=Ingot @1
+@1 Block=Blok @1
+@1 Pickaxe=@1 krumpáč
+@1 Shovel=@1 lopata
+@1 Axe=@1 sekyra
+@1 Sword=@1 meč
+@1 Hoe=@1 motyka
+
+Copper=Copper
+Tin=Tin
+Bronze=Bronze
+Silver=Silver
+Gold=Gold
+Mithril=Mithril
+Copper Rail=Měděná kolej
+
+Copper Ore=Ložisko mědi
+Copper Lump=Měděná ruda
+Copper Ingot=Ingot mědi
+Copper Block=Blok mědi
+Copper Pickaxe=Měděný krumpáč
+Copper Shovel=Měděná lopata
+Copper Axe=Měděná sekyra
+Copper Sword=Měděný meč
+Copper Hoe=Měděná motyka
+
+Tin Ore=Ložisko cínu
+Tin Lump=Cínová ruda
+Tin Ingot=Ingot cínu
+Tin Block=Blok cínu
+Tin Pickaxe=Cínový krumpáč
+Tin Shovel=Cínová lopata
+Tin Axe=Cínová sekyra
+Tin Sword=Cínový meč
+Tin Hoe=Cínová motyka
+
+# Bronze?
+
+Silver Ore=Ložisko stříbra
+Silver Lump=Stříbrná ruda
+Silver Ingot=Ingot stříbra
+Silver Block=Blok stříbra
+Silver Pickaxe=Stříbrný krumpáč
+Silver Shovel=Stříbrná lopata
+Silver Axe=Stříbrná sekyra
+Silver Sword=Stříbrný meč
+Silver Hoe=Stříbrná motyka
+
+Gold Ore=Ložisko zlata
+Gold Lump=Zlatá ruda
+Gold Ingot=Ingot zlata
+Gold Block=Blok zlata
+Gold Pickaxe=Zlatý krumpáč
+Gold Shovel=Zlatá lopata
+Gold Axe=Zlatá sekyra
+Gold Sword=Zlatý meč
+Gold Hoe=Zlatá motyka
+
+Mithril Ore=Ložisko mitrilu
+Mithril Lump=Mitrilová ruda
+Mithril Ingot=Ingot mitrilu
+Mithril Block=Blok mitrilu
+Mithril Pickaxe=Mitrilový krumpáč
+Mithril Shovel=Mitrilová lopata
+Mithril Axe=Mitrilová sekyra
+Mithril Sword=Mitrilový meč
+Mithril Hoe=Mitrilová motyka
