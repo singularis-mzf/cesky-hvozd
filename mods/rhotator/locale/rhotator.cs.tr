@@ -1,0 +1,47 @@
+# textdomain:rhotator
+
+Cannot rotate node with paramtype2 @=@= @1=Nemohu otáčet blok, protože má paramtype2 @=@= @1
+Copied rotation from node: @1=Otočení zkopírováno z: @1
+Copies rotation from pointed-to node=Zkopíruje otočení z bloku, na nějž ukazujete
+copy_file() unable to open dest for writing=copy_file() nemůže otevřít cíl pro zápis
+copy_file() unable to open source for reading=copy_file() nemůže otevřít zdroj pro čtení
+Cycles through memory modes=Cyklí přes režimy paměti
+Default placement (can't rotate nodes of this type)=Výchozí otočení (bloky tohoto typu nelze otáčet)
+Default placement (no stored rotation)=Výchozí otočení (žádné otočení není uloženo)
+displays this description@n/rhotator memory [on|off|auto]: displays or sets rotation memory for newly placed blocks (auto means 'auto copy from pointed-to node if possible, no rotation otherwise')=zobrazí tento popis@n/rhotator memory [on|off|auto]: vypíše nebo změní nastavení paměti rotátoru pro nově umísťované bloky (auto znamená 'otočit podle paměti, je-li to možné, jinak neotáčet')
+files copied successfully=soubory úspěšně zkopírovány
+Get a better developer=Najděte lepšího vývojáře/ku
+Multitool button inversion=Výměna tlačítek univerzálního rotátoru
+Multitool sneak inversion=Přepnutí tlačítka Shift(?)
+Placed node according to previous rotation=Blok umístěn podle zapamatovaného otočení
+Pulled closest edge=Nejbližší hrana přitažena
+Pushed closest edge=Nejbližší hrana zatlačena
+Pushes closest edge=Zatlačí na nejbližší hranu
+[rhotator] Current Multitool configuration:@n    Left-click: @1@n    Sneak-left-click: @2@n    Right-click: @3@n    Sneak-right-click: @4=[rotátor] Současné nastavení univerzálního rotátoru:@n    Levý klik: @1@n    Shift+levý klik: @2@n    Pravý klik: @3@n    Shift+pravý klik: @4
+Rhotator Memory Tool@nLeft-click toggles rotation memory@nRight-click copies rotation from pointed node=Paměťový rotátor@nLevý klik přepne režim paměti otočení@nPravý klik zkopíruje otočení bloku, na nějž ukazujete
+[rhotator] Missing 'rhotator_admin' privilege=[rotátor] Chybí vám právo 'rhotator_admin'
+Rhotator Screwdriver Alt@nLeft-click rotates face@nRight-click pushes edge@nHold sneak to invert direction=Alternativní rotátor@nLevý klik otáčí čelní stranu@nPravý klik zatlačí na hranu@nShift obrací směr
+Rhotator Screwdriver Multitool@nCombines rotate, push, memory and copy in a single tool@nRun '/rhotator' in the chat for help=Univerzální rotátor@nKombinuje operace otáčení, zatlačení, paměti a kopírování.@nNápověda: '/rhotator'.
+Rhotator Screwdriver@nLeft-click pushes edge@nRight-click rotates face@nHold sneak to invert direction=Rotátor@nLevý klik zatlačí na hranu@nPravý klik otáčí čelní stranu@nShift obrací směr
+Rhotator Testing Cube=Testovací krychle rotátoru
+[rhotator] unsupported param: @1=[rotátor] Nepodporovaný parametr: @1
+[rhotator] @1 is @2=[rotátor] @1 je @2
+Rotated pointed face clockwise=Čelní strana otočena ve směru hodinových ručiček (-)
+Rotated pointed face counter-clockwise=Čelní strana otočena proti směru hodinových ručiček (+)
+Rotates pointed-to face clockwise=Otočí blok po směru hodinových ručiček
+Rotation disallowed by on_rotate() return value=Otáčení znemožněno návratovou hodnotou on_rotate()
+Rotation memory=Paměť otočení
+Rotation prevented by can_dig() checks=Otáčení znemožněno návratovou hodnotou can_dig()
+Rotation prevented by on_rotate @=@= false=Otáčení znemožněno návratovou hodnotou on_rotate()
+Rotation reportedly performed by on_rotate()=Otáčení podle on_rotate() provedeno
+Server default for tool in inventory requirement=Výchozí požadavek serveru na nástroj v inventáři(?)
+Tool in inventory requirement=Požadavek serveru na nástroj v inventáři(?)
+Unregistered node placed=Umístěn neregistrovaný blok
+Unsupported node type: @1=Nepodporovaný typ bloku: @1
+Unsupported node type: @1 - cannot copy rotation=Nepodporovaný typ bloku: @1 - nemohu zkopírovat otočení
+Wallmounted node rotated with default screwdriver behavior=Blok přichycený ke zdí otočen jako normálním šroubovákem
+You're not authorized to alter nodes in this area=V této oblasti nemáte právo měnit bloky
+is=je
+on=zapnutá
+off=vypnutá
+auto=automatická
