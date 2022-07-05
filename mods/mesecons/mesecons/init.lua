@@ -39,6 +39,8 @@
 --	}
 --}
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 -- PUBLIC VARIABLES
 mesecon={} -- contains all functions and all global variables
 mesecon.queue={} -- contains the ActionQueue
@@ -126,3 +128,5 @@ dofile(minetest.get_modpath("mesecons").."/legacy.lua");
 
 --Services like turnoff receptor on dignode and so on
 dofile(minetest.get_modpath("mesecons").."/services.lua");
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

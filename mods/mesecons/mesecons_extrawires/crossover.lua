@@ -17,7 +17,7 @@ local crossover_states = {
 }
 
 minetest.register_node("mesecons_extrawires:crossover_off", {
-	description = "Insulated Mesecon Crossover",
+	description = "Izolovaný mesespoj: křížení",
 	drawtype = "mesh",
 	mesh = "mesecons_extrawires_crossover.b3d",
 	tiles = {
@@ -29,7 +29,7 @@ minetest.register_node("mesecons_extrawires:crossover_off", {
 	paramtype = "light",
 	is_ground_content = false,
 	walkable = false,
-	stack_max = 99,
+	-- stack_max = 99,
 	selection_box = {type="fixed", fixed={-16/32, -16/32, -16/32, 16/32, -5/32, 16/32}},
 	groups = {dig_immediate=3, mesecon=3},
 	sounds = mesecon.node_sound.default,
@@ -43,7 +43,7 @@ minetest.register_node("mesecons_extrawires:crossover_off", {
 })
 
 minetest.register_node("mesecons_extrawires:crossover_01", {
-	description = "You hacker you!",
+	description = "Ty hackeře!",
 	drop = "mesecons_extrawires:crossover_off",
 	drawtype = "mesh",
 	mesh = "mesecons_extrawires_crossover.b3d",
@@ -56,7 +56,7 @@ minetest.register_node("mesecons_extrawires:crossover_01", {
 	paramtype = "light",
 	is_ground_content = false,
 	walkable = false,
-	stack_max = 99,
+	-- stack_max = 99,
 	selection_box = {type="fixed", fixed={-16/32, -16/32, -16/32, 16/32, -5/32, 16/32}},
 	groups = {dig_immediate=3, mesecon=3, not_in_creative_inventory=1},
 	sounds = mesecon.node_sound.default,
@@ -70,7 +70,7 @@ minetest.register_node("mesecons_extrawires:crossover_01", {
 })
 
 minetest.register_node("mesecons_extrawires:crossover_10", {
-	description = "You hacker you!",
+	description = "Ty hackeře!",
 	drop = "mesecons_extrawires:crossover_off",
 	drawtype = "mesh",
 	mesh = "mesecons_extrawires_crossover.b3d",
@@ -83,7 +83,7 @@ minetest.register_node("mesecons_extrawires:crossover_10", {
 	paramtype = "light",
 	is_ground_content = false,
 	walkable = false,
-	stack_max = 99,
+	-- stack_max = 99,
 	selection_box = {type="fixed", fixed={-16/32, -16/32, -16/32, 16/32, -5/32, 16/32}},
 	groups = {dig_immediate=3, mesecon=3, not_in_creative_inventory=1},
 	sounds = mesecon.node_sound.default,
@@ -97,7 +97,7 @@ minetest.register_node("mesecons_extrawires:crossover_10", {
 })
 
 minetest.register_node("mesecons_extrawires:crossover_on", {
-	description = "You hacker you!",
+	description = "Ty hackeře!",
 	drop = "mesecons_extrawires:crossover_off",
 	drawtype = "mesh",
 	mesh = "mesecons_extrawires_crossover.b3d",
@@ -110,7 +110,7 @@ minetest.register_node("mesecons_extrawires:crossover_on", {
 	paramtype = "light",
 	is_ground_content = false,
 	walkable = false,
-	stack_max = 99,
+	-- stack_max = 99,
 	selection_box = {type="fixed", fixed={-16/32, -16/32, -16/32, 16/32, -5/32, 16/32}},
 	groups = {dig_immediate=3, mesecon=3, not_in_creative_inventory=1},
 	sounds = mesecon.node_sound.default,

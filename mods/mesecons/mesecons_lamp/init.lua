@@ -1,6 +1,7 @@
 -- MESELAMPS
 -- A lamp is "is an electrical device used to create artificial light" (wikipedia)
 -- guess what?
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local mesecon_lamp_box = {
 	type = "wallmounted",
@@ -50,7 +51,7 @@ minetest.register_node("mesecons_lamp:lamp_off", {
 	node_box = mesecon_lamp_box,
 	selection_box = mesecon_lamp_box,
 	groups = {dig_immediate=3, mesecon_receptor_off = 1, mesecon_effector_off = 1},
-	description = "Mesecon Lamp",
+	description = "Lampa (mesespoje)",
 	sounds = mesecon.node_sound.glass,
 	mesecons = {effector = {
 		action_on = function (pos, node)
@@ -69,3 +70,4 @@ minetest.register_craft({
 		{"", "mesecons_gamecompat:glass", ""},
 	}
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

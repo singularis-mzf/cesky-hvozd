@@ -1,3 +1,5 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 mesecon.node_sound = {}
 
 mesecon.sound_name = {}
@@ -13,3 +15,4 @@ if minetest.get_modpath("default") then
 	minetest.log("info", "Mesecons: detected Minetest Game for game compatibility")
 	dofile(minetest.get_modpath("mesecons_gamecompat").."/compat_mtg.lua")
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

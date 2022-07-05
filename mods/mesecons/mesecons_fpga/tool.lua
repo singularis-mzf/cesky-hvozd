@@ -2,7 +2,7 @@ return function(plg)
 
 
 minetest.register_tool("mesecons_fpga:programmer", {
-	description = "FPGA Programmer",
+	description = "Programátor FPGA",
 	inventory_image = "jeija_fpga_programmer.png",
 	stack_max = 1,
 	on_place = function(itemstack, placer, pointed_thing)

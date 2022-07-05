@@ -1,3 +1,5 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 -- Modified, from minetest_game/mods/doors/init.lua
 local function on_rightclick(pos, dir, check_name, replace, replace_dir, params)
 	pos.y = pos.y + dir
@@ -138,3 +140,5 @@ else
 		})
 	end
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

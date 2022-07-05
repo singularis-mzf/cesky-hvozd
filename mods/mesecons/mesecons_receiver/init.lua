@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 local rcvboxes = {
 	{ -3/16, -3/16, -8/16       , 3/16,  3/16  , -13/32       }, -- the smaller bump
 	{ -1/32, -1/32, -3/2        , 1/32,  1/32  , -1/2         }, -- the wire through the block
@@ -270,3 +271,4 @@ function mesecon.buttonlike_onrotate(pos, node, _, _, new_param2)
 	minetest.check_for_falling(pos)
 	return true
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

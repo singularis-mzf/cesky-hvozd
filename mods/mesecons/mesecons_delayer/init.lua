@@ -1,3 +1,5 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 -- Function that get the input/output rules of the delayer
 local delayer_get_output_rules = function(node)
 	local rules = {{x = 0, y = 0, z = 1}}
@@ -81,7 +83,7 @@ if i > 1 then
 end
 
 local off_state = {
-	description = "Delayer",
+	description = "Zpožďovač",
 	tiles = {
 		"mesecons_delayer_off_"..tostring(i)..".png",
 		"mesecons_delayer_bottom.png",
@@ -124,7 +126,7 @@ minetest.register_node("mesecons_delayer:delayer_off_"..tostring(i), off_state)
 
 -- Activated delayer definition defaults
 local on_state = {
-	description = "You hacker you",
+	description = "Ty hackeře!",
 	tiles = {
 		"mesecons_delayer_on_"..tostring(i)..".png",
 		"mesecons_delayer_bottom.png",
@@ -172,3 +174,4 @@ minetest.register_craft({
 		{"mesecons_gamecompat:cobble","mesecons_gamecompat:cobble", "mesecons_gamecompat:cobble"},
 	}
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

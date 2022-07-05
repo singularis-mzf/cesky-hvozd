@@ -1,3 +1,5 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local side_texture = mesecon.texture.steel_block or "mesecons_detector_side.png"
 
 local GET_COMMAND = "GET"
@@ -71,7 +73,7 @@ minetest.register_node("mesecons_detector:object_detector_off", {
 	is_ground_content = false,
 	walkable = true,
 	groups = {cracky=3},
-	description="Player Detector",
+	description="Detektor hráčských postav",
 	mesecons = {receptor = {
 		state = mesecon.state.off,
 		rules = mesecon.rules.pplate
@@ -247,7 +249,7 @@ minetest.register_node("mesecons_detector:node_detector_off", {
 	is_ground_content = false,
 	walkable = true,
 	groups = {cracky=3},
-	description="Node Detector",
+	description="Detektor předmětů",
 	mesecons = {receptor = {
 		state = mesecon.state.off
 	}},
@@ -319,3 +321,5 @@ minetest.register_abm({
 		mesecon.receptor_off(pos)
 	end,
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

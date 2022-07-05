@@ -1,5 +1,7 @@
 --MESECON TORCHES
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local rotate_torch_rules = function (rules, param2)
 	if param2 == 5 then
 		return mesecon.rotate_rules_right(rules)
@@ -85,7 +87,7 @@ minetest.register_node("mesecons_torch:mesecon_torch_on", {
 	selection_box = torch_selectionbox,
 	groups = {dig_immediate=3},
 	light_source = minetest.LIGHT_MAX-5,
-	description="Mesecon Torch",
+	description="Mesespojová pochodeň",
 	sounds = mesecon.node_sound.default,
 	mesecons = {receptor = {
 		state = mesecon.state.on,
@@ -126,3 +128,4 @@ minetest.register_abm({
 -- 2 = x+1
 -- 0 = y+1
 -- 1 = y-1
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

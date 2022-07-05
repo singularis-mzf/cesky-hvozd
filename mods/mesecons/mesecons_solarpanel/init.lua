@@ -1,6 +1,7 @@
 -- Solar Panel
+print("[MOD BEGIN]" .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 mesecon.register_node("mesecons_solarpanel:solar_panel", {
-	description = "Solar Panel",
+	description = "Solární panel (mesespoje)",
 	drawtype = "nodebox",
 	tiles = {"mesecons_solarpanel.png"},
 	inventory_image = "mesecons_solarpanel.png",
@@ -40,7 +41,7 @@ minetest.register_craft({
 })
 
 minetest.register_abm({
-	label = "Solar Panel On/Off",
+	label = "Solární panel zap/vyp",
 	nodenames = {
 		"mesecons_solarpanel:solar_panel_off",
 		"mesecons_solarpanel:solar_panel_on"
@@ -61,3 +62,4 @@ minetest.register_abm({
 		end
 	end,
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

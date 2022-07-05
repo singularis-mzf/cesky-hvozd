@@ -1,5 +1,7 @@
 -- The BLINKY_PLANT
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local toggle_timer = function (pos)
 	local timer = minetest.get_node_timer(pos)
 	if timer:is_started() then
@@ -20,7 +22,7 @@ local on_timer = function (pos)
 end
 
 mesecon.register_node("mesecons_blinkyplant:blinky_plant", {
-	description="Blinky Plant",
+	description="Mrkající květina",
 	drawtype = "plantlike",
 	inventory_image = "jeija_blinky_plant_off.png",
 	paramtype = "light",
@@ -56,3 +58,5 @@ minetest.register_craft({
 			{"","group:mesecon_conductor_craftable",""},
 			{"group:sapling","group:sapling","group:sapling"}}
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

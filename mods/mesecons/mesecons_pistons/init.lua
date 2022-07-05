@@ -1,3 +1,5 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local specs = {
 	normal = {
 		offname = "mesecons_pistons:piston_normal_off",
@@ -86,7 +88,7 @@ local piston_on = function(pos, node)
 	local success, stack, oldstack = mesecon.mvps_push(pusher_pos, dir, max_push, meta:get_string("owner"))
 	if not success then
 		if stack == "protected" then
-			meta:set_string("infotext", "Can't extend: protected area on the way")
+			meta:set_string("infotext", "Nemohu posouvat: v cestě je chráněná oblast")
 		end
 		return
 	end
@@ -265,7 +267,7 @@ local piston_on_box = {
 -- Normal (non-sticky) Pistons:
 -- offstate
 minetest.register_node("mesecons_pistons:piston_normal_off", {
-	description = "Piston",
+	description = "Píst",
 	tiles = {
 		"mesecons_piston_top.png",
 		"mesecons_piston_bottom.png",
@@ -290,7 +292,7 @@ minetest.register_node("mesecons_pistons:piston_normal_off", {
 
 -- onstate
 minetest.register_node("mesecons_pistons:piston_normal_on", {
-	description = "Activated Piston Base",
+	description = "Základna pístu (aktivní)",
 	drawtype = "nodebox",
 	tiles = {
 		"mesecons_piston_top.png",
@@ -319,7 +321,7 @@ minetest.register_node("mesecons_pistons:piston_normal_on", {
 
 -- pusher
 minetest.register_node("mesecons_pistons:piston_pusher_normal", {
-	description = "Piston Pusher",
+	description = "Deska pístu",
 	drawtype = "nodebox",
 	tiles = {
 		"mesecons_piston_pusher_top.png",
@@ -344,7 +346,7 @@ minetest.register_node("mesecons_pistons:piston_pusher_normal", {
 -- Sticky ones
 -- offstate
 minetest.register_node("mesecons_pistons:piston_sticky_off", {
-	description = "Sticky Piston",
+	description = "Lepící píst",
 	tiles = {
 		"mesecons_piston_top.png",
 		"mesecons_piston_bottom.png",
@@ -369,7 +371,7 @@ minetest.register_node("mesecons_pistons:piston_sticky_off", {
 
 -- onstate
 minetest.register_node("mesecons_pistons:piston_sticky_on", {
-	description = "Activated Sticky Piston Base",
+	description = "Základna lepícího pístu (aktivní)",
 	drawtype = "nodebox",
 	tiles = {
 		"mesecons_piston_top.png",
@@ -398,7 +400,7 @@ minetest.register_node("mesecons_pistons:piston_sticky_on", {
 
 -- pusher
 minetest.register_node("mesecons_pistons:piston_pusher_sticky", {
-	description = "Sticky Piston Pusher",
+	description = "Deska lepícího pístu",
 	drawtype = "nodebox",
 	tiles = {
 		"mesecons_piston_pusher_top.png",
@@ -480,3 +482,4 @@ minetest.register_craft({
 
 -- load legacy code
 dofile(minetest.get_modpath("mesecons_pistons").."/legacy.lua")
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

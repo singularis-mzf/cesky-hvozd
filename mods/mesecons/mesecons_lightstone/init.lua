@@ -1,3 +1,5 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local lightstone_rules = {
 	{x=0,  y=0,  z=-1},
 	{x=1,  y=0,  z=0},
@@ -59,15 +61,16 @@ function mesecon.lightstone_add(name, base_item, texture_off, texture_on, desc)
 end
 
 
-mesecon.lightstone_add("red", "mesecons_gamecompat:dye_red", "jeija_lightstone_red_off.png", "jeija_lightstone_red_on.png", "Red Lightstone")
-mesecon.lightstone_add("green", "mesecons_gamecompat:dye_green", "jeija_lightstone_green_off.png", "jeija_lightstone_green_on.png", "Green Lightstone")
-mesecon.lightstone_add("blue", "mesecons_gamecompat:dye_blue", "jeija_lightstone_blue_off.png", "jeija_lightstone_blue_on.png", "Blue Lightstone")
-mesecon.lightstone_add("gray", "mesecons_gamecompat:dye_grey", "jeija_lightstone_gray_off.png", "jeija_lightstone_gray_on.png", "Grey Lightstone")
-mesecon.lightstone_add("darkgray", "mesecons_gamecompat:dye_dark_grey", "jeija_lightstone_darkgray_off.png", "jeija_lightstone_darkgray_on.png", "Dark Grey Lightstone")
-mesecon.lightstone_add("yellow", "mesecons_gamecompat:dye_yellow", "jeija_lightstone_yellow_off.png", "jeija_lightstone_yellow_on.png", "Yellow Lightstone")
-mesecon.lightstone_add("orange", "mesecons_gamecompat:dye_orange", "jeija_lightstone_orange_off.png", "jeija_lightstone_orange_on.png", "Orange Lightstone")
-mesecon.lightstone_add("white", "mesecons_gamecompat:dye_white", "jeija_lightstone_white_off.png", "jeija_lightstone_white_on.png", "White Lightstone")
-mesecon.lightstone_add("pink", "mesecons_gamecompat:dye_pink", "jeija_lightstone_pink_off.png", "jeija_lightstone_pink_on.png", "Pink Lightstone")
-mesecon.lightstone_add("magenta", "mesecons_gamecompat:dye_magenta", "jeija_lightstone_magenta_off.png", "jeija_lightstone_magenta_on.png", "Magenta Lightstone")
-mesecon.lightstone_add("cyan", "mesecons_gamecompat:dye_cyan", "jeija_lightstone_cyan_off.png", "jeija_lightstone_cyan_on.png", "Cyan Lightstone")
-mesecon.lightstone_add("violet", "mesecons_gamecompat:dye_violet", "jeija_lightstone_violet_off.png", "jeija_lightstone_violet_on.png", "Violet Lightstone")
+mesecon.lightstone_add("red", "mesecons_gamecompat:dye_red", "jeija_lightstone_red_off.png", "jeija_lightstone_red_on.png", "Červený signální blok")
+mesecon.lightstone_add("green", "mesecons_gamecompat:dye_green", "jeija_lightstone_green_off.png", "jeija_lightstone_green_on.png", "Zelený signální blok")
+mesecon.lightstone_add("blue", "mesecons_gamecompat:dye_blue", "jeija_lightstone_blue_off.png", "jeija_lightstone_blue_on.png", "Modrý signální blok")
+mesecon.lightstone_add("gray", "mesecons_gamecompat:dye_grey", "jeija_lightstone_gray_off.png", "jeija_lightstone_gray_on.png", "Šedý signální blok")
+mesecon.lightstone_add("darkgray", "mesecons_gamecompat:dye_dark_grey", "jeija_lightstone_darkgray_off.png", "jeija_lightstone_darkgray_on.png", "Tmavý signální blok")
+mesecon.lightstone_add("yellow", "mesecons_gamecompat:dye_yellow", "jeija_lightstone_yellow_off.png", "jeija_lightstone_yellow_on.png", "Žlutý signální blok")
+mesecon.lightstone_add("orange", "mesecons_gamecompat:dye_orange", "jeija_lightstone_orange_off.png", "jeija_lightstone_orange_on.png", "Oranžový signální blok")
+mesecon.lightstone_add("white", "mesecons_gamecompat:dye_white", "jeija_lightstone_white_off.png", "jeija_lightstone_white_on.png", "Bílý signální blok")
+mesecon.lightstone_add("pink", "mesecons_gamecompat:dye_pink", "jeija_lightstone_pink_off.png", "jeija_lightstone_pink_on.png", "Růžový signální blok")
+mesecon.lightstone_add("magenta", "mesecons_gamecompat:dye_magenta", "jeija_lightstone_magenta_off.png", "jeija_lightstone_magenta_on.png", "Purpurový signální blok")
+mesecon.lightstone_add("cyan", "mesecons_gamecompat:dye_cyan", "jeija_lightstone_cyan_off.png", "jeija_lightstone_cyan_on.png", "Tyrkysový signální blok")
+mesecon.lightstone_add("violet", "mesecons_gamecompat:dye_violet", "jeija_lightstone_violet_off.png", "jeija_lightstone_violet_on.png", "Fialový signální blok")
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

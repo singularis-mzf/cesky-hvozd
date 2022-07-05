@@ -1,10 +1,11 @@
 -- Sticky blocks can be used together with pistons or movestones to push / pull
 -- structures that are "glued" together using sticky blocks
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 -- All sides sticky block
 minetest.register_node("mesecons_stickyblocks:sticky_block_all", {
 	-- TODO: Rename to “All-Faces Sticky Block” when other sticky blocks become available
-	description = "Sticky Block",
+	description = "Blok lepící ze všech stran",
 	tiles = {"mesecons_stickyblocks_sticky.png"},
 	is_ground_content = false,
 	groups = {choppy=3, oddly_breakable_by_hand=2},
@@ -17,3 +18,4 @@ minetest.register_node("mesecons_stickyblocks:sticky_block_all", {
 	end,
 	sounds = mesecon.node_sound.wood,
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

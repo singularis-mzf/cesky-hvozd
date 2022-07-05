@@ -28,6 +28,8 @@
 -- (see where local env is defined)
 -- Something nice to play is is appending minetest.env to it.
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local BASENAME = "mesecons_luacontroller:luacontroller"
 
 local rules = {
@@ -845,7 +847,7 @@ for d = 0, 1 do
 	}
 
 	minetest.register_node(node_name, {
-		description = "Luacontroller",
+		description = "Kontrolér jazyka Lua",
 		drawtype = "nodebox",
 		tiles = {
 			top,
@@ -939,3 +941,4 @@ minetest.register_craft({
 		{'group:mesecon_conductor_craftable', 'group:mesecon_conductor_craftable', ''},
 	}
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

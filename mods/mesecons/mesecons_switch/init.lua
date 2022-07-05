@@ -1,8 +1,10 @@
 -- mesecons_switch
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 mesecon.register_node("mesecons_switch:mesecon_switch", {
 	paramtype2="facedir",
-	description="Switch",
+	description="Přepínač",
 	is_ground_content = false,
 	sounds = mesecon.node_sound.stone,
 	on_rightclick = function (pos, node)
@@ -34,3 +36,4 @@ minetest.register_craft({
 		{"group:mesecon_conductor_craftable","", "group:mesecon_conductor_craftable"},
 	}
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 local function insulated_wire_get_rules(node)
 	local rules = 	{{x = 1,  y = 0,  z = 0},
 			 {x =-1,  y = 0,  z = 0}}
@@ -9,7 +10,7 @@ end
 
 minetest.register_node("mesecons_insulated:insulated_on", {
 	drawtype = "nodebox",
-	description = "Straight Insulated Mesecon",
+	description = "Izolovaný mesespoj",
 	tiles = {
 		"jeija_insulated_wire_sides_on.png",
 		"jeija_insulated_wire_sides_on.png",
@@ -46,7 +47,7 @@ minetest.register_node("mesecons_insulated:insulated_on", {
 
 minetest.register_node("mesecons_insulated:insulated_off", {
 	drawtype = "nodebox",
-	description = "Straight Insulated Mesecon",
+	description = "Izolovaný mesespoj",
 	tiles = {
 		"jeija_insulated_wire_sides_off.png",
 		"jeija_insulated_wire_sides_off.png",
@@ -88,3 +89,4 @@ minetest.register_craft({
 		{"mesecons_materials:fiber", "mesecons_materials:fiber", "mesecons_materials:fiber"},
 	}
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

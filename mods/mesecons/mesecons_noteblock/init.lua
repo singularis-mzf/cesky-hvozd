@@ -1,5 +1,7 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 minetest.register_node("mesecons_noteblock:noteblock", {
-	description = "Noteblock",
+	description = "Hudební blok",
 	tiles = {"mesecons_noteblock.png"},
 	is_ground_content = false,
 	groups = {snappy=2, choppy=2, oddly_breakable_by_hand=2},
@@ -100,3 +102,4 @@ mesecon.noteblock_play = function(pos, param2)
 		minetest.sound_play(soundname, {pos = pos}, true)
 	end
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -55,7 +55,7 @@ minetest.register_node("mesecons_extrawires:tjunction_on", {
 
 minetest.register_node("mesecons_extrawires:tjunction_off", {
 	drawtype = "nodebox",
-	description = "Insulated Mesecon T-junction",
+	description = "Izolovaný mesespoj: spojení ve tvaru T",
 	tiles = {
 		"jeija_insulated_wire_tjunction_tb_off.png",
 		"jeija_insulated_wire_tjunction_tb_off.png^[transformR180",

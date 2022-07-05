@@ -3,6 +3,9 @@
 -- Active if flowing >water< above it
 -- (does not work with other liquids)
 
+
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 minetest.register_node("mesecons_hydroturbine:hydro_turbine_off", {
 	drawtype = "mesh",
 	mesh = "jeija_hydro_turbine_off.obj",
@@ -17,7 +20,7 @@ minetest.register_node("mesecons_hydroturbine:hydro_turbine_off", {
 	is_ground_content = false,
 	wield_scale = {x=0.75, y=0.75, z=0.75},
 	groups = {dig_immediate=2},
-	description="Water Turbine",
+	description="Vodní turbína",
 	paramtype = "light",
 	selection_box = {
 		type = "fixed",
@@ -47,7 +50,7 @@ minetest.register_node("mesecons_hydroturbine:hydro_turbine_on", {
 	inventory_image = "jeija_hydro_turbine_inv.png",
 	drop = "mesecons_hydroturbine:hydro_turbine_off 1",
 	groups = {dig_immediate=2,not_in_creative_inventory=1},
-	description="Water Turbine",
+	description="Vodní turbína",
 	paramtype = "light",
 	selection_box = {
 		type = "fixed",
@@ -103,3 +106,4 @@ minetest.register_craft({
 	}
 })
 
+print("[MOD END]" .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

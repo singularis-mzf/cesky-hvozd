@@ -1,11 +1,12 @@
 -- REMOVESTONE
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 minetest.register_node("mesecons_random:removestone", {
 	tiles = {"jeija_removestone.png"},
 	is_ground_content = false,
 	inventory_image = minetest.inventorycube("jeija_removestone_inv.png"),
 	groups = {cracky=3},
-	description="Removestone",
+	description="Trvale mizící blok",
 	sounds = mesecon.node_sound.stone,
 	mesecons = {effector = {
 		action_on = function (pos, node)
@@ -29,7 +30,7 @@ minetest.register_craft({
 -- GHOSTSTONE
 
 minetest.register_node("mesecons_random:ghoststone", {
-	description="Ghoststone",
+	description="Dočasně mizící blok",
 	tiles = {"jeija_ghoststone.png"},
 	is_ground_content = false,
 	inventory_image = minetest.inventorycube("jeija_ghoststone_inv.png"),
@@ -76,3 +77,4 @@ minetest.register_craft({
 		{"mesecons_gamecompat:steel_ingot", "mesecons_gamecompat:cobble", "mesecons_gamecompat:steel_ingot"},
 	}
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

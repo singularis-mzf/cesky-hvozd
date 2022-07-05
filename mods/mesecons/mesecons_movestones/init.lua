@@ -8,6 +8,8 @@
 -- Pushes all block in front of it
 -- Pull all blocks in its back
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 -- settings:
 local timer_interval = 1 / mesecon.setting("movestone_speed", 3)
 local max_push = mesecon.setting("movestone_max_push", 50)
@@ -50,7 +52,7 @@ function mesecon.register_movestone(name, def, is_sticky, is_vertical)
 		local success, stack, oldstack = mesecon.mvps_push(frontpos, direction, max_push, owner)
 		if not success then
 			if stack == "protected" then
-				meta:set_string("infotext", "Can't move: protected area on the way")
+				meta:set_string("infotext", "Nemohu posouvat: v cestě leží chráněná oblast")
 				return
 			end
 			minetest.get_node_timer(pos):start(timer_interval)
@@ -128,7 +130,7 @@ mesecon.register_movestone("mesecons_movestones:movestone", {
 		"jeija_movestone_arrows.png",
 	},
 	groups = {cracky = 3},
-    description = "Movestone",
+    description = "Pohyblivý blok",
 	sounds = mesecon.node_sound.stone
 }, false, false)
 
@@ -142,7 +144,7 @@ mesecon.register_movestone("mesecons_movestones:sticky_movestone", {
 		"jeija_sticky_movestone.png",
 	},
 	groups = {cracky = 3},
-    description = "Sticky Movestone",
+    description = "Lepící pohyblivý blok",
 	sounds = mesecon.node_sound.stone,
 }, true, false)
 
@@ -156,7 +158,7 @@ mesecon.register_movestone("mesecons_movestones:movestone_vertical", {
 		"jeija_movestone_arrows.png^[transformR90",
 	},
 	groups = {cracky = 3},
-    description = "Vertical Movestone",
+    description = "Svisle pohyblivý blok",
 	sounds = mesecon.node_sound.stone
 }, false, true)
 
@@ -170,7 +172,7 @@ mesecon.register_movestone("mesecons_movestones:sticky_movestone_vertical", {
 		"jeija_movestone_arrows.png^[transformR90",
 	},
 	groups = {cracky = 3},
-    description = "Vertical Sticky Movestone",
+    description = "Lepící svisle pohyblivý blok",
 	sounds = mesecon.node_sound.stone,
 }, true, true)
 
@@ -234,3 +236,6 @@ minetest.register_alias("mesecons_movestones:movestone_active",
 		"mesecons_movestones:movestone")
 minetest.register_alias("mesecons_movestones:sticky_movestone_active",
 		"mesecons_movestones:sticky_movestone")
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+

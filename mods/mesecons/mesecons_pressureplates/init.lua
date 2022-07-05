@@ -1,3 +1,5 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local pp_box_off = {
 	type = "fixed",
 	fixed = { -7/16, -8/16, -7/16, 7/16, -7/16, 7/16 },
@@ -87,7 +89,7 @@ end
 
 mesecon.register_pressure_plate(
 	"mesecons_pressureplates:pressure_plate_wood",
-	"Wooden Pressure Plate",
+	"Dřevěný pedál",
 	{"jeija_pressure_plate_wood_off.png","jeija_pressure_plate_wood_off.png","jeija_pressure_plate_wood_off_edges.png"},
 	{"jeija_pressure_plate_wood_on.png","jeija_pressure_plate_wood_on.png","jeija_pressure_plate_wood_on_edges.png"},
 	"jeija_pressure_plate_wood_wield.png",
@@ -98,7 +100,7 @@ mesecon.register_pressure_plate(
 
 mesecon.register_pressure_plate(
 	"mesecons_pressureplates:pressure_plate_stone",
-	"Stone Pressure Plate",
+	"Kamenný pedál",
 	{"jeija_pressure_plate_stone_off.png","jeija_pressure_plate_stone_off.png","jeija_pressure_plate_stone_off_edges.png"},
 	{"jeija_pressure_plate_stone_on.png","jeija_pressure_plate_stone_on.png","jeija_pressure_plate_stone_on_edges.png"},
 	"jeija_pressure_plate_stone_wield.png",
@@ -106,3 +108,4 @@ mesecon.register_pressure_plate(
 	{{"mesecons_gamecompat:cobble", "mesecons_gamecompat:cobble"}},
 	{ cracky = 3, oddly_breakable_by_hand = 3 },
 	mesecon.node_sound.stone)
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

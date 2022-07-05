@@ -1,6 +1,8 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 minetest.register_chatcommand("say", {
 	params = "<text>",
-	description = "Say <text> as the server",
+	description = "Říci <text> jako server",
 	privs = {server=true},
 	func = function(name, param)
 		minetest.chat_send_all(name .. ": " .. param)
@@ -8,37 +10,37 @@ minetest.register_chatcommand("say", {
 })
 
 minetest.register_chatcommand("tell", {
-	params = "<name> <text>",
-	description = "Say <text> to <name> privately",
+	params = "<hráč/ka> <text>",
+	description = "Říci <text> <hráči/ce> soukromě",
 	privs = {shout=true},
 	func = function(name, param)
 		local found, _, target, message = param:find("^([^%s]+)%s+(.*)$")
 		if found == nil then
-			minetest.chat_send_player(name, "Invalid usage: " .. param)
+			minetest.chat_send_player(name, "Chybné použití: " .. param)
 			return
 		end
 		if not minetest.get_player_by_name(target) then
-			minetest.chat_send_player(name, "Invalid target: " .. target)
+			minetest.chat_send_player(name, "Chybný cíl: " .. target)
 		end
-		minetest.chat_send_player(target, name .. " whispers: " .. message, false)
+		minetest.chat_send_player(target, name .. " šeptá: " .. message, false)
 	end
 })
 
 minetest.register_chatcommand("hp", {
-	params = "<name> <value>",
-	description = "Set health of <name> to <value> hitpoints",
+	params = "<hráč/ka> <počet>",
+	description = "Nastavit zdraví <hráči/ce> na <počet> bodů",
 	privs = {ban=true},
 	func = function(name, param)
 		local found, _, target, value = param:find("^([^%s]+)%s+(%d+)$")
 		if found == nil then
-			minetest.chat_send_player(name, "Invalid usage: " .. param)
+			minetest.chat_send_player(name, "Chybné použití: " .. param)
 			return
 		end
 		local player = minetest.get_player_by_name(target)
 		if player then
 			player:set_hp(value)
 		else
-			minetest.chat_send_player(name, "Invalid target: " .. target)
+			minetest.chat_send_player(name, "Chybný cíl: " .. target)
 		end
 	end
 })
@@ -56,15 +58,15 @@ local function initialize_data(meta)
 	else
 		owner = "owned by " .. owner
 	end
-	meta:set_string("infotext", "Command Block\n" ..
+	meta:set_string("infotext", "Příkazový blok\n" ..
 		"(" .. owner .. ")\n" ..
-		"Commands: "..commands)
+		"Příkazy: "..commands)
 end
 
 local function construct(pos)
 	local meta = minetest.get_meta(pos)
 
-	meta:set_string("commands", "tell @nearest Commandblock unconfigured")
+	meta:set_string("commands", "tell @nearest Příkazový blok není nakonfigurován")
 
 	meta:set_string("owner", "")
 
@@ -180,7 +182,7 @@ local function can_dig(pos, player)
 end
 
 minetest.register_node("mesecons_commandblock:commandblock_off", {
-	description = "Command Block",
+	description = "Příkazový blok",
 	tiles = {"jeija_commandblock_off.png"},
 	inventory_image = minetest.inventorycube("jeija_commandblock_off.png"),
 	is_ground_content = false,
@@ -212,3 +214,5 @@ minetest.register_node("mesecons_commandblock:commandblock_on", {
 	}},
 	on_blast = mesecon.on_blastnode,
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -2,6 +2,8 @@
 -- A button that when pressed emits power for 1 second
 -- and then turns off again
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 mesecon.button_turnoff = function (pos)
 	local node = minetest.get_node(pos)
 	if node.name ~= "mesecons_button:button_on" then -- has been dug
@@ -45,7 +47,7 @@ minetest.register_node("mesecons_button:button_off", {
 	}
 	},
 	groups = {dig_immediate=2, mesecon_needs_receiver = 1},
-	description = "Button",
+	description = "Tlačítko",
 	on_rightclick = function (pos, node)
 		minetest.swap_node(pos, {name = "mesecons_button:button_on", param2=node.param2})
 		mesecon.receptor_on(pos, mesecon.rules.buttonlike_get(node))
@@ -108,3 +110,5 @@ minetest.register_craft({
 		{"group:mesecon_conductor_craftable","mesecons_gamecompat:stone"},
 	}
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -77,7 +77,7 @@ end
 
 -- Vertical wire
 mesecon.register_node("mesecons_extrawires:vertical", {
-	description = "Vertical Mesecon",
+	description = "Svislý mesespoj",
 	drawtype = "nodebox",
 	walkable = false,
 	paramtype = "light",
@@ -110,7 +110,7 @@ mesecon.register_node("mesecons_extrawires:vertical", {
 
 -- Vertical wire top
 mesecon.register_node("mesecons_extrawires:vertical_top", {
-	description = "Vertical mesecon",
+	description = "Svislý mesespoj",
 	drawtype = "nodebox",
 	walkable = false,
 	paramtype = "light",
@@ -142,7 +142,7 @@ mesecon.register_node("mesecons_extrawires:vertical_top", {
 
 -- Vertical wire bottom
 mesecon.register_node("mesecons_extrawires:vertical_bottom", {
-	description = "Vertical mesecon",
+	description = "Svislý mesespoj",
 	drawtype = "nodebox",
 	walkable = false,
 	paramtype = "light",

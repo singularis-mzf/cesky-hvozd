@@ -8,6 +8,8 @@
 -- ## Update wire looks ##
 -- #######################
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 -- self_pos = pos of any mesecon node, from_pos = pos of conductor to getconnect for
 local wire_getconnect = function (from_pos, self_pos)
 	local node = minetest.get_node(self_pos)
@@ -203,7 +205,7 @@ local function register_wires()
 		end
 
 		mesecon.register_node(":mesecons:wire_"..nodeid, {
-			description = "Mesecon",
+			description = "Mesespoj",
 			drawtype = "nodebox",
 			inventory_image = "mesecons_wire_inv.png",
 			wield_image = "mesecons_wire_inv.png",
@@ -257,3 +259,4 @@ if minetest.registered_aliases["mesecons_gamecompat:mese"] then
 		cooktime = 30,
 	})
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

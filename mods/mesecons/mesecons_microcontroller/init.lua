@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 local EEPROM_SIZE = 255
 
 local microc_rules = {}
@@ -57,7 +58,7 @@ if nodename ~= "mesecons_microcontroller:microcontroller0000" then
 end
 
 minetest.register_node(nodename, {
-	description = "Microcontroller",
+	description = "Mikrokontrolér",
 	drawtype = "nodebox",
 	tiles = {
 		top,
@@ -721,3 +722,4 @@ yc.merge_portstates = function(Lreal, Lvirtual)
 	if Lvirtual.d or Lreal.d then L.d = true end
 	return L
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

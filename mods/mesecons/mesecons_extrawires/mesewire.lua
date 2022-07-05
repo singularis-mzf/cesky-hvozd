@@ -6,7 +6,7 @@ else
 	-- Register placeholder.
 	mese_nodename = "mesecons_extrawires:mese"
 	minetest.register_node("mesecons_extrawires:mese", {
-		description = "Mese Wire",
+		description = "Spoj z mese",
 		tiles = {"mesecons_wire_off.png"},
 		paramtype = "light",
 		light_source = 3,
