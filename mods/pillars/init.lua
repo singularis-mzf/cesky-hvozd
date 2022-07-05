@@ -2,6 +2,7 @@
 -- This mode is licensed as MIT licence. This code can't be edited or copyed
 -- outside the terms of this license.
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 local basic_shape = {
 	{-0.5, 0.25, -0.5, 0.5, 0.5, 0.5}, -- top
 	{-0.5, -0.5, -0.5, 0.5, -0.25, 0.5}, -- bot
@@ -33,7 +34,7 @@ local function is_pillar(pos)
 end
 
 local function connected(pos, name, top)
-    v_dir = vector.new(0,-1,0)
+    local v_dir = vector.new(0,-1,0)
     
     if top == true then
         v_dir = vector.new(0,1,0)
@@ -110,7 +111,7 @@ function pillars.register_pillar(name, def)
 	                   {"_top", top_shape, no_inv_groups},
 	                   {"_bot", bottom_shape, no_inv_groups},
 	                   {"_mid", middle_shape, no_inv_groups}}) do
-        sides = { "top", "bottom" }
+        local sides = { "top", "bottom" }
 	    
         if v[1] == "_top" then
             sides = { "bottom" }
@@ -129,10 +130,11 @@ function pillars.register_pillar(name, def)
 		    inventory_image = def.inventory_image,
 		    wield_image = def.wield_image,
 		    tiles = def.textures,
+		    use_texture_alpha = def.use_texture_alpha or "opaque",
 		    groups = v[3],
 		    drop = "pillars:" .. name,
 		    sounds = def.sounds,
-		    use_texture_alpha = def.use_texture_alpha or false,
+
 		    node_box = {
 			    type = "fixed",
 			    fixed = v[2]
@@ -162,39 +164,39 @@ end
 local default_lib_nodes = {
     -- Define all pillars from stone
     
-    {"stone", "Stone Pillar"},
-    {"cobble", "Cobblestone Pillar"},
-    {"stonebrick", "Stone Brick Pillar", "stone_brick"},
-    {"stone_block", "Stone Block Pillar"},
-    {"mossycobble", "Mossy Cobblestone Pillar"},
+    {"stone", "Pilíř ze skalního kamene"},
+    {"cobble", "Pilíř z dlažebního kamene"},
+    {"stonebrick", "Pilíř z kamenných cihel", "stone_brick"},
+    {"stone_block", "Pilíř z kamenných bloků"},
+    {"mossycobble", "Pilíř z dlažebního kamene porostlého mechem"},
     
-    {"desert_stone", "Desert Stone Pillar"},
-    {"desert_cobble", "Desert Cobblestone Pillar"},
-    {"desert_stonebrick", "Desert Stone Brick Pillar", "desert_stone_brick"},
-    {"desert_stone_block", "Desert Stone Block Pillar"},
+    {"desert_stone", "Pilíř z pouštního skalního kamene"},
+    {"desert_cobble", "Pilíř z pouštního dlažebního kamene"},
+    {"desert_stonebrick", "Pilíř z cihel z pouštního kamene", "desert_stone_brick"},
+    {"desert_stone_block", "Pilíř z bloků pouštního kamene"},
     
-    {"sandstone", "Sandstone Pillar"},
-    {"sandstonebrick", "Sandstone Brick Pillar", "sandstone_brick"},
-    {"sandstone_block", "Sandstone Block Pillar"},
+    {"sandstone", "Pilíř ze žlutého pískovce"},
+    {"sandstonebrick", "Pilíř ze žlutých pískovcových cihel", "sandstone_brick"},
+    {"sandstone_block", "Pilíř ze žlutých pískovcových bloků"},
     
-    {"desert_sandstone", "Desert Sandstone Pillar"},
-    {"desert_sandstone_brick", "Desert Sandstone Brick Pillar"},
-    {"desert_sandstone_block", "Desert Sandstone Block Pillar"},
+    {"desert_sandstone", "Pilíř z pouštního pískovce"},
+    {"desert_sandstone_brick", "Pilíř z pouštních pískovcových cihel"},
+    {"desert_sandstone_block", "Pilíř z pouštních pískovcových bloků"},
     
-    {"silver_sandstone", "Silver Sandstone Pillar"},
-    {"silver_sandstone_brick", "Silver Sandstone Brick Pillar"},
-    {"silver_sandstone_block", "Silver Sandstone Block Pillar"},
+    {"silver_sandstone", "Pilíř z bílého pískovce"},
+    {"silver_sandstone_brick", "Pilíř z bílých pískovcových cihel"},
+    {"silver_sandstone_block", "Pilíř z bílých pískovcových bloků"},
     
-    {"obsidian", "Obsidian Pillar"},
-    {"obsidianbrick", "Obsidian Brick Pillar", "obsidian_brick"},
-    {"obsidian_block", "Obsidian Block Pillar"},
+    {"obsidian", "Pilíř z obsidiánu"},
+    {"obsidianbrick", "Pilíř z obsidiánových cihel", "obsidian_brick"},
+    {"obsidian_block", "Pilíř z obsidiánových bloků"},
     
     -- Define all pillar from wood planks
-    {"wood", "Wood Pillar", sound = default.node_sound_wood_defaults()},
-    {"junglewood", "Jungle Wood Pillar", sound = default.node_sound_wood_defaults()},
-    {"pine_wood", "Pine Wood Pillar", sound = default.node_sound_wood_defaults()},
-    {"acacia_wood", "Acacia Wood Pillar", sound = default.node_sound_wood_defaults()},
-    {"aspen_wood", "Aspen Wood Pillar", sound = default.node_sound_wood_defaults()},
+    {"wood", "Pilíř z jabloňového dřeva", sound = default.node_sound_wood_defaults()},
+    {"junglewood", "Pilíř z dřeva džunglovníku", sound = default.node_sound_wood_defaults()},
+    {"pine_wood", "Pilíř z borového dřeva", sound = default.node_sound_wood_defaults()},
+    {"acacia_wood", "Pilíř z akáciového dřeva", sound = default.node_sound_wood_defaults()},
+    {"aspen_wood", "Pilíř z osikového dřeva", sound = default.node_sound_wood_defaults()},
 }
 
 for k, v in pairs(default_lib_nodes) do
@@ -218,3 +220,4 @@ for k, v in pairs(default_lib_nodes) do
     })
 end
 
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
