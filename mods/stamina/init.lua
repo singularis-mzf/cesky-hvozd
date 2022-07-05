@@ -1,8 +1,4 @@
-if not minetest.settings:get_bool("enable_damage") then
-	minetest.log("warning", "[stamina] Stamina will not load if damage is disabled (enable_damage=false)")
-	return
-end
-
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 stamina = {}
 local modname = minetest.get_current_modname()
 local armor_mod = minetest.get_modpath("3d_armor") and minetest.global_exists("armor") and armor.def
@@ -173,11 +169,14 @@ local function poison_tick(player_name, ticks, interval, elapsed)
 	elseif elapsed > ticks then
 		stamina.set_poisoned(player, false)
 	else
+		return
+		--[[
 		local hp = player:get_hp() - 1
 		if hp > 0 then
 			player:set_hp(hp)
 		end
 		minetest.after(interval, poison_tick, player_name, ticks, interval, elapsed + 1)
+		]]
 	end
 end
 
@@ -299,7 +298,7 @@ function stamina.set_sprinting(player, sprinting)
 	end
 
 	if settings.sprint_particles and sprinting then
-		local pos = player:getpos()
+		local pos = player:get_pos()
 		local node = minetest.get_node({x = pos.x, y = pos.y - 1, z = pos.z})
 		local def = minetest.registered_nodes[node.name] or {}
 		local drawtype = def.drawtype
@@ -331,7 +330,7 @@ local function move_tick()
 	for _,player in ipairs(minetest.get_connected_players()) do
 		local controls = player:get_player_control()
 		local is_moving = controls.up or controls.down or controls.left or controls.right
-		local velocity = player:get_player_velocity()
+		local velocity = player:get_velocity()
 		velocity.y = 0
 		local horizontal_speed = vector.length(velocity)
 		local has_velocity = horizontal_speed > 0.05
@@ -372,6 +371,7 @@ local function stamina_tick()
 	end
 end
 
+--[[
 local function health_tick()
 	-- heal or damage player, depending on saturation
 	for _,player in ipairs(minetest.get_connected_players()) do
@@ -401,14 +401,15 @@ local function health_tick()
 		end
 	end
 end
+]]
 
 local stamina_timer = 0
-local health_timer = 0
+-- local health_timer = 0
 local action_timer = 0
 
 local function stamina_globaltimer(dtime)
 	stamina_timer = stamina_timer + dtime
-	health_timer = health_timer + dtime
+	-- health_timer = health_timer + dtime
 	action_timer = action_timer + dtime
 
 	if action_timer > settings.move_tick then
@@ -421,10 +422,12 @@ local function stamina_globaltimer(dtime)
 		stamina_tick()
 	end
 
+	--[[
 	if health_timer > settings.health_tick then
 		health_timer = 0
 		health_tick()
 	end
+	]]
 end
 
 -- override minetest.do_item_eat() so we can redirect hp_change to stamina
@@ -467,7 +470,7 @@ function minetest.do_item_eat(hp_change, replace_with_item, itemstack, player, p
 
 	if settings.eat_particles then
 		-- particle effect when eating
-		local pos = player:getpos()
+		local pos = player:get_pos()
 		pos.y = pos.y + 1.5 -- mouth level
 		local texture  = minetest.registered_items[itemname].inventory_image
 		local dir = player:get_look_dir()
@@ -499,7 +502,7 @@ function minetest.do_item_eat(hp_change, replace_with_item, itemstack, player, p
 			if inv:room_for_item("main", {name=replace_with_item}) then
 				inv:add_item("main", replace_with_item)
 			else
-				local pos = player:getpos()
+				local pos = player:get_pos()
 				pos.y = math.floor(pos.y - 1.0)
 				minetest.add_item(pos, replace_with_item)
 			end
@@ -553,3 +556,4 @@ end)
 minetest.register_on_respawnplayer(function(player)
 	stamina.update_saturation(player, settings.visual_max)
 end)
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
