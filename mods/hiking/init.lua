@@ -1,17 +1,19 @@
 --Hume2's Hiking mod
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 hiking = {}
 
 hiking.base_material = "dye:white"
 
 --You can add another colours here.
 hiking.colours = {
-	{name = "red", colour = "FF0000", material = "dye:red"},
-	{name = "blue", colour = "0000FF", material = "dye:blue"},
-	{name = "green", colour = "00C000", material = "dye:green"},
-	{name = "yellow", colour = "FFFF00", material = "dye:yellow"},
+	{name = "red", title = "Červená", colour = "FF0000", material = "dye:red"},
+	{name = "blue", title = "Modrá", colour = "0000FF", material = "dye:blue"},
+	{name = "green", title = "Zelená", colour = "00C000", material = "dye:green"},
+	{name = "yellow", title = "Žlutá", colour = "FFFF00", material = "dye:yellow"},
 	--Uncomment this line to add Polish black signs
-	--{name = "black", colour = "000000", material = "dye:black"}
+	-- {name = "black", title = "Černá", colour = "000000", material = "dye:black"}
 }
 
 ------------------------------------------------------------------------------------
@@ -46,7 +48,7 @@ hiking.basic_properties = {
 		if minetest.check_player_privs(name, {protection_bypass = true}) or minetest.check_player_privs(name, {hiking = true}) then
 			return minetest.item_place(itemstack, placer, pointed_thing)
 		else
-			minetest.chat_send_player(name, "Missing privilege: hiking")
+			minetest.chat_send_player(name, "Chybí vám právo: hiking")
 			return itemstack
 		end
 	end,
@@ -81,7 +83,7 @@ local function merge(a, b)
 end
 
 local function firstToUpper(str)
-	return (str:gsub("^%l", string.upper))
+	return str
 end
 
 function hiking.get_texture(colour, style)
@@ -91,7 +93,7 @@ end
 function hiking.register_sign(colour, style, direction)
 	local inv = hiking.get_texture(colour, style)
 	local inv2 = "hiking_sign_pole.png^" .. inv
-	local desc = firstToUpper(colour.name) .. " " .. style.title
+	local desc = firstToUpper(colour.title) .. " " .. style.title
 	local my_groups = {snappy=1, oddly_breakable_by_hand=2, attached_node=1, nostomp=1, hiking=1}
 	if (direction ~= nil) then
 		desc = desc .. " " .. direction
@@ -101,6 +103,7 @@ function hiking.register_sign(colour, style, direction)
 	minetest.register_node("hiking:" .. style.id .. colour.name, merge(hiking.basic_properties, {
 		description = desc,
 		tiles = {inv},
+		use_texture_alpha = "clip",
 		inventory_image = inv,
 		wield_image = inv,
 		groups = my_groups
@@ -109,14 +112,15 @@ end
 
 function hiking.register_pole(colour, style)
 	local inv = hiking.get_texture(colour, style)
-	local desc = firstToUpper(colour.name) .. " " .. style.title
+	local desc = firstToUpper(colour.title) .. " " .. style.title
 	local base_id = "hiking:" .. style.id .. colour.name
 	local inv1 = "hiking_sign_pole.png^" .. inv
 	local inv2 = "hiking_sign_pole_thin.png^" .. inv
 
 	minetest.register_node("hiking:pole_" .. style.id .. colour.name, merge(hiking.basic_properties, {
-		description = desc .. " on Pillar",
+		description = desc .. " na sloupku",
 		tiles = {inv},
+		use_texture_alpha = "clip",
 		inventory_image = inv1,
 		wield_image = inv1,
 		drawtype = "mesh",
@@ -125,8 +129,9 @@ function hiking.register_pole(colour, style)
 	}))
 
 	minetest.register_node("hiking:pole2_" .. style.id .. colour.name, merge(hiking.basic_properties, {
-		description = desc .. " on Pole",
+		description = desc .. " na tyči",
 		tiles = {inv},
+		use_texture_alpha = "clip",
 		inventory_image = inv2,
 		wield_image = inv2,
 		drawtype = "mesh",
@@ -162,8 +167,8 @@ end
 
 function hiking.register_sign_lr(colour, style)
 	hiking.register_sign(colour, style, nil)
-	hiking.register_sign(colour, {id = style.id .. "_left", title = style.title}, "Left")
-	hiking.register_sign(colour, {id = style.id .. "_right", title = style.title}, "Right")
+	hiking.register_sign(colour, {id = style.id .. "_left", title = style.title}, "vlevo")
+	hiking.register_sign(colour, {id = style.id .. "_right", title = style.title}, "vpravo")
 	hiking.register_pole(colour, style)
 
 	local base_sign = "hiking:" .. style.id .. colour.name
@@ -189,14 +194,14 @@ end
 -------------------------------------
 
 for _, colour in pairs(hiking.colours) do
-	hiking.register_sign_lr(colour, {id = "sign", title = "Hiking Sign"})
-	hiking.register_sign(colour, {id = "end", title = "End Sign"}, nil)
-	hiking.register_sign_lr(colour, {id = "local", title = "Local Hiking Sign"})
-	hiking.register_sign_lr(colour, {id = "educational", title = "Educational Path"})
-	hiking.register_sign_lr(colour, {id = "castle", title = "Castle Branch"})
-	hiking.register_sign_lr(colour, {id = "curiosity", title = "Curiosity Branch"})
-	hiking.register_sign_lr(colour, {id = "peak", title = "Peak Branch"})
-	hiking.register_sign_lr(colour, {id = "spring", title = "Spring Branch"})
+	hiking.register_sign_lr(colour, {id = "sign", title = "turistická značka"})
+	hiking.register_sign(colour, {id = "end", title = "koncová turistická značka"}, nil)
+	hiking.register_sign_lr(colour, {id = "local", title = "místní turistická značka"})
+	hiking.register_sign_lr(colour, {id = "educational", title = "vzdělávací stezka"})
+	hiking.register_sign_lr(colour, {id = "castle", title = "odbočka k hradu"})
+	hiking.register_sign_lr(colour, {id = "curiosity", title = "odbočka k zajímavosti"})
+	hiking.register_sign_lr(colour, {id = "peak", title = "odbočka k vrcholu"})
+	hiking.register_sign_lr(colour, {id = "spring", title = "letní odbočka"})
 
 	local base_id = "hiking:sign" .. colour.name
 
@@ -335,3 +340,5 @@ minetest.is_protected = function(pos, pname)
 	
 	return false
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
