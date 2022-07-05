@@ -15,7 +15,7 @@ if homedecor_path then
 else
     -- Placeholder node, in the style of homedecor.
     minetest.register_node("elevator:placeholder", {
-        description = "Expansion Placeholder",
+        description = "Místodržící blok pro růst",
         selection_box = {
             type = "fixed",
             fixed = {0, 0, 0, 0, 0, 0},
@@ -70,14 +70,18 @@ elseif aurum_path then
     moditems.steel_block_image = "aurum_ore_white.png^[colorize:#cbcdcd:255^aurum_ore_bumps.png^aurum_ore_block.png"
 end
 
+moditems.elevator_groups_on = moditems.elevator_groups
+moditems.elevator_groups_off = table.copy(moditems.elevator_groups)
+moditems.elevator_groups_off.not_in_creative_inventory = 1
+
 if minetest.global_exists("screwdriver") then
     moditems.on_rotate_disallow = screwdriver.disallow
 end
 
 minetest.register_node("elevator:shaft", {
-    description = "Elevator Shaft",
-    _doc_items_longdesc = "An elevator shaft that connects elevators to other elevators and motors.",
-    _doc_items_usagehelp = "Building a vertical stack of elevators and shafts with an elevator motor on top allows vertical transportation.",
+    description = "Šachta výtahu",
+    -- _doc_items_longdesc = "An elevator shaft that connects elevators to other elevators and motors.",
+    -- _doc_items_usagehelp = "Building a vertical stack of elevators and shafts with an elevator motor on top allows vertical transportation.",
     tiles = { moditems.el_shaft_gfx },
     drawtype = "nodebox",
     use_texture_alpha = "clip",
@@ -118,9 +122,9 @@ minetest.register_node("elevator:shaft", {
   })
 
 minetest.register_node("elevator:motor", {
-    description = "Elevator Motor",
-    _doc_items_longdesc = "The engine powering an elevator shaft. Placed at the top.",
-    _doc_items_usagehelp = "Place the motor on the top of a stack of elevators and elevator shafts. The elevators will activate and you can then use them.",
+    description = "Motor výtahu",
+    -- _doc_items_longdesc = "The engine powering an elevator shaft. Placed at the top.",
+    -- _doc_items_usagehelp = "Place the motor on the top of a stack of elevators and elevator shafts. The elevators will activate and you can then use them.",
     tiles = {
         moditems.steel_block_image,
         moditems.steel_block_image,
@@ -163,7 +167,7 @@ local box_box = {
 
 -- Elevator box node. Not intended to be placeable.
 minetest.register_node("elevator:elevator_box", {
-    description = "Elevator",
+    description = "Stanice výtahu",
     drawtype = "nodebox",
     paramtype = 'light',
     paramtype2 = "facedir",
@@ -231,7 +235,7 @@ for _,mode in ipairs({"on", "off"}) do
         cbox = box
     end
     minetest.register_node(nodename, {
-        description = "Elevator",
+        description = "Stanice výtahu",
         drawtype = "nodebox",
         sunlight_propagates = false,
         paramtype = "light",
@@ -239,8 +243,8 @@ for _,mode in ipairs({"on", "off"}) do
         on_rotate = moditems.on_rotate_disallow,
         climbable = true,
 
-        _doc_items_longdesc = on and "An active elevator, ready for transporting." or "An inactive elevator, not connected to a motor.",
-        _doc_items_usagehelp = on and "Step inside this elevator and use it (right-click) to be transported to any other elevator along the shaft." or "This elevator is inactive; it is disconnected from a motor. It may be extended with shafts and other elevators in a vertical line with an elevator motor on top to power the whole shaft and enable transport.",
+        -- _doc_items_longdesc = on and "An active elevator, ready for transporting." or "An inactive elevator, not connected to a motor.",
+        -- _doc_items_usagehelp = on and "Step inside this elevator and use it (right-click) to be transported to any other elevator along the shaft." or "This elevator is inactive; it is disconnected from a motor. It may be extended with shafts and other elevators in a vertical line with an elevator motor on top to power the whole shaft and enable transport.",
 
         selection_box = {
                 type = "fixed",
@@ -274,7 +278,7 @@ for _,mode in ipairs({"on", "off"}) do
         },
         use_texture_alpha = "clip",
 
-        groups = moditems.elevator_groups,
+        groups = mode == "on" and moditems.elevator_groups_on or moditems.elevator_groups_off,
         drop = "elevator:elevator_off",
 
         -- Emit a bit of light when active.
@@ -344,47 +348,47 @@ for _,mode in ipairs({"on", "off"}) do
                 if #tpnames > 0 then
                     if not minetest.is_protected(pos, sender:get_player_name()) then
                         formspec = "size[4,6]"
-                        .."label[0,0;Click once to travel.]"
+                        .."label[0,0;Zvolte cílové patro:]"
                         .."textlist[-0.1,0.5;4,4;target;"..table.concat(tpnames_l, ",").."]"
                         .."field[0.25,5.25;4,0;label;;"..minetest.formspec_escape(meta:get_string("label")).."]"
-                        .."button_exit[-0.05,5.5;4,1;setlabel;Set label]"
+                        .."button_exit[-0.05,5.5;4,1;setlabel;Nazvat patro]"
                     else
                         formspec = "size[4,4.4]"
-                        .."label[0,0;Click once to travel.]"
+                        .."label[0,0;Zvolte cílové patro:]"
                         .."textlist[-0.1,0.5;4,4;target;"..table.concat(tpnames_l, ",").."]"
                     end
                 else
                     if not minetest.is_protected(pos, sender:get_player_name()) then
                         formspec = "size[4,2]"
-                        .."label[0,0;No targets available.]"
+                        .."label[0,0;Žádné cílové stanice.]"
                         .."field[0.25,1.25;4,0;label;;"..minetest.formspec_escape(meta:get_string("label")).."]"
-                        .."button_exit[-0.05,1.5;4,1;setlabel;Set label]"
+                        .."button_exit[-0.05,1.5;4,1;setlabel;Nazvat patro]"
                     else
                         formspec = "size[4,0.4]"
-                        .."label[0,0;No targets available.]"
+                        .."label[0,0;Žádné cílové stanice.]"
                     end
                 end
                 minetest.show_formspec(sender:get_player_name(), "elevator:elevator", formspec)
             elseif not elevator.motors[motorhash] then
                 if not minetest.is_protected(pos, sender:get_player_name()) then
                     formspec = "size[4,2]"
-                    .."label[0,0;This elevator is inactive.]"
+                    .."label[0,0;Výtah je mimo provoz.]"
                     .."field[0.25,1.25;4,0;label;;"..minetest.formspec_escape(meta:get_string("label")).."]"
                     .."button_exit[-0.05,1.5;4,1;setlabel;Set label]"
                 else
                     formspec = "size[4,0.4]"
-                    .."label[0,0;This elevator is inactive.]"
+                    .."label[0,0;Výtah je mimo provoz.]"
                 end
                 minetest.show_formspec(sender:get_player_name(), "elevator:elevator", formspec)
             elseif elevator.boxes[motorhash] then
                 if not minetest.is_protected(pos, sender:get_player_name()) then
                     formspec = "size[4,2]"
-                    .."label[0,0;This elevator is in use.]"
+                    .."label[0,0;Tato šachta je již obsazena.]"
                     .."field[0.25,1.25;4,0;label;;"..minetest.formspec_escape(meta:get_string("label")).."]"
                     .."button_exit[-0.05,1.5;4,1;setlabel;Set label]"
                 else
                     formspec = "size[4,0.4]"
-                    .."label[0,0;This elevator is in use.]"
+                    .."label[0,0;Tato šachta je již obsazena.]"
                 end
                 minetest.show_formspec(sender:get_player_name(), "elevator:elevator", formspec)
             end

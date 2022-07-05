@@ -213,7 +213,7 @@ minetest.register_abm({
     interval = 1,
     chance = 1,
     action = offabm,
-    label = "Elevator (Off)",
+    label = "Výtah (vypnutý)",
 })
 
 -- Convert on to off when applicable.
@@ -229,7 +229,7 @@ minetest.register_abm({
             minetest.swap_node(pos, node)
         end
     end,
-    label = "Elevator (On)",
+    label = "Výtah (zapnutý)",
 })
 
 -- Remove the player from self, and teleport them to pos if specified.
