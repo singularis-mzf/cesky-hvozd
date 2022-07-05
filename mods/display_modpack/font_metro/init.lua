@@ -11,6 +11,8 @@
  Derivative textures and code are under CC-BY-SA license
 --]]
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 font_api.register_font(
 	'metro',
 	{
@@ -22,3 +24,4 @@ font_api.register_font(
 	  }
 );
 
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

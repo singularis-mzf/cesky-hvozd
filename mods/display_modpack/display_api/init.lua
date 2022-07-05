@@ -16,7 +16,7 @@
 		You should have received a copy of the GNU General Public License
 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --]]
-
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 -- Global variables
 -------------------
 
@@ -29,3 +29,5 @@ display_api.path = minetest.get_modpath(display_api.name)
 
 dofile(display_api.path.."/display.lua")
 dofile(display_api.path.."/deprecation.lua")
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

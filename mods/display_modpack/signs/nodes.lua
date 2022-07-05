@@ -94,8 +94,13 @@ local function on_receive_fields_poster(pos, formname, fields, player)
 			if (fields.write or fields.font or fields.key_enter) then
 				meta:set_string("display_text", fields.display_text)
 				meta:set_string("text", fields.text)
-				meta:set_string("infotext", "\""..fields.display_text
-						.."\"\n"..S("(right-click to read more text)"))
+				local infotext = "\""..fields.display_text .."\"\n"
+				if #(fields.text) > 200 then
+					infotext = infotext .. S("(right-click to read more text)") .. "\n" .. string.sub(fields.text, 1, 200) .. "(...)"
+				else
+					infotext = infotext .. fields.text
+				end
+				meta:set_string("infotext", infotext)
 				display_api.update_entities(pos)
 			end
 			if (fields.write or fields.key_enter) then
@@ -206,6 +211,7 @@ local models = {
 			tiles = { "signs_poster_sides.png", "signs_poster_sides.png",
 			          "signs_poster_sides.png", "signs_poster_sides.png",
 			          "signs_poster_sides.png", "signs_poster.png" },
+			use_texture_alpha = "opaque",
 			inventory_image = "signs_poster_inventory.png",
 			groups= { dig_immediate = 3 },
 			on_construct = display_api.on_construct,

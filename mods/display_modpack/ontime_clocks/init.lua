@@ -18,6 +18,8 @@
     along with ontime_clocks.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 ontime_clocks = {}
 ontime_clocks.name = minetest.get_current_modname()
 ontime_clocks.path = minetest.get_modpath(ontime_clocks.name)
@@ -29,3 +31,5 @@ ontime_clocks.intllib = S
 dofile(ontime_clocks.path.."/common.lua")
 dofile(ontime_clocks.path.."/nodes.lua")
 dofile(ontime_clocks.path.."/crafts.lua")
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

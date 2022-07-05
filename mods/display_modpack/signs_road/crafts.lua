@@ -19,160 +19,62 @@
     along with signs_road.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
--- Standard rectangle signs
+local signs_table = {
+	-- dye_back, dye_front, itemstring_rect?, itemstring_right?, itemstring_large?
+	{ "dye:white", "dye:black", "signs_road:white_sign", "signs_road:white_right_sign", "signs_road:large_street_sign" },
+	{ "dye:blue", "dye:white", "signs_road:blue_sign", "signs_road:blue_right_sign", "signs_road:blue_large_street_sign" },
+	{ "dye:green", "dye:white", "signs_road:green_sign", "signs_road:green_right_sign", "signs_road:green_large_street_sign" },
+	{ "dye:yellow", "dye:black", "signs_road:yellow_sign", "signs_road:yellow_right_sign", "signs_road:yellow_large_street_sign" },
+	{ "dye:red", "dye:white", "signs_road:red_sign", "signs_road:red_right_sign", "signs_road:red_large_street_sign" },
+	{ "dye:brown", "dye:white", "signs_road:brown_sign", "signs_road:brown_right_sign", "signs_road:brown_large_street_sign" },
+	{ "dye:red", "dye:white", "signs_road:red_sign", "signs_road:red_right_sign", "signs_road:red_large_street_sign" },
+	{ "dye:black", "dye:white", "signs_road:black_sign", "signs_road:black_right_sign", "signs_road:black_large_street_sign"},
+	{ "", "dye:black", "signs_road:inv_sign_black_text", "", "signs_road:invisible_large_street_sign_black_text"},
+	{ "", "dye:white", "signs_road:inv_sign_white_text", "", "signs_road:invisible_large_street_sign_white_text"},
+}
 
-minetest.register_craft({
-	output = 'signs_road:white_sign 2',
-	recipe = {
-		{'dye:white', 'dye:black', ''},
-		{'default:steel_ingot', 'default:steel_ingot', 'default:steel_ingot'},
-		{'', '', ''},
-	}
-})
-
-minetest.register_craft({
-	output = 'signs_road:blue_sign 2',
-	recipe = {
-		{'dye:blue', 'dye:white', ''},
-		{'default:steel_ingot', 'default:steel_ingot', 'default:steel_ingot'},
-		{'', '', ''},
-	}
-})
-
-minetest.register_craft({
-	output = 'signs_road:green_sign 2',
-	recipe = {
-		{'dye:green', 'dye:white', ''},
-		{'default:steel_ingot', 'default:steel_ingot', 'default:steel_ingot'},
-		{'', '', ''},
-	}
-})
-
-minetest.register_craft({
-	output = 'signs_road:yellow_sign 2',
-	recipe = {
-		{'dye:yellow', 'dye:black', ''},
-		{'default:steel_ingot', 'default:steel_ingot', 'default:steel_ingot'},
-		{'', '', ''},
-	}
-})
-
-minetest.register_craft({
-	output = 'signs_road:red_sign 2',
-	recipe = {
-		{'dye:red', 'dye:white', ''},
-		{'default:steel_ingot', 'default:steel_ingot', 'default:steel_ingot'},
-		{'', '', ''},
-	}
-})
-
--- Standard direction signs
-
-minetest.register_craft({
-	output = 'signs_road:black_right_sign 2',
-	recipe = {
-		{'dye:black', 'dye:white', 'default:steel_ingot'},
-		{'default:steel_ingot', 'default:steel_ingot', ''},
-		{'', '', ''},
-	}
-})
-
-minetest.register_craft({
-	output = 'signs_road:white_right_sign 2',
-	recipe = {
-		{'dye:white', 'dye:black', 'default:steel_ingot'},
-		{'default:steel_ingot', 'default:steel_ingot', ''},
-		{'', '', ''},
-	}
-})
-
-minetest.register_craft({
-	output = 'signs_road:blue_right_sign 2',
-	recipe = {
-		{'dye:blue', 'dye:white', 'default:steel_ingot'},
-		{'default:steel_ingot', 'default:steel_ingot', ''},
-		{'', '', ''},
-	}
-})
-
-minetest.register_craft({
-	output = 'signs_road:green_right_sign 2',
-	recipe = {
-		{'dye:green', 'dye:white', 'default:steel_ingot'},
-		{'default:steel_ingot', 'default:steel_ingot', ''},
-		{'', '', ''},
-	}
-})
-
-minetest.register_craft({
-	output = 'signs_road:yellow_right_sign 2',
-	recipe = {
-		{'dye:yellow', 'dye:black', 'default:steel_ingot'},
-		{'default:steel_ingot', 'default:steel_ingot', ''},
-		{'', '', ''},
-	}
-})
-
-minetest.register_craft({
-	output = 'signs_road:red_right_sign 2',
-	recipe = {
-		{'dye:red', 'dye:white', 'default:steel_ingot'},
-		{'default:steel_ingot', 'default:steel_ingot', ''},
-		{'', '', ''},
-	}
-})
-
--- Transform Rectangle <-> Direction
-
-minetest.register_craft({
-	type = 'shapeless', output = 'signs_road:white_right_sign',
-	recipe = {'signs_road:white_sign'},
-})
-
-minetest.register_craft({
-	type = 'shapeless', output = 'signs_road:white_sign',
-	recipe = {'signs_road:white_right_sign'},
-})
-
-minetest.register_craft({
-	type = 'shapeless', output = 'signs_road:blue_right_sign',
-	recipe = {'signs_road:blue_sign'},
-})
-
-minetest.register_craft({
-	type = 'shapeless', output = 'signs_road:blue_sign',
-	recipe = {'signs_road:blue_right_sign'},
-})
-
-minetest.register_craft({
-	type = 'shapeless', output = 'signs_road:green_right_sign',
-	recipe = {'signs_road:green_sign'},
-})
-
-minetest.register_craft({
-	type = 'shapeless', output = 'signs_road:green_sign',
-	recipe = {'signs_road:green_right_sign'},
-})
-
-minetest.register_craft({
-	type = 'shapeless', output = 'signs_road:yellow_right_sign',
-	recipe = {'signs_road:yellow_sign'},
-})
-
-minetest.register_craft({
-	type = 'shapeless', output = 'signs_road:yellow_sign',
-	recipe = {'signs_road:yellow_right_sign'},
-})
-
-minetest.register_craft({
-	type = 'shapeless', output = 'signs_road:red_right_sign',
-	recipe = {'signs_road:red_sign'},
-})
-
-minetest.register_craft({
-	type = 'shapeless', output = 'signs_road:red_sign',
-	recipe = {'signs_road:red_right_sign'},
-})
+for i, v in ipairs(signs_table) do
+	local dye_back, dye_front, itemstring_rect, itemstring_right, itemstring_large = unpack(v)
+	if itemstring_right ~= "" then
+		minetest.register_craft({
+			output = itemstring_right .. " 2",
+			recipe = {
+				{dye_back, dye_front, "default:steel_ingot"},
+				{"default:steel_ingot", "default:steel_ingot", ""},
+				{"", "", ""},
+			}
+		})
+	end
+	if itemstring_rect ~= "" then
+		minetest.register_craft({
+			output = itemstring_rect .. " 2",
+			recipe = {
+				{dye_back, dye_front, ""},
+				{"default:steel_ingot", "default:steel_ingot", "default:steel_ingot"},
+				{"", "", ""},
+			}
+		})
+		if itemstring_right ~= "" then
+			minetest.register_craft({
+				type = "shapeless",
+				output = itemstring_right,
+				recipe = {itemstring_rect},
+			})
+			minetest.register_craft({
+				type = "shapeless",
+				output = itemstring_rect,
+				recipe = {itemstring_right},
+			})
+		end
+		if itemstring_large ~= "" then
+			minetest.register_craft({
+				type = "shapeless",
+				output = itemstring_large,
+				recipe = {itemstring_rect, itemstring_rect, itemstring_rect, itemstring_rect},
+			})
+		end
+	end
+end
 
 -- Various signs
 
@@ -192,10 +94,4 @@ minetest.register_craft({
 		{'default:steel_ingot', 'default:steel_ingot', 'default:steel_ingot'},
 		{'', '', ''},
 	}
-})
-
-minetest.register_craft({
-      type = "shapeless",
-      output = 'signs_road:large_street_sign',
-      recipe = {'signs_road:white_street_sign', 'signs_road:white_street_sign', 'signs_road:white_street_sign', 'signs_road:white_street_sign'},
 })

@@ -148,6 +148,7 @@ minetest.register_node("ontime_clocks:frameless_black", {
 		wall_top = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 }
 	},
 	tiles = {"ontime_clocks_frameless.png"},
+	use_texture_alpha = "clip",
 	groups = {oddly_breakable_by_hand=1, not_blocking_trains=1, display_api=1},
 	display_entities = {
 		["ontime_clocks:display"] = {
@@ -185,6 +186,7 @@ minetest.register_node("ontime_clocks:frameless_gold", {
 		wall_top = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 }
 	},
 	tiles = {"ontime_clocks_frameless.png^[colorize:#FF0"},
+	use_texture_alpha = "clip",
 	groups = {oddly_breakable_by_hand=1, not_blocking_trains=1, display_api=1},
 	display_entities = {
 		["ontime_clocks:display"] = {
@@ -222,6 +224,7 @@ minetest.register_node("ontime_clocks:frameless_white", {
 		wall_top = { -0.5, -0.5, -0.5, 0.5, 0.5, 0.5 }
 	},
 	tiles = {"ontime_clocks_frameless.png^[colorize:#FFF"},
+	use_texture_alpha = "clip",
 	groups = {oddly_breakable_by_hand=1, not_blocking_trains=1, display_api=1},
 	display_entities = {
 		["ontime_clocks:display"] = {

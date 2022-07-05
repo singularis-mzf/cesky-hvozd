@@ -18,6 +18,8 @@
     along with boards.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 boards = {}
 boards.name = minetest.get_current_modname()
 boards.path = minetest.get_modpath(boards.name)
@@ -137,3 +139,4 @@ minetest.register_craft(
 		}		
 	})
 
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

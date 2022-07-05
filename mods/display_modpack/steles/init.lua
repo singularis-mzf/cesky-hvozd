@@ -18,6 +18,8 @@
     along with steles.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 steles = {}
 steles.name = minetest.get_current_modname()
 steles.path = minetest.get_modpath(steles.name)
@@ -29,3 +31,4 @@ steles.intllib = S
 dofile(steles.path.."/config.lua")
 dofile(steles.path.."/nodes.lua")
 dofile(steles.path.."/crafts.lua")
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

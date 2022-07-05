@@ -18,6 +18,8 @@
     along with signs.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 signs_api = {}
 signs_api.name = minetest.get_current_modname()
 signs_api.path = minetest.get_modpath(signs_api.name)
@@ -56,7 +58,7 @@ function signs_api.set_formspec(pos)
 		else
 			local extralabel = ""
 			if maxlines then
-				extralabel = F(" (first %s lines only)"):format(maxlines)
+				extralabel = minetest.formspec_escape(" " .. S("(first @1 lines only)", maxlines))
 			end
 
 			fs = "textarea[0.5,0.7;5.5,2;display_text;"..F("Text")..""..
@@ -249,3 +251,5 @@ end
 
 -- Text entity for all signs
 display_api.register_display_entity("signs:display_text")
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

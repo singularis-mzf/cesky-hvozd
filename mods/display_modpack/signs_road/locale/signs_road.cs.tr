@@ -1,0 +1,43 @@
+# textdomain:signs_road
+
+# Czech translation by Singularis
+
+# * direction sign
+Black direction sign=Černá směrovka (2 řádky)
+Blue direction sign=Modrá směrovka (2 řádky)
+Brown direction sign=Hnědá směrovka (2 řádky)
+Green direction sign=Zelená směrovka (2 řádky)
+Red direction sign=Červená směrovka (2 řádky)
+White direction sign=Bílá směrovka (2 řádky)
+Yellow direction sign=Žlutá směrovka (2 řádky)
+
+# * sign
+Black road sign=Černá cedule (2 řádky)
+Blue road sign=Modrá cedule (2 řádky)
+Brown road sign=Hnědá cedule (2 řádky)
+Green road sign=Zelená cedule (2 řádky)
+Red road sign=Červená cedule (2 řádky)
+White road sign=Bílá cedule (2 řádky)
+Yellow road sign=Žlutá cedule (2 řádky)
+
+# Large * banner
+Large banner=Velká bílá cedule (5×1 m)
+Large black banner=Velká černá cedule (5×1 m)
+Large blue banner=Velká modrá cedule (5×1 m)
+Large brown banner=Velká hnědá cedule (5×1 m)
+Large green banner=Velká zelená cedule (5×1 m)
+Large red banner=Velká červená cedule (5×1 m)
+Large yellow banner=Velká žlutá cedule (5×1 m)
+
+# Invisible sign
+
+Invisible sign with black text=Neviditelná cedule s černým textem (4 řádky)
+Invisible sign with white text=Neviditelná cedule s bílým textem (4 řádky)
+
+# Large invisible banner
+Large invisible banner with black text=Velká neviditelná cedule s černým textem
+Large invisible banner with white text=Velká neviditelná cedule s bílým textem
+
+# Special
+Blue street sign=Tmavomodrá cedule (3 řádky)
+Red and white town sign= Bílá cedule s červeným rámem
