@@ -17,6 +17,7 @@
 
 --]]
 
+local S = minetest.get_translator("denseores")
 
 -- Mithril, Tin, Silver. That's my pattern.
 
@@ -24,7 +25,7 @@
 --[	Finished!	--]
 
 minetest.register_node("denseores:large_mithril_ore", {
-	description = "Heavy Mithril Ore",
+	description = S("Heavy Mithril Ore"),
 	tiles ={"default_stone.png^large_mithril_ore.png"},
 	groups = {cracky=3},
 	drop = 'moreores:mithril_lump 2',
@@ -32,7 +33,7 @@ minetest.register_node("denseores:large_mithril_ore", {
 })
 
 minetest.register_node("denseores:large_silver_ore", {
-	description = "Heavy Silver Ore",
+	description = S("Heavy Silver Ore"),
 	tiles ={"default_stone.png^large_silver_ore.png"},
 	groups = {cracky=3},
 	drop = 'moreores:silver_lump 2',
@@ -50,8 +51,8 @@ minetest.register_ore({
     clust_scarcity = 12,
     clust_num_ores = 2,
     clust_size     = 2,
-    height_min     = -31000,
-    height_max     = 64,
+    y_min     = -31000,
+    y_max     = 64,
 })
 
 minetest.register_ore({
@@ -61,8 +62,8 @@ minetest.register_ore({
     clust_scarcity = 12,
     clust_num_ores = 2,
     clust_size     = 2,
-    height_min     = -31000,
-    height_max     = 64,
+    y_min     = -31000,
+    y_max     = 64,
 })
 
 

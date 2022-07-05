@@ -24,13 +24,17 @@ coal, iron, copper, gold, mese, diamond
 Large, small
 --]]
 
+local S = minetest.get_translator("denseores")
+
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 denseores_modpath = minetest.get_modpath("denseores")
 
 
 --[	Large Ore Nodes	--]
 
 minetest.register_node("denseores:large_coal_ore", {	--coal
-	description = "Large Coal Ore",
+	description = S("Large Coal Ore"),
 	tiles ={"default_stone.png^large_coal_ore.png"},
 	groups = {cracky=3},
 	drop = 'default:coal_lump 2',
@@ -38,7 +42,7 @@ minetest.register_node("denseores:large_coal_ore", {	--coal
 })
 
 minetest.register_node("denseores:large_iron_ore", {	--iron
-	description = "Large Iron Ore",
+	description = S("Large Iron Ore"),
 	tiles ={"default_stone.png^large_iron_ore.png"},
 	groups = {cracky=2},
 	drop = 'default:iron_lump 2',
@@ -46,7 +50,7 @@ minetest.register_node("denseores:large_iron_ore", {	--iron
 })
 
 minetest.register_node("denseores:large_copper_ore", {	--copper
-	description = "Large Copper Ore",
+	description = S("Large Copper Ore"),
 	tiles ={"default_stone.png^large_copper_ore.png"},
 	groups = {cracky=2},
 	drop = 'default:copper_lump 2',
@@ -54,7 +58,7 @@ minetest.register_node("denseores:large_copper_ore", {	--copper
 })
 
 minetest.register_node("denseores:large_tin_ore", {	--tin
-	description = "Large Tin Ore",
+	description = S("Large Tin Ore"),
 	tiles ={"default_stone.png^large_tin_ore.png"},
 	groups = {cracky=3},
 	drop = 'default:tin_lump 2',
@@ -62,7 +66,7 @@ minetest.register_node("denseores:large_tin_ore", {	--tin
 })
 
 minetest.register_node("denseores:large_gold_ore", {	--gold
-	description = "Large Gold Ore",
+	description = S("Large Gold Ore"),
 	tiles ={"default_stone.png^large_gold_ore.png"},
 	groups = {cracky=2},
 	drop = 'default:gold_lump 2',
@@ -70,7 +74,7 @@ minetest.register_node("denseores:large_gold_ore", {	--gold
 })
 
 minetest.register_node("denseores:large_mese_ore", {	--mese
-	description = "Large Mese Ore",
+	description = S("Large Mese Ore"),
 	tiles ={"default_stone.png^large_mese_ore.png"},
 	groups = {cracky=1},
 	drop = 'default:mese_crystal 2',
@@ -78,7 +82,7 @@ minetest.register_node("denseores:large_mese_ore", {	--mese
 })
 
 minetest.register_node("denseores:large_diamond_ore", {	--diamond
-	description = "Large Diamond Ore",
+	description = S("Large Diamond Ore"),
 	tiles ={"default_stone.png^large_diamond_ore.png"},
 	groups = {cracky=1},
 	drop = 'default:diamond 2',
@@ -95,8 +99,8 @@ minetest.register_ore({
     clust_scarcity = 14,
     clust_num_ores = 2,
     clust_size     = 2,
-    height_min     = -31000,
-    height_max     = 64,
+    y_min     = -31000,
+    y_max     = 64,
 })
 
 minetest.register_ore({
@@ -106,8 +110,8 @@ minetest.register_ore({
     clust_scarcity = 14,
     clust_num_ores = 2,
     clust_size     = 2,
-    height_min     = -31000,
-    height_max     = 2,
+    y_min     = -31000,
+    y_max     = 2,
 })
 
 minetest.register_ore({
@@ -117,8 +121,8 @@ minetest.register_ore({
 	clust_scarcity = 14,
 	clust_num_ores = 2,
 	clust_size     = 2,
-	height_min     = -31000,
-	height_max     = 2,
+	y_min     = -31000,
+	y_max     = 2,
 })
 
 minetest.register_ore({
@@ -128,8 +132,8 @@ minetest.register_ore({
     clust_scarcity = 12,
     clust_num_ores = 2,
     clust_size     = 2,
-    height_min     = -31000,
-    height_max     = 64,
+    y_min     = -31000,
+    y_max     = 64,
 })
 
 minetest.register_ore({
@@ -139,8 +143,8 @@ minetest.register_ore({
 	clust_scarcity = 14,
 	clust_num_ores = 2,
 	clust_size     = 2,
-	height_min     = -31000,
-	height_max     = 2,
+	y_min     = -31000,
+	y_max     = 2,
 })
 
 minetest.register_ore({
@@ -150,8 +154,8 @@ minetest.register_ore({
 	clust_scarcity = 14,
 	clust_num_ores = 2,
 	clust_size     = 2,
-	height_min     = -31000,
-	height_max     = -64,
+	y_min     = -31000,
+	y_max     = -64,
 })
 
 minetest.register_ore({
@@ -161,8 +165,8 @@ minetest.register_ore({
 	clust_scarcity = 14,
 	clust_num_ores = 2,
 	clust_size     = 2,
-	height_min     = -31000,
-	height_max     = -128,
+	y_min     = -31000,
+	y_max     = -128,
 })
 
 
@@ -234,4 +238,4 @@ if minetest.get_modpath("moreores") then		--Thank you Kazea of the Minetest Four
 	dofile(denseores_modpath .. "/mo.lua")
 end
 
-
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
