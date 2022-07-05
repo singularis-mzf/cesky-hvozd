@@ -1,5 +1,7 @@
 local S = attrans
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 advtrains.register_wagon("engine_industrial", {
 	mesh="advtrains_engine_industrial.b3d",
 	textures = {"advtrains_engine_industrial.png"},
@@ -23,7 +25,7 @@ advtrains.register_wagon("engine_industrial", {
 	},
 	seat_groups = {
 		dstand={
-			name = "Driver Stand",
+			name = S("Driver Stand"),
 			access_to = {},
 			driving_ctrl_access = true,
 		},
@@ -62,7 +64,7 @@ advtrains.register_wagon("engine_industrial_big", {
 	},
 	seat_groups = {
 		dstand={
-			name = "Driver Stand",
+			name = S("Driver Stand"),
 			access_to = {},
 			driving_ctrl_access = true,
 		},
@@ -155,3 +157,5 @@ minetest.register_craft({
 		{'advtrains:wheel', '', 'advtrains:wheel'},
 	},
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

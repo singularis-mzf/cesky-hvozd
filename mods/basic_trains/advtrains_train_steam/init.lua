@@ -1,5 +1,7 @@
 local S = attrans
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 -- length of the steam engine loop sound
 local SND_LOOP_LEN = 5
 
@@ -25,7 +27,7 @@ advtrains.register_wagon("newlocomotive", {
 	},
 	seat_groups = {
 		dstand={
-			name = "Driver Stand",
+			name = S("Driver Stand"),
 			driving_ctrl_access=true,
 			access_to = {},
 		},
@@ -96,7 +98,7 @@ advtrains.register_wagon("detailed_steam_engine", {
 	},
 	seat_groups = {
 		dstand={
-			name = "Driver Stand",
+			name = S("Driver Stand"),
 			driving_ctrl_access=true,
 			access_to = {},
 		},
@@ -259,3 +261,5 @@ minetest.register_craft({
 		{'advtrains:wheel', '', 'advtrains:wheel'},
 	},
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

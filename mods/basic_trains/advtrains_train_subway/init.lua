@@ -1,13 +1,15 @@
 local S = attrans
 
-advtrains.register_wagon("subway_wagon", {
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
+local wagon = {
 	mesh="advtrains_subway_wagon.b3d",
 	textures = {"advtrains_subway_wagon.png"},
 	drives_on={default=true},
 	max_speed=15,
 	seats = {
 		{
-			name="Driver stand",
+			name=S("Driver stand"),
 			attach_offset={x=0, y=0, z=0},
 			view_offset={x=0, y=0, z=0},
 			group="dstand",
@@ -39,13 +41,13 @@ advtrains.register_wagon("subway_wagon", {
 	},
 	seat_groups = {
 		dstand={
-			name = "Driver Stand",
+			name = S("Driver Stand"),
 			access_to = {"pass"},
 			require_doors_open=true,
 			driving_ctrl_access=true,
 		},
 		pass={
-			name = "Passenger area",
+			name = S("Passenger area"),
 			access_to = {"dstand"},
 			require_doors_open=true,
 		},
@@ -141,7 +143,13 @@ advtrains.register_wagon("subway_wagon", {
 			end
 		end	
 	end,
-}, S("Subway Passenger Wagon"), "advtrains_subway_wagon_inv.png")
+}
+
+advtrains.register_wagon("subway_wagon", wagon, S("Subway Passenger Wagon"), "advtrains_subway_wagon_inv.png")
+
+wagon = table.copy(wagon)
+wagon.textures = {"advtrains_subway_wagon_green.png"}
+advtrains.register_wagon("subway_wagon_green", wagon, S("Green Subway Passenger Wagon"), "advtrains_subway_wagon_green_inv.png")
 
 --wagons
 minetest.register_craft({
@@ -152,3 +160,14 @@ minetest.register_craft({
 		{'default:steelblock', 'default:steelblock', 'default:steelblock'},
 	},
 })
+
+minetest.register_craft({
+	output = 'advtrains:subway_wagon_green',
+	recipe = {
+		{'default:steelblock', 'default:steelblock', 'default:steelblock'},
+		{'default:steelblock', 'dye:dark_green', 'default:steelblock'},
+		{'default:steelblock', 'default:steelblock', 'default:steelblock'},
+	},
+})
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

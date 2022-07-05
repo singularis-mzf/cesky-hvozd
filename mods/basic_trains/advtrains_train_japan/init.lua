@@ -1,5 +1,7 @@
 local S = attrans
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 -- note: scharfenberg coupler is defined in advtrains core
 advtrains.register_coupler_type("train_japan_interwagon", attrans("Japanese Train Inter-Wagon Connection"))
 
@@ -42,13 +44,13 @@ advtrains.register_wagon("engine_japan", {
 	},
 	seat_groups = {
 		dstand={
-			name = "Driver Stand",
+			name = S("Driver Stand"),
 			access_to = {"pass"},
 			require_doors_open=true,
 			driving_ctrl_access=true,
 		},
 		pass={
-			name = "Passenger area",
+			name = S("Passenger area"),
 			access_to = {"dstand"},
 			require_doors_open=true,
 		},
@@ -121,7 +123,7 @@ advtrains.register_wagon("wagon_japan", {
 	},
 	seat_groups = {
 		pass={
-			name = "Passenger area",
+			name = S("Passenger area"),
 			access_to = {},
 			require_doors_open=true,
 		},
@@ -167,5 +169,4 @@ output = 'advtrains:wagon_japan',
 	},
 })
 
-
-
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
