@@ -23,7 +23,6 @@ minetest.register_on_joinplayer(function(player)
 		alignment = {x=0.5, y=0.5},
 	})
 
-
 	huddata[name] = data
 end)
 
@@ -53,7 +52,7 @@ mail.hud_update = function(playername, messages)
 		player:hud_change(data.textid, "text", "")
 	else
 		player:hud_change(data.imageid, "text", "email_mail.png")
-		player:hud_change(data.textid, "text", unreadcount .. " /mail")
+		player:hud_change(data.textid, "text", unreadcount .. " /pošta")
 	end
 
 end

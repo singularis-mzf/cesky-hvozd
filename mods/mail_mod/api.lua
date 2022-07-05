@@ -1,12 +1,13 @@
 -- see: mail.md
 
+local S = minetest.get_translator("mail_mod")
+
 mail.registered_on_receives = {}
 function mail.register_on_receive(func)
 	mail.registered_on_receives[#mail.registered_on_receives + 1] = func
 end
 
-mail.receive_mail_message = "You have a new message from %s! Subject: %s\nTo view it, type /mail"
-mail.read_later_message = "You can read your messages later by using the /mail command"
+mail.receive_mail_message = "You have a new message from @1! Subject: @2\nTo view it, type /mail"
 
 --[[
 mail sending function, can be invoked with one object argument (new api) or
@@ -109,7 +110,7 @@ function mail.send(src, dst, subject, body)
 				m.subject = string.sub(m.subject,1,27) .. "..."
 			end
 			minetest.chat_send_player(name,
-					string.format(mail.receive_mail_message, m.from, m.subject))
+					S(mail.receive_mail_message, m.from, m.subject))
 		end
 	end
 

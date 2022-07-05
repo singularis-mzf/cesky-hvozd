@@ -1,3 +1,5 @@
+local S = minetest.get_translator("mail_mod")
+
 -- refactor these to some proper management thing
 selected_idxs = {
 	messages = {},
@@ -15,58 +17,54 @@ else
 	theme = ""
 end
 
-mail.inbox_formspec = "size[8,9;]" .. theme .. [[
-		button[6,0.10;2,0.5;new;New]
-		button[6,0.95;2,0.5;read;Read]
-		button[6,1.70;2,0.5;reply;Reply]
-		button[6,2.45;2,0.5;replyall;Reply All]
-		button[6,3.20;2,0.5;forward;Forward]
-		button[6,3.95;2,0.5;delete;Delete]
-		button[6,4.82;2,0.5;markread;Mark Read]
-		button[6,5.55;2,0.5;markunread;Mark Unread]
-		button[6,6.55;2,0.5;contacts;Contacts]
-		button[6,7.40;2,0.5;about;About]
-		button_exit[6,8.45;2,0.5;quit;Close]
+mail.inbox_formspec = "size[8,9;]" .. theme .. "\n" ..
+		"button[6,0.10;2,0.5;new;" .. S("New Mail") .. "]\n" ..
+		"button[6,0.95;2,0.5;read;" .. S("Read").."]\n" ..
+		"button[6,1.70;2,0.5;reply;" .. S("Reply").."]\n" ..
+		"button[6,2.45;2,0.5;replyall;" .. S("Reply All").."]\n" ..
+		"button[6,3.20;2,0.5;forward;" .. S("Forward").."]\n" ..
+		"button[6,3.95;2,0.5;delete;" .. S("Delete").."]\n" ..
+		"button[6,4.82;2,0.5;markread;" .. S("Mark Read").."]\n" ..
+		"button[6,5.55;2,0.5;markunread;" .. S("Mark Unread").."]\n" ..
+		"button[6,6.55;2,0.5;contacts;" .. S("Contacts").."]\n" ..
+		"button[6,7.40;2,0.5;about;" .. S("About").."]\n" ..
+		"button_exit[6,8.45;2,0.5;quit;" .. S("Close").."]\n\n" ..
+		"tablecolumns[color;text;text]\n" ..
+		"table[0,0;5.75,9;messages;#999," .. S("From") .. "," .. S("Subject")
 
-		tablecolumns[color;text;text]
-		table[0,0;5.75,9;messages;#999,From,Subject]]
+mail.contacts_formspec = "size[8,9;]" .. theme ..
+		"button[6,0.10;2,0.5;new;" .. S("New Contact") .."]\n"..
+		"button[6,0.85;2,0.5;edit;" .. S("Edit") .."]\n"..
+		"button[6,1.60;2,0.5;delete;" .. S("Delete") .."]\n"..
+		"button[6,8.25;2,0.5;back;" .. S("Back") .."]\n"..
+		"tablecolumns[color;text;text]\n"..
+		"table[0,0;5.75,9;contacts;#999," .. S("Name")..","..S("Note")
 
-mail.contacts_formspec = "size[8,9;]" .. theme .. [[
-		button[6,0.10;2,0.5;new;New]
-		button[6,0.85;2,0.5;edit;Edit]
-		button[6,1.60;2,0.5;delete;Delete]
-		button[6,8.25;2,0.5;back;Back]
-		tablecolumns[color;text;text]
-		table[0,0;5.75,9;contacts;#999,Name,Note]]
-
-mail.select_contact_formspec = "size[8,9;]" .. theme .. [[
-		tablecolumns[color;text;text]
-		table[0,0;3.5,9;contacts;#999,Name,Note%s]
-		button[3.55,2.00;1.75,0.5;toadd;→ Add]
-		button[3.55,2.75;1.75,0.5;toremove;← Remove]
-		button[3.55,6.00;1.75,0.5;ccadd;→ Add]
-		button[3.55,6.75;1.75,0.5;ccremove;← Remove]
-		tablecolumns[color;text;text]
-		table[5.15,0.0;2.75,4.5;to;#999,TO:,Note%s]
-		tablecolumns[color;text;text]
-		table[5.15,4.6;2.75,4.5;cc;#999,CC:,Note%s]
-		button[3.55,8.25;1.75,0.5;back;Back]
-	]]
+mail.select_contact_formspec = "size[8,9;]" .. theme ..
+		"tablecolumns[color;text;text]"..
+		"table[0,0;3.5,9;contacts;#999," .. S("Name") .. "," .. S("Note") .. "%s]"..
+		"button[3.55,2.00;1.75,0.5;toadd;→ " .. S("Add") .. "]"..
+		"button[3.55,2.75;1.75,0.5;toremove;← " .. S("Remove") .. "]"..
+		"button[3.55,6.00;1.75,0.5;ccadd;→ " .. S("Add") .. "]"..
+		"button[3.55,6.75;1.75,0.5;ccremove;← " .. S("Remove") .. "]"..
+		"tablecolumns[color;text;text]"..
+		"table[5.15,0.0;2.75,4.5;to;#999," .. S("TO:") .. "," .. S("Note") .. "%s]"..
+		"tablecolumns[color;text;text]"..
+		"table[5.15,4.6;2.75,4.5;cc;#999,".. S("CC:") .. "," .. S("Note") .. "%s]"..
+		"button[3.55,8.25;1.75,0.5;back;" .. S("Back") .. "]"
 
 
 function mail.show_about(name)
-	local formspec = [[
-			size[8,5;]
-			button[7.25,0;0.75,0.5;back;X]
-			label[0,0;Mail]
-			label[0,0.5;By cheapie]
-			label[0,1;http://github.com/cheapie/mail]
-			label[0,1.5;See LICENSE file for license information]
-			label[0,2.5;NOTE: Communication using this system]
-			label[0,3;is NOT guaranteed to be private!]
-			label[0,3.5;Admins are able to view the messages]
-			label[0,4;of any player.]
-		]] .. theme
+	local formspec =
+			"size[8,5;]\n" ..
+			"button[7.25,0;0.75,0.5;back;X]\n" ..
+			"label[0,0;Mail]\n"..
+			"label[0,0.5;Autor/ka: cheapie]\n" ..
+			"label[0,1;http://github.com/cheapie/mail]\n"..
+			"label[0,1.5;Do češtiny převedl/a: Singularis]\n"..
+			"label[0,2;Pro licenční informace viz soubor LICENSE v repozitáři]\n"..
+			"label[0,3;POZNÁMKA: Komunikace tímto systémem NEMUSÍ být zcela soukromá!]\n"..
+			"label[0,4;Administrace má přístup ke zprávám všech postav.]" .. theme
 
 	minetest.show_formspec(name, "mail:about", formspec)
 end
@@ -105,7 +103,7 @@ function mail.show_inbox(name)
 					formspec[#formspec + 1] = minetest.formspec_escape(message.subject)
 				end
 			else
-				formspec[#formspec + 1] = "(No subject)"
+				formspec[#formspec + 1] = "(Bez předmětu)"
 			end
 		end
 		if selected_idxs.messages[name] then
@@ -114,7 +112,7 @@ function mail.show_inbox(name)
 		end
 		formspec[#formspec + 1] = "]"
 	else
-		formspec[#formspec + 1] = "]label[2.25,4.5;No mail]"
+		formspec[#formspec + 1] = "]label[2.25,4.5;Žádné zprávy]"
 	end
 	minetest.show_formspec(name, "mail:inbox", table.concat(formspec, ""))
 end
@@ -125,25 +123,19 @@ function mail.show_contacts(name)
 end
 
 function mail.show_edit_contact(name, contact_name, note, illegal_name_hint)
-	local formspec = [[
-			size[6,7]
-			button[4,6.25;2,0.5;back;Back]
-			field[0.25,0.5;4,1;name;Player name:;%s]
-			textarea[0.25,1.6;4,6.25;note;Note:;%s]
-			button[4,0.10;2,1;save;Save]
-		]]
+	local formspec =
+			"size[6,7]\n"..
+			"button[4,6.25;2,0.5;back;"..S("Back").."]\n"..
+			"field[0.25,0.5;4,1;name;"..S("Player name:")..";%s]\n"..
+			"textarea[0.25,1.6;4,6.25;note;"..S("Note:")..";%s]\n"..
+			"button[4,0.10;2,1;save;"..S("Save").."]"
 	if illegal_name_hint == "collision" then
-		formspec = formspec .. [[
-				label[4,1;That name]
-				label[4,1.5;is already in]
-				label[4,2;your contacts.]
-			]]
+		formspec = formspec ..
+				"label[4,1;"..S("That name").."]\n"..
+				"label[4,1.5;"..S("is already in").."]\n"..
+				"label[4,2;"..S("your contacts.").."]"
 	elseif illegal_name_hint == "empty" then
-		formspec = formspec .. [[
-				label[4,1;The contact]
-				label[4,1.5;name cannot]
-				label[4,2;be empty.]
-			]]
+		formspec = formspec .. "label[4,1;"..S("The contact").."]\nlabel[4,1.5;"..S("name cannot").."]\nlabel[4,2;"..S("be empty.").."]"
 	end
 	formspec = formspec .. theme
 	formspec = string.format(formspec,
@@ -209,7 +201,7 @@ function mail.compile_contact_list(name, selected, playernames)
 			end
 			formspec[#formspec + 1] = "]"
 		else
-			formspec[#formspec + 1] = "]label[2,4.5;No contacts]"
+			formspec[#formspec + 1] = "]label[2,4.5;"..S("No contacts").."]"
 		end
 	else
 		if type(playernames) == "string" then
@@ -251,19 +243,18 @@ end
 function mail.show_message(name, msgnumber)
 	local messages = mail.getMessages(name)
 	local message = messages[msgnumber]
-	local formspec = [[
-			size[8,9]
-			button[7.25,0;0.75,0.5;back;X]
-			label[0,0;From: %s]
-			label[0,0.4;To: %s]
-			label[0,0.8;CC: %s]
-			label[0,1.3;Subject: %s]
-			textarea[0.25,1.8;8,7.8;;;%s]
-			button[0,8.5;2,1;reply;Reply]
-			button[2,8.5;2,1;replyall;Reply All]
-			button[4,8.5;2,1;forward;Forward]
-			button[6,8.5;2,1;delete;Delete]
-		]] .. theme
+	local formspec =
+			"size[8,9]\n"..
+			"button[7.25,0;0.75,0.5;back;X]\n"..
+			"label[0,0;"..S("From:").." %s]\n"..
+			"label[0,0.4;"..S("To:").." %s]\n"..
+			"label[0,0.8;"..S("CC:").." %s]\n"..
+			"label[0,1.3;"..S("Subject:").." %s]\n"..
+			"textarea[0.25,1.8;8,7.8;;;%s]\n"..
+			"button[0,8.5;2,1;reply;"..S("Reply").."]\n"..
+			"button[2,8.5;2,1;replyall;"..S("Reply All").."]\n"..
+			"button[4,8.5;2,1;forward;"..S("Forward").."]\n"..
+			"button[6,8.5;2,1;delete;"..S("Delete").."]\n" .. theme
 
 	local from = minetest.formspec_escape(message.sender) or ""
 	local to = minetest.formspec_escape(message.to) or ""
@@ -281,19 +272,18 @@ function mail.show_message(name, msgnumber)
 end
 
 function mail.show_compose(name, defaultto, defaultsubj, defaultbody, defaultcc, defaultbcc)
-	local formspec = [[
-			size[8,9]
-			button[0,0;1,1;tocontacts;To:]
-			field[1.1,0.3;3.2,1;to;;%s]
-			button[4,0;1,1;cccontacts;CC:]
-			field[5.1,0.3;3.1,1;cc;;%s]
-			button[4,0.75;1,1;bcccontacts;BCC:]
-			field[5.1,1.05;3.1,1;bcc;;%s]
-			field[0.25,2;8,1;subject;Subject:;%s]
-			textarea[0.25,2.5;8,6;body;;%s]
-			button[0.5,8.5;3,1;cancel;Cancel]
-			button[4.5,8.5;3,1;send;Send]
-		]] .. theme
+	local formspec =
+			"size[8,9]\n"..
+			"button[0,0;1,1;tocontacts;"..S("To:").."]\n"..
+			"field[1.1,0.3;3.2,1;to;;%s]\n"..
+			"button[4,0;1,1;cccontacts;"..S("CC:").."]\n"..
+			"field[5.1,0.3;3.1,1;cc;;%s]\n"..
+			"button[4,0.75;1,1;bcccontacts;"..S("BCC:").."]\n"..
+			"field[5.1,1.05;3.1,1;bcc;;%s]\n"..
+			"field[0.25,2;8,1;subject;"..S("Subject:")..";%s]\n"..
+			"textarea[0.25,2.5;8,6;body;;%s]\n"..
+			"button[0.5,8.5;3,1;cancel;"..S("Cancel").."]\n"..
+			"button[4.5,8.5;3,1;send;"..S("Send").."]\n" .. theme
 
 	defaultto = defaultto or ""
 	defaultsubj = defaultsubj or ""
@@ -313,13 +303,13 @@ end
 
 function mail.reply(name, message)
 	mail.ensure_new_format(message)
-	local replyfooter = "Type your reply here.\n\n--Original message follows--\n" ..message.body
+	local replyfooter = "Sem napište svoji odpověď.\n\n--Následuje původní zpráva--\n" ..message.body
 	mail.show_compose(name, message.sender, "Re: "..message.subject, replyfooter)
 end
 
 function mail.replyall(name, message)
 	mail.ensure_new_format(message)
-	local replyfooter = "Type your reply here.\n\n--Original message follows--\n" ..message.body
+	local replyfooter = "Sem napište svoji odpověď.\n\n--Následuje původní zpráva--\n" ..message.body
 
 	-- new recipients are the sender plus the original recipients, minus ourselves
 	local recipients = message.to or ""
@@ -349,7 +339,7 @@ function mail.replyall(name, message)
 end
 
 function mail.forward(name, message)
-	local fwfooter = "Type your message here.\n\n--Original message follows--\n" .. (message.body or "")
+	local fwfooter = "Sem napište svoji zprávu.\n\n--Následuje původní zpráva--\n" .. (message.body or "")
 	mail.show_compose(name, "", "Fw: " .. (message.subject or ""), fwfooter)
 end
 
@@ -683,12 +673,10 @@ minetest.register_on_player_receive_fields(mail.handle_receivefields)
 if minetest.get_modpath("unified_inventory") then
 	mail.receive_mail_message = mail.receive_mail_message ..
 		" or use the mail button in the inventory"
-	mail.read_later_message = mail.read_later_message ..
-		" or by using the mail button in the inventory"
 
 	unified_inventory.register_button("mail", {
 			type = "image",
 			image = "mail_button.png",
-			tooltip = "Mail"
+			tooltip = S("Mail")
 		})
 end

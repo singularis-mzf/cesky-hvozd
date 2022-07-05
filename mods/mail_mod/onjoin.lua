@@ -12,10 +12,8 @@ minetest.register_on_joinplayer(function(player)
 
 		if unreadcount > 0 then
 			minetest.chat_send_player(name,
-				minetest.colorize("#00f529", "(" ..  unreadcount .. ") You have mail! Type /mail to read"))
+				minetest.colorize("#00f529", "(" ..  unreadcount .. ") Máte nepřečtenou poštu! Pro přečtení zadejte „/pošta“, „/posta“, nebo použijte tlačítko v inventáři"))
 
 		end
 	end, player:get_player_name())
-
-	mail.migrate_contacts(player:get_player_name())
 end)

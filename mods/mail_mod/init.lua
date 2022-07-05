@@ -1,3 +1,5 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 mail = {
 
 	-- mark webmail fork for other mods
@@ -29,38 +31,10 @@ mail = {
 local MP = minetest.get_modpath(minetest.get_current_modname())
 dofile(MP .. "/util/normalize.lua")
 dofile(MP .. "/chatcommands.lua")
-dofile(MP .. "/migrate.lua")
 dofile(MP .. "/attachment.lua")
 dofile(MP .. "/hud.lua")
 dofile(MP .. "/storage.lua")
 dofile(MP .. "/api.lua")
 dofile(MP .. "/gui.lua")
 dofile(MP .. "/onjoin.lua")
-
--- optional webmail stuff below
-local http = QoS and QoS(minetest.request_http_api(), 2) or minetest.request_http_api()
-
-if http then
-	local webmail_url = mail.webmail.url
-	local webmail_key = mail.webmail.key
-
-	if not webmail_url then error("webmail.url is not defined") end
-	if not webmail_key then error("webmail.key is not defined") end
-
-	print("[mail] loading webmail-component with endpoint: " .. webmail_url)
-
-	mail.handlers = {}
-	dofile(MP .. "/webmail/tan.lua")
-	dofile(MP .. "/webmail/webmail.lua")
-	dofile(MP .. "/webmail/hook.lua")
-	dofile(MP .. "/webmail/handler_auth.lua")
-	dofile(MP .. "/webmail/handler_send.lua")
-	dofile(MP .. "/webmail/handler_messages.lua")
-	dofile(MP .. "/webmail/handler_delete.lua")
-	dofile(MP .. "/webmail/handler_mark_read.lua")
-	dofile(MP .. "/webmail/handler_mark_unread.lua")
-	mail.webmail_init(http, webmail_url, webmail_key)
-end
-
--- migrate storage
-mail.migrate()
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
