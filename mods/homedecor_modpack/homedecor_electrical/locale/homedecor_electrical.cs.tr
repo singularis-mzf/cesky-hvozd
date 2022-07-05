@@ -1,0 +1,8 @@
+# textdomain: homedecor_electrical
+
+
+### init.lua ###
+
+Doorbell=Domovní zvonek
+Light switch=Vypínač (domácí)
+Power Outlet=Elektrická zásuvka

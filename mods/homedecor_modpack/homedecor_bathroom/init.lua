@@ -1,5 +1,7 @@
 local S = minetest.get_translator("homedecor_bathroom")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local sc_disallow = minetest.get_modpath("screwdriver") and screwdriver.disallow or nil
 
 local wood_tex = homedecor.textures.default_wood
@@ -17,9 +19,7 @@ homedecor.register("bathroom_tiles_dark", {
 	paramtype2 = "color",
 	palette = "unifieddyes_palette_extended.png",
 	groups = {cracky=3, ud_param2_colorable = 1, dig_stone = 2},
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	on_construct = unifieddyes.on_construct,
 	on_dig = unifieddyes.on_dig,
 	crafts = {
@@ -45,9 +45,7 @@ homedecor.register("bathroom_tiles_medium", {
 	paramtype2 = "color",
 	palette = "unifieddyes_palette_extended.png",
 	groups = {cracky=3, ud_param2_colorable = 1, dig_stone = 2},
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	on_construct = unifieddyes.on_construct,
 	on_dig = unifieddyes.on_dig,
 	crafts = {
@@ -73,9 +71,7 @@ homedecor.register("bathroom_tiles_light", {
 	paramtype2 = "color",
 	palette = "unifieddyes_palette_extended.png",
 	groups = {cracky=3, ud_param2_colorable = 1, dig_stone = 2},
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	on_construct = unifieddyes.on_construct,
 	on_dig = unifieddyes.on_dig,
 	crafts = {
@@ -132,9 +128,7 @@ homedecor.register("medicine_cabinet", {
 	},
 	walkable = false,
 	groups = { snappy = 3, dig_stone = 2 },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	on_punch = function(pos, node, puncher, pointed_thing)
 		node.name = "homedecor:medicine_cabinet_open"
 		minetest.swap_node(pos, node)
@@ -209,9 +203,7 @@ homedecor.register("toilet", {
 	selection_box = toilet_sbox,
 	node_box = toilet_cbox,
 	groups = {cracky=3, dig_stone = 2},
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		node.name = "homedecor:toilet_open"
 		minetest.set_node(pos, node)
@@ -241,9 +233,7 @@ homedecor.register("toilet_open", {
 	drop = "homedecor:toilet",
 	use_texture_alpha = "blend",
 	groups = {cracky=3, dig_stone = 2},
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		node.name = "homedecor:toilet"
 		minetest.set_node(pos, node)
@@ -273,9 +263,7 @@ homedecor.register("toilet_paper", {
 	selection_box = tp_cbox,
 	walkable = false,
 	groups = {snappy=3,oddly_breakable_by_hand=3, dig_stone = 2},
-	_sound_def = {
-		key = "node_sound_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	crafts = {
 		{
 			recipe = {
@@ -318,9 +306,7 @@ homedecor.register("sink", {
 	selection_box = sink_sbox,
 	collision_box = sink_cbox,
 	groups = {cracky=3, dig_stone = 2},
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	on_destruct = function(pos)
 		homedecor.stop_particle_spawner({x=pos.x, y=pos.y+1, z=pos.z})
 	end,
@@ -371,9 +357,7 @@ homedecor.register("taps", {
 	},
 	walkable = false,
 	groups = {cracky=3, dig_stone = 2},
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	on_rightclick = taps_on_rightclick,
 	on_destruct = homedecor.stop_particle_spawner,
 	on_rotate = sc_disallow or nil,
@@ -403,9 +387,7 @@ homedecor.register("taps_brass", {
 	},
 	walkable = false,
 	groups = {cracky=3, dig_stone = 2},
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	on_rightclick = taps_on_rightclick,
 	on_destruct = homedecor.stop_particle_spawner,
 	on_rotate = sc_disallow or nil,
@@ -438,9 +420,7 @@ homedecor.register("shower_tray", {
 	},
 	selection_box = homedecor.nodebox.slab_y(0.1),
 	groups = {cracky=2, dig_stone = 2},
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	on_destruct = function(pos)
 		homedecor.stop_particle_spawner({x=pos.x, y=pos.y+2, z=pos.z}) -- the showerhead
 		homedecor.stop_particle_spawner({x=pos.x, y=pos.y+1, z=pos.z}) -- the taps, if any
@@ -540,9 +520,7 @@ homedecor.register("bathtub_clawfoot_brass_taps", {
 	groups = {cracky=3, dig_stone = 2},
 	selection_box = tub_sbox,
 	node_box = tub_cbox,
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	crafts = {
 		{
 			recipe = {
@@ -569,9 +547,7 @@ homedecor.register("bathtub_clawfoot_chrome_taps", {
 	groups = {cracky=3, dig_stone = 2},
 	selection_box = tub_sbox,
 	node_box = tub_cbox,
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	crafts = {
 		{
 			recipe = {
@@ -603,9 +579,7 @@ homedecor.register("bathroom_set", {
 	groups = {snappy=3, dig_stone = 2},
 	selection_box = bs_cbox,
 	walkable = false,
-	_sound_def = {
-		key = "node_sound_glass_defaults",
-	},
+	sounds = default.node_sound_glass_defaults(),
 	crafts = {
 		{
 			recipe = {
@@ -721,3 +695,4 @@ unifieddyes.register_color_craft({
 	}
 })
 
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

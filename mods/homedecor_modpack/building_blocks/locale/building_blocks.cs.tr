@@ -1,0 +1,48 @@
+# textdomain: building_blocks
+
+
+### alias.lua ###
+
+# Granite=Žula
+
+### node_stairs.lua ###
+
+Adobe=Vepřovice
+Adobe Slab=Deska z vepřovice
+Adobe Stair=Schody z vepřovice
+Brobble Spread=Cihlový zlom (povrch s automatickými svahy)
+Chess board tiling=Šachovnicové dlaždice
+Fake Grass=Falešná tráva
+Fake Grass Slab=Deska z falešné trávy
+Fake Grass Stair=Schody z falešné trávy
+Fireplace=Kamna
+Grate=Pletivo
+Grate Slab=Deska z pletiva
+Grate Stair=Schody z pletiva
+Gravel Spread=Štěrk (povrch s automatickými svahy)
+Hardwood=Tvrzené vícedruhové dřevo
+Hardwood Slab=Deska z tvrzeného vícedruhového dřeva
+Hardwood Stair=Schody z tvrzeného vícedruhového dřeva
+Marble=Mramor (Homedecor)
+Marble Slab=Deska z mramoru (Homedecor)
+Marble Stair=Schody z mramoru (Homedecor)
+Roof block=Střešní krytina
+Roof block Slab=Deska ze střešní krytiny
+Roof block Stair=Schody ze střešní krytiny
+Streak Free Glass=Čisté sklo s tyrkysovým rámem
+Streak Free Glass Slab=Deska z čistého skla s tyrkysovým rámem
+Streak Free Glass Stair=Schody z čistého skla s tyrkysovým rámem
+Tar=Asfalt
+Tar Slab=Deska z asfaltu
+Tar Stair=Schody z asfaltu
+Tarmac Spread=Asfalt (povrch s automatickými svahy)
+Terrycloth towel=Froté ručník (povrch s automatickými svahy)
+Wood Framed Glass=Čisté sklo s hnědým rámem
+Wood Framed Glass Slab=Deska z čistého skla s hnědým rámem
+Wood Framed Glass Stair=Schody z čistého skla s hnědým rámem
+
+### others.lua ###
+
+Small bundle of sticks=Hromádka dříví
+Tar Knife=Asfaltový nůž
+Tar base=Surový asfalt

@@ -1,0 +1,20 @@
+# textdomain: homedecor_fences
+
+
+### init.lua ###
+
+Barbed Wire Fence=Ohrada z řetězů
+Barbed Wire Fence Corner=Ohrada z řetězů (roh)
+Chainlink Fence=Plot z bílého pletiva
+Chainlink Fence Corner=Plot z bílého pletiva (roh)
+Fence/railing (@1)=Plot (@1)
+Unpainted Picket Fence=Dřevěný laťkový plot
+Unpainted Picket Fence Corner=Dřevěný laťkový plot (roh)
+White Picket Fence=Bílý laťkový plot
+White Picket Fence Corner=Bílý laťkový plot (roh)
+Wooden Privacy Fence=Hustší dřevěný plot
+Wooden Privacy Fence Corner=Hustší dřevěný plot (roh)
+Wrought Iron fence (type 2)=Ozdobná kovová mříž
+Wrought Iron fence (type 2) Corner=Ozdobná kovová mříž (roh)
+brass=mosazný
+wrought iron=železný

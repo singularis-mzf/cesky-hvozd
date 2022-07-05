@@ -1,0 +1,26 @@
+# textdomain: homedecor_roofing
+
+
+### init.lua ###
+
+@1 (inner corner)=@1 (vnitřní roh)
+@1 (outer corner)=@1 (vnější roh)
+
+Chimney=Cihlový komín
+Glass Skylight=Skleněné desky (povrch s automatickými svahy)
+Glass Skylight Frosted=Mléčné skleněné desky (povrch s automatickými svahy)
+
+Shingles (asphalt)=Asfaltové křidlice (povrch s automatickými svahy)
+Shingles (terracotta)=Křidlice (povrch s automatickými svahy)
+Shingles (wood)=Dřevěné křidlice (povrch s automatickými svahy)
+
+# Shingles (@1)=Křidlice (@1) (povrch s automatickými svahy)
+
+Asphalt Shingles=Asfaltové křidlice
+Glass Shingles=Skleněná střešní krytina
+Terracotta Shingles=Křidlice
+Wood Shingles=Dřevěné křidlice
+
+asphalt=asfalt
+terracotta=pálená hlína
+wood=dřevo

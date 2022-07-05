@@ -4,6 +4,8 @@
 local S = minetest.get_translator("homedecor_seating")
 local modpath = minetest.get_modpath("homedecor_seating")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 lrfurn = {}
 
 lrfurn.fdir_to_right = {
@@ -129,3 +131,5 @@ dofile(modpath.."/longsofas.lua")
 dofile(modpath.."/sofas.lua")
 dofile(modpath.."/armchairs.lua")
 dofile(modpath.."/misc.lua")
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

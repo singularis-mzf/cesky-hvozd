@@ -1,5 +1,7 @@
 -- Node definitions for Homedecor doors
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 if not minetest.get_modpath("doors") or not minetest.get_modpath("default") then
 	minetest.log(
 		"action",
@@ -128,7 +130,7 @@ for _, door in ipairs(door_list) do
 	local name = door.name
 	doors.register("homedecor_" .. name, generate_door(door))
 
-	--hack to get around doors not allowing custom meshes
+	--[[hack to get around doors not allowing custom meshes
 	if door.mesh then
 		for _, v in pairs(door_types) do
 			minetest.override_item("doors:homedecor_" .. name .. v, {
@@ -136,6 +138,7 @@ for _, door in ipairs(door_list) do
 			})
 		end
 	end
+	]]
 
 	--compatibility
 	old_doors[#old_doors + 1] = "homedecor:door_"..name.."_left"
@@ -707,3 +710,4 @@ minetest.register_lbm({
 		minetest.set_node({x=pos.x, y=pos.y+1, z=pos.z}, {name = "doors:hidden"})
 	end
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

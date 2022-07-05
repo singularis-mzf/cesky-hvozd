@@ -2,6 +2,8 @@
 
 local S = minetest.get_translator("homedecor_lighting")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 homedecor_lighting = {}
 
 local function is_protected(pos, clicker)
@@ -42,6 +44,13 @@ local rules_alldir = {
 	{x =  1, y = -1, z =  0},
 	{x =  0, y = -1, z = -1},
 }
+
+local brightness_levels
+if minetest.get_modpath("digilines") then
+	brightness_levels = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
+else
+	brightness_levels = {0, 14}
+end
 
 -- mesecons compatibility
 
@@ -198,7 +207,7 @@ end
 
 --for light_brightn_name in pairs(word_to_bright) do
 
-for brightness_level = 0, 14 do
+for _, brightness_level in ipairs(brightness_levels) do
 
 	local tiles
 	local overlay
@@ -277,9 +286,7 @@ for brightness_level = 0, 14 do
 		node_box = glowlight_nodebox.half,
 		groups = { snappy = 3, ud_param2_colorable = 1, not_in_creative_inventory = nici, dig_glass=1 },
 		light_source = brightness_level,
-		_sound_def = {
-			key = "node_sound_glass_defaults",
-		},
+		sounds = default.node_sound_glass_defaults(),
 		after_place_node = function(pos, placer, itemstack, pointed_thing)
 			unifieddyes.fix_rotation(pos, placer, itemstack, pointed_thing)
 		end,
@@ -345,9 +352,7 @@ for brightness_level = 0, 14 do
 		node_box = glowlight_nodebox.quarter,
 		groups = { snappy = 3, ud_param2_colorable = 1, not_in_creative_inventory = nici, dig_glass=1 },
 		light_source = brightness_level,
-		_sound_def = {
-			key = "node_sound_glass_defaults",
-		},
+		sounds = default.node_sound_glass_defaults(),
 		after_place_node = function(pos, placer, itemstack, pointed_thing)
 			unifieddyes.fix_rotation(pos, placer, itemstack, pointed_thing)
 		end,
@@ -414,9 +419,7 @@ for brightness_level = 0, 14 do
 		node_box = glowlight_nodebox.small_cube,
 		groups = { snappy = 3, ud_param2_colorable = 1, not_in_creative_inventory = nici, dig_glass=1 },
 		light_source = brightness_level,
-		_sound_def = {
-			key = "node_sound_glass_defaults",
-		},
+		sounds = default.node_sound_glass_defaults(),
 		after_place_node = function(pos, placer, itemstack, pointed_thing)
 			unifieddyes.fix_rotation(pos, placer, itemstack, pointed_thing)
 		end,
@@ -459,9 +462,7 @@ for brightness_level = 0, 14 do
 		light_source = brightness_level,
 		sunlight_propagates = true,
 		groups = {cracky=3, oddly_breakable_by_hand=3, not_in_creative_inventory = nici},
-		_sound_def = {
-			key = "node_sound_glass_defaults",
-		},
+		sounds = default.node_sound_glass_defaults(),
 		on_rightclick = homedecor_lighting.toggle_light,
 		drop = {
 			items = {
@@ -561,9 +562,7 @@ for brightness_level = 0, 14 do
 			use_texture_alpha = "clip",
 			groups = { snappy = 3, not_in_creative_inventory = nici, dig_glass=1 },
 			light_source = brightness_level,
-			_sound_def = {
-				key = "node_sound_glass_defaults",
-			},
+			sounds = default.node_sound_glass_defaults(),
 			on_rightclick = homedecor_lighting.toggle_light,
 			drop = {
 				items = {
@@ -605,9 +604,7 @@ for brightness_level = 0, 14 do
 		use_texture_alpha = "clip",
 		groups = { snappy = 3, not_in_creative_inventory = nici, dig_glass=1 },
 		light_source = brightness_level,
-		_sound_def = {
-			key = "node_sound_glass_defaults",
-		},
+		sounds = default.node_sound_glass_defaults(),
 		on_place = minetest.rotate_node,
 		on_rightclick = homedecor_lighting.toggle_light,
 		drop = {
@@ -716,9 +713,7 @@ for brightness_level = 0, 14 do
 		walkable = false,
 		light_source = brightness_level,
 		selection_box = tlamp_cbox,
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 		groups = {cracky=2,oddly_breakable_by_hand=1, ud_param2_colorable = 1, not_in_creative_inventory=nici },
 		drop = {
 			items = {
@@ -749,9 +744,7 @@ for brightness_level = 0, 14 do
 		light_source = brightness_level,
 		groups = {cracky=2,oddly_breakable_by_hand=1, ud_param2_colorable = 1, not_in_creative_inventory=nici },
 		selection_box = slamp_cbox,
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 		on_rotate = minetest.get_modpath("screwdriver") and screwdriver.rotate_simple or nil,
 		--expand = { top="air" },
 		drop = {
@@ -816,9 +809,7 @@ for _, light_brightn_name in ipairs({"off", "on"}) do
 		light_source = onflag and (minetest.LIGHT_MAX - 5) or nil,
 		sunlight_propagates = true,
 		groups = {cracky=3, oddly_breakable_by_hand=3, not_in_creative_inventory = nici},
-		_sound_def = {
-			key = "node_sound_glass_defaults",
-		},
+		sounds = default.node_sound_glass_defaults(),
 		on_rightclick = homedecor_lighting.toggle_light,
 		drop = {
 			items = {
@@ -837,6 +828,7 @@ for _, light_brightn_name in ipairs({"off", "on"}) do
 
 	-- rope lighting
 
+--[[
 	minetest.register_node(":homedecor:rope_light_on_floor_"..light_brightn_name, {
 		description = S("Rope lighting (on floor)"),
 		inventory_image =  "homedecor_rope_light_on_floor.png",
@@ -866,9 +858,7 @@ for _, light_brightn_name in ipairs({"off", "on"}) do
 			"group:mesecon_conductor_craftable"
 		},
 		groups = {cracky=3, oddly_breakable_by_hand=3, not_in_creative_inventory = nici_m},
-		_sound_def = {
-			key = "node_sound_stone_defaults",
-		},
+		sounds = default.node_sound_stone_defaults(),
 		drop = {
 			items = {
 				{items = {"homedecor:rope_light_on_floor_"..di} },
@@ -914,9 +904,7 @@ for _, light_brightn_name in ipairs({"off", "on"}) do
 			"group:mesecon_conductor_craftable"
 		},
 		groups = {cracky=3, oddly_breakable_by_hand=3, not_in_creative_inventory = nici_m},
-		_sound_def = {
-			key = "node_sound_stone_defaults",
-		},
+		sounds = default.node_sound_stone_defaults(),
 		drop = {
 			items = {
 				{items = {"homedecor:rope_light_on_ceiling_"..di}},
@@ -932,6 +920,7 @@ for _, light_brightn_name in ipairs({"off", "on"}) do
 			},
 		} or nil,
 	})
+]]
 
 	homedecor.register("wall_lamp_"..light_brightn_name, {
 		description = S("Wall Lamp/light"),
@@ -1090,9 +1079,7 @@ homedecor.register("oil_lamp", {
 	walkable = false,
 	groups = { snappy = 3, dig_glass=1 },
 	light_source = minetest.LIGHT_MAX-3,
-	_sound_def = {
-		key = "node_sound_glass_defaults",
-	},
+	sounds = default.node_sound_glass_defaults(),
 })
 
 homedecor.register("oil_lamp_tabletop", {
@@ -1104,9 +1091,7 @@ homedecor.register("oil_lamp_tabletop", {
 	collision_box = ol_cbox,
 	groups = { snappy = 3, dig_glass=1 },
 	light_source = minetest.LIGHT_MAX-3,
-	_sound_def = {
-		key = "node_sound_glass_defaults",
-	},
+	sounds = default.node_sound_glass_defaults(),
 })
 
 local topchains_sbox = {
@@ -1169,9 +1154,7 @@ minetest.register_node(":homedecor:chandelier_steel", {
 	mesh = "homedecor_chandelier.obj",
 	use_texture_alpha = "clip",
 	groups = {cracky=3, dig_glass=1},
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 })
 
 minetest.register_node(":homedecor:chandelier_brass", {
@@ -1198,11 +1181,10 @@ minetest.register_node(":homedecor:chandelier_brass", {
 	mesh = "homedecor_chandelier.obj",
 	use_texture_alpha = "clip",
 	groups = {cracky=3, dig_glass=1},
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 })
 
+--[[
 homedecor.register("torch_wall", {
 	description = S("Wall Torch"),
 	mesh = "forniture_torch.obj",
@@ -1230,6 +1212,7 @@ homedecor.register("torch_wall", {
 	use_texture_alpha = "clip",
 	groups = {cracky=3, dig_glass=1},
 })
+]]
 
 -- table lamps and standing lamps
 
@@ -1831,7 +1814,7 @@ unifieddyes.register_color_craft({
 	}
 })
 
-
+--[[
 minetest.register_craft({
 	output = "homedecor:torch_wall 10",
 	recipe = {
@@ -1839,6 +1822,7 @@ minetest.register_craft({
 		{ "default:steel_ingot" },
 	},
 })
+]]
 -- aliases
 
 minetest.register_alias("chains:chain_top",                    "homedecor:chain_steel_top")
@@ -1872,8 +1856,10 @@ minetest.register_alias("homedecor:wall_lamp",                 "homedecor:wall_l
 minetest.register_alias("homedecor:rope_light_on_floor_0",     "homedecor:rope_light_on_floor_off")
 minetest.register_alias("homedecor:rope_light_on_floor_14",    "homedecor:rope_light_on_floor_on")
 
+--[[
 minetest.register_alias("homedecor:rope_light_on_ceiling_0",   "homedecor:rope_light_on_ceiling_off")
 minetest.register_alias("homedecor:rope_light_on_ceiling_14",  "homedecor:rope_light_on_ceiling_on")
+]]
 
 for name, level in pairs(word_to_bright) do
 	minetest.register_alias("homedecor:glowlight_half_"..name,        "homedecor:glowlight_half_"..level)
@@ -1897,7 +1883,7 @@ end
 
 if minetest.get_modpath("darkage") then
 	minetest.register_alias("homedecor:lattice_lantern_large",        "darkage:lamp")
-	for n = 0, 14 do
+	for _, n in ipairs(brightness_levels) do
 		minetest.register_alias("homedecor:lattice_lantern_large_"..n, "darkage:lamp")
 	end
 	for name, level in pairs(word_to_bright) do
@@ -1905,3 +1891,4 @@ if minetest.get_modpath("darkage") then
 	end
 end
 
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

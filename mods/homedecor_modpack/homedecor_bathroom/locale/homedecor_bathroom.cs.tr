@@ -1,0 +1,20 @@
+# textdomain: homedecor_bathroom
+
+
+### init.lua ###
+
+Bathroom Sink=Umývadlo
+Bathroom sundries set=Zrcadlo v koupelně
+Bathroom taps/faucet=Kohoutek v koupelně (železný)
+Bathroom taps/faucet (brass)=Kohoutek v koupelně (mosazný)
+Bathroom/kitchen tiles (dark)=Kachličky (tmavé, lze barvit)
+Bathroom/kitchen tiles (light)=Kachličky (světlé, lze barvit)
+Bathroom/kitchen tiles (medium)=Kachličky (střední, lze barvit)
+Bathtub, clawfoot, with brass taps=Vana s nožičkami a mosazným kohoutkem
+Bathtub, clawfoot, with chrome taps=Vana s nožičkami a chromovým kohoutkem
+Medicine cabinet=Skříňka na léky
+Shower Head=Sprcha
+Shower Tray=Dno sprchového koutu
+Toilet=Záchodová mísa
+Toilet paper=Toaletní papír
+Towel rod with towel=Ručník na tyči

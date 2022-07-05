@@ -1,5 +1,7 @@
 local S = minetest.get_translator("homedecor_foyer")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 homedecor.register("coatrack_wallmount", {
 	tiles = { homedecor.plain_wood },
 	inventory_image = "homedecor_coatrack_wallmount_inv.png",
@@ -40,9 +42,7 @@ homedecor.register("coat_tree", {
 	inventory_image = "homedecor_coatrack_inv.png",
 	description = S("Coat tree"),
 	groups = {snappy=3, dig_tree=2},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	expand = { top="placeholder" },
 	walkable = false,
 	selection_box = {
@@ -111,9 +111,7 @@ for _, mat in ipairs(mat_colors) do
 			"homedecor_welcome_mat_"..color..".png",
 		},
 		groups = {crumbly=3, dig_tree=2},
-		_sound_def = {
-			key = "node_sound_dirt_defaults",
-		},
+		sounds = default.node_sound_dirt_defaults(),
 		node_box = {
 			type = "fixed",
 			fixed = { -0.5, -0.5, -0.375, 0.5, -0.46875, 0.375 }
@@ -121,3 +119,5 @@ for _, mat in ipairs(mat_colors) do
 		crafts = crafts
 	})
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

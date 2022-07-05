@@ -1,5 +1,8 @@
 local S = minetest.get_translator("homedecor_windows_and_treatments")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
+
 homedecor_windows_and_treatments = {}
 
 homedecor.register("window_quartered", {
@@ -14,9 +17,7 @@ homedecor.register("window_quartered", {
 	},
 	use_texture_alpha = "blend",
 	groups = {snappy=3, dig_glass=2},
-	_sound_def = {
-		key = "node_sound_glass_defaults",
-	},
+	sounds = default.node_sound_glass_defaults(),
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -47,9 +48,7 @@ homedecor.register("window_plain", {
 	},
 	use_texture_alpha = "blend",
 	groups = {snappy=3, dig_glass=2},
-	_sound_def = {
-		key = "node_sound_glass_defaults",
-	},
+	sounds = default.node_sound_glass_defaults(),
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -81,9 +80,7 @@ homedecor.register("blinds_thick", {
 	},
 	walkable = false,
 	groups = {snappy=3, dig_glass=2},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	selection_box = wb1_cbox
 })
 
@@ -102,9 +99,7 @@ homedecor.register("blinds_thin", {
 	},
 	walkable = false,
 	groups = {snappy=3, dig_glass=2},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	selection_box = wb2_cbox
 })
 
@@ -116,9 +111,7 @@ homedecor.register("curtain_closed", {
 	use_texture_alpha = "blend",
 	walkable = false,
 	groups = { snappy = 3, ud_param2_colorable = 1, not_in_creative_inventory=1, dig_glass=2 },
-	_sound_def = {
-		key = "node_sound_leaves_defaults",
-	},
+	sounds = default.node_sound_leaves_defaults(),
 	paramtype = "light",
 	paramtype2 = "colorwallmounted",
 	palette = "unifieddyes_palette_colorwallmounted.png",
@@ -141,9 +134,7 @@ homedecor.register("curtain_open", {
 	use_texture_alpha = "blend",
 	walkable = false,
 	groups = { snappy = 3, ud_param2_colorable = 1, dig_glass=2 },
-	_sound_def = {
-		key = "node_sound_leaves_defaults",
-	},
+	sounds = default.node_sound_leaves_defaults(),
 	paramtype = "light",
 	paramtype2 = "colorwallmounted",
 	palette = "unifieddyes_palette_colorwallmounted.png",
@@ -190,9 +181,7 @@ homedecor.register("window_flowerbox", {
 		"homedecor_flowerbox_sides.png"
 	},
 	inventory_image = "homedecor_flowerbox_inv.png",
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	use_texture_alpha = "clip",
 	groups = { snappy = 3, dig_wood=2 },
 	node_box = {
@@ -212,9 +201,7 @@ homedecor.register("stained_glass", {
 	groups = {snappy=3, dig_glass=2},
 	use_texture_alpha = "blend",
 	light_source = 3,
-	_sound_def = {
-		key = "node_sound_glass_defaults",
-	},
+	sounds = default.node_sound_glass_defaults(),
 	node_box = {
 		type = "fixed",
 		fixed = { {-0.5, -0.5, 0.46875, 0.5, 0.5, 0.5} }
@@ -257,9 +244,7 @@ homedecor.register("shutter", {
 	palette = "unifieddyes_palette_colorwallmounted.png",
 	airbrush_replacement_node = "homedecor:shutter_colored",
 	groups = { snappy = 3, ud_param2_colorable = 1, dig_wood = 2 },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	selection_box = shutter_cbox,
 	node_box = shutter_cbox,
 	after_place_node = function(pos, placer, itemstack, pointed_thing)
@@ -277,9 +262,7 @@ homedecor.register("shutter_colored", {
 	paramtype2 = "colorwallmounted",
 	palette = "unifieddyes_palette_colorwallmounted.png",
 	groups = { snappy = 3 , not_in_creative_inventory = 1, ud_param2_colorable = 1, dig_wood = 2},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	selection_box = shutter_cbox,
 	node_box = shutter_cbox,
 	after_place_node = function(pos, placer, itemstack, pointed_thing)
@@ -547,3 +530,4 @@ minetest.register_craft({
 	},
 })
 
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

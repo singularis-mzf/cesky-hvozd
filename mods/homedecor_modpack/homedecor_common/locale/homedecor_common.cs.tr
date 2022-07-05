@@ -1,0 +1,28 @@
+# textdomain: homedecor_common
+
+
+### crafts.lua ###
+
+Small Wooden Drawer=Dřevěná zásuvka
+Terracotta Roof Tile=Křidlice
+
+### expansion.lua ###
+
+Not enough room - the space for the headboard is occupied!=Nedostatek místa pro umístění předmětu!
+Not enough room - the upper space is occupied!=Nedostatek místa pro umístění předmětu směrem nahoru!
+Someone already owns that spot.=Předmět nelze umístit, protože místo je chráněno.
+Someone already owns the spot where the headboard goes.=Předmět nelze umístit, protože místo je chráněno.
+
+### furnaces.lua ###
+
+@1 (active)=@1 (aktivní)
+@1 (active: @2%)=@1 (aktivní: @2%)
+@1 (empty)=@1 (prázdná)
+@1 (out of fuel)=@1 (bez paliva)
+@1 (output bins are full)=@1 (výstupní mřížka je plná)
+Furnace=Trouba
+
+### inventory.lua ###
+
+@1 (Locked)=@1 (zamykatelná/ý)
+@1 (owned by @2)=@1 (vlastní: @2)

@@ -1,0 +1,53 @@
+# textdomain: homedecor_tables
+
+
+Table=Lakovaný dřevěný stůl
+
+### coffeetable.lua ###
+
+Coffee Table=Nízký stolek 2×1 m
+No room to place the coffee table!=Nedostatek místa pro umístění stolku!
+Someone else owns the spot where the middle or far end goes!=Chyba! Oblast je chráněná a nemáte právo do ní umístit stolek.
+Someone else owns the spot where the other end goes!=Chyba! Oblast je chráněná a nemáte právo do ní umístit stolek.
+
+### endtable.lua ###
+
+End Table=Nízký stolek 1×1 m
+
+### misc.lua ###
+
+# Large glass table piece=D
+# Large wooden table piece=C
+# Legs for Utility Table=B
+Table Legs (@1)=Nohy ke stolu (@1)
+# Utility Table=
+brass=mosazné
+wrought iron=železné
+wood=dřevěné
+Mahogany Table=Hnědý lakovaný dřevěný stůl
+White Table=Bílý lakovaný dřevěný stůl
+
+small_round glass table with brass legs=Malý kulatý skleněný stůl s mosaznými nohami
+small_round glass table with wood legs=Malý kulatý skleněný stůl s dřevěnými nohami
+small_round glass table with wrought_iron legs=Malý kulatý skleněný stůl s železnými nohami
+small_round wood table with brass legs=Malý kulatý dřevěný stůl s mosaznými nohami
+small_round wood table with wood legs=Malý kulatý dřevěný stůl s dřevěnými nohami
+small_round wood table with wrought_iron legs=Malý kulatý dřevěný stůl s železnými nohami
+small_square glass table with brass legs=Malý čtveratý skleněný stůl s mosaznými nohami
+small_square glass table with wood legs=Malý čtveratý skleněný stůl s dřevěnými nohami
+small_square glass table with wrought_iron legs=Malý čtveratý skleněný stůl s železnými nohami
+small_square wood table with brass legs=Malý čtveratý dřevěný stůl s mosaznými nohami
+small_square wood table with wood legs=Malý čtveratý dřevěný stůl s dřevěnými nohami
+small_square wood table with wrought_iron legs=Malý čtveratý dřevěný stůl s železnými nohami
+large_square glass table with brass legs=Velký čtveratý skleněný stůl s mosaznými nohami
+large_square glass table with wood legs=Velký čtveratý skleněný stůl s dřevěnými nohami
+large_square glass table with wrought_iron legs=Velký čtveratý skleněný stůl s železnými nohami
+large_square wood table with brass legs=Velký čtveratý dřevěný stůl s mosaznými nohami
+large_square wood table with wood legs=Velký čtveratý dřevěný stůl s dřevěnými nohami
+large_square wood table with wrought_iron legs=Velký čtveratý dřevěný stůl s železnými nohami
+small_round glass tabletop=Malá kulatá skleněná deska na stůl
+small_round wood tabletop=Malá kulatá dřevěná deska na stůl
+small_square glass tabletop=Malá čtveratá skleněná deska na stůl
+small_square wood tabletop=Malá čtveratá dřevěná deska na stůl
+large_square glass tabletop=Velká čtveratá skleněná deska na stůl
+large_square wood tabletop=Velká čtveratá dřevěná deska na stůl

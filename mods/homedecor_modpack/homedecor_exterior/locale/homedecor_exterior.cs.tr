@@ -1,0 +1,25 @@
+# textdomain: homedecor_exterior
+
+
+### init.lua ###
+
+Barbecue=Gril
+Doghouse=Psí bouda
+Garden Lattice (@1)=Zahradní mříž (@1)
+Garden stone path=Kamenitá zahradní cesta
+No room in your inventory to add a filled bucket!=Váš inventář je plný! Nelze přidat naplněný kbelík.
+No room under there to hang a swing.=Pod zvoleným blokem není dost místa k umístění houpačky
+Shrubbery (@1)=Okrasný keř (@1)
+Shrubbery (large, @1)=Okrasný keř (horní díl, @1)
+Tree's swing=Houpačka na strom
+Water well=Malá studna
+
+You have to point at the bottom side of an overhanging object to place a swing.=K umístění houpačky klikněte na spodní stranu větve.
+
+green=zelený
+red=červený
+white wood=bílá
+white wood, with vegetation=bílá, s popínavou rostlinou
+wood=dřevěná
+wood, with vegetation=dřevěná, s popínavou rostlinou
+yellow=žlutý

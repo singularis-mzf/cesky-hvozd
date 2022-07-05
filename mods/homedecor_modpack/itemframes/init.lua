@@ -1,7 +1,15 @@
 local S = minetest.get_translator("itemframes")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local tmp = {}
 local sd_disallow = minetest.get_modpath("screwdriver") and screwdriver.disallow or nil
+
+local is_frame = {
+	["itemframes:frame"] = 1,
+	["itemframes:frame_brown"] = 1,
+	["itemframes:frame_invis"] = 1,
+}
 
 minetest.register_entity("itemframes:item",{
 	hp_max = 1,
@@ -68,7 +76,7 @@ facedir[3] = {x = -1, y = 0, z = 0}
 
 local remove_item = function(pos, node)
 	local objs = nil
-	if node.name == "itemframes:frame" then
+	if is_frame[node.name] then
 		objs = minetest.get_objects_inside_radius(pos, .5)
 	elseif node.name == "itemframes:pedestal" then
 		objs = minetest.get_objects_inside_radius({x=pos.x,y=pos.y+1,z=pos.z}, .5)
@@ -86,7 +94,7 @@ local update_item = function(pos, node)
 	remove_item(pos, node)
 	local meta = minetest.get_meta(pos)
 	if meta:get_string("item") ~= "" then
-		if node.name == "itemframes:frame" then
+		if is_frame[node.name] then
 			local posad = facedir[node.param2]
 			if not posad then return end
 			pos.x = pos.x + posad.x * 6.5 / 16
@@ -98,7 +106,7 @@ local update_item = function(pos, node)
 		tmp.nodename = node.name
 		tmp.texture = ItemStack(meta:get_string("item")):get_name()
 		local e = minetest.add_entity(pos,"itemframes:item")
-		if node.name == "itemframes:frame" then
+		if is_frame[node.name] then
 			local yaw = math.pi * 2 - node.param2 * math.pi / 2
 			e:set_yaw(yaw)
 		end
@@ -106,19 +114,21 @@ local update_item = function(pos, node)
 end
 
 local drop_item = function(pos, node)
+	--[[
 	local meta = minetest.get_meta(pos)
 	if meta:get_string("item") ~= "" then
-		if node.name == "itemframes:frame" then
+		if is_frame[node.name] then
 			minetest.add_item(pos, meta:get_string("item"))
 		elseif node.name == "itemframes:pedestal" then
 			minetest.add_item({x=pos.x,y=pos.y+1,z=pos.z}, meta:get_string("item"))
 		end
 		meta:set_string("item","")
 	end
+	]]
 	remove_item(pos, node)
 end
 
-minetest.register_node("itemframes:frame",{
+local frame_def = {
 	description = S("Item frame"),
 	drawtype = "nodebox",
 	node_box = {
@@ -137,9 +147,7 @@ minetest.register_node("itemframes:frame",{
 	sunlight_propagates = true,
 	groups = {choppy = 2, dig_immediate = 2},
 	legacy_wallmounted = true,
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	on_rotate = sd_disallow or nil,
 	after_place_node = function(pos, placer, itemstack)
 		local meta = minetest.get_meta(pos)
@@ -153,7 +161,7 @@ minetest.register_node("itemframes:frame",{
 		if name == meta:get_string("owner") or
 				minetest.check_player_privs(name, "protection_bypass") then
 			drop_item(pos,node)
-			local s = itemstack:take_item()
+			local s = itemstack:peek_item()
 			meta:set_string("item",s:to_string())
 			local item_meta = s:get_meta()
 			local description = item_meta:get_string("description")
@@ -195,8 +203,24 @@ minetest.register_node("itemframes:frame",{
 			drop_item(pos, node)
 		end
 	end,
-})
+}
 
+minetest.register_node("itemframes:frame", frame_def)
+
+frame_def = table.copy(frame_def)
+frame_def.description = S("Item frame (brown)")
+frame_def.inventory_image = "itemframes_frame_brown.png"
+frame_def.tiles = {frame_def.inventory_image}
+frame_def.wield_image = frame_def.inventory_image
+minetest.register_node("itemframes:frame_brown", frame_def)
+
+frame_def = table.copy(frame_def)
+frame_def.description = S("Item frame (invisible)")
+frame_def.inventory_image = "itemframes_invisible_inv.png"
+frame_def.wield_image = "itemframes_invisible.png"
+frame_def.tiles = {frame_def.wield_image}
+frame_def.use_texture_alpha = "clip"
+minetest.register_node("itemframes:frame_invis", frame_def)
 
 minetest.register_node("itemframes:pedestal",{
 	description = S("Pedestal"),
@@ -216,9 +240,7 @@ minetest.register_node("itemframes:pedestal",{
 	tiles = {"itemframes_pedestal.png"},
 	paramtype = "light",
 	groups = {cracky = 3, dig_stone = 2},
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	on_rotate = sd_disallow or nil,
 	after_place_node = function(pos, placer, itemstack)
 		local meta = minetest.get_meta(pos)
@@ -232,7 +254,7 @@ minetest.register_node("itemframes:pedestal",{
 		if name == meta:get_string("owner") or
 				minetest.check_player_privs(name, "protection_bypass") then
 			drop_item(pos,node)
-			local s = itemstack:take_item()
+			local s = itemstack:peek_item()
 			meta:set_string("item",s:to_string())
 			local item_meta = s:get_meta()
 			local description = item_meta:get_string("description")
@@ -281,7 +303,7 @@ minetest.register_node("itemframes:pedestal",{
 minetest.register_lbm({
 	label = "Maintain itemframe and pedestal entities",
 	name = "itemframes:maintain_entities",
-	nodenames = {"itemframes:frame", "itemframes:pedestal"},
+	nodenames = {"itemframes:frame", "itemframes:frame_brown", "itemframes:frame_invis", "itemframes:pedestal"},
 	run_at_every_load = true,
 	action = function(pos1, node1)
 		minetest.after(0,
@@ -318,6 +340,20 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
+	output = 'itemframes:frame_brown',
+	recipe = {
+		{'group:stick', 'group:stick', 'group:stick'},
+		{'group:stick', 'group:wood', 'default:stick'},
+		{'group:stick', 'group:stick', 'group:stick'},
+	}
+})
+
+minetest.register_craft({
+	output = "itemframes:frame_invis",
+	recipe = {{homedecor.materials.paper, "mesecons_materials:glue"}}
+})
+
+minetest.register_craft({
 	output = 'itemframes:pedestal',
 	recipe = {
 		{homedecor.materials.stone, homedecor.materials.stone, homedecor.materials.stone},
@@ -331,4 +367,6 @@ if minetest.get_modpath("mesecons_mvps") then
 	mesecon.register_mvps_stopper("itemframes:frame")
 	mesecon.register_mvps_stopper("itemframes:pedestal")
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 

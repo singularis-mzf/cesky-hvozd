@@ -1,0 +1,11 @@
+# textdomain: homedecor_climate_control
+
+
+### init.lua ###
+
+Air Conditioner=Klimatizace
+Ceiling Fan=Větrák se světlem (nelze vypnout)
+Desk Fan=Stolní větrák (lze zapnout/vypnout)
+Fan blades=Vrtule pro větrák
+Radiator heater=Radiátor ústředního topení
+Space heater=Ohřívač vzduchu

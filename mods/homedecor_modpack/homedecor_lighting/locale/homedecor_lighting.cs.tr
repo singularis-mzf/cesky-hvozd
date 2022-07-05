@@ -1,0 +1,34 @@
+# textdomain: homedecor_lighting
+
+
+### init.lua ###
+
+Candlestick (brass)=Svíce na mosazném svícnu
+Candlestick (wrought iron)=Svíce na železném svícnu
+Ceiling Lamp/Light=Lustr@n(lze vypínat)
+Ceiling Lantern/Light=Závěsná lampa na strop@n(lze vypínat)
+Chandelier (brass)=Mosazný lustr se svícemi
+Chandelier (steel)=Železný lustr se svícemi
+Desk Lamp/Light=Stolní lampa@n(lze vypínat a barvit)
+Ground Lantern/Light=Lampa na podlahu@n(lze vypínat)
+Hanging Lantern/Light=Lampa na zeď@n(lze vypínat)
+Hanging chain (ceiling mount, brass)=Stropní upevnění mosazného řetězu
+Hanging chain (ceiling mount, steel)=Stopní upevnění železného řetězu
+Lattice lantern/Light (large)=Velká svítilna s mřížkou@n(lze vypínat)
+Lattice lantern/light (small)=Malá svítilna s mřížkou@n(lze vypínat)
+Oil Lamp/Light (tabletop)=Petrolejová lampa na stůl
+Oil lamp/Light (hurricane)=Petrolejová lampa přenosná
+Plasma Ball/light=Plazmová koule@n(lze vypnout)
+Plasma Lamp/Light=Plazmový blok@n(lze vypnout)
+Rope lighting (on ceiling)=Spojující se zářivky na strop@n(k zapnutí použijte mesespoje)
+Rope lighting (on floor)=Spojující se zářivky na podlahu@n(k zapnutí použijte mesespoje)
+Small Glowlight Cube=Malé krychlové osvětlení@n(lze vypnout a barvit)
+Standing Lamp/Light=Vysoká stojící lampa (hnědé dřevo)@n(lze vypnout a barvit)
+Table Lamp/Light=Nízká stojící lampa (hnědé dřevo)@n(lze vypnout a barvit)
+Thick Candle=Tlustá svíce
+Thick Glowlight=Zářivka ve tvaru desky (8/16)@n(lze vypnout a barvit)
+Thin Candle=Tenká svíce
+Thin Glowlight=Zářivka ve tvaru desky (4/16)@n(lze vypnout a barvit)
+Wall Lamp/light=Lampa s upevněním na zeď@n(lze vypnout)
+Wall Torch=Ozdobná pochodeň
+Wall sconce=Svícen na zeď se svíčkou (železný)

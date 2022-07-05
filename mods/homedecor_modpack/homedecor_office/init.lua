@@ -1,5 +1,7 @@
 local S = minetest.get_translator("homedecor_office")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 homedecor.register("filing_cabinet", {
 	description = S("Filing cabinet"),
 	mesh = "homedecor_filing_cabinet.obj",
@@ -9,9 +11,7 @@ homedecor.register("filing_cabinet", {
 		"homedecor_filing_cabinet_bottom.png"
 	},
 	groups = { snappy = 3, dig_tree=2 },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	infotext=S("Filing cabinet"),
 	inventory = {
 		size=16,
@@ -43,9 +43,7 @@ homedecor.register("desk", {
 	inventory_image = "homedecor_desk_inv.png",
 	selection_box = desk_cbox,
 	collision_box = desk_cbox,
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	groups = { snappy = 3, dig_tree=2 },
 	expand = { right="placeholder" },
 	inventory = {
@@ -89,9 +87,7 @@ homedecor.register("desk_globe", {
 	collision_box = globe_cbox,
 	groups = {choppy=2, oddly_breakable_by_hand=2},
 	walkable = false,
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	crafts = {
 		{
 			recipe = {
@@ -147,3 +143,5 @@ homedecor.register("calendar", {
 		}
 	}
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

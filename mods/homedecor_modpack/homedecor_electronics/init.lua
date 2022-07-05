@@ -2,6 +2,8 @@
 
 local S = minetest.get_translator("homedecor_electronics")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 homedecor.register("speaker", {
 	description = S("Large Stereo Speaker"),
 	mesh="homedecor_speaker_large.obj",
@@ -10,9 +12,7 @@ homedecor.register("speaker", {
 		"homedecor_speaker_front.png"
 	},
 	groups = { snappy = 3, dig_tree = 2 },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		minetest.set_node(pos, {name = "homedecor:speaker_open", param2 = node.param2})
 	end,
@@ -44,9 +44,7 @@ homedecor.register("speaker_open", {
 		{ name = "homedecor_generic_metal.png", color = homedecor.color_black }
 	},
 	groups = { snappy = 3, not_in_creative_inventory=1, dig_tree = 2 },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		minetest.set_node(pos, {name = "homedecor:speaker", param2 = node.param2})
 	end
@@ -67,9 +65,7 @@ homedecor.register("speaker_small", {
 	selection_box = spk_cbox,
 	walkable = false,
 	groups = { snappy = 3, dig_tree = 2 },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	crafts = {
 		{
 			recipe = {
@@ -93,9 +89,7 @@ homedecor.register("stereo", {
 			'homedecor_stereo_back.png',
 			'homedecor_stereo_front.png'},
 	groups = { snappy = 3, dig_tree = 2 },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	crafts = {
 		{
 			recipe = {
@@ -115,9 +109,7 @@ homedecor.register("projection_screen", {
 	inventory_image = 'homedecor_projection_screen_inv.png',
 	walkable = false,
 	groups = { snappy = 3, dig_tree = 2 },
-	_sound_def = {
-		key = "node_sound_leaves_defaults",
-	},
+	sounds = default.node_sound_leaves_defaults(),
 	paramtype2 = 'wallmounted',
 	selection_box = {
 		type = "wallmounted",
@@ -153,9 +145,7 @@ homedecor.register("television", {
 	},
 	light_source = minetest.LIGHT_MAX - 1,
 	groups = { snappy = 3, dig_tree = 2 },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	crafts = {
 		{
 			recipe = {
@@ -193,9 +183,7 @@ homedecor.register("dvd_vcr", {
 		}
 	},
 	groups = { snappy = 3, dig_tree = 2 },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	crafts = {
 		{
 			output = "homedecor:dvd_player 2",
@@ -234,9 +222,7 @@ homedecor.register("telephone", {
 	groups = {snappy=3, dig_tree = 2},
 	selection_box = tel_cbox,
 	walkable = false,
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	crafts = {
 		{
 			recipe = {
@@ -298,3 +284,5 @@ minetest.register_craft({
 	recipe = "homedecor:projection_screen",
 	burntime = 30,
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

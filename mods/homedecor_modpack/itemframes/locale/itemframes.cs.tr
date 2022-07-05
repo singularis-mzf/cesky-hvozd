@@ -1,0 +1,11 @@
+# textdomain: itemframes
+
+
+### init.lua ###
+
+Item frame=Fotografie v rámu
+Item frame (brown)=Fotografie v rámu (tmavé pozadí)
+Item frame (invisible)=Fotografie bez rámu
+Item frame (owned by @1)=Fotografie (vlastní: @1)
+Pedestal=Piedestal
+Pedestal (owned by @1)=Piedestal (vlastní: @1)

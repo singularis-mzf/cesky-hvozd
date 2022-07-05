@@ -1,5 +1,7 @@
 local S = minetest.get_translator("homedecor_furniture")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local ob_cbox = {
 	type = "fixed",
 	fixed = { -0.5, -0.5, 0, 0.5, 0.5, 0.5 }
@@ -16,9 +18,7 @@ homedecor.register("openframe_bookshelf", {
 		wood_tex
 	},
 	groups = {choppy=3,oddly_breakable_by_hand=2,flammable=3},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	selection_box = ob_cbox,
@@ -40,9 +40,7 @@ homedecor.register("wall_shelf", {
 		wood_tex,
 	},
 	groups = { snappy = 3, dig_tree = 2 },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -51,3 +49,5 @@ homedecor.register("wall_shelf", {
 		}
 	}
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

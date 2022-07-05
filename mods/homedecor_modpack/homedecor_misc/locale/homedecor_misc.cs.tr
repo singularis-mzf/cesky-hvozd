@@ -1,0 +1,58 @@
+# textdomain: homedecor_misc
+
+
+### init.lua ###
+
+Banister for Stairs (@1, @2)=Zábradlí (@1, @2)
+Blue Geranium=Modrá pelargonie
+Bonsai=Bonsaj
+Brass Pole=Mosazná tyč
+Cactus=Sukulent
+Cardboard box=Malá kartonová kabice
+Cardboard box (big)=Velká kartonová krabice
+DVD/CD cabinet=Skříň na DVD a CD (jen ozdoba)
+Dartboard=Terč
+Drop-Ceiling Tile=Bílá dlaždice
+Fishtank=Akvárium@n(osvětlení lze zapnout/vypnout)
+Fishtank (lighted)=Akvárium (osvětlené)
+Flower Pot (@1)=Květináč (@1)
+Japanese tatami=Japonské tatami
+Japanese wall=Japonská zeď (prostřední díl)
+Japanese wall (bottom)=Japonská zeď (spodní díl)
+Japanese wall (top)=Japonská zeď (horní díl)
+Piano=Klavír
+Pool Table=Kulečníkový stůl
+Potted flower (@1)=@1 v květináči
+Rose=Červená růže
+Rug (@1)=Koberec (@1)
+Skateboard=Skateboard
+Small Flower Pot=Malý květináč
+Spiral Staircase=Točité schodiště
+Sport bench=Vzpěračský stůl
+Textured Ceiling Paint=Malířský váleček
+Trophy=Trofej
+Tulip=Žlutý tulipán
+Viola=Fialka
+White Dandelion=Bílá pampeliška
+Wrought Iron Pole=Železná tyč
+Yellow Dandelion=Žlutá pampeliška
+brass=mosazné
+dark topped=tmavě lakované
+diagonal=diagonální
+diagonal left=vlevo od schodů
+diagonal right=vpravo od schodů
+diagonal left lower part=spodní díl vlevo od schodů
+diagonal left upper part=horní díl vlevo od schodů
+diagonal right lower part=spodní díl vpravo od schodů
+diagonal right upper part=horní díl vpravo od schodů
+horizontal=vodorovné
+not enough space=není dost místa
+wood=dřevěné barvitelné
+wrought iron=železné
+black=černý
+green=zelený
+terracotta=hliněný
+
+large=velký
+small=malý
+persian=perský

@@ -1,5 +1,7 @@
 local S = minetest.get_translator("homedecor_clocks")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local wood
 if minetest.get_modpath("default") then
 	wood = "default_wood.png"
@@ -50,9 +52,7 @@ for _, mat in ipairs(clock_materials) do
 		walkable = false,
 		selection_box = clock_sbox,
 		groups = {snappy=3, dig_tree=2},
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 		crafts = {
 			craft
 		}
@@ -77,9 +77,7 @@ homedecor.register("digital_clock", {
 		}
 	},
 	walkable = false,
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	groups = {snappy=3, dig_tree=2},
 	crafts = {
 		{
@@ -111,9 +109,7 @@ homedecor.register("alarm_clock", {
 		}
 	},
 	walkable = false,
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	groups = {snappy=3, dig_tree=2},
 	crafts = {
 		{
@@ -146,9 +142,7 @@ homedecor.register("grandfather_clock", {
 	groups = {snappy = 3, dig_tree=2},
 	selection_box = gf_cbox,
 	collision_box = gf_cbox,
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	expand = { top="placeholder" },
 	on_rotate = minetest.get_modpath("screwdriver") and screwdriver.rotate_simple or nil,
 	crafts = {
@@ -166,3 +160,5 @@ homedecor.register("grandfather_clock", {
 
 minetest.register_alias("homedecor:grandfather_clock_bottom", "homedecor:grandfather_clock")
 minetest.register_alias("homedecor:grandfather_clock_top", "air")
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

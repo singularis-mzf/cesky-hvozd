@@ -36,9 +36,7 @@ for _, t in ipairs(leg_materials) do
 		walkable = false,
 		use_texture_alpha = "blend",
 		groups = {snappy=3, dig_tree=2},
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 		selection_box = {
 			type = "fixed",
 			fixed = { -0.37, -0.5, -0.37, 0.37, 0.5, 0.37 }
@@ -61,15 +59,15 @@ for i, mat in ipairs(tabletop_materials) do
 	local s
 
 	if m == "glass" then
-		s = "node_sound_glass_defaults"
+		s = default.node_sound_glass_defaults()
 	else
-		s = "node_sound_wood_defaults"
+		s = default.node_sound_wood_defaults()
 	end
 
 	for _, shape in ipairs(table_shapes) do
 
 		homedecor.register(m.."_table_"..shape, {
-			description = shape.." "..m.." tabletop",
+			description = S(shape.." "..m.." tabletop"),
 			mesh = "homedecor_table_"..shape..".obj",
 			tiles = {
 				'homedecor_'..m..'_table_'..shape..'.png',
@@ -81,9 +79,7 @@ for i, mat in ipairs(tabletop_materials) do
 			wield_image = 'homedecor_'..m..'_table_'..shape..'_inv.png',
 			use_texture_alpha = "blend",
 			groups = { snappy = 3, dig_tree=2 },
-			_sound_def = {
-				key = s,
-			},
+			sounds = s,
 			selection_box = tables_cbox,
 			collision_box = tables_cbox,
 			on_place = function(itemstack, placer, pointed_thing)
@@ -108,7 +104,7 @@ for i, mat in ipairs(tabletop_materials) do
 			local leg_mat = unpack(l)
 
 			homedecor.register(string.format("%s_table_%s_with_%s_legs", m, shape, leg_mat), {
-				description = string.format("%s %s table with %s legs", shape, m, leg_mat),
+				description = S(string.format("%s %s table with %s legs", shape, m, leg_mat)),
 				mesh = "homedecor_table_"..shape..".obj",
 				tiles = {
 					'homedecor_blanktile.png',
@@ -119,9 +115,7 @@ for i, mat in ipairs(tabletop_materials) do
 				},
 				use_texture_alpha = "blend",
 				groups = { snappy = 3, dig_tree=2 },
-				_sound_def = {
-					key = s
-				},
+				sounds = s,
 			})
 		end
 	end
@@ -162,9 +156,7 @@ for _, t in ipairs(table_colors) do
 			},
 		},
 		groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2},
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 	})
 end
 

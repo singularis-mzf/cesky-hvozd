@@ -2,6 +2,8 @@ local S = minetest.get_translator("homedecor_electrical")
 
 homedecor_electrical = {}
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 function homedecor_electrical.toggle_switch(pos, node, clicker, itemstack, pointed_thing)
 	if not clicker then return false end
 	local playername = clicker:get_player_name()
@@ -168,3 +170,5 @@ minetest.register_craft( {
 -- aliases
 
 minetest.register_alias("homedecor:light_switch", "homedecor:light_switch_on")
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

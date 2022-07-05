@@ -1,5 +1,7 @@
 local S = minetest.get_translator("homedecor_pictures_and_paintings")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local wood_tex = homedecor.textures.default_wood
 
 local pframe_cbox = {
@@ -10,7 +12,7 @@ local n = { 1, 2 }
 
 for _, i in ipairs(n) do
 	homedecor.register("picture_frame"..i, {
-		description = S("Picture Frame @1", i),
+		description = S("Picture Frame " .. i),
 		mesh = "homedecor_picture_frame.obj",
 		tiles = {
 			"homedecor_picture_frame_image"..i..".png",
@@ -22,9 +24,7 @@ for _, i in ipairs(n) do
 		groups = {snappy = 3, dig_tree = 3},
 		selection_box = pframe_cbox,
 		walkable = false,
-		_sound_def = {
-			key = "node_sound_glass_defaults",
-		},
+		sounds = default.node_sound_glass_defaults(),
 	})
 end
 
@@ -37,7 +37,7 @@ local p_cbox = {
 
 for i = 1,20 do
 	homedecor.register("painting_"..i, {
-		description = S("Decorative painting #@1", i),
+		description = S("Decorative painting #" .. i),
 		mesh = "homedecor_painting.obj",
 		tiles = {
 			wood_tex,
@@ -47,9 +47,7 @@ for i = 1,20 do
 		selection_box = p_cbox,
 		walkable = false,
 		groups = {snappy=3, dig_tree = 3},
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 	})
 end
 
@@ -178,3 +176,5 @@ if minetest.get_modpath("i3") then
 		by = numbers
 	})
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

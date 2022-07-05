@@ -1,6 +1,8 @@
 local S = minetest.get_translator("homedecor_exterior")
 homedecor_exterior = {}
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local bbq_cbox = {
 	type = "fixed",
 	fixed = { -0.5, -0.5, -0.3125, 0.5, 0.53125, 0.3125 }
@@ -25,9 +27,7 @@ homedecor.register("barbecue", {
 	light_source = 9,
 	selection_box = bbq_cbox,
 	collision_box = bbq_cbox,
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	-- no need for placeholder it appears
 	expand = { top="air" },
 	crafts = {
@@ -58,9 +58,7 @@ homedecor.register("doghouse", {
 	collision_box = homedecor.nodebox.slab_y(1.5),
 	groups = {snappy=3, dig_tree = 2},
 	expand = { top="placeholder" },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	on_rotate = minetest.get_modpath("screwdriver") and screwdriver.rotate_simple or nil,
 	crafts = {
 		{
@@ -100,9 +98,7 @@ homedecor.register("stonepath", {
 		type = "fixed",
 		fixed = { -0.4375, -0.5, -0.4375, 0.4375, -0.4, 0.4375 }
 	},
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	crafts = {
 		{
 			output = "homedecor:stonepath 16",
@@ -162,9 +158,7 @@ homedecor.register("lattice_"..name, {
 		type = "fixed",
 		fixed = {-0.5, -0.5, 0.44, 0.5, 0.5, 0.5}
 	},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 })
 end
 
@@ -178,9 +172,7 @@ homedecor.register("swing", {
 	inventory_image = "homedecor_swing_inv.png",
 	use_texture_alpha = "clip",
 	groups = { snappy=3, oddly_breakable_by_hand=3, dig_tree = 2 },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	walkable = false,
 	on_rotate = minetest.get_modpath("screwdriver") and screwdriver.disallow or nil,
 	node_box = {
@@ -315,9 +307,7 @@ homedecor.register("well", {
 	selection_box = homedecor.nodebox.slab_y(2),
 	collision_box = homedecor.nodebox.slab_y(2),
 	expand = { top="placeholder" },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	on_rotate = minetest.get_modpath("screwdriver") and screwdriver.rotate_simple or nil,
 	crafts = {
 		{
@@ -371,9 +361,7 @@ for color, color_loc in pairs(homedecor_exterior.shrub_colors) do
 		is_ground_content = false,
 		use_texture_alpha = "clip",
 		groups = {snappy=3, flammable=2, dig_tree = 3},
-		_sound_def = {
-			key = "node_sound_leaves_defaults",
-		},
+		sounds = default.node_sound_leaves_defaults(),
 		crafts = {
 			{
 				type = "shapeless",
@@ -397,9 +385,7 @@ for color, color_loc in pairs(homedecor_exterior.shrub_colors) do
 		is_ground_content = false,
 		use_texture_alpha = "clip",
 		groups = {snappy=3, flammable=2, dig_tree = 3},
-		_sound_def = {
-			key = "node_sound_leaves_defaults",
-		},
+		sounds = default.node_sound_leaves_defaults(),
 		selection_box = shrub_cbox,
 		collision_box = shrub_cbox,
 		crafts = {
@@ -489,3 +475,5 @@ minetest.register_alias("homedecor:well_base", "homedecor:well")
 
 minetest.register_alias("gloopblocks:shrubbery", "homedecor:shrubbery_green")
 minetest.register_alias("gloopblocks:shrubbery_large", "homedecor:shrubbery_large_green")
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

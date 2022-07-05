@@ -2,6 +2,8 @@
 
 local S = minetest.get_translator("homedecor_climate_control")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 homedecor.register("air_conditioner", {
 	description = S("Air Conditioner"),
 	mesh = "homedecor_ac.obj",
@@ -11,9 +13,7 @@ homedecor.register("air_conditioner", {
 	},
 	groups = { snappy = 3, dig_stone = 3 },
 	use_texture_alpha = "clip",
-	_sound_def = {
-		key = "node_sound_leaves_defaults",
-	},
+	sounds = default.node_sound_leaves_defaults(),
 	selection_box = { type="regular" },
 	crafts = {
 		{
@@ -125,9 +125,7 @@ homedecor.register("ceiling_fan", {
 	use_texture_alpha = "clip",
 	groups = { snappy = 3, dig_stone = 3 },
 	light_source = minetest.LIGHT_MAX-1,
-	_sound_def = {
-		key = "node_sound_glass_defaults",
-	},
+	sounds = default.node_sound_glass_defaults(),
 	crafts = {
 		{
 			recipe = {
@@ -160,9 +158,7 @@ homedecor.register("space_heater", {
 	inventory_image = "homedecor_heater_inv.png",
 	walkable = false,
 	groups = { snappy = 3, dig_stone = 3 },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -196,9 +192,7 @@ homedecor.register("radiator", {
 	groups = {snappy=3, dig_stone = 3},
 	selection_box = r_cbox,
 	collision_box = r_cbox,
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	crafts = {
 		{
 			recipe = {
@@ -224,3 +218,5 @@ minetest.register_craft( {
 		{ "basic_materials:plastic_sheet", "", "basic_materials:plastic_sheet" }
     },
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

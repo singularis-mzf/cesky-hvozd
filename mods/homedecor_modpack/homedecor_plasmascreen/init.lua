@@ -1,5 +1,7 @@
 local S = minetest.get_translator("plasmascreen")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local sc_disallow = minetest.get_modpath("screwdriver") and screwdriver.disallow or nil
 
 homedecor.register("tv_stand", {
@@ -184,3 +186,5 @@ minetest.register_alias("plasmascreen:screen5", "homedecor:tv")
 minetest.register_alias("plasmascreen:stand", "homedecor:tv_stand")
 minetest.register_alias("plasmascreen:tv", "homedecor:tv")
 minetest.register_alias("plasmascreen:tv_off", "homedecor:tv_off")
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

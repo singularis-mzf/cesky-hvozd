@@ -2,6 +2,8 @@
 
 local S = minetest.get_translator("homedecor_fences")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local brass =  {
 	output = "homedecor:fence_brass 6",
 	recipe = {
@@ -34,9 +36,7 @@ for _, m in ipairs(materials) do
 		inventory_image = "homedecor_fence_"..name..".png",
 		selection_box = homedecor.nodebox.bar_y(1/7),
 		groups = {snappy=3, dig_stone=3},
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 		crafts = {
 			craft
 		}
@@ -58,9 +58,7 @@ homedecor.register("fence_picket", {
 	},
 	use_texture_alpha = "clip",
 	groups = {snappy=3, dig_tree=2},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	selection_box = homedecor.nodebox.slab_z(-0.1),
 	node_box = homedecor.nodebox.slab_z(-0.002),
 	crafts = {
@@ -94,9 +92,7 @@ homedecor.register("fence_picket_corner", {
 	},
 	use_texture_alpha = "clip",
 	groups = {snappy=3, dig_tree=2},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	selection_box = homedecor.nodebox.corner_xz(0.1, -0.1),
 	node_box = homedecor.nodebox.corner_xz(0.002, -0.002),
 	crafts = {
@@ -122,9 +118,7 @@ homedecor.register("fence_picket_white", {
 	},
 	use_texture_alpha = "clip",
 	groups = {snappy=3, dig_tree=2},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	selection_box = homedecor.nodebox.slab_z(-0.1),
 	node_box = homedecor.nodebox.slab_z(-0.002),
 	crafts = {
@@ -158,9 +152,7 @@ homedecor.register("fence_picket_corner_white", {
 	},
 	use_texture_alpha = "clip",
 	groups = {snappy=3, dig_tree=2},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	selection_box = homedecor.nodebox.corner_xz(0.1, -0.1),
 	node_box = homedecor.nodebox.corner_xz(0.002, -0.002),
 	crafts = {
@@ -185,9 +177,7 @@ homedecor.register("fence_privacy", {
 		"homedecor_fence_privacy_front.png"
 	},
 	groups = {snappy=3, dig_tree=2},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	selection_box = homedecor.nodebox.slab_z(-3/16),
 	node_box = {
 		type = "fixed",
@@ -228,9 +218,7 @@ homedecor.register("fence_privacy_corner", {
 		"homedecor_fence_privacy_corner_front.png"
 	},
 	groups = {snappy=3, dig_tree=2},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	selection_box = {
 		type = "fixed",
 		fixed = {
@@ -269,9 +257,7 @@ homedecor.register("fence_barbed_wire", {
 	tiles = {"homedecor_fence_barbed_wire.png"},
 	use_texture_alpha = "clip",
 	groups = {snappy=3, dig_tree=2},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	selection_box = homedecor.nodebox.slab_z(-0.125),
 	collision_box = homedecor.nodebox.slab_z(-0.125),
 	crafts = {
@@ -297,9 +283,7 @@ homedecor.register("fence_barbed_wire_corner", {
 	tiles = { "homedecor_fence_barbed_wire.png" },
 	use_texture_alpha = "clip",
 	groups = {snappy=3, dig_tree=2},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	selection_box = homedecor.nodebox.corner_xz(0.125, -0.125),
 	collision_box = homedecor.nodebox.corner_xz(0.125, -0.125),
 	crafts = {
@@ -323,9 +307,7 @@ homedecor.register("fence_chainlink", {
 	},
 	use_texture_alpha = "clip",
 	groups = {snappy=3, dig_stone=3},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	selection_box = homedecor.nodebox.slab_z(-0.125),
 	collision_box = homedecor.nodebox.slab_z(-0.125),
 	crafts = {
@@ -359,9 +341,7 @@ homedecor.register("fence_chainlink_corner", {
 	},
 	use_texture_alpha = "clip",
 	groups = {snappy=3, dig_stone=3},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	selection_box = homedecor.nodebox.corner_xz(0.125, -0.125),
 	collision_box = homedecor.nodebox.corner_xz(0.125, -0.125),
 	crafts = {
@@ -384,9 +364,7 @@ homedecor.register("fence_wrought_iron_2", {
 	},
 	use_texture_alpha = "clip",
 	groups = {snappy=3, dig_stone=3},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	selection_box = homedecor.nodebox.slab_z(-0.08),
 	node_box = {
 		type = "fixed",
@@ -430,9 +408,7 @@ homedecor.register("fence_wrought_iron_2_corner", {
 	},
 	use_texture_alpha = "clip",
 	groups = {snappy=3, dig_stone=3},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	selection_box = homedecor.nodebox.corner_xz(0.08, -0.08),
 	node_box = {
 		type = "fixed",
@@ -475,3 +451,5 @@ if minetest.get_modpath("signs_lib") and minetest.get_modpath("default") then
 	signs_lib.old_fenceposts["homedecor:fence_wrought_iron_with_sign"] = "homedecor:fence_wrought_iron"
 	signs_lib.old_fenceposts_replacement_signs["homedecor:fence_wrought_iron_with_sign"] = "default:sign_wall_wood_onpole"
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

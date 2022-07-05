@@ -1,0 +1,10 @@
+# textdomain: homedecor_office
+
+
+### init.lua ###
+
+Calendar=Kalendář
+Date (right-click to update):@n@1=Datum (klik pravým pro aktualizaci):@n@1
+Desk=Pracovní stůl
+Desk globe=Globus
+Filing cabinet=Stolek se zásuvkou

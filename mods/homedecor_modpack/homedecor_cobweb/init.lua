@@ -1,6 +1,8 @@
 local S = minetest.get_translator("homedecor_cobweb")
 homedecor_cobweb = {}
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 homedecor.register("cobweb_corner", {
 	description = S("Cobweb"),
 	drawtype = "torchlike",
@@ -169,3 +171,5 @@ function homedecor_cobweb.rotate(pos)
 	end
 
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

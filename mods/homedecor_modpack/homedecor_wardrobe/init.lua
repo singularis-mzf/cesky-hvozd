@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 if not minetest.get_modpath("player_api") then
 	minetest.log(
 		"action",
@@ -69,11 +70,11 @@ local function set_player_skin(player, skin, save)
 	end
 
 	if save and not skinsdb_mod_path then
-
+		local player_meta = player:get_meta()
 		if skin == default_skin then
-			player:set_attribute("homedecor:player_skin", "")
+			player_meta:set_string("homedecor:player_skin", "")
 		else
-			player:set_attribute("homedecor:player_skin", skin)
+			player_meta:set_string("homedecor:player_skin", skin)
 		end
 	end
 end
@@ -199,8 +200,10 @@ end
 minetest.register_craft( {
 	output = "homedecor:wardrobe",
 	recipe = {
-		{ "homedecor:drawer_small", "homedecor:kitchen_cabinet" },
+		{ "homedecor:drawer_small", "homedecor:kitchen_cabinet_colorable" },
 		{ "homedecor:drawer_small", "group:wood" },
 		{ "homedecor:drawer_small", "group:wood" }
 	},
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

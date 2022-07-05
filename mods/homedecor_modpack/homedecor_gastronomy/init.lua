@@ -1,5 +1,7 @@
 local S = minetest.get_translator("homedecor_gastronomy")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local cutlery_cbox = {
 	type = "fixed",
 	fixed = {
@@ -17,9 +19,7 @@ homedecor.register("cutlery_set", {
 	groups = {snappy=3, dig_stone=3},
 	selection_box = cutlery_cbox,
 	walkable = false,
-	_sound_def = {
-		key = "node_sound_glass_defaults",
-	},
+	sounds = default.node_sound_glass_defaults(),
 })
 
 local bottle_cbox = {
@@ -52,9 +52,7 @@ for _, b in ipairs(bottle_colors) do
 		mesh = "homedecor_bottle.obj",
 		walkable = false,
 		groups = {snappy=3, dig_stone=3},
-		_sound_def = {
-			key = "node_sound_glass_defaults",
-		},
+		sounds = default.node_sound_glass_defaults(),
 		selection_box = bottle_cbox
 	})
 
@@ -70,9 +68,7 @@ for _, b in ipairs(bottle_colors) do
 		mesh = "homedecor_4_bottles.obj",
 		walkable = false,
 		groups = {snappy=3, dig_stone=3},
-		_sound_def = {
-			key = "node_sound_glass_defaults",
-		},
+		sounds = default.node_sound_glass_defaults(),
 		selection_box = fbottle_cbox
 	})
 end
@@ -87,9 +83,7 @@ homedecor.register("4_bottles_multi", {
 	mesh = "homedecor_4_bottles.obj",
 	groups = {snappy=3, dig_stone=3},
 	walkable = false,
-	_sound_def = {
-		key = "node_sound_glass_defaults",
-	},
+	sounds = default.node_sound_glass_defaults(),
 	selection_box = fbottle_cbox
 })
 
@@ -108,9 +102,7 @@ homedecor.register("wine_rack", {
 	groups = {choppy=2, dig_tree=2},
 	selection_box = wine_cbox,
 	collision_box = wine_cbox,
-	_sound_def = {
-		key = "node_sound_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 })
 
 -- coffee!
@@ -306,3 +298,4 @@ minetest.register_craft({
 	},
 })
 
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

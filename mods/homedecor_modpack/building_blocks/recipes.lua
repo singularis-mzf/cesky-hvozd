@@ -93,6 +93,7 @@ minetest.register_craft({
 		{"group:stick"},
 	}
 })
+--[[
 minetest.register_craft({
 	output = "building_blocks:Marble 9",
 	recipe = {
@@ -101,6 +102,7 @@ minetest.register_craft({
 		{materials.clay_lump, "group:tar_block",materials.clay_lump},
 	}
 })
+]]
 minetest.register_craft({
 	output = 'building_blocks:Roofing 10',
 	recipe = {

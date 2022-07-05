@@ -1,5 +1,7 @@
 local S = minetest.get_translator("homedecor_bedroom")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local sc_disallow = minetest.get_modpath("screwdriver") and screwdriver.disallow or nil
 
 local wood_tex, wool_tex = homedecor.textures.default_wood, homedecor.textures.wool_white
@@ -53,9 +55,7 @@ homedecor.register("bed_regular", {
 	groups = {snappy=3, ud_param2_colorable = 1, dig_generic=2},
 	selection_box = bed_sbox,
 	node_box = bed_cbox,
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	on_rotate = sc_disallow or nil,
 	after_place_node = function(pos, placer, itemstack, pointed_thing)
 		unifieddyes.fix_rotation_nsew(pos, placer, itemstack, pointed_thing)
@@ -102,9 +102,7 @@ homedecor.register("bed_extended", {
 	selection_box = bed_sbox,
 	node_box = bed_cbox,
 	groups = {snappy=3, ud_param2_colorable = 1, dig_generic=2},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	expand = { forward = "air" },
 	on_rotate = sc_disallow or nil,
 	after_dig_node = function(pos, oldnode, oldmetadata, digger)
@@ -137,9 +135,7 @@ homedecor.register("bed_kingsize", {
 	groups = {snappy=3, ud_param2_colorable = 1, dig_generic=2},
 	selection_box = kbed_sbox,
 	node_box = kbed_cbox,
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	on_rotate = sc_disallow or nil,
 	after_place_node = function(pos, placer, itemstack, pointed_thing)
 		unifieddyes.fix_rotation_nsew(pos, placer, itemstack, pointed_thing)
@@ -188,9 +184,7 @@ for w, d in pairs({ ["mahogany"] = S("mahogany"), ["oak"] = S("oak") }) do
 			}
 		},
 		groups = { snappy = 3, dig_tree = 2 },
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 		selection_box = { type = "regular" },
 		infotext=S("One-drawer Nightstand"),
 		inventory = {
@@ -216,9 +210,7 @@ for w, d in pairs({ ["mahogany"] = S("mahogany"), ["oak"] = S("oak") }) do
 			}
 		},
 		groups = { snappy = 3, dig_tree = 2 },
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 		selection_box = { type = "regular" },
 		infotext=S("Two-drawer Nightstand"),
 		inventory = {
@@ -408,3 +400,5 @@ unifieddyes.register_color_craft({
 		"MAIN_DYE"
 	}
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

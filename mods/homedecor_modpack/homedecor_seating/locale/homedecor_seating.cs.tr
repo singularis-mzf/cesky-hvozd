@@ -1,0 +1,36 @@
+# textdomain: homedecor_seating
+
+
+### armchairs.lua ###
+
+Armchair=Křeslo@n(lze barvit)
+
+### init.lua ###
+
+Someone else owns the spot where the middle or far end goes!=Chyba! Oblast je chráněná a nemáte právo do ní umístit pohovku.
+Someone else owns the spot where the other end goes!=Chyba! Oblast je chráněná a nemáte právo do ní umístit pohovku.
+
+### longsofas.lua ###
+
+Long Sofa=Trojitá pohovka@n(lze barvit)
+
+### longsofas.lua ###
+### sofas.lua ###
+
+No room to place the sofa!=Nedostatek místa k umístění pohovky!
+
+### sofas.lua ###
+
+Sofa=Pohovka@n(lze barvit)
+
+
+###
+
+Basic office chair=Otočné křeslo bez opěradel
+Upscale office chair=Otočné křeslo s opěradly
+Garden Bench (style 1)=Venkovní lavička (styl 1)
+Garden Bench (style 2)=Venkovní lavička (styl 2)
+Simple Bench=Lakovaná dřevěná lavička
+Deck Chair=Lehátko
+Deck Chair (blue striped)=Lehátko (s modrými pruhy)
+Kitchen chair=Kuchyňská židle

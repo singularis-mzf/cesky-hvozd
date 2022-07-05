@@ -2,6 +2,8 @@
 
 local S = minetest.get_translator("homedecor_kitchen")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 -- steel-textured fridge
 homedecor.register("refrigerator_steel", {
 	mesh = "homedecor_refrigerator.obj",
@@ -9,9 +11,7 @@ homedecor.register("refrigerator_steel", {
 	inventory_image = "homedecor_refrigerator_steel_inv.png",
 	description = S("Refrigerator (stainless steel)"),
 	groups = {snappy=3, dig_stone=1},
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	selection_box = homedecor.nodebox.slab_y(2),
 	collision_box = homedecor.nodebox.slab_y(2),
 	expand = { top="placeholder" },
@@ -32,9 +32,7 @@ homedecor.register("refrigerator_white", {
 	groups = {snappy=3, dig_stone=1},
 	selection_box = homedecor.nodebox.slab_y(2),
 	collision_box = homedecor.nodebox.slab_y(2),
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	expand = { top="placeholder" },
 	infotext=S("Refrigerator"),
 	inventory = {
@@ -119,9 +117,7 @@ homedecor.register("dishwasher", {
 		}
 	},
 	selection_box = { type = "regular" },
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 	groups = { snappy = 3, dig_stone=1 },
 })
 
@@ -139,9 +135,7 @@ homedecor.register("dishwasher_"..m, {
 		"homedecor_dishwasher_front.png"
 	},
 	groups = { snappy = 3, dig_tree=1 },
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 })
 end
 
@@ -193,9 +187,7 @@ for _, mat in ipairs(counter_materials) do
 		airbrush_replacement_node = "homedecor:kitchen_cabinet_colored"..material,
 		place_param2 = 0,
 		groups = { snappy = 3, ud_param2_colorable = 1, dig_tree=1},
-		_sound_def = {
-			key = "node_sound_stone_defaults",
-		},
+		sounds = default.node_sound_stone_defaults(),
 		infotext=S("Kitchen Cabinet"),
 		inventory = {
 			size=24,
@@ -224,9 +216,7 @@ for _, mat in ipairs(counter_materials) do
 		paramtype2 = "colorwallmounted",
 		palette = "unifieddyes_palette_colorwallmounted.png",
 		groups = { snappy = 3, ud_param2_colorable = 1, not_in_creative_inventory = 1, dig_tree=1 },
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 		infotext=S("Kitchen Cabinet"),
 		inventory = {
 			size=24,
@@ -256,9 +246,7 @@ for _, mat in ipairs(counter_materials) do
 		palette = "unifieddyes_palette_colorwallmounted.png",
 		airbrush_replacement_node = "homedecor:kitchen_cabinet_colored_with_drawers"..material,
 		groups = { snappy = 3, ud_param2_colorable = 1, dig_tree=1},
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 		infotext=S("Kitchen Cabinet with drawers"),
 		inventory = {
 			size=24,
@@ -287,9 +275,7 @@ for _, mat in ipairs(counter_materials) do
 		paramtype2 = "colorwallmounted",
 		palette = "unifieddyes_palette_colorwallmounted.png",
 		groups = { snappy = 3, ud_param2_colorable = 1, not_in_creative_inventory = 1, dig_tree=1 },
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 		infotext=S("Kitchen Cabinet with drawers"),
 		inventory = {
 			size=24,
@@ -325,9 +311,7 @@ homedecor.register("kitchen_cabinet_colorable_half", {
 	selection_box = kitchen_cabinet_half_box,
 	node_box = kitchen_cabinet_half_box,
 	groups = { snappy = 3, ud_param2_colorable = 1, dig_tree=1 },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	infotext=S("Kitchen Cabinet"),
 	inventory = {
 		size=12,
@@ -357,9 +341,7 @@ homedecor.register("kitchen_cabinet_colored_half", {
 	selection_box = kitchen_cabinet_half_box,
 	node_box = kitchen_cabinet_half_box,
 	groups = { snappy = 3, ud_param2_colorable = 1, not_in_creative_inventory = 1, dig_tree=1  },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	infotext=S("Kitchen Cabinet"),
 	inventory = {
 		size=12,
@@ -390,9 +372,7 @@ homedecor.register("kitchen_cabinet_colorable_with_sink", {
 	airbrush_replacement_node = "homedecor:kitchen_cabinet_colored_with_sink",
 	place_param2 = 0,
 	groups = { snappy = 3, ud_param2_colorable = 1, dig_tree=1 },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	infotext=S("Under-sink cabinet"),
 	inventory = {
 		size=16,
@@ -437,9 +417,7 @@ homedecor.register("kitchen_cabinet_colored_with_sink", {
 	paramtype2 = "colorwallmounted",
 	palette = "unifieddyes_palette_colorwallmounted.png",
 	groups = { snappy = 3, ud_param2_colorable = 1,  not_in_creative_inventory = 1, dig_tree=1 },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	infotext=S("Under-sink cabinet"),
 	inventory = {
 		size=16,
@@ -816,3 +794,5 @@ minetest.register_lbm({
 		minetest.swap_node(pos, { name = newname, param2 = new_fdir })
 	end
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

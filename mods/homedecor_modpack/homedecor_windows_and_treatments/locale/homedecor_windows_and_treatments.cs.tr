@@ -1,0 +1,18 @@
+# textdomain: homedecor_windows_and_treatments
+
+
+### init.lua ###
+
+Curtain Rod (@1)=Parapet (@1)
+Curtains=Záclony@n(lze barvit a otevírat/zavírat)
+Curtains (open)=Záclony
+Stained Glass=Barevná mozaika místo okna
+Window (plain)=Okno (není otevírací)
+Window (quartered)=Okno čtvrcené (není otevírací)
+Window Blinds (thick)=Žaluzie (husté)
+Window Blinds (thin)=Žaluzie (řídké)
+Window flowerbox=Závěsný květináč pod okno
+Wooden Shutter=Okenice@n(lze barvit)
+brass=mosazný
+wood=dřevěný
+wrought iron=železný

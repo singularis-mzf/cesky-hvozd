@@ -1,5 +1,7 @@
 local S = minetest.get_translator("homedecor_trash_cans")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local tg_cbox = {
 	type = "fixed",
 	fixed = { -0.35, -0.5, -0.35, 0.35, 0.4, 0.35 }
@@ -45,7 +47,7 @@ homedecor.register("trash_can_green_open", {
 	inventory= {
 		size = 9,
 		formspec = "size[8,9]"..
-		"button[2.5,3.8;3,1;empty;Empty Trash]"..
+		"button[2.5,3.8;3,1;empty;" .. S("Empty Trash") .. "]"..
 		"list[context;main;2.5,0.5;3,3;]"..
 		"list[current_player;main;0,5;8,4;]" ..
 		"listring[]",
@@ -84,3 +86,5 @@ homedecor.register("trash_can", {
 		},
 	}
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

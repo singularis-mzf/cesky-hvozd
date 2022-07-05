@@ -1,5 +1,7 @@
 local S = minetest.get_translator("inbox")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local inbox = {}
 
 local mb_cbox = {
@@ -22,9 +24,7 @@ homedecor.register("inbox", {
 	collision_box = mb_cbox,
 	paramtype2 = "facedir",
 	groups = {choppy=2,oddly_breakable_by_hand=2},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	on_rotate = minetest.get_modpath("screwdriver") and screwdriver.rotate_simple or nil,
 	after_place_node = function(pos, placer, itemstack)
 		local meta = minetest.get_meta(pos)
@@ -128,3 +128,5 @@ function inbox.get_inbox_insert_formspec(pos)
 		"listring[]"
 	return formspec
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -9,6 +9,8 @@
 
 local S = minetest.get_translator("homedecor_misc")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 homedecor_misc = {}
 
 local wool_black, wool_grey = homedecor.textures.wool_black, homedecor.textures.wool_grey
@@ -22,9 +24,7 @@ homedecor.register("ceiling_paint", {
 	wield_image = 'homedecor_ceiling_paint_roller.png',
 	walkable = false,
 	groups = { snappy = 3 },
-	_sound_def = {
-		key = "node_sound_leaves_defaults",
-	},
+	sounds = default.node_sound_leaves_defaults(),
 	selection_box = { type = "wallmounted" },
 })
 
@@ -36,9 +36,7 @@ homedecor.register("ceiling_tile", {
 	inventory_image = 'homedecor_ceiling_tile.png',
 	walkable = false,
 	groups = { snappy = 3 },
-	_sound_def = {
-		key = "node_sound_leaves_defaults",
-	},
+	sounds = default.node_sound_leaves_defaults(),
 	selection_box = { type = "wallmounted" },
 })
 
@@ -76,9 +74,7 @@ for _, rt in ipairs(rug_types) do
 		paramtype2 = "wallmounted",
 		walkable = false,
 		groups = {snappy = 3},
-		_sound_def = {
-			key = "node_sound_leaves_defaults",
-		},
+		sounds = default.node_sound_leaves_defaults(),
 		selection_box = { type = "wallmounted" },
 	})
 end
@@ -94,9 +90,7 @@ homedecor.register("flower_pot_"..p, {
 		{ name = default and "default_dirt.png" or wood_tex, color = 0xff505050 },
 	},
 	groups = { snappy = 3, potting_soil=1 },
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_leaves_defaults(),
 })
 end
 if minetest.get_modpath("flowers") then
@@ -125,9 +119,7 @@ if minetest.get_modpath("flowers") then
 			walkable = false,
 			use_texture_alpha = "clip",
 			groups = {snappy = 3},
-			_sound_def = {
-				key = "node_sound_glass_defaults",
-			},
+			sounds = default.node_sound_glass_defaults(),
 			selection_box = {
 				type = "fixed",
 				fixed = { -0.2, -0.5, -0.2, 0.2, 0.3, 0.2 }
@@ -161,9 +153,7 @@ homedecor.register("pole_brass", {
 		fixed = { -0.125, -0.5, -0.125, 0.125, 0.5, 0.125 },
 	},
 	groups = {snappy=3},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	check_for_pole = true
 })
 
@@ -181,9 +171,7 @@ homedecor.register("pole_wrought_iron", {
                 fixed = {-0.0625, -0.5, -0.0625, 0.0625, 0.5, 0.0625}
 	},
     groups = {snappy=3},
-    _sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+    sounds = default.node_sound_wood_defaults(),
 })
 
 local ft_cbox = {
@@ -206,9 +194,7 @@ homedecor.register("fishtank", {
 	selection_box = ft_cbox,
 	collision_box = ft_cbox,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
-	_sound_def = {
-		key = "node_sound_glass_defaults",
-	},
+	sounds = default.node_sound_glass_defaults(),
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		minetest.set_node(pos, {name = "homedecor:fishtank_lighted", param2 = node.param2})
 		return itemstack
@@ -231,9 +217,7 @@ homedecor.register("fishtank_lighted", {
 	selection_box = ft_cbox,
 	collision_box = ft_cbox,
 	groups = {cracky=3,oddly_breakable_by_hand=3,not_in_creative_inventory=1},
-	_sound_def = {
-		key = "node_sound_glass_defaults",
-	},
+	sounds = default.node_sound_glass_defaults(),
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		minetest.set_node(pos, {name = "homedecor:fishtank", param2 = node.param2})
 		return itemstack
@@ -287,9 +271,7 @@ homedecor.register("dvd_cd_cabinet", {
 	},
 	selection_box = homedecor.nodebox.slab_z(-0.5),
 	groups = {choppy=2,oddly_breakable_by_hand=2},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 })
 
 local pooltable_cbox = {
@@ -312,9 +294,7 @@ homedecor.register("pool_table", {
 	selection_box = pooltable_cbox,
 	collision_box = pooltable_cbox,
 	expand = { forward="placeholder" },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	on_rotate = minetest.get_modpath("screwdriver") and screwdriver.disallow or nil,
 })
 
@@ -338,9 +318,7 @@ homedecor.register("piano", {
 	selection_box = piano_cbox,
 	collision_box = piano_cbox,
 	expand = { right="placeholder" },
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	on_rotate = minetest.get_modpath("screwdriver") and screwdriver.disallow or nil,
 })
 
@@ -383,9 +361,7 @@ homedecor.register("sportbench", {
 	groups = { snappy=3 },
 	selection_box = sb_cbox,
 	walkable = false,
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 })
 
 local skate_cbox = {
@@ -403,9 +379,7 @@ homedecor.register("skateboard", {
 	groups = {snappy=3},
 	selection_box = skate_cbox,
 	walkable = false,
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	on_place = minetest.rotate_node
 })
 
@@ -452,9 +426,19 @@ homedecor_misc.banister_materials = {
 	}
 }
 
-for _, side in ipairs({"diagonal_left", "diagonal_right", "horizontal"}) do
+local banister_sides = {
+	{"diagonal_left", S("diagonal left"), 2, 1},
+	{"diagonal_right", S("diagonal right"), 2, 3},
+	{"diagonal_left_upper", S("diagonal left upper part"), 1, 1},
+	{"diagonal_left_lower", S("diagonal left lower part"), 3, 1},
+	{"diagonal_right_upper", S("diagonal right upper part"), 1, 3},
+	{"diagonal_right_lower", S("diagonal right lower part"), 3, 3},
+	{"horizontal", S("horizontal"), 0, 0},
+}
 
-	local sidedesc = side:match("^diagonal") and S("diagonal") or S("horizontal")
+for _, sideinfo in ipairs(banister_sides) do
+
+	local side, sidedesc = unpack(sideinfo)
 
 	for _, mat in ipairs(homedecor_misc.banister_materials) do
 
@@ -467,10 +451,7 @@ for _, side in ipairs({"diagonal_left", "diagonal_right", "horizontal"}) do
 		}
 
 		if side == "horizontal" then
-			cbox = {
-				type = "fixed",
-				fixed = { -8/16, -8/16, 5/16, 8/16, 8/16, 8/16 }
-			}
+			cbox.fixed = { -8/16, -8/16, 5/16, 8/16, 8/16, 8/16 }
 		end
 
 		local def = {
@@ -480,17 +461,11 @@ for _, side in ipairs({"diagonal_left", "diagonal_right", "horizontal"}) do
 				tile1,
 				tile2,
 			},
-			inventory_image = "homedecor_banister_"..name.."_inv.png",
+			inventory_image = "homedecor_banister_"..name.."_"..side.."_inv.png",
 			selection_box = cbox,
 			collision_box = cbox,
 			groups = { snappy = 3},
-			on_place = homedecor.place_banister,
-			drop = "homedecor:banister_"..name.."_horizontal",
 		}
-
-		if side ~= "horizontal" then
-			def.groups.not_in_creative_inventory = 1
-		end
 
 		if name == "wood" then
 			def.palette = "unifieddyes_palette_greys.png"
@@ -508,16 +483,17 @@ for _, side in ipairs({"diagonal_left", "diagonal_right", "horizontal"}) do
 				homedecor.white_wood,
 				homedecor.white_wood
 			}
-			def2.inventory_image = "homedecor_banister_wood_colored_inv.png"
+			def2.inventory_image = "homedecor_banister_wood_colored_"..side.."_inv.png"
 			def2.groups.not_in_creative_inventory = 1
+			def2.drop = nn -- Will cause a loss of color, but I don't know how to do it better and allow stacking.
 
-			unifieddyes.generate_split_palette_nodes(nn, def2, "homedecor:banister_"..name.."_horizontal")
+			unifieddyes.generate_split_palette_nodes(nn, def2, nil)
 		end
 	end
 end
 
 homedecor.register("spiral_staircase", {
-	description = "Spiral Staircase",
+	description = S("Spiral Staircase"),
 	mesh = "homedecor_spiral_staircase.obj",
 	wield_scale = { x=0.4, y=0.4, z=0.4 },
 	tiles = {
@@ -551,9 +527,7 @@ homedecor.register("spiral_staircase", {
 		}
 	},
 	groups = {cracky = 1},
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 	on_rotate = minetest.get_modpath("screwdriver") and screwdriver.rotate_simple or nil,
 	after_place_node = function(pos, placer, itemstack, pointed_thing)
 		local fdir = minetest.dir_to_facedir(placer:get_look_dir())
@@ -643,9 +617,7 @@ homedecor.register("dartboard", {
 	},
 	groups = {choppy=2,dig_immediate=2,attached_node=1},
 	legacy_wallmounted = true,
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 })
 
 -- crafting
@@ -988,6 +960,18 @@ for i in ipairs(homedecor_misc.banister_materials) do
 			{ dye2,    vertmat, topmat }
 		},
 	})
+
+	for _, sideinfo in ipairs(banister_sides) do
+		local side, sidedesc, i1, i2 = unpack(sideinfo)
+		if side ~= "horizontal" then
+				local recipe = {{"","",""},{"","homedecor:banister_"..name.."_horizontal",""},{"","",""}}
+				recipe[i1][i2] = recipe[2][2]
+				minetest.register_craft({
+					output = "homedecor:banister_"..name.."_"..side.." 2",
+					recipe = recipe
+					})
+		end
+	end
 end
 
 unifieddyes.register_color_craft({
@@ -1023,9 +1007,7 @@ minetest.register_node(":homedecor:japanese_wall_top", {
 	groups = {snappy=3},
 	selection_box = jp_cbox,
 	collision_box = jp_cbox,
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 })
 
 minetest.register_node(":homedecor:japanese_wall_middle", {
@@ -1041,9 +1023,7 @@ minetest.register_node(":homedecor:japanese_wall_middle", {
 	groups = {snappy=3},
 	selection_box = jp_cbox,
 	collision_box = jp_cbox,
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 })
 
 minetest.register_node(":homedecor:japanese_wall_bottom", {
@@ -1059,7 +1039,7 @@ minetest.register_node(":homedecor:japanese_wall_bottom", {
 	groups = {snappy=3},
 	selection_box = jp_cbox,
 	collision_box = jp_cbox,
-	_sound_def = {
-		key = "node_sound_wood_defaults",
-	},
+	sounds = default.node_sound_wood_defaults(),
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

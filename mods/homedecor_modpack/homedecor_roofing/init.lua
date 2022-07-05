@@ -1,5 +1,7 @@
 local S = minetest.get_translator("homedecor_roofing")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 homedecor_roofing = {}
 
 minetest.register_node(":homedecor:skylight", {
@@ -10,9 +12,7 @@ minetest.register_node(":homedecor:skylight", {
 	inventory_image = "homedecor_skylight_inv.png",
 	groups = { snappy = 3, dig_tree = 2 },
 	paramtype = "light",
-	_sound_def = {
-		key = "node_sound_glass_defaults",
-	},
+	sounds = default.node_sound_glass_defaults(),
 	selection_box = homedecor.nodebox.slab_y(0.1),
 })
 
@@ -25,15 +25,13 @@ minetest.register_node(":homedecor:skylight_frosted", {
 	use_texture_alpha = "blend",
 	groups = { snappy = 3, dig_tree = 2 },
 	paramtype = "light",
-	_sound_def = {
-		key = "node_sound_glass_defaults",
-	},
+	sounds = default.node_sound_glass_defaults(),
 	selection_box = homedecor.nodebox.slab_y(0.1),
 })
 
 for s, s_loc in pairs({ ["asphalt"] = S("asphalt"), ["terracotta"] = S("terracotta"), ["wood"] = S("wood") }) do
 	minetest.register_node(":homedecor:shingles_"..s, {
-		description = S("Shingles (@1)", s_loc),
+		description = S("Shingles (" .. s .. ")"),
 		drawtype = "raillike",
 		tiles = { "homedecor_shingles_"..s..".png" },
 		wield_image = "homedecor_shingles_"..s..".png",
@@ -41,9 +39,7 @@ for s, s_loc in pairs({ ["asphalt"] = S("asphalt"), ["terracotta"] = S("terracot
 		paramtype = "light",
 		walkable = false,
 		groups = { snappy = 3, dig_tree = 2 },
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 		selection_box = homedecor.nodebox.slab_y(0.1),
 	})
 end
@@ -99,9 +95,7 @@ homedecor_roofing.register_outer_corner = function(modname, subname, groups, slo
 		collision_box = ocorner_cbox,
 		groups = groups,
 		on_place = minetest.rotate_node,
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 	})
 end
 
@@ -122,9 +116,7 @@ homedecor_roofing.register_inner_corner = function(modname, subname, groups, slo
 		collision_box = icorner_cbox,
 		groups = groups,
 		on_place = minetest.rotate_node,
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 	})
 end
 
@@ -147,9 +139,7 @@ homedecor_roofing.register_slope = function(modname, subname, recipeitem, groups
 		use_texture_alpha = "blend",
 		groups = groups,
 		on_place = minetest.rotate_node,
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 	})
 
 	-- convert between flat shingles and slopes
@@ -331,9 +321,7 @@ homedecor.register("chimney", {
 	},
 	selection_box = homedecor.nodebox.bar_y(0.25),
 	groups = {cracky=3, dig_tree = 2},
-	_sound_def = {
-		key = "node_sound_stone_defaults",
-	},
+	sounds = default.node_sound_stone_defaults(),
 })
 
 -- crafting
@@ -383,3 +371,5 @@ minetest.register_craft({
 		"homedecor:skylight"
 	}
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -1,6 +1,8 @@
 local S = minetest.get_translator("homedecor_laundry")
 -- laundry devices
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 homedecor.register("washing_machine", {
 	description = S("Washing Machine"),
 	tiles = {
@@ -104,3 +106,4 @@ homedecor.register("ironing_board", {
 		}
 	}
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

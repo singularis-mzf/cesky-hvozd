@@ -1,5 +1,7 @@
 local S = minetest.get_translator("homedecor_books")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local bookcolors = {
 	{ "red",    0xffd26466 },
 	{ "green",  0xff62aa66 },
@@ -129,11 +131,11 @@ for _, c in ipairs(bookcolors) do
 			local formspec
 			if owner == "" or owner == player_name then
 				formspec = "size[8,8]"..
-					"field[0.5,1;7.5,0;title;Book title :;"..
+					"field[0.5,1;7.5,0;title;" .. S("Book title :") .. ";"..
 						minetest.formspec_escape(title).."]"..
-					"textarea[0.5,1.5;7.5,7;text;Book content :;"..
+					"textarea[0.5,1.5;7.5,7;text;" .. S("Book content :") .. ";"..
 						minetest.formspec_escape(text).."]"..
-					"button_exit[2.5,7.5;3,1;save;Save]"
+					"button_exit[2.5,7.5;3,1;save;" .. S("Save") .. "]"
 			else
 				formspec = "size[8,8]"..
 				"button_exit[7,0.25;1,0.5;close;X]"..
@@ -206,3 +208,5 @@ end)
 
 minetest.register_alias("homedecor:book", "homedecor:book_grey")
 minetest.register_alias("homedecor:book_open", "homedecor:book_open_grey")
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -1,0 +1,13 @@
+# textdomain: homedecor_bedroom
+
+
+### init.lua ###
+
+Bed=Postel jedoduchá s barvitelným povlečením
+Bed (king sized)=Postel dvojitá s barvitelným povlečením
+Nightstand with One Drawer (@1)=Noční stolek s jednou zásuvkou (@1)
+Nightstand with Two Drawers (@1)=Noční stolek se dvěma zásuvkami (@1)
+One-drawer Nightstand=Noční stolek s jednou zásuvkou
+Two-drawer Nightstand=Noční stolek se dvěma zásuvkami
+mahogany=hnědý
+oak=dubové dřevo

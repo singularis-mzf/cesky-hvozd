@@ -1,3 +1,5 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 if minetest.get_modpath("default") then
 	minetest.override_item("default:bookshelf", {
 		drawtype = "mesh",
@@ -123,3 +125,6 @@ if minetest.get_modpath("doors") then
 	end
 
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+

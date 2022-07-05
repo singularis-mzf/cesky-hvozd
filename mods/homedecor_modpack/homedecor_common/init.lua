@@ -3,6 +3,8 @@
 
 local modpath = minetest.get_modpath("homedecor_common")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 homedecor = {}
 homedecor.modpath = modpath
 
@@ -68,3 +70,5 @@ dofile(modpath.."/crafts.lua")
 if minetest.settings:get_bool("log_mod") then
 	minetest.log("action", "[HomeDecor API] Loaded!")
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -1,0 +1,10 @@
+# textdomain: homedecor_clocks
+
+
+### init.lua ###
+
+Alarm clock=Hodiny s buzením@n(vhodné na noční stolek, nejdou!)
+Digital clock=Nástěnné digitální hodiny (nejdou!)
+Grandfather Clock=Kyvadlové hodiny (nejdou!)
+Plastic analog clock=Ručičkové hodiny s plastovým okrajem (nejdou!)
+Wooden analog clock=Ručičkové hodiny s dřevěným okrajem (nejdou!)
