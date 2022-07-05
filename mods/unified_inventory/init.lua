@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 -- Unified Inventory
 
 if not minetest.features.formspec_version_element then
@@ -33,6 +34,9 @@ unified_inventory = {
 	initialized_callbacks = {},
 	craft_registered_callbacks = {},
 
+	-- Virtual item groups
+	virtual_groups = {},
+
 	-- Homepos stuff
 	home_pos = {},
 	home_filename =	worldpath.."/unified_inventory_home.home",
@@ -52,6 +56,14 @@ unified_inventory = {
 	list_img_offset = 0.13,
 	standard_background = "bgcolor[#0000]background9[0,0;1,1;ui_formbg_9_sliced.png;true;16]",
 
+	-- Overridable functions for extended multi-byte characters
+	string_lower_extended = function(s)
+		return string.lower(s)
+	end,
+	string_remove_extended_chars = function(s)
+		return s
+	end,
+
 	version = 4
 }
 
@@ -67,9 +79,9 @@ ui.style_full = {
 	formh = 12.25,
 	-- Item browser size, pos
 	pagecols = 8,
-	pagerows = 9,
+	pagerows = 12,
 	page_x = 10.75,
-	page_y = 2.30,
+	page_y = 0.10,
 	-- Item browser controls
 	page_buttons_x = 11.60,
 	page_buttons_y = 10.15,
@@ -108,9 +120,9 @@ ui.style_lite = {
 	formh = 9.75,
 	-- Item browser size, pos
 	pagecols = 4,
-	pagerows = 5,
+	pagerows = 7,
 	page_x = 10.5,
-	page_y = 2.15,
+	page_y = 0.15,
 	-- Item browser controls
 	page_buttons_x = 10.5,
 	page_buttons_y = 6.15,
@@ -193,3 +205,4 @@ end
 dofile(modpath.."/item_names.lua")
 dofile(modpath.."/waypoints.lua")
 dofile(modpath.."/legacy.lua") -- mod compatibility
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -98,8 +98,7 @@ ui.register_button("misc_set_day", {
 	action = function(player)
 		local player_name = player:get_player_name()
 		if minetest.check_player_privs(player_name, {settime=true}) then
-			minetest.sound_play("birds",
-					{to_player=player_name, gain = 1.0})
+			-- minetest.sound_play("birds", {to_player=player_name, gain = 1.0})
 			minetest.set_timeofday((6000 % 24000) / 24000)
 			minetest.chat_send_player(player_name,
 				S("Time of day set to 6am"))
@@ -122,8 +121,7 @@ ui.register_button("misc_set_night", {
 	action = function(player)
 		local player_name = player:get_player_name()
 		if minetest.check_player_privs(player_name, {settime=true}) then
-			minetest.sound_play("owl",
-					{to_player=player_name, gain = 1.0})
+			-- minetest.sound_play("owl", {to_player=player_name, gain = 1.0})
 			minetest.set_timeofday((21000 % 24000) / 24000)
 			minetest.chat_send_player(player_name,
 					S("Time of day set to 9pm"))
@@ -330,7 +328,7 @@ ui.register_page("craftguide", {
 			"label[".. (give_x+0.1)..",".. (craftguidey + 2.7) .. ";" .. F(S("Give me:")) .. "]",
 			"button["..(give_x)..","..     (craftguidey + 2.9) .. ";0.75,0.5;craftguide_giveme_1;1]",
 			"button["..(give_x+0.8)..",".. (craftguidey + 2.9) .. ";0.75,0.5;craftguide_giveme_10;10]",
-			"button["..(give_x+1.6)..",".. (craftguidey + 2.9) .. ";0.75,0.5;craftguide_giveme_99;99]"
+			"button["..(give_x+1.6)..",".. (craftguidey + 2.9) .. ";0.75,0.5;craftguide_giveme_100;100]"
 		})
 
 		if not craft then
@@ -485,7 +483,7 @@ local function craftguide_craft(player, formname, fields)
 	if not amount then return end
 
 	amount = tonumber(amount) or -1 -- fallback for "all"
-	if amount == 0 or amount < -1 or amount > 99 then return end
+	if amount == 0 or amount < -1 or amount > 100 then return end
 
 	local player_name = player:get_player_name()
 

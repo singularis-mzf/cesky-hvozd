@@ -103,6 +103,8 @@ end
 
 -- Add category GUI elements (top right)
 local function formspec_add_categories(player, formspec, ui_peruser)
+	return nil
+--[[
 	local player_name = player:get_player_name()
 	local n = #formspec + 1
 
@@ -152,6 +154,7 @@ local function formspec_add_categories(player, formspec, ui_peruser)
 		-- next
 		formspec[n] = formspec_button(ui_peruser, "next_category", "ui_right_icon.png", categories_scroll_pos, {ui_peruser.pagecols - 1, 0}, 0.8, S("Scroll categories right"))
 	end
+]]
 end
 
 local function formspec_add_search_box(player, formspec, ui_peruser)
@@ -341,15 +344,33 @@ function ui.apply_filter(player, filter, search_dir)
 	if not player then
 		return false
 	end
-	local player_name = player:get_player_name()
-	local lfilter = string.lower(filter)
-	local ffilter
+	local player_name, contains_extended, lower, lfilter, ffilter
+
+	player_name = player:get_player_name()
+	contains_extended = filter ~= ui.string_remove_extended_chars(filter)
+	if contains_extended then
+		-- pattern contains extended characters
+		lower = ui.string_lower_extended
+		lfilter = lower(filter)
+	else
+		-- pattern does not contain extended characters
+		-- => remove extended characters from tested strings
+		lower = function(s)
+			return string.lower(ui.string_remove_extended_chars(s))
+		end
+		lfilter = string.lower(filter)
+	end
+
 	if lfilter:sub(1, 6) == "group:" then
 		local groups = lfilter:sub(7):split(",")
 		ffilter = function(name, def)
 			for _, group in ipairs(groups) do
-				if not def.groups[group]
-				or def.groups[group] <= 0 then
+				local virt_group = unified_inventory.virtual_groups[group]
+				if virt_group then
+					if not virt_group[name] then
+						return false
+					end
+				elseif not def.groups[group] or def.groups[group] <= 0 then
 					return false
 				end
 			end
@@ -360,12 +381,13 @@ function ui.apply_filter(player, filter, search_dir)
 		local lang = player_info and player_info.lang_code or ""
 
 		ffilter = function(name, def)
-			local lname = string.lower(name)
-			local ldesc = string.lower(def.description)
+			if string.find(lower(name), lfilter)
+			or string.find(lower(def.description), lfilter) then
+				return true
+			end
 			local llocaldesc = minetest.get_translated_string
-				and string.lower(minetest.get_translated_string(lang, def.description))
-			return string.find(lname, lfilter, 1, true) or string.find(ldesc, lfilter, 1, true)
-				or llocaldesc and string.find(llocaldesc, lfilter, 1, true)
+				and lower(minetest.get_translated_string(lang, def.description))
+			return llocaldesc and string.find(llocaldesc, lfilter)
 		end
 	end
 	ui.filtered_items_list[player_name]={}
