@@ -4,6 +4,8 @@
 
 --]]
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 font_api.register_font(
 	'oldwizard',
 	{
@@ -15,3 +17,5 @@ font_api.register_font(
 		},
 	}
 );
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
