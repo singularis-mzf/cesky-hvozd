@@ -339,9 +339,10 @@ resp. *ostatní\_zdroje*.
 ## Farming Redo (farming)
 
 * Zdroj: [https://notabug.org/tenplus1/farming](https://notabug.org/tenplus1/farming), revize 0b06c7cd450c5ec9a76b3c22a9c57f06e4f8a7c2
-* Původní licence: MIT a další (včetně CC-BY-NS-SA)
+* Původní licence: MIT a další (včetně CC-BY-ND-SA)
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/farming/)
+* Implantovány jahody z módu Ethereal NG (licence: MIT).
 
 ## Funny Shadows (shadows)
 
@@ -627,6 +628,12 @@ resp. *ostatní\_zdroje*.
 * [ContentDB](https://content.minetest.net/packages/bell07/wielded\_light/)
 
 # Ostatní použité zdroje
+
+## Ethereal NG (ethereal)
+
+* Zdroj: [https://notabug.org/tenplus1/ethereal](https://notabug.org/tenplus1/ethereal), revize 769fb8111edd0a895514db3a2df316c0b49b0252
+* Původní licence: kód MIT, textury různé, ale neoznačené také MIT
+* [ContentDB](https://content.minetest.net/packages/TenPlus1/ethereal/)
 
 ## Technic CNC Improve Machine (technic\_cnc\_improve)
 

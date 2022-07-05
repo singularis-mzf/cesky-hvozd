@@ -130,7 +130,7 @@ alias("farming_plus:rhubarb_2", "farming:rhubarb_2")
 alias("farming_plus:rhubarb", "farming:rhubarb_3")
 alias("farming_plus:rhubarb_item", "farming:rhubarb")
 
--- Strawberry
+--[[ Strawberry
 if eth then
 	alias("farming_plus:strawberry_item", "ethereal:strawberry")
 	alias("farming_plus:strawberry_seed", "ethereal:strawberry")
@@ -154,6 +154,7 @@ else
 	alias("farming_plus:strawberry_3", "farming:raspberry_3")
 	alias("farming_plus:strawberry", "farming:raspberry_4")
 end
+]]
 
 -- Tomato
 alias("farming_plus:tomato_seed", "farming:tomato")

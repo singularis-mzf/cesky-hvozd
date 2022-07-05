@@ -135,6 +135,16 @@ Created by TenPlus1 (CC BY 3.0)
   farming_hemp*.png
   farming_tofu*.png
 
+Created by TenPlus1 (MIT)
+  ethereal_strawberry_1.png
+  ethereal_strawberry_2.png
+  ethereal_strawberry_3.png
+  ethereal_strawberry_4.png
+  ethereal_strawberry_5.png
+  ethereal_strawberry_6.png
+  ethereal_strawberry_7.png
+  ethereal_strawberry_8.png
+
 Created by ademant (CC-BY-3.0)
   farming_rye*.png
   farming_oat*.png
@@ -180,3 +190,4 @@ Created by TechM8 (https://www.deviantart.com/techm8)
 
 Created by RZR0 (CC-BY-NC-SA)
   farming_blueberry_pie.png
+
