@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local path = minetest.get_modpath("mobs")
 
@@ -16,10 +17,7 @@ dofile(path .. "/mount.lua")
 -- Mob Items
 dofile(path .. "/crafts.lua")
 
--- Mob Spawner
-dofile(path .. "/spawner.lua")
-
 -- Lucky Blocks
 dofile(path .. "/lucky_block.lua")
 
-print("[MOD] Mobs Redo loaded")
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

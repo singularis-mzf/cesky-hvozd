@@ -1,0 +1,37 @@
+# textdomain:mobs
+** Peaceful Mode Active - No Monsters Will Spawn=** Je aktivní mírumumilovný režim — nebudou se zjevovat žádné příšery
+@1 (Tamed)=@1 (ochočený/á/é)
+@1 at full health (@2)=@1 zcela zdravý/á/é (@2)
+@1 has been tamed!=@1 byl/a/o ochočen/a/o
+@1 is owner!=Zvíře patří: @1
+Active Mob Limit Reached!=Dosažen limit počtu zvířat na serveru!
+Already protected!=Zvíře je již chráněno!
+Change=Změnit
+Command:=Příkaz:
+Enter name:=Nové jméno:
+Enter texture:=Zadejte texturu:
+Lasso (right-click animal to put in inventory)=Laso@n(kliknutím pravým tlačítkem na zvíře se je pokusíte chytit do inventáře)
+Leather=Kožešina
+Meat=Maso
+Missed!=Vedle!
+Mob Fence=Plot se silovým polem
+Mob Fence Top=Plotní nástavec se silovým polem
+Mob Protection Rune=Runa na ochranu zvířat
+Mob Protection Rune (Level 2)=Silnější runa na ochranu zvířat
+Mob Reset Stick=Hůlka vrácení zvířat do výchozího stavu
+#Mob Spawner=
+#Mob Spawner settings failed!=Настройки спаунера моба провалились
+Mob has been protected!=Zvíře je před vámi chráněno!
+Name Tag=Visačka se jménem (na zvířata a NPC)
+Net (right-click animal to put in inventory)=Síť na zvířata@n(kliknutím pravým tlačítkem na zvíře se je pokusíte chytit do inventáře; nechytá motýly a světlušky)
+Not tamed!=Zvíře není ochočeno!
+Raw Meat=Syrové maso
+Rename=Přejmenovat
+Saddle=Sedlo
+#Spawner Active (@1)=Активные спаунер (@1)
+#Spawner Not Active (enter settings)=Спаунер не активен (введите настройки)
+Steel Shears (right-click to shear)=Nůžky na ovce (stříhejte pravým tlačítkem myši)
+#Syntax: “name min_light[0-14] max_light[0-14] max_mobs_in_area[0 to disable] player_distance[1-20] y_offset[-10 to 10]”=
+lifetimer expired, removed @1=Čas života vypršel, @1 odstraněn/a/o
+
+Meat Block=Blok masa
