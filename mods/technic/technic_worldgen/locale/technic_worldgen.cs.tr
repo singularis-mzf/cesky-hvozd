@@ -1,0 +1,43 @@
+# textdomain:technic_worldgen
+
+###crafts.lua
+Uranium Lump=Uranová ruda
+Uranium Ingot=Ingot uranu
+Chromium Lump=Chromová ruda
+Chromium Ingot=Ingot chromu
+Zinc Lump=Zinková ruda
+Zinc Ingot=Ingot zinku
+Brass Ingot=Ingot mosazi
+Wrought Iron Ingot=Ingot železa
+Cast Iron Ingot=Ingot litého železa
+Carbon Steel Ingot=Ingot uhlíkové oceli
+Stainless Steel Ingot=Ingot nerezu
+Iron=Železo
+Lead Lump=Olověná ruda
+Lead Ore=Ložisko olova
+Sulfur Ore=Ložisko síry
+Sulfur Lump=Hrouda síry
+
+###nodes.lua
+Uranium Ore=Ložisko uranu
+Chromium Ore=Ložisko chromu
+Zinc Ore=Ložisko zinku
+Granite=Žula
+Marble=Mramor (podzemní)
+Marble Bricks=Mramorové cihly
+Uranium Block=Blok uranu
+Chromium Block=Blok chromu
+Zinc Block=Blok zinku
+Wrought Iron Block=Blok železa
+Cast Iron Block=Blok litého železa
+Carbon Steel Block=Blok uhlíkové oceli
+Stainless Steel Block=Blok nerezu
+Brass Block=Blok mosazi
+Wrought Iron=Železo
+Lead Block=Blok olova
+Lead Ingot=Ingot olova
+
+###rubber.lua
+Rubber Tree Sapling=Sazenice kaučukovníku
+Rubber Tree=Kaučukovník (kmen)
+Rubber Tree Leaves=Listy kaučukovníku

@@ -1,0 +1,10 @@
+# textdomain: wrench
+
+Wrench=Klíč na truhly
+@1 with items=@1 s obsahem
+
+Cannot pickup node. Owned by @1.=Nelze zvednout truhlu, je vlastněna: @1
+Not enough room in inventory to pickup node.=Inventář je přeplněný!
+Cannot pickup node containing @1.=Nelze zvednout truhlu obsahující: @1.
+Cannot pickup node. Nesting inventories is not allowed.=Nelze zvednout truhlu, protože obsahuje vnořené inventáře.
+Cannot pickup node. Node contains too much metadata.=Nelze zvednout truhlu, protože její obsah je příliš komplikovaný.

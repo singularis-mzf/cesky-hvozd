@@ -1,0 +1,216 @@
+# textdomain:technic
+# Czech Translation for Technic mod
+# by Singularis
+
+## Misc
+[Technic] Loaded in @1 seconds=[Technic] Mod načten za %f sekund
+Allow splitting incoming 'charge' stacks from tubes=Dovolit dělení dávek na dobití příchozích z rour
+Allow splitting incoming 'discharge' stacks=Dovolit dělení dávek na vybití příchozích z rour
+
+## Tiers
+HV=VN
+MV=SN
+LV=NN
+
+## Items
+Silicon Wafer=Křemíkový wafer
+Doped Silicon Wafer=Legovaný křemíkový wafer
+Enriched Uranium=Obohacený uran
+Uranium Fuel=Uranové palivo
+Diamond Drill Head=Diamantová vrtací hlavice
+Blue Energy Crystal=Modrý energetický krystal
+Green Energy Crystal=Zelený energetický krystal
+Red Energy Crystal=Červený energetický krystal
+Fine Copper Wire=Jemný měděný drát
+Copper Coil=Měděná cívka
+Electric Motor=Elektromotor
+Low Voltage Transformer=Nízkonapěťový transformátor
+Medium Voltage Transformer=Transformátor na střední napětí
+High Voltage Transformer=Vysokonapěťový transformátor
+Control Logic Unit=Kontrolní jednotka
+Mixed Metal Ingot=Ingot ze směsi kovů
+Composite Plate=Kompozitní plát
+Copper Plate=Měděný plát
+Carbon Plate=Uhelný plát
+Graphite=Grafit
+Carbon Cloth=Uhelné vlákno
+Raw Latex=Přírodní latex
+Rubber Fiber=Guma
+@1%-Fissile Uranium Ingot=@1% ingot uranu
+@1%-Fissile Uranium Block=@1% blok uranu
+Chernobylite Block=Blok černobylitu
+Corium Bucket=Kbelík coria
+Rubber Tree Grinding=Drť dřeva kaučukovníku
+Common Tree Grinding=Dřevěná drť
+Corium Source=Zdroj coria
+Machine Casing=Kryt pro elektrická zařízení
+Rubber Goo=Kaučukové bláto
+Sawdust=Dřevoprach
+
+## Machine misc
+Machine cannot be removed because it is not empty=Stroj není možné odstranit, protože není prázdný
+Inventory move disallowed due to protection=Ochrana oblasti zabránila zásahu do inventáře
+# $1: Machine name (Includes tier)
+@1 Active (@2 EU)=@1 aktivní (@2 EU)
+@1 Active=@1 aktivní
+@1 Disabled=@1 vypnutý/á/é
+@1 Enabled=@1 zapnutý/á/é
+@1 Idle=@1 nečinný/á/é
+@1 Improperly Placed=@1 je chybně umístěný/á/é
+@1 is empty=@1 je prázdný/á/é
+@1 Unpowered=@1 je bez napájení
+@1 Out Of Fuel=@1: došlo palivo
+@1 Has Bad Cabling=@1 je chybně připojen/a ke kabelům
+@1 (Slave)=
+@1 Has No Network=@1 není připojen/a k funkční elektrické síti
+@1 Finished=@1 hotovo
+Enable/Disable=Zapnout/Vypnout
+Range=Dosah
+Upgrade Slots=Vylepšení
+In:=Vstup:
+Out:=Výstup:
+Slot %d=Slot %d
+Itemwise=Po kusech
+Stackwise=Po dávkách
+Ignoring Mesecon Signal=Ignoruj mesespoje
+Controlled by Mesecon Signal=Řízen/a/o mesespojem
+Owner:=Vlastník:
+Unlocked=Odemčený/á/é
+Locked=Zamčený/á/é
+Radius:=Dosah:
+Enabled=Zapnuto
+Disabled=Vypnuto
+Public=Veřejný
+Private=Soukromý
+Digiline Channel=Kanál digilinky
+Channel=Kanál
+
+## Machine names
+# $1: Tier
+@1 Alloy Furnace=@1 slévací pec
+@1 Battery Box=@1 bateriová skříň
+@1 Battery Box: @2 / @3=@1 bateriová skříň: @2 / @3
+@1 Cable=@1 kabel
+@1 Cable Plate=@1 kabel (skrz panel)
+@1 Centrifuge=@1 centrifuga
+@1 Compressor=@1 kompresor
+@1 Extractor=@1 extraktor
+@1 Forcefield Emitter=@1 emitor silového pole
+@1 Freezer=@1 chladič
+@1 Furnace=@1 pec
+@1 Grinder=@1 drtič
+@1 Music Player=@1 hudební přehravač
+@1 Nuclear Reactor Core=@1 jádro jaderného reaktoru
+@1 Quarry=@1 těžební stroj
+@1 Tool Workshop=@1 opravna nářadí
+Arrayed Solar @1 Generator=@1 solární generátor
+Fuel-Fired @1 Generator=@1 tepelný generátor
+Geothermal @1 Generator=@1 geotermální generátor
+Hydro @1 Generator=@1 vodní generátor
+Nuclear @1 Generator Core=@1 atomový reaktor (jádro)
+Small Solar @1 Generator=@1 malý solární generátor
+Wind @1 Generator=@1 větrný generátor
+Self-Contained Injector=Samostatný injektor
+Constructor Mk@1=Konstruktor značky @1
+Frame=Klec
+Frame Motor=Motor klece
+Template=Šablona
+Template (replacing)=Šablona (nahrazující)
+Template Motor=Motor šablony
+Template Tool=Nástroj šablony
+Battery Box=Bateriová skříň
+Supply Converter=Transformátor (univerzální)
+Switching Station=Rozvodná skříň
+Fuel-Fired Alloy Furnace=Slévací pec na palivo
+Fuel-Fired Furnace=Pec na palivo
+Wind Mill Frame=Podpěra větrného generátoru
+Forcefield=Silové pole
+Nuclear Reactor Rod Compartment=Prostor pro palivové tyče
+Administrative World Anchor=Administrátorská světová kotva
+Power Monitor=Elektroměr
+Vacuum Cleaner=Vysavač (17x17x17 metrů)
+Vacuum Cleaner Mk1=Vysavač značky 1 (17x17x17 metrů)
+Vacuum Cleaner Mk2=Vysavač značky 2 (33x33x33 metrů)
+Vacuum Cleaner Mk3=Vysavač značky 3 (51x51x51 metrů)
+
+## Machine-specific
+# $1: Pruduced EU
+Charge=Nabíjení
+Discharge=Vybíjení
+Power level=Úroveň nabití skříně
+# $1: Tier $2: current_charge $3: max_charge
+@1 Battery Box: @2/@3=@1 bateriová skříň: @2/@3
+# $1: Machine name $2: Supply $3: Demand
+@1. Supply: @2 Demand: @3=@1. Příkon: @2 Požadovaný odběr: @3 
+Production at @1%=Produkce na @1%
+Choose Milling Program:=Vyberte program:
+Slim Elements half / normal height:=Poloviční/normální výška:
+Current track @1=Hraje píseň č. @1
+Stopped=Zastaveno
+Keeping %d/%d map blocks loaded=Udržuji %d/%d mapových bloků
+Digging not started=Těžba nezačala
+Digging finished=Těžba hotová
+Digging @1 m above machine=Těžím @1 m nad strojem
+Digging @1 m below machine=Těžím @1 m pod strojem
+@1 (@2 @3 -> @4 @5)=@1 (@2 @3 -> @4 @5)
+Power Monitor. Supply: @1 Demand: @2=Elektroměr. Příkon: @1 Požadovaný výkon: @2
+Sphere=Tvar koule
+Cube=Tvar krychle
+Input Power=Příkon
+ERROR: Only players with server privilege may enable Administrative World Anchor or change its radius!=CHYBA: Jen hráči/ky s právem server mohou zapnout administrátorskou světovou kotvu nebo změnit její dosah!
+
+## Grinder Recipes
+# $1: Name
+@1 Dust=@1 prach
+Akalin=Akalinový
+Alatro=Alatrový
+Arol=Arolový
+Brass=Mosazný
+Bronze=Bronzový
+Carbon Steel=Uhelnoocelový
+Cast Iron=Litoželezný
+Chernobylite=Černobylitový
+Chromium=Chromový
+Coal=Uhelný
+Copper=Měděný
+Gold=Zlatý
+Mithril=Mitrilový
+Lead=Olověný
+Silver=Stříbrný
+Stainless Steel=Nerezový
+Stone=Kamenný
+Sulfur=Sirný
+Talinite=Talinitový
+Tin=Cínový
+Wrought Iron=Železný
+Zinc=Zinkový
+@1%-Fissile Uranium=@1% uranový
+
+## Tools
+RE Battery=Baterie
+Water Can=Kanystr vody
+River Water Can=Kanystr říční vody
+Lava Can=Kanystr lávy
+Chainsaw Mk1=Motorová pila značky 1
+Chainsaw Mk2=Motorová pila značky 2
+Chainsaw Mk3=Motorová pila značky 3
+Flashlight=Svítilna
+3 nodes deep.=3 metry do hloubky.
+3 nodes tall.=3 metry do výšky.
+3 nodes wide.=3 metry na šířku.
+3x3 nodes.=3x3 metry.
+Use while sneaking to change Mining Drill Mk%d modes.=Pro změnu režimu Shift + levý klik
+Mining Drill Mk@1 Mode @2=Vrták značky @1, mód @2
+Mining Drill Mk@1=Vrták značky @1
+Mining Laser Mk@1=Laser značky @1
+Single node.=Jednotlivý blok.
+Sonic Screwdriver (left-click rotates face, right-click rotates axis)=Sonický šroubovák (levý klik otáčí objekt, pravý osu otáčení)
+Tree Tap=Kohoutek na stromy
+Prospector=Detektor kovů a jiných materiálů
+
+## Craft descriptions
+Alloy cooking=slévání
+Grinding=drcení
+Compressing=lisování
+Extracting=extrahování
+Separating=dělení

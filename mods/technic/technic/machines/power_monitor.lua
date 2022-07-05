@@ -57,7 +57,7 @@ minetest.register_abm({
 					S("Power Monitor. Supply: @1 Demand: @2",
 					technic.EU_string(supply), technic.EU_string(demand)))
 		else
-			meta:set_string("infotext",S("Power Monitor Has No Network"))
+			meta:set_string("infotext",S("@1 Has No Network", S("Power Monitor")))
 		end
 	end,
 })

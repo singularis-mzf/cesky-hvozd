@@ -63,7 +63,7 @@ local function clear_networks(pos)
 				-- This is similar to check_node_subp
 				technic.cables[minetest.hash_node_position(pos)] = network_id
 				pos.visited = 1
-				if technic.is_tier_cable(name, tier) then
+				if technic.is_tier_cable(node.name, tier) then
 					table.insert(network.all_nodes,pos)
 				elseif technic.machines[tier][node.name] then
 					meta:set_string(tier.."_network",minetest.pos_to_string(sw_pos))
@@ -149,7 +149,7 @@ function technic.register_cable(tier, size)
 	}
 
 	minetest.register_node("technic:"..ltier.."_cable", {
-		description = S("%s Cable"):format(tier),
+		description = S("@1 Cable", S(tier)),
 		tiles = {"technic_"..ltier.."_cable.png"},
 		inventory_image = "technic_"..ltier.."_cable_wield.png",
 		wield_image = "technic_"..ltier.."_cable_wield.png",
@@ -191,7 +191,7 @@ function technic.register_cable(tier, size)
 	end
 	for p, i in pairs(xyz) do
 		local def = {
-			description = S("%s Cable Plate"):format(tier),
+			description = S("@1 Cable Plate", S(tier)),
 			tiles = {"technic_"..ltier.."_cable.png"},
 			groups = table.copy(groups),
 			sounds = default.node_sound_wood_defaults(),

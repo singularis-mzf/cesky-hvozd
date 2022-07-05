@@ -811,7 +811,7 @@ local function template_drops(pos, node, oldmeta, digger)
 					end
 				end
 			else
-				local stack_max = 99
+				local stack_max = 100
 				local num = #minetest.deserialize(c)
 				drops = {}
 				while num > stack_max do

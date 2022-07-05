@@ -48,7 +48,7 @@ local function forceload_on(pos, meta)
 end
 
 local function set_display(pos, meta)
-	meta:set_string("infotext", S(meta:get_int("enabled") ~= 0 and "%s Enabled" or "%s Disabled"):format(desc))
+	meta:set_string("infotext", S(meta:get_int("enabled") ~= 0 and "@1 Enabled" or "@1 Disabled", desc))
 	meta:set_string("formspec",
 		"size[5,3.5]"..
 		"item_image[0,0;1,1;technic:admin_anchor]"..
@@ -61,7 +61,7 @@ local function set_display(pos, meta)
 		(meta:get_int("enabled") == 0 and
 			"button[3,2;2,1;enable;"..minetest.formspec_escape(S("Disabled")).."]" or
 			"button[3,2;2,1;disable;"..minetest.formspec_escape(S("Enabled")).."]")..
-		"label[0,3;"..minetest.formspec_escape(S("Keeping %d/%d map blocks loaded"):format(#currently_forceloaded_positions(meta), #compute_forceload_positions(pos, meta))).."]")
+		"label[0,3;"..minetest.formspec_escape(S("Keeping @1/@2 map blocks loaded", #currently_forceloaded_positions(meta), #compute_forceload_positions(pos, meta))).."]")
 end
 
 minetest.register_node("technic:admin_anchor", {
@@ -87,10 +87,10 @@ minetest.register_node("technic:admin_anchor", {
 		forceload_off(meta)
 	end,
 	on_receive_fields = function (pos, formname, fields, sender)
+		local sender_is_player = sender and sender:is_player()
 		local meta = minetest.get_meta(pos)
-		if (meta:get_int("locked") ~= 0 or fields.lock) and
-				not (sender and sender:is_player() and
-					sender:get_player_name() == meta:get_string("owner")) then
+		local sender_has_owner_rights = sender_is_player and (sender:get_player_name() == meta:get_string("owner") or minetest.check_player_privs(sender, "protection_bypass"))
+		if (meta:get_int("locked") ~= 0 or fields.lock) and not sender_has_owner_rights then
 			return
 		end
 		if fields.unlock then meta:set_int("locked", 0) end
@@ -98,8 +98,12 @@ minetest.register_node("technic:admin_anchor", {
 		if fields.disable or fields.enable or fields.radius then
 			forceload_off(meta)
 			if fields.disable then meta:set_int("enabled", 0) end
-			if fields.enable then meta:set_int("enabled", 1) end
-			if fields.radius and string.find(fields.radius, "^[0-9]+$") and tonumber(fields.radius) < 256 then meta:set_int("radius", fields.radius) end
+			if sender_is_player and minetest.check_player_privs(sender, "server") then
+				if fields.enable then meta:set_int("enabled", 1) end
+				if fields.radius and string.find(fields.radius, "^[0-9]+$") and tonumber(fields.radius) < 256 then meta:set_int("radius", fields.radius) end
+			elseif (fields.enable and not fields.disable) or fields.radius then
+				minetest.chat_send_player(sender:get_player_name(), S("ERROR: Only players with server privilege may enable Administrative World Anchor or change its radius!"))
+			end
 			if meta:get_int("enabled") ~= 0 then
 				forceload_on(pos, meta)
 			end

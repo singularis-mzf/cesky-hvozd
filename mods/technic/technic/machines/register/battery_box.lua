@@ -1,7 +1,7 @@
 
 local digilines_path = minetest.get_modpath("digilines")
 
-local S = technic.getter
+local S = minetest.get_translator("technic")
 local tube_entry = "^pipeworks_tube_connection_metallic.png"
 local cable_entry = "^technic_cable_connection_overlay.png"
 
@@ -142,7 +142,7 @@ local function add_on_off_buttons(meta, ltier, charge_percent)
 					pipeworks.button_off,
 					pipeworks.button_on
 				}
-			).."label[3.9,2.01;Allow splitting incoming 'charge' stacks from tubes]"..
+			).."label[3.9,2.01;"..S("Allow splitting incoming 'charge' stacks from tubes").."]"..
 			fs_helpers.cycling_button(
 				meta,
 				"image_button[3,2.5;1,0.6",
@@ -151,7 +151,7 @@ local function add_on_off_buttons(meta, ltier, charge_percent)
 					pipeworks.button_off,
 					pipeworks.button_on
 				}
-			).."label[3.9,2.51;Allow splitting incoming 'discharge' stacks]"
+			).."label[3.9,2.51;"..S("Allow splitting incoming 'discharge' stacks").."]"
 	end
 	return formspec
 end
@@ -166,7 +166,7 @@ function technic.register_battery_box(data)
 		"list[context;src;3,1;1,1;]"..
 		"image[4,1;1,1;technic_battery_reload.png]"..
 		"list[context;dst;5,1;1,1;]"..
-		"label[0,0;"..S("%s Battery Box"):format(tier).."]"..
+		"label[0,0;"..S("@1 Battery Box", S(tier)).."]"..
 		"label[3,0;"..S("Charge").."]"..
 		"label[5,0;"..S("Discharge").."]"..
 		"label[1,3;"..S("Power level").."]"..
@@ -196,7 +196,7 @@ function technic.register_battery_box(data)
 		local meta           = minetest.get_meta(pos)
 
 		if not technic.is_tier_cable(below.name, tier) then
-			meta:set_string("infotext", S("%s Battery Box Has No Network"):format(tier))
+			meta:set_string("infotext", S("@1 Has No Network", S("@1 Battery Box", S(tier))).. "(itext)")
 			return
 		end
 
@@ -255,11 +255,11 @@ function technic.register_battery_box(data)
 
 		local charge_percent = math.floor(current_charge / max_charge * 100)
 		meta:set_string("formspec", formspec..add_on_off_buttons(meta, ltier, charge_percent))
-		local infotext = S("@1 Battery Box: @2 / @3", tier,
+		local infotext = S("@1 Battery Box: @2 / @3", S(tier),
 				technic.EU_string(current_charge),
 				technic.EU_string(max_charge))
 		if eu_input == 0 then
-			infotext = S("%s Idle"):format(infotext)
+			infotext = S("@1 Idle", infotext)
 		end
 		meta:set_string("infotext", infotext)
 	end
@@ -276,9 +276,9 @@ function technic.register_battery_box(data)
 			groups.tubedevice_receiver = 1
 		end
 
-		local top_tex = "technic_"..ltier.."_battery_box_top.png"..tube_entry
+		local top_tex = "technic_"..ltier.."_battery_box_top.png"
 		local front_tex = "technic_"..ltier.."_battery_box_front.png^technic_power_meter"..i..".png"
-		local side_tex = "technic_"..ltier.."_battery_box_side.png"..tube_entry
+		local side_tex = "technic_"..ltier.."_battery_box_side.png"
 		local bottom_tex = "technic_"..ltier.."_battery_box_bottom.png"..cable_entry
 
 		if ltier == "lv" then
@@ -288,7 +288,7 @@ function technic.register_battery_box(data)
 		end
 
 		minetest.register_node("technic:"..ltier.."_battery_box"..i, {
-			description = S("%s Battery Box"):format(tier),
+			description = S("@1 Battery Box", S(tier)),
 			tiles = {
 				top_tex,
 				bottom_tex,
@@ -312,7 +312,7 @@ function technic.register_battery_box(data)
 				local charge = meta:get_int("internal_EU_charge")
 				local cpercent = math.floor(charge / max_charge * 100)
 				local inv = meta:get_inventory()
-				meta:set_string("infotext", S("%s Battery Box"):format(tier))
+				meta:set_string("infotext", S("@1 Battery Box", S(tier)))
 				meta:set_string("formspec", formspec..add_on_off_buttons(meta, ltier, cpercent))
 				meta:set_string("channel", ltier.."_battery_box"..minetest.pos_to_string(pos))
 				meta:set_int(tier.."_EU_demand", 0)

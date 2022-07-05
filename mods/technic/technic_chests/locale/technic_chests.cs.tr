@@ -1,0 +1,59 @@
+# textdomain: technic_chests
+
+@1 Chest=@1 truhla
+@1 Locked Chest=@1 zamykatelná truhla
+@1 Locked Chest (owned by @2)=@1 zamykatelná truhla (vlastník/ice: @2)
+Color Filter: @1=Barevná značka: @1
+Edit chest description:=Upravit popisek:
+
+# Colors
+Black=Černá
+Blue=Modrá
+Brown=Hnědá
+Cyan=Tyrkysová
+Dark Green=Tmavozelená
+Dark Grey=Tmavě šedá
+Green=Světle zelená
+Grey=Šedá
+Magenta=Magentová
+Orange=Oranžová
+Pink=Růžová
+Red=Červená
+Violet=Fialová
+White=Bílá
+Yellow=Žlutá
+None=Bez barvy
+
+# Materials
+Copper=Měděná
+Gold=Zlatá
+Iron=Železná
+Mithril=Mitrilová
+Silver=Stříbrná
+Wooden=Dřevěná
+
+# Sorting
+Sort=Seřadit
+Auto-sort is @1=Samořazení je @1
+Off=vypnuto
+On=zapnuto
+@1 (owned by @2)=@1 (vlastník/ice: @2)
+@1 Protected Chest=@1 chráněná truhla
+Selected Color: @1=Barevná značka: @1
+Move existing to Chest=Přesunout do truhly věci,@njaké už tam jsou
+Move specific=Přesunout konkrétní
+Drop to move=Pusťte pro přesun
+Move all to Chest=Vše z inventáře do truhly
+Move all to Inventory=Vše z truhly do inventáře
+Send player put messages=Zasílat zprávy 'vloženo'
+Send player take messages=Zasílat zprávy 'vyjmuto'
+Send tube inject messages=Zasílat zprávy 'vloženo do roury'
+Send tube pull messages=Zasílat zprávy 'vyjmuto z roury'
+Send overflow messages=Zasílat zprávy 'přeplnění'
+Auto-sort is On=Samořazení je@nzapnuto
+Auto-sort is Off=Samořazení je@nvypnuto
+Sort by Quantity=Řadit dle@npočtu
+Sort by Type=Řadit dle@ndruhu
+Sort by Wear=Řadit dle@nopotřebení
+Natural sort=Přirozené řazení
+Sort by Item=Řadit dle@nkonkrétního typu

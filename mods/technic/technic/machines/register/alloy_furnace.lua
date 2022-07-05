@@ -40,7 +40,7 @@ end
 function technic.register_alloy_furnace(data)
 	data.typename = "alloy"
 	data.machine_name = "alloy_furnace"
-	data.machine_desc = S("%s Alloy Furnace")
+	data.machine_desc = S("@1 Alloy Furnace", "%s")
 
 	data.insert_object = technic.insert_object_unique_stack
 	data.can_insert = technic.can_insert_unique_stack

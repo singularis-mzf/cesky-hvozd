@@ -1,7 +1,8 @@
 -- Minetest 0.4.6 mod: extranodes
 -- namespace: technic
--- Boilerplate to support localized strings if intllib mod is installed.
-local S = rawget(_G, "intllib") and intllib.Getter() or function(s) return s end
+local S = minetest.get_translator("extranodes")
+
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 if minetest.get_modpath("moreblocks") then
 
@@ -307,3 +308,4 @@ if minetest.get_modpath("unifieddyes") then
 		})
 	end
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

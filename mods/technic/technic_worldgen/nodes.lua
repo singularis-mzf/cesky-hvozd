@@ -1,5 +1,5 @@
 
-local S = technic.worldgen.gettext
+local S = minetest.get_translator("technic_worldgen")
 
 minetest.register_node( ":technic:mineral_uranium", {
 	description = S("Uranium Ore"),
