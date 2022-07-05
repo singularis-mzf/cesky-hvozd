@@ -1,3 +1,5 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local trampolinebox = {
 	type = "fixed",
 	fixed = {
@@ -22,7 +24,7 @@ local trampoline_punch = function(pos, node)
 	if id < "6" then
 		id = id + 1
 		minetest.swap_node(pos, {name = string.sub(node.name, 1, #node.name - 1)..id})
-		minetest.get_meta(pos):set_string("infotext", "Bouncy Level: "..id)
+		minetest.get_meta(pos):set_string("infotext", "Úroveň pružnosti: "..id)
 	end
 end
 
@@ -31,19 +33,19 @@ local power_decrease = function(pos, node)
 	if id > "1" then
 		id = id - 1
 		minetest.swap_node(pos, {name = string.sub(node.name, 1, #node.name - 1)..id})
-		minetest.get_meta(pos):set_string("infotext", "Bouncy Level: "..id)
+		minetest.get_meta(pos):set_string("infotext", "Úroveň pružnosti: "..id)
 	end
 end
 
 for i = 1, 6 do
 	minetest.register_node("jumping:trampoline"..i, {
-		description = "Trampoline",
+		description = "Trampolína",
 		drawtype = "nodebox",
 		node_box = trampolinebox,
 		selection_box = trampolinebox,
 		paramtype = "light",
 		on_construct = function(pos)
-			minetest.get_meta(pos):set_string("infotext", "Bouncy Level: "..i)
+			minetest.get_meta(pos):set_string("infotext", "Úroveň pružnosti: "..i)
 		end,
 		on_punch = trampoline_punch,
 		on_rightclick = power_decrease,
@@ -53,17 +55,18 @@ for i = 1, 6 do
 			"jumping_trampoline_bottom.png",
 			"jumping_trampoline_sides.png^jumping_trampoline_sides_overlay"..i..".png"
 		},
+		use_texture_alpha = "opaque",
 		groups = {
 				dig_immediate = 2,
-				bouncy = 20 + i * 20,
+				bouncy = 50 + i * 10, -- 20 + i * 20,
 				fall_damage_add_percent = -70,
-				not_in_creative_inventory = ( i > 1 and 1 or nil),
+				not_in_creative_inventory = (i > 1 and 1 or nil),
 			},
 	})
 end
 
 minetest.register_node("jumping:cushion", {
-	description = "Cushion",
+	description = "Polštář",
 	drawtype = "nodebox",
 	node_box = cushionbox,
 	selection_box = cushionbox,
@@ -73,6 +76,7 @@ minetest.register_node("jumping:cushion", {
 		"jumping_cushion_tb.png",
 		"jumping_cushion_sides.png"
 	},
+	use_texture_alpha = "opaque",
 	groups = {dig_immediate=2, disable_jump=1, fall_damage_add_percent=-100},
 })
 
@@ -97,3 +101,4 @@ if minetest.get_modpath("farming") and minetest.get_modpath("wool") then
 		}
 	})
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
