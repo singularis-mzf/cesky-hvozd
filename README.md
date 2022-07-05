@@ -115,6 +115,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: LGPLv2.1
 * [ContentDB](https://content.minetest.net/packages/TumeniNodes/pkarcs/)
 
+## Sky Mobs (mobs\_sky)
+
+* Zdroj: [https://notabug.org/TenPlus1/mobs\_sky](https://notabug.org/TenPlus1/mobs\_sky), revize fdcaf298720e1007dc19e282872d83b66cc4ced5
+* Původní licence: mobs\_bat: kód GPL, model a textury CC-BY-SA-3.0, zvuky WTFPL; mobs\_birds: kód MIT, model a textury CC-BY-SA-3.0; mobs\_butterfly: kód MIT, model a textury: CC-BY-SA-3.0
+* Licence úprav: kód: { mobs\_bat: GPL, ostatní módy: MIT }; modely a textury: CC-BY-SA-3.0
+* [ContentDB](https://content.minetest.net/packages/TenPlus1/mobs\_sky/)
+
 ## Some More Trains (some\_more\_trains)
 
 * Zdroj: [https://github.com/APercy/some\_more\_trains](https://github.com/APercy/some\_more\_trains), revize 326f7e73a73e05e26a4cc25c8cc5acc777429443

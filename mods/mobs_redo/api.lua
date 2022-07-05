@@ -4119,6 +4119,10 @@ end
 -- MarkBu's spawn function (USE this one please)
 function mobs:spawn(def)
 
+	if not def.cesky_hvozd_allowed then
+		return
+	end
+
 	mobs:spawn_specific(
 		def.name,
 		def.nodes or {"group:soil", "group:stone"},
