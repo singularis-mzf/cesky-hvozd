@@ -1,6 +1,6 @@
 local path = minetest.get_modpath(minetest.get_current_modname()) .. "/"
 
-local S
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 -- Check for translation method
 local S
@@ -60,5 +60,4 @@ end
 -- Lucky Blocks
 dofile(path .. "lucky_block.lua")
 
-
-print ("[MOD] Mobs Redo Animals loaded")
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
