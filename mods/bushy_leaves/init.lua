@@ -15,6 +15,48 @@ Codezeilen und schreibe das auch nicht dran.
 
 ]]--
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
+local leaves_nodes = {
+	"default:acacia_bush_leaves",
+	"default:acacia_leaves",
+	"default:aspen_leaves",
+	"default:blueberry_bush_leaves",
+	"default:blueberry_bush_leaves_with_berries",
+	"default:bush_leaves",
+	"default:leaves",
+	"ebony:leaves",
+	"cherrytree:blossom_leaves",
+	"cherrytree:leaves",
+	"chestnuttree:leaves",
+	"plumtree:leaves",
+	"moretrees:apple_tree_leaves",
+	"moretrees:beech_leaves",
+	"moretrees:birch_leaves",
+	"moretrees:cedar_leaves",
+	"moretrees:date_palm_leaves",
+	"moretrees:fir_leaves",
+	"moretrees:fir_leaves_bright",
+	"moretrees:oak_leaves",
+	"moretrees:palm_leaves",
+	"moretrees:poplar_leaves",
+	"moretrees:rubber_tree_leaves",
+	"moretrees:sequoia_leaves",
+	"moretrees:spruce_leaves",
+	"moretrees:willow_leaves",
+	"willow:leaves",
+	-- "default:jungleleaves",
+	-- "moretrees:jungletree_leaves_yellow",
+	-- "moretrees:jungletree_leaves_red",
+	-- "default:pine_bush_needles",
+	-- "default:pine_needles",
+}
+
+-- local mods_with_leaves = {
+    -- ["default"] = 1,
+    -- ["moretrees"] = 1,
+-- }
+
 local node_box_bushy_leaves = {
 	type = "fixed",
 	fixed = {
@@ -37,31 +79,22 @@ local node_box_full_node = {
 	fixed = { -8/16, -8/16, -8/16,  8/16,  8/16,  8/16 },
 }
 
-local get_node_box = function(node_name, node_def)
-	local node_box
-	if (
-		string.match(node_name, "leaves") or
-		string.match(node_name, "needles")
-	) then
-		node_box = node_box_bushy_leaves
-	end
-	return node_box
-end
+local bushy_leaves_override = {
+	drawtype = "nodebox",
+	node_box = node_box_bushy_leaves,
+	collision_box = node_box_full_node,
+	use_texture_alpha = "blend",
+}
 
 local add_bushy_leaves = function()
-	for node_name, node_def in pairs(minetest.registered_nodes) do
-		local node_box = get_node_box(node_name, node_def)
-		if nil ~= node_box then
-			minetest.override_item(
-				node_name,
-				{
-					drawtype = "nodebox",
-					node_box = node_box,
-					collision_box = node_box_full_node,
-				}
-			)
+	-- local counter = 0
+	for i, v in ipairs(leaves_nodes) do
+		if minetest.registered_nodes[v] then
+			minetest.override_item(v, bushy_leaves_override)
 		end
 	end
+	-- print(string.format("[MOD] Bushy Leaves: %d items redefined.\n", counter))
 end
 
 minetest.register_on_mods_loaded(add_bushy_leaves)
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
