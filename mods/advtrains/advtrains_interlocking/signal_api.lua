@@ -257,7 +257,7 @@ function advtrains.interlocking.signal_rc_handler(pos, node, player, itemstack, 
 			advtrains.interlocking.show_signal_aspect_selector(
 				pname,
 				ndef.advtrains.supported_aspects,
-				"Set aspect manually", callback,
+				attrans("Set aspect manually"), callback,
 				isasp)
 		else
 			--static signal - only IP
@@ -325,21 +325,21 @@ function advtrains.interlocking.show_ip_form(pos, pname, only_notset)
 	if not minetest.check_player_privs(pname, "interlocking") then
 		return
 	end
-	local form = "size[7,5]label[0.5,0.5;Signal at "..minetest.pos_to_string(pos).."]"
+	local form = "size[7,5]label[0.5,0.5;" .. attrans("Signal at @1", minetest.pos_to_string(pos)).."]"
 	advtrains.interlocking.db.check_for_duplicate_ip(pos)
 	local pts, connid = advtrains.interlocking.db.get_ip_by_signalpos(pos)
 	if pts then
-		form = form.."label[0.5,1.5;Influence point is set at "..pts.."/"..connid.."]"
-		form = form.."button_exit[0.5,2.5;  5,1;set;Move]"
-		form = form.."button_exit[0.5,3.5;  5,1;clear;Clear]"
+		form = form.."label[0.5,1.5;" .. attrans("Influence point is set at @1/@2", pts, connid).."]"
+		form = form.."button_exit[0.5,2.5;  5,1;set;"..attrans("Move") .. "]"
+		form = form.."button_exit[0.5,3.5;  5,1;clear;" .. attrans("Clear") .. "]"
 		local ipos = minetest.string_to_pos(pts)
 		ipmarker(ipos, connid)
 	else
-		form = form.."label[0.5,1.5;Influence point is not set.]"
-		form = form.."label[0.5,2.0;It is recommended to set an influence point.]"
-		form = form.."label[0.5,2.5;This is the point where trains will obey the signal.]"
+		form = form.."label[0.5,1.5;" .. attrans("Influence point is not set.") .. "]"
+		form = form.."label[0.5,2.0;" .. attrans("It is recommended to set an influence point.") .. "]"
+		form = form.."label[0.5,2.5;" .. attrans("This is the point where trains will obey the signal.") .. "]"
 		
-		form = form.."button_exit[0.5,3.5;  5,1;set;Set]"
+		form = form.."button_exit[0.5,3.5;  5,1;set;" .. attrans("Set") .. "]"
 	end
 	if not only_notset or not pts then
 		minetest.show_formspec(pname, "at_il_ipassign_"..minetest.pos_to_string(pos), form)
@@ -368,12 +368,12 @@ end)
 -- inits the signal IP assignment process
 function advtrains.interlocking.signal_init_ip_assign(pos, pname)
 	if not minetest.check_player_privs(pname, "interlocking") then
-		minetest.chat_send_player(pname, "Insufficient privileges to use this!")
+		minetest.chat_send_player(pname, attrans("Insufficient privileges to use this!"))
 		return
 	end
 	--remove old IP
 	--advtrains.interlocking.db.clear_ip_by_signalpos(pos)
-	minetest.chat_send_player(pname, "Configuring Signal: Please look in train's driving direction and punch rail to set influence point.")
+	minetest.chat_send_player(pname, attrans("Configuring Signal: Please look in train's driving direction and punch rail to set influence point."))
 	
 	players_assign_ip[pname] = pos
 end
@@ -398,15 +398,15 @@ minetest.register_on_punchnode(function(pos, node, player, pointed_thing)
 				if not advtrains.interlocking.db.get_ip_signal_asp(pts, plconnid) then
 					advtrains.interlocking.db.set_ip_signal(pts, plconnid, signalpos)
 					ipmarker(pos, plconnid)
-					minetest.chat_send_player(pname, "Configuring Signal: Successfully set influence point")
+					minetest.chat_send_player(pname, attrans("Configuring Signal: Successfully set influence point"))
 				else
-					minetest.chat_send_player(pname, "Configuring Signal: Influence point of another signal is already present!")
+					minetest.chat_send_player(pname, attrans("Configuring Signal: Influence point of another signal is already present!"))
 				end
 			else
-				minetest.chat_send_player(pname, "Configuring Signal: This is not a normal two-connection rail! Aborted.")
+				minetest.chat_send_player(pname, attrans("Configuring Signal: This is not a normal two-connection rail! Aborted."))
 			end
 		else
-			minetest.chat_send_player(pname, "Configuring Signal: Node is too far away. Aborted.")
+			minetest.chat_send_player(pname, attrans("Configuring Signal: Node is too far away. Aborted."))
 		end
 		players_assign_ip[pname] = nil
 	end
@@ -429,22 +429,22 @@ function advtrains.interlocking.show_signal_aspect_selector(pname, p_suppasp, p_
 	}
 	local purpose = p_purpose or ""
 	
-	local form = "size[7,7]label[0.5,0.5;Select Signal Aspect:]"
+	local form = "size[7,7]label[0.5,0.5;" .. attrans("Select Signal Aspect:") .. "]"
 	form = form.."label[0.5,1;"..purpose.."]"
 	
-	form = form.."label[0.5,1.5;== Main Signal ==]"
+	form = form.."label[0.5,1.5;" .. attrans("== Main Signal ==") .. "]"
 	local selid = 1
 	local entries = {}
 	for idx, spv in ipairs(suppasp.main) do
 		local entry
 		if spv == 0 then
-			entry = "Halt"
+			entry = attrans("Halt")
 		elseif spv == -1 then
-			entry = "Continue at maximum speed"
+			entry = attrans("Continue at maximum speed")
 		elseif not spv then
-			entry = "Continue\\, speed limit unchanged (no info)"
+			entry = attrans("Continue\\, speed limit unchanged (no info)")
 		else
-			entry = "Continue at speed of "..spv				
+			entry = attrans("Continue at speed of @1", spv)
 		end
 		-- hack: the crappy formspec system returns the label, not the index. save the index in it.
 		entries[idx] = idx.."| "..entry
@@ -455,26 +455,26 @@ function advtrains.interlocking.show_signal_aspect_selector(pname, p_suppasp, p_
 	form = form.."dropdown[0.5,2;6;main;"..table.concat(entries, ",")..";"..selid.."]"
 
 	
-	form = form.."label[0.5,3;== Shunting ==]"
+	form = form.."label[0.5,3;" .. attrans("== Shunting ==") .. "]"
 	if suppasp.shunt == nil then
 		local st = 1
 		if isasp and isasp.shunt then st=2 end
-		form = form.."dropdown[0.5,3.5;6;shunt_free;---,allowed;"..st.."]"
+		form = form.."dropdown[0.5,3.5;6;shunt_free;---," .. attrans("allowed") .. ";"..st.."]"
 	end
 
-	form = form.."label[0.5,4.5;== Distant Signal ==]"
+	form = form.."label[0.5,4.5;" .. attrans("== Distant Signal ==").."]"
 	local selid = 1
 	local entries = {}
 	for idx, spv in ipairs(suppasp.dst) do
 		local entry
 		if spv == 0 then
-			entry = "Expect to stop at the next signal"
+			entry = attrans("Expect to stop at the next signal")
 		elseif spv == -1 then
-			entry = "Expect to pass the next signal at maximum speed"
+			entry = attrans("Expect to pass the next signal at maximum speed")
 		elseif not spv then
-			entry = "No info"
+			entry = attrans("No info")
 		else
-			entry = string.format("Expect to pass the next signal at speed of %d", spv)
+			entry = attrans("Expect to pass the next signal at speed of @1", string.format("%d", spv))
 		end
 		entries[idx] = idx.."| "..entry
 		if isasp and spv == (isasp.dst or false) then
@@ -483,7 +483,7 @@ function advtrains.interlocking.show_signal_aspect_selector(pname, p_suppasp, p_
 	end
 	form = form.."dropdown[0.5,5;6;dst;"..table.concat(entries, ",")..";"..selid.."]"
 
-	form = form.."button_exit[0.5,6;5,1;save;Save signal aspect]"
+	form = form.."button_exit[0.5,6;5,1;save;" .. attrans("Save signal aspect") .. "]"
 	
 	local token = advtrains.random_id()
 	
@@ -526,7 +526,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				local asp = {
 					main = psl.suppasp.main[maini],
 					dst = psl.suppasp.dst[dsti],
-					shunt = usebool(psl.suppasp.shunt, fields.shunt_free, "allowed"),
+					shunt = usebool(psl.suppasp.shunt, fields.shunt_free, attrans("allowed")),
 					info = {}
 				}
 				psl.callback(pname, asp)

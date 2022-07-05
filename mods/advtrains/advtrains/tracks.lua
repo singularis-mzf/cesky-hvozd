@@ -476,7 +476,8 @@ function advtrains.register_tracks(tracktype, def, preset)
 					
 					mesh = def.shared_model or (def.models_prefix.."_"..img_suffix..def.models_suffix),
 					tiles = {def.shared_texture or (def.texture_prefix.."_"..img_suffix..".png"), def.second_texture},
-					
+					use_texture_alpha = "clip",
+
 					groups = {
 						attached_node = advtrains.IGNORE_WORLD and 0 or 1,
 						advtrains_track=1,

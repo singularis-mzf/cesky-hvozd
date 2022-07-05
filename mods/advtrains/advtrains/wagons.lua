@@ -361,7 +361,7 @@ function wagon:on_step(dtime)
 		
 		--show off-track information in outside text instead of notifying the whole server about this
 		if train.off_track then
-			outside = outside .."\n!!! Train off track !!!"
+			outside = outside .."\n" .. attrans("!!! Train off track !!!")
 		end
 		
 		if self.infotext_cache~=outside  then
@@ -700,16 +700,16 @@ function wagon:on_rightclick(clicker)
 										self:get_on(clicker, seatid)
 										return
 									else
-										rsn="Wagon is full."
+										rsn=attrans("Wagon is full.")
 									end
 								else
-									rsn="Doors are closed! (try holding sneak key!)"
+									rsn=attrans("Doors are closed! (try holding sneak key!)")
 								end
 							end
 						end
 					end
 				end
-				minetest.chat_send_player(pname, attrans("Can't get on: "..rsn))
+				minetest.chat_send_player(pname, attrans("Can't get on: @1", rsn))
 			else
 				self:show_get_on_form(pname)
 			end
@@ -805,8 +805,8 @@ function wagon:get_off(seatno)
 		end
 		--if not door_entry, or paths missing, fall back to old method
 		--atdebug("using fallback")
-		local objpos=advtrains.round_vector_floor_y(self.object:getpos())
-		local yaw=self.object:getyaw()
+		local objpos=advtrains.round_vector_floor_y(self.object:get_pos())
+		local yaw=self.object:get_yaw()
 		local isx=(yaw < math.pi/4) or (yaw > 3*math.pi/4 and yaw < 5*math.pi/4) or (yaw > 7*math.pi/4)
 		local offp
 		--abuse helper function
@@ -859,23 +859,23 @@ function wagon:show_wagon_properties(pname)
 	]]
 	local data = advtrains.wagons[self.id]
 	local form="size[5,5]"
-	form = form .. "field[0.5,1;4.5,1;whitelist;Allow these players to access your wagon:;"..minetest.formspec_escape(data.whitelist or "").."]"
-	form = form .. "field[0.5,2;4.5,1;roadnumber;Wagon road number:;"..minetest.formspec_escape(data.roadnumber or "").."]"
+	form = form .. "field[0.5,1;4.5,1;whitelist;" .. attrans("Allow these players to access your wagon:") .. ";"..minetest.formspec_escape(data.whitelist or "").."]"
+	form = form .. "field[0.5,2;4.5,1;roadnumber;" .. attrans("Wagon road number:") .. ";"..minetest.formspec_escape(data.roadnumber or "").."]"
 	local fc = ""
 	if data.fc then
 		fc = table.concat(data.fc, "!")
 	end
-	form = form .. "field[0.5,3;4.5,1;fc;Freight Code:;"..fc.."]"
+	form = form .. "field[0.5,3;4.5,1;fc;" .. attrans("Freight Code:") ..";"..fc.."]"
 	if data.fc then
 		if not data.fcind then data.fcind = 1 end
 		if data.fcind > 1 then
-			form=form.."button[0.5,3.5;1,1;fcp;prev FC]"
+			form=form.."button[0.5,3.5;1,1;fcp;" .. S("prev FC") .."]"
 		end
-		form=form.."label[1.5,3.5;Current FC:]"
+		form=form.."label[1.5,3.5;" .. S("Current FC:").."]"
 
 		local cur = data.fc[data.fcind] or ""
 		form=form.."label[1.5,3.75;"..minetest.formspec_escape(cur).."]"
-		form=form.."button[3.5,3.5;1,1;fcn;next FC]"
+		form=form.."button[3.5,3.5;1,1;fcn;" .. S("next FC") .. "]"
 	end
 	form=form.."button_exit[0.5,4.5;4,1;save;"..attrans("Save wagon properties").."]"
 	minetest.show_formspec(pname, "advtrains_prop_"..self.id, form)
@@ -968,7 +968,7 @@ function wagon:show_bordcom(pname)
 	form=form.."field[7.5,3.25;3,1;routingcode;"..attrans("Routingcode")..";"..(minetest.formspec_escape(train.routingcode or "")).."]"
 	--row 5 : train overview and autocoupling
 	if train.velocity==0 then
-		form=form.."label[0.5,4;Train overview /coupling control:]"
+		form=form.."label[0.5,4;"..attrans("Train overview/coupling control:").."]"
 		linhei=5
 		local pre_own, pre_wl, owns_any = nil, nil, minetest.check_player_privs(pname, "train_admin")
 		for i, tpid in ipairs(train.trainparts) do
@@ -1008,9 +1008,9 @@ function wagon:show_bordcom(pname)
 		end
 		
 	else
-		form=form.."label[0.5,4.5;Train overview / coupling control is only shown when the train stands.]"
+		form=form.."label[0.5,4.5;" .. attrans("Train overview / coupling control is only shown when the train stands.") .. "]"
 	end
-	form = form .. "button[0.5,8;3,1;save;Save]"
+	form = form .. "button[0.5,8;3,1;save;" .. attrans("Save") .. "]"
 	
 	-- Interlocking functionality: If the interlocking module is loaded, you can set the signal aspect
 	-- from inside the train
@@ -1020,14 +1020,14 @@ function wagon:show_bordcom(pname)
 			local oci = train.lzb.checkpoints[i]
 			if oci.udata and oci.udata.signal_pos then
 				if advtrains.interlocking.db.get_sigd_for_signal(oci.udata.signal_pos) then
-					form = form .. "button[4.5,8;5,1;ilrs;Remote Routesetting]"
+					form = form .. "button[4.5,8;5,1;ilrs;" .. attrans("Remote Routesetting") .. "]"
 					break
 				end
 			end
 			i=i+1
 		end
 		if train.ars_disable then
-			form = form .. "button[4.5,7;5,1;ilarsenable;Clear 'Disable ARS' flag]"
+			form = form .. "button[4.5,7;5,1;ilarsenable;" .. attrans("Clear 'Disable ARS' flag") .. "]"
 		end
 	end
 	
@@ -1250,7 +1250,7 @@ function wagon:check_seat_group_access(pname, sgr)
 		return false, "Not allowed to access a driver stand!"
 	end
 	if self.seat_groups[sgr].driving_ctrl_access then
-		advtrains.log("Drive", pname, self.object:getpos(), self:train().text_outside)
+		advtrains.log("Drive", pname, self.object:get_pos(), self:train().text_outside)
 	end
 	return true
 end
@@ -1267,7 +1267,7 @@ end
 
 function advtrains.safe_decouple_wagon(w_id, pname, try_run)
 	if not minetest.check_player_privs(pname, "train_operator") then
-		minetest.chat_send_player(pname, "Missing train_operator privilege")
+		minetest.chat_send_player(pname, attrans("Missing train_operator privilege"))
 		return false
 	end
 	local data = advtrains.wagons[w_id]
@@ -1285,7 +1285,7 @@ function advtrains.safe_decouple_wagon(w_id, pname, try_run)
 	end
 	
 	if not checklock(pname, data.owner, owdata.owner, data.whitelist, owdata.whitelist) then
-		minetest.chat_send_player(pname, "Not allowed to do this.")
+		minetest.chat_send_player(pname, attrans("Not allowed to do this."))
 		return false
 	end
 	
@@ -1372,7 +1372,7 @@ function advtrains.register_wagon(sysname_p, prototype, desc, inv_img, nincreati
 					return itemstack
 				end
 				if not minetest.check_player_privs(placer, {train_operator = true }) then
-					minetest.chat_send_player(pname, "You don't have the train_operator privilege.")
+					minetest.chat_send_player(pname, attrans("You don't have the train_operator privilege."))
 					return itemstack
 				end
 				if not minetest.check_player_privs(placer, {train_admin = true }) and minetest.is_protected(pointed_thing.under, placer:get_player_name()) then
@@ -1384,7 +1384,7 @@ function advtrains.register_wagon(sysname_p, prototype, desc, inv_img, nincreati
 				
 				local prevpos = advtrains.get_adjacent_rail(pointed_thing.under, tconns, plconnid, prototype.drives_on)
 				if not prevpos then
-					minetest.chat_send_player(pname, "The track you are trying to place the wagon on is not long enough!")
+					minetest.chat_send_player(pname, attrans("The track you are trying to place the wagon on is not long enough!"))
 					return
 				end
 				
@@ -1416,5 +1416,5 @@ advtrains.register_wagon("advtrains:wagon_placeholder", {
 	assign_to_seat_group = {},
 	wagon_span=1,
 	drops={},
-}, "Wagon placeholder", "advtrains_wagon_placeholder.png", true)
+}, attrans("Wagon placeholder"), "advtrains_wagon_placeholder.png", true)
 

@@ -1,6 +1,8 @@
 -- Advtrains interlocking system
 -- See database.lua for a detailed explanation
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 advtrains.interlocking = {}
 
 advtrains.SHUNT_SPEED_MAX = 6
@@ -28,3 +30,4 @@ dofile(modpath.."tsr_rail.lua")
 
 
 minetest.register_privilege("interlocking", {description = "Can set up track sections, routes and signals.", give_to_singleplayer = true})
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

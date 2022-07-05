@@ -13,6 +13,8 @@
     GNU Affero General Public License for more details.
 ]]--
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 serialize_lib = {}
 
 --[[ Configuration table
@@ -73,4 +75,4 @@ function serialize_lib.write_table_to_file(root_table, filename)
 	return true
 end
 
-
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

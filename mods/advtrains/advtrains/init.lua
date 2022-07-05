@@ -1,4 +1,4 @@
-
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 --[[
 Advanced Trains - Minetest Mod
 
@@ -422,7 +422,7 @@ function advtrains.load_version_4()
 	end
 	
 	--== load luaatc ==
-	if atlatc then
+	if minetest.get_modpath("advtrains_luaautomation") and atlatc then
 		local la_save = serialize_lib.load_atomic(advtrains.fpath.."_atlatc.ls")
 		if la_save then
 			atlatc.load(la_save)
@@ -526,7 +526,7 @@ advtrains.avt_save = function(remove_players_from_wagons)
 	
 	-- save of luaatc
 	local la_save
-	if atlatc then
+	if minetest.get_modpath("advtrains_luaautomation") and atlatc then
 		la_save = atlatc.save()
 	end
 	
@@ -614,7 +614,7 @@ minetest.register_globalstep(function(dtime_mt)
 		if advtrains_itm_mainloop then
 			advtrains_itm_mainloop(dtime)
 		end
-		if atlatc then
+		if minetest.get_modpath("advtrains_luaautomation") and atlatc then
 			--atlatc.mainloop_stepcode(dtime)
 			atlatc.interrupt.mainloop(dtime)
 		end
@@ -643,7 +643,7 @@ end)
 -- first time called in main loop (after the init phase) because luaautomation has to initialize first.
 function advtrains.load()
 	advtrains.avt_load() --loading advtrains. includes ndb at advtrains.ndb.load_data()
-	--if atlatc then
+	--if minetest.get_modpath("advtrains_luaautomation") and atlatc then
 	--	atlatc.load() --includes interrupts
 	--end == No longer loading here. Now part of avt_save() legacy loading.
 	if advtrains_itm_init then
@@ -677,7 +677,7 @@ function advtrains.save(remove_players_from_wagons)
 	
 	local t1 = os.clock()
 	advtrains.avt_save(remove_players_from_wagons) --saving advtrains. includes ndb at advtrains.ndb.save_data()
-	if atlatc then
+	if minetest.get_modpath("advtrains_luaautomation") and atlatc then
 		atlatc.save()
 	end
 	atlog("Saved advtrains save files, took",math.floor((os.clock()-t1) * 1000),"ms")
@@ -700,7 +700,7 @@ end)
 minetest.register_chatcommand("at_empty_seats",
 	{
         params = "", -- Short parameter description
-        description = "Detach all players, especially the offline ones, from all trains. Use only when no one serious is on a train.", -- Full description
+        description = attrans("Detach all players, especially the offline ones, from all trains. Use only when no one serious is on a train."), -- Full description
         privs = {train_operator=true, server=true}, -- Require the "privs" privilege to run
         func = function(name, param)
 				atwarn("Data is being saved. While saving, advtrains will remove the players from trains. Save files will be reloaded afterwards!")
@@ -712,7 +712,7 @@ minetest.register_chatcommand("at_empty_seats",
 minetest.register_chatcommand("at_reroute",
 	{
         params = "", 
-        description = "Delete all train routes, force them to recalculate", 
+        description = attrans("Delete all train routes, force them to recalculate"),
         privs = {train_operator=true}, -- Only train operator is required, since this is relatively safe.
         func = function(name, param)
 				advtrains.invalidate_all_paths()
@@ -722,8 +722,8 @@ minetest.register_chatcommand("at_reroute",
 
 minetest.register_chatcommand("at_whereis",
 	{
-		params = "<train id>",
-		description = "Returns the position of the train with the given id",
+		params = attrans("<train id>"),
+		description = attrans("Returns the position of the train with the given id"),
 		privs = {train_operator = true},
 		func = function(name,param)
 			local train = advtrains.trains[param] 
@@ -737,7 +737,7 @@ minetest.register_chatcommand("at_whereis",
 minetest.register_chatcommand("at_disable_step",
 	{
         params = "<yes/no>", 
-        description = "Disable the advtrains globalstep temporarily", 
+        description = attrans("Disable the advtrains globalstep temporarily"),
         privs = {server=true},
         func = function(name, param)
 			if minetest.is_yes(param) then
@@ -761,5 +761,5 @@ end
 
 
 local tot=(os.clock()-lot)*1000
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 minetest.log("action", "[advtrains] Loaded in "..tot.."ms")
-

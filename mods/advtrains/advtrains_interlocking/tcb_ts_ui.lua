@@ -26,7 +26,7 @@ minetest.register_node("advtrains_interlocking:tcb_node", {
 	},
 	mesh = "at_il_tcb_node.obj",
 	tiles = {"at_il_tcb_node.png"},
-	description="Track Circuit Break",
+	description=attrans("Track Circuit Break"),
 	sunlight_propagates=true,
 	groups = {
 		cracky=3,

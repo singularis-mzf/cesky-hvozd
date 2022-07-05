@@ -1,4 +1,4 @@
-
+print("[MOD BEGIN] " .. minetest.get_current_modname())
 
 local map_def={
 	example = {
@@ -85,8 +85,8 @@ local function cache_ndb()
 end
 
 minetest.register_chatcommand("itm", {
-	params="[x1 z1 x2 z2] or [mdef]",
-	description="Display advtrains train map of given area.\nFirst form:[x1 z1 x2 z2] - specify area directly.\nSecond form:[mdef] - Use a predefined map background(see init.lua)\nThird form: No parameters - use WorldEdit position markers.",
+	params="[x1 z1 x2 z2] nebo [mdef]",
+	description=attrans("Display advtrains train map of given area.\nFirst form:[x1 z1 x2 z2] - specify area directly.\nSecond form:[mdef] - Use a predefined map background(see init.lua)\nThird form: No parameters - use WorldEdit position markers."),
 	privs={itm=true},
 	func = function(name, param)
 		local mdef=string.match(param, "^(%S+)$")
@@ -119,7 +119,7 @@ minetest.register_chatcommand("itm", {
 })
 minetest.register_chatcommand("itm_cache_ndb", {
 	params="",
-	description="Cache advtrains node database again. Run when tracks changed.",
+	description=attrans("Cache advtrains node database again. Run when tracks changed."),
 	privs={itm=true},
 	func = function(name, param)
 		cache_ndb()
@@ -147,3 +147,4 @@ function advtrains_itm_init()
 	--automatically run itm_cache_ndb
 	minetest.after(2, cache_ndb)
 end
+print("[MOD END] " .. minetest.get_current_modname())

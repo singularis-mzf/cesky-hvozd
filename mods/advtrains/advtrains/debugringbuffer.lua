@@ -38,7 +38,7 @@ end
 minetest.register_chatcommand("atdebug_show",
 	{
         params = "train sid", -- Short parameter description
-        description = "Dump debug log", -- Full description
+        description = "Zapíše ladicí log", -- Full description
         privs = {train_operator=true}, -- Require the "privs" privilege to run
         func = function(name, param)
 			advtrains.drb_dump(param)

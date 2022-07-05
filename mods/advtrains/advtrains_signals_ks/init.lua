@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 -- Ks signals
 -- Can display main aspects (no Zs) + Sht
 
@@ -168,11 +169,12 @@ for _, rtab in ipairs({
 			}
 		end
 		minetest.register_node("advtrains_signals_ks:hs_"..typ.."_"..rot, {
-			description = "Ks Main Signal",
+			description = attrans("Ks Main Signal"),
 			drawtype = "mesh",
 			mesh = "advtrains_signals_ks_main_smr"..rot..".obj",
 			tiles = {"advtrains_signals_ks_mast.png", "advtrains_signals_ks_head.png", "advtrains_signals_ks_head.png", tile},
-			
+			use_texture_alpha = "opaque",
+
 			paramtype="light",
 			sunlight_propagates=true,
 			light_source = 4,
@@ -211,11 +213,12 @@ for _, rtab in ipairs({
 			shuntd = {asp = { main = false, shunt = true } , n = "danger"},
 		}) do
 		minetest.register_node("advtrains_signals_ks:ra_"..typ.."_"..rot, {
-			description = "Ks Shunting Signal",
+			description = attrans("Ks Shunting Signal"),
 			drawtype = "mesh",
 			mesh = "advtrains_signals_ks_sht_smr"..rot..".obj",
 			tiles = {"advtrains_signals_ks_mast.png", "advtrains_signals_ks_head.png", "advtrains_signals_ks_head.png", "advtrains_signals_ks_ltm_"..typ..".png"},
-			
+			use_texture_alpha = "opaque",
+
 			paramtype="light",
 			sunlight_propagates=true,
 			light_source = 4,
@@ -256,7 +259,8 @@ for _, rtab in ipairs({
 			drawtype = "mesh",
 			mesh = "advtrains_signals_ks_"..mesh.."_smr"..rot..".obj",
 			tiles = {"advtrains_signals_ks_signpost.png", tile2},
-			
+			use_texture_alpha = "opaque",
+
 			paramtype="light",
 			sunlight_propagates=true,
 			light_source = 4,
@@ -295,7 +299,7 @@ for _, rtab in ipairs({
 		if typ == "hfs" then
 			tile2 = "advtrains_signals_ks_sign_hfs.png"
 		end
-		register_sign("sign", typ, prts.n, "Signal Sign", "sign"..mesh, tile2, "hfs", "advtrains_signals_ks_sign_lf7.png", prts.asp)
+		register_sign("sign", typ, prts.n, attrans("Signal Sign"), "sign"..mesh, tile2, "hfs", "advtrains_signals_ks_sign_lf7.png", prts.asp)
 	end
 	
 	for typ, prts in pairs {
@@ -313,7 +317,7 @@ for _, rtab in ipairs({
 		if typ == "e" then
 			tile2 = "advtrains_signals_ks_sign_zs10.png"
 		end
-		register_sign("sign", typ, prts.n, "Permanent local speed restriction sign", "sign"..mesh, tile2, "8", "advtrains_signals_ks_sign_8.png^[invert:rgb", prts.asp)
+		register_sign("sign", typ, prts.n, attrans("Permanent local speed restriction sign"), "sign"..mesh, tile2, "8", "advtrains_signals_ks_sign_8.png^[invert:rgb", prts.asp)
 	end
 
 	for typ, prts in pairs {
@@ -326,7 +330,7 @@ for _, rtab in ipairs({
 	} do
 		local tile2 = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_"..typ..".png^[makealpha:255,255,255)"..(typ == "e" and "" or "^[multiply:orange")
 		local inv = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_8.png^[makealpha:255,255,255)^[multiply:orange"
-		register_sign("sign_lf", typ, prts.n, "Temporary local speed restriction sign", "sign", tile2, "8", inv, {main = prts.main, shunt = true, type = "temp"})
+		register_sign("sign_lf", typ, prts.n, attrans("Temporary local speed restriction sign"), "sign", tile2, "8", inv, {main = prts.main, shunt = true, type = "temp"})
 	end
 
 	for typ, prts in pairs {
@@ -339,7 +343,7 @@ for _, rtab in ipairs({
 	} do
 		local tile2 = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_"..typ..".png^[makealpha:255,255,255)"
 		local inv = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_8.png^[makealpha:255,255,255)"
-		register_sign("sign_lf7", typ, prts.n, "Line speed restriction sign", "sign", tile2, "8", inv, {main = prts.main, shunt = true, type = "line"})
+		register_sign("sign_lf7", typ, prts.n, attrans("Line speed restriction sign"), "sign", tile2, "8", inv, {main = prts.main, shunt = true, type = "line"})
 	end
 	
 	-- Geschwindigkeits(vor)anzeiger für Ks-Signale
@@ -354,6 +358,7 @@ for _, rtab in ipairs({
 		local def = {
 			drawtype = "mesh",
 			tiles = {"advtrains_signals_ks_mast.png","advtrains_signals_ks_head.png","advtrains_signals_ks_sign_"..typ..".png^[invert:rgb^[noalpha"},
+			use_texture_alpha = "opaque",
 			paramtype = "light",
 			sunlight_propagates = true,
 			light_source = 4,
@@ -373,7 +378,7 @@ for _, rtab in ipairs({
 
 		-- Zs 3
 		local t = table.copy(def)
-		t.description = "Ks speed limit indicator"
+		t.description = attrans("Ks speed limit indicator")
 		t.mesh = "advtrains_signals_ks_zs_top_smr"..rot..".obj"
 		t.drop = "advtrains_signals_ks:zs3_off_0"
 		t.selection_box.fixed[1][5] = 0
@@ -382,7 +387,7 @@ for _, rtab in ipairs({
 
 		-- Zs 3v
 		local t = table.copy(def)
-		t.description = "Ks distant speed limit indicator"
+		t.description = attrans("Ks distant speed limit indicator")
 		t.mesh = "advtrains_signals_ks_zs_bottom_smr"..rot..".obj"
 		t.drop = "advtrains_signals_ks:zs3v_off_0"
 		t.tiles[3] = t.tiles[3] .. "^[multiply:yellow"
@@ -391,11 +396,12 @@ for _, rtab in ipairs({
 	end
 	
 	minetest.register_node("advtrains_signals_ks:mast_mast_"..rot, {
-		description = "Ks Mast",
+		description = attrans("Ks Mast"),
 		drawtype = "mesh",
 		mesh = "advtrains_signals_ks_mast_smr"..rot..".obj",
 		tiles = {"advtrains_signals_ks_mast.png"},
-		
+		use_texture_alpha = "opaque",
+
 		paramtype="light",
 		sunlight_propagates=true,
 		--light_source = 4,
@@ -479,3 +485,4 @@ minetest.register_craft{
 	output = "advtrains_signals_ks:sign_lf7_8_0 1",
 	recipe = {{"advtrains_signals_ks:sign_lf_8_0"}}
 }
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

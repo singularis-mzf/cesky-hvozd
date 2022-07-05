@@ -1,6 +1,8 @@
 -- Default tracks for advtrains
 -- (c) orwell96 and contributors
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 --flat
 advtrains.register_tracks("default", {
 	nodename_prefix="advtrains:dtrack",
@@ -513,3 +515,5 @@ minetest.register_lbm({
 		action = function(pos, node, active_object_count, active_object_count_wider) minetest.set_node(pos, {name="advtrains:dtrack_st_45", param2=node.param2}) end,
 	})
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

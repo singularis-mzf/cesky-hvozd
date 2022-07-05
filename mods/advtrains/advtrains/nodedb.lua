@@ -379,7 +379,7 @@ local ptime=0
 minetest.register_chatcommand("at_sync_ndb",
 	{
         params = "", -- Short parameter description
-        description = "Write node db back to map and find ghost nodes", -- Full description
+        description = attrans("Write node db back to map and find ghost nodes"), -- Full description
         privs = {train_operator=true}, 
         func = function(name, param)
 				if os.time() < ptime+30 and not minetest.get_player_privs(name, "server") then

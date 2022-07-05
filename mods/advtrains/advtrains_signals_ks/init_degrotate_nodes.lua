@@ -20,7 +20,8 @@ minetest.register_node("advtrains_signals_ks:mast", {
 	},
 	mesh = "advtrains_signals_ks_mast.obj",
 	tiles = {"advtrains_signals_ks_mast.png"},
-	description="Ks Signal Mast",
+	use_texture_alpha = "opaque",
+	description=attrans("Ks Signal Mast"),
 	sunlight_propagates=true,
 	groups = {
 		cracky=3,
@@ -41,7 +42,8 @@ minetest.register_node("advtrains_signals_ks:head_main", {
 	},
 	mesh = "advtrains_signals_ks_head_main.obj",
 	tiles = {"advtrains_signals_ks_mast.png", "advtrains_signals_ks_head.png"},
-	description="Ks Main Signal Screen",
+	use_texture_alpha = "opaque",
+	description=attrains("Ks Main Signal Screen"),
 	sunlight_propagates=true,
 	groups = {
 		cracky=3,
@@ -62,7 +64,8 @@ minetest.register_node("advtrains_signals_ks:zs_top", {
 	},
 	mesh = "advtrains_signals_ks_zs_top_smr0.obj",
 	tiles = {"advtrains_signals_ks_mast.png", "advtrains_signals_ks_head.png"},
-	description="Ks Speed Restriction Signal (top)",
+	use_texture_alpha = "opaque",
+	description=attrans("Ks Speed Restriction Signal (top)"),
 	sunlight_propagates=true,
 	groups = {
 		cracky=3,
@@ -83,7 +86,8 @@ minetest.register_node("advtrains_signals_ks:zs_bottom", {
 	},
 	mesh = "advtrains_signals_ks_zs_bottom_smr0.obj",
 	tiles = {"advtrains_signals_ks_mast.png", "advtrains_signals_ks_head.png"},
-	description="Ks Speed Restriction Signal (bottom)",
+	use_texture_alpha = "opaque",
+	description=attrans("Ks Speed Restriction Signal (bottom)"),
 	sunlight_propagates=true,
 	groups = {
 		cracky=3,

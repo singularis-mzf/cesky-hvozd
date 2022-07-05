@@ -34,7 +34,7 @@ local suppasp = {
 }
 
 minetest.register_node("advtrains_interlocking:ds_danger", {
-	description = "Demo signal at Danger",
+	description = attrans("Demo signal at Danger"),
 	tiles = {"at_il_signal_asp_danger.png"},
 	groups = {
 		cracky = 3,
@@ -53,7 +53,7 @@ minetest.register_node("advtrains_interlocking:ds_danger", {
 	after_dig_node = advtrains.interlocking.signal_after_dig,
 })
 minetest.register_node("advtrains_interlocking:ds_free", {
-	description = "Demo signal at Free",
+	description = attrans("Demo signal at Free"),
 	tiles = {"at_il_signal_asp_free.png"},
 	groups = {
 		cracky = 3,
@@ -74,7 +74,7 @@ minetest.register_node("advtrains_interlocking:ds_free", {
 	after_dig_node = advtrains.interlocking.signal_after_dig,
 })
 minetest.register_node("advtrains_interlocking:ds_slow", {
-	description = "Demo signal at Slow",
+	description = attrans("Demo signal at Slow"),
 	tiles = {"at_il_signal_asp_slow.png"},
 	groups = {
 		cracky = 3,

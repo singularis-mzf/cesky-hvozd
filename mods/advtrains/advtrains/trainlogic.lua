@@ -628,7 +628,7 @@ function advtrains.train_step_b(id, train, dtime)
 				local ocn = otrn.path_cn[ob_idx]
 				local ocp = otrn.path_cp[ob_idx]
 
-				local target_is_inside, ref_index, facing
+				local target_is_inside, ref_index, facing, same_dir
 
 				if base_cn == ocn then
 					-- same direction

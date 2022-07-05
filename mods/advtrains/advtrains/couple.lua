@@ -475,7 +475,7 @@ minetest.register_entity("advtrains:couple", {
 		self.object:remove()
 	end,
 	on_step=function(self, dtime)
-		if advtrains.wagon_outside_range(self.object:getpos()) then
+		if advtrains.wagon_outside_range(self.object:get_pos()) then
 			--atdebug("Couple Removing outside range")
 			self.object:remove()
 			return
@@ -514,7 +514,7 @@ minetest.register_entity("advtrains:couple", {
 				tp2=advtrains.path_get_interpolated(train2, train2.end_index)
 			end
 			local pos_median=advtrains.pos_median(tp1, tp2)
-			if not vector.equals(pos_median, self.object:getpos()) then
+			if not vector.equals(pos_median, self.object:get_pos()) then
 				self.object:set_pos(pos_median)
 			end
 			self.position_set=true
