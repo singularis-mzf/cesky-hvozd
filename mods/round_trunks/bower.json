@@ -1,6 +1,6 @@
 {
   "name": "round_trunks",
-  "description": "Turns (default) cubic tree trunks to cylindrical.",
+  "description": "Turns (default) cubic tree trunks to cylindrical. Modified for server Český hvozd.",
   "keywords": [
     "environment", "trees"
   ],
@@ -10,7 +10,8 @@
     "https://codeberg.org/Hamlet/round_trunks/media/branch/master/screenshot.png"
   ],
   "authors": [
-    "Hamlet"
+    "Hamlet",
+    "Singularis"
   ],
   "license": "EUPL-1.2",
   "dependencies": {

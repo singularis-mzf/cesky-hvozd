@@ -1,9 +1,0 @@
-# ENG: Use the alternative shape for the leaves and needles?
-#
-# ITA: Usare la forma alternativa per foglie e aghi di pino?
-round_trunks_leaves (Alternative Leaves) bool false
-
-# ENG: Use the textures' overrider?
-#
-# ITA: Usare le immagini alternative?
-round_trunks_textures (Textures overrider) bool true

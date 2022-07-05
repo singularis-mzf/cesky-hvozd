@@ -21,60 +21,96 @@
 
 --]]
 
-
---
--- Global mod's namespace
---
-
 round_trunks = {}
 
+-- Constant
+local round_trunk_def = {
+	drawtype = 'mesh',
+	mesh = 'round_trunks_trunk.obj',
+	paramtype = 'light',
+	paramtype2 = 'facedir',
+	selection_box = {
+		type = 'fixed',
+		fixed = {-0.4, -0.5, -0.4, 0.4, 0.5, 0.4}
+	},
+	collision_box = {
+		type = 'fixed',
+		fixed = {-0.4, -0.5, -0.4, 0.4, 0.5, 0.4}
+	}
+}
 
---
--- Local procedures
---
-
--- Minetest logger
-local pr_LogMessage = function()
-
-	-- Constant
-	local s_LOG_LEVEL = minetest.settings:get('debug_log_level')
-
-	-- Body
-	if (s_LOG_LEVEL == nil)
-	or (s_LOG_LEVEL == 'action')
-	or (s_LOG_LEVEL == 'info')
-	or (s_LOG_LEVEL == 'verbose')
-	then
-		minetest.log('action', '[Mod] Round Trunks [v1.1.0] loaded.')
+function round_trunks.trunks_overrider(itemname)
+	if minetest.registered_nodes[itemname] then
+		minetest.override_item(itemname, round_trunk_def)
 	end
 end
 
-
--- Subfiles loader
-local pr_LoadSubFiles = function()
-
-	-- Constants
-	local s_MOD_PATH = minetest.get_modpath('round_trunks')
-	local s_MINETEST_GAME = minetest.get_modpath('default')
-	local s_MINECLONE = ''
-
-	-- Body
-	dofile(s_MOD_PATH .. '/core/API.lua')
-
-	if (s_MINETEST_GAME ~= nil) then
-		dofile(s_MOD_PATH .. '/core/MTG.lua')
-	end
-
-	if (s_MINECLONE ~= nil) then
-	end
-
-end
+round_trunks.trunks_overrider('default:acacia_tree')
+round_trunks.trunks_overrider('default:aspen_tree')
+-- round_trunks.trunks_overrider('default:jungletree')
+-- round_trunks.trunks_overrider('default:pine_tree')
+round_trunks.trunks_overrider('default:tree')
+round_trunks.trunks_overrider('cherrytree:trunk')
+round_trunks.trunks_overrider('chestnuttree:trunk')
+round_trunks.trunks_overrider('ebony:trunk')
+round_trunks.trunks_overrider('moretrees:beech_trunk')
+round_trunks.trunks_overrider('moretrees:date_palm_trunk')
+round_trunks.trunks_overrider('moretrees:date_palm_mfruit_trunk')
+round_trunks.trunks_overrider('moretrees:date_palm_ffruit_trunk')
+round_trunks.trunks_overrider('moretrees:fir_trunk')
+round_trunks.trunks_overrider('moretrees:palm_trunk')
+round_trunks.trunks_overrider('moretrees:poplar_trunk')
+round_trunks.trunks_overrider('plumtree:trunk')
 
 
---
--- Main body
---
+-- Textures' replacers
+local t_TEXTURES_ACACIA_TREE = {
+	tiles = {
+		'round_trunks_acacia_tree_top.png',
+		'round_trunks_acacia_tree_top.png',
+		'default_acacia_tree.png',
+		'default_acacia_tree.png',
+		'default_acacia_tree.png',
+		'default_acacia_tree.png'
+	}
+}
 
+local t_TEXTURES_ASPEN_TREE = {
+	tiles = {
+		'round_trunks_aspen_tree_top.png',
+		'round_trunks_aspen_tree_top.png',
+		'default_aspen_tree.png',
+		'default_aspen_tree.png',
+		'default_aspen_tree.png',
+		'default_aspen_tree.png'
+	}
+}
 
-pr_LoadSubFiles()
-pr_LogMessage()
+local t_TEXTURES_PINE_TREE = {
+	tiles = {
+		'round_trunks_pine_top.png',
+		'round_trunks_pine_top.png',
+		'default_pine_tree.png',
+		'default_pine_tree.png',
+		'default_pine_tree.png',
+		'default_pine_tree.png'
+	}
+}
+
+local t_TEXTURES_DEFAULT_TREE = {
+	tiles = {
+		'round_trunks_default_tree_top.png',
+		'round_trunks_default_tree_top.png',
+		'default_tree.png',
+		'default_tree.png',
+		'default_tree.png',
+		'default_tree.png'
+	}
+}
+
+--[[
+minetest.override_item('default:acacia_tree', t_TEXTURES_ACACIA_TREE)
+minetest.override_item('default:aspen_tree', t_TEXTURES_ASPEN_TREE)
+minetest.override_item('default:pine_tree', t_TEXTURES_PINE_TREE)
+minetest.override_item('default:tree', t_TEXTURES_DEFAULT_TREE)
+]]
