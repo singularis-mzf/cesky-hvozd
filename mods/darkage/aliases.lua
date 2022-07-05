@@ -56,35 +56,11 @@ minetest.register_alias("darkage:panel_sandstone_cobble_vertical","default:panel
 minetest.register_alias("darkage:stair_sandstone_cobble_inner_inverted","default:stair_sandstonebrick_inner_inverted")
 minetest.register_alias("darkage:slab_sandstone_cobble_three_quarter_inverted","default:slab_sandstonebrick_three_quarter_inverted")
 
--- darkage:slate_tale + stairs/slabs/microblocks -> darkage:slate_tile + stairs/slabs/microblocks
-minetest.register_alias("darkage:slate_tile","darkage:slate_tale")
-minetest.register_alias("darkage:slab_slate_tile_inverted","darkage:slab_slate_tale_inverted")
-minetest.register_alias("darkage:slab_slate_tile_wall","darkage:slab_slate_tale_wall")
-minetest.register_alias("darkage:slab_slate_tile_quarter","darkage:slab_slate_tale_quarter")
-minetest.register_alias("darkage:slab_slate_tile_quarter_inverted","darkage:slab_slate_tale_quarter_inverted")
-minetest.register_alias("darkage:slab_slate_tile_quarter_wall","darkage:slab_slate_tale_quarter_wall")
-minetest.register_alias("darkage:slab_slate_tile_three_quarter","darkage:slab_slate_tale_three_quarter")
-minetest.register_alias("darkage:slab_slate_tile_three_quarter_inverted","darkage:slab_slate_tale_three_quarter_inverted")
-minetest.register_alias("darkage:slab_slate_tile_three_quarter_wall","darkage:slab_slate_tale_three_quarter_wall")
-minetest.register_alias("darkage:stair_slate_tile_inverted","darkage:stair_slate_tale_inverted")
-minetest.register_alias("darkage:stair_slate_tile_wall","darkage:stair_slate_tale_wall")
-minetest.register_alias("darkage:stair_slate_tile_wall_half","darkage:stair_slate_tale_wall_half")
-minetest.register_alias("darkage:stair_slate_tile_wall_half_inverted","darkage:stair_slate_tale_wall_half_inverted")
-minetest.register_alias("darkage:stair_slate_tile_half","darkage:stair_slate_tale_half")
-minetest.register_alias("darkage:stair_slate_tile_half_inverted","darkage:stair_slate_tale_half_inverted")
-minetest.register_alias("darkage:stair_slate_tile_right_half","darkage:stair_slate_tale_right_half")
-minetest.register_alias("darkage:stair_slate_tile_right_half_inverted","darkage:stair_slate_tale_right_half_inverted")
-minetest.register_alias("darkage:stair_slate_tile_wall_half","darkage:stair_slate_tale_wall_half")
-minetest.register_alias("darkage:stair_slate_tile_wall_half_inverted","darkage:stair_slate_tale_wall_half_inverted")
-minetest.register_alias("darkage:stair_slate_tile_inner","darkage:stair_slate_tale_inner")
-minetest.register_alias("darkage:stair_slate_tile_inner_inverted","darkage:stair_slate_tale_inner_inverted")
-minetest.register_alias("darkage:stair_slate_tile_outer","darkage:stair_slate_tale_outer")
-minetest.register_alias("darkage:stair_slate_tile_outer_inverted","darkage:stair_slate_tale_outer_inverted")
-minetest.register_alias("darkage:panel_slate_tile_bottom","darkage:panel_slate_tale_bottom")
-minetest.register_alias("darkage:panel_slate_tile_top","darkage:panel_slate_tale_top")
-minetest.register_alias("darkage:panel_slate_tile_vertical","darkage:panel_slate_tale_vertical")
-minetest.register_alias("darkage:micro_slate_tile_bottom","darkage:micro_slate_tale_bottom")
-minetest.register_alias("darkage:micro_slate_tile_top","darkage:micro_slate_tale_top")
-
 -- darkage:desert_stone_with_iron -> default:desert_stone
 minetest.register_alias("darkage:desert_stone_with_iron","default:desert_stone")
+
+minetest.register_alias("darkage:adobe", "building_blocks:Adobe")
+if not minetest.registered_nodes["building_blocks:Marble"] then
+	minetest.register_alias("building_blocks:Marble", "darkage:marble")
+end
+

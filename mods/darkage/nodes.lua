@@ -2,8 +2,10 @@
 -- Naturally spawning blocks
 --
 
+local S = minetest.get_translator("darkage")
+
 minetest.register_node("darkage:chalk", {
-	description = "Chalk",
+	description = S("Chalk"),
 	tiles = {"darkage_chalk.png"},
 	is_ground_content = true,
 	drop = "darkage:chalk_powder 4",
@@ -12,15 +14,15 @@ minetest.register_node("darkage:chalk", {
 })
 
 minetest.register_node("darkage:marble", {
-	description = "Marble",
+	description = S("Marble"),
 	tiles = {"darkage_marble.png"},
 	is_ground_content = true,
-	groups = {cracky=3},
+	groups = {cracky=3,marble=1},
 	sounds = default.node_sound_stone_defaults()
 })
 
 minetest.register_node("darkage:serpentine", {
-	description = "Serpentine",
+	description = S("Serpentine"),
 	tiles = {"darkage_serpentine.png"},
 	is_ground_content = true,
 	groups = {cracky=3},
@@ -28,7 +30,7 @@ minetest.register_node("darkage:serpentine", {
 })
 
 minetest.register_node("darkage:mud", {
-	description = "Mud",
+	description = S("Mud"),
 	tiles = {"darkage_mud_top.png", "darkage_mud.png"},
 	is_ground_content = true,
 	groups = {crumbly=3},
@@ -39,7 +41,7 @@ minetest.register_node("darkage:mud", {
 })
 
 minetest.register_node("darkage:schist", {
-	description = "Schist",
+	description = S("Schist"),
 	tiles = {"darkage_schist.png"},
 	is_ground_content = true,
 	groups = {cracky=3},
@@ -47,7 +49,7 @@ minetest.register_node("darkage:schist", {
 })
 
 minetest.register_node("darkage:shale", {
-	description = "Shale",
+	description = S("Shale"),
 	tiles = {"darkage_shale.png","darkage_shale.png","darkage_shale_side.png"},
 	is_ground_content = true,
 	groups = {crumbly=2,cracky=2},
@@ -55,7 +57,7 @@ minetest.register_node("darkage:shale", {
 })
 
 minetest.register_node("darkage:silt", {
-	description = "Silt",
+	description = S("Silt"),
 	tiles = {"darkage_silt.png"},
 	is_ground_content = true,
 	groups = {crumbly=3},
@@ -66,7 +68,7 @@ minetest.register_node("darkage:silt", {
 })
 
 minetest.register_node("darkage:slate", {
-	description = "Slate",
+	description = S("Slate"),
 	tiles = {"darkage_slate.png","darkage_slate.png","darkage_slate_side.png"},
 	is_ground_content = true,
 	drop = "darkage:slate_cobble",
@@ -75,7 +77,7 @@ minetest.register_node("darkage:slate", {
 })
 
 minetest.register_node("darkage:ors", {
-	description = "Old Red Sandstone",
+	description = S("Old Red Sandstone"),
 	tiles = {"darkage_ors.png"},
 	is_ground_content = true,
 	drop = "darkage:ors_cobble",
@@ -84,7 +86,7 @@ minetest.register_node("darkage:ors", {
 })
 
 minetest.register_node("darkage:gneiss", {
-	description = "Gneiss",
+	description = S("Gneiss"),
 	tiles = {"darkage_gneiss.png"},
 	is_ground_content = true,
 	groups = {cracky=3},
@@ -93,7 +95,7 @@ minetest.register_node("darkage:gneiss", {
 })
 
 minetest.register_node("darkage:basalt", {
-	description = "Basalt",
+	description = S("Basalt"),
 	tiles = {"darkage_basalt.png"},
 	is_ground_content = true,
 	drop = "darkage:basalt_cobble",
@@ -106,28 +108,28 @@ minetest.register_node("darkage:basalt", {
 --
 
 minetest.register_node("darkage:slate_cobble", {
-	description = "Slate Cobble",
+	description = S("Slate Cobble"),
 	tiles = {"darkage_slate_cobble.png"},
 	groups = {cracky=2},
 	sounds = default.node_sound_stone_defaults()
 })
 
 minetest.register_node("darkage:ors_cobble", {
-	description = "Old Red Sandstone Cobble",
+	description = S("Old Red Sandstone Cobble"),
 	tiles = {"darkage_ors_cobble.png"},
 	groups = {crumbly=2,cracky=2},
 	sounds = default.node_sound_stone_defaults()
 })
 
 minetest.register_node("darkage:gneiss_cobble", {
-	description = "Gneiss Cobble",
+	description = S("Gneiss Cobble"),
 	tiles = {"darkage_gneiss_cobble.png"},
 	groups = {cracky=3},
 	sounds = default.node_sound_stone_defaults()
 })
 
 minetest.register_node("darkage:basalt_cobble", {
-	description = "Basalt Cobble",
+	description = S("Basalt Cobble"),
 	tiles = {"darkage_basalt_cobble.png"},
 	groups = {cracky=3},
 	sounds = default.node_sound_stone_defaults()
@@ -138,35 +140,35 @@ minetest.register_node("darkage:basalt_cobble", {
 --
 
 minetest.register_node("darkage:slate_brick", {
-	description = "Slate Brick",
+	description = S("Slate Brick"),
 	tiles = {"darkage_slate_brick.png"},
 	groups = {cracky=2},
 	sounds = default.node_sound_stone_defaults()
 })
 
 minetest.register_node("darkage:ors_brick", {
-	description = "Old Red Sandstone Brick",
+	description = S("Old Red Sandstone Brick"),
 	tiles = {"darkage_ors_brick.png"},
 	groups = {crumbly=2,cracky=2},
 	sounds = default.node_sound_stone_defaults()
 })
 
 minetest.register_node("darkage:gneiss_brick", {
-	description = "Gneiss Brick",
+	description = S("Gneiss Brick"),
 	tiles = {"darkage_gneiss_brick.png"},
 	groups = {cracky=3},
 	sounds = default.node_sound_stone_defaults()
 })
 
 minetest.register_node("darkage:basalt_brick", {
-	description = "Basalt Brick",
+	description = S("Basalt Brick"),
 	tiles = {"darkage_basalt_brick.png"},
 	groups = {cracky=3},
 	sounds = default.node_sound_stone_defaults()
 })
 
 minetest.register_node("darkage:stone_brick", {
-	description = "Stone Brick",
+	description = S("Stone Brick"),
 	tiles = {"darkage_stone_brick.png"},
 	groups = {cracky=3},
 	sounds = default.node_sound_stone_defaults()
@@ -175,52 +177,55 @@ minetest.register_node("darkage:stone_brick", {
 --
 -- Other Blocks
 --
-
+--[[
 minetest.register_node("darkage:straw", {
-	description = "Straw",
+	description = S("Straw"),
 	tiles = {"darkage_straw.png"},
 	groups = {snappy=3, flammable=2},
 	sounds = default.node_sound_leaves_defaults(),
 })
 
 minetest.register_node("darkage:straw_bale", {
-	description = "Straw Bale",
+	description = S("Straw Bale"),
 	tiles = {"darkage_straw_bale.png"},
 	drop = "darkage:straw 4",
 	groups = {snappy=2, flammable=2},
 	sounds = default.node_sound_leaves_defaults(),
 })
+]]
 
 minetest.register_node("darkage:slate_tile", {
-	description = "Slate Tile",
+	description = S("Slate Tile"),
 	tiles = {"darkage_slate_tile.png"},
 	groups = {cracky=2},
 	sounds = default.node_sound_stone_defaults()
 })
 
 minetest.register_node("darkage:marble_tile", {
-	description = "Marble Tile",
+	description = S("Marble Tile"),
 	tiles = {"darkage_marble_tile.png"},
 	groups = {cracky=2},
 	sounds = default.node_sound_stone_defaults()
 })
 
 minetest.register_node("darkage:reinforced_chalk", {
-	description = "Reinforced Chalk",
+	description = S("Reinforced Chalk"),
 	tiles = {"darkage_chalk.png^darkage_reinforce.png"},
 	groups = {cracky=3},
 	sounds = default.node_sound_stone_defaults()
 })
 
+--[[
 minetest.register_node("darkage:adobe", {
-	description = "Adobe",
+	description = S("Adobe"),
 	tiles = {"darkage_adobe.png"},
 	groups = {crumbly=3},
 	sounds = default.node_sound_sand_defaults(),
 })
+]]
 
 minetest.register_node("darkage:lamp", {
-	description = "Lamp",
+	description = S("Lamp"),
 	tiles = {"darkage_lamp.png"},
 	paramtype = "light",
 	light_source = 14,
@@ -229,7 +234,7 @@ minetest.register_node("darkage:lamp", {
 })
 
 minetest.register_node("darkage:cobble_with_plaster", {
-	description = "Cobblestone With Plaster",
+	description = S("Cobblestone With Plaster"),
 	tiles = {"darkage_cobble_with_plaster_D.png", "darkage_cobble_with_plaster_B.png", "darkage_cobble_with_plaster_C.png",
 		"darkage_cobble_with_plaster_A.png", "default_cobble.png", "darkage_chalk.png"},
 	paramtype2 = "facedir",
@@ -239,14 +244,14 @@ minetest.register_node("darkage:cobble_with_plaster", {
 })
 
 minetest.register_node("darkage:darkdirt", {
-	description = "Dark Dirt",
+	description = S("Dark Dirt"),
 	tiles = {"darkage_darkdirt.png"},
 	groups = {crumbly=2},
 	sounds = default.node_sound_dirt_defaults(),
 })
 
 minetest.register_node("darkage:dry_leaves", {
-	description = "Dry Leaves",
+	description = S("Dry Leaves"),
 	tiles = {"darkage_dry_leaves.png"},
 	paramtype = "light",
 	groups = {snappy=3, flammable=2},
@@ -258,7 +263,7 @@ minetest.register_node("darkage:dry_leaves", {
 --
 
 minetest.register_node("darkage:box", {
-	description = "Box",
+	description = S("Box"),
 	tiles = { "darkage_box_top.png","darkage_box_top.png","darkage_box.png"},
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -295,7 +300,7 @@ minetest.register_node("darkage:box", {
 })
 
 minetest.register_node("darkage:wood_shelves", {
-	description = "Wooden Shelves",
+	description = S("Wooden Shelves"),
 	tiles = { "darkage_shelves.png","darkage_shelves.png","darkage_shelves.png",
 			"darkage_shelves.png","darkage_shelves.png","darkage_shelves_front.png"},
 	paramtype = "light",
@@ -339,7 +344,7 @@ minetest.register_node("darkage:wood_shelves", {
 --
 
 minetest.register_node("darkage:glass", {
-	description = "Medieval Glass",
+	description = S("Medieval Glass"),
 	drawtype = "glasslike",
 	tiles = {"darkage_glass.png"},
 	paramtype = "light",
@@ -349,7 +354,7 @@ minetest.register_node("darkage:glass", {
 })
 
 minetest.register_node("darkage:glow_glass", {
-	description = "Medieval Glow Glass",
+	description = S("Medieval Glow Glass"),
 	drawtype = "glasslike",
 	tiles = {"darkage_glass.png"},
 	paramtype = "light",
@@ -364,21 +369,21 @@ minetest.register_node("darkage:glow_glass", {
 --
 
 minetest.register_node("darkage:reinforced_wood", {
-	description = "Reinforced Wood",
+	description = S("Reinforced Wood"),
 	tiles = {"default_wood.png^darkage_reinforce.png"},
 	groups = {snappy=2,choppy=3,oddly_breakable_by_hand=3,flammable=3},
 	sounds = default.node_sound_wood_defaults()
 })
 
 minetest.register_node("darkage:reinforced_wood_left", {
-	description = "Reinforced Wood Left",
+	description = S("Reinforced Wood Left"),
 	tiles = {"darkage_reinforced_wood_left.png"},
 	groups = {snappy=2,choppy=3,oddly_breakable_by_hand=3,flammable=3},
 	sounds = default.node_sound_wood_defaults()
 })
 
 minetest.register_node("darkage:reinforced_wood_right", {
-	description = "Reinforced Wood Right",
+	description = S("Reinforced Wood Right"),
 	tiles = {"darkage_reinforced_wood_right.png"},
 	groups = {snappy=2,choppy=3,oddly_breakable_by_hand=3,flammable=3},
 	sounds = default.node_sound_wood_defaults()
@@ -389,7 +394,7 @@ minetest.register_node("darkage:reinforced_wood_right", {
 --
 
 minetest.register_node("darkage:wood_bars", {
-	description = "Wooden Bars",
+	description = S("Wooden Bars"),
 	drawtype = "glasslike",
 	tiles = {"darkage_wood_bars.png"},
 	inventory_image = "darkage_wood_bars.png",
@@ -401,7 +406,7 @@ minetest.register_node("darkage:wood_bars", {
 })
 
 minetest.register_node("darkage:wood_grille", {
-	description = "Wooden Grille",
+	description = S("Wooden Grille"),
 	drawtype = "glasslike",
 	tiles = {"darkage_wood_grille.png"},
 	inventory_image = "darkage_wood_grille.png",
@@ -413,7 +418,7 @@ minetest.register_node("darkage:wood_grille", {
 })
 
 minetest.register_node("darkage:wood_frame", {
-	description = "Wooden Frame",
+	description = S("Wooden Frame"),
 	drawtype = "glasslike",
 	tiles = {"darkage_wood_frame.png"},
 	inventory_image = "darkage_wood_frame.png",
@@ -429,7 +434,7 @@ minetest.register_node("darkage:wood_frame", {
 --
 
 minetest.register_node("darkage:chain", {
-	description = "Chain",
+	description = S("Chain"),
 	drawtype = "signlike",
 	tiles = {"darkage_chain.png"},
 	inventory_image = "darkage_chain.png",
@@ -446,7 +451,7 @@ minetest.register_node("darkage:chain", {
 })
 
 minetest.register_node("darkage:iron_bars", {
-	description = "Iron Bars",
+	description = S("Iron Bars"),
 	drawtype = "glasslike",
 	tiles = {"darkage_iron_bars.png"},
 	inventory_image = "darkage_iron_bars.png",
@@ -458,7 +463,7 @@ minetest.register_node("darkage:iron_bars", {
 })
 
 minetest.register_node("darkage:iron_grille", {
-	description = "Iron Grille",
+	description = S("Iron Grille"),
 	drawtype = "glasslike",
 	tiles = {"darkage_iron_grille.png"},
 	inventory_image = "darkage_iron_grille.png",

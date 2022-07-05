@@ -97,6 +97,17 @@ minetest.register_craft({
 -- Other Blocks
 --
 
+--[[
+
+if minetest.get_modpath("farming") then
+
+	minetest.register_craft({
+		output = "darkage:straw",
+		recipe = {{"farming:straw"}}
+	})
+
+end
+
 minetest.register_craft({
 	output = "darkage:straw 2",
 	recipe = {
@@ -120,6 +131,7 @@ minetest.register_craft({
 		{"darkage:straw","darkage:straw"},
 	}
 })
+]]
 
 minetest.register_craft({
 	output = "darkage:slate_tile 4",
@@ -161,7 +173,7 @@ minetest.register_craft({
 	output = "darkage:adobe 4",
 	recipe = {
 		{"default:sand","default:sand"},
-		{"default:clay_lump","darkage:straw"},
+		{"default:clay_lump","farming:straw"},
 	}
 })
 
