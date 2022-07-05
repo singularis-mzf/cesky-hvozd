@@ -29,6 +29,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 --=====================================================================
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 unifieddyes = {}
 
 local modpath=minetest.get_modpath(minetest.get_current_modname())
@@ -39,5 +41,6 @@ dofile(modpath.."/airbrush.lua")
 dofile(modpath.."/dyes-crafting.lua")
 dofile(modpath.."/aliases.lua")
 
-print("[UnifiedDyes] Loaded!")
+-- print("[UnifiedDyes] Loaded!")
 unifieddyes.init = true
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
