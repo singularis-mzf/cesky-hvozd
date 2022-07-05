@@ -49,10 +49,41 @@ minetest.register_craft({output = FB.NAME..":a13",
 		{	"",			"",			"",			},
 	},
 })
+minetest.register_craft({output = FB.NAME..":a13lower",
+	recipe ={
+		{	"",			FB.NAME..":i02",	"",	},
+		{	"",			FB.NAME..":i00",	"",			},
+		{	"",			"",			FB.NAME..":i00",			},
+	},
+})
+minetest.register_craft({output = FB.NAME..":a13upper",
+	recipe ={
+		{	"",			FB.NAME..":i02",	"",	},
+		{	"",			FB.NAME..":i00",	FB.NAME..":i00",			},
+		{	"",			"",			"",			},
+	},
+})
+
 minetest.register_craft({output = FB.NAME..":a14",
 	recipe ={
 		{	FB.NAME..":i00",	FB.NAME..":i02",	"",			},
 		{	"",			FB.NAME..":i00",	"",			},
+		{	"",			"",			"",			},
+	},
+})
+
+minetest.register_craft({output = FB.NAME..":a14lower",
+	recipe ={
+		{	"",	FB.NAME..":i02",	"",			},
+		{	"",			FB.NAME..":i00",	"",			},
+		{	FB.NAME..":i00",			"",			"",			},
+	},
+})
+
+minetest.register_craft({output = FB.NAME..":a14upper",
+	recipe ={
+		{	"",	FB.NAME..":i02",	"",			},
+		{	FB.NAME..":i00",			FB.NAME..":i00",	"",			},
 		{	"",			"",			"",			},
 	},
 })
@@ -131,6 +162,22 @@ minetest.register_craft({output = FB.NAME..":a15",
 	recipe ={
 		{	"",			"",			"",			},
 		{	FB.NAME..":a13",	"",			FB.NAME..":a14",	},
+		{	"",			"",			"",			},
+	},
+})
+
+minetest.register_craft({output = FB.NAME..":a15lower",
+	recipe ={
+		{	"",			"",			"",			},
+		{	FB.NAME..":a13lower",	"",			FB.NAME..":a14lower",	},
+		{	"",			"",			"",			},
+	},
+})
+
+minetest.register_craft({output = FB.NAME..":a15upper",
+	recipe ={
+		{	"",			"",			"",			},
+		{	FB.NAME..":a13upper",	"",			FB.NAME..":a14upper",	},
 		{	"",			"",			"",			},
 	},
 })

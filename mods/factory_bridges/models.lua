@@ -1,3 +1,11 @@
+local model_transform_y = function(model, y_mul, y_add, t)
+	local result = {}
+	for i, r in ipairs(model) do
+		result[i] = {r[1], r[2] * y_mul + y_add, r[3], r[4], r[5] * y_mul + y_add, r[6]}
+	end
+	return result
+end
+
 local s = {l = -0.5, m = 0, h = 0.5, s = 0.01} -- размеры
 local e = {} -- элементы
 --			x_min		y_min		z_min		x_max		y_max		z2_max
@@ -211,6 +219,17 @@ e.k =	{ -- 1.24 x 0.04 x 0.04
 		{	s.h-001*s.s,	s.l-100*s.s,	s.l+023*s.s,	s.h-005*s.s,	s.l+024*s.s,	s.l+027*s.s	},	--e.h[3] стойка правая ближняя (для ступеньки)
 		{	s.h-001*s.s,	s.l-050*s.s,	s.h-027*s.s,	s.h-005*s.s,	s.l+075*s.s,	s.h-023*s.s	},	--e.h[4] стойка правая дальняя (для ступеньки)
 	}
+e.k_low = model_transform_y(e.k, 0.5, -0.25)
+e.k_low[1][2] = e.k_low[1][2] - 040*s.s
+e.k_low[2][2] = e.k_low[2][2] - 040*s.s
+e.k_low[3][2] = e.k_low[3][2] - 040*s.s
+e.k_low[4][2] = e.k_low[4][2] - 040*s.s
+e.k_high = model_transform_y(e.k, 0.5, 0.25)
+e.k_high[1][2] = e.k_high[1][2] - 040*s.s
+e.k_high[2][2] = e.k_high[2][2] - 040*s.s
+e.k_high[3][2] = e.k_high[3][2] - 040*s.s
+e.k_high[4][2] = e.k_high[4][2] - 040*s.s
+
 e.l =	{
 		{	s.l+000*s.s,	s.l+000*s.s,	s.l+000*s.s,	s.l+006*s.s,	s.l+003*s.s,	s.l+003*s.s	},	--e.i[01] левый поручень...
 		{	s.l+000*s.s,	s.l+003*s.s,	s.l+003*s.s,	s.l+006*s.s,	s.l+006*s.s,	s.l+006*s.s	},
@@ -280,6 +299,9 @@ e.l =	{
 		{	s.h-000*s.s,	s.l+096*s.s,	s.l+096*s.s,	s.h-006*s.s,	s.l+100*s.s,	s.l+100*s.s	},	--e.i[66]
 	}
 
+e.l_low = model_transform_y(e.l, 0.5, -0.25)
+e.l_high = model_transform_y(e.l, 0.5, 0.25)
+
 -- diagonal railing
 e.m = {}
 for i=0,95,5 do
@@ -331,6 +353,43 @@ FB.MODELS.A15 = {e.k[01], e.k[02], e.k[03], e.k[04], -- наклонный дв�
 		e.l[56], e.l[57], e.l[58], e.l[59], e.l[60], e.l[61], e.l[62], e.l[63], e.l[64], e.l[65], e.l[66],
 		}
 
+FB.MODELS.A13L = {e.k_low[01], e.k_low[02], -- наклонный левый поручень
+		e.l_low[01], e.l_low[02], e.l_low[03], e.l_low[04], e.l_low[05], e.l_low[06], e.l_low[07], e.l_low[08], e.l_low[09], e.l_low[10], e.l_low[11],
+		e.l_low[12], e.l_low[13], e.l_low[14], e.l_low[15], e.l_low[16], e.l_low[17], e.l_low[18], e.l_low[19], e.l_low[20], e.l_low[21], e.l_low[22],
+		e.l_low[23], e.l_low[24], e.l_low[25], e.l_low[26], e.l_low[27], e.l_low[28], e.l_low[29], e.l_low[30], e.l_low[31], e.l_low[32], e.l_low[33],
+		}
+FB.MODELS.A14L = {e.k_low[03], e.k_low[04], -- наклонный правый поручень
+		e.l_low[34], e.l_low[35], e.l_low[36], e.l_low[37], e.l_low[38], e.l_low[39], e.l_low[40], e.l_low[41], e.l_low[42], e.l_low[43], e.l_low[44],
+		e.l_low[45], e.l_low[46], e.l_low[47], e.l_low[48], e.l_low[49], e.l_low[50], e.l_low[51], e.l_low[52], e.l_low[53], e.l_low[54], e.l_low[55],
+		e.l_low[56], e.l_low[57], e.l_low[58], e.l_low[59], e.l_low[60], e.l_low[61], e.l_low[62], e.l_low[63], e.l_low[64], e.l_low[65], e.l_low[66],
+		}
+FB.MODELS.A15L = {e.k_low[01], e.k_low[02], e.k_low[03], e.k_low[04], -- наклонный двойной поручень
+		e.l_low[01], e.l_low[02], e.l_low[03], e.l_low[04], e.l_low[05], e.l_low[06], e.l_low[07], e.l_low[08], e.l_low[09], e.l_low[10], e.l_low[11],
+		e.l_low[12], e.l_low[13], e.l_low[14], e.l_low[15], e.l_low[16], e.l_low[17], e.l_low[18], e.l_low[19], e.l_low[20], e.l_low[21], e.l_low[22],
+		e.l_low[23], e.l_low[24], e.l_low[25], e.l_low[26], e.l_low[27], e.l_low[28], e.l_low[29], e.l_low[30], e.l_low[31], e.l_low[32], e.l_low[33],
+		e.l_low[34], e.l_low[35], e.l_low[36], e.l_low[37], e.l_low[38], e.l_low[39], e.l_low[40], e.l_low[41], e.l_low[42], e.l_low[43], e.l_low[44],
+		e.l_low[45], e.l_low[46], e.l_low[47], e.l_low[48], e.l_low[49], e.l_low[50], e.l_low[51], e.l_low[52], e.l_low[53], e.l_low[54], e.l_low[55],
+		e.l_low[56], e.l_low[57], e.l_low[58], e.l_low[59], e.l_low[60], e.l_low[61], e.l_low[62], e.l_low[63], e.l_low[64], e.l_low[65], e.l_low[66],
+		}
+
+FB.MODELS.A13H = {e.k_high[01], e.k_high[02], -- наклонный левый поручень
+		e.l_high[01], e.l_high[02], e.l_high[03], e.l_high[04], e.l_high[05], e.l_high[06], e.l_high[07], e.l_high[08], e.l_high[09], e.l_high[10], e.l_high[11],
+		e.l_high[12], e.l_high[13], e.l_high[14], e.l_high[15], e.l_high[16], e.l_high[17], e.l_high[18], e.l_high[19], e.l_high[20], e.l_high[21], e.l_high[22],
+		e.l_high[23], e.l_high[24], e.l_high[25], e.l_high[26], e.l_high[27], e.l_high[28], e.l_high[29], e.l_high[30], e.l_high[31], e.l_high[32], e.l_high[33],
+		}
+FB.MODELS.A14H = {e.k_high[03], e.k_high[04], -- наклонный правый поручень
+		e.l_high[34], e.l_high[35], e.l_high[36], e.l_high[37], e.l_high[38], e.l_high[39], e.l_high[40], e.l_high[41], e.l_high[42], e.l_high[43], e.l_high[44],
+		e.l_high[45], e.l_high[46], e.l_high[47], e.l_high[48], e.l_high[49], e.l_high[50], e.l_high[51], e.l_high[52], e.l_high[53], e.l_high[54], e.l_high[55],
+		e.l_high[56], e.l_high[57], e.l_high[58], e.l_high[59], e.l_high[60], e.l_high[61], e.l_high[62], e.l_high[63], e.l_high[64], e.l_high[65], e.l_high[66],
+		}
+FB.MODELS.A15H = {e.k_high[01], e.k_high[02], e.k_high[03], e.k_high[04], -- наклонный двойной поручень
+		e.l_high[01], e.l_high[02], e.l_high[03], e.l_high[04], e.l_high[05], e.l_high[06], e.l_high[07], e.l_high[08], e.l_high[09], e.l_high[10], e.l_high[11],
+		e.l_high[12], e.l_high[13], e.l_high[14], e.l_high[15], e.l_high[16], e.l_high[17], e.l_high[18], e.l_high[19], e.l_high[20], e.l_high[21], e.l_high[22],
+		e.l_high[23], e.l_high[24], e.l_high[25], e.l_high[26], e.l_high[27], e.l_high[28], e.l_high[29], e.l_high[30], e.l_high[31], e.l_high[32], e.l_high[33],
+		e.l_high[34], e.l_high[35], e.l_high[36], e.l_high[37], e.l_high[38], e.l_high[39], e.l_high[40], e.l_high[41], e.l_high[42], e.l_high[43], e.l_high[44],
+		e.l_high[45], e.l_high[46], e.l_high[47], e.l_high[48], e.l_high[49], e.l_high[50], e.l_high[51], e.l_high[52], e.l_high[53], e.l_high[54], e.l_high[55],
+		e.l_high[56], e.l_high[57], e.l_high[58], e.l_high[59], e.l_high[60], e.l_high[61], e.l_high[62], e.l_high[63], e.l_high[64], e.l_high[65], e.l_high[66],
+		}
 
 FB.MODELS.B00 = {e.a[01]} -- нижняя плита
 FB.MODELS.B01 = {e.a[01], e.e[01], e.f[01]} -- одна угловая стойка

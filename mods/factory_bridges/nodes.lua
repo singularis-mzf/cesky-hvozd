@@ -143,6 +143,62 @@ minetest.register_node(FB.NAME..":a15", {
 	node_box = {type = "fixed", fixed = FB.MODELS.A15},
 })
 
+minetest.register_node(FB.NAME..":a13lower", {
+	description = FB.LOCAL("a13lower"),
+	drawtype = "nodebox",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {cracky = 2},
+	tiles = {FB.NAME.."_00.png"},
+	node_box = {type = "fixed", fixed = FB.MODELS.A13L},
+})
+minetest.register_node(FB.NAME..":a14lower", {
+	description = FB.LOCAL("a14lower"),
+	drawtype = "nodebox",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {cracky = 2},
+	tiles = {FB.NAME.."_00.png"},
+	node_box = {type = "fixed", fixed = FB.MODELS.A14L},
+})
+minetest.register_node(FB.NAME..":a15lower", {
+	description = FB.LOCAL("a15lower"),
+	drawtype = "nodebox",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {cracky = 2},
+	tiles = {FB.NAME.."_00.png"},
+	node_box = {type = "fixed", fixed = FB.MODELS.A15L},
+})
+
+minetest.register_node(FB.NAME..":a13upper", {
+	description = FB.LOCAL("a13upper"),
+	drawtype = "nodebox",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {cracky = 2},
+	tiles = {FB.NAME.."_00.png"},
+	node_box = {type = "fixed", fixed = FB.MODELS.A13H},
+})
+minetest.register_node(FB.NAME..":a14upper", {
+	description = FB.LOCAL("a14upper"),
+	drawtype = "nodebox",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {cracky = 2},
+	tiles = {FB.NAME.."_00.png"},
+	node_box = {type = "fixed", fixed = FB.MODELS.A14H},
+})
+minetest.register_node(FB.NAME..":a15upper", {
+	description = FB.LOCAL("a15upper"),
+	drawtype = "nodebox",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {cracky = 2},
+	tiles = {FB.NAME.."_00.png"},
+	node_box = {type = "fixed", fixed = FB.MODELS.A15H},
+})
+
 minetest.register_node(FB.NAME..":b00", {
 	description = FB.LOCAL("b00"),
 	drawtype = "nodebox",
