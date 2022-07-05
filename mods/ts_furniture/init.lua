@@ -1,9 +1,10 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 ts_furniture = {}
 
 -- If true, you can sit on chairs and benches, when right-click them.
 ts_furniture.enable_sitting = minetest.settings:get_bool("ts_furniture.enable_sitting", true)
 ts_furniture.globalstep = minetest.settings:get_bool("ts_furniture.globalstep", true)
-ts_furniture.kneeling_bench = minetest.settings:get_bool("ts_furniture.kneeling_bench", false)
+ts_furniture.kneeling_bench = minetest.settings:get_bool("ts_furniture.kneeling_bench", true)
 
 -- Used for localization
 local S = minetest.get_translator("ts_furniture")
@@ -29,8 +30,8 @@ if ts_furniture.enable_sitting then
 	ts_furniture.sit = function(pos, _, player)
 		local name = player:get_player_name()
 		if not player_api.player_attached[name] then
-			if vector.length(player:get_player_velocity()) > 0 then
-				minetest.chat_send_player(player:get_player_name(), 'You can only sit down when you are not moving.')
+			if vector.length(player:get_velocity()) > 0 then
+				minetest.chat_send_player(player:get_player_name(), S("You can only sit down when you are not moving."))
 				return
 			end
 			player:move_to(pos)
@@ -267,3 +268,4 @@ if minetest.get_modpath("ethereal") then
 	ts_furniture.register_furniture("ethereal:willow_wood", "Willow")
 	ts_furniture.register_furniture("ethereal:yellow_wood", "Healing Tree")
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
