@@ -50,13 +50,10 @@ mobs:register_mob("guinea_pig:guinea_pig", {
 	stay_near = {{"farming:jackolantern_on"}, 10},
 	fear_height = 2,
 	on_rightclick = function(self, clicker)
-
 		-- feed or tame
 		if mobs:feed_tame(self, clicker, 4, true, true) then return end
 		if mobs:protect(self, clicker) then return end
 		if mobs:capture_mob(self, clicker, 90, 90, 0, true) then return end
-
-
 	end,
 
 	on_replace = function(self, pos, oldnode, newnode)
@@ -71,7 +68,7 @@ mobs:register_mob("guinea_pig:guinea_pig", {
 
 })
 
-
+--[[
 if not mobs.custom_spawn_animal then
 mobs:spawn({
 	name = "guinea_pig:guinea_pig",
@@ -99,17 +96,18 @@ minetest.register_craft({
 	output = "guinea_pig:guinea_pig",
 	recipe = {"group:grass", "mobs_animal:rat_set"}
 })
+]]
 
-
-mobs:register_egg("guinea_pig:guinea_pig", "Guinea pig", "guinea_pig_inv.png")
+mobs:register_egg("guinea_pig:guinea_pig", "Morče", "guinea_pig_inv.png")
 
 minetest.register_node("guinea_pig:pellets", {
-	description = "Guinea pig pellets",
+	description = "Bobky morčat",
 	inventory_image = "farming_cotton_seed.png",
 	wield_image = "farming_cotton_seed.png",
 	paramtype = "light",
 	sunlight_propagates = true,
 	tiles = {"farming_cotton_seed.png"},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	node_box = {
 	    type = "fixed",
@@ -119,14 +117,15 @@ minetest.register_node("guinea_pig:pellets", {
 })
 
 -- mulch
-minetest.register_craft({
-	type = "shapeless",
-	output = "bonemeal:mulch 4",
-	recipe = {
-		"guinea_pig:pellets", "guinea_pig:pellets", "guinea_pig:pellets", 
-		"guinea_pig:pellets", "guinea_pig:pellets", "guinea_pig:pellets", 
-		"guinea_pig:pellets", "guinea_pig:pellets", "guinea_pig:pellets", 
-	}
-})
-
+if minetest.get_modpath("bonemeal") then
+	minetest.register_craft({
+		type = "shapeless",
+		output = "bonemeal:mulch 4",
+		recipe = {
+			"guinea_pig:pellets", "guinea_pig:pellets", "guinea_pig:pellets",
+			"guinea_pig:pellets", "guinea_pig:pellets", "guinea_pig:pellets",
+			"guinea_pig:pellets", "guinea_pig:pellets", "guinea_pig:pellets",
+		}
+	})
+end
 
