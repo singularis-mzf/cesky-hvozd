@@ -1,10 +1,12 @@
+local S = minetest.get_translator("worldedit")
+
 -- Expands or contracts the cuboid in all axes by amount (positive or negative)
 worldedit.cuboid_volumetric_expand = function(name, amount)
 	local pos1 = worldedit.pos1[name]
 	local pos2 = worldedit.pos2[name]
 	
 	if pos1 == nil or pos2 == nil then
-		return false, "Undefined cuboid"
+		return false, S("Undefined cuboid")
 	end
 	
 	local delta1 = vector.new()
@@ -30,11 +32,11 @@ worldedit.cuboid_linear_expand = function(name, axis, direction, amount)
 	local pos2 = worldedit.pos2[name]
 	
 	if pos1 == nil or pos2 == nil then
-		return false, "undefined cuboid"
+		return false, S("undefined cuboid")
 	end
 	
 	if direction ~= 1 and direction ~= -1 then
-		return false, "invalid marker"
+		return false, S("invalid marker")
 	end
 	
 	local marker = worldedit.marker_get_closest_to_axis(name, axis, direction)
@@ -47,7 +49,7 @@ worldedit.cuboid_linear_expand = function(name, axis, direction, amount)
 	elseif axis == 'z' then
 		deltavect.z = amount * direction
 	else
-		return false, "invalid axis"
+		return false, S("invalid axis")
 	end
 	
 	worldedit.marker_move(name, marker, deltavect)
@@ -61,7 +63,7 @@ worldedit.cuboid_shift = function(name, axis, amount)
 	local pos2 = worldedit.pos2[name]
 	
 	if pos1 == nil or pos2 == nil then
-		return false, "undefined cuboid"
+		return false, S("undefined cuboid")
 	end
 	
 	if axis == 'x' then
@@ -74,7 +76,7 @@ worldedit.cuboid_shift = function(name, axis, amount)
 		worldedit.pos1[name].z = pos1.z + amount
 		worldedit.pos2[name].z = pos2.z + amount
 	else
-		return false, "invalid axis"
+		return false, S("invalid axis")
 	end
 	
 	return true

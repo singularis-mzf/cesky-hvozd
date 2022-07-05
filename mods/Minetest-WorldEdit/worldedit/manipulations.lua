@@ -2,7 +2,7 @@
 -- @module worldedit.manipulations
 
 local mh = worldedit.manip_helpers
-
+local S = minetest.get_translator("worldedit")
 
 --- Sets a region to `node_names`.
 -- @param pos1
@@ -541,7 +541,7 @@ function worldedit.rotate(pos1, pos2, axis, angle)
 		worldedit.flip(pos1, pos2, other2)
 		count, pos1, pos2 = worldedit.transpose(pos1, pos2, other1, other2)
 	else
-		error("Only 90 degree increments are supported!")
+		error(S("Only 90 degree increments are supported!"))
 	end
 	return count, pos1, pos2
 end
@@ -575,7 +575,7 @@ function worldedit.orient(pos1, pos2, angle)
 		return 0
 	end
 	if angle % 90 ~= 0 then
-		error("Only 90 degree increments are supported!")
+		error(S("Only 90 degree increments are supported!"))
 	end
 	local wallmounted_substitution = wallmounted[angle]
 	local facedir_substitution = facedir[angle]

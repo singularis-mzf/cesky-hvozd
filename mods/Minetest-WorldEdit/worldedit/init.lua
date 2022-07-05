@@ -8,6 +8,7 @@
 -- @author Bret O'Donnel (cornernote)
 -- @author ShadowNinja
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 worldedit = {}
 
@@ -42,3 +43,4 @@ if minetest.settings:get_bool("worldedit_run_tests") then
 	dofile(path .. "/test.lua")
 	minetest.after(0, worldedit.run_tests)
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

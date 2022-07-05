@@ -1,3 +1,5 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 worldedit = worldedit or {}
 
 --[[
@@ -20,6 +22,8 @@ If the identifier is already registered to another function, it will be replaced
 
 The `on_select` function must not call `worldedit.show_page`
 ]]
+
+local S = minetest.get_translator("worldedit")
 
 worldedit.pages = {} --mapping of identifiers to options
 local identifiers = {} --ordered list of identifiers
@@ -58,8 +62,8 @@ end
 
 worldedit.get_formspec_header = function(identifier)
 	local entry = worldedit.pages[identifier] or {}
-	return "button[0,0;2,0.5;worldedit_gui;Back]" ..
-		string.format("label[2,0;WorldEdit GUI > %s]", entry.name or "")
+	return "button[0,0;2,0.5;worldedit_gui;"..S("Back").."]" ..
+		string.format("label[2,0;" ..S("WorldEdit GUI >").." %s]", entry.name or "")
 end
 
 local get_formspec = function(name, identifier)
@@ -91,7 +95,7 @@ if minetest.global_exists("unified_inventory") then -- unified inventory install
 			worldedit.show_page(name, "worldedit_gui")
 			return true
 		elseif fields.worldedit_gui_exit then --return to original page
-			local player = minetest.get_player_by_name(name)
+			-- local player = minetest.get_player_by_name(name)
 			if player then
 				unified_inventory.set_inventory_formspec(player, "craft")
 			end
@@ -181,7 +185,7 @@ elseif minetest.global_exists("smart_inventory") then -- smart_inventory install
 	-- register the inventory button
 	smart_inventory.register_page({
 		name = "worldedit_gui",
-		tooltip = "Edit your World!",
+		tooltip = S("Edit your World!"),
 		icon = "inventory_plus_worldedit_gui.png",
 		smartfs_callback = smart_worldedit_gui_callback,
 		sequence = 99
@@ -226,7 +230,7 @@ else
 end
 
 worldedit.register_gui_function("worldedit_gui", {
-	name = "WorldEdit GUI",
+	name = S("WorldEdit GUI"),
 	privs = {interact=true},
 	get_formspec = function(name)
 		--create a form with all the buttons arranged in a grid
@@ -250,8 +254,8 @@ worldedit.register_gui_function("worldedit_gui", {
 			y = y - height
 		end
 		return string.format("size[%g,%g]", math.max(columns * width, 5), math.max(y + 0.5, 3)) ..
-			"button[0,0;2,0.5;worldedit_gui_exit;Back]" ..
-			"label[2,0;WorldEdit GUI]" ..
+			"button[0,0;2,0.5;worldedit_gui_exit;"..S("Back").."]" ..
+			"label[2,0;"..S("WorldEdit GUI").."]" ..
 			table.concat(buttons)
 	end,
 })
@@ -262,7 +266,7 @@ worldedit.register_gui_handler("worldedit_gui", function(name, fields)
 			--ensure player has permission to perform action
 			local has_privs, missing_privs = minetest.check_player_privs(name, entry.privs)
 			if not has_privs then
-				worldedit.player_notify(name, "you are not allowed to use this function (missing privileges: " .. table.concat(missing_privs, ", ") .. ")")
+				worldedit.player_notify(name, S("you are not allowed to use this function (missing privileges: @1)", table.concat(missing_privs, ", ")))
 				return false
 			end
 			if entry.on_select then
@@ -278,3 +282,4 @@ worldedit.register_gui_handler("worldedit_gui", function(name, fields)
 end)
 
 dofile(minetest.get_modpath(minetest.get_current_modname()) .. "/functionality.lua")
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

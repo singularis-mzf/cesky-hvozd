@@ -1,5 +1,7 @@
 --provides shorter names for the commands in `worldedit_commands`
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 worldedit.alias_command = function(alias, original)
 	if not worldedit.registered_commands[original] then
 		minetest.log("error", "worldedit_shortcommands: original " .. original .. " does not exist")
@@ -50,3 +52,5 @@ worldedit.alias_command("rsr", "restore")
 worldedit.alias_command("l", "lua")
 worldedit.alias_command("lt", "luatransform")
 worldedit.alias_command("clro", "clearobjects")
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
