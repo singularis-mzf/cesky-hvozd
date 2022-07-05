@@ -1,7 +1,10 @@
 
 -- Realistic Torch mod by TenPlus1
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 real_torch = {}
+real_torch.S = minetest.get_translator("real_torch")
+local S = real_torch.S
 
 -- check for timer settings or use defaults
 real_torch.min_duration = tonumber(minetest.settings:get("torch_min_duration")) or 1200
@@ -41,8 +44,45 @@ end
 
 
 -- coal powder
+minetest.override_item("technic:coal_dust", {
+	on_use = function(itemstack, user, pointed_thing)
+
+		if not pointed_thing or pointed_thing.type ~= "node" then
+			return
+		end
+
+		local pos = pointed_thing.under
+		local nod = minetest.get_node(pos)
+		local rep = false
+
+		if nod.name == "real_torch:torch" then
+			nod.name = "default:torch"
+			rep = true
+
+		elseif nod.name == "real_torch:torch_wall" then
+			nod.name = "default:torch_wall"
+			rep = true
+
+		elseif nod.name == "real_torch:torch_ceiling" then
+			nod.name = "default:torch_ceiling"
+			rep = true
+		end
+
+		if rep then
+			minetest.set_node(pos, {name = nod.name, param2 = nod.param2})
+
+			if not is_creative(user:get_player_name()) then
+				itemstack:take_item()
+			end
+		end
+
+		return itemstack
+	end
+})
+
+--[[
 minetest.register_craftitem("real_torch:coal_powder", {
-	description = "Coal Powder",
+	description = S("Coal Powder"),
 	inventory_image = "real_torch_coal_powder.png",
 
 	-- punching unlit torch with coal powder relights
@@ -81,7 +121,6 @@ minetest.register_craftitem("real_torch:coal_powder", {
 	end
 })
 
-
 -- use coal powder as furnace fuel
 minetest.register_craft({
 	type = "fuel",
@@ -106,6 +145,7 @@ minetest.register_craft({
 	output = "default:torch",
 	recipe = {{"real_torch:torch", "real_torch:coal_powder"}}
 })
+]]
 
 -- 4x burnt out torches = 1x stick
 minetest.register_craft({
@@ -216,3 +256,4 @@ minetest.override_item("tnt:gunpowder", {
 	end
 })
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

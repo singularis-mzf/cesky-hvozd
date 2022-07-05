@@ -1,4 +1,4 @@
-
+local S = real_torch.S
 local function on_flood(pos, oldnode, newnode)
 
 	minetest.add_item(pos, ItemStack("real_torch:torch 1"))
@@ -28,7 +28,7 @@ end
 
 -- unlit floor torch
 minetest.register_node("real_torch:torch", {
-	description = "Torch",
+	description = S("Torch"),
 	drawtype = "mesh",
 	mesh = "torch_floor.obj",
 	inventory_image = "real_torch_on_floor.png",
