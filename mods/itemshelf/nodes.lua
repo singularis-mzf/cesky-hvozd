@@ -41,7 +41,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 	if material_name ~= "" then material_name = material_name.."_" end
 
 	itemshelf.register_shelf(material_name.."small_shelf", {
-		description = display_prefix.." Shelf (4)",
+		description = "Hluboká výkladní skříňka na 4 věci (" .. display_prefix..")",
 		textures = {
 			texture,
 			texture,
@@ -65,7 +65,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 	})
 
 	itemshelf.register_shelf(material_name.."large_shelf", {
-		description = display_prefix.." Shelf (6)",
+		description = "Hluboká výkladní skříňka na 6 věcí (" .. display_prefix..")",
 		textures = {
 			texture,
 			texture,
@@ -89,7 +89,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 	})
 
 	itemshelf.register_shelf(material_name.."half_depth_shelf_small", {
-		description = display_prefix.." Half Shelf (4)",
+		description = "Mělká výkladní skříňka na 4 věci (" .. display_prefix..")",
 		textures = {
 			texture,
 			texture,
@@ -114,7 +114,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 	})
 
 	itemshelf.register_shelf(material_name.."half_depth_shelf_large", {
-		description = display_prefix.." Half Shelf (6)",
+		description = "Mělká výkladní skříňka na 6 věcí (" .. display_prefix..")",
 		textures = {
 			texture,
 			texture,
@@ -140,7 +140,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 
 	-- Half-depth open-back shelf, 4 items
 	itemshelf.register_shelf(material_name.."half_depth_open_shelf", {
-		description = display_prefix.." Half Open-Back Shelf (4)",
+		description = "Výkladní regál na 4 věci (" .. display_prefix..")",
 		textures = {
 			texture,
 			texture,
@@ -166,7 +166,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 
 	-- Half-depth open-back shelf, 6 items
 	itemshelf.register_shelf(material_name.."half_depth_open_shelf_large", {
-		description = display_prefix.." Half Open-Back Shelf (6)",
+		description = "Výkladní regál na 6 věci (" .. display_prefix..")",
 		textures = {
 			texture,
 			texture,
@@ -192,8 +192,8 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 end
 
 -- Register nodes and recipes on all minetest_game wood types
-register_node_and_recipe("default:wood", "", "Apple Wood", "default_wood.png")
-register_node_and_recipe("default:pine_wood", "pine", "Pine Wood", "default_pine_wood.png")
-register_node_and_recipe("default:aspen_wood", "aspen", "Aspen Wood", "default_aspen_wood.png")
-register_node_and_recipe("default:acacia_wood", "acacia", "Acacia Wood", "default_acacia_wood.png")
-register_node_and_recipe("default:junglewood", "jungle", "Jungle Wood", "default_junglewood.png")
+register_node_and_recipe("default:wood", "", "jabloňové dřevo", "default_wood.png")
+register_node_and_recipe("default:pine_wood", "pine", "borové dřevo", "default_pine_wood.png")
+register_node_and_recipe("default:aspen_wood", "aspen", "osikové dřevo", "default_aspen_wood.png")
+register_node_and_recipe("default:acacia_wood", "acacia", "akáciové dřevo", "default_acacia_wood.png")
+register_node_and_recipe("default:junglewood", "jungle", "džunglovníkové dřevo", "default_junglewood.png")
