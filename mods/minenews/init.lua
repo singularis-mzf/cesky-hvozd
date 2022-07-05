@@ -1,3 +1,7 @@
+local S = minetest.get_translator("minenews")
+
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 -- Register bypass priv
 minetest.register_privilege("news_bypass", {
 	description = "Skip the news display on login.",
@@ -11,6 +15,9 @@ local function get_formspec(name)
 	local lang = player_info.lang_code
 	if lang == "" then
 		lang = "en"
+	end
+	if not minetest.check_player_privs(name, "ch_registered_player") then
+		lang = "newplayer"
 	end
 	-- Lookup news file to display, trying by language first, with a default news.md
 	-- fallback.
@@ -34,7 +41,7 @@ local function get_formspec(name)
 		"size[24,16]"..
 		"noprepend[]"..
 		"bgcolor["..bg_color.."]"..
-		"button_exit[20.8,14.8;3,1;close;OK]"
+		"button_exit[20.8,14.8;3,1;close;" .. S("OK").. "]"
 
 	if discord_link ~= "" then
 		news_fs = news_fs..
@@ -42,7 +49,7 @@ local function get_formspec(name)
 			"field[1.3,14.8;19.2,1;discord_invite;;"..discord_link.."]"
 	end
 
-	local news = "No news for today."
+	local news = S("No news for today.")
 	if news_file then
 		news = news_file:read("*a")
 		news_file:close()
@@ -79,7 +86,7 @@ local function on_joinplayer(player)
 	local name = player:get_player_name()
 	if player:get_hp() <= 0 then
 		return
-	elseif minetest.get_player_privs(name).news_bypass then
+	elseif minetest.check_player_privs(name, {["news_bypass"] = true}) then
 		return
 	else
 		minetest.show_formspec(name, "news", get_formspec(name))
@@ -89,13 +96,21 @@ end
 minetest.register_on_joinplayer(on_joinplayer)
 
 -- Command to display server news at any time
+local show_news = function(name)
+	minetest.show_formspec(name, "news", get_formspec(name))
+end
+
+minetest.register_chatcommand("novinky", {
+	description = "Zobrazí novinky na serveru",
+	func = show_news
+})
 minetest.register_chatcommand("news", {
-	description = "Shows server news to the player",
-	func = function (name)
-		minetest.show_formspec(name, "news", get_formspec(name))
-	end
+	description = "Zobrazí novinky na serveru",
+	func = show_news
 })
 
 -- Exported API
 minenews = {}
 minenews.on_joinplayer = on_joinplayer
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
