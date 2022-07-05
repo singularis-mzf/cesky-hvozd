@@ -13,6 +13,8 @@
 -- followed by the global api access for other mods
 -- to work with markdown 2 formspec.
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 ----------------Local Functions----------------
 
 local function D(msg)
@@ -696,3 +698,4 @@ end
 md2f.header = function()
 	return "formspec_version[4]size[20,20]position[0.5,0.5]bgcolor[#111E]\n"
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
