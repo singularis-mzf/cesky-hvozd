@@ -4,6 +4,8 @@
 -- Rework 2017 by bell07
 -- License: GPLv3
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 skins = {}
 skins.modpath = minetest.get_modpath(minetest.get_current_modname())
 skins.default = "character"
@@ -21,13 +23,6 @@ end
 if minetest.get_modpath("sfinv") then
 	dofile(skins.modpath.."/sfinv_page.lua")
 end
-
--- ie.loadfile does not exist?
-skins.ie = minetest.request_insecure_environment()
-skins.http = minetest.request_http_api()
-dofile(skins.modpath.."/skins_updater.lua")
-skins.ie = nil
-skins.http = nil
 
 -- 3d_armor compatibility
 if minetest.global_exists("armor") then
@@ -90,7 +85,7 @@ if not default_skin_obj then
 	default_skin_obj:set_texture("character.png")
 	default_skin_obj:set_meta("format", '1.0')
 	default_skin_obj:set_meta("_sort_id", 0)
-	default_skin_obj:set_meta("name", "Sam")
+	default_skin_obj:set_meta("name", "Jan (pův. Sam)")
 	default_skin_obj:set_hand_from_texture()
 end
 
@@ -100,3 +95,4 @@ minetest.register_allow_player_inventory_action(function(player, action, inv, da
 		return 0
 	end
 end)
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

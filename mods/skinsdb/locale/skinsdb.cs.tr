@@ -1,0 +1,21 @@
+# textdomain: skinsdb
+# Translation by Singularis
+
+Raw texture=Textura
+Name=Jméno
+Author=Autor/ka
+Change=Změnit...
+Page=Strana
+License=Licence
+Description=Popis
+Show, list or set player's skin=Zobrazí nebo nastaví vzhled postavy, případně vypíše dostupné vzhledy.
+Player not found=Postava nenalezena
+unknown command=neznámý příkaz
+see /help skinsdb for supported parameters=pro seznam podporovaných parametrů zadejte /help skinsdb
+skin set to=nastavit vzhled na
+invalid skin=neplatný vzhled
+unknown parameter=neznámý parametr
+unknown skin=neznámý vzhled
+Downloads the specified range of skins and shuts down the server=Stáhne dané množství vzhledů a vypne server
+Skins=Vzhledy
+Requires skin key=Vyžaduje klíč vzhledu(?)
