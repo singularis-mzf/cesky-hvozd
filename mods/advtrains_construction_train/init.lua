@@ -1,9 +1,5 @@
-local S
-if minetest.get_modpath("intllib") then
-    S = intllib.Getter()
-else
-    S = function(s,a,...)a={a,...}return s:gsub("@(%d+)",function(n)return a[tonumber(n)]end)end
-end
+local S = attrans
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 function round_down(pos)
    return {x=math.floor(pos.x), y=math.floor(pos.y), z=math.floor(pos.z)}
@@ -20,7 +16,7 @@ advtrains.register_wagon("construction_train", {
 	max_speed=2,
 	seats = {
 		{
-			name="Driver stand",
+			name=S("Driver stand"),
 			attach_offset={x=0, y=10, z=0},
 			view_offset={x=0, y=0, z=0},
 			group="dstand",
@@ -52,13 +48,13 @@ advtrains.register_wagon("construction_train", {
 	},
 	seat_groups = {
 		dstand={
-			name = "Driver Stand",
+			name = S("Driver Stand"),
 			access_to = {"pass"},
 			require_doors_open=true,
 			driving_ctrl_access=true,
 		},
 		pass={
-			name = "Passenger area",
+			name = S("Passenger area"),
 			access_to = {"dstand"},
 			require_doors_open=true,
 		},
@@ -82,7 +78,8 @@ advtrains.register_wagon("construction_train", {
 	--collisionbox = {-1.0,-0.5,-1.8, 1.0,2.5,1.8},
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	is_locomotive=true,
-	drops={"default:steelblock 4"},
+	-- drops={"default:steelblock 4"},
+	drops={"advtrains:construction_train"},
 	horn_sound = "advtrains_subway_horn",
 	custom_on_step = function (self, dtime )
 	   if self:train().velocity == 0 then
@@ -142,3 +139,5 @@ advtrains.register_wagon("construction_train", {
 		end
 	end,
 }, S("Construction train"), "advtrains_subway_wagon_inv.png")
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
