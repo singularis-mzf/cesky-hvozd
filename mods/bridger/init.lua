@@ -1,5 +1,9 @@
+local S = minetest.get_translator("bridger")
+
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 minetest.register_node("bridger:scaffolding", {
-	description = "Scaffolding",
+	description = S("Scaffolding"),
 	drawtype = "glasslike_framed_optional",
 	tiles = {"bridges_scaffolding.png", "bridges_scaffolding_detail.png"},
 	paramtype = "light",
@@ -17,3 +21,5 @@ dofile(minetest.get_modpath("bridger") .. "/crafts.lua")
 if minetest.settings:get_bool("Bridger_enable_alias") then
 	dofile(minetest.get_modpath("bridger") .. "/alias.lua")
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -1,9 +1,11 @@
+local S = minetest.get_translator("bridger")
+
 local function rotate_and_place(itemstack, placer, pointed_thing)
 	local p0 = pointed_thing.under
 	local p1 = pointed_thing.above
 	local param2 = 0
 
-	local placer_pos = placer:getpos()
+	local placer_pos = placer:get_pos()
 	if placer_pos then
 		param2 = minetest.dir_to_facedir(vector.subtract(p1, placer_pos))
 	end
@@ -37,7 +39,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		local bridge_color = row[2]
 
 		minetest.register_node("bridger:foundation", {
-			description = "Bridge Foundation",
+			description = S("Bridge Foundation"),
 			drawtype = "nodebox",
 			tiles = {"default_clay.png"},
 			paramtype = "light",
@@ -62,7 +64,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:block_" .. bridge_color, {
-			description = bridge_desc .. " Block",
+			description = S("@1 Block", S(bridge_desc)),
 			drawtype = "normal",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			paramtype = "light",
@@ -72,7 +74,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 
 		if minetest.get_modpath("moreblocks") then
 			stairsplus:register_all("bridger", "block_" .. bridge_color, "bridger:block_" .. bridge_color, {
-				description = bridge_desc,
+				description = S("@1 Block", S(bridge_desc)),
 				tiles = {"bridges_" .. bridge_color .. ".png"},
 				groups = {cracky=3},
 				sounds = default.node_sound_metal_defaults(),
@@ -91,7 +93,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 			)
 
 			minetest.register_node("bridger:step_" .. bridge_color, {
-				description = bridge_desc .. " Step",
+				description = S("@1 Step", bridge_desc),
 				drawtype = "nodebox",
 				tiles = {"bridges_" .. bridge_color .. ".png"},
 				paramtype = "light",
@@ -114,7 +116,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		end
 
 		minetest.register_node("bridger:suspension_top_" .. bridge_color, {
-			description = bridge_desc .. " Cable Top",
+			description = S("@1 Cable Top", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			paramtype = "light",
@@ -137,7 +139,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:suspension_cable_" .. bridge_color, {
-			description = bridge_desc .. " Cable",
+			description = S("@1 Cable", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			paramtype = "light",
@@ -152,7 +154,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:deck_" .. bridge_color, {
-			description = bridge_desc .. " Deck",
+			description = S("@1 Deck", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			paramtype = "light",
@@ -174,7 +176,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:deck_edge_" .. bridge_color, {
-			description = bridge_desc .. " Deck Edge",
+			description = S("@1 Deck Edge", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			paramtype = "light",
@@ -198,7 +200,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:train_deck_" .. bridge_color, {
-			description = bridge_desc .. " Train Deck",
+			description = S("@1 Train Deck", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			paramtype = "light",
@@ -248,7 +250,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:girder_mid_" .. bridge_color, {
-			description = bridge_desc .. " Girder Middle",
+			description = S("@1 Girder Middle", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			paramtype = "light",
@@ -276,7 +278,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:girder_right_" .. bridge_color, {
-			description = bridge_desc .. " Girder Right End",
+			description = S("@1 Girder Right End", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			paramtype = "light",
@@ -316,7 +318,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:girder_left_" .. bridge_color, {
-			description = bridge_desc .. " Girder Left End",
+			description = S("@1 Girder Left End", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			paramtype = "light",
@@ -356,7 +358,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_right_slant_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure Right Slant",
+			description = S("@1 Truss Superstructure Right Slant", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -423,7 +425,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_left_slant_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure Left Slant",
+			description = S("@1 Truss Superstructure Left Slant", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -490,7 +492,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_end_right_slant_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure End Right Slant",
+			description = S("@1 Truss Superstructure End Right Slant", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -555,7 +557,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_end_left_slant_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure End Left Slant",
+			description = S("@1 Truss Superstructure End Left Slant", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -620,7 +622,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_mid_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure Middle",
+			description = S("@1 Truss Superstructure Middle", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -718,7 +720,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_tall_right_slant_" .. bridge_color, {
-			description = bridge_desc .. " Tall Truss Superstructure Right Slant",
+			description = S("@1 Tall Truss Superstructure Right Slant", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -783,7 +785,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_tall_left_slant_" .. bridge_color, {
-			description = bridge_desc .. " Tall Truss Superstructure Left Slant",
+			description = S("@1 Tall Truss Superstructure Left Slant", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -848,7 +850,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_tall_mid_" .. bridge_color, {
-			description = bridge_desc .. " Tall Truss Superstructure Middle",
+			description = S("@1 Tall Truss Superstructure Middle", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -942,7 +944,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_tall_simple_" .. bridge_color, {
-			description = bridge_desc .. " Tall Truss Superstructure Middle Simple",
+			description = S("@1 Tall Truss Superstructure Middle Simple", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -1035,7 +1037,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_tall_simple_end_left_" .. bridge_color, {
-			description = bridge_desc .. " Tall Truss Superstructure Simple Left End",
+			description = S("@1 Tall Truss Superstructure Simple Left End", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -1056,7 +1058,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_tall_simple_end_right_" .. bridge_color, {
-			description = bridge_desc .. " Tall Truss Superstructure Simple Right End",
+			description = S("@1 Tall Truss Superstructure Simple Right End", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -1077,7 +1079,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_simple_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure Middle Simple",
+			description = S("@1 Truss Superstructure Middle Simple", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -1175,7 +1177,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_simple_end_left_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure Simple Left End",
+			description = S("@1 Truss Superstructure Simple Left End", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -1196,7 +1198,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_simple_end_right_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure Simple Right End",
+			description = S("@1 Truss Superstructure Simple Right End", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -1217,7 +1219,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_up_right_slant_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure Up Right Slant",
+			description = S("@1 Truss Superstructure Up Right Slant", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -1299,7 +1301,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_up_left_slant_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure Up Left Slant",
+			description = S("@1 Truss Superstructure Up Left Slant", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -1379,7 +1381,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_up_mid_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure Up Middle",
+			description = S("@1 Truss Superstructure Up Middle", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -1490,7 +1492,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_up_simple_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure Up Simple",
+			description = S("@1 Truss Superstructure Up Simple", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -1599,7 +1601,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_down_right_slant_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure Down Right Slant",
+			description = S("@1 Truss Superstructure Down Right Slant", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -1679,7 +1681,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_down_left_slant_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure Down Left Slant",
+			description = S("@1 Truss Superstructure Down Left Slant", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -1761,7 +1763,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_down_mid_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure Down Middle",
+			description = S("@1 Truss Superstructure Down Middle", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -1872,7 +1874,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_down_simple_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure Down Simple",
+			description = S("@1 Truss Superstructure Down Simple", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -1981,7 +1983,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_substructure_end_right_slant_" .. bridge_color, {
-			description = bridge_desc .. " Truss Substructure End Right Slant",
+			description = S("@1 Truss Substructure End Right Slant", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -2045,7 +2047,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_substructure_end_left_slant_" .. bridge_color, {
-			description = bridge_desc .. " Truss Substructure End Left Slant",
+			description = S("@1 Truss Substructure End Left Slant", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color ..
@@ -2109,7 +2111,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_substructure_right_slant_" .. bridge_color, {
-			description = bridge_desc .. " Truss Substructure Right Slant",
+			description = S("@1 Truss Substructure Right Slant", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_substructure_right_slant.png^[makealpha:255,126,126",
@@ -2172,7 +2174,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_substructure_left_slant_" .. bridge_color, {
-			description = bridge_desc .. " Truss Substructure Left Slant",
+			description = S("@1 Truss Substructure Left Slant", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_substructure_left_slant.png^[makealpha:255,126,126",
@@ -2236,7 +2238,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_substructure_simple_" .. bridge_color, {
-			description = bridge_desc .. " Truss Substructure Simple",
+			description = S("@1 Truss Substructure Simple", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_substructure_simple.png^[makealpha:255,126,126",
@@ -2324,7 +2326,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_substructure_mid_" .. bridge_color, {
-			description = bridge_desc .. " Truss Substructure Middle",
+			description = S("@1 Truss Substructure Middle", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_substructure_mid.png^[makealpha:255,126,126",
@@ -2414,7 +2416,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:small_upper_chord_" .. bridge_color, {
-			description = bridge_desc .. " Small Upper Chord",
+			description = S("@1 Small Upper Chord", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_small_upper_chord.png^[makealpha:255,126,126",
@@ -2467,7 +2469,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:small_upper_chord_slanted_" .. bridge_color, {
-			description = bridge_desc .. " Small Slanted Upper Chord",
+			description = S("@1 Small Slanted Upper Chord", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_small_upper_chord_slanted.png^[makealpha:255,126,126",
@@ -2571,7 +2573,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:medium_upper_chord_" .. bridge_color, {
-			description = bridge_desc .. " Medium Upper Chord",
+			description = S("@1 Medium Upper Chord", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_medium_upper_chord.png^[makealpha:255,126,126",
@@ -2656,7 +2658,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:medium_upper_chord_slanted_" .. bridge_color, {
-			description = bridge_desc .. " Medium Slanted Upper Chord",
+			description = S("@1 Medium Slanted Upper Chord", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_medium_upper_chord_slanted.png^[makealpha:255,126,126",
@@ -2772,7 +2774,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:large_upper_chord_" .. bridge_color, {
-			description = bridge_desc .. " Large Upper Chord",
+			description = S("@1 Large Upper Chord", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_large_upper_chord.png^[makealpha:255,126,126",
@@ -2853,7 +2855,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:large_upper_chord_slanted_" .. bridge_color, {
-			description = bridge_desc .. " Large Slanted Upper Chord",
+			description = S("@1 Large Slanted Upper Chord", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_large_upper_chord_slanted.png^[makealpha:255,126,126",
@@ -2969,7 +2971,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:small_support_" .. bridge_color, {
-			description = bridge_desc .. " Small Support",
+			description = S("@1 Small Support", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_small_support.png^[makealpha:255,126,126",
@@ -3081,7 +3083,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:small_support_top_" .. bridge_color, {
-			description = bridge_desc .. " Small Support Top",
+			description = S("@1 Small Support Top", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_small_support_top.png^[makealpha:255,126,126",
@@ -3277,7 +3279,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:medium_support_" .. bridge_color, {
-			description = bridge_desc .. " Medium Support",
+			description = S("@1 Medium Support", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_medium_support.png^[makealpha:255,126,126",
@@ -3388,7 +3390,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:medium_support_bot_" .. bridge_color, {
-			description = bridge_desc .. " Bottom Medium Support",
+			description = S("@1 Bottom Medium Support", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_medium_support_bot.png^[makealpha:255,126,126",
@@ -3414,7 +3416,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:large_support_" .. bridge_color, {
-			description = bridge_desc .. " Large Support",
+			description = S("@1 Large Support", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_large_support.png^[makealpha:255,126,126",
@@ -3532,7 +3534,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:large_support_bot_" .. bridge_color, {
-			description = bridge_desc .. " Bottom Large Support",
+			description = S("@1 Bottom Large Support", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_large_support_bot.png^[makealpha:255,126,126",
@@ -3558,7 +3560,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_right_slant_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure Right Slant",
+			description = S("@1 Truss Superstructure Right Slant", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_superstructure_right_slant.png^[makealpha:255,126,126",
@@ -3623,7 +3625,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:truss_superstructure_left_slant_" .. bridge_color, {
-			description = bridge_desc .. " Truss Superstructure Left Slant",
+			description = S("@1 Truss Superstructure Left Slant", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			inventory_image = "bridges_" .. bridge_color .. ".png^bridges_superstructure_left_slant.png^[makealpha:255,126,126",
@@ -3688,7 +3690,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:corrugated_steel_" .. bridge_color, {
-			description = bridge_desc .. " Corrugated Steel",
+			description = S("@1 Corrugated Steel", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_corrugated_steel_" .. bridge_color .. ".png"},
 			paramtype = "light",
@@ -3711,7 +3713,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:corrugated_steel_ceiling_" .. bridge_color, {
-			description = bridge_desc .. " Corrugated Steel Deck",
+			description = S("@1 Corrugated Steel Deck", bridge_desc),
 			drawtype = "nodebox",
 			tiles = {"bridges_corrugated_steel_" .. bridge_color .. ".png^[transformR90"},
 			paramtype = "light",
@@ -3731,7 +3733,7 @@ end
 
 if minetest.settings:get_bool("bridger_enable_trestles", true) then
 	minetest.register_node("bridger:trestle_support", {
-		description = "Trestle Support",
+		description = S("Trestle Support"),
 		drawtype = "nodebox",
 		tiles = {"default_junglewood.png"},
 		inventory_image = "default_junglewood.png^bridges_trestle_support.png^[makealpha:255,126,126",
@@ -3802,7 +3804,7 @@ if minetest.settings:get_bool("bridger_enable_trestles", true) then
 	})
 
 	minetest.register_node("bridger:trestle_support_small", {
-		description = "Small Trestle Support",
+		description = S("Small Trestle Support"),
 		drawtype = "nodebox",
 		tiles = {"default_junglewood.png"},
 		inventory_image = "default_junglewood.png^bridges_trestle_support_small.png^[makealpha:255,126,126",
@@ -3828,7 +3830,7 @@ if minetest.settings:get_bool("bridger_enable_trestles", true) then
 	})
 
 	minetest.register_node("bridger:trestle_side", {
-		description = "Trestle Siding",
+		description = S("Trestle Siding"),
 		drawtype = "nodebox",
 		tiles = {"default_junglewood.png"},
 		inventory_image = "default_junglewood.png^bridges_trestle_side.png^[makealpha:255,126,126",
@@ -3909,7 +3911,7 @@ if minetest.settings:get_bool("bridger_enable_trestles", true) then
 	})
 
 	minetest.register_node("bridger:trestle_deck", {
-		description = "Trestle Deck",
+		description = S("Trestle Deck"),
 		drawtype = "nodebox",
 		tiles = {"default_junglewood.png"},
 		inventory_image = "default_junglewood.png^bridges_trestle_deck.png^[makealpha:255,126,126",
@@ -3939,7 +3941,7 @@ if minetest.settings:get_bool("bridger_enable_trestles", true) then
 	})
 
 	minetest.register_node("bridger:trestle_substructure_small", {
-		description = "Small Trestle Substructure",
+		description = S("Small Trestle Substructure"),
 		drawtype = "nodebox",
 		tiles = {"default_junglewood.png"},
 		inventory_image = "default_junglewood.png^bridges_trestle_small.png^[makealpha:255,126,126",
@@ -3987,7 +3989,7 @@ if minetest.settings:get_bool("bridger_enable_trestles", true) then
 	})
 
 	minetest.register_node("bridger:trestle_substructure_large", {
-		description = "Large Trestle Substructure",
+		description = S("Large Trestle Substructure"),
 		drawtype = "nodebox",
 		tiles = {"default_junglewood.png"},
 		inventory_image = "default_junglewood.png^bridges_trestle_large.png^[makealpha:255,126,126",
@@ -4043,7 +4045,7 @@ if minetest.settings:get_bool("bridger_enable_trestles", true) then
 	})
 
 	minetest.register_node("bridger:lattice_truss_side", {
-		description = "Lattice Truss",
+		description = S("Lattice Truss"),
 		drawtype = "nodebox",
 		tiles = {"default_junglewood.png"},
 		inventory_image = "default_junglewood.png^bridges_lattice_truss_side.png^[makealpha:255,126,126",
@@ -4084,7 +4086,7 @@ if minetest.settings:get_bool("bridger_enable_trestles", true) then
 	})
 
 	minetest.register_node("bridger:lattice_truss_top", {
-		description = "Lattice Truss Upper Chord",
+		description = S("Lattice Truss Upper Chord"),
 		drawtype = "nodebox",
 		tiles = {"default_junglewood.png"},
 		inventory_image = "default_junglewood.png^bridges_lattice_truss_top.png^[makealpha:255,126,126",
@@ -4142,7 +4144,7 @@ end
 
 if minetest.settings:get_bool("bridger_enable_wooden_bridges", true) then
 	minetest.register_node("bridger:small_beam", {
-		description = "Small Wooden Beam Bridge",
+		description = S("Small Wooden Beam Bridge"),
 		drawtype = "nodebox",
 		tiles = {"default_wood.png"},
 		paramtype = "light",
@@ -4171,7 +4173,7 @@ if minetest.settings:get_bool("bridger_enable_wooden_bridges", true) then
 	})
 
 	minetest.register_node("bridger:small_beam_mid", {
-		description = "Small Wooden Beam Bridge Middle",
+		description = S("Small Wooden Beam Bridge Middle"),
 		drawtype = "nodebox",
 		tiles = {"default_wood.png"},
 		paramtype = "light",
@@ -4196,7 +4198,7 @@ if minetest.settings:get_bool("bridger_enable_wooden_bridges", true) then
 	})
 
 	minetest.register_node("bridger:small_beam_end", {
-		description = "Small Wooden Beam Bridge End",
+		description = S("Small Wooden Beam Bridge End"),
 		drawtype = "nodebox",
 		tiles = {"default_wood.png"},
 		paramtype = "light",
@@ -4226,7 +4228,7 @@ if minetest.settings:get_bool("bridger_enable_wooden_bridges", true) then
 	})
 
 	minetest.register_node("bridger:small_beam_corner", {
-		description = "Small Wooden Beam Bridge Corner",
+		description = S("Small Wooden Beam Bridge Corner"),
 		drawtype = "nodebox",
 		tiles = {"default_wood.png"},
 		paramtype = "light",
@@ -4255,7 +4257,7 @@ if minetest.settings:get_bool("bridger_enable_wooden_bridges", true) then
 	})
 
 	minetest.register_node("bridger:small_beam_3", {
-		description = "Small Wooden Beam Bridge Crossing",
+		description = S("Small Wooden Beam Bridge Crossing"),
 		drawtype = "nodebox",
 		tiles = {"default_wood.png"},
 		paramtype = "light",
@@ -4283,7 +4285,7 @@ if minetest.settings:get_bool("bridger_enable_wooden_bridges", true) then
 	})
 
 	minetest.register_node("bridger:small_beam_4", {
-		description = "Small Wooden Beam Bridge Crossing",
+		description = S("Small Wooden Beam Bridge Crossing"),
 		drawtype = "nodebox",
 		tiles = {"default_wood.png"},
 		paramtype = "light",
@@ -4310,7 +4312,7 @@ if minetest.settings:get_bool("bridger_enable_wooden_bridges", true) then
 	})
 
 	minetest.register_node("bridger:small_beam_stair", {
-		description = "Small Wooden Beam Bridge Stair",
+		description = S("Small Wooden Beam Bridge Stair"),
 		drawtype = "nodebox",
 		tiles = {"default_wood.png"},
 		paramtype = "light",
@@ -4400,7 +4402,7 @@ if minetest.settings:get_bool("bridger_enable_wooden_bridges", true) then
 	})
 
 	minetest.register_node("bridger:large_beam", {
-		description = "Large Wooden Beam Bridge",
+		description = S("Large Wooden Beam Bridge"),
 		drawtype = "nodebox",
 		tiles = {"default_wood.png"},
 		paramtype = "light",
@@ -4429,7 +4431,7 @@ if minetest.settings:get_bool("bridger_enable_wooden_bridges", true) then
 	})
 
 	minetest.register_node("bridger:large_fancy_beam", {
-		description = "Large Fancy Wooden Beam Bridge",
+		description = S("Large Fancy Wooden Beam Bridge"),
 		drawtype = "nodebox",
 		tiles = {"default_wood.png"},
 		paramtype = "light",
@@ -4505,7 +4507,7 @@ if minetest.settings:get_bool("bridger_enable_wooden_bridges", true) then
 	end
 
 	minetest.register_node("bridger:large_beam_swivel_normal", {
-		description = "Large Wooden Swivel Bridge",
+		description = S("Large Wooden Swivel Bridge"),
 		drawtype = "nodebox",
 		tiles = {"default_wood.png"},
 		paramtype = "light",
@@ -4543,7 +4545,7 @@ if minetest.settings:get_bool("bridger_enable_wooden_bridges", true) then
 	})
 
 	minetest.register_node("bridger:large_beam_swivel_open", {
-		description = "Large Wooden Swivel Bridge",
+		description = S("Large Wooden Swivel Bridge"),
 		drawtype = "nodebox",
 		tiles = {"default_wood.png^[transformR90"},
 		paramtype = "light",
@@ -4582,7 +4584,7 @@ if minetest.settings:get_bool("bridger_enable_wooden_bridges", true) then
 	})
 
 	minetest.register_node("bridger:large_drawbridge_normal", {
-		description = "Large Wooden Drawbridge",
+		description = S("Large Wooden Drawbridge"),
 		drawtype = "nodebox",
 		tiles = {"default_wood.png"},
 		paramtype = "light",
@@ -4619,7 +4621,7 @@ if minetest.settings:get_bool("bridger_enable_wooden_bridges", true) then
 	})
 
 	minetest.register_node("bridger:large_drawbridge_open", {
-		description = "Large Wooden Drawbridge",
+		description = S("Large Wooden Drawbridge"),
 		drawtype = "nodebox",
 		tiles = {"default_wood.png"},
 		paramtype = "light",
@@ -4697,7 +4699,7 @@ if minetest.settings:get_bool("bridger_enable_wooden_bridges", true) then
 	})
 
 	minetest.register_node("bridger:deck_wood", {
-		description = "Wooden Deck",
+		description = S("Wooden Deck"),
 		drawtype = "nodebox",
 		tiles = {"default_junglewood.png"},
 		paramtype = "light",

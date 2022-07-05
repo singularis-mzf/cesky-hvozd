@@ -1,5 +1,7 @@
+local S = minetest.get_translator("bridger")
+
 minetest.register_craftitem("bridger:bridges_wooden_rod", {
-	description = "Wooden Rod",
+	description = S("Wooden Rod"),
 	inventory_image = "bridges_wooden_rod.png",
 })
 
@@ -30,12 +32,12 @@ minetest.register_craft({
 
 if minetest.settings:get_bool("bridger_enable_trusses", true) then
 	minetest.register_craftitem("bridger:bridges_steel_rod", {
-		description = "Steel Rod",
+		description = S("Steel Rod"),
 		inventory_image = "bridges_steel_rod.png",
 	})
 
 	minetest.register_craftitem("bridger:bridges_diagonal_steel_rod", {
-		description = "Steel Rod",
+		description = S("Steel Rod"),
 		inventory_image = "bridges_diagonal_steel_rod.png",
 	})
 
