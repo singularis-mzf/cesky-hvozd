@@ -42,10 +42,15 @@ minetest.register_globalstep(function(dtime)
 				end
 			end
 
-			table.insert(areaStrings, ("%s [%u] (%s%s%s)")
-					:format(area.name, id, area.owner,
+			local str
+			if area.weak then
+				str = ("%s [%u]"):format(area.name, id)
+			else
+				str = ("%s [%u] (%s%s%s)"):format(area.name, id, area.owner,
 					area.open and S(":open") or "",
-					faction_info and ": "..faction_info or ""))
+					faction_info and ": "..faction_info or "")
+			end
+			table.insert(areaStrings, str)
 		end
 
 		for i, area in pairs(areas:getExternalHudEntries(pos)) do

@@ -1,0 +1,139 @@
+# textdomain: areas
+
+
+
+### chatcommands.lua ###
+
+<AreaName>=<NázevOblasti>
+<ID> [faction_name]=<ID> [jméno_frakce]
+<NewOwner>=<NovýVlastníkIce>
+<ParentID>=<IDNadzóny>
+<PlayerName>=<JménoHráčeKy>
+<newName>=<NovýNázev>
+@1 has given you control over the area "@2" (ID @3).=@1 vám dal/a kontrolu nad źónou „@2“ (ID @3)
+@1 spanning up to @2x@3x@4.=@1 se rozkládá v oblasti @2x@3x@4.
+A regular expression is required.=Je vyžadován regulární výraz.
+Area @1 does not exist or is not owned by you.=Zóna @1 neexistuje
+Area closed for faction members.=Zóna je pro členstvo frakce uzavřena.
+Area closed.=Zóna je uzavřena.
+Area does not exist.=Zóna neexistuje.
+Area is open for members of: @1=Zóna je otevřena pro členstvo: @1
+Area opened.=Zóna je otevřena.
+Area week=Zóna je slabá (s nízkou prioritou)
+Area normal.=Zóna je normální.
+Area protected. ID: @1=Zóna je zastřežena. ID: @1
+Area renamed.=Zóna přejmenována.
+Area successfully moved.=Zóna úspěšně přemístěna.
+Change the owner of an area using its ID=Změnit vlastníka/ici zóny prostřednictvím jejího ID
+Faction doesn't exists=Frakce neexistuje
+Find areas using a Lua regular expression=Najít zóny pomocí regulárního výrazu jazyka Lua
+Get information about area configuration and usage.=Získat informace o nastavení a použití zóny.
+
+Give a player access to a sub-area beetween two positions that have already been protected, Use set_owner if you don't want the parent to be set.=Dát hráči/ce přístup k podzóně již zastřežené zóny. Použijte set_owner, nechcete-li nastavit nadzónu.
+
+Invalid regular expression.=Chybný regulární výraz.
+Limit: @1 areas=Limit: @1 zón
+Limit: no area count limit=Limit: bez limitu
+List your areas, or all areas if you are an admin.=Vypsat vaše zóny (admin: všechny zóny)
+Move (or resize) an area to the current positions.=Přesunout zónu na aktuální pozice nebo změnit její velikost.
+No matches found.=Nenalezeno.
+No visible areas.=Žádné viditelné zóny.
+Owner changed.=Vlastnictví změněno.
+Players with the "@1" privilege can protect up to @2 areas=Hráči/ky s právem „@1“ mohou zastřežit až @2 zón.
+
+Protect an area between two positions and give a player access to it without setting the parent of the area to any existing area=Zastřeží zónu mezi dvěma pozicemi a dá hráči/ce přístup do ní bez nastavení nadzóny.
+
+Protect your own area=Zastřežit vaši vlastní zónu
+Recursively remove areas using an ID=Rekurzívně odstranit zóny použitím ID
+Remove an area using an ID=Odstranit zónu podle jejího ID
+Removed area @1=Zóna @1 odstraněna
+Removed area @1 and it's sub areas.=Zóna @1 a její podzóny odstraněny.
+Removes all ownerless areas=Odstraní všechny nevlastněné zóny.
+Rename an area that you own=Přejmenuje vaši zónu.
+Self protection is disabled.=Samozastřežování je vypnuto.
+Self protection is enabled.=Samozastřežování je zapnuto.
+That area doesn't exist.=Zóna neexistuje.
+The player "@1" does not exist.=Hráč/ka „@1“ neexistuje.
+Toggle an area open (anyone can interact) or closed=Přepne, zda je zóna otevřená (kdokoliv může interagovat) nebo uzavřená.
+Toggle an area open/closed for members in your faction.=Přepne otevřenost zóny pro členstvo vaší frakce.
+Toggle an area weak (low priority) or normal=Přepne, zda je zóna slabá (s nízkou prioritou) nebo normální.
+You are an area administrator ("areas" privilege).=Jste správce/kyně zón (právo „areas“).
+You can protect areas=Můžete zastřežovat zóny
+You can't protect that area.=Nemůžete zastřežit tuto zónu.
+You can't protect that area: @1=Nemůžete zastřežit tuto zónu: @1
+You don't have the necessary privilege ("@1").=Nemáte potřebné právo („@1“).
+You don't own that area.=Nevlastníte tuto zónu.
+You have @1 areas.=Máte @1 zón.
+
+You have been granted control over area #@1. Type /list_areas to show your areas.=Byla vám svěřena kontrola nad zónou #@1. Použijte příkaz /list_areas k zobrazení vašich zón.
+
+You have extended area protection limits ("areas_high_limit" privilege).=Máte zvýšený limit pro zastřežování zón (právo „areas_high_limit“).
+
+You have the necessary privilege ("@1").=Máte potřebné právo („@1“).
+You need to select an area first.=Nejprve musíte označit zónu.
+
+### chatcommands.lua ###
+### pos.lua ###
+
+<ID>=<ID>
+Invalid usage, see /help @1.=Chybné použití, viz /help @1.
+
+### hud.lua ###
+
+:open=:otevřená
+:weak=:slabá
+Areas:=Zóny:
+
+### init.lua ###
+
+Can administer areas.=Může spravovat zóny.
+Can protect areas.=Může zastřežovat zóny.
+Can protect more, bigger areas.=Může zastřežovat víc a větších zón.
+
+### interact.lua ###
+
+@1 is protected by @2.=@1 je zastřežena od: @2.
+
+### internal.lua ###
+
+Area is too big.=Zóna je příliš velká.
+
+Self protection is disabled or you do not have the necessary privilege.=Samozastřežování je vypnuto nebo nemáte potřebné oprávnění.
+
+The area intersects with @1 [@2] (@3).=Zóna se překrývá s @1 [@2] (@3).
+
+You have reached the maximum amount of areas that you are allowed to protect.=Dosáhli jste maximálního dovoleného počtu oblastí k zastřežení.
+
+
+### legacy.lua ###
+
+<version>=<verze>
+Converted areas saved. Done.=Konvertované zóny uloženy.
+Converting areas…=Konvertuji zóny...
+Error loading legacy file: @1=Chyba při načítání starého souboru: @1
+Invalid version number. (0 allowed)=Chybné číslo verze. (0 dovoleno)
+Legacy file loaded.=Starý soubor načten.
+
+Loads, converts, and saves the areas from a legacy save file.=Načte, zkonvertuje a uloží zóny ze souboru ve starém formátu.
+
+Table format updated.=Formát zón aktualizován.
+unnamed=nepojmenovaný/á
+
+### pos.lua ###
+
+<not set>=<není nastavena>
+Area @1 selected.=Vybrána zóna @1.
+Area position @1 set to @2=Pozice zóny č. @1 nastavena na @2
+Position @1 set to @2=Pozice č. @1 nastavena na @2
+Position @1: =Pozice @1:
+Select an area by ID.=Zvolit zónu podle ID.
+Select position @1 by punching a node.=Zvolit pozici @1 kliknutím na blok.
+Select positions by punching two nodes.=Zvolit pozice kliknutím na dva bloky.
+
+Set area protection region position @1 to your location or the one specified=Zastřežit zónu od pozice @1 do vaší nebo specifikované pozice.
+
+Set area protection region, position 1, or position 2 by punching nodes, or display the region=Zastřežit zónu, nastavit pozici 1, 2, nebo zobrazit oblast.
+
+The area @1 does not exist.=Zóna @1 neexistuje.
+Unable to get position.=Nemohu získat pozici.
+Unknown subcommand: @1=Neznámý podpříkaz: @1

@@ -87,31 +87,61 @@ function areas:canInteract(pos, name)
 	if minetest.check_player_privs(name, self.adminPrivs) then
 		return true
 	end
-	local owned = false
+	local strongProtected, weakProtected, weakOpen
+
 	for _, area in pairs(self:getAreasAtPos(pos)) do
-		if area.owner == name or area.open then
-			return true
-		elseif areas.factions_available and area.faction_open then
+		local areaOpen = area.owner == name or area.open
+		if not areaOpen and areas.factions_available and area.faction_open then
 			if (factions.version or 0) < 2 then
 				local faction_name = factions.get_player_faction(name)
 				if faction_name then
 					for _, fname in ipairs(area.faction_open or {}) do
 						if faction_name == fname then
-							return true
+							areaOpen = true
+							break
 						end
 					end
 				end
 			else
 				for _, fname in ipairs(area.faction_open or {}) do
 					if factions.player_is_in_faction(fname, name) then
-						return true
+						areaOpen = true
+						break
 					end
 				end
 			end
 		end
-		owned = true
+
+		if area.weak then
+			if areaOpen then
+				weakOpen = true
+			else
+				weakProtected = true
+			end
+		else
+			if areaOpen then
+				return true -- strong open => return true immediatelly
+			else
+				strongProtected = true
+			end
+		end
 	end
-	return not owned
+
+	return not strongProtected and (weakOpen or not weakProtected)
+	--[[
+	if strongProtected then
+		return false
+	end
+	-- no strong areas
+	if weakOpen then
+		return true
+	end
+	if weakProtected then
+		return false
+	end
+	-- no areas
+	return true
+	]]
 end
 
 -- Returns a table (list) of all players that own an area

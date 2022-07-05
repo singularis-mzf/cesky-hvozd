@@ -283,6 +283,26 @@ minetest.register_chatcommand("area_open", {
 	end
 })
 
+minetest.register_chatcommand("area_weak", {
+	params = S("<ID>"),
+	description = S("Toggle an area weak (low priority) or normal"),
+	func = function(name, param)
+		local id = tonumber(param)
+		if not id then
+			return false, S("Invalid usage, see /help @1.", "area_weak")
+		end
+
+		if not areas:isAreaOwner(id, name) then
+			return false, S("Area @1 does not exist"
+					.." or is not owned by you.", id)
+		end
+		local weak = not areas.areas[id].weak
+		-- Save false as nil to avoid inflating the DB.
+		areas.areas[id].weak = weak or nil
+		areas:save()
+		return true, weak and S("Area week") or S("Area normal.")
+	end
+})
 
 if areas.factions_available then
 	minetest.register_chatcommand("area_faction_open", {

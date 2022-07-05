@@ -2,6 +2,8 @@
 -- Based on node_ownership
 -- License: LGPLv2+
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 areas = {}
 
 areas.factions_available = minetest.get_modpath("playerfactions") and true
@@ -42,3 +44,5 @@ if minetest.settings:get_bool("log_mods") then
 	local diffTime = os.clock() - areas.startTime
 	minetest.log("action", "areas loaded in "..diffTime.."s.")
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
