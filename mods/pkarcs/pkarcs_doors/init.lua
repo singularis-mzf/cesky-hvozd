@@ -1,12 +1,14 @@
 screwdriver = screwdriver or {}
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 pkarcs_doors = {}
 
 -- Register Door Nodes
 pkarcs_doors.door = {
 	{
 		"acacia_wood",
-		"Acacia Wood",
+		"z akáciového dřeva",
 		{choppy = 2, door = 1},
 		default.node_sound_wood_defaults(),
 		"doors_door",
@@ -16,7 +18,7 @@ pkarcs_doors.door = {
 
 	{
 		"aspen_wood",
-		"Aspen Wood",
+		"z osikového dřeva",
 		{choppy = 2, door = 1},
 		default.node_sound_wood_defaults(),
 		"doors_door",
@@ -26,7 +28,7 @@ pkarcs_doors.door = {
 
 	{
 		"junglewood",
-		"Junglewood",
+		"z dřeva džunglovníku",
 		{choppy = 2, door = 1},
 		default.node_sound_wood_defaults(),
 		"doors_door",
@@ -36,7 +38,7 @@ pkarcs_doors.door = {
 
 	{
 		"pine_wood",
-		"Pine Wood",
+		"z borového dřeva",
 		{choppy = 2, door = 1},
 		default.node_sound_wood_defaults(),
 		"doors_door",
@@ -46,7 +48,7 @@ pkarcs_doors.door = {
 
 	{
 		"wood",
-		"Wood",
+		"z jabloňového dřeva",
 		{choppy = 2, door = 1},
 		default.node_sound_wood_defaults(),
 		"doors_door",
@@ -56,7 +58,7 @@ pkarcs_doors.door = {
 
 	{
 		"bronze",
-		"Bronze",
+		"z bronzu",
 		{cracky = 1, level = 2, door = 1},
 		default.node_sound_metal_defaults(),
 		"doors_steel_door",
@@ -66,7 +68,7 @@ pkarcs_doors.door = {
 
 	{
 		"copper",
-		"Copper",
+		"z mědi",
 		{cracky = 1, level = 2, door = 1},
 		default.node_sound_metal_defaults(),
 		"doors_steel_door",
@@ -76,7 +78,7 @@ pkarcs_doors.door = {
 
 	{
 		"iron",
-		"Iron",
+		"ze železa",
 		{cracky = 1, level = 2, door = 1},
 		default.node_sound_metal_defaults(),
 		"doors_steel_door",
@@ -86,7 +88,7 @@ pkarcs_doors.door = {
 
 	{
 		"steel",
-		"Steel",
+		"z oceli",
 		{cracky = 1, level = 2, door = 1},
 		default.node_sound_metal_defaults(),
 		"doors_steel_door",
@@ -96,7 +98,7 @@ pkarcs_doors.door = {
 
 	{
 		"tin",
-		"Tin",
+		"z cínu",
 		{cracky = 1, level = 2, door = 1},
 		default.node_sound_metal_defaults(),
 		"doors_steel_door",
@@ -106,7 +108,7 @@ pkarcs_doors.door = {
 
 	{
 		"bar",
-		"Bar",
+		"z kovových mříží",
 		{cracky = 1, level = 2, door = 1},
 		default.node_sound_metal_defaults(),
 		"doors_steel_door",
@@ -145,13 +147,13 @@ for _, row in ipairs(pkarcs_doors.door) do
 	local craft_material = row[7]
 
 	local Ldoor_def = {
-		description = desc.. " Arch Door (left)",
+		description = "Zaoblené dveře levé (výška 2 m) " .. desc,
 		inventory_image = "pkarcs_doors_" ..name.. "_item.png",
 		wield_image = "pkarcs_doors_" ..name.. "_item.png",
 		drawtype = "mesh",
 		mesh = "pkarcs_door_L.obj",
 		tiles = {door_tiles},
-		use_texture_alpha = true,
+		use_texture_alpha = "clip",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		on_rotate = screwdriver.rotate_simple,
@@ -175,7 +177,7 @@ for _, row in ipairs(pkarcs_doors.door) do
 			pkarcs_doors.open(pos, node, name, "L", door_sound)
 		end,
 	}
-	
+
 	if minetest.get_modpath("mesecons") then
 		Ldoor_def.mesecons = {
 			effector = {
@@ -194,7 +196,7 @@ for _, row in ipairs(pkarcs_doors.door) do
 		drawtype = "mesh",
 		mesh = "pkarcs_door_L_open.obj",
 		tiles = {door_tiles},
-		use_texture_alpha = true,
+		use_texture_alpha = "clip",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		on_rotate = screwdriver.rotate_simple,
@@ -236,13 +238,13 @@ for _, row in ipairs(pkarcs_doors.door) do
 
 
 	local Rdoor_def = {
-		description = desc.. " Arch Door (right)",
+		description = "Zaoblené dveře pravé (výška 2 m) " .. desc,
 		inventory_image = "pkarcs_doors_" ..name.. "_item.png^[transformFXX",
 		wield_image = "pkarcs_doors_" ..name.. "_item.png^[transformFXX",
 		drawtype = "mesh",
 		mesh = "pkarcs_door_R.obj",
 		tiles = {door_tiles},
-		use_texture_alpha = true,
+		use_texture_alpha = "clip",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		on_rotate = screwdriver.rotate_simple,
@@ -285,7 +287,7 @@ for _, row in ipairs(pkarcs_doors.door) do
 		drawtype = "mesh",
 		mesh = "pkarcs_door_R_open.obj",
 		tiles = {door_tiles},
-		use_texture_alpha = true,
+		use_texture_alpha = "clip",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		on_rotate = screwdriver.rotate_simple,
@@ -348,3 +350,4 @@ for _, row in ipairs(pkarcs_doors.door) do
 		}
 	})
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

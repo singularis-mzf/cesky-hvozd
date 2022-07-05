@@ -1,12 +1,14 @@
 screwdriver = screwdriver or {}
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 pkarcs_doors3 = {}
 
 -- Register Door Nodes
 pkarcs_doors3.door = {
 	{
 		"acacia_wood",
-		"Acacia Wood",
+		"z akáciového dřeva",
 		{choppy = 2, door = 1},
 		default.node_sound_wood_defaults(),
 		"doors_door",
@@ -16,7 +18,7 @@ pkarcs_doors3.door = {
 
 	{
 		"aspen_wood",
-		"Aspen Wood",
+		"z osikového dřeva",
 		{choppy = 2, door = 1},
 		default.node_sound_wood_defaults(),
 		"doors_door",
@@ -26,7 +28,7 @@ pkarcs_doors3.door = {
 
 	{
 		"junglewood",
-		"Junglewood",
+		"z dřeva džunglovníku",
 		{choppy = 2, door = 1},
 		default.node_sound_wood_defaults(),
 		"doors_door",
@@ -36,7 +38,7 @@ pkarcs_doors3.door = {
 
 	{
 		"pine_wood",
-		"Pine Wood",
+		"z borového dřeva",
 		{choppy = 2, door = 1},
 		default.node_sound_wood_defaults(),
 		"doors_door",
@@ -46,7 +48,7 @@ pkarcs_doors3.door = {
 
 	{
 		"wood",
-		"Wood",
+		"z jabloňového dřeva",
 		{choppy = 2, door = 1},
 		default.node_sound_wood_defaults(),
 		"doors_door",
@@ -56,7 +58,7 @@ pkarcs_doors3.door = {
 
 	{
 		"bronze",
-		"Bronze",
+		"z bronzu",
 		{cracky = 1, level = 2, door = 1},
 		default.node_sound_metal_defaults(),
 		"doors_steel_door",
@@ -66,7 +68,7 @@ pkarcs_doors3.door = {
 
 	{
 		"copper",
-		"Copper",
+		"z mědi",
 		{cracky = 1, level = 2, door = 1},
 		default.node_sound_metal_defaults(),
 		"doors_steel_door",
@@ -76,7 +78,7 @@ pkarcs_doors3.door = {
 
 	{
 		"iron",
-		"Iron",
+		"ze železa",
 		{cracky = 1, level = 2, door = 1},
 		default.node_sound_metal_defaults(),
 		"doors_steel_door",
@@ -86,7 +88,7 @@ pkarcs_doors3.door = {
 
 	{
 		"steel",
-		"Steel",
+		"z oceli",
 		{cracky = 1, level = 2, door = 1},
 		default.node_sound_metal_defaults(),
 		"doors_steel_door",
@@ -96,7 +98,7 @@ pkarcs_doors3.door = {
 
 	{
 		"tin",
-		"Tin",
+		"z cínu",
 		{cracky = 1, level = 2, door = 1},
 		default.node_sound_metal_defaults(),
 		"doors_steel_door",
@@ -106,7 +108,7 @@ pkarcs_doors3.door = {
 
 	{
 		"bar",
-		"Bar",
+		"z kovových mříží",
 		{cracky = 1, level = 2, door = 1},
 		default.node_sound_metal_defaults(),
 		"doors_steel_door",
@@ -146,13 +148,13 @@ for _, row in ipairs(pkarcs_doors3.door) do
 
 
 	local Ldoor_def = {
-		description = desc.. " Arch Door3 (left)",
+		description = "Zaoblené dveře levé (výška 3 m) " .. desc,
 		inventory_image = "pkarcs_doors3_" ..name.. "_item.png",
 		wield_image = "pkarcs_doors3_" ..name.. "_item.png",
 		drawtype = "mesh",
 		mesh = "pkarcs_doors3_L.obj",
 		tiles = {door_tiles},
-		use_texture_alpha = true,
+		use_texture_alpha = "clip",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		on_rotate = screwdriver.rotate_simple,
@@ -194,7 +196,7 @@ for _, row in ipairs(pkarcs_doors3.door) do
 		drawtype = "mesh",
 		mesh = "pkarcs_doors3_L_open.obj",
 		tiles = {door_tiles},
-		use_texture_alpha = true,
+		use_texture_alpha = "clip",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		on_rotate = screwdriver.rotate_simple,
@@ -235,13 +237,13 @@ for _, row in ipairs(pkarcs_doors3.door) do
 	minetest.register_node(":pkarcs_doors3:" ..name.. "_Ldoor_open", Ldoor_open_def)
 
 	local Rdoor_def = {
-		description = desc.. " Arch Door3 (right)",
+		description = "Zaoblené dveře pravé (výška 3 m) " .. desc,
 		inventory_image = "pkarcs_doors3_" ..name.. "_item.png^[transformFXX",
 		wield_image = "pkarcs_doors3_" ..name.. "_item.png^[transformFXX",
 		drawtype = "mesh",
 		mesh = "pkarcs_doors3_R.obj",
 		tiles = {door_tiles},
-		use_texture_alpha = true,
+		use_texture_alpha = "clip",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		on_rotate = screwdriver.rotate_simple,
@@ -284,7 +286,7 @@ for _, row in ipairs(pkarcs_doors3.door) do
 		drawtype = "mesh",
 		mesh = "pkarcs_doors3_R_open.obj",
 		tiles = {door_tiles},
-		use_texture_alpha = true,
+		use_texture_alpha = "clip",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		on_rotate = screwdriver.rotate_simple,
@@ -347,3 +349,4 @@ for _, row in ipairs(pkarcs_doors3.door) do
 		}
 	})
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

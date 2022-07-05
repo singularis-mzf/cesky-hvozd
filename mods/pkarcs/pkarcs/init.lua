@@ -19,6 +19,7 @@ end
 
 --]]
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 pkarcs = {}
 
@@ -39,7 +40,7 @@ function pkarcs.register_all(nodename, desc, tile, sound, group, craftmaterial)
 	end
 
 	minetest.register_node(":pkarcs:"..nodename.."_arc", {
-		description = desc.." Arc",
+		description = desc.." (oblouk)",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		tiles = tile_collection,
@@ -114,7 +115,7 @@ function pkarcs.register_all(nodename, desc, tile, sound, group, craftmaterial)
 	})
 
 	minetest.register_node(":pkarcs:"..nodename.."_outer_arc", {
-		description = desc.." Outer Arc",
+		description = desc.." (vnější oblouk)",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		tiles = tile_collection,
@@ -190,7 +191,7 @@ function pkarcs.register_all(nodename, desc, tile, sound, group, craftmaterial)
 	})
 
 	minetest.register_node(":pkarcs:"..nodename.."_inner_arc", {
-		description = desc.." Inner Arc",
+		description = desc.." (vnitřní oblouk)",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		tiles = tile_collection,
@@ -342,3 +343,4 @@ pkarcs.register_node("default:pine_wood")
 pkarcs.register_node("default:acacia_wood")
 pkarcs.register_node("default:aspen_wood")
 
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
