@@ -1,0 +1,15 @@
+# textdomain: lemontree
+
+
+### init.lua ###
+
+Lemon=
+Lemon Tree Fence Gate=
+Lemon Tree Fence Rail=
+Lemon Tree Leaves=
+Lemon Tree Sapling=
+Lemon Tree Slab=
+Lemon Tree Stair=
+Lemon Tree Trunk=
+Lemon Tree Wood=
+Lemon Tree Wood Fence=

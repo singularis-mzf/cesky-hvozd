@@ -1,0 +1,17 @@
+
+wardrobe_outfits.enable_Ashley (Enable Ashley skin) bool true
+wardrobe_outfits.enable_Bluez_Sam_II (Enable Bluez Sam II skin) bool true
+wardrobe_outfits.enable_CaligoPL (Enable CaligoPL skin) bool true
+wardrobe_outfits.enable_Charlotte (Enable Charlotte skin) bool true
+wardrobe_outfits.enable_Chloe (Enable Chloé skin) bool true
+wardrobe_outfits.enable_Cloe (Enable Cloé skin) bool true
+wardrobe_outfits.enable_Coralie (Enable Coralie skin) bool true
+wardrobe_outfits.enable_Emma (Enable Emma skin) bool true
+wardrobe_outfits.enable_Fiona (Enable Fiona skin) bool true
+wardrobe_outfits.enable_Gregoire (Enable Grégoire skin) bool true
+wardrobe_outfits.enable_Iris (Enable Iris skin) bool true
+wardrobe_outfits.enable_Julia (Enable Julia skin) bool true
+wardrobe_outfits.enable_Lisa (Enable Lisa skin) bool true
+wardrobe_outfits.enable_Morgane (Enable Morgane skin) bool true
+wardrobe_outfits.enable_Super_Nerd (Enable Super Nerd skin) bool true
+wardrobe_outfits.enable_Zenohelds (Enable Zenohelds skin) bool true

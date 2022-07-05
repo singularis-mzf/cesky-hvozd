@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2022 David Hurka <doxydoxy@mailbox.org>
+#
+# SPDX-License-Identifier: CC0-1.0 OR MIT
+
+variables:
+  DEBIAN_FRONTEND: "noninteractive"
+
+doxy_mini_tram_ci_reuse:
+    image:
+        name: fsfe/reuse:latest
+        entrypoint: [""]
+    only:
+        - merge_requests
+        - master
+    script:
+        - reuse lint
+
+doxy_mini_tram_ci_lua:
+    image: debian:testing
+    only:
+        - merge_requests
+    before_script:
+        - apt-get update
+        - apt-get install --yes --no-install-recommends eatmydata
+        - eatmydata apt-get install --yes --no-install-recommends build-essential luarocks
+        - luarocks install busted
+        - luarocks install luacheck
+    script:
+        - busted .
+        - luacheck .

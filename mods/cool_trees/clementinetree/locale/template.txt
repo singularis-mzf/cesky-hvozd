@@ -1,0 +1,16 @@
+# textdomain: clementinetree
+
+
+### init.lua ###
+
+Clementine=
+Clementine Tree Fence Gate=
+Clementine Tree Fence Rail=
+Clementine Tree Leaves=
+Clementine Tree Sapling=
+Clementine Tree Slab=
+Clementine Tree Stair=
+Clementine Tree Trunk=
+Clementine Tree Wood=
+Clementine Tree Wood Fence=
+Clementine Wood Door=

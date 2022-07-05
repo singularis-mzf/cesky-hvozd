@@ -1,0 +1,15 @@
+# textdomain: plumtree
+
+
+### init.lua ###
+
+Plum=
+Plum Tree Fence Gate=
+Plum Tree Fence Rail=
+Plum Tree Slab=
+Plum Tree Stair=
+Plum Tree Wood Fence=
+Plumtree Leaves=
+Plumtree Tree Sapling=
+Plumtree Trunk=
+Plumtree Wood=

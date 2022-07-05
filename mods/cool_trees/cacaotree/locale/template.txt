@@ -1,0 +1,21 @@
+# textdomain: cacaotree
+
+
+### init.lua ###
+
+Cacao Beans=
+Cacao Pod=
+Cacao Tree Fence Gate=
+Cacao Tree Fence Rail=
+Cacao Tree Leaves=
+Cacao Tree Liana=
+Cacao Tree Sapling=
+Cacao Tree Slab=
+Cacao Tree Stair=
+Cacao Tree Trunk=
+Cacao Tree Wood=
+Cacao Tree Wood Fence=
+Cacaotree Flower Creeper=
+Choco Cake=
+Cocoa Powder=
+Milk Chocolate=

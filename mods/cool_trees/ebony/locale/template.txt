@@ -1,0 +1,18 @@
+# textdomain: ebony
+
+
+### init.lua ###
+
+Ebony Creeper=
+Ebony Creeper with Leaves=
+Ebony Fence Gate=
+Ebony Fence Rail=
+Ebony Leaves=
+Ebony Liana=
+Ebony Slab=
+Ebony Stair=
+Ebony Tree Sapling=
+Ebony Trunk=
+Ebony Wood=
+Ebony Wood Fence=
+Persimmon fruit=

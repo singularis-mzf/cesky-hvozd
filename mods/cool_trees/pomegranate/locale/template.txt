@@ -1,0 +1,16 @@
+# textdomain: pomegranate
+
+
+### init.lua ###
+
+Pomegranate=
+Pomegranate Section=
+Pomegranate Tree Fence Gate=
+Pomegranate Tree Fence Rail=
+Pomegranate Tree Leaves=
+Pomegranate Tree Sapling=
+Pomegranate Tree Slab=
+Pomegranate Tree Stair=
+Pomegranate Tree Trunk=
+Pomegranate Tree Wood=
+Pomegranate Tree Wood Fence=

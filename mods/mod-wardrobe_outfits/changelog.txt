@@ -1,0 +1,21 @@
+
+v1.0
+----
+- initial release
+- added skins:
+	- Ashley
+	- Bluez Sam II
+	- CaligoPL
+	- Charlotte
+	- Chloé
+	- Cloé
+	- Coralie
+	- Emma
+	- Fiona
+	- Grégoire
+	- Iris
+	- Julia
+	- Lisa
+	- Morgane
+	- Super Nerd
+	- Zenohelds
