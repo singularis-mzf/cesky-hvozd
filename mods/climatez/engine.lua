@@ -626,7 +626,7 @@ minetest.register_chatcommand("climatez", {
 	privs = {
         server = true,
     },
-	description = "Climate Functions",
+	description = "Nastavení počasí",
     func = function(name, param)
 		local subcommand, player_name
 		local i = 0
@@ -639,7 +639,7 @@ minetest.register_chatcommand("climatez", {
 			i = i + 1
 		end
 		if not(subcommand == "stop") and not(subcommand == "start") then
-			return true, "Error: The subcomands for the climatez command are 'stop | start'"
+			return true, "Chyba: Podpříkazy příkazu climatez jsou 'stop | start'"
 		end
 		--if subcommand then
 			--minetest.chat_send_all("subcommand =".. subcommand)
@@ -655,10 +655,10 @@ minetest.register_chatcommand("climatez", {
 						remove_climate_player_effects(player_name)
 						climatez.players[player_name].disabled = true
 					else
-						minetest.chat_send_player(player_name, player_name .. " ".. "is not inside any climate.")
+						minetest.chat_send_player(player_name, player_name .. " ".. "nemá žádné počasí.")
 					end
 				else
-					minetest.chat_send_player(name, "The player "..player_name.." is not online.")
+					minetest.chat_send_player(name, "Hráč/ka "..player_name.." není online.")
 				end
 			else
 				local player = minetest.get_player_by_name(name)
@@ -666,7 +666,7 @@ minetest.register_chatcommand("climatez", {
 					if climatez.players[name] then
 						climatez.climates[climatez.players[name].climate_id]:stop()
 					else
-						minetest.chat_send_player(name, "You are not inside any climate.")
+						minetest.chat_send_player(name, "Nejste v žádném počasí.")
 					end
 				end
 			end
