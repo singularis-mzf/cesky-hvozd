@@ -2,6 +2,8 @@
 --
 -- SPDX-License-Identifier: MIT OR LGPL-2.1-or-later
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 advtrains_attachment_offset_patch = {};
 
 --! Tries to get the parent implementation of @p method_name
@@ -69,3 +71,5 @@ end
 
 dofile(minetest.get_modpath("advtrains_attachment_offset_patch") .. "/dummy.lua");
 dofile(minetest.get_modpath("advtrains_attachment_offset_patch") .. "/api.lua");
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

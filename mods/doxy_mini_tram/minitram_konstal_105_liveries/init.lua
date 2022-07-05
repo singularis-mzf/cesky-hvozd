@@ -4,6 +4,8 @@
 
 local S = minetest.get_translator("minitram_konstal_105_liveries");
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 minitram_konstal_105_liveries = {};
 
 function minitram_konstal_105_liveries.add_liveries_konstal_105(wagon_definition)
@@ -343,3 +345,5 @@ function minitram_konstal_105_liveries.add_liveries_konstal_105(wagon_definition
 
     multi_component_liveries.setup_advtrains_wagon(wagon_definition, livery_definition, livery_texture_slot);
 end
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

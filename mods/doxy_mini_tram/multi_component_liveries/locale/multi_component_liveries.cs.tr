@@ -1,0 +1,37 @@
+# SPDX-FileCopyrightText: 2022 Singularis <singularis@volny.cz>
+#
+# SPDX-License-Identifier: CC0-1.0 OR MIT
+# textdomain:multi_component_liveries
+
+# — =
+# @1.: @2 @3=@1.: @2 @3
+#  * C = @1 — @2=
+Livery component “@1” not present.=Komponenta „@1“ není přítomna.
+Meta colors have red and alpha components set to zero.=Metabarvy mají červenou složku a složku alfa nastavené na nulu.
+Meta colors have the red component set to zero.=Metabarvy mají červenou složku nastavenou na nulu.
+No livery component selected. Paint #000000 0% for help.=Nebyla zvolena žádná barvitelná komponenta. Barvěte #000000 0% pro nápovědu.
+No livery component selected. Paint #000000 for help.=Nebyla zvolena žádná barvitelná komponenta. Barvěte #000000 pro nápovědu.
+nothing=nic
+Now painting on livery component “@1”.=Nyní barvím komponentu: „@1“.
+Now painting on livery component “@1” at layer @2.=Nyní barvím komponentu: „@1“, vrstvu @2.
+Now painting on livery component “@1”, moved to layer @2.=Nyní barvím komponentu: „@1“, přesunutou do vrstvy @2.
+Now painting on newly added livery component “@1”.=Nyní barvím nově přidanou barvitelnou komponentu „@1“.
+Now painting on newly added livery component “@1” at layer @2.=Nyní barvím nově přidanou barvitelnou komponentu „@1“ ve vrstvě @2.
+ * P = @1 — @2=
+Private slot @1 is empty.=Soukromý slot @1 je prázdný.
+Removed livery component “@1” from layer @2.=Barvitelná komponenta „@1“ byla odstraněna z vrstvy @2.
+Saved livery in private slot @1.=Barva komponenty uložena do soukromého slotu @1.
+Saved livery in shared slot @1.=Barva komponenty uložena do sdíleného slotu @1.
+Shared slot @1 is empty.=Sdílený slot @1 je prázdný.
+There is no livery component with index @1. Paint #000000 0% for help.=Tramvaj nemá barvitelnou komponentu na indexu @1. Barvěte #000000 0% pro nápovědu.
+There is no livery component with index @1. Paint #000000 for help.=Tramvaj nemá barvitelnou komponentu na indexu @1. Barvěte #000000 pro nápovědu.
+There is no preset with number @1. Paint #000000 0% for help.=Předvolba číslo @1 neexistuje. Barvěte #000000 0% pro nápovědu.
+There is no preset with number @1. Paint #000000 for help.=Předvolba číslo @1 neexistuje. Barvěte #000000 pro nápovědu.
+There is no slot with number @1. Paint #000000 0% for help.=Slot číslo @1 neexistuje. Barvěte #000000 0% pro nápovědu.
+There is no slot with number @1. Paint #000000 for help.=Slot číslo @1 neexistuje. Barvěte #000000 pro nápovědu.
+This tool does not provide recognized color data.=Použitý nástroj neposkytuje rozpoznatelné údaje o barvě.
+This tool has invalid color data: @1=Použitý nástroj má neplatná data o barvě: @1
+Undefined meta color. Paint #000000 0% for help.=Nedefinovaná metabarva. Barvěte #000000 0% pro nápovědu.
+Undefined meta color. Paint #000000 for help.=Nedefinovaná metabarva. Barvěte #000000 pro nápovědu.
+
+This wagon offers multiple livery components. To access them, you can paint some “meta colors”, which are explained here. @1@n * Green @=@= 0 — Commands@n    - Blue @=@= 0 — Print this help text.@n    - Blue @=@= S; 1 ≤ S ≤ 30 — Load livery from slot S.@n    - Blue @=@= S; 101 ≤ (S + 100) ≤ 130 — Save livery to slot S. (S ≤ 10 are personal slots, S ≥ 11 are public slots; slots are not persistent.)@n    - Blue @=@= P; 201 ≤ (P + 200) ≤ 250 — Load livery from preset P.@n * Green @=@= C; 1 ≤ C ≤ 254 — Select livery component C to paint next.@n    - Blue @=@= 0 — Paint livery component on its current position or on top.@n    - Blue @=@= L; 1 ≤ L ≤ 254 — Move livery component to layer L. Higher L goes on top of lower L.@n    - Blue @=@= 255 — Remove livery component C.@nYou can load these presets:@n@2@nYou can choose from these livery components:@n@3@nCurrent livery: @4@n=@nTento vagon se skládá z více barvitelných komponent. K barvení každé z nich můžete použít „metabarvy“ vysvětlené zde. @1@n * Zelená @=@= 0 — Příkazy@n    - Modrá @=@= 0 — Vypíše tuto nápovědu.@n    - Modrá @=@= S; 1 ≤ S ≤ 30 — Načte barvu komponenty ze slotu S.@n    - Modrá @=@= S; 101 ≤ (S + 100) ≤ 130 — Uloží barvu komponenty do slotu S. (S ≤ 10 jsou soukromé sloty, S ≥ 11 jsou veřejné sloty; sloty nejsou perzistentní.)@n    - Modrá @=@= P; 201 ≤ (P + 200) ≤ 250 — Načíst barvu komponenty z předvolby P.@n * Zelená @=@= C; 1 ≤ C ≤ 254 — Zvolí, aby se příště barvila komponenta C.@n    - Modrá @=@= 0 — Nabarví komponentu v jejím současném umístění nebo nahoře.@n    - Modrá @=@= L; 1 ≤ L ≤ 254 — Přesune komponentu do vrstvy L. Vyšší L se nanáší na nižší L.@n    - Modrá @=@= 255 — Odstraní komponentu C.@nMůžete načítat z těchto předvoleb:@n@2@nMůžete volit z těchto barvitelných komponent:@n@3@nAktuální komponenta: @4@n

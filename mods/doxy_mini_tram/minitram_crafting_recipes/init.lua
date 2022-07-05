@@ -1,15 +1,19 @@
 -- SPDX-FileCopyrightText: 2022 David Hurka <doxydoxy@mailbox.org>
+-- SPDX-FileCopyrightText: 2022 Singularis <singularis@volny.cz>
 --
 -- SPDX-License-Identifier: CC0-1.0 OR MIT
 
 local S = minetest.get_translator("minitram_crafting_recipes");
+
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 --! Returns the first registered item name from the list @p names.
 --! The empty string is considered registered.
 --! If none is registered, prints a warning message.
 local function choose(names)
     for _, name in ipairs(names) do
-        if name == "" or minetest.registered_items[names] then
+        if name == "" or minetest.registered_items[name] then
+--			minetest.log("warning", "INFO: Selected "..name.." from: '" .. table.concat(names, "', '") .. "'");
             return name;
         end
     end
@@ -290,3 +294,5 @@ minetest.register_craft({
         { konstal_105, konstal_105 };
     };
 });
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

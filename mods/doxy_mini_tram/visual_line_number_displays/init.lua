@@ -2,6 +2,8 @@
 --
 -- SPDX-License-Identifier: CC0-1.0 OR MIT
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 visual_line_number_displays = {};
 
 visual_line_number_displays.font = font_api.get_font("metro");
@@ -21,7 +23,11 @@ dofile(modpath .. "/renderer.lua");
 --
 -- The file is necessary for the /render_manual_pictures command,
 -- so it is needless to say it will only work correctly with a custom client.
+--[[
 local render_manual_pictures = string.sub("$Format:%%$", 1, 1) == "$";
 if render_manual_pictures then
     pcall(dofile, modpath .. "/autotests/render_manual_pictures.lua");
 end
+]]
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
