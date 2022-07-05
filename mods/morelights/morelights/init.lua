@@ -1,4 +1,5 @@
 morelights = {}
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 -- TODO: Change node definition based on game if groups get too unwieldy.
 
@@ -155,3 +156,4 @@ end
 
 local path = minetest.get_modpath("morelights")
 dofile(path .. "/nodes.lua")
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -1,6 +1,6 @@
 local S = minetest.get_translator("morelights_modern")
 
-
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 minetest.register_node("morelights_modern:block", {
     description = S("Modern Light Block"),
     tiles = {"morelights_metal_dark.png^morelights_modern_block.png"},
@@ -40,7 +40,7 @@ minetest.register_node("morelights_modern:smallblock", {
 morelights.register_variants({
     {
         name = "morelights_modern:post_d",
-        description = S("Modern Post Light (@1)", S("dark")),
+        description = S("Modern Post Light (dark)"),
         tiles = {
             "morelights_metal_dark.png",
             "morelights_metal_dark.png",
@@ -49,7 +49,7 @@ morelights.register_variants({
     },
     {
         name = "morelights_modern:post_l",
-        description = S("Modern Post Light (@1)", S("light")),
+        description = S("Modern Post Light (light)"),
         tiles = {
             "morelights_metal_light.png",
             "morelights_metal_light.png",
@@ -74,14 +74,12 @@ morelights.register_variants({
 morelights.register_variants({
     {
         name = "morelights_modern:streetpost_d",
-        description = S("Street Lamp Post (@1) - connects to bar lights",
-                S("dark")),
+        description = S("Street Lamp Post (dark) - connects to bar lights"),
         tiles = {"morelights_metal_dark.png"}
     },
     {
         name = "morelights_modern:streetpost_l",
-        description = S("Street Lamp Post (@1) - connects to bar lights",
-                S("light")),
+        description = S("Street Lamp Post (light) - connects to bar lights"),
         tiles = {"morelights_metal_light.png"}
     }
 },
@@ -186,12 +184,12 @@ minetest.register_node("morelights_modern:ceilinglight", {
 morelights.register_variants({
     {
         name = "morelights_modern:canlight_d",
-        description = S("Modern Can Light (@1)", S("dark")),
+        description = S("Modern Can Light (dark)"),
         tiles = {"morelights_metal_dark.png^morelights_modern_canlight.png"}
     },
     {
         name = "morelights_modern:canlight_l",
-        description = S("Modern Can Light (@1)", S("light")),
+        description = S("Modern Can Light (light)"),
         tiles = {"morelights_metal_light.png^morelights_modern_canlight.png"}
     },
 },
@@ -244,7 +242,7 @@ minetest.register_node("morelights_modern:walllamp", {
 morelights.register_variants({
     {
         name = "morelights_modern:tablelamp_d",
-        description = S("Modern Table Lamp (@1)", S("dark")),
+        description = S("Modern Table Lamp (dark)"),
         tiles = {
             "morelights_metal_light_32.png^morelights_modern_tablelamp_o.png",
             "morelights_modern_tablelamp_d.png"
@@ -252,7 +250,7 @@ morelights.register_variants({
     },
     {
         name = "morelights_modern:tablelamp_l",
-        description = S("Modern Table Lamp (@1)", S("light")),
+        description = S("Modern Table Lamp (light)"),
         tiles = {
             "morelights_metal_dark_32.png^morelights_modern_tablelamp_o.png",
             "morelights_modern_tablelamp_l.png"
@@ -281,14 +279,14 @@ morelights.register_variants({
 morelights.register_variants({
     {
         name = "morelights_modern:pathlight_d",
-        description = S("Modern Path Light (@1)", S("dark")),
+        description = S("Modern Path Light (dark)"),
         tiles = {
             "morelights_metal_dark_32.png^morelights_modern_pathlight.png"
         }
     },
     {
         name = "morelights_modern:pathlight_l",
-        description = S("Modern Path Light (@1)", S("light")),
+        description = S("Modern Path Light (light)"),
         tiles = {
             "morelights_metal_light_32.png^morelights_modern_pathlight.png"
         }
@@ -463,3 +461,4 @@ minetest.register_craft({
         {"", a.steel, ""}
     }
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

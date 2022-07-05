@@ -1,6 +1,6 @@
 local S = minetest.get_translator("morelights_extras")
 
-
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 minetest.register_node("morelights_extras:f_block", {
     description = S("Futuristic Light Block"),
     tiles = {"morelights_extras_f_block.png"},
@@ -134,6 +134,7 @@ do
     })
 end
 
+--[[ -- not working
 minetest.register_node("morelights_extras:stairlight", {
     description = S("Stair Light (place on stairs)"),
     drawtype = "nodebox",
@@ -193,7 +194,7 @@ minetest.register_node("morelights_extras:stairlight", {
 
     on_rotate = screwdriver.rotate_simple
 })
-
+]]
 --
 -- Craft recipes
 --
@@ -242,3 +243,4 @@ minetest.register_craft({
         {a.steel, "morelights:bulb", a.steel}
     }
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

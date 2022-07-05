@@ -1,5 +1,6 @@
 local S = minetest.get_translator("morelights_vintage")
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 -- Register custom brass ingot if a suitable replacement doesn't exist.
 if morelights.craft_items.brass == nil then
@@ -362,3 +363,4 @@ minetest.register_craft({
         {a.steel, a.brass, a.steel}
     }
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

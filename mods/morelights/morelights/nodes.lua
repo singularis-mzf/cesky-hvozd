@@ -9,7 +9,7 @@ minetest.register_craftitem("morelights:bulb", {
 morelights.register_variants({
     {
         name = "morelights:pole_d",
-        description = S("Metal Pole (@1)", S("dark")),
+        description = S("Metal Pole (dark)"),
         tiles = {"morelights_metal_dark_32.png"},
         inventory_image = "morelights_pole_d_inv.png",
         wield_image = "morelights_pole_d_inv.png",
@@ -21,7 +21,7 @@ morelights.register_variants({
     },
     {
         name = "morelights:pole_l",
-        description = S("Metal Pole (@1)", S("light")),
+        description = S("Metal Pole (light)"),
         tiles = {"morelights_metal_light_32.png"},
         inventory_image = "morelights_pole_l_inv.png",
         wield_image = "morelights_pole_l_inv.png",
@@ -91,7 +91,7 @@ morelights.register_variants({
 morelights.register_variants({
     {
         name = "morelights:chain_d",
-        description = S("Metal Chain (@1)", S("dark")),
+        description = S("Metal Chain (dark)"),
         tiles = {"morelights_metal_dark_32.png"},
         inventory_image = "morelights_chain_d_inv.png",
         wield_image = "morelights_chain_d_inv.png",
@@ -103,7 +103,7 @@ morelights.register_variants({
     },
     {
         name = "morelights:chain_l",
-        description = S("Metal Chain (@1)", S("light")),
+        description = S("Metal Chain (light)"),
         tiles = {"morelights_metal_light_32.png"},
         inventory_image = "morelights_chain_l_inv.png",
         wield_image = "morelights_chain_l_inv.png",
