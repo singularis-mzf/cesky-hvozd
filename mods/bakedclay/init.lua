@@ -1,23 +1,27 @@
 
 -- Baked Clay by TenPlus1
 
+local S = minetest.get_translator("bakedclay")
+
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local clay = {
-	{"natural", "Natural"},
-	{"white", "White"},
-	{"grey", "Grey"},
-	{"black", "Black"},
-	{"red", "Red"},
-	{"yellow", "Yellow"},
-	{"green", "Green"},
-	{"cyan", "Cyan"},
-	{"blue", "Blue"},
-	{"magenta", "Magenta"},
-	{"orange", "Orange"},
-	{"violet", "Violet"},
-	{"brown", "Brown"},
-	{"pink", "Pink"},
-	{"dark_grey", "Dark Grey"},
-	{"dark_green", "Dark Green"}
+	{"natural", S("Natural")},
+	{"white", S("White")},
+	{"grey", S("Grey")},
+	{"black", S("Black")},
+	{"red", S("Red")},
+	{"yellow", S("Yellow")},
+	{"green", S("Green")},
+	{"cyan", S("Cyan")},
+	{"blue", S("Blue")},
+	{"magenta", S("Magenta")},
+	{"orange", S("Orange")},
+	{"violet", S("Violet")},
+	{"brown", S("Brown")},
+	{"pink", S("Pink")},
+	{"dark_grey", S("Dark Grey")},
+	{"dark_green", S("Dark Green")}
 }
 
 local techcnc_mod = minetest.get_modpath("technic_cnc")
@@ -30,7 +34,7 @@ for _, clay in pairs(clay) do
 	-- node
 
 	minetest.register_node("bakedclay:" .. clay[1], {
-		description = clay[2] .. " Baked Clay",
+		description = S("@1 Baked Clay", clay[2]),
 		tiles = {"baked_clay_" .. clay[1] ..".png"},
 		groups = {cracky = 3, bakedclay = 1},
 		sounds = default.node_sound_stone_defaults()
@@ -55,7 +59,7 @@ for _, clay in pairs(clay) do
 
 		stairsplus:register_all("bakedclay", "baked_clay_" .. clay[1],
 				"bakedclay:" .. clay[1], {
-			description = clay[2] .. " Baked Clay",
+			description = S("@1 Baked Clay", clay[2]),
 			tiles = {"baked_clay_" .. clay[1] .. ".png"},
 			groups = {cracky = 3},
 			sounds = default.node_sound_stone_defaults()
@@ -76,7 +80,7 @@ for _, clay in pairs(clay) do
 		stairs.register_all("bakedclay_" .. clay[1], "bakedclay:" .. clay[1],
 			{cracky = 3},
 			{"baked_clay_" .. clay[1] .. ".png"},
-			clay[2] .. " Baked Clay",
+			S("@1 Baked Clay", clay[2]),
 			default.node_sound_stone_defaults())
 
 	-- default stairs
@@ -85,8 +89,8 @@ for _, clay in pairs(clay) do
 		stairs.register_stair_and_slab("bakedclay_".. clay[1], "bakedclay:".. clay[1],
 			{cracky = 3},
 			{"baked_clay_" .. clay[1] .. ".png"},
-			clay[2] .. " Baked Clay Stair",
-			clay[2] .. " Baked Clay Slab",
+			S("@1 Baked Clay Stair", clay[2]),
+			S("@1 Baked Clay Slab", clay[2]),
 			default.node_sound_stone_defaults())
 	end
 
@@ -96,42 +100,9 @@ for _, clay in pairs(clay) do
 		technic_cnc.register_all("bakedclay:" .. clay[1],
 		{cracky = 3, not_in_creative_inventory = 1},
 		{"baked_clay_" .. clay[1] .. ".png"},
-		clay[2] .. " Baked Clay")
+		S("@1 Baked Clay", clay[2]))
 	end
 end
-
--- Terracotta blocks (textures by D3monPixel, thanks for use :)
-for _, clay in pairs(clay) do
-
-	if clay[1] ~= "natural" then
-
-		local texture = "baked_clay_terracotta_" .. clay[1] ..".png"
-
-		minetest.register_node("bakedclay:terracotta_" .. clay[1], {
-			description = clay[2] .. " Glazed Terracotta",
-			tiles = {
-				texture .. "",
-				texture .. "",
-				texture .. "^[transformR180",
-				texture .. "",
-				texture .. "^[transformR270",
-				texture .. "^[transformR90",
-			},
-			paramtype2 = "facedir",
-			groups = {cracky = 3, terracotta = 1},
-			sounds = default.node_sound_stone_defaults(),
-			on_place = minetest.rotate_node
-		})
-
-		minetest.register_craft({
-			type = "cooking",
-			output = "bakedclay:terracotta_" .. clay[1],
-			recipe = "bakedclay:" .. clay[1]
-		})
-	end
-end
-
-minetest.register_alias("bakedclay:terracotta_light_blue", "bakedclay:terracotta_cyan")
 
 -- cook clay block into white baked clay
 
@@ -195,13 +166,13 @@ local function add_simple_flower(name, desc, box, f_groups)
 		drawtype = "plantlike",
 		waving = 1,
 		tiles = {"baked_clay_" .. name .. ".png"},
+		use_texture_alpha = "clip",
 		inventory_image = "baked_clay_" .. name .. ".png",
 		wield_image = "baked_clay_" .. name .. ".png",
 		sunlight_propagates = true,
 		paramtype = "light",
 		walkable = false,
 		buildable_to = true,
-		stack_max = 99,
 		groups = f_groups,
 		sounds = default.node_sound_leaves_defaults(),
 		selection_box = {
@@ -212,16 +183,16 @@ local function add_simple_flower(name, desc, box, f_groups)
 end
 
 local flowers = {
-	{"delphinium", "Blue Delphinium",
+	{"delphinium", S("Blue Delphinium"),
 	{-0.15, -0.5, -0.15, 0.15, 0.3, 0.15}, {color_cyan = 1}},
 
-	{"thistle", "Thistle",
+	{"thistle", S("Thistle"),
 	{-0.15, -0.5, -0.15, 0.15, 0.2, 0.15}, {color_magenta = 1}},
 
-	{"lazarus", "Lazarus Bell",
+	{"lazarus", S("Lazarus Bell"),
 	{-0.15, -0.5, -0.15, 0.15, 0.2, 0.15}, {color_pink = 1}},
 
-	{"mannagrass", "Reed Mannagrass",
+	{"mannagrass", S("Reed Mannagrass"),
 	{-0.15, -0.5, -0.15, 0.15, 0.2, 0.15}, {color_dark_green = 1}}
 }
 
@@ -236,9 +207,9 @@ minetest.register_decoration({
 	place_on = {"default:dirt_with_grass"},
 	sidelen = 16,
 	noise_params = {
-		offset = 0,
-		scale = 0.004,
-		spread = {x = 100, y = 100, z = 100},
+		offset = -0.02,
+		scale = 0.04,
+		spread = {x = 200, y = 200, z = 200},
 		seed = 7133,
 		octaves = 3,
 		persist = 0.6
@@ -253,9 +224,9 @@ minetest.register_decoration({
 	place_on = {"default:dirt_with_grass", "default:dirt_with_dry_grass"},
 	sidelen = 16,
 	noise_params = {
-		offset = 0,
-		scale = 0.004,
-		spread = {x = 100, y = 100, z = 100},
+		offset = -0.02,
+		scale = 0.04,
+		spread = {x = 200, y = 200, z = 200},
 		seed = 7134,
 		octaves = 3,
 		persist = 0.6
@@ -270,9 +241,9 @@ minetest.register_decoration({
 	place_on = {"default:dirt_with_grass", "default:dirt_with_rainforest_litter"},
 	sidelen = 16,
 	noise_params = {
-		offset = 0,
-		scale = 0.01,
-		spread = {x = 100, y = 100, z = 100},
+		offset = -0.02,
+		scale = 0.1,
+		spread = {x = 50, y = 50, z = 50},
 		seed = 7135,
 		octaves = 3,
 		persist = 0.6
@@ -289,9 +260,9 @@ minetest.register_decoration({
 	place_on = {"default:dirt_with_grass", "default:sand"},
 	sidelen = 16,
 	noise_params = {
-		offset = 0,
-		scale = 0.009,
-		spread = {x = 100, y = 100, z = 100},
+		offset = -0.02,
+		scale = 0.2,
+		spread = {x = 50, y = 50, z = 50},
 		seed = 7136,
 		octaves = 3,
 		persist = 0.6
@@ -344,65 +315,6 @@ lucky_block:add_blocks({
 	}},
 })
 
-p = "bakedclay:terracotta_"
-
-lucky_block:add_blocks({
-	{"nod", "default:chest", 0, {
-		{name = p.."black", max = 20},
-		{name = p.."blue", max = 20},
-		{name = p.."brown", max = 20},
-		{name = p.."cyan", max = 20},
-		{name = p.."dark_green", max = 20},
-		{name = p.."dark_grey", max = 20},
-		{name = p.."green", max = 20},
-		{name = p.."grey", max = 20},
-		{name = p.."magenta", max = 20},
-		{name = p.."orange", max = 20},
-		{name = p.."pink", max = 20},
-		{name = p.."red", max = 20},
-		{name = p.."violet", max = 20},
-		{name = p.."white", max = 20},
-		{name = p.."yellow", max = 20}
-	}}
-})
-end
-
--- colored clay compatibility
-
-if minetest.settings:get_bool("colored_clay_compatibility") == true then
-
-local cc = {
-	{"black", "black"},
-	{"blue", "blue"},
-	{"bright", "natural"},
-	{"brown", "brown"},
-	{"cyan", "cyan"},
-	{"dark_green", "dark_green"},
-	{"dark_grey", "dark_grey"},
-	{"green", "green"},
-	{"grey", "grey"},
-	{"hardened", "natural"},
-	{"magenta", "magenta"},
-	{"orange", "orange"},
-	{"pink", "pink"},
-	{"red", "red"},
-	{"violet", "violet"},
-	{"white", "white"},
-	{"yellow", "yellow"}
-}
-
-for n = 1, #cc do
-
-	local nod1 = "colored_clay:" .. cc[n][1]
-	local nod2 = "bakedclay:" .. cc[n][2]
-
-	minetest.register_alias(nod1, nod2)
-
-	if stairsplus_mod then
-		stairsplus:register_alias_all("colored_clay", cc[n][1], "bakedclay", cc[n][2])
-	end
-end
-
 end
 
 -- flowerpot mod
@@ -414,5 +326,4 @@ if minetest.get_modpath("flowerpot") then
 	flowerpot.register_node("bakedclay:mannagrass")
 end
 
-
-print ("[MOD] Baked Clay loaded")
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
