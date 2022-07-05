@@ -1,0 +1,21 @@
+# textdomain: anvil
+
+
+### init.lua ###
+
+@1 cannot be repaired with an anvil.=@1 — nelze opravit na kovadlině.
+@1's anvil=Soukromá kovadlina (vlastník/ice: @1)
+A tool for repairing other tools at a blacksmith's anvil.=Nástroj k opravě jiných nástrojů na kovadlině.
+A tool for repairing other tools in conjunction with a blacksmith's hammer.=Nástroj k opravě jiných nástrojů pomocí kladiva.
+
+Anvil=Kovadlina
+Private anvil=Soukromá kovadlina
+
+Right-click on this anvil with a damaged tool to place the damaged tool upon it. You can then repair the damaged tool by striking it with a blacksmith's hammer. Repeated blows may be necessary to fully repair a badly worn tool. To retrieve the tool either punch or right-click the anvil with an empty hand.=Vezměte opotřebený nástroj a pravým tlačítkem myši ho položte na tuto kovadlinu. Pak ho můžete opravit klikáním levým tlačítkem, držíce kladivo. K opravení opotřebeného nástroje může být potřeba víc úderů.
+
+Shared anvil=Veřejná kovadlina
+Steel blacksmithing hammer=Kladivo
+This anvil is for damaged tools only.=Na kovadlině lze opravit jen opotřebené nástroje.
+
+Use this hammer to strike blows upon an anvil bearing a damaged tool and you can repair it. It can also be used for smashing stone, but it is not well suited to this task.=Toto kladivo slouží k opravě nástrojů na kovadlině. Lze je použít i k rozbíjení kamene, ale není k tomu příliš vhodné.
+Your @1 has been repaired successfully.=@1 je nyní zcela opraven/a.

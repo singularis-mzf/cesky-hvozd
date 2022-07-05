@@ -5,6 +5,8 @@
 -- * the hammer gets damaged a bit at each repair step
 ---------------------------------------------------------------------------------------
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 anvil = {
 	setting = {
 		item_displacement = 2/16,
@@ -157,7 +159,7 @@ end
 
 minetest.register_node("anvil:anvil", {
 	drawtype = "nodebox",
-	description = S("Anvil"),
+	description = S("Private anvil"),
 	_doc_items_longdesc = S("A tool for repairing other tools in conjunction with a blacksmith's hammer."),
 	_doc_items_usagehelp = S("Right-click on this anvil with a damaged tool to place the damaged tool upon it. You can then repair the damaged tool by striking it with a blacksmith's hammer. Repeated blows may be necessary to fully repair a badly worn tool. To retrieve the tool either punch or right-click the anvil with an empty hand."),
 	tiles = {"default_stone.png"},
@@ -228,10 +230,10 @@ minetest.register_node("anvil:anvil", {
 			return 0
 		end
 		if (listname=='input') then
-			if (stack:get_wear() == 0) then
-				minetest.chat_send_player( player:get_player_name(), S('This anvil is for damaged tools only.'))
-				return 0
-			end
+			-- if (stack:get_wear() == 0) then
+				-- minetest.chat_send_player( player:get_player_name(), S('This anvil is for damaged tools only.'))
+				-- return 0
+			-- end
 
 			if (minetest.get_item_group(stack:get_name(), "not_repaired_by_anvil") ~= 0) then
 				local item_def = minetest.registered_items[stack:get_name()]
@@ -471,13 +473,13 @@ local shared_anvil_craft_stack = ItemStack("anvil:anvil")
 shared_anvil_craft_stack:get_meta():set_int("shared", 1)
 shared_anvil_craft_stack:get_meta():set_string("description", S("Shared anvil"))
 minetest.register_craft({
-	output = shared_anvil_craft_stack:to_string(),
+	output = "anvil:anvil",
 	type = "shapeless",
-	recipe = { "anvil:anvil", "default:paper" }
+	recipe = { shared_anvil_craft_stack:to_string(), "default:paper" }
 })
 
 minetest.register_craft({
-	output = "anvil:anvil",
+	output = shared_anvil_craft_stack:to_string(),
 	recipe = {
 		{"default:steel_ingot","default:steel_ingot","default:steel_ingot"},
 		{'',                   "default:steel_ingot",''                   },
@@ -493,3 +495,5 @@ minetest.register_craft({
 		{"group:stick","",""}
 	}
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
