@@ -1,4 +1,6 @@
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 bonemeal = {}
 
 local path = minetest.get_modpath("bonemeal")
@@ -6,8 +8,7 @@ local min, max, random = math.min, math.max, math.random
 
 
 -- Load support for intllib.
-local S = minetest.get_translator and minetest.get_translator("bonemeal") or
-		dofile(path .. "/intllib.lua")
+local S = minetest.get_translator("bonemeal")
 
 
 -- creative check
@@ -686,4 +687,4 @@ dofile(path .. "/mods.lua")
 dofile(path .. "/lucky_block.lua")
 
 
-print ("[MOD] bonemeal loaded")
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
