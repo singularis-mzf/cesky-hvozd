@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 local shadows = {
 	map_params = {
 		decay_minimum_light = 3,
@@ -107,7 +108,7 @@ function shadows:update_shadows(min, max)
 					delta = ((min.y + y)%(-self.vector.y) == 0 and 1 or 0) -- 2 to 1
 					source = i + va.ystride - self.vector.x * delta - self.vector.z * delta*va.zstride
 					-- take the smallest transparency of self, +x and +z. this is to handle edges of walls, houses and caves
-					transparency = math.min(self.transparency[ data[i] ], math.min(self.transparency[ data[i - self.vector.x * delta] ], self.transparency[ data[i - self.vector.z * delta * va.zstride] ]))
+					transparency = math.min(self.transparency[ data[i] ] or 0, math.min(self.transparency[ data[i - self.vector.x * delta] ] or 0, self.transparency[ data[i - self.vector.z * delta * va.zstride] ] or 0))
 
 					if light[source] > minetest.LIGHT_MAX then
 						ilight = light[source] * transparency -- project ray
@@ -258,9 +259,9 @@ function shadows:watch_players()
 
 	-- scan players and update the queues
 	for name,previous in pairs(self.players) do
-		player = minetest.get_player_by_name(name)
+		local player = minetest.get_player_by_name(name)
 		local look_direction = vector.normalize(player:get_look_dir())
-		player_block = to_block_pos(player:get_pos(), self.map_params.blocksize)
+		local player_block = to_block_pos(player:get_pos(), self.map_params.blocksize)
 		self.players[name] = { block = player_block, direction = look_direction, generation = shadows.generation, queue = {} }
 
 		local side = vector.normalize(vector.cross(look_direction, vector.new(0, 1, 0)))
@@ -420,3 +421,4 @@ minetest.register_on_placenode(function(pos)
 	local block = to_block_pos(pos, shadows.map_params.blocksize)
 	shadows:mark_block_dirty(block)
 end)
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
