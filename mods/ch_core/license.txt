@@ -1,0 +1,50 @@
+License of source code
+----------------------
+
+GNU Lesser General Public License, version 2.1
+Copyright (C) 2022 Singularis <singularis@volny.cz>
+
+This program is free software; you can redistribute it and/or modify it under the terms
+of the GNU Lesser General Public License as published by the Free Software Foundation;
+either version 2.1 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details:
+https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+
+
+Licenses of media (textures)
+----------------------------
+ch_core_cz_flag.png
+ch_core_cz_flag_inv.png
+	License: public domain by the Czech law
+	Source: https://cs.wikipedia.org/wiki/Soubor:Flag_of_the_Czech_Republic.svg
+
+ch_core_sk_flag.png
+ch_core_sk_flag_inv.png
+	License: public domain by the Slovak law
+	Source: https://cs.wikipedia.org/wiki/Soubor:Flag_of_Slovakia.svg
+
+moon.png
+moon_tonemap.png
+sun.png
+wool_black.png
+wool_blue.png
+wool_brown.png
+wool_colored_light_blue.png
+wool_cyan.png
+wool_dark_green.png
+wool_dark_grey.png
+wool_green.png
+wool_grey.png
+wool_magenta.png
+wool_orange.png
+wool_pink.png
+wool_red.png
+wool_violet.png
+wool_white.png
+wool_yellow.png
+	License: Unlicense
+	Author: Sharpik
+	Source: https://github.com/Sharpik/Minetest-SharpNet-Photo-Realism-Texturespack
