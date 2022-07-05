@@ -1,5 +1,6 @@
 local S = attrans
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 -- Gets called when an entity is made - will set the right livery that was painted
 local function tram_set_textures(self, data)
     local new_textures = self.textures
@@ -129,13 +130,13 @@ advtrains.register_wagon("tram", {
 	},
 	seat_groups = {
 		dstand={
-			name = "Driver Stand",
+			name = S("Driver Stand"),
 			access_to = {"pass"},
 			require_doors_open=false,
 			driving_ctrl_access=true,
 		},
 		pass={
-			name = "Passenger area",
+			name = S("Passenger area"),
 			access_to = {"dstand"},
 			require_doors_open=false,
 		},
@@ -200,3 +201,4 @@ minetest.register_craft({
 		{'default:steelblock', 'default:steelblock', 'default:steelblock'},
 	},
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
