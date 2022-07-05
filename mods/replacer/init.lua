@@ -42,7 +42,8 @@
 --            * right click: place one of the itmes 
 --            * receipe changed
 --            * inventory image added
-    
+
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")    
 -- adds a function to check ownership of a node; taken from VanessaEs homedecor mod
 dofile(minetest.get_modpath("replacer").."/check_owner.lua");
 
@@ -62,7 +63,7 @@ replacer.blacklist[ "protector:protect"] = true;
 replacer.blacklist[ "protector:protect2"] = true;
 
 -- adds a tool for inspecting nodes and entities
-dofile(minetest.get_modpath("replacer").."/inspect.lua");
+-- dofile(minetest.get_modpath("replacer").."/inspect.lua");
 
 -- adds a formspec with a history function (accessible with AUX1 + left click)
 dofile(minetest.get_modpath("replacer").."/fs_history.lua");
@@ -73,7 +74,7 @@ dofile(minetest.get_modpath("replacer").."/mode_of_replacement.lua");
 
 minetest.register_tool( "replacer:replacer",
 {
-    description = "Node replacement tool",
+    description = "Nahrazovač",
     groups = {}, 
     inventory_image = "replacer_replacer.png",
     wield_image = "",
@@ -112,7 +113,7 @@ minetest.register_tool( "replacer:replacer",
 
  
        if( pointed_thing.type ~= "node" ) then
-          minetest.chat_send_player( name, "  Error: No node selected.");
+          minetest.chat_send_player( name, "  Chyba: Není vybrán žádný blok.");
           return nil;
        end
 
@@ -143,7 +144,7 @@ replacer.replace = function( itemstack, user, pointed_thing, mode )
        local name = user:get_player_name();
  
        if( pointed_thing.type ~= "node" ) then
-          minetest.chat_send_player( name, "  Error: No node.");
+          minetest.chat_send_player( name, "  Chyba: Žádný blok.");
           return nil;
        end
 
@@ -152,7 +153,7 @@ replacer.replace = function( itemstack, user, pointed_thing, mode )
        
        if( node == nil ) then
 
-          minetest.chat_send_player( name, "Error: Target node not yet loaded. Please wait a moment for the server to catch up.");
+          minetest.chat_send_player( name, "Chyba: Cílový blok ještě není načtený. Počkejte prosím, než se server vzpamatuje.");
           return nil;
        end
 
@@ -192,14 +193,14 @@ replacer.replace = function( itemstack, user, pointed_thing, mode )
        end
 
        if( node.name and node.name ~= "" and replacer.blacklist[ node.name ]) then
-          minetest.chat_send_player( name, "Replacing blocks of the type '"..( node.name or "?" )..
-		"' is not allowed on this server. Replacement failed.");
+          minetest.chat_send_player( name, "Nahrazování bloků typu '"..( node.name or "?" )..
+		"' není na tomto serveru dovoleno. Nahrazení selhalo.");
           return nil;
        end
 
        if( replacer.blacklist[ daten[1] ]) then
-          minetest.chat_send_player( name, "Placing blocks of the type '"..( daten[1] or "?" )..
-		"' with the replacer is not allowed on this server. Replacement failed.");
+          minetest.chat_send_player( name, "Umísťování bloků typu '"..( daten[1] or "?" )..
+		"' nahrazovačem není na tomto serveru dovoleno. Nahrazení selhalo.");
           return nil;
        end
 
@@ -229,7 +230,7 @@ replacer.replace = function( itemstack, user, pointed_thing, mode )
           if( not( user:get_inventory():contains_item("main", daten[1]))) then
  
 
-             minetest.chat_send_player( name, "You have no further '"..( daten[1] or "?" ).."'. Replacement failed.");
+             minetest.chat_send_player( name, "Již nemáte žádné další '"..( daten[1] or "?" ).."'. Nahrazení selhalo.");
              return nil;
           end
 
@@ -248,7 +249,7 @@ replacer.replace = function( itemstack, user, pointed_thing, mode )
                 -- thus can be replaced
                 local node_def = minetest.registered_nodes[node.name]
                 if(not(node_def) or not(node_def.buildable_to)) then
-                   minetest.chat_send_player( name, "Replacing '"..( node.name or "air" ).."' with '"..( pattern or "?" ).."' failed. Unable to remove old node.");
+                   minetest.chat_send_player( name, "Nahrazení '"..( node.name or "air" ).."' s '"..( pattern or "?" ).."' selhalo. Nemohu odstranit původní blok.");
                    return nil;
                 end
              end
@@ -272,3 +273,4 @@ minetest.register_craft({
         }
 })
 
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

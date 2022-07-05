@@ -8,38 +8,38 @@ replacer.max_hist_size = 20
 -- turn stored pattern string (<node_name> <param1> <param2>) into something readable by human beeings
 replacer.human_readable_pattern = function(pattern)
 	if(not(pattern)) then
-		return "(nothing)"
+		return "(nic)"
 	end
 	-- data is stored in the form "<nodename> <param1> <param2>"
 	local parts = string.split(pattern, " ")
 	if(not(parts) or #parts < 3) then
-		return "(corrupted data)"
+		return "(data jsou poškozená)"
 	end
 	local node_name = parts[1]
 	local param2 = parts[3]
 
 	local def = minetest.registered_nodes[ node_name ]
 	if(not(def)) then
-		return "(unknown node)"
+		return "(neznámý objekt)"
 	end
-	local text = "'"..tostring(def.description or "- no description -").."'"
+	local text = "'"..tostring(def.description or "- bez popisu -").."'"
 	if(not(def.description) or def.description == "") then
-		text = "- no description -"
+		text = "- bez popisu -"
 	end
 	-- facedir is probably the most commonly used rotation variant
 	if( def.paramtype2 == "facedir"
 	 or def.paramtype2 == "colorfacedir") then
-		local axis_names = {"y+ (Ground)", "z+ (North)", "z- (South)",
-				    "x+ (East)", "x- (West)", "y- (Sky)"}
-		text = text.." Rotated: "..tostring(param2 % 4)..
-			" around axis: "..tostring( axis_names[ math.floor( (param2%24) / 4 ) + 1 ])
+		local axis_names = {"y+ (dolu)", "z+ (sever)", "z- (jih)",
+				    "x+ (východ)", "x- (západ)", "y- (nahoru)"}
+		text = text.." Otočeno: "..tostring(param2 % 4)..
+			" okolo osy: "..tostring( axis_names[ math.floor( (param2%24) / 4 ) + 1 ])
 	-- wallmounted is diffrent
 	elseif( def.paramtype2 == "wallmounted"
 	     or def.paramtype2 == "colorwallmounted") then
-		local axis_names = {"y+ (Ground)", "y- (Sky)",
-				    "z+ (North)", "z- (South)",
-				    "x+ (East)", "x- (West)"}
-		text = text.." Mounted at wall: "..tostring( axis_names[ (param2 % 6)+ 1 ])
+		local axis_names = {"y+ (dolu)", "y- (nahoru)",
+				    "z+ (sever)", "z- (jih)",
+				    "x+ (východ)", "x- (západ)"}
+		text = text.." Upevněno na zeď: "..tostring( axis_names[ (param2 % 6)+ 1 ])
 	end
 	return text
 end
@@ -62,10 +62,10 @@ replacer.set_to = function(player_name, pattern, player, itemstack)
 	-- actually store the new pattern
 	meta:set_string("pattern", pattern )
 
-	meta:set_string("description", "Node replacement tool set to:\n"..set_to..
+	meta:set_string("description", "Nahrazovač nastaven na:\n"..set_to..
 					"\n["..tostring(pattern).."]")
 
-	minetest.chat_send_player(player_name, "Node replacement tool set to: "..set_to..
+	minetest.chat_send_player(player_name, "Nahrazovač nastaven na: "..set_to..
 					"["..tostring(pattern).."].")
 
 	replacer.add_to_hist(player_name, pattern)
@@ -126,20 +126,20 @@ replacer.get_formspec = function(player_name, current_pattern, player)
 	end
 
 	local formspec = "size[18,10]"..
-		"label[6,0;Node Replacement Tool Setup and History]"..
-		"button_exit[8,9.4;2,0.8;quit;Exit]"..
-		"label[0.2,8.5;Note: Selected mode and history are reset on server restart.\n"..
-			"Note: The selected mode is valid for *all* replacers you use. "..
-			"The stored pattern is valid for *this particular* replacer only.]"..
-		"label[0.2,0.6;Select mode: When replacing (punching, left-click) or "..
-			"placing (right-click) a block, ..]"..
+		"label[6,0;Nastavení a záznamy nahrazovače]"..
+		"button_exit[8,9.4;2,0.8;quit;Zavřít]"..
+		"label[0.2,8.5;Poznámka: Nastavený režim a historie se ztratí při restartu serveru.\n"..
+			"Poznámka: Vybraný typ objektu platí pro *všechny* vámi používané nahrazovače. "..
+			"Uložený vzor platí jen pro *tento konkrétní* nahrazovač.]"..
+		"label[0.2,0.6;Zvolit režim: Při nahrazování (levým tlačítkem) nebo "..
+			"umísťování (pravým tlačítkem) bloku, ..]"..
 		"dropdown[0.2,1.0;17;select_mode;"..
 			table.concat(replacer.mode_descriptions, ",")..
 			";"..tostring(current_mode)..";]"..
-		"label[0.2,2.1;Click here to set the replacer to a pattern you have stored before:]"..
+		"label[0.2,2.1;Klikněte zde pro nastavení nahrazovače na přechozí vzor:]"..
 		"tablecolumns[color;"..
-			"text,align=right,tooltip=Amount of nodes of this type left in your inventory:"..
-			";color;text,align=left,tooltip=Stored pattern:]"..
+			"text,align=right,tooltip=V inventáři vám tohoto typu bloků zbývá:"..
+			";color;text,align=left,tooltip=Uložený vzor:]"..
 		"table[0.2,2.5;17,6;replacer_history;"
 	-- make sure all variables exist and the current entry is stored
 	replacer.add_to_hist(player_name, current_pattern)
@@ -149,12 +149,12 @@ replacer.get_formspec = function(player_name, current_pattern, player)
 		if(v == current_pattern) then
 			selected = i
 		end
-		local amount_left = "#00FF00,infinite supply:,#00FF00"
+		local amount_left = "#00FF00,nekonečno:,#00FF00"
 		if(not(in_creative_mode)) then
 			-- which item are we looking for?
 			local parts = v:split(" ")
 			if(not(parts) or #parts<1) then
-				parts = {"does not exist"}
+				parts = {"neexistuje"}
 			-- TODO: handle this in a more general way
 			elseif(parts[1] == "default:dirt_with_grass") then
 				parts[1] = "default:dirt"
@@ -163,7 +163,7 @@ replacer.get_formspec = function(player_name, current_pattern, player)
 				amount_left = "#00FF00,"..tostring(counted_inv[ parts[1] ]).." available:"..
 					",#00FF00"
 			else
-				amount_left = "#FF0000,none left!,#CFCFCF"
+				amount_left = "#FF0000,nic nezbývá!,#CFCFCF"
 			end
 		end
 		hist_entries[ i ] = tostring(amount_left)..","..

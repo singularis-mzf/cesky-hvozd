@@ -19,7 +19,7 @@ end
 
 minetest.register_tool( "replacer:inspect",
 {
-    description = "Node inspection tool",
+    description = "Průzkumník bloků",
     groups = {}, 
     inventory_image = "replacer_inspect.png",
     wield_image = "",
@@ -63,16 +63,16 @@ replacer.inspect = function( itemstack, user, pointed_thing, mode, show_receipe 
 	end
  
 	if(     pointed_thing.type == 'object' ) then
-		local text = 'This is ';
+		local text = 'Toto je ';
 		local ref = pointed_thing.ref;
 		if( not( ref )) then
-			text = text..'a borken object. We have no further information about it. It is located';
+			text = text..'nějaký objekt. Nemám o něm bližší informace. Nachází se';
 		elseif( ref:is_player()) then
-			text = text..'your fellow player \"'..tostring( ref:get_player_name() )..'\"';
+			text = text..'hráč/ka \"'..tostring( ref:get_player_name() )..'\"';
 		else
 			local luaob = ref:get_luaentity();
 			if( luaob and luaob.get_staticdata) then
-				text = text..'entity \"'..tostring( luaob.name )..'\"';
+				text = text..'entita \"'..tostring( luaob.name )..'\"';
 				local sdata = luaob:get_staticdata();
 				if( sdata ) then
 					sdata = minetest.deserialize( sdata );
@@ -84,19 +84,19 @@ replacer.inspect = function( itemstack, user, pointed_thing, mode, show_receipe 
 						end
 					end
 					if( sdata.age ) then
-						text = text..', dropped '..tostring( math.floor( sdata.age/60 ))..' minutes ago';
+						text = text..', vyhozený/á před '..tostring( math.floor( sdata.age/60 ))..' minutami';
 					end
 				end
 			else
-				text = text..'object \"'..tostring( ref:get_entity_name() )..'\"';
+				text = text..'objekt \"'..tostring( ref:get_entity_name() )..'\"';
 			end
 
 		end
-		text = text..' at '..minetest.pos_to_string( ref:get_pos() );
+		text = text..' na pozici '..minetest.pos_to_string( ref:get_pos() );
 		minetest.chat_send_player( name, text );
 		return nil;
 	elseif( pointed_thing.type ~= 'node' ) then
-		minetest.chat_send_player( name, 'Sorry. This is an unkown something of type \"'..tostring( pointed_thing.type )..'\". No information available.');
+		minetest.chat_send_player( name, 'Promiňte. Toto je něco neznámého (\"'..tostring( pointed_thing.type )..'\"). Nemám bližší informace.');
 		return nil;
 	end
 	
@@ -104,21 +104,21 @@ replacer.inspect = function( itemstack, user, pointed_thing, mode, show_receipe 
 	local node = minetest.get_node_or_nil( pos );
        
 	if( node == nil ) then
-		minetest.chat_send_player( name, "Error: Target node not yet loaded. Please wait a moment for the server to catch up.");
+		minetest.chat_send_player( name, "Chyba: Požadovaný blok dosud není načtený. Počkejte, prosím, chvilku, zda se server nevzpamatuje.");
 		return nil;
 	end
 
-	local text = ' ['..tostring( node.name )..'] with param2='..tostring( node.param2 )..' at '..minetest.pos_to_string( pos )..'.';	
+	local text = ' ['..tostring( node.name )..'] s hodnotou param2='..tostring( node.param2 )..' na pozici '..minetest.pos_to_string( pos )..'.';	
 	if( not( minetest.registered_nodes[ node.name ] )) then
-		text = 'This node is an UNKOWN block'..text;
+		text = 'Tento blok je neznámý blok '..text;
 	else
-		text = 'This is a \"'..tostring( minetest.registered_nodes[ node.name ].description or ' - no description provided -')..'\" block'..text;
+		text = 'Toto je \"'..tostring( minetest.registered_nodes[ node.name ].description or ' - bez popisu -')..'\" blok'..text;
 	end
 	local protected_info = "";
 	if( minetest.is_protected(     pos, name )) then
-		protected_info = 'WARNING: You can\'t dig this node. It is protected.';
+		protected_info = 'VAROVÁNÍ: Tento blok nemůžete odstranit, protože je chráněný.';
 	elseif( minetest.is_protected( pos, '_THIS_NAME_DOES_NOT_EXIST_' )) then
-		protected_info = 'INFO: You can dig this node, but others can\'t.';
+		protected_info = 'INFORMACE: Tento blok můžete vytěžit, ale ostatní ne.';
 	end
 	text = text..' '..protected_info;
 -- no longer spam the chat; the craft guide is more informative
@@ -190,7 +190,7 @@ replacer.add_circular_saw_receipe = function( node_name, receipes )
 	if( not( help ) or #help ~= 2 or help[1]=='stairs') then
 		return;
 	end
-	help2 = help[2]:split('_');
+	local help2 = help[2]:split('_');
 	if( not( help2 ) or #help2 < 2 or (help2[1]~='micro' and help2[1]~='panel' and help2[1]~='stair' and help2[1]~='slab')) then
 		return;
 	end
@@ -267,30 +267,30 @@ replacer.inspect_show_crafting = function( name, node_name, fields )
 	if(     minetest.registered_nodes[ node_name ] ) then
 		if(     minetest.registered_nodes[ node_name ].description
 		    and minetest.registered_nodes[ node_name ].description~= "") then
-			desc = "\""..minetest.registered_nodes[ node_name ].description.."\" block";
+			desc = "\""..minetest.registered_nodes[ node_name ].description.."\" blok";
 		elseif( minetest.registered_nodes[ node_name ].name ) then
-			desc = "\""..minetest.registered_nodes[ node_name ].name.."\" block";
+			desc = "\""..minetest.registered_nodes[ node_name ].name.."\" blok";
 		else
-			desc = " - no description provided - block";
+			desc = " - bez popisu - blok";
 		end
 	elseif( minetest.registered_items[ node_name ] ) then
 		if(     minetest.registered_items[ node_name ].description 
 		    and minetest.registered_items[ node_name ].description~= "") then
-			desc = "\""..minetest.registered_items[ node_name ].description.."\" item";
+			desc = "\""..minetest.registered_items[ node_name ].description.."\" položka";
 		elseif( minetest.registered_items[ node_name ].name ) then
-			desc = "\""..minetest.registered_items[ node_name ].name.."\" item";
+			desc = "\""..minetest.registered_items[ node_name ].name.."\" položka";
 		else
-			desc = " - no description provided - item";
+			desc = " - bez popisu - položka";
 		end
 	end
 	if( not( desc ) or desc=="") then
-		desc = ' - no description provided - ';
+		desc = ' - bez popisu - ';
 	end
 		
 	local formspec = "size[6,6]"..
-		"label[0,5.5;This is a "..minetest.formspec_escape( desc )..".]"..
-		"button_exit[5.0,4.3;1,0.5;quit;Exit]"..
-		"label[0,0;Name:]"..
+		"label[0,5.5;Toto je blok typu: "..minetest.formspec_escape( desc )..".]"..
+		"button_exit[5.0,4.3;1,0.5;quit;Zavřít]"..
+		"label[0,0;Název:]"..
 		"field[20,20;0.1,0.1;node_name;node_name;"..node_name.."]".. -- invisible field for passing on information
 		"field[21,21;0.1,0.1;receipe_nr;receipe_nr;"..tostring( receipe_nr ).."]".. -- another invisible field
 		"label[1,0;"..tostring( node_name ).."]"..
@@ -298,13 +298,13 @@ replacer.inspect_show_crafting = function( name, node_name, fields )
 
 	-- provide additional information regarding the node in particular that has been inspected
 	if( fields.pos ) then
-		formspec = formspec.."label[0.0,0.3;Located at "..
+		formspec = formspec.."label[0.0,0.3;Umístěno na pozici "..
 			minetest.formspec_escape( minetest.pos_to_string( fields.pos ));
 		if( fields.param2 ) then
-			formspec = formspec.." with param2="..tostring( fields.param2 );
+			formspec = formspec.." s param2="..tostring( fields.param2 );
 		end
 		if( fields.light ) then
-			formspec = formspec.." and receiving "..tostring( fields.light ).." light";
+			formspec = formspec.." a s úrovní příchozího světla "..tostring( fields.light );
 		end
 		formspec = formspec..".]";	
 	end
@@ -318,19 +318,19 @@ replacer.inspect_show_crafting = function( name, node_name, fields )
 		receipe_nr = 1;
 	end
 	if( res and receipe_nr > 1 ) then
-		formspec = formspec.."button[3.8,5;1,0.5;prev_receipe;prev]";
+		formspec = formspec.."button[3.8,5;1,0.5;prev_receipe;předchozí]";
 	end
 	if( res and receipe_nr < #res ) then
-		formspec = formspec.."button[5.0,5.0;1,0.5;next_receipe;next]";
+		formspec = formspec.."button[5.0,5.0;1,0.5;next_receipe;další]";
 	end
 	if( not( res ) or #res<1) then
-		formspec = formspec..'label[3,1;No receipes.]';
+		formspec = formspec..'label[3,1;Žádné recepty]';
 		if(   minetest.registered_nodes[ node_name ]
 		  and minetest.registered_nodes[ node_name ].drop ) then
 			local drop = minetest.registered_nodes[ node_name ].drop;
 			if( drop ) then
 				if(     type( drop )=='string' and drop ~= node_name ) then
-					formspec = formspec.."label[2,1.6;Drops on dig:]"..
+					formspec = formspec.."label[2,1.6;Při vytěžení získáte:]"..
 						"item_image_button[2,2;1.0,1.0;"..replacer.image_button_link( drop ).."]";
 				elseif( type( drop )=='table' and drop.items ) then
 					local droplist = {};
@@ -341,7 +341,7 @@ replacer.inspect_show_crafting = function( name, node_name, fields )
 						end
 					end
 					local i = 1;
-					formspec = formspec.."label[2,1.6;May drop on dig:]";
+					formspec = formspec.."label[2,1.6;Při vytěžení můžete získat:]";
 					for k,v in pairs( droplist ) do
 						formspec = formspec..
 							"item_image_button["..(((i-1)%3)+1)..","..math.floor(((i-1)/3)+2)..";1.0,1.0;"..replacer.image_button_link( k ).."]";
@@ -351,7 +351,7 @@ replacer.inspect_show_crafting = function( name, node_name, fields )
 			end
 		end
 	else
-		formspec = formspec.."label[1,5;Alternate "..tostring( receipe_nr ).."/"..tostring( #res ).."]";
+		formspec = formspec.."label[1,5;Varianta "..tostring( receipe_nr ).."/"..tostring( #res ).."]";
 		-- reverse order; default receipes (and thus the most intresting ones) are usually the oldest
 		local receipe = res[ #res+1-receipe_nr ];
 		if(     receipe.type=='normal'  and receipe.items) then
@@ -370,7 +370,7 @@ replacer.inspect_show_crafting = function( name, node_name, fields )
 			formspec = formspec.."item_image_button[1,1;3.4,3.4;"..replacer.image_button_link( 'default:furnace_active' ).."]".. --default_furnace_front.png]"..
 					"item_image_button[2.9,2.7;1.0,1.0;"..replacer.image_button_link( receipe.items[1] ).."]"..
 					"label[1.0,0;"..tostring(receipe.items[1]).."]"..
-					"label[0,0.5;This can be used as a fuel.]";
+					"label[0,0.5;Nelze péci v peci.]";
 		elseif( receipe.type=='cooking' and receipe.items and #receipe.items==1 ) then
 			formspec = formspec.."item_image_button[1,1;3.4,3.4;"..replacer.image_button_link( 'default:furnace' ).."]".. --default_furnace_front.png]"..
 					"item_image_button[2.9,2.7;1.0,1.0;"..replacer.image_button_link( receipe.items[1] ).."]";
@@ -382,7 +382,7 @@ replacer.inspect_show_crafting = function( name, node_name, fields )
 			formspec = formspec.."item_image_button[1,1;3.4,3.4;"..replacer.image_button_link( 'moreblocks:circular_saw' ).."]"..
 					"item_image_button[2,0.6;1.0,1.0;"..replacer.image_button_link( receipe.items[1] ).."]";
 		else
-			formspec = formspec..'label[3,1;Error: Unkown receipe.]';
+			formspec = formspec..'label[3,1;Chyba: Neznámý recept.]';
 		end
 		-- show how many of the items the receipe will yield
 		local outstack = ItemStack( receipe.output );

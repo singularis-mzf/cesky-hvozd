@@ -4,9 +4,9 @@ replacer.user_mode = {}
 
 -- descriptions for the dropdown menu (accessible via AUX1 + left-click)
 replacer.mode_descriptions = {
-	"[ normal ] replace material, shape and orientation according to the stored pattern",
-	"[ material ] replace the material only (if possible), while keeping shape and orientation",
-	"[ shape ] replace shape and orientation (if possible), while keeping the material"}
+	"[ normální ] nahrazuje materiál, tvar a otočení podle uloženého vzoru",
+	"[ materiál ] je-li to možné, nahrazuje jen materiál, ponechávajíc tvar a otočení",
+	"[ tvar ] je-li to možné, nahrazuje tvar a otočení, ponechávajíc materiál"}
 
 -- internal names for the above modes (will be stored in replacer.user_mode[ player_name ])
 replacer.mode_names = {"normal", "material", "shape"}

@@ -9,7 +9,7 @@ function replacer_homedecor_node_is_owned(pos, placer)
 	if (type( minetest.is_protected ) == "function") then
 		local res = minetest.is_protected( pos, pname );
 		if( res ) then
-			minetest.chat_send_player( pname, "Cannot replace node. It is protected." );
+			minetest.chat_send_player( pname, "Nemohu nahradit blok, protože je chráněný." );
 		end
 		return res;
 	end
@@ -23,19 +23,19 @@ function replacer_homedecor_node_is_owned(pos, placer)
                                 elseif type(GetNodeOwnerName) == "function" then        -- ...is a recent version
                                         ownername = GetNodeOwnerName(pos)
                                 else
-                                        ownername = "someone"
+                                        ownername = "někdo"
                                 end
                         end
                 end
 
         elseif type(isprotect)=="function" then                                         -- glomie's protection mod
                 if not isprotect(5, pos, placer) then
-                        ownername = "someone"
+                        ownername = "někdo"
                 end
         end
 
         if ownername ~= false then
-                minetest.chat_send_player( pname, "Sorry, "..ownername.." owns that spot." )
+                minetest.chat_send_player( pname, "Promiňte, "..ownername.." vlastní toto místo." )
                 return true
         else
                 return false
