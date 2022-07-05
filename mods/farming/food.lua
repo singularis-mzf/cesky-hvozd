@@ -152,7 +152,7 @@ minetest.register_craft({
 --= Salt Crystal
 
 minetest.register_node("farming:salt_crystal", {
-	description = ("Salt crystal"),
+	description = S("Salt crystal"),
 	inventory_image = "farming_salt_crystal.png",
 	wield_image = "farming_salt_crystal.png",
 	drawtype = "plantlike",

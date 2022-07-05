@@ -5,6 +5,8 @@
 	auto-refill by crabman77
 ]]
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 farming = {
 	mod = "redo",
 	version = "20220309",
@@ -736,3 +738,5 @@ dofile(farming.path .. "/food.lua")
 dofile(farming.path .. "/mapgen.lua")
 dofile(farming.path .. "/compatibility.lua") -- Farming Plus compatibility
 dofile(farming.path .. "/lucky_block.lua")
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
