@@ -37,11 +37,11 @@ function travelnet.formspecs.error_message(options)
 		)
 end
 
-function travelnet.formspecs.edit_travelnet(options)
+function travelnet.formspecs.edit_travelnet(options, player_name)
 	if not options then options = {} end
 	-- some players seem to be confused with entering network names at first; provide them
 	-- with a default name
-	local default_network = "net1"
+	local default_network = "síť1"
 
 	return ([[
 		size[10,6.0]
@@ -64,7 +64,7 @@ function travelnet.formspecs.edit_travelnet(options)
 		S("Assign to network:"),
 		minetest.formspec_escape(
 			travelnet.is_falsey_string(options.station_network)
-				and default_network
+				and (ch_core.na_jmeno_bez_barev_a_mezer(player_name) or default_network)
 				or options.station_network
 		),
 		S("You can have more than one network. If unsure, use \"@1\".", default_network),

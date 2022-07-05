@@ -7,6 +7,7 @@
 
 local S = minetest.get_translator("travelnet")
 
+local travelnet_nodenames = {}
 local travelnet_dyes = {}
 
 local function on_interact(pos, _, player)
@@ -22,8 +23,13 @@ end
 
 -- travelnet box register function
 function travelnet.register_travelnet_box(cfg)
+    local desc = S("Travelnet-Box")
+    travelnet_nodenames[cfg.nodename] = 1
+	if cfg.colorname then
+        desc = desc .. " (" .. cfg.colorname .. ")"
+    end
 	minetest.register_node(cfg.nodename, {
-		description = S("Travelnet-Box"),
+		description = desc,
 		drawtype = "mesh",
 		mesh = "travelnet.obj",
 		sunlight_propagates = true,
@@ -139,3 +145,20 @@ function travelnet.register_travelnet_box(cfg)
 		})
 	end
 end
+
+local on_chatcommand = function(name)
+	local player = minetest.get_player_by_name(name);
+	local pos = player and player:get_pos()
+	local node = pos and minetest.get_node(pos)
+	if node and travelnet_nodenames[node.name] then
+		return on_interact(pos, nil, player)
+	else
+		return false, S("You are not in a Travelnet-Box!")
+	end
+end
+
+minetest.register_chatcommand("cestovat", {
+	description = "Opens an interface of the Travelnet Box you are standing in",
+	privs = {},
+	func = on_chatcommand,
+})

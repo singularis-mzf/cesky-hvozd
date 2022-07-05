@@ -17,6 +17,8 @@
 
 --]]
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 -- integration test
 if minetest.settings:get_bool("travelnet.enable_travelnet_integration_test") then
 	dofile(minetest.get_modpath(minetest.get_current_modname()) .. "/integration_test.lua")
@@ -103,7 +105,7 @@ if travelnet.travelnet_effect_enabled then
 		initial_sprite_basepos = { x=0, y=0 },
 		is_visible = true,
 		makes_footstep_sound = false,
-		automatic_rotate = true,
+		automatic_rotate = 6,
 
 		anz_rotations = 0,
 
@@ -142,3 +144,4 @@ end
 -- upon server start, read the savefile
 travelnet.restore_data()
 travelnet.player_formspec_data = nil
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
