@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 mobs:register_mob("mobs_jellyfish:jellyfish", {
 	type = "animal",
@@ -41,4 +42,5 @@ mobs:spawn({
 	max_height = 0,
 })
 
-mobs:register_egg("mobs_jellyfish:jellyfish", "Jellyfish", "jellyfish_inv.png", 0)
+mobs:register_egg("mobs_jellyfish:jellyfish", "Medúza", "jellyfish_inv.png", 0)
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

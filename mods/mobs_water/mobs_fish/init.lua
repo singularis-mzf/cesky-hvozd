@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local SPRITE_VERSION = false -- set to true to use upright sprites instead of meshes
 
@@ -100,7 +101,7 @@ mobs:spawn({
 	active_object_count = 5,
 })
 
-mobs:register_egg("mobs_fish:clownfish", "Clownfish",
+mobs:register_egg("mobs_fish:clownfish", "Klaun (ryba)",
 	"animal_clownfish_clownfish_item.png", 0)
 
 -- Tropical fish
@@ -174,5 +175,7 @@ mobs:spawn({
 	active_object_count = 5,
 })
 
-mobs:register_egg("mobs_fish:tropical", "Tropical fish",
+mobs:register_egg("mobs_fish:tropical", "Tropická ryba",
 	"animal_fish_blue_white_fish_blue_white_item.png", 0)
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

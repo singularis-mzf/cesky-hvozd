@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 -- local variables
 local l_spawn_chance = 60000
@@ -76,7 +77,7 @@ if ENABLE_WALKERS then
 		max_height = 10,
 	})
 
-	mobs:register_egg("mobs_crocs:crocodile", "Crocodile", "default_grass.png", 1)
+	mobs:register_egg("mobs_crocs:crocodile", "Krokodýl (chodivé povahy)", "default_grass.png", 1)
 end
 
 -- float
@@ -133,7 +134,7 @@ if ENABLE_FLOATERS then
 		max_height = 10,
 	})
 
-	mobs:register_egg("mobs_crocs:crocodile_float", "Crocodile (floater)",
+	mobs:register_egg("mobs_crocs:crocodile_float", "Krokodýl (vznášivé povahy)",
 		"default_grass.png", 1)
 end
 
@@ -190,6 +191,7 @@ if ENABLE_SWIMMERS then
 		max_height = 10,
 	})
 
-	mobs:register_egg("mobs_crocs:crocodile_swim", "Crocodile (swimmer)",
+	mobs:register_egg("mobs_crocs:crocodile_swim", "Krokodýl (plavavé povahy)",
 		"default_grass.png", 1)
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
