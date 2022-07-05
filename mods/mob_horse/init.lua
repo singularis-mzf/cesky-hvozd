@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 -- Load support for intllib.
 local MP = minetest.get_modpath(minetest.get_current_modname()) .. "/"
@@ -370,5 +371,4 @@ lucky_block:add_blocks({
 
 end
 
-
-print("[MOD] Mob Horse loaded")
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
