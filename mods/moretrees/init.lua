@@ -13,42 +13,11 @@
 -- by RealBadAngel.
 --
 
-moretrees = {}
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
-minetest.override_item("default:sapling", {
-	description = "Sapling"
-})
-
-minetest.override_item("default:tree", {
-	description = "Tree"
-})
-
-minetest.override_item("default:wood", {
-	description = "Wooden Planks"
-})
-
-minetest.override_item("default:leaves", {
-	description = "Leaves"
-})
-
-minetest.override_item("default:fence_wood", {
-	description = "Wooden Fence"
-})
-
-minetest.override_item("default:fence_rail_wood", {
-	description = "Wooden Fence Rail"
-})
-
-if minetest.get_modpath("doors") then
-	minetest.override_item("doors:gate_wood_closed", {
-		description = "Wooden Fence Gate"
-	})
-
-	minetest.override_item("doors:gate_wood_open", {
-		description = "Wooden Fence Gate"
-	})
-end
-
+moretrees = {
+	air = {name = "air"}
+}
 
 -- Read the default config file (and if necessary, copy it to the world folder).
 
@@ -86,120 +55,10 @@ moretrees.cutting_tools = {
 	"titanium:axe",
 }
 
-dofile(modpath.."/tree_models.lua")
-dofile(modpath.."/node_defs.lua")
-dofile(modpath.."/date_palm.lua")
-dofile(modpath.."/cocos_palm.lua")
-dofile(modpath.."/biome_defs.lua")
-dofile(modpath.."/saplings.lua")
-dofile(modpath.."/crafts.lua")
-
--- tree spawning setup
-
-if moretrees.spawn_saplings then
-	moretrees.spawn_beech_object = "moretrees:beech_sapling_ongen"
-	moretrees.spawn_apple_tree_object = "moretrees:apple_tree_sapling_ongen"
-	moretrees.spawn_oak_object = "moretrees:oak_sapling_ongen"
-	moretrees.spawn_sequoia_object = "moretrees:sequoia_sapling_ongen"
-	moretrees.spawn_palm_object = "moretrees:palm_sapling_ongen"
-	moretrees.spawn_date_palm_object = "moretrees:date_palm_sapling_ongen"
-	moretrees.spawn_cedar_object = "moretrees:cedar_sapling_ongen"
-	moretrees.spawn_rubber_tree_object = "moretrees:rubber_tree_sapling_ongen"
-	moretrees.spawn_willow_object = "moretrees:willow_sapling_ongen"
-	moretrees.spawn_birch_object = "moretrees:birch_sapling_ongen"
-	moretrees.spawn_spruce_object = "moretrees:spruce_sapling_ongen"
-	moretrees.spawn_jungletree_object = "moretrees:jungletree_sapling_ongen"
-	moretrees.spawn_fir_object = "moretrees:fir_sapling_ongen"
-	moretrees.spawn_fir_snow_object = "snow:sapling_pine"
-	moretrees.spawn_poplar_object = "moretrees:poplar_sapling_ongen"
-	moretrees.spawn_poplar_small_object = "moretrees:poplar_small_sapling_ongen"
-else
-	moretrees.spawn_beech_object = moretrees.beech_model
-	moretrees.spawn_apple_tree_object = moretrees.apple_tree_model
-	moretrees.spawn_oak_object = moretrees.oak_model
-	moretrees.spawn_sequoia_object = moretrees.sequoia_model
-	moretrees.spawn_palm_object = moretrees.palm_model
-	moretrees.spawn_date_palm_object = moretrees.date_palm_model
-	moretrees.spawn_cedar_object = moretrees.cedar_model
-	moretrees.spawn_rubber_tree_object = moretrees.rubber_tree_model
-	moretrees.spawn_willow_object = moretrees.willow_model
-	moretrees.spawn_birch_object = "moretrees.grow_birch"
-	moretrees.spawn_spruce_object = "moretrees.grow_spruce"
-	moretrees.spawn_jungletree_object = "moretrees.grow_jungletree"
-	moretrees.spawn_fir_object = "moretrees.grow_fir"
-	moretrees.spawn_fir_snow_object = "moretrees.grow_fir_snow"
-	moretrees.spawn_poplar_object = moretrees.poplar_model
-	moretrees.spawn_poplar_small_object = moretrees.poplar_small_model
-end
-
-if moretrees.enable_beech then
-	biome_lib:register_generate_plant(moretrees.beech_biome, moretrees.spawn_beech_object)
-end
-
-if moretrees.enable_apple_tree then
-	biome_lib:register_generate_plant(moretrees.apple_tree_biome, moretrees.spawn_apple_tree_object)
-end
-
-if moretrees.enable_oak then
-	biome_lib:register_generate_plant(moretrees.oak_biome, moretrees.spawn_oak_object)
-end
-
-if moretrees.enable_sequoia then
-	biome_lib:register_generate_plant(moretrees.sequoia_biome, moretrees.spawn_sequoia_object)
-end
-
-if moretrees.enable_palm then
-	biome_lib:register_generate_plant(moretrees.palm_biome, moretrees.spawn_palm_object)
-end
-
-if moretrees.enable_date_palm then
-	biome_lib:register_generate_plant(moretrees.date_palm_biome, moretrees.spawn_date_palm_object)
-	biome_lib:register_generate_plant(moretrees.date_palm_biome_2, moretrees.spawn_date_palm_object)
-end
-
-if moretrees.enable_cedar then
-	biome_lib:register_generate_plant(moretrees.cedar_biome, moretrees.spawn_cedar_object)
-end
-
-if moretrees.enable_rubber_tree then
-	biome_lib:register_generate_plant(moretrees.rubber_tree_biome, moretrees.spawn_rubber_tree_object)
-end
-
-if moretrees.enable_willow then
-	biome_lib:register_generate_plant(moretrees.willow_biome, moretrees.spawn_willow_object)
-end
-
-if moretrees.enable_birch then
-	biome_lib:register_generate_plant(moretrees.birch_biome, moretrees.spawn_birch_object)
-end
-
-if moretrees.enable_spruce then
-	biome_lib:register_generate_plant(moretrees.spruce_biome, moretrees.spawn_spruce_object)
-end
-
-if moretrees.enable_jungle_tree then
-	biome_lib:register_generate_plant(moretrees.jungletree_biome, moretrees.spawn_jungletree_object)
-end
-
-if moretrees.enable_fir then
-	biome_lib:register_generate_plant(moretrees.fir_biome, moretrees.spawn_fir_object)
-	if minetest.get_modpath("snow") then
-		biome_lib:register_generate_plant(moretrees.fir_biome_snow, moretrees.spawn_fir_snow_object)
-	end
-end
-
-if moretrees.enable_poplar then
-	biome_lib:register_generate_plant(moretrees.poplar_biome, moretrees.spawn_poplar_object)
-	biome_lib:register_generate_plant(moretrees.poplar_biome_2, moretrees.spawn_poplar_object)
-	biome_lib:register_generate_plant(moretrees.poplar_biome_3, moretrees.spawn_poplar_object)
-	biome_lib:register_generate_plant(moretrees.poplar_small_biome, moretrees.spawn_poplar_small_object)
-	biome_lib:register_generate_plant(moretrees.poplar_small_biome_2, moretrees.spawn_poplar_small_object)
-end
-
 -- Code to spawn a birch tree
 
 function moretrees.grow_birch(pos)
-	minetest.swap_node(pos, biome_lib.air)
+	minetest.swap_node(pos, moretrees.air)
 	if math.random(1,2) == 1 then
 		minetest.spawn_tree(pos, moretrees.birch_model1)
 	else
@@ -210,7 +69,7 @@ end
 -- Code to spawn a spruce tree
 
 function moretrees.grow_spruce(pos)
-	minetest.swap_node(pos, biome_lib.air)
+	minetest.swap_node(pos, moretrees.air)
 	if math.random(1,2) == 1 then
 		minetest.spawn_tree(pos, moretrees.spruce_model1)
 	else
@@ -264,10 +123,10 @@ function moretrees.grow_jungletree(pos)
 		moretrees.jungletree_model.rules_b = moretrees.jt_rules_b2
 	end
 
-	minetest.swap_node(pos, biome_lib.air)
+	minetest.swap_node(pos, moretrees.air)
 	local leaves = minetest.find_nodes_in_area({x = pos.x-1, y = pos.y, z = pos.z-1}, {x = pos.x+1, y = pos.y+10, z = pos.z+1}, "default:leaves")
 	for leaf in ipairs(leaves) do
-			minetest.swap_node(leaves[leaf], biome_lib.air)
+			minetest.swap_node(leaves[leaf], moretrees.air)
 	end
 	minetest.spawn_tree(pos, moretrees.jungletree_model)
 end
@@ -291,10 +150,10 @@ function moretrees.grow_fir(pos)
 	moretrees.fir_model.iterations = 7
 	moretrees.fir_model.random_level = 5
 
-	minetest.swap_node(pos, biome_lib.air)
+	minetest.swap_node(pos, moretrees.air)
 	local leaves = minetest.find_nodes_in_area({x = pos.x, y = pos.y, z = pos.z}, {x = pos.x, y = pos.y+5, z = pos.z}, "default:leaves")
 	for leaf in ipairs(leaves) do
-		minetest.swap_node(leaves[leaf], biome_lib.air)
+		minetest.swap_node(leaves[leaf], moretrees.air)
 	end
 	minetest.spawn_tree(pos,moretrees.fir_model)
 end
@@ -318,12 +177,20 @@ function moretrees.grow_fir_snow(pos)
 	moretrees.fir_model.iterations = 2
 	moretrees.fir_model.random_level = 2
 
-	minetest.swap_node(pos, biome_lib.air)
+	minetest.swap_node(pos, moretrees.air)
 	local leaves = minetest.find_nodes_in_area({x = pos.x, y = pos.y, z = pos.z}, {x = pos.x, y = pos.y+5, z = pos.z}, "default:leaves")
 	for leaf in ipairs(leaves) do
-			minetest.swap_node(leaves[leaf], biome_lib.air)
+			minetest.swap_node(leaves[leaf], moretrees.air)
 	end
 	minetest.spawn_tree(pos,moretrees.fir_model)
 end
 
-print("[Moretrees] Loaded (2013-02-11)")
+dofile(modpath.."/tree_models.lua")
+dofile(modpath.."/node_defs.lua")
+dofile(modpath.."/date_palm.lua")
+dofile(modpath.."/cocos_palm.lua")
+-- dofile(modpath.."/biome_defs.lua")
+-- dofile(modpath.."/saplings.lua")
+dofile(modpath.."/crafts.lua")
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

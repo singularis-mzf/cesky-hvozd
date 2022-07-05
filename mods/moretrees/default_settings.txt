@@ -9,20 +9,13 @@ moretrees.enable_palm			= true
 moretrees.enable_date_palm		= true
 moretrees.enable_cedar			= true
 moretrees.enable_rubber_tree	= true
-moretrees.enable_willow			= true
+moretrees.enable_willow			= false
 moretrees.enable_birch			= true
 moretrees.enable_spruce			= true
 moretrees.enable_jungle_tree	= true
 moretrees.enable_fir			= true
 moretrees.enable_poplar			= true
-moretrees.enable_beech			= false
-
--- set this to true to make moretrees spawn saplings at mapgen time instead
--- of fully-grown trees, which will grow into full trees after a very short
--- delay.  This reduces mapgen lag in some situations, and fixes situations
--- where the mapgen conflicts with the tree generator.
-
-moretrees.spawn_saplings		= true
+moretrees.enable_beech			= true
 
 -- Set this to true to allow defining stairs/slabs/etc.  If Moreblocks is
 -- installed, this will use that mod's Stairs Plus component.  Otherwise, it
@@ -32,7 +25,7 @@ moretrees.enable_stairs			= true
 
 -- If this variable is set to true, register fences for moretrees wood
 
-moretrees.enable_fences         = false
+moretrees.enable_fences         = true
 
 -- Set this to true if you want the plantlike drawtype for leaves, which
 -- improves some peoples' framerates without resorting to making leaf nodes opaque.
@@ -43,7 +36,7 @@ moretrees.plantlike_leaves		= false
 -- Enable this if you want moretrees to redefine default apples so that they
 -- fall when leaves decay/are dug.
 
-moretrees.enable_redefine_apple		= true
+moretrees.enable_redefine_apple		= false
 
 -- Set this to true to enable leaf decay of all trees except the default ones.
 
@@ -66,7 +59,7 @@ moretrees.firs_remove_chance		= 150
 -- Cocos palm settings
 
 moretrees.coconuts_regrow		= true
-moretrees.coconuts_convert_existing_palms = true	-- Converting existing palm trees will make coconuts regrow on them as well
+moretrees.coconuts_convert_existing_palms = false	-- Converting existing palm trees will make coconuts regrow on them as well
 							-- Else, they will only regrow on newly-spawned palms
 							-- However, conversion is not an exact science, and although an attempt is
 							-- made to detect whether a trunk belongs to an actual palm, some coconut trunks
