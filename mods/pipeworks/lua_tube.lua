@@ -27,7 +27,7 @@
 -- You can add more functions to the environment
 -- (see where local env is defined)
 -- Something nice to play is appending minetest.env to it.
-
+local S = minetest.get_translator("pipeworks")
 local BASENAME = "pipeworks:lua_tube"
 
 local rules = {
@@ -905,7 +905,7 @@ for white  = 0, 1 do
 	}
 
 	minetest.register_node(node_name, {
-		description = "Lua controlled Tube",
+		description = S("Lua controlled Tube"),
 		drawtype = "nodebox",
 		tiles = tiles,
 		use_texture_alpha = texture_alpha_mode,
@@ -918,9 +918,7 @@ for white  = 0, 1 do
 		node_box = node_box,
 		on_construct = reset_meta,
 		on_receive_fields = on_receive_fields,
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 		mesecons = mesecons,
 		digiline = digiline,
 		-- Virtual portstates are the ports that
@@ -1030,9 +1028,7 @@ minetest.register_node(BASENAME .. "_burnt", {
 	node_box = node_box,
 	on_construct = reset_meta,
 	on_receive_fields = on_receive_fields,
-	_sound_def = {
-        key = "node_sound_wood_defaults",
-    },
+	sounds = default.node_sound_wood_defaults(),
 	virtual_portstates = {red = false, blue = false, yellow = false,
 		green = false, black = false, white = false},
 	mesecons = {

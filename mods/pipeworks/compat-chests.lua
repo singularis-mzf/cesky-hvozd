@@ -145,14 +145,6 @@ end
 -- Override Construction
 local override_protected, override, override_open, override_protected_open
 override_protected = {
-	tiles = {
-		"default_chest_top.png"..tube_entry,
-		"default_chest_top.png"..tube_entry,
-		"default_chest_side.png"..tube_entry,
-		"default_chest_side.png"..tube_entry,
-		"default_chest_lock.png",
-		"default_chest_inside.png"
-	},
 	after_place_node = function(pos, placer)
 		old_chest_locked_def.after_place_node(pos, placer)
 		pipeworks.after_place(pos)
@@ -193,20 +185,12 @@ override_protected = {
 			return inv:room_for_item("main", stack)
 		end,
 		input_inventory = "main",
-		connect_sides = {left = 1, right = 1, back = 1, bottom = 1, top = 1}
+		connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1, top = 1}
 	},
 	after_dig_node = pipeworks.after_dig,
 	on_rotate = pipeworks.on_rotate
 }
 override = {
-	tiles = {
-		"default_chest_top.png"..tube_entry,
-		"default_chest_top.png"..tube_entry,
-		"default_chest_side.png"..tube_entry,
-		"default_chest_side.png"..tube_entry,
-		"default_chest_front.png",
-		"default_chest_inside.png"
-	},
 	on_rightclick = function(pos, node, clicker)
 		minetest.sound_play(old_chest_def.sound_open, {gain = 0.3, pos = pos,
 				max_hear_distance = 10})
@@ -239,7 +223,7 @@ override = {
 			return inv:room_for_item("main", stack)
 		end,
 		input_inventory = "main",
-		connect_sides = {left = 1, right = 1, back = 1, bottom = 1, top = 1}
+		connect_sides = {left = 1, right = 1, back = 1, front = 1, bottom = 1, top = 1}
 	},
 	after_place_node = pipeworks.after_place,
 	after_dig_node = pipeworks.after_dig,
@@ -264,23 +248,6 @@ override_protected_open.groups = table.copy(old_chest_locked_open_def.groups)
 override_protected_open.tube = table.copy(override_protected.tube)
 override_protected_open.tube.connect_sides = table.copy(override_protected.tube.connect_sides)
 override_protected_open.tube.connect_sides.top = nil
-
-override_protected.tiles = { -- Rearranged according to the chest registration in Minetest_Game.
-	"default_chest_top.png"..tube_entry,
-	"default_chest_top.png"..tube_entry,
-	"default_chest_side.png"..tube_entry.."^[transformFX",
-	"default_chest_side.png"..tube_entry,
-	"default_chest_side.png"..tube_entry,
-	"default_chest_lock.png",
-}
-override.tiles = {
-	"default_chest_top.png"..tube_entry,
-	"default_chest_top.png"..tube_entry,
-	"default_chest_side.png"..tube_entry.."^[transformFX",
-	"default_chest_side.png"..tube_entry,
-	"default_chest_side.png"..tube_entry,
-	"default_chest_front.png",
-}
 
 -- Add the extra groups
 for _,v in ipairs({override_protected, override, override_open, override_protected_open}) do

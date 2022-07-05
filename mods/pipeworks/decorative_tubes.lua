@@ -1,4 +1,4 @@
-local S = minetest.get_translator("pipeworks")
+	local S = minetest.get_translator("pipeworks")
 
 local straight = function(pos, node, velocity, stack) return {velocity} end
 local steel_tex = "[combine:16x16^[noalpha^[colorize:#D3D3D3"
@@ -16,9 +16,7 @@ minetest.register_node("pipeworks:steel_block_embedded_tube", {
 	paramtype2 = "facedir",
 	groups = {cracky=1, oddly_breakable_by_hand = 1, tubedevice = 1, dig_glass = 2},
 	legacy_facedir_simple = true,
-	_sound_def = {
-        key = "node_sound_stone_defaults",
-    },
+	sounds = default.node_sound_metal_defaults(),
 	tube = {
 		connect_sides = {front = 1, back = 1,},
 		priority = 50,
@@ -64,9 +62,7 @@ minetest.register_node("pipeworks:steel_pane_embedded_tube", {
 	paramtype2 = "facedir",
 	groups = {cracky=1, oddly_breakable_by_hand = 1, tubedevice = 1, dig_glass = 2},
 	legacy_facedir_simple = true,
-	_sound_def = {
-        key = "node_sound_stone_defaults",
-    },
+	sounds = default.node_sound_stone_defaults(),
 	tube = {
 		connect_sides = {front = 1, back = 1,},
 		priority = 50,

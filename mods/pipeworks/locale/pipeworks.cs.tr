@@ -1,0 +1,121 @@
+# textdomain: pipeworks
+
+# Author: Singularis <singularis@volny.cz>
+# License: CC-by-SA 4.0
+
+## generic interaction
+Set=Nastavit
+Close=Zavřít
+
+## digilines interfacing
+Channel=Kanál
+
+## init
+Allow splitting incoming stacks from tubes=Dovolit dělení dávek při vstupu z rour
+Automation components=Automatizace
+
+## autocrafter
+Unknown item=Neznámá položka
+unconfigured Autocrafter: unknown recipe=Automat není nakonfigurován: neznámý recept
+unconfigured Autocrafter=Automat není nakonfigurován
+'@1' Autocrafter (@2)=Automat na '@1' (@2)
+Save=Uložit
+paused '@1' Autocrafter=Automat na '@1' pozastaven
+Autocrafter=Výrobní automat
+
+## compat-furnaces
+Allow splitting incoming material (not fuel) stacks from tubes=Dovolit dělení dávek (kromě paliva) při vstupu z rour
+
+## decorative tubes
+Airtight steelblock embedded tube=Roura v bloku železa
+Airtight panel embedded tube=Roura skrz panel
+
+## devices
+Pump/Intake Module=Vodní pumpa
+Valve=Ventil
+Decorative grating=Ozdobná mřížka
+Spigot outlet=Pípa
+Airtight Pipe entry/exit=Potrubí skrz panel
+Flow Sensor=Detektor toku
+Flow sensor (on)=Detektor toku (aktivní)
+empty=prázdná
+@1% full=plná z @1 %
+Expansion Tank (@1)=Nádrž (@1)
+Fluid Storage Tank (@1)=Nádrž (@1)
+Fountainhead=Sprcha
+Straight-only Pipe=Jednosměrné potrubí
+
+## filter-injector
+(slot #@1 next)=(následuje slot: #@1)
+@1 Filter-Injector=Filtrující injektor: @1
+Sequence slots by Priority=Brát vždy od začátku
+Sequence slots Randomly=Brát náhodně
+Sequence slots by Rotation=Brát postupně
+Exact match - off=Filtrace vypnuta
+Exact match - on=Filtrace zapnuta
+Prefer item types:=Filtrovat:
+Itemwise=po kusech
+Stackwise=po dávkách
+Digiline=digilinka
+
+## legacy
+Auto-Tap=Automatický kohoutek
+
+## pipes
+Pipe Segment=Vodovodní potrubí
+Pipe Segment (legacy)=Vodovodní potrubí (zastaralé)
+
+
+## routing tubes
+Pneumatic tube segment=Pneumatická roura
+Broken Tube=Prasklá roura
+High Priority Tube Segment=Pneumatická roura s vysokou prioritou
+Accelerating Pneumatic Tube Segment=Zrychlující pneumatická roura
+Crossing Pneumatic Tube Segment=Křížící pneumatická roura
+One way tube=Jednosměrná pneumatická roura
+Lua controlled Tube=Roura řízená jazykem Lua
+
+## signal tubes
+Detecting Pneumatic Tube Segment on=Detekující pneumatická roura (mesespoje, aktivní)
+Detecting Pneumatic Tube Segment=Detekující pneumatická roura (mesespoje)
+Digiline Detecting Pneumatic Tube Segment=Detekující pneumatická roura (digilinky)
+Digiline Detecting Tube=Detekující pneumatická roura (digilinky)
+Conducting Pneumatic Tube Segment=Vodivá pneumatická roura (jen mesespoje)
+Conducting Pneumatic Tube Segment on=Vodivá pneumatická roura (mesespoje, aktivní)
+Digiline Conducting Pneumatic Tube Segment=Vodivá pneumatická roura (jen digilinky)
+Mesecon and Digiline Conducting Pneumatic Tube Segment=Vodivá pneumatická roura (mesespoje i digilinky)
+Mesecon and Digiline Conducting Pneumatic Tube Segment on=Vodivá pneumatická roura (mesespoje i digilinky, aktivní)
+
+## sorting tubes
+Sorting Pneumatic Tube Segment=Třídicí pneumatická roura
+Sorting pneumatic tube=Třídicí pneumatická roura
+
+## teleport tube
+Receive=Příjem
+Channels are public by default=Standardně jsou kanály volně přístupné
+Use <player>:<channel> for fully private channels=Pro oboustranně soukromé kanály použijte tvar <hráč/ka>:<kanál>
+Use <player>;<channel> for private receivers=Pro soukromý příjem použijte tvar <hráč/ka>;<kanál>
+Teleporting Pneumatic Tube Segment=Teleportující pneumatická roura
+Teleporting Tube=Teleportující pneumatická roura
+Unconfigured Teleportation Tube=Nenastavená teleportující pneumatická roura
+Sorry, channel '@1' is reserved for exclusive use by @2=Kanál '@1' je soukromý kanál vyhrazený pro @2.
+Sorry, receiving from channel '@1' is reserved for @2=Příjem z kanálu '@1' je vyhrazený pro @2.
+Teleportation Tube @1 on '@2'=Teleportační trubka @1 z/na '@2'
+
+## trashcan
+Trash Can=Odpadkový koš@nVeškerý vstupující materiál je ihned zničen
+
+## tube registration
+Pneumatic tube segment (legacy)=Pneumatická roura (zastaralá)
+
+## vacuum tubes
+Radius=Dosah
+Vacuuming Pneumatic Tube Segment=Nasávací pneumatická roura (5x5x5 metrů)
+Adjustable Vacuuming Tube=Nastavitelná nasávací pneumatické roura
+Adjustable Vacuuming Pneumatic Tube Segment=Nastavitelná nasávací pneumatické roura
+Adjustable Vacuuming Pneumatic Tube Segment (@1m)=Nastavitelná nasávací pneumatické roura (@1 m)
+
+## wielder
+Node Breaker=Naběrač bloků
+Deployer=Umísťovač bloků
+Dispenser=Vyhazovač bloků

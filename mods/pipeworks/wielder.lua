@@ -199,9 +199,7 @@ local function register_wielder(data)
 			paramtype2 = "facedir",
 			tubelike = 1,
 			groups = groups,
-			_sound_def = {
-				key = "node_sound_stone_defaults",
-			},
+			sounds = default.node_sound_stone_defaults(),
 			drop = data.name_base.."_off",
 			on_construct = function(pos)
 				local meta = minetest.get_meta(pos)

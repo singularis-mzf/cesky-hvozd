@@ -118,7 +118,7 @@ if pipeworks.enable_mese_tube then
 					local meta = minetest.get_meta(pos)
 					local inv = meta:get_inventory()
 					for i = 1, 6 do
-						meta:set_int("l"..tostring(i).."s", 1)
+						meta:set_int("l"..tostring(i).."s", 0)
 						inv:set_size("line"..tostring(i), 6*1)
 					end
 					update_formspec(pos)

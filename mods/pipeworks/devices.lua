@@ -148,9 +148,7 @@ for s in ipairs(states) do
 		paramtype = "light",
 		paramtype2 = "facedir",
 		groups = dgroups,
-		_sound_def = {
-			key = "node_sound_metal_defaults",
-		},
+		sounds = default.node_sound_metal_defaults(),
 		walkable = true,
 		pipe_connections = { top = 1 },
 		after_place_node = function(pos)
@@ -202,9 +200,7 @@ for s in ipairs(states) do
 			fixed = { -5/16, -4/16, -8/16, 5/16, 5/16, 8/16 }
 		},
 		groups = dgroups,
-		_sound_def = {
-			key = "node_sound_metal_defaults",
-		},
+		sounds = default.node_sound_metal_defaults(),
 		walkable = true,
 		on_place = pipeworks.rotate_on_place,
 		after_dig_node = function(pos)
@@ -252,9 +248,7 @@ minetest.register_node(nodename_valve_loaded, {
 		fixed = { -5/16, -4/16, -8/16, 5/16, 5/16, 8/16 }
 	},
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4},
-	_sound_def = {
-        key = "node_sound_metal_defaults",
-    },
+	sounds = default.node_sound_metal_defaults(),
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
 	after_dig_node = function(pos)
@@ -304,9 +298,7 @@ minetest.register_node("pipeworks:grating", {
 	sunlight_propagates = true,
 	paramtype = "light",
 	groups = {snappy=3, pipe=1, dig_generic = 4},
-	_sound_def = {
-        key = "node_sound_metal_defaults",
-    },
+	sounds = default.node_sound_metal_defaults(),
 	walkable = true,
 	pipe_connections = { top = 1 },
 	after_place_node = function(pos)
@@ -331,9 +323,7 @@ minetest.register_node(nodename_spigot_empty, {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	groups = {snappy=3, pipe=1, dig_generic = 4},
-	_sound_def = {
-        key = "node_sound_metal_defaults",
-    },
+	sounds = default.node_sound_metal_defaults(),
 	walkable = true,
 	pipe_connections = { left=1, right=1, front=1, back=1,
 						 left_param2 = 3, right_param2 = 1, front_param2 = 2, back_param2 = 0 },
@@ -368,9 +358,7 @@ minetest.register_node(nodename_spigot_loaded, {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4},
-	_sound_def = {
-        key = "node_sound_metal_defaults",
-    },
+	sounds = default.node_sound_metal_defaults(),
 	walkable = true,
 	pipe_connections = { left=1, right=1, front=1, back=1,
 						 left_param2 = 3, right_param2 = 1, front_param2 = 2, back_param2 = 0 },
@@ -426,9 +414,7 @@ minetest.register_node(nodename_panel_empty, {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	groups = {snappy=3, pipe=1, dig_generic = 4},
-	_sound_def = {
-        key = "node_sound_metal_defaults",
-    },
+	sounds = default.node_sound_metal_defaults(),
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
 	after_dig_node = function(pos)
@@ -448,9 +434,7 @@ minetest.register_node(nodename_panel_loaded, {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4},
-	_sound_def = {
-        key = "node_sound_metal_defaults",
-    },
+	sounds = default.node_sound_metal_defaults(),
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
 	after_dig_node = function(pos)
@@ -480,9 +464,7 @@ minetest.register_node(nodename_sensor_empty, {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	groups = {snappy=3, pipe=1, dig_generic = 4},
-	_sound_def = {
-        key = "node_sound_metal_defaults",
-    },
+	sounds = default.node_sound_metal_defaults(),
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
 	after_dig_node = function(pos)
@@ -521,9 +503,7 @@ minetest.register_node(nodename_sensor_loaded, {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4},
-	_sound_def = {
-        key = "node_sound_metal_defaults",
-    },
+	sounds = default.node_sound_metal_defaults(),
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
 	after_dig_node = function(pos)
@@ -590,9 +570,7 @@ for fill = 0, 10 do
 		paramtype = "light",
 		paramtype2 = "facedir",
 		groups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1, dig_generic = 4},
-		_sound_def = {
-			key = "node_sound_metal_defaults",
-		},
+		sounds = default.node_sound_metal_defaults(),
 		walkable = true,
 		drop = "pipeworks:storage_tank_0",
 		pipe_connections = { top = 1, bottom = 1},
@@ -620,9 +598,7 @@ for fill = 0, 10 do
 		paramtype = "light",
 		paramtype2 = "facedir",
 		groups = sgroups,
-		_sound_def = {
-			key = "node_sound_metal_defaults",
-		},
+		sounds = default.node_sound_metal_defaults(),
 		walkable = true,
 		drop = "pipeworks:storage_tank_0",
 		pipe_connections = { top = 1, bottom = 1},
@@ -649,9 +625,7 @@ minetest.register_node(nodename_fountain_empty, {
 	sunlight_propagates = true,
 	paramtype = "light",
 	groups = {snappy=3, pipe=1, dig_generic = 4},
-	_sound_def = {
-        key = "node_sound_metal_defaults",
-    },
+	sounds = default.node_sound_metal_defaults(),
 	walkable = true,
 	pipe_connections = { bottom = 1 },
 	after_place_node = function(pos)
@@ -686,9 +660,7 @@ minetest.register_node(nodename_fountain_loaded, {
 	sunlight_propagates = true,
 	paramtype = "light",
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4},
-	_sound_def = {
-        key = "node_sound_metal_defaults",
-    },
+	sounds = default.node_sound_metal_defaults(),
 	walkable = true,
 	pipe_connections = { bottom = 1 },
 	after_place_node = function(pos)
@@ -738,9 +710,7 @@ minetest.register_node(nodename_sp_empty, {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	groups = {snappy=3, pipe=1, dig_generic = 4},
-	_sound_def = {
-        key = "node_sound_metal_defaults",
-    },
+	sounds = default.node_sound_metal_defaults(),
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
 	after_dig_node = function(pos)
@@ -762,9 +732,7 @@ minetest.register_node(nodename_sp_loaded, {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4},
-	_sound_def = {
-        key = "node_sound_metal_defaults",
-    },
+	sounds = default.node_sound_metal_defaults(),
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
 	after_dig_node = function(pos)

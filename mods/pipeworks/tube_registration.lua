@@ -106,11 +106,9 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 			fixed = outboxes
 		},
 		groups = tgroups,
-		_sound_def = {
-			key = "node_sound_wood_defaults",
-		},
+		sounds = default.node_sound_wood_defaults(),
 		walkable = true,
-		stack_max = 99,
+		-- stack_max = 99,
 		basename = name,
 		style = style,
 		drop = string.format("%s_%s", name, dropname),
