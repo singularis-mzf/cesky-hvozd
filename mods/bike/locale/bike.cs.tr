@@ -1,0 +1,14 @@
+# textdomain:bike
+
+Alpha (0-255)=Alfa (0-255)
+Bike=Jízdní kolo
+Bike Handles=Řídítka jízdního kola
+Bike Painter (@1, A: @2)=Barvicí pistole na jízdní kola (@1, A: @2)
+Bike Painter=Barvicí pistole na jízdní kola
+Bike Wheel=Kolo na jízní kolo
+Hex Color=Barva hex.
+Preview:=Náhled:
+Set paint color=Nastavit barvu
+Warning: Destroying the bike gives you only some resources back. If you are sure, hold sneak while destroying the bike.=Varování: Rozebrání kola vám vrátí jen některé díly. Chcete-li to opravdu udělat, držte přitom Shift.
+You cannot ride @1's bike.=Nemůžete řídit toto kolo, protože patří: @1
+You cannot take @1's bike.=Nemůžete vzít toto kolo, protože patří: @1

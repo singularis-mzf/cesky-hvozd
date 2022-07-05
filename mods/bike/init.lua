@@ -1,5 +1,9 @@
 --[[ Helpers ]]--
 
+local S = minetest.get_translator("bike")
+
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 -- Skin mod detection
 local skin_mod
 
@@ -26,12 +30,12 @@ local setting_ownable = minetest.settings:get_bool("mount_ownable", false)
 --[[ Crafts ]]--
 
 minetest.register_craftitem("bike:wheel", {
-	description = "Bike Wheel",
+	description = S("Bike Wheel"),
 	inventory_image = "bike_wheel.png",
 })
 
 minetest.register_craftitem("bike:handles", {
-	description = "Bike Handles",
+	description = S("Bike Handles"),
 	inventory_image = "bike_handles.png",
 })
 
@@ -244,7 +248,7 @@ function bike.on_rightclick(self, clicker)
 	if not self.driver then
 		local pname = clicker:get_player_name()
 		if setting_ownable and self.owner and pname ~= self.owner then
-			minetest.chat_send_player(pname, "You cannot ride " .. self.owner .. "'s bike.")
+			minetest.chat_send_player(pname, S("You cannot ride @1's bike.", self.owner))
 			return
 		end
 
@@ -369,7 +373,7 @@ function bike.on_punch(self, puncher)
 	if not self.driver then
 		local pname = puncher:get_player_name()
 		if setting_ownable and self.owner and pname ~= self.owner then
-			minetest.chat_send_player(pname, "You cannot take " .. self.owner .. "'s bike.")
+			minetest.chat_send_player(pname, S("You cannot take @1's bike.", self.owner))
 			return
 		end
 
@@ -391,7 +395,7 @@ function bike.on_punch(self, puncher)
 			if not (creative and creative.is_enabled_for(pname)) then
 				local ctrl = puncher:get_player_control()
 				if not ctrl.sneak then
-					minetest.chat_send_player(pname, "Warning: Destroying the bike gives you only some resources back. If you are sure, hold sneak while destroying the bike.")
+					minetest.chat_send_player(pname, S("Warning: Destroying the bike gives you only some resources back. If you are sure, hold sneak while destroying the bike."))
 					return
 				end
 				local leftover = inv:add_item("main", iron .. " 6")
@@ -663,7 +667,7 @@ minetest.register_entity("bike:bike", bike)
 
 -- Bike craftitem
 minetest.register_craftitem("bike:bike", {
-	description = "Bike",
+	description = S("Bike"),
 	inventory_image = "bike_inventory.png",
 	wield_scale = {x = 3, y = 3, z = 2},
 	groups = {flammable = 2},
@@ -761,9 +765,9 @@ local function show_painter_form(itemstack, player)
 		"size[6,6;true]"..
 		"position[0.5, 0.45]"..
 		-- Hex/Alpha fields
-		"button[1.6,5.5;2,1;set;Set paint color]"..
-		"field[0.9,5;2,0.8;hex;Hex Color;"..color.."]"..
-		"field[2.9,5;2,0.8;alpha;Alpha (0-255);"..tostring(alpha).."]"..
+		"button[1.6,5.5;2,1;set;" .. S("Set paint color") .. "]"..
+		"field[0.9,5;2,0.8;hex;" .. S("Hex Color") .. ";"..color.."]"..
+		"field[2.9,5;2,0.8;alpha;" .. S("Alpha (0-255)") .. ";"..tostring(alpha).."]"..
 		-- RGBA sliders
 		"scrollbar[0,2;5,0.3;horizontal;r;"..tostring(to_slider_rgb(rgba.r)).."]"..
 		"label[5.1,1.9;R: "..tostring(rgba.r).."]"..
@@ -774,7 +778,7 @@ local function show_painter_form(itemstack, player)
 		"scrollbar[0,3.8;5,0.3;horizontal;a;"..tostring(to_slider_rgb(rgba.a)).."]"..
 		"label[5.1,3.7;A: "..tostring(rgba.a).."]"..
 		-- Preview
-		"label[1,0;Preview:]"..
+		"label[1,0;" .. S("Preview:") .. "]"..
 		"image[2,0;2,2;bike_metal_base.png^[colorize:"..color..":"..tostring(rgba.a).."]"
 	)
 end
@@ -796,7 +800,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				-- Save color data to painter (rgba sliders will adjust to hex/alpha too!)
 				meta:set_string("paint_color", hex)
 				meta:set_string("alpha", tostring(alpha))
-				meta:set_string("description", "Bike Painter ("..hex:upper()..", A: "..tostring(alpha)..")")
+				meta:set_string("description", S("Bike Painter (@1, A: @2)", hex:upper(), tostring(alpha)..")"))
 				player:set_wielded_item(itemstack)
 				show_painter_form(itemstack, player)
 				return
@@ -812,7 +816,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				meta:set_string("paint_color", rgb_to_hex(sval(fields.r),sval(fields.g),sval(fields.b)))
 				meta:set_string("alpha", sval(fields.a))
 				-- Keep track of what this painter is painting
-				meta:set_string("description", "Bike Painter ("..meta:get_string("paint_color"):upper()..", A: "..meta:get_string("alpha")..")")
+				meta:set_string("description", S("Bike Painter (@1, A: @2)", meta:get_string("paint_color"):upper(), meta:get_string("alpha")))
 				player:set_wielded_item(itemstack)
 				show_painter_form(itemstack, player)
 			end
@@ -822,7 +826,7 @@ end)
 
 -- Make the actual thingy
 minetest.register_tool("bike:painter", {
-	description = "Bike Painter",
+	description = S("Bike Painter"),
 	inventory_image = "bike_painter.png",
 	wield_scale = {x = 2, y = 2, z = 1},
 	on_place = show_painter_form,
@@ -863,3 +867,5 @@ minetest.register_craft({
 		{"", rubber, blue_dye},
 	},
 })
+
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
