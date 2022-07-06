@@ -9,6 +9,7 @@ function technic_cnc.register_program(recipeitem, suffix, model, groups, images,
 	local dtype
 	local nodeboxdef
 	local meshdef
+	local node_def = minetest.registered_nodes[recipeitem]
 
 	if type(model) ~= "string" then -- assume a nodebox if it's a table or function call
 		dtype = "nodebox"
@@ -35,7 +36,8 @@ function technic_cnc.register_program(recipeitem, suffix, model, groups, images,
 		walkable      = true,
 		groups        = groups,
 		selection_box = sbox,
-		collision_box = cbox
+		collision_box = cbox,
+		sounds        = node_def and node_def.sounds,
 	})
 end
 
