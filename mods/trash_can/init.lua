@@ -11,6 +11,7 @@ moditems.boxart = ""
 moditems.trashbin_groups = {snappy=1,choppy=2,oddly_breakable_by_hand=2,flammable=3}
 moditems.dumpster_groups = {cracky=3,oddly_breakable_by_hand=1}
 
+local has_homedecor = minetest.get_modpath("homedecor_trash_cans")
 
 --
 -- Functions
@@ -79,7 +80,7 @@ local dumpster_nodebox = {
 --
 
 -- Normal Trash Can
-minetest.register_node("trash_can:trash_can_wooden",{
+local trash_can_def = {
 	description = "Odpadkový koš",
 	drawtype="nodebox",
 	paramtype = "light",
@@ -135,7 +136,21 @@ minetest.register_node("trash_can:trash_can_wooden",{
 				" empties trash can at " .. minetest.pos_to_string(pos))
 		end
 	end,
-})
+}
+
+minetest.register_node("trash_can:trash_can_wooden", trash_can_def)
+
+if has_homedecor then
+	minetest.override_item("homedecor:trash_can", {
+		groups = trash_can_def.groups,
+		on_construct = trash_can_def.on_construct,
+		can_dig = trash_can_def.can_dig,
+		on_metadata_inventory_move = trash_can_def.on_metadata_inventory_move,
+		on_metadata_inventory_put = trash_can_def.on_metadata_inventory_put,
+		on_metadata_inventory_take = trash_can_def.on_metadata_inventory_take,
+		on_receive_fields = trash_can_def.on_receive_fields,
+	})
+end
 
 -- Dumpster
 minetest.register_node("trash_can:dumpster", {
