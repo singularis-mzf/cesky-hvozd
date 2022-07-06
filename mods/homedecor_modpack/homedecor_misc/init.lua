@@ -172,6 +172,7 @@ homedecor.register("pole_wrought_iron", {
 	},
     groups = {snappy=3},
     sounds = default.node_sound_wood_defaults(),
+	check_for_pole = true,
 })
 
 local ft_cbox = {

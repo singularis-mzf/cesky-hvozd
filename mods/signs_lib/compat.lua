@@ -1,18 +1,43 @@
-if minetest.get_modpath("default") then
-	local default_fences = {
-		"default:fence_wood",
-		"default:fence_acacia_wood",
-		"default:fence_aspen_wood",
-		"default:fence_junglewood",
-		"default:fence_pine_wood"
-	}
+local poles = {
+	"default:fence_wood",
+	"default:fence_acacia_wood",
+	"default:fence_aspen_wood",
+	"default:fence_junglewood",
+	"default:fence_pine_wood",
+	"cherrytree:fence",
+	"ebony:fence",
+	"homedecor:fence_wrough_iron",
+	"mobs:fence_wood",
+	"moretrees:apple_tree_fence",
+	"moretrees:beech_fence",
+	"moretrees:birch_fence",
+	"moretrees:cedar_fence",
+	"moretrees:date_palm_fence",
+	"moretrees:fir_fence",
+	"moretrees:oak_fence",
+	"moretrees:palm_fence",
+	"moretrees:poplar_fence",
+	"moretrees:rubber_tree_fence",
+	"moretrees:sequoia_fence",
+	"moretrees:spruce_fence",
+	"plumtree:fence",
+	"willow:fence",
+	"chestnuttree:fence",
+	"homedecor:pole_brass",
+	"homedecor:pole_wrought_iron",
+	"morelights:pole_d",
+	"morelights:pole_l",
+}
 
-	for _, n in ipairs(default_fences) do
-		minetest.override_item(n, {
-			check_for_pole = true
-		})
+local check_for_pole_override = {check_for_pole = true}
+
+for _, n in ipairs(poles) do
+	if minetest.registered_items[n] then
+		minetest.override_item(n, check_for_pole_override)
 	end
 end
+
+
 
 if minetest.get_modpath("cottages") then
 	local cbox = table.copy(minetest.registered_items["cottages:table"].node_box)
