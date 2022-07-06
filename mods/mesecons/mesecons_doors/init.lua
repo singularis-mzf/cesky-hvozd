@@ -81,6 +81,12 @@ meseconify_door("doors:door_glass")
 meseconify_door("doors:door_obsidian_glass")
 meseconify_door("xpanes:door_steel_bar")
 
+meseconify_door("doors:door_wood_cd")
+meseconify_door("doors:door_steel_cd")
+meseconify_door("doors:door_glass_cd")
+meseconify_door("doors:door_obsidian_glass_cd")
+meseconify_door("xpanes:door_steel_bar_cd")
+
 -- Trapdoor
 local function trapdoor_switch(pos, node)
 	local state = minetest.get_meta(pos):get_int("state")
