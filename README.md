@@ -585,6 +585,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: LGPL 2.1
 * [ContentDB](https://content.minetest.net/packages/Emojiminetest/technic\_hv\_extend/)
 
+## Trash Can (trash\_can)
+
+* Zdroj: [https://github.com/minetest-mods/trash\_can](https://github.com/minetest-mods/trash\_can), revize 423b0f26a827fd3b0092d29d859199ff6776b212
+* Původní licence: MIT
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/Evergreen/trash\_can/)
+
 ## Travelnet (travelnet)
 
 * Zdroj: [https://github.com/mt-mods/travelnet](https://github.com/mt-mods/travelnet), revize a436c1b106beafbca6fe7279eb9359e88e025ab0
