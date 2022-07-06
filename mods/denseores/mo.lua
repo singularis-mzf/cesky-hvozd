@@ -26,7 +26,7 @@ local S = minetest.get_translator("denseores")
 
 minetest.register_node("denseores:large_mithril_ore", {
 	description = S("Heavy Mithril Ore"),
-	tiles ={"default_stone.png^large_mithril_ore.png"},
+	tiles ={"default_stone.png^moreores_mineral_mithril2.png"},
 	groups = {cracky=3},
 	drop = 'moreores:mithril_lump 2',
 	sounds = default.node_sound_stone_defaults(),
@@ -34,7 +34,7 @@ minetest.register_node("denseores:large_mithril_ore", {
 
 minetest.register_node("denseores:large_silver_ore", {
 	description = S("Heavy Silver Ore"),
-	tiles ={"default_stone.png^large_silver_ore.png"},
+	tiles ={"default_stone.png^moreores_mineral_silver2.png"},
 	groups = {cracky=3},
 	drop = 'moreores:silver_lump 2',
 	sounds = default.node_sound_stone_defaults(),

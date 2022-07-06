@@ -35,7 +35,7 @@ denseores_modpath = minetest.get_modpath("denseores")
 
 minetest.register_node("denseores:large_coal_ore", {	--coal
 	description = S("Large Coal Ore"),
-	tiles ={"default_stone.png^large_coal_ore.png"},
+	tiles ={"default_stone.png^default_mineral_coal2.png"},
 	groups = {cracky=3},
 	drop = 'default:coal_lump 2',
 	sounds = default.node_sound_stone_defaults(),
@@ -43,7 +43,7 @@ minetest.register_node("denseores:large_coal_ore", {	--coal
 
 minetest.register_node("denseores:large_iron_ore", {	--iron
 	description = S("Large Iron Ore"),
-	tiles ={"default_stone.png^large_iron_ore.png"},
+	tiles ={"default_stone.png^default_mineral_iron2.png"},
 	groups = {cracky=2},
 	drop = 'default:iron_lump 2',
 	sounds = default.node_sound_stone_defaults(),
@@ -51,7 +51,7 @@ minetest.register_node("denseores:large_iron_ore", {	--iron
 
 minetest.register_node("denseores:large_copper_ore", {	--copper
 	description = S("Large Copper Ore"),
-	tiles ={"default_stone.png^large_copper_ore.png"},
+	tiles ={"default_stone.png^default_mineral_copper2.png"},
 	groups = {cracky=2},
 	drop = 'default:copper_lump 2',
 	sounds = default.node_sound_stone_defaults(),
@@ -59,7 +59,7 @@ minetest.register_node("denseores:large_copper_ore", {	--copper
 
 minetest.register_node("denseores:large_tin_ore", {	--tin
 	description = S("Large Tin Ore"),
-	tiles ={"default_stone.png^large_tin_ore.png"},
+	tiles ={"default_stone.png^default_mineral_tin2.png"},
 	groups = {cracky=3},
 	drop = 'default:tin_lump 2',
 	sounds = default.node_sound_stone_defaults(),
@@ -67,7 +67,7 @@ minetest.register_node("denseores:large_tin_ore", {	--tin
 
 minetest.register_node("denseores:large_gold_ore", {	--gold
 	description = S("Large Gold Ore"),
-	tiles ={"default_stone.png^large_gold_ore.png"},
+	tiles ={"default_stone.png^default_mineral_gold2.png"},
 	groups = {cracky=2},
 	drop = 'default:gold_lump 2',
 	sounds = default.node_sound_stone_defaults(),
@@ -75,7 +75,7 @@ minetest.register_node("denseores:large_gold_ore", {	--gold
 
 minetest.register_node("denseores:large_mese_ore", {	--mese
 	description = S("Large Mese Ore"),
-	tiles ={"default_stone.png^large_mese_ore.png"},
+	tiles ={"default_stone.png^default_mineral_mese2.png"},
 	groups = {cracky=1},
 	drop = 'default:mese_crystal 2',
 	sounds = default.node_sound_stone_defaults(),
@@ -83,7 +83,7 @@ minetest.register_node("denseores:large_mese_ore", {	--mese
 
 minetest.register_node("denseores:large_diamond_ore", {	--diamond
 	description = S("Large Diamond Ore"),
-	tiles ={"default_stone.png^large_diamond_ore.png"},
+	tiles ={"default_stone.png^default_mineral_diamond2.png"},
 	groups = {cracky=1},
 	drop = 'default:diamond 2',
 	sounds = default.node_sound_stone_defaults(),

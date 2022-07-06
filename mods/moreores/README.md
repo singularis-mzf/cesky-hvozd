@@ -1,7 +1,8 @@
 # More Ores
 
 More Ores for [Minetest](https://www.minetest.net/), a free and open source infinite
-world block sandbox game.
+world block sandbox game. This is an altered version for Minetest server
+Český hvozd.
 
 [**Forum topic**](https://forum.minetest.net/viewtopic.php?f=11&t=549)
 
