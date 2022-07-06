@@ -221,6 +221,33 @@ technic_cnc.programs = {
 			}
 		}
 	},
+
+	{ suffix  = "technic_cnc_opposedcurvededge",
+		model = "technic_opposed_curved_edge.obj",
+		desc  = S("Opposed Curved Edges Block")
+	},
+
+	{ suffix  = "technic_cnc_cylinder_half",
+		model = "technic_cylinder_half.obj",
+		desc  = S("Half Cylinder"),
+		cbox  = {
+			type = "fixed",
+			fixed = {
+				{ -0.5,  -0.5, -0.5, 0.5,  0, 0.5 },
+			}
+		}
+	},
+	
+	{ suffix  = "technic_cnc_cylinder_half_corner",
+		model = "technic_cylinder_half_corner.obj",
+		desc  = S("Half Cylinder Corner"),
+		cbox  = {
+			type = "fixed",
+			fixed = {
+				{ -0.5,  -0.5, -0.5, 0.5,  0, 0.5 },
+			}
+		}
+	},
 }
 
 -- Allow disabling certain programs for some node. Default is allowing all types for all nodes
@@ -245,11 +272,14 @@ technic_cnc.onesize_products = {
 	block_fluted             = 1,
 	cylinder                 = 2,
 	cylinder_horizontal      = 2,
+	cylinder_half            = 2,
+	cylinder_half_corner     = 2,
 	d45_slope_216            = 2,
 	diagonal_truss           = 2,
 	diagonal_truss_cross     = 1,
 	oblate_spheroid          = 1,
 	onecurvededge            = 1,
+	opposedcurvededge        = 1,
 	pyramid                  = 2,
 	sphere                   = 1,
 	sphere_half              = 2,

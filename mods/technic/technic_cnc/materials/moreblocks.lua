@@ -14,12 +14,14 @@ technic_cnc.register_all(
 	S("Split Stone Tile")
 )
 
+--[[
 technic_cnc.register_all(
 	"moreblocks:checker_stone_tile",
 	{stone = 1, cracky = 3, not_in_creative_inventory = 1},
 	{"moreblocks_checker_stone_tile.png"},
 	S("Checker Stone Tile")
 )
+]]
 
 technic_cnc.register_all(
 	"moreblocks:cactus_checker",

@@ -6,6 +6,7 @@ dofile(path .. "basic_materials.lua")
 
 local optional_mods = {
 	"bakedclay",
+	"building_blocks",
 	"ethereal",
 	"moreblocks",
 	"technic_worldgen",

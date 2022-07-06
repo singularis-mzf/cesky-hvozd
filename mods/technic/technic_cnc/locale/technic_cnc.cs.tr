@@ -39,6 +39,9 @@ Fluted Square Column=(rýhovaný blok)
 Diagonal Truss=(příčný trám)
 Diagonal Truss Cross=(křížení příčných trámů)
 Half Sphere=(polokoule)
+Opposed Curved Edges Block=(blok se dvěma zakulacenými hranami)
+Half Cylinder=(půlválec)
+Half Cylinder Corner=(roh z půlválce)
 
 # Materiály
 
@@ -46,6 +49,7 @@ Brick=Cihly
 Cobble=Dlažební kámen
 Concrete=Beton
 Dirt=Hlína
+Fake Grass=Hlína s falešnou trávou
 Leaves=Listy
 Sandstone=Žlutý pískovec
 Stone=Kámen

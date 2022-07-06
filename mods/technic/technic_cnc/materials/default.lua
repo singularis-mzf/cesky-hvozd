@@ -8,12 +8,14 @@ technic_cnc.register_all(
 	S("Dirt")
 )
 
+--[[
 technic_cnc.register_all(
 	"default:dirt_with_grass",
 	{snappy = 2,choppy = 2,oddly_breakable_by_hand = 3,not_in_creative_inventory = 1},
 	{"default_grass.png"},
 	S("Grassy dirt")
 )
+]]
 
 technic_cnc.register_all(
 	"default:wood",
@@ -99,12 +101,14 @@ technic_cnc.register_all(
 	S("Cobble")
 )
 
+--[[
 technic_cnc.register_all(
 	"default:mossycobble",
 	{cracky = 3, stone = 1, not_in_creative_inventory = 1},
 	{"default_mossycobble.png"},
 	S("Mossy Cobblestone")
 )
+]]
 
 technic_cnc.register_all(
 	"default:desert_cobble",
