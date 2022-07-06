@@ -157,35 +157,81 @@ for i, color in ipairs(sign_colors) do
 	minetest.register_alias("signs:sign_"..color[1].."_yard",         "basic_signs:sign_steel_"..color[1].."_yard")
 end
 
-	signs_lib.register_sign("basic_signs:test", {
-		description = "Testovací cedule",
-		paramtype2 = "facedir",
-		selection_box = cbox,
-		mesh = "signs_lib_standard_facedir_sign_wall.obj",
-		tiles = {
-			"basic_signs_steel_red.png",
-			"signs_lib_sign_wall_steel_edges.png",
-			nil,
-			nil,
-			"default_steel_block.png"
-		},
-		inventory_image = "basic_signs_steel_red_inv.png",
-		groups = signs_lib.standard_steel_groups,
-		sounds = signs_lib.standard_steel_sign_sounds,
-		default_color = "0",
-		entity_info = {
-			mesh = "signs_lib_standard_sign_entity_wall.obj",
-			yaw = signs_lib.standard_yaw
-		},
-		allow_hanging = true,
-		allow_widefont = true,
-		allow_onpole = true,
-		allow_onpole_horizontal = true,
-		allow_yard = true,
-		use_texture_alpha = "clip",
-		font_size = 32,
-		horiz_scaling = 0.25,
-		vert_scaling = 0.25,
-	})
+signs_lib.register_sign("basic_signs:vevystavbe", {
+	description = "Cedule: Ve výstavbě",
+	paramtype2 = "facedir",
+	selection_box = cbox,
+	mesh = "signs_lib_standard_facedir_sign_wall.obj",
+	tiles = {
+		"basic_signs_ve_vystavbe.png",
+		"signs_lib_sign_wall_steel_edges.png",
+		nil,
+		nil,
+		"default_steel_block.png"
+	},
+	inventory_image = "basic_signs_ve_vystavbe_inv.png",
+	groups = signs_lib.standard_steel_groups,
+	sounds = signs_lib.standard_steel_sign_sounds,
+	default_color = "0",
+	entity_info = {
+		mesh = "signs_lib_standard_sign_entity_wall.obj",
+		yaw = signs_lib.standard_yaw
+	},
+	allow_hanging = true,
+	allow_widefont = false,
+	allow_onpole = true,
+	allow_onpole_horizontal = true,
+	allow_yard = true,
+	use_texture_alpha = "clip",
+	after_place_node = function(pos, placer, itemstack, pointed_thing)
+		signs_lib.after_place_node(pos, placer, itemstack, pointed_thing, false)
+		-- signs_lib.update_sign(pos, { text = "VE VÝSTAVBĚ" })
+		return true
+	end,
+	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
+		-- signs_lib.update_sign(pos, { text = "VE VÝSTAVBĚ" })
+		return nil
+	end,
+	on_rotate = function(pos, node, user, mode)
+		return nil
+	end,
+})
+
+minetest.register_craft({
+	output = "basic_signs:vevystavbe 16",
+	type = "shapeless",
+	recipe = {"basic_signs:sign_wall_steel_white_red", "dye:black"},
+})
+
+signs_lib.register_sign("basic_signs:test", {
+	description = "Testovací cedule (nepoužívejte na stavbách, je jen pro účely vývoje serveru!)",
+	paramtype2 = "facedir",
+	selection_box = cbox,
+	mesh = "signs_lib_standard_facedir_sign_wall.obj",
+	tiles = {
+		"basic_signs_steel_red.png",
+		"signs_lib_sign_wall_steel_edges.png",
+		nil,
+		nil,
+		"default_steel_block.png"
+	},
+	inventory_image = "basic_signs_steel_red_inv.png",
+	groups = signs_lib.standard_steel_groups,
+	sounds = signs_lib.standard_steel_sign_sounds,
+	default_color = "0",
+	entity_info = {
+		mesh = "signs_lib_standard_sign_entity_wall.obj",
+		yaw = signs_lib.standard_yaw
+	},
+	allow_hanging = true,
+	allow_widefont = true,
+	allow_onpole = true,
+	allow_onpole_horizontal = true,
+	allow_yard = true,
+	use_texture_alpha = "clip",
+	font_size = 32,
+	horiz_scaling = 0.25,
+	vert_scaling = 0.25,
+})
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
