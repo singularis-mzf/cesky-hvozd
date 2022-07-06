@@ -16,10 +16,18 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 
 dofile(minetest.get_modpath("chess").."/pieces.lua")
 
+local register_stopper = minetest.get_modpath("mesecons_mvps") and mesecon.register_mvps_stopper or function(n)
+	return true
+end
+
 local letters = {"a", "b", "c", "d", "e", "f", "g", "h"}
 
 local size = 9 --total width(10) including the border coordinate 0,0
 local innerSize = 8 --inner width(8) including the coordinate 1,1
+
+local function get_nil()
+	return nil
+end
 
 local function dig_chessboard(pos, node, digger)
 	local size = 9
@@ -43,6 +51,7 @@ end
 
 local function place_chessboard(pos, placer)
 	local player_name = placer:get_player_name()
+	local registered_nodes = minetest.registered_nodes
 	--place chess board
 	for i = size, 0, -1 do
 		for ii = size, 0, -1 do
@@ -50,8 +59,14 @@ local function place_chessboard(pos, placer)
 				if (i+ii+iii~=0) then
 					local p = {x=pos.x+i, y=pos.y+iii, z=pos.z+ii}
 					local n = minetest.get_node(p)
+					local is_free = n.name == "air"
 
-					if(n.name ~= "air") then
+					if not is_free then
+						local def = registered_nodes[n.name]
+						is_free = def and def.buildable_to
+					end
+
+					if not is_free then
 						minetest.chat_send_player(player_name, "Nemohu umístit šachovnici! Ujistěte se, že na severovýchod je volný prostor 10x10.")
 						return
 					end
@@ -132,14 +147,25 @@ minetest.register_node("chess:spawn",{
     groups = {snappy=1,choppy=2,oddly_breakable_by_hand=1},
     after_dig_node = dig_chessboard,
     on_punch = function(pos, node, puncher)
-        -- TODO: reset the pieces
+		if puncher and puncher:is_player() then
+			local controls = puncher:get_player_control()
+			if not controls.sneak then
+				minetest.chat_send_player(puncher:get_player_name(), "** pro uvedení šachovnice do výchozího stavu musíte při kliknutí držet Shift **")
+				return false, "** pro uvedení šachovnice do výchozího stavu musíte při kliknutí držet Shift **"
+			end
+		end
 		dig_chessboard(pos, node, puncher)
 		minetest.add_node(pos, {name="chess:spawn"})
 		place_chessboard(pos, puncher)
 		return true
     end,
     after_place_node = place_chessboard,
+	on_blast = function(pos, intensity)
+		dig_chessboard(pos, nil, nil)
+		return nil
+	end,
 })
+register_stopper("chess:spawn")
 
 -- Add crafting for the spawn block
 minetest.register_craft({
@@ -157,7 +183,10 @@ minetest.register_node("chess:board_white",{
     tiles = {"chess_board_white.png"},
     inventory_image = "chess_board_white.png",
     groups = {indestructable=1, not_in_creative_inventory=1},
+	diggable = false,
+	on_blast = get_nil,
 })
+register_stopper("chess:board_white")
 
 --Register the Board Blocks: black
 minetest.register_node("chess:board_black",{
@@ -165,14 +194,20 @@ minetest.register_node("chess:board_black",{
     tiles = {"chess_board_black.png"},
     inventory_image = "chess_board_black.png",
     groups = {indestructable=1, not_in_creative_inventory=1},
+	diggable = false,
+	on_blast = get_nil,
 })
+register_stopper("chess:board_black")
 
 minetest.register_node("chess:border",{
     description = "Okraj šachovnice",
     tiles = {"chess_board_black.png", "chess_board_black.png", "chess_board_black.png^chess_border_side.png"},
     inventory_image = "chess_board_black.png",
     groups = {indestructable=1, not_in_creative_inventory=1},
+	diggable = false,
+	on_blast = get_nil,
 })
+register_stopper("chess:border")
 
 for iii = innerSize, 1, -1 do
     minetest.register_node("chess:border_" .. letters[iii],{
@@ -181,7 +216,10 @@ for iii = innerSize, 1, -1 do
         inventory_image = "chess_board_white.png",
         paramtype2 = "facedir",
         groups = {indestructable=1, not_in_creative_inventory=1},
-    })
+		diggable = false,
+		on_blast = get_nil,
+	})
+	register_stopper("chess:border_" .. letters[iii])
 
     minetest.register_node("chess:border_" .. iii,{
         description = "Bílé pole šachovnice",
@@ -189,7 +227,10 @@ for iii = innerSize, 1, -1 do
         inventory_image = "chess_board_white.png",
         paramtype2 = "facedir",
         groups = {indestructable=1, not_in_creative_inventory=1},
+		diggable = false,
+		on_blast = get_nil,
     })
+	register_stopper("chess:border_" .. iii)
 end
 
 for _, n in ipairs({"pawn", "rook", "knight", "bishop", "queen", "king"}) do
@@ -207,6 +248,12 @@ for _, color in ipairs({"white", "gray", "black"}) do
 			type = "shapeless",
 			recipe = {"chess:" .. n .. "_" .. color, "chess:pawn_" .. color},
 		})
+	end
+end
+
+if register_stopper then
+	for _, n in ipairs({""}) do
+		register_stopper("chess:" .. n)
 	end
 end
 
