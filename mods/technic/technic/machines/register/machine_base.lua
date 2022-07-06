@@ -25,7 +25,7 @@ function technic.new_default_tube()
 	}
 end
 
-local connect_default = {"bottom", "back", "left", "right"}
+local connect_default = {"top", "bottom", "back", "left", "right"}
 
 local function round(v)
 	return math.floor(v + 0.5)
