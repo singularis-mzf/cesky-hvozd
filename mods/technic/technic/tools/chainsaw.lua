@@ -80,7 +80,7 @@ local function recursive_dig(origin, remaining_charge)
 	local queue_begin = 1
 	local queue_end = 2
 
-	local hashkey = 65536 * origin.x + 256 * origin.y + origin.z -- .z must have a coefficient "1"
+	local hashkey = 65536 * (origin.x - x_min) + 256 * (origin.y - y_min) + (origin.z - z_min) -- .z must have a coefficient "1"
 	local hashset = {[hashkey] = 1}
 
 	local dig_count = 0
@@ -110,7 +110,7 @@ local function recursive_dig(origin, remaining_charge)
 					for x = pos.x - 1, pos.x + 1 do
 						if x_min <= x and x <= x_max then
 							-- inner z-cycle is optimized off:
-							hashkey = 65536 * x + 256 * y + z;
+							hashkey = 65536 * (x - x_min) + 256 * (y - y_min) + (z - z_min);
 
 							if not hashset[hashkey - 1] and z_min <= z - 1 then
 								hashset[hashkey - 1] = 1
@@ -177,9 +177,12 @@ end
 
 -- Chainsaw entry point
 local function chainsaw_dig(pos, current_charge)
+	-- Play the sound before the tree is chopped
+	if current_charge >= chainsaw_charge_per_node then
+		minetest.sound_play("chainsaw", {pos = pos, gain = 1.0, max_hear_distance = 10}, true)
+	end
 	-- Start sawing things down
 	local remaining_charge = recursive_dig(pos, current_charge)
-	minetest.sound_play("chainsaw", {pos = pos, gain = 1.0, max_hear_distance = 10}, true)
 
 	-- Now drop items for the player
 	for name, stack in pairs(produced) do
