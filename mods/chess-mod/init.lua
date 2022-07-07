@@ -30,23 +30,38 @@ local function get_nil()
 end
 
 local function dig_chessboard(pos, node, digger)
-	local size = 9
-	local p = {x=pos.x+1, y=pos.y, z=pos.z+1}
-	local n = minetest.get_node(p)
+	local p = vector.new(pos.x + 1, pos.y, pos.z + 1)
+	local n = minetest.get_node(p).name
 
-	if n.name == "chess:board_black" then
-		for i = size, 0, -1 do
-			for ii = size, 0, -1 do
-				--remove board
-				local p = {x=pos.x+i, y=pos.y, z=pos.z+ii}
-				minetest.remove_node(p)
+	if n ~= "chess:board_black" then
+		return false
+	end
+	local registered_nodes = minetest.registered_nodes
+	local positions_to_remove = {}
+	for i = size, 0, -1 do
+		for ii = size, 0, -1 do
+			--remove board
+			p = vector.new(pos.x + i, pos.y, pos.z + ii)
+			positions_to_remove[1 + #positions_to_remove] = p
 
-				--remove pieces ontop
-				local p = {x=pos.x+i, y=pos.y+1, z=pos.z+ii}
-				minetest.remove_node(p)
+			--remove pieces ontop
+			p = vector.new(pos.x + i, pos.y + 1, pos.z + ii)
+			n = minetest.get_node(p)
+			n = n and n.name
+			if n and n ~= "air" and n ~= "chess:spawn" then
+				n = registered_nodes[n]
+				if not n or n.diggable == false or (n.can_dig and n.can_dig(vector.copy(p), digger) == false) then
+					minetest.log("warning", "Na šachovnici byl nalezen neodstranitelný blok ("..(pos.x + i)..","..(pos.y + 1)..","..(pos.z + ii)..")")
+				else
+					positions_to_remove[1 + #positions_to_remove] = p
+				end
 			end
 		end
 	end
+	for _, p in ipairs(positions_to_remove) do
+		minetest.remove_node(p)
+	end
+	return true
 end
 
 local function place_chessboard(pos, placer)
