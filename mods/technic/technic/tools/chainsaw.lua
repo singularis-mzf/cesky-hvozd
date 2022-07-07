@@ -68,48 +68,64 @@ end
 
 -- This function does all the hard work. Recursively we dig the node at hand
 -- if it is in the table and then search the surroundings for more stuff to dig.
-local function recursive_dig(pos, origin, remaining_charge)
-	local remaining_charge_original = remaining_charge
-	local queue = {pos}
-	local hashset = {[pos.x..","..pos.y..","..pos.z] = 1}
+local function recursive_dig(origin, remaining_charge)
+	local x_min = origin.x - max_saw_radius
+	local y_min = origin.y
+	local z_min = origin.z - max_saw_radius
+	local x_max = origin.x + max_saw_radius
+	local y_max = origin.y + 100
+	local z_max = origin.z + max_saw_radius
+
+	local queue = {origin}
 	local queue_begin = 1
 	local queue_end = 2
-	local node, is_timber
 
-	while remaining_charge >= chainsaw_charge_per_node and queue_begin < queue_end do
+	local hashkey = 65536 * origin.x + 256 * origin.y + origin.z -- .z must have a coefficient "1"
+	local hashset = {[hashkey] = 1}
+
+	local dig_count = 0
+	local dig_count_max = math.floor(remaining_charge / chainsaw_charge_per_node)
+
+	while queue_begin < queue_end and dig_count < dig_count_max do
 		-- dequeue a node
-		pos = queue[queue_begin]
+		local pos = queue[queue_begin]
+		queue[queue_begin] = nil -- keep the queue short
 		queue_begin = queue_begin + 1
-		node = minetest.get_node(pos)
-		is_timber = timber_nodenames[node.name]
 
-		-- print("Chainsaw dig["..counter.."] at ("..pos.x..","..pos.y..","..pos.z.."): "..(is_timber and "true" or "false").." (queue: "..state.queue_begin..".."..state.queue_end..", charge = ".. state.remaining_charge..")")
-		--counter = counter + 1
+		local node_name = minetest.get_node(pos).name
+		if timber_nodenames[node_name] then
 
-		if is_timber then
 			-- Wood found - cut it
-			handle_drops(minetest.get_node_drops(node.name, ""))
+			handle_drops(minetest.get_node_drops(node_name, ""))
 			minetest.remove_node(pos)
-			remaining_charge = remaining_charge - chainsaw_charge_per_node
+			dig_count = dig_count + 1
 
 			-- Check for snow on pine trees, sand/gravel on leaves, etc
 			minetest.check_for_falling(pos)
 
-			-- Check surroundings and enqueue wood recursively
-			for y=-1, 1 do
-				if (pos.y + y) >= origin.y then
-					for x=-1, 1 do
-						if (pos.x + x) <= (origin.x + max_saw_radius) and (pos.x + x) >= (origin.x - max_saw_radius) then
-							for z=-1, 1 do
-								if (pos.z + z) <= (origin.z + max_saw_radius) and (pos.z + z) >= (origin.z - max_saw_radius) then
-									local npos = {x=pos.x+x, y=pos.y+y, z=pos.z+z}
-									local nposstr = npos.x..","..npos.y..","..npos.z
-									if not hashset[nposstr] and timber_nodenames[minetest.get_node(npos).name] then
-										queue[queue_end] = npos
-										queue_end = queue_end + 1
-										hashset[nposstr] = 1
-									end
-								end
+			-- Enqueue surroundings
+			local z = pos.z
+			for y = pos.y - 1, pos.y + 1 do
+				if y_min <= y and y <= y_max then
+					for x = pos.x - 1, pos.x + 1 do
+						if x_min <= x and x <= x_max then
+							-- inner z-cycle is optimized off:
+							hashkey = 65536 * x + 256 * y + z;
+
+							if not hashset[hashkey - 1] and z_min <= z - 1 then
+								hashset[hashkey - 1] = 1
+								queue[queue_end] = vector.new(x, y, z - 1)
+								queue_end = queue_end + 1
+							end
+							if not hashset[hashkey] then
+								hashset[hashkey] = 1
+								queue[queue_end] = vector.new(x, y, z)
+								queue_end = queue_end + 1
+							end
+							if not hashset[hashkey + 1] and z + 1 <= z_max then
+								hashset[hashkey + 1] = 1
+								queue[queue_end] = vector.new(x, y, z + 1)
+								queue_end = queue_end + 1
 							end
 						end
 					end
@@ -117,8 +133,12 @@ local function recursive_dig(pos, origin, remaining_charge)
 			end
 		end
 	end
-	print("Chainsaw dig at "..origin.x..","..origin.y..","..origin.z..": queue="..queue_end..", remaining_charge: "..remaining_charge_original.." => "..remaining_charge)
-	return remaining_charge
+
+	local remaining_charge_original = remaining_charge
+	remaining_charge = remaining_charge - dig_count * chainsaw_charge_per_node
+
+	print("Chainsaw dig at "..origin.x..","..origin.y..","..origin.z..": queue="..queue_end..", dig_count="..dig_count..", remaining_charge: "..remaining_charge_original.." => "..remaining_charge)
+	return math.max(0, remaining_charge)
 end
 
 -- Function to randomize positions for new node drops
@@ -158,7 +178,7 @@ end
 -- Chainsaw entry point
 local function chainsaw_dig(pos, current_charge)
 	-- Start sawing things down
-	local remaining_charge = recursive_dig(pos, pos, current_charge)
+	local remaining_charge = recursive_dig(pos, current_charge)
 	minetest.sound_play("chainsaw", {pos = pos, gain = 1.0, max_hear_distance = 10}, true)
 
 	-- Now drop items for the player

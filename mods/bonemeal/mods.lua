@@ -125,7 +125,23 @@ if minetest.get_modpath("moretrees") then
 		{"moretrees:poplar_sapling", moretrees.spawn_poplar_object, "soil"},
 		{"moretrees:willow_sapling", moretrees.spawn_willow_object, "soil"},
 		{"moretrees:rubber_tree_sapling", moretrees.spawn_rubber_tree_object, "soil"},
-		{"moretrees:fir_sapling", fir_grow, "soil"}
+		{"moretrees:fir_sapling", fir_grow, "soil"},
+
+		{"moretrees:beech_sapling_ongen", moretrees.spawn_beech_object, "soil"},
+		{"moretrees:apple_tree_sapling_ongen", moretrees.spawn_apple_tree_object, "soil"},
+		{"moretrees:oak_sapling_ongen", moretrees.spawn_oak_object, "soil"},
+		{"moretrees:sequoia_sapling_ongen", moretrees.spawn_sequoia_object, "soil"},
+		{"moretrees:birch_sapling_ongen", moretrees.grow_birch, "soil"},
+		{"moretrees:palm_sapling_ongen", moretrees.spawn_palm_object, "soil"},
+		{"moretrees:palm_sapling_ongen", moretrees.spawn_palm_object, "sand"},
+		{"moretrees:date_palm_sapling_ongen", moretrees.spawn_date_palm_object, "soil"},
+		{"moretrees:date_palm_sapling_ongen", moretrees.spawn_date_palm_object, "sand"},
+		{"moretrees:spruce_sapling_ongen", moretrees.grow_spruce, "soil"},
+		{"moretrees:cedar_sapling_ongen", moretrees.spawn_cedar_object, "soil"},
+		{"moretrees:poplar_sapling_ongen", moretrees.spawn_poplar_object, "soil"},
+		{"moretrees:willow_sapling_ongen", moretrees.spawn_willow_object, "soil"},
+		{"moretrees:rubber_tree_sapling_ongen", moretrees.spawn_rubber_tree_object, "soil"},
+		{"moretrees:fir_sapling_ongen", fir_grow, "soil"},
 	})
 
 elseif minetest.get_modpath("technic_worldgen") then
@@ -134,7 +150,6 @@ elseif minetest.get_modpath("technic_worldgen") then
 		{"moretrees:rubber_tree_sapling", technic.rubber_tree_model, "soil"}
 	})
 end
-
 
 if minetest.get_modpath("caverealms") then
 
