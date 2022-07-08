@@ -1,5 +1,5 @@
 local max_charge = {50000, 200000, 650000}
-local power_usage_per_node = {200, 500, 800}
+local power_usage_per_node = {200, 200, 200}
 
 local S = minetest.get_translator("technic")
 
