@@ -126,7 +126,7 @@ function stamina.update_saturation(player, level)
 	end
 
 	-- players without interact priv cannot eat
-	if old < settings.heal_lvl and not minetest.check_player_privs(player, {interact=true}) then
+	if old < settings.heal_lvl and not minetest.check_player_privs(player, "interact") then
 		return
 	end
 
@@ -233,7 +233,7 @@ function stamina.exhaust_player(player, change, cause)
 		end
 	end
 
-	if not is_player(player) then
+	if not is_player(player) or not minetest.check_player_privs(player, "interact") then
 		return
 	end
 
@@ -364,9 +364,11 @@ end
 local function stamina_tick()
 	-- lower saturation by 1 point after settings.tick second(s)
 	for _,player in ipairs(minetest.get_connected_players()) do
-		local saturation = stamina.get_saturation(player)
-		if saturation > settings.tick_min then
-			stamina.update_saturation(player, saturation - 1)
+		if minetest.check_player_privs(player, "interact") then
+			local saturation = stamina.get_saturation(player)
+			if saturation > settings.tick_min then
+				stamina.update_saturation(player, saturation - 1)
+			end
 		end
 	end
 end
