@@ -86,6 +86,13 @@ function stairsplus:register_noface_trunk(modname, subname, original_node_name, 
 	def = table.copy(def)
 	def.sunlight_propagates = true
 	stairsplus:register_all(modname, subname, modname..":"..subname, def)
+
+	local recipe_row = {original_node_name, original_node_name, original_node_name}
+	local recipe_row2 = {original_node_name, "", original_node_name}
+	minetest.register_craft({
+		output = modname..":"..subname.." 8",
+		recipe = {recipe_row, recipe_row2, recipe_row},
+	})
 end
 
 function stairsplus:register_allfaces_trunk(modname, subname, original_node_name, tile_index)
@@ -106,6 +113,12 @@ function stairsplus:register_allfaces_trunk(modname, subname, original_node_name
 	def = table.copy(def)
 	def.sunlight_propagates = true
 	stairsplus:register_all(modname, subname, modname..":"..subname, def)
+
+	local recipe_row = {original_node_name, original_node_name, original_node_name}
+	minetest.register_craft({
+		output = modname..":"..subname.." 9",
+		recipe = {recipe_row, recipe_row, recipe_row},
+	})
 end
 
 -- luacheck: no unused
