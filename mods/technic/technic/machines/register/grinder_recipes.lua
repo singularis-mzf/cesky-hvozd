@@ -35,21 +35,13 @@ local recipes = {
 }
 
 -- defuse the sandstone -> 4 sand recipe to avoid infinite sand bugs (also consult the inverse compressor recipe)
-minetest.clear_craft({
-	recipe = {
-		{"default:sandstone"}
-	},
-})
-minetest.clear_craft({
-	recipe = {
-		{"default:desert_sandstone"}
-	},
-})
-minetest.clear_craft({
-	recipe = {
-		{"default:silver_sandstone"}
-	},
-})
+print("[technic] Will clear recipe for default:sandstone")
+minetest.clear_craft({recipe = {{"default:sandstone"}}})
+print("[technic] Will clear recipe for default:desert_sandstone")
+minetest.clear_craft({recipe = {{"default:desert_sandstone"}}})
+print("[technic] Will clear recipe for default:silver_sandstone")
+minetest.clear_craft({recipe = {{"default:silver_sandstone"}}})
+print("[technic] Recipes cleared")
 
 if minetest.get_modpath("farming") then
 	table.insert(recipes, {"farming:seed_wheat",   "farming:flour 1"})
