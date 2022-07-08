@@ -214,6 +214,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: GPLv3
 * [ContentDB](https://content.minetest.net/packages/1faco/beautiflowers/)
 
+## Bell (bell)
+
+* Zdroj: [https://github.com/FaceDeer/bell](https://github.com/FaceDeer/bell), revize fbc13a7566e9787b5f05d8c8eb3ec989ba5792b2
+* Původní licence: GPLv3, zvuk CC-BY-SA-3.0
+* Licence úprav: GPLv3
+* [ContentDB](https://content.minetest.net/packages/Sokomine/bell/)
+
 ## Bike (bike)
 
 * Zdroj: [https://gitlab.com/h2mm/bike/](https://gitlab.com/h2mm/bike/), revize c5b287c3ce20ad5c4cb5eba67e47d68ce04c046c
