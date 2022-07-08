@@ -309,6 +309,9 @@ if minetest.get_modpath("moreblocks") then
 		groups = {choppy = 2, oddly_breakable_by_hand = 1, flammable = 3},
 		sounds = default.node_sound_wood_defaults(),
 	})
+
+	stairsplus:register_noface_trunk("cherrytree", "trunk_noface", "cherrytree:trunk")
+	stairsplus:register_allfaces_trunk("cherrytree", "trunk_allfaces", "cherrytree:trunk")
 end
 
 --Support for bonemeal
@@ -316,6 +319,7 @@ end
 if minetest.get_modpath("bonemeal") ~= nil then
 	bonemeal:add_sapling({
 		{"cherrytree:sapling", grow_new_cherrytree_tree, "soil"},
+		{"cherrytree:sapling_ongen", grow_new_cherrytree_tree, "soil"},
 	})
 end
 

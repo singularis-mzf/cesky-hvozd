@@ -25,15 +25,10 @@ if minetest.get_modpath("default") then
 		"desert_cobble",
 		"meselamp",
 		"glass",
-		"tree",
 		"wood",
-		"jungletree",
 		"junglewood",
-		"pine_tree",
 		"pine_wood",
-		"acacia_tree",
 		"acacia_wood",
-		"aspen_tree",
 		"aspen_wood",
 		"obsidian",
 		"obsidian_block",
@@ -80,6 +75,18 @@ if minetest.get_modpath("default") then
 		minetest.register_alias_force("stairs:stair_outer_" .. name, mod .. ":stair_" .. name .. "_outer")
 		minetest.register_alias_force("stairs:stair_inner_" .. name, mod .. ":stair_" .. name .. "_inner")
 		minetest.register_alias_force("stairs:slab_"  .. name, mod .. ":slab_"  .. name)
+	end
+
+	local default_trunks = {
+		"acacia_tree",
+		"aspen_tree",
+		"jungletree",
+		"pine_tree",
+		"tree",
+	}
+	for _, name in ipairs(default_trunks) do
+		stairsplus:register_noface_trunk("moreblocks", name .. "_noface", "default:"..name)
+		stairsplus:register_allfaces_trunk("moreblocks", name .. "_allfaces", "default:"..name)
 	end
 end
 

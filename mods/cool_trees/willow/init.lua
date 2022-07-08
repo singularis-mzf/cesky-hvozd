@@ -230,11 +230,15 @@ if minetest.get_modpath("moreblocks") then
 		groups = {choppy = 2, oddly_breakable_by_hand = 1, flammable = 3},
 		sounds = default.node_sound_wood_defaults(),
 	})
+
+	stairsplus:register_noface_trunk("willow", "trunk_noface", "willow:trunk")
+	stairsplus:register_allfaces_trunk("willow", "trunk_allfaces", "willow:trunk")
 end
 
 if minetest.get_modpath("bonemeal") ~= nil then
 	bonemeal:add_sapling({
 		{"willow:sapling", grow_new_willow_tree, "soil"},
+		{"willow:sapling_ongen", grow_new_willow_tree, "soil"},
 	})
 end
 

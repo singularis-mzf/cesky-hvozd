@@ -127,6 +127,20 @@ minetest.register_node("ebony:trunk", {
 	on_place = minetest.rotate_node,
 })
 
+local trunk_def = {
+	description = S("Ebony Trunk"),
+	tiles = {
+		"ebony_trunk_top.png",
+		"ebony_trunk_top.png",
+		"ebony_trunk.png"
+	},
+	groups = {tree = 1, choppy = 2, oddly_breakable_by_hand = 1, flammable = 2},
+	sounds = default.node_sound_wood_defaults(),
+	paramtype2 = "facedir",
+	is_ground_content = false,
+	on_place = minetest.rotate_node,
+}
+
 -- ebony wood
 minetest.register_node("ebony:wood", {
 	description = S("Ebony Wood"),
@@ -319,11 +333,15 @@ if minetest.get_modpath("moreblocks") then
 		groups = {choppy = 2, oddly_breakable_by_hand = 1, flammable = 3},
 		sounds = default.node_sound_wood_defaults(),
 	})
+
+	stairsplus:register_noface_trunk("ebony", "trunk_noface", "ebony:trunk")
+	stairsplus:register_allfaces_trunk("ebony", "trunk_allfaces", "ebony:trunk")
 end
 
 if minetest.get_modpath("bonemeal") ~= nil then
 	bonemeal:add_sapling({
 		{"ebony:sapling", grow_new_ebony_tree, "soil"},
+		{"ebony:sapling_ongen", grow_new_ebony_tree, "soil"},
 	})
 end
 

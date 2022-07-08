@@ -373,6 +373,7 @@ local nodes = {
 		sounds = sound_stone,
 		no_stairs = true,
 	},
+	--[[
 	["all_faces_tree"] = {
 		description = S("All-faces Tree"),
 		tiles = {"default_tree_top.png"},
@@ -408,6 +409,7 @@ local nodes = {
 		sounds = sound_wood,
 		furnace_burntime = 22,
 	},
+	]]
 	["glow_glass"] = {
 		description = S("Glow Glass"),
 		drawtype = "glasslike_framed_optional",

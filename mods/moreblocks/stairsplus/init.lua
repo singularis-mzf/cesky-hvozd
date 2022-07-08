@@ -8,6 +8,7 @@ Licensed under the zlib license. See LICENSE.md for more information.
 -- Nodes will be called <modname>:{stair,slab,panel,micro,slope}_<subname>
 
 local modpath = minetest.get_modpath("moreblocks").. "/stairsplus"
+local S = minetest.get_translator("moreblocks")
 
 stairsplus = {}
 stairsplus.expect_infinite_stacks = false
@@ -64,6 +65,47 @@ function stairsplus:register_alias_force_all(modname_old, subname_old, modname_n
 	self:register_slope_alias_force(modname_old, subname_old, modname_new, subname_new)
 	self:register_panel_alias_force(modname_old, subname_old, modname_new, subname_new)
 	self:register_micro_alias_force(modname_old, subname_old, modname_new, subname_new)
+end
+
+-- stairsplus:register_trunk_noface("default", "tree_noface", "default:tree", 3)
+function stairsplus:register_noface_trunk(modname, subname, original_node_name, tile_index)
+	local def = minetest.registered_nodes[original_node_name]
+	if not def then
+		minetest.log("error", "Cannot register noface trunk of unknown node "..original_node_name.."!")
+		return false
+	end
+	def = table.copy(def)
+	def.description = (def.description or "").." "..S("(no face)")
+	local t = def.tiles[tile_index or 3] or def.tiles[#def.tiles] or def.tiles[1]
+	if not t then
+		minetest.log("error", "Cannot determine tiles for "..modname..":"..subname.."!")
+		return false
+	end
+	def.tiles = {t}
+	minetest.register_node(":"..modname..":"..subname, def)
+	def = table.copy(def)
+	def.sunlight_propagates = true
+	stairsplus:register_all(modname, subname, modname..":"..subname, def)
+end
+
+function stairsplus:register_allfaces_trunk(modname, subname, original_node_name, tile_index)
+	local def = minetest.registered_nodes[original_node_name]
+	if not def then
+		minetest.log("error", "Cannot register all-faces trunk of unknown node "..original_node_name.."!")
+		return false
+	end
+	def = table.copy(def)
+	def.description = (def.description or "").." "..S("(all faces)")
+	local t = def.tiles[tile_index or 1] or def.tiles[#def.tiles]
+	if not t then
+		minetest.log("error", "Cannot determine tiles for "..modname..":"..subname.."!")
+		return false
+	end
+	def.tiles = {t}
+	minetest.register_node(":"..modname..":"..subname, def)
+	def = table.copy(def)
+	def.sunlight_propagates = true
+	stairsplus:register_all(modname, subname, modname..":"..subname, def)
 end
 
 -- luacheck: no unused

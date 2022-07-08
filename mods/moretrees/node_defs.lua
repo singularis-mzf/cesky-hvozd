@@ -409,7 +409,10 @@ for i in ipairs(moretrees.treelist) do
 
 	--			stairsplus:register_all(modname, subname, recipeitem, {fields})
 
-				stairsplus:register_all(
+				stairsplus:register_noface_trunk("moretrees", treename.."_trunk_noface", "moretrees:"..treename.."_trunk")
+				stairsplus:register_allfaces_trunk("moretrees", treename.."_trunk_allfaces", "moretrees:"..treename.."_trunk")
+
+				--[[stairsplus:register_all(
 					"moretrees",
 					treename.."_trunk",
 					"moretrees:"..treename.."_trunk",
@@ -423,7 +426,7 @@ for i in ipairs(moretrees.treelist) do
 						description = moretrees.treedesc[treename].trunk,
 						drop = treename.."_trunk",
 					}
-				)
+				)]]
 
 				stairsplus:register_all(
 					"moretrees",

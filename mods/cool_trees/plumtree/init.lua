@@ -291,6 +291,9 @@ if minetest.get_modpath("moreblocks") then
 		groups = {choppy = 2, oddly_breakable_by_hand = 1, flammable = 3},
 		sounds = default.node_sound_wood_defaults(),
 	})
+
+	stairsplus:register_noface_trunk("plumtree", "trunk_noface", "plumtree:trunk")
+	stairsplus:register_allfaces_trunk("plumtree", "trunk_allfaces", "plumtree:trunk")
 end
 
 --Support for bonemeal
@@ -298,6 +301,7 @@ end
 if minetest.get_modpath("bonemeal") ~= nil then
 	bonemeal:add_sapling({
 		{"plumtree:sapling", grow_new_plumtree_tree, "soil"},
+		{"plumtree:sapling_ongen", grow_new_plumtree_tree, "soil"},
 	})
 end
 
