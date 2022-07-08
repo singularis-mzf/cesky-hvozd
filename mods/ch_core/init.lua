@@ -6,6 +6,7 @@ ch_core = {
 	ignorovani_chatu = {}, -- (player_from..">>>>"..player_to => 1 || nil)
 	joinplayer_timestamp = {}, -- player_name => timestamp (for online players only)
 	storage = minetest.get_mod_storage(),
+	uhel_hlavy = {}, -- player_name => posledni_uhel
 }
 
 minetest.register_privilege("ch_registered_player", "Odlišuje registrované postavy od čerstvě založených.")
@@ -51,10 +52,20 @@ minetest.register_chatcommand("yacatek", def);
 
 local last_timeofday = 0 -- pravděpodobně se pokusí něco přehrát v prvním globalstepu,
 -- ale to nevadí, protöže v tu chvíli stejně nemůže být ještě nikdo online.
+local abs = math.abs
+local deg = math.deg
+local get_timeofday = minetest.get_timeofday
+local max = math.max
+local min = math.min
 local gain_1 = {gain = 1.0}
-minetest.register_globalstep(function(dtime)
-	-- DEN: 5:30 .. 19:00
-	local tod = minetest.get_timeofday()
+local head_bone_name = "Head"
+local head_bone_position = vector.new(0, 6.35, 0)
+local head_bone_angle = vector.new(0, 0, 0)
+local uhel_hlavy = ch_core.uhel_hlavy
+
+local function globalstep(dtime)
+-- DEN: 5:30 .. 19:00
+	local tod = get_timeofday()
 	local byla_noc = last_timeofday < 0.2292 or last_timeofday > 0.791666
 	local je_noc = tod < 0.2292 or tod > 0.791666
 	if byla_noc and not je_noc then
@@ -65,6 +76,28 @@ minetest.register_globalstep(function(dtime)
 		minetest.sound_play("owl", gain_1)
 	end
 	last_timeofday = tod
-end)
+
+	-- PRO KAŽDÉHO HRÁČE/KU:
+	for _, player in pairs(minetest.get_connected_players()) do
+		local player_name = player:get_player_name()
+
+		-- ÚHEL HLAVY:
+		local puvodni_uhel_hlavy = uhel_hlavy[player_name] or 0
+		local novy_uhel_hlavy = player:get_look_vertical()
+		local rozdil = novy_uhel_hlavy - puvodni_uhel_hlavy
+		if rozdil > 0.001 or rozdil < -0.001 then
+			if rozdil > 0.3 then
+				-- omezit pohyb hlavy
+				novy_uhel_hlavy = puvodni_uhel_hlavy + 0.3
+			elseif rozdil < -0.3 then
+				novy_uhel_hlavy = puvodni_uhel_hlavy - 0.3
+			end
+			head_bone_angle.x = -0.5 * deg(puvodni_uhel_hlavy + novy_uhel_hlavy)
+			player:set_bone_position(head_bone_name, head_bone_position, head_bone_angle)
+			uhel_hlavy[player_name] = novy_uhel_hlavy
+		end
+	end
+end
+minetest.register_globalstep(globalstep)
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
