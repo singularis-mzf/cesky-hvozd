@@ -500,6 +500,13 @@ resp. *ostatní\_zdroje*.
 * Původní licence: LGPL 2.1 pro kód, CC-BY-SA-4.0 pro média
 * Licence úprav: LGPL 2.1
 
+## Powerbanks (powerbanks)
+
+* Zdroj: [https://github.com/OgelGames/powerbanks](https://github.com/OgelGames/powerbanks), revize efd27fb551b0dd4977bf2b6b834e2ec210282114
+* Původní licence: MIT pro kód, CC-BY-SA-4.0 pro média
+* Licence úprav: MIT pro kód, CC-BY-SA 4.0 pro média
+* [ContentDB](https://content.minetest.net/packages/OgelGames/powerbanks/)
+
 ## Realtime Elevator (elevator)
 
 * Zdroj: [https://github.com/shacknetisp/elevator](https://github.com/shacknetisp/elevator), revize ef9ae22b81e7227bee627089f4e7c8c2b608fcb9
