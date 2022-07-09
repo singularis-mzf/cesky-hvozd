@@ -393,6 +393,12 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/zorman2000/itemshelf/)
 
+## JIT Profiler (jitprofiler)
+
+* Zdroj: [https://forum.minetest.net/viewtopic.php?t=28135](https://forum.minetest.net/viewtopic.php?t=28135), jitprofiler.zip (SHA-256: 405ae916661cad32fff911a8e54e3c1d59b889b4ff909b0f9d11b7ab95ee35d5)
+* Původní licence: MIT
+* Licence úprav: MIT
+
 ## Jumping (jumping)
 
 * Zdroj: [https://github.com/minetest-mods/jumping](https://github.com/minetest-mods/jumping), revize b5205e4e7d651306d31e2ea100ad75abb1856401
