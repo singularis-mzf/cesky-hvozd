@@ -173,6 +173,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: GPLv3
 * [ContentDB](https://content.minetest.net/packages/FaceDeer/anvil/)
 
+## Appliances API (appliances)
+
+* Zdroj: [https://github.com/sfence/appliances](https://github.com/sfence/appliances), revize 153ce6b72fae3a5062cb14b2480b406afe21a301
+* Původní licence: MIT pro kód, CC-BY-SA-3.0 pro média
+* Licence úprav: MIT pro kód, CC-BY-SA-3.0 pro média
+* [ContentDB](https://content.minetest.net/packages/SFENCE/appliances/)
+
 ## Areas (areas)
 
 * Zdroj: [https://github.com/minetest-mods/areas/](https://github.com/minetest-mods/areas/), revize 4018c0d20450a106b3bda6627894b130595a7cd6
@@ -286,6 +293,13 @@ resp. *ostatní\_zdroje*.
 * Původní licence: GPLv3 pro kód, CC BY-SA-4.0 pro textury, CC0 pro zvuky.
 * Licence úprav: GPLv3
 * [ContentDB](https://content.minetest.net/packages/runs/climatez/)
+
+## Clothing 2 (clothing)
+
+* Zdroj: [https://github.com/sfence/clothing](https://github.com/sfence/clothing), revize dabac3f5ece2766a570c39b0885c776879d81903
+* Původní licence: LGPLv2.1 pro kód, převážně CC-BY-SA-3.0 pro média (také CC-BY-SA-4.0 a CC0)
+* Licence úprav: LGPLv2.1 pro kód, CC-BY-SA-3.0 pro média
+* [ContentDB](https://content.minetest.net/packages/SFENCE/clothing/)
 
 ## Cottages (cottages)
 

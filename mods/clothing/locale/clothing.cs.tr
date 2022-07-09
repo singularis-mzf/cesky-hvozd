@@ -1,0 +1,69 @@
+# textdomain:clothing
+
+# colors
+black=černá/é
+blue=modrá/é
+brown=hnědá/é
+cyan=tyrkysová/é
+dark green=tmavě zelená/é
+dark grey=tmavě šedá/é
+green=zelená/é
+grey=šedá/é
+magenta=magentová/é
+orange=oranžová/é
+pink=růžová/é
+red=červená/é
+violet=fialová/é
+white=bílá/é
+yellow=žlutá/é
+
+# clothing types
+cotton cape=plášť
+cotton cape with picture=plášť s obrázkem
+cotton gloves=rukavice
+cotton hood mask=kukla
+cotton left glove=levá rukavice
+cotton pants=kalhoty
+cotton right glove=pravá rukavice
+cotton shirt=tričko
+cotton shirt with picture=tričko s obrázkem
+cotton shorts=krátké kalhoty
+cotton short with short sleeve=tričko s krátkým rukávem
+cotton skullcap=čepice
+cotton undershirt=tílko
+
+# others
+Bone needle=jehla (na šití)
+Clothing=Oblečení
+Colorize white wool, yarn, fabric.=Barví bílou tkaninu, niť, látku.
+Dirty water bucket=kbelík špinavé vody
+Dirty water source=zdroj špinavé vody
+Dye machine=barvicí stroj
+Dye machine filled with dirty water=barvicí stroj + špinavá voda
+Dye machine filled with water=barvicí stroj + voda
+Dye machine with dirty water=barvicí stroj + špinavá voda
+Dying=barvení
+Empty dye machine=barvicí stroj (prázdný)
+Empty it by empty bucket.=Vyprázdněte ho kbelíkem.
+Empty yarn spool=prázdná cívka na nit
+fabric=látka
+Fill with water and dye.=Naplňte vodou a barvivem.
+Fill yarn empty spool by yarn.=Navíjí nit na prázdnou cívku
+Flowing dirty water=tekoucí špinavá voda
+Loom=tkalcovský stav
+Mannequin stand=krejčovská panna
+Mannequin Stand=krejčovská panna
+Mannequin stand top=vrchní díl krejčovské panny
+Need time to colorize.=Barevní potřebuje čas.
+Need time to colorize wool, fabric or yarn.=Barvení příze, látky nebo nitě potřebuje čas.
+Powered by punching.=Na ruční pohon (klikáním levým tlačítkem myši).
+Put dirty water on gravel and wait for cleaning it.=Nalijte vodu na štěrk a počkejte, než se vyčistí.
+Sewing=šití
+Sewing clothes from fabric and yarn.=Šije šaty s použitím látek a nití.
+Sewing table=šicí stroj
+Spinning=navíjení
+Spinning machine=navíjecí stroj
+Use for spinning=Použijte k navíjení
+Weaving=tkaní
+Weaving fabric from yarn.=Tká látky z nití.
+yarn spool=cívka nitě

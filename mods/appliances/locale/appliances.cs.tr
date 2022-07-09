@@ -1,0 +1,15 @@
+# textdomain:appliances
+active=pracuje
+idle=stojí
+producting=produkuje
+waiting=čeká
+unpowered=je bez napájení/pohonu
+active mese=aktivní mese
+LV EU=EU NN
+MV EU=EU SN
+HV EU=EU VN
+#EpU=
+TA axle=hřídel(?)
+#ku=
+Factory EU=továrních EU
+No energy! Please, use charger.=Vybito! Prosím, použijte nabíječku.
