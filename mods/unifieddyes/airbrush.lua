@@ -355,7 +355,7 @@ function unifieddyes.show_airbrush_form(player)
 		t[#t+1] = ";"..S("Dyes").."]"
 		t[#t+1] = "label[10.7,"
 		t[#t+1] = (vps*5.67+vs)
-		t[#t+1] = ";on hand]"
+		t[#t+1] = ";v inventáři]"
 
 	end
 

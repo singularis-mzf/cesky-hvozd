@@ -404,6 +404,13 @@ resp. *ostatní\_zdroje*.
 * Kód: vlastní práce; textury: vlastní práce založená na fotografiích (CC-BY-SA-4.0)
 * Licence: kód MIT, textury CC-BY-SA-4.0
 
+## Letters (letters)
+
+* Zdroj: [https://github.com/minetest-mods/letters](https://github.com/minetest-mods/letters), revize d44b88fa908682d5f68a27b491f6d0e57e66fa4c
+* Původní licence: zlib license (kompatibilní s GPL) pro kód a CC BY-SA neznámé verze pro textury (ale snad lze předpokládat CC BY-SA 4.0).
+* Licence úprav: zlib license pro kód a CC BY-SA pro textury
+* [ContentDB](https://content.minetest.net/packages/Amaz/letters/)
+
 ## Localized Server News (minenews)
 
 * Zdroj: [https://github.com/ronoaldo/minenews](https://github.com/ronoaldo/minenews), revize e4346dc6c666a52039c33bb2c62ee9ad85655820
