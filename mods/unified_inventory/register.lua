@@ -90,6 +90,37 @@ ui.register_button("home_gui_go", {
 	end,
 })
 
+local def = {
+	params = "",
+	description = "Nastaví čas na ráno",
+	privs = {settime = true},
+	func = function(player_name, param)
+		-- if minetest.check_player_privs(player_name, {settime=true}) then
+		-- minetest.sound_play("birds", {to_player=player_name, gain = 1.0})
+		minetest.set_timeofday((6000 % 24000) / 24000)
+		minetest.chat_send_player(player_name, S("Time of day set to 6am"))
+		--else
+		--	minetest.chat_send_player(player_name,
+		--		S("You don't have the settime privilege!"))
+		--	ui.set_inventory_formspec(player, ui.current_page[player_name])
+		-- end
+	end,
+}
+minetest.register_chatcommand("den", table.copy(def))
+def.description = "Nastaví čas na začátek noci"
+def.func = function(player_name, param)
+	-- if minetest.check_player_privs(player_name, {settime=true}) then
+		-- minetest.sound_play("owl", {to_player=player_name, gain = 1.0})
+		minetest.set_timeofday((21000 % 24000) / 24000)
+		minetest.chat_send_player(player_name, S("Time of day set to 9pm"))
+	-- else
+	--		minetest.chat_send_player(player_name,
+	--				S("You don't have the settime privilege!"))
+	--		ui.set_inventory_formspec(player, ui.current_page[player_name])
+	--	end
+end
+minetest.register_chatcommand("noc", def)
+--[[
 ui.register_button("misc_set_day", {
 	type = "image",
 	image = "ui_sun_icon.png",
@@ -135,7 +166,7 @@ ui.register_button("misc_set_night", {
 		return minetest.check_player_privs(player:get_player_name(), {settime=true})
 	end,
 })
-
+]]
 ui.register_button("clear_inv", {
 	type = "image",
 	image = "ui_trash_icon.png",
