@@ -1,47 +1,117 @@
 local S = minetest.get_translator("letters")
 
 letters = {
-	{"al", "au", "a", "A"},
-	{"aal", "aau", "á", "Á"},
-	{"bl", "bu", "b", "B"},
-	{"cl", "cu", "c", "C"},
-	{"ccl", "ccu", "č", "Č"},
-	{"dl", "du", "d", "D"},
-	{"ddl", "ddu", "ď", "Ď"},
-	{"el", "eu", "e", "E"},
-	{"eel", "eeu", "é", "É"},
-	{"ejel", "ejeu", "ě", "Ě"},
-	{"fl", "fu", "f", "F"},
-	{"gl", "gu", "g", "G"},
-	{"hl", "hu", "h", "H"},
-	{"il", "iu", "i", "I"},
-	{"iil", "iiu", "í", "Í"},
-	{"jl", "ju", "j", "J"},
-	{"kl", "ku", "k", "K"},
-	{"ll", "lu", "l", "L"},
-	{"ml", "mu", "m", "M"},
-	{"nl", "nu", "n", "N"},
-	{"nnl", "nnu", "ň", "Ň"},
-	{"ol", "ou", "o", "O"},
-	{"ool", "oou", "ó", "Ó"},
-	{"pl", "pu", "p", "P"},
-	{"ql", "qu", "q", "Q"},
-	{"rl", "ru", "r", "R"},
-	{"rrl", "rru", "ř", "Ř"},
-	{"sl", "su", "s", "S"},
-	{"ssl", "ssu", "š", "Š"},
-	{"tl", "tu", "t", "T"},
-	{"ttl", "ttu", "ť", "Ť"},
-	{"ul", "uu", "u", "U"},
-	{"uul", "uuu", "ú", "Ú"},
-	{"uoul", "uouu", "ů", "Ů"},
-	{"vl", "vu", "v", "V"},
-	{"wl", "wu", "w", "W"},
-	{"xl", "xu", "x", "X"},
-	{"yl", "yu", "y", "Y"},
-	{"yyl", "yyu", "ý", "Ý"},
-	{"zl", "zu", "z", "Z"},
-	{"zzl", "zzu", "ž", "Ž"},
+	register_letters = function(modname, subname, from_node, description, tiles, def)
+		return true -- only for API compatibility
+	end,
+}
+
+local lower_letters = {
+	{"al", "a"},
+	{"aal", "á"},
+	{"ael", "ä"},
+	{"bl", "b"},
+	{"cl", "c"},
+	{"ccl", "č"},
+	{"dl", "d"},
+	{"ddl", "ď"},
+	{"el", "e"},
+	{"eel", "é"},
+	{"ejel", "ě"},
+	{"fl", "f"},
+	{"gl", "g"},
+	{"hl", "h"},
+	{"il", "i"},
+	{"iil", "í"},
+	{"jl", "j"},
+	{"kl", "k"},
+	{"ll", "l"},
+	{"ldl", "ĺ"},
+	{"lml", "ľ"},
+	{"ml", "m"},
+	{"nl", "n"},
+	{"nnl", "ň"},
+	{"ol", "o"},
+	{"ool", "ó"},
+	{"ouol", "ô"},
+	{"pl", "p"},
+	{"ql", "q"},
+	{"rl", "r"},
+	{"rrl", "ř"},
+	{"rrrl", "ŕ"},
+	{"sl", "s"},
+	{"ssl", "š"},
+	{"tl", "t"},
+	{"ttl", "ť"},
+	{"ul", "u"},
+	{"uul", "ú"},
+	{"uoul", "ů"},
+	{"vl", "v"},
+	{"wl", "w"},
+	{"xl", "x"},
+	{"yl", "y"},
+	{"yyl", "ý"},
+	{"zl", "z"},
+	{"zzl", "ž"},
+}
+
+local upper_letters = {
+	{"au", "A"},
+	{"aau", "Á"},
+	{"aeu", "Ä"},
+	{"bu", "B"},
+	{"cu", "C"},
+	{"ccu", "Č"},
+	{"du", "D"},
+	{"ddu", "Ď"},
+	{"eu", "E"},
+	{"eeu", "É"},
+	{"ejeu", "Ě"},
+	{"fu", "F"},
+	{"gu", "G"},
+	{"hu", "H"},
+	{"iu", "I"},
+	{"iiu", "Í"},
+	{"ju", "J"},
+	{"ku", "K"},
+	{"lu", "L"},
+	{"ldu", "Ĺ"},
+	{"lmu", "Ľ"},
+	{"mu", "M"},
+	{"nu", "N"},
+	{"nnu", "Ň"},
+	{"ou", "O"},
+	{"oou", "Ó"},
+	{"ouou", "Ô"},
+	{"pu", "P"},
+	{"qu", "Q"},
+	{"ru", "R"},
+	{"rru", "Ř"},
+	{"rrru", "Ŕ"},
+	{"su", "S"},
+	{"ssu", "Š"},
+	{"tu", "T"},
+	{"ttu", "Ť"},
+	{"uu", "U"},
+	{"uuu", "Ú"},
+	{"uouu", "Ů"},
+	{"vu", "V"},
+	{"wu", "W"},
+	{"xu", "X"},
+	{"yu", "Y"},
+	{"yyu", "Ý"},
+	{"zu", "Z"},
+	{"zzu", "Ž"},
+	{"0", "0", true},
+	{"1", "1", true},
+	{"2", "2", true},
+	{"3", "3", true},
+	{"4", "4", true},
+	{"5", "5", true},
+	{"6", "6", true},
+	{"7", "7", true},
+	{"8", "8", true},
+	{"9", "9", true},
 }
 
 local letter_cutter = {
@@ -82,26 +152,20 @@ local def_base = {
 }
 local def, texture
 
-for _, row in ipairs(letters) do
-
-	-- lower letter
-	def = table.copy(def_base)
-	def.description = S("Letter \"@1\"", row[3])
-	texture = "letters_pattern.png^letters_" ..row[1].. "_overlay.png^[makealpha:255,126,126"
-	def.inventory_image = texture
-	def.wield_image = texture
-	def.tiles = {texture}
-	minetest.register_node("letters:letter_" ..row[1], def)
-
-	-- upper letter
-	def = table.copy(def_base)
-	def.description = S("Letter \"@1\"", row[4])
-	texture = "letters_pattern.png^letters_" ..row[2].. "_overlay.png^[makealpha:255,126,126"
-	def.inventory_image = texture
-	def.wield_image = texture
-	def.tiles = {texture}
-
-	minetest.register_node("letters:letter_"..row[2], def)
+for _, letters_list in ipairs({lower_letters, upper_letters}) do
+	for _, row in ipairs(letters_list) do
+		def = table.copy(def_base)
+		if not row[3] then
+			def.description = S("Letter \"@1\"", row[2])
+		else
+			def.description = S("Digit \"@1\"", row[2])
+		end
+		texture = "letters_pattern.png^letters_" ..row[1].. "_overlay.png^[makealpha:255,126,126"
+		def.inventory_image = texture
+		def.wield_image = texture
+		def.tiles = {texture}
+		minetest.register_node("letters:letter_" ..row[1], def)
+	end
 end
 
 local cost = 0.110
@@ -113,7 +177,7 @@ function letter_cutter:get_output_inv_lower(modname, subname, amount, max)
 		return list
 	end
 
-	for i, t in ipairs(letters) do
+	for i, t in ipairs(lower_letters) do
 		table.insert(list, "letters:letter_" ..t[1].." "..math.min(math.floor(amount/cost), max))
 	end
 	return list
@@ -126,8 +190,8 @@ function letter_cutter:get_output_inv_upper(modname, subname, amount, max)
 		return list
 	end
 
-	for i, t in ipairs(letters) do
-		table.insert(list, "letters:letter_" ..t[2].." "..math.min(math.floor(amount/cost), max))
+	for i, t in ipairs(upper_letters) do
+		table.insert(list, "letters:letter_" ..t[1].." "..math.min(math.floor(amount/cost), max))
 	end
 	return list
 end
@@ -323,15 +387,15 @@ local gui_slots = "listcolors[#606060AA;#808080;#101010;#202020;#FFF]"
 
 local function update_cutter_formspec(pos)
 	local meta = minetest.get_meta(pos)
-	meta:set_string("formspec", "size[15,9]" ..gui_slots..
+	meta:set_string("formspec", "size[15,10]" ..gui_slots..
 			"label[0,0;Vstupní\nmateriál]" ..
 			"list[current_name;input;1.5,0;1,1;]" ..
-			"list[current_name;output;2.8,0;12,4;]" ..
+			"list[current_name;output;2.8,0;12,5;]" ..
 			-- "button[0,1;2.5,1;itemlist;Použitelné materiály]" ..
-			"list[current_player;main;1.5,5;8,4;]" ..
-			"field[0.5,4.3;3,1;text;Zadat text;${text}]" ..
-			"button[3.5,4;2,1;make_text;Vyřezat text]" ..
-			"label[5.5,4.2;" .. minetest.formspec_escape(meta:get_string("message")) .. "]")
+			"list[current_player;main;1.5,6;8,4;]" ..
+			"field[0.5,5.3;5,1;text;Zadat text;${text}]" ..
+			"button[5.5,5;2,1;make_text;Vyřezat text]" ..
+			"label[7.5,5.2;" .. minetest.formspec_escape(meta:get_string("message")) .. "]")
 end
 
 local function cut_from_text(pos, input_text, player)
@@ -358,22 +422,19 @@ local function cut_from_text(pos, input_text, player)
 
 	local totalcost = 0
 	local throwawayinv = minetest.create_detached_inventory("letter_cutter:throwaway", {}, playername)
+	local letter_list = cuttername == "letters:letter_cutter_upper" and upper_letters or lower_letters
 
 	throwawayinv:set_size("main", playerinv:get_size("main"))
 	throwawayinv:set_list("main", playerinv:get_list("main"))
     local i = 1
     while i <= #input_text do
         local char = nil
-        local isupper = false
         local lettername = nil
-        for j = 1, #letters do
-            if cuttername == "letters:letter_cutter_lower" and string.sub(input_text, i, i + string.len(letters[j][3]) - 1) == letters[j][3] then
-                char = letters[j][3]
-                lettername = "letters:letter_"..letters[j][1]
-            elseif cuttername == "letters:letter_cutter_upper" and string.sub(input_text, i, i + string.len(letters[j][4]) - 1) == letters[j][4] then
-                char = letters[j][4]
-                isupper = true
-                lettername = "letters:letter_"..letters[j][2]
+		for j, letter_def in ipairs(letter_list) do
+            if string.sub(input_text, i, i + string.len(letter_def[2]) - 1) == letter_def[2] then
+                char = letter_def[2]
+                lettername = "letters:letter_"..letter_def[1]
+				break
             end
         end
         if char then
@@ -424,7 +485,7 @@ function letter_cutter.on_construct_lower(pos)
 
 	local inv = meta:get_inventory()
 	inv:set_size("input", 1)    -- Input slot for full blocks of material x.
-	inv:set_size("output", 4*12) -- 4x12 versions of stair-parts of material x.
+	inv:set_size("output", 5*12) -- 5x12 versions of stair-parts of material x.
 
 	letter_cutter:reset_lower(pos)
 end
@@ -442,7 +503,7 @@ function letter_cutter.on_construct_upper(pos)
 
 	local inv = meta:get_inventory()
 	inv:set_size("input", 1)    -- Input slot for full blocks of material x.
-	inv:set_size("output", 4*12) -- 4x12 versions of stair-parts of material x.
+	inv:set_size("output", 5*12) -- 5x12 versions of stair-parts of material x.
 
 	letter_cutter:reset_upper(pos)
 end
@@ -458,17 +519,6 @@ function letter_cutter.can_dig(pos,player)
 end
 
 function letter_cutter.on_receive_fields(pos, formname, fields, sender)
-	--[[
-	if fields.itemlist then
-		local list = {}
-		for name, t in pairs(letter_cutter.known_nodes) do
-			list[#list+1] = name
-		end
-		letter_cutter.show_item_list(sender, 'Podporované materiály', list, pos)
-		return
-	end
-	]]
-
 	if fields.make_text and fields.text then
 		cut_from_text(pos, fields.text, sender)
 		return
@@ -476,7 +526,7 @@ function letter_cutter.on_receive_fields(pos, formname, fields, sender)
 end
 
 minetest.register_node("letters:letter_cutter_lower",  {
-	description = "Řezací stroj na malá písmena",
+	description = "Řezačka na malá písmena",
 	drawtype = "nodebox",
 	node_box = {
 		type = "fixed",
@@ -536,7 +586,7 @@ minetest.register_craft({
 })
 
 minetest.register_node("letters:letter_cutter_upper",  {
-	description = "Řezací stroj na velká písmena",
+	description = "Řezačka na velká písmena a číslice",
 	drawtype = "nodebox",
 	node_box = {
 		type = "fixed",
@@ -570,7 +620,7 @@ minetest.register_node("letters:letter_cutter_upper",  {
 		local owner = placer and placer:get_player_name() or ""
 		meta:set_string("owner",  owner)
 		meta:set_string("infotext",
-				"Řezačka na velká písmena je prázdná (postavil/a ji "
+				"Řezačka na velká písmena a číslice je prázdná (postavil/a ji "
 					..meta:get_string("owner")..")")
 	end,
 	allow_metadata_inventory_move = letter_cutter.allow_metadata_inventory_move,
@@ -591,5 +641,3 @@ minetest.register_craft({
 		{"default:tree", "default:steel_ingot", "default:tree"},
 	},
 })
-
-dofile(minetest.get_modpath("letters").."/registrations.lua")
