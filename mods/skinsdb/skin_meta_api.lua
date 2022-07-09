@@ -64,7 +64,8 @@ function skin_class:set_hand_from_texture()
 			hand_def[k] = v
 		end
 	end
-	hand_def.tiles = {self:get_texture()}
+	--hand_def.tiles = {self:get_texture()}
+	hand_def.tiles = {"blank.png"}
 	hand_def.visual_scale = 1
 	hand_def.wield_scale = {x=1,y=1,z=1}
 	hand_def.paramtype = "light"
