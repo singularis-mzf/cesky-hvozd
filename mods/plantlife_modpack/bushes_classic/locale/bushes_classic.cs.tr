@@ -1,0 +1,17 @@
+# textdomain: bushes_classic
+
+# Copyright (C) 2022 Singularis
+# This file is distributed under the same license as the Plantlife Modpack.
+#
+
+Strawberry=Jahoda
+Strawberry Bush=Okrasný keř s jahodami
+Blackberry=Ostružina
+Blackberry Bush=Okrasný keř s ostružinami
+Blueberry=Borůvka
+Blueberry Bush=Okrasný keř s borůvkami
+Raspberry=Malina
+Raspberry Bush=Okrasný keř s malinami
+Gooseberry=Angrešt
+Gooseberry Bush=Okrasný keř s angrešty
+Currently fruitless Bush=Okrasný keř bez plodů
