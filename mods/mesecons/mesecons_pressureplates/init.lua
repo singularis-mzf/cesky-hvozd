@@ -18,19 +18,30 @@ local function pp_on_timer(pos)
 	-- For some reason the first time on_timer is called, the pos is wrong
 	if not basename then return end
 
-	local objs   = minetest.get_objects_inside_radius(pos, 1)
+	local x_min = pos.x - 1
+	local x_max = pos.x + 1
+	local y_min = pos.y - 0.5
+	local y_max = pos.y + 0.5
+	local z_min = pos.z - 1
+	local z_max = pos.z + 1
 
-	if objs[1] == nil and node.name == basename .. "_on" then
+	local should_be_enabled = false
+	for _, player in pairs(minetest.get_connected_players()) do
+		local pos = player:get_pos()
+		if pos and x_min <= pos.x and pos.x <= x_max and z_min <= pos.z and pos.z <= z_max and y_min <= pos.y and pos.y <= y_max then
+			should_be_enabled = true
+			break
+		end
+	end
+
+	if node.name == basename.."_off" and should_be_enabled then
+		-- turn on
+		minetest.set_node(pos, {name = basename .. "_on"})
+		mesecon.receptor_on(pos, mesecon.rules.pplate)
+	elseif node.name == basename.."_on" and not should_be_enabled then
+		-- turn off
 		minetest.set_node(pos, {name = basename .. "_off"})
 		mesecon.receptor_off(pos, mesecon.rules.pplate)
-	elseif node.name == basename .. "_off" then
-		for k, obj in pairs(objs) do
-			local objpos = obj:get_pos()
-			if objpos.y > pos.y-1 and objpos.y < pos.y then
-				minetest.set_node(pos, {name = basename .. "_on"})
-				mesecon.receptor_on(pos, mesecon.rules.pplate )
-			end
-		end
 	end
 	return true
 end
@@ -64,7 +75,7 @@ function mesecon.register_pressure_plate(basename, description, textures_off, te
 		pressureplate_basename = basename,
 		on_timer = pp_on_timer,
 		on_construct = function(pos)
-			minetest.get_node_timer(pos):start(mesecon.setting("pplate_interval", 0.1))
+			minetest.get_node_timer(pos):start(mesecon.setting("pplate_interval", 1.0))
 		end,
 		sounds = sounds,
 	},{
