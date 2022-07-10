@@ -78,8 +78,8 @@ sethome.go = function(name)
 end
 
 minetest.register_privilege("home", {
-	description = S("Can use /sethome and /home"),
-	give_to_singleplayer = false
+	description = "Umožní používat /doma a /domů",
+	give_to_singleplayer = true
 })
 
 local def = {
