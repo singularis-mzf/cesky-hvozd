@@ -26,6 +26,19 @@ ch_core_sk_flag_inv.png
 	License: public domain by the Slovak law
 	Source: https://cs.wikipedia.org/wiki/Soubor:Flag_of_Slovakia.svg
 
+ch_core_sickle_steel.png
+	License: CC BY-SA 3.0
+	Author: Cap
+	Source: https://github.com/t-affeldt/sickles
+	Unmodified
+
+ch_core_sickle_stone.png
+ch_core_sickle_wood.png
+	License: CC BY-SA 3.0
+	Author: Cap
+	Source: https://github.com/t-affeldt/sickles
+	Modified by Singularis
+
 moon.png
 moon_tonemap.png
 sun.png

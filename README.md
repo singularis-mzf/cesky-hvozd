@@ -689,6 +689,12 @@ resp. *ostatní\_zdroje*.
 * Původní licence: kód MIT, textury různé, ale neoznačené také MIT
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/ethereal/)
 
+## Scythes & Sickles (sickles)
+
+* Zdroj: [https://github.com/t-affeldt/sickles](https://github.com/t-affeldt/sickles), revize 64f88263e223c0eb22a0721cda0e9680c65f5267
+* Původní licence: kód LGPLv3, textury CC BY-SA 3.0 a CC BY-SA 4.0
+* [ContentDB](https://content.minetest.net/packages/TestificateMods/sickles/)
+
 ## Technic CNC Improve Machine (technic\_cnc\_improve)
 
 * Zdroj: [https://github.com/Emojigit/technic\_cnc\_improve](https://github.com/Emojigit/technic\_cnc\_improve), revize 769fb8111edd0a895514db3a2df316c0b49b0252

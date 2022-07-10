@@ -16,6 +16,7 @@ dofile(modpath .. "/data.lua")
 dofile(modpath .. "/chat.lua")
 dofile(modpath .. "/joinplayer.lua")
 dofile(modpath .. "/nodes.lua")
+dofile(modpath .. "/sickles.lua")
 
 -- kouzelníci/ce nesmí vkládat do cizích inventářů
 minetest.override_chatcommand("give", {privs = {give = true, protection_bypass = true, interact = true}})
