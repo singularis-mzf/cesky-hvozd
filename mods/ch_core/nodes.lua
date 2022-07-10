@@ -57,3 +57,4 @@ minetest.register_craft({
 		{"dye:red", "", ""},
 	},
 })
+ch_core.submod_loaded("nodes")

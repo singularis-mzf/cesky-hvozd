@@ -64,7 +64,7 @@ function travelnet.formspecs.edit_travelnet(options, player_name)
 		S("Assign to network:"),
 		minetest.formspec_escape(
 			travelnet.is_falsey_string(options.station_network)
-				and (ch_core.na_jmeno_bez_barev_a_mezer(player_name) or default_network)
+				and (ch_core.prihlasovaci_na_zobrazovaci(player_name):gsub(" ", "_") or default_network)
 				or options.station_network
 		),
 		S("You can have more than one network. If unsure, use \"@1\".", default_network),

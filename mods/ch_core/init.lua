@@ -2,51 +2,33 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 
 local modpath = minetest.get_modpath("ch_core")
 ch_core = {
-	doslech = {}, -- pro chat (player_name => number 0..65535)
-	ignorovani_chatu = {}, -- (player_from..">>>>"..player_to => 1 || nil)
-	joinplayer_timestamp = {}, -- player_name => timestamp (for online players only)
 	storage = minetest.get_mod_storage(),
+	submods_loaded = {}, -- submod => true
+
+	klavesy = {}, -- player_name => {sneak => true|false, aux1 => true|false, ...}
 	uhel_hlavy = {}, -- player_name => posledni_uhel
 }
 
-minetest.register_privilege("ch_registered_player", "Odlišuje registrované postavy od čerstvě založených.")
-
-dofile(modpath .. "/lib.lua")
-dofile(modpath .. "/data.lua")
-dofile(modpath .. "/chat.lua")
-dofile(modpath .. "/joinplayer.lua")
-dofile(modpath .. "/nodes.lua")
-dofile(modpath .. "/sickles.lua")
-
--- kouzelníci/ce nesmí vkládat do cizích inventářů
-minetest.override_chatcommand("give", {privs = {give = true, protection_bypass = true, interact = true}})
-
-
--- /začátek
-local function zacatek(player_name)
-	local player = minetest.get_player_by_name(player_name)
-	local player_pos = player and player:get_pos()
-	if not player_pos then
-		return false
+function ch_core.require_submod(current_submod, wanted_submod)
+	if ch_core.submods_loaded[wanted_submod] then
+		return true
 	end
-	local is_registered = minetest.check_player_privs(player_name, "ch_registered_player")
-	player_pos = vector.new(player_pos.x, player_pos.y, player_pos.z)
-	local zacatek_pos = (is_registered and ch_core.registered_spawn or ch_core.unregistered_spawn) or minetest.setting_get_pos("static_spawnpoint") or vector.new(0,0,0)
-	if vector.distance(player_pos, zacatek_pos) < 5 then
-		return false, "Jste příliš blízko počáteční pozice!"
-	end
-	player:set_pos(zacatek_pos)
-	ch_core.systemovy_kanal(player_name, "Teleport úspěšný!")
+	error("ch_core submodule '"..wanted_submod.."' is required to be loaded before '"..current_submod.."'!")
+end
+function ch_core.submod_loaded(current_submod)
+	ch_core.submods_loaded[current_submod] = true
 	return true
 end
-local def = {
-	description = "Okamžitě vás přenese na počáteční pozici.",
-	func = zacatek,
-}
-minetest.register_chatcommand("začátek", def);
-minetest.register_chatcommand("zacatek", def);
-minetest.register_chatcommand("yačátek", def);
-minetest.register_chatcommand("yacatek", def);
+
+dofile(modpath .. "/privs.lua")
+dofile(modpath .. "/data.lua")
+dofile(modpath .. "/lib.lua") -- : data
+dofile(modpath .. "/chat.lua") -- : data, lib, privs
+dofile(modpath .. "/hud.lua")
+dofile(modpath .. "/joinplayer.lua") -- : data, lib
+dofile(modpath .. "/nodes.lua")
+dofile(modpath .. "/sickles.lua")
+dofile(modpath .. "/zacatek.lua") -- : privs
 
 -- KOHOUT: při přechodu mezi dnem a nocí přehraje zvuk
 -- TODO: přehrávat, jen když je postava na povrchu (tzn. ne v hlubokém podzemí)
@@ -79,23 +61,38 @@ local function globalstep(dtime)
 	last_timeofday = tod
 
 	-- PRO KAŽDÉHO HRÁČE/KU:
-	for _, player in pairs(minetest.get_connected_players()) do
+	local connected_players = minetest.get_connected_players()
+	for _, player in pairs(connected_players) do
 		local player_name = player:get_player_name()
-
-		-- ÚHEL HLAVY:
-		local puvodni_uhel_hlavy = uhel_hlavy[player_name] or 0
-		local novy_uhel_hlavy = player:get_look_vertical()
-		local rozdil = novy_uhel_hlavy - puvodni_uhel_hlavy
-		if rozdil > 0.001 or rozdil < -0.001 then
-			if rozdil > 0.3 then
-				-- omezit pohyb hlavy
-				novy_uhel_hlavy = puvodni_uhel_hlavy + 0.3
-			elseif rozdil < -0.3 then
-				novy_uhel_hlavy = puvodni_uhel_hlavy - 0.3
+		local online_charinfo = ch_core.online_charinfo[player_name]
+		if online_charinfo then
+			-- ÚHEL HLAVY:
+			local puvodni_uhel_hlavy = online_charinfo.uhel_hlavy or 0
+			local novy_uhel_hlavy = player:get_look_vertical()
+			local rozdil = novy_uhel_hlavy - puvodni_uhel_hlavy
+			if rozdil > 0.001 or rozdil < -0.001 then
+				if rozdil > 0.3 then
+					-- omezit pohyb hlavy
+					novy_uhel_hlavy = puvodni_uhel_hlavy + 0.3
+				elseif rozdil < -0.3 then
+					novy_uhel_hlavy = puvodni_uhel_hlavy - 0.3
+				end
+				head_bone_angle.x = -0.5 * deg(puvodni_uhel_hlavy + novy_uhel_hlavy)
+				player:set_bone_position(head_bone_name, head_bone_position, head_bone_angle)
+				online_charinfo.uhel_hlavy = novy_uhel_hlavy
 			end
-			head_bone_angle.x = -0.5 * deg(puvodni_uhel_hlavy + novy_uhel_hlavy)
-			player:set_bone_position(head_bone_name, head_bone_position, head_bone_angle)
-			uhel_hlavy[player_name] = novy_uhel_hlavy
+
+			-- REAGOVAT NA KLÁVESY:
+			local old_controls = online_charinfo.klavesy
+			local new_controls = player:get_player_control()
+			online_charinfo.klavesy = new_controls
+			if not old_controls then
+				--
+			elseif new_controls.aux1 and not old_controls.aux1 then
+				print(player_name.." pressed aux1")
+			elseif not new_controls.aux1 and old_controls.aux1 then
+				print(player_name.." leaved aux1")
+			end
 		end
 	end
 end

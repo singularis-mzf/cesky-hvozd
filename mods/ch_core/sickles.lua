@@ -70,3 +70,5 @@ minetest.register_craft({
 		{"group:stick", ""}
 	}
 })
+
+ch_core.submod_loaded("sickles")

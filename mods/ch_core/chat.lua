@@ -1,126 +1,145 @@
-local doslech = {}
+ch_core.require_submod("chat", "privs")
+ch_core.require_submod("chat", "data")
+ch_core.require_submod("chat", "lib")
 
-local colors = {
-	celoserverovy = minetest.get_color_escape_sequence("#ff8700"),
-	mistni = minetest.get_color_escape_sequence("#fff297"),
-	rp = minetest.get_color_escape_sequence("#fff297"),
-	soukromy = minetest.get_color_escape_sequence("#ff4cf3"),
-	sepot = minetest.get_color_escape_sequence("#fff297cc"),
-	skupinovy = minetest.get_color_escape_sequence("#54cc29"),
-	systemovy = minetest.get_color_escape_sequence("#cccccc"),
-}
-local reset_color = minetest.get_color_escape_sequence("#ffffff")
-local posl_soukr_adresat = {}
+minetest.register_on_joinplayer(function(player, last_login)
+	local player_name = player:get_player_name()
+	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
+	online_charinfo.doslech = 65535
+	online_charinfo.chat_ignore_list = {} -- player => true
+end)
 
-ch_core.systemovy_kanal = function(komu, zprava)
-	if zprava ~= "" then -- je-li zprava "", ignorovat
-		local barevna_zprava = colors.systemovy .. "SERVER: " .. zprava .. reset_color
-		if not komu or komu == "" then -- je-li komu "", rozeslat všem
-			minetest.chat_send_all(barevna_zprava)
-		else
-			minetest.chat_send_player(komu, barevna_zprava)
-		end
+local color_celoserverovy = minetest.get_color_escape_sequence("#ff8700")
+local color_mistni = minetest.get_color_escape_sequence("#fff297")
+local color_rp = color_mistni
+local color_soukromy = minetest.get_color_escape_sequence("#ff4cf3")
+local color_sepot = minetest.get_color_escape_sequence("#fff297cc")
+-- local color_skupinovy = minetest.get_color_escape_sequence("#54cc29")
+local color_systemovy = minetest.get_color_escape_sequence("#cccccc")
+local color_reset = minetest.get_color_escape_sequence("#ffffff")
+
+function ch_core.systemovy_kanal(komu, zprava)
+	if zprava == "" then
+		return true -- je-li zprava "", ignorovat
 	end
-	return true
+	if not komu or komu == "" then -- je-li komu "", rozeslat všem
+		minetest.chat_send_all(color_systemovy .. "SERVER: " .. zprava .. color_reset)
+	else
+		minetest.chat_send_player(komu, color_systemovy .. "SERVER: " .. zprava .. color_reset)
+	end
 end
 
-ch_core.mistni_kanal = function(odkoho, zprava, pozice, max_dosah)
-	local pocitadlo = 0
-	local odkoho_doslech = ch_core.doslech[odkoho]
+function ch_core.mistni_kanal(odkoho, zprava, pozice, max_dosah)
 	pozice = vector.new(pozice.x, pozice.y, pozice.z)
-	local barva_zpravy = max_dosah and colors.sepot or colors.mistni
-	local odkoho_s_diakritikou = ch_core.na_jmeno_bez_barev(odkoho)
 
-	for _, player in pairs(minetest.get_connected_players()) do
-		local komu = player:get_player_name()
-		if komu ~= odkoho and (not ch_core.ignorovani_chatu[odkoho .. ">>>>" .. komu] or minetest.check_player_privs(komu, "protection_bypass")) then
-			local vzdalenost_odkoho_komu = math.ceil(vector.distance(pozice, player:get_pos()))
-			local komu_doslech = ch_core.doslech[komu]
+	local pocitadlo = 0
+	local odkoho_info = ch_core.online_charinfo[odkoho] or {}
+	local odkoho_doslech = odkoho_info.doslech or 65535
+	local barva_zpravy = max_dosah and color_sepot or color_mistni
+	local odkoho_s_diakritikou = ch_core.prihlasovaci_na_zobrazovaci(odkoho)
+
+	for _, komu_player in pairs(minetest.get_connected_players()) do
+		local komu = komu_player:get_player_name()
+		local komu_info = ch_core.online_charinfo[komu]
+		if komu_info and komu ~= odkoho and (not komu_info.chat_ignore_list[odkoho] or minetest.check_player_privs(odkoho, "protection_bypass")) then
+			local vzdalenost_odkoho_komu = math.ceil(vector.distance(pozice, komu_player:get_pos()))
+			local komu_doslech = komu_info.doslech or 65535
 			if (not max_dosah or vzdalenost_odkoho_komu <= max_dosah) and vzdalenost_odkoho_komu <= komu_doslech then
-				minetest.chat_send_player(komu, barva_zpravy .. odkoho_s_diakritikou .. (vzdalenost_odkoho_komu > komu_doslech and " (m.d.)" or "") .. ": " .. zprava .. " (" .. vzdalenost_odkoho_komu .. " m)" .. reset_color)
+				minetest.chat_send_player(komu, barva_zpravy .. odkoho_s_diakritikou .. (vzdalenost_odkoho_komu > odkoho_doslech and " (m.d.)" or "") .. ": " .. zprava .. color_systemovy.. " (" .. vzdalenost_odkoho_komu .. " m)" .. color_reset)
 				pocitadlo = pocitadlo + 1
 			end
 		end
 	end
-	minetest.chat_send_player(odkoho, barva_zpravy .. odkoho_s_diakritikou .. ": " .. zprava .. colors.systemovy .. " (" .. pocitadlo .. " post.)" .. reset_color)
+	minetest.chat_send_player(odkoho, barva_zpravy .. odkoho_s_diakritikou .. ": " .. zprava .. color_systemovy .. " (" .. pocitadlo .. " post.)" .. color_reset)
 	return true
 end
 
-ch_core.rp_kanal = function(odkoho, zprava, pozice)
-	local pocitadlo = 0
+function ch_core.rp_kanal(odkoho, zprava, pozice)
 	pozice = vector.new(pozice.x, pozice.y, pozice.z)
-	local barevna_zprava = colors.rp .. "*" .. ch_core.na_jmeno_bez_barev(odkoho) .. " " .. zprava .. "*" .. reset_color
-	for _, player in pairs(minetest.get_connected_players()) do
-		local komu = player:get_player_name()
-		if (not ch_core.ignorovani_chatu[odkoho .. ">>>>" .. komu] or minetest.check_player_privs(komu, "protection_bypass")) then
-			local vzdalenost_odkoho_komu = math.ceil(vector.distance(pozice, player:get_pos()))
-			if vzdalenost_odkoho_komu <= ch_core.doslech[komu] then
+
+	local pocitadlo = 0
+	local barevna_zprava = color_rp .. "*" .. ch_core.prihlasovaci_na_zobrazovaci(odkoho) .. " " .. zprava .. "*" .. color_reset
+	for _, komu_player in pairs(minetest.get_connected_players()) do
+		local komu = komu_player:get_player_name()
+		local komu_info = ch_core.online_charinfo[komu]
+		if komu_info and komu ~= odkoho and (not komu_info.chat_ignore_list[odkoho] or minetest.check_player_privs(odkoho, "protection_bypass")) then
+			local vzdalenost_odkoho_komu = math.ceil(vector.distance(pozice, komu_player:get_pos()))
+			local komu_doslech = komu_info.doslech or 65535
+			if vzdalenost_odkoho_komu <= komu_doslech  then
 				minetest.chat_send_player(komu, barevna_zprava)
 				pocitadlo = pocitadlo + 1
 			end
 		end
 	end
+	minetest.chat_send_player(odkoho, color_rp .. "*" .. ch_core.prihlasovaci_na_zobrazovaci(odkoho) .. " " .. zprava .. "*" .. color_systemovy .. " (" .. pocitadlo .. " post.)" .. color_reset)
 	return true
 end
 
-ch_core.celoserverovy_kanal = function(odkoho, zprava)
+function ch_core.celoserverovy_kanal(odkoho, zprava)
 	local pocitadlo = 0
-	local barva_zpravy = colors.celoserverovy
-	local odkoho_s_diakritikou = ch_core.na_jmeno_bez_barev(odkoho)
-	for _, player in pairs(minetest.get_connected_players()) do
-		local komu = player:get_player_name()
-		if komu ~= odkoho and (not ch_core.ignorovani_chatu[odkoho .. ">>>>" .. komu] or minetest.check_player_privs(komu, "protection_bypass")) then
-			local vzdalenost_odkoho_komu = math.ceil(vector.distance(pozice, player:get_pos()))
-			local komu_doslech = ch_core.doslech[komu]
-			minetest.chat_send_player(komu, barva_zpravy .. odkoho_s_diakritikou .. (vzdalenost_odkoho_komu > komu_doslech and " (m.d.)" or "") .. ": " .. zprava .. " (" .. vzdalenost_odkoho_komu .. " m)" .. reset_color)
+	local odkoho_player = minetest.get_player_by_name(odkoho)
+	local odkoho_pos = odkoho_player and odkoho_player:get_pos()
+	if not odkoho_pos then
+		minetest.log("warning", "[ch_core] celoserverovy_kanal(): cannot found info about player '"..odkoho.."'!")
+		return false
+	end
+	local odkoho_info = ch_core.online_charinfo[odkoho] or {}
+	local odkoho_doslech = odkoho_info.doslech or 65535
+	local odkoho_s_diakritikou = ch_core.prihlasovaci_na_zobrazovaci(odkoho)
+	for _, komu_player in pairs(minetest.get_connected_players()) do
+		local komu = komu_player:get_player_name()
+		local komu_info = ch_core.online_charinfo[komu]
+		if komu_info and komu ~= odkoho and (not komu_info.chat_ignore_list[odkoho] or minetest.check_player_privs(odkoho, "protection_bypass")) then
+			local vzdalenost_odkoho_komu = math.ceil(vector.distance(odkoho_pos, komu_player:get_pos()))
+			local komu_doslech = komu_info.doslech or 65535
+			minetest.chat_send_player(komu, color_celoserverovy .. odkoho_s_diakritikou .. (vzdalenost_odkoho_komu > odkoho_doslech and " (m.d.)" or "") .. ": " .. zprava .. color_systemovy.. " (" .. vzdalenost_odkoho_komu .. " m)" .. color_reset)
 			pocitadlo = pocitadlo + 1
 		end
 	end
-	minetest.chat_send_player(odkoho, barva_zpravy .. odkoho_s_diakritikou .. ": " .. zprava .. colors.systemovy .. " (" .. pocitadlo .. " post.)" .. reset_color)
+	minetest.chat_send_player(odkoho, color_celoserverovy .. odkoho_s_diakritikou .. ": " .. zprava .. color_systemovy .. " (" .. pocitadlo .. " post.)" .. color_reset)
 	return true
 end
 
-ch_core.soukroma_zprava = function(odkoho, komu, zprava)
-	if odkoho == "" or zprava == "" then
+function ch_core.soukroma_zprava(odkoho, komu, zprava)
+	local odkoho_info = ch_core.online_charinfo[odkoho]
+	if not odkoho_info or odkoho == "" or zprava == "" then
+		minetest.log("warning", "private message not send: "..(odkoho_info and "true" or "false")..","..odkoho..","..#zprava)
 		return true
 	end
 	if komu == "" then
-		komu = posl_soukr_adresat[odkoho]
+		komu = odkoho_info.posl_soukr_adresat
 		if not komu then
-			ch_core.systemovy_kanal(odkoho, "Dosud jste nikomu nepsali, musíte uvést jméno adresáta/ky soukromé zprávy.")
+			ch_core.systemovy_kanal(odkoho, "Dosud jste nikomu nepsal/a, musíte uvést jméno adresáta/ky soukromé zprávy.")
 			return true
 		end
 	end
 	if not minetest.player_exists(komu) then
-		ch_core.systemovy_kanal(odkoho, "Hráč/ka " .. ch_core.na_jmeno_bez_barev(komu) .. " neexistuje!")
+		ch_core.systemovy_kanal(odkoho, "Postava " .. ch_core.prihlasovaci_na_zobrazovaci(komu) .. " neexistuje!")
 		return true
 	end
-	if ch_core.ignorovani_chatu[odkoho .. ">>>>" .. komu] and not minetest.check_player_privs(odkoho, "protection_bypass") then
-		ch_core.systemovy_kanal(odkoho, "Hráč/ka " .. ch_core.na_jmeno_bez_barev(komu) .. " vás ignoruje!")
-		return true
-	end
-	for _, player in pairs(minetest.get_connected_players()) do
-		local player_name = player:get_player_name()
-		if player_name == komu then
-			minetest.chat_send_player(odkoho, colors.soukromy .. "-> ".. ch_core.na_jmeno_bez_barev(komu)..": "..zprava .. reset_color)
-			minetest.chat_send_player(komu, colors.soukromy .. ch_core.na_jmeno_bez_barev(odkoho)..": "..zprava .. reset_color)
-			posl_soukr_adresat[odkoho] = komu
+	local komu_info = ch_core.online_charinfo[komu]
+	if komu_info then
+		if komu_info.chat_ignore_list[odkoho] and not minetest.check_player_privs(odkoho, "protection_bypass") then
+			ch_core.systemovy_kanal(odkoho, "Postava " .. ch_core.prihlasovaci_na_zobrazovaci(komu) .. " vás ignoruje!")
 			return true
 		end
+		minetest.chat_send_player(odkoho, color_soukromy .. "-> ".. ch_core.prihlasovaci_na_zobrazovaci(komu)..": "..zprava .. color_reset)
+		minetest.chat_send_player(komu, color_soukromy .. ch_core.prihlasovaci_na_zobrazovaci(odkoho)..": "..zprava .. color_reset)
+		odkoho_info.posl_soukr_adresat = komu
+		return true
 	end
 	ch_core.systemovy_kanal(odkoho, komu .. " není ve hře!")
 	return true
 end
 
 local function on_chat_message(jmeno, zprava)
-	minetest.log("info", "on_chat_message("..jmeno..","..zprava..")")
+	-- minetest.log("info", "on_chat_message("..jmeno..","..zprava..")") -- DEBUGGING ONLY!
 	local info = minetest.get_player_by_name(jmeno)
 	if not info then
 		minetest.log("warning", "No info found about player "..jmeno.."!")
 		return true
 	end
 	local c = zprava:sub(1, 1)
-	local i
 	if c == "!" then
 		-- celoserverový kanál
 		if not minetest.check_player_privs(jmeno, "shout") then
@@ -150,93 +169,190 @@ local function on_chat_message(jmeno, zprava)
 	end
 end
 
-local function on_joinplayer(player, last_login)
-	local player_name = player:get_player_name()
-	ch_core.doslech[player_name] = 65535
-	ch_core.joinplayer_timestamp[player_name] = os.time()
-	print("JOIN PLAYER(" .. player_name ..")");
-	return
-end
-
-local function on_leaveplayer(player, time)
-	local player_name = player:get_player_name()
-
-	local current_played_seconds = os.time() - (ch_core.joinplayer_timestamp[player_name] or 0)
-	local total_played_seconds = (ch_core.storage:get_int("playtime/" .. player_name) or 0) + current_played_seconds
-	ch_core.storage:set_int("playtime/" .. player_name, total_played_seconds) -- zatím nefunguje!
-
-	ch_core.doslech[player_name] = nil
-	ch_core.joinplayer_timestamp[player_name] = nil
-	print("LEAVE PLAYER(" .. player_name .."): played seconds: " .. current_played_seconds .. " / " .. total_played_seconds);
-	return
-end
-
-local function set_doslech(player_name, param)
+function ch_core.set_doslech(player_name, param)
 	if param == "" or string.match(param, "%D") or param + 0 < 0 or param + 0 > 65535 then
 		return false
 	end
-	param = param + 0
-	ch_core.doslech[player_name] = param
+	param = math.max(0, math.min(65535, param + 0))
+	local player_info = ch_core.online_charinfo[player_name] or {}
+	player_info.doslech = param
 	-- print("player_name=("..player_name.."), param=("..param..")")
 	ch_core.systemovy_kanal(player_name, "Doslech nastaven na " .. param)
 	return true
 end
 
-local function set_ignorovat(player_name, name_to_ignore)
+function ch_core.set_ignorovat(player_name, name_to_ignore)
+	local player_info = ch_core.online_charinfo[player_name]
+	if not player_info then
+		minetest.log("error", "[ch_core] cannot found online_charinfo["..player_name.."]")
+		return false
+	end
+	local ignore_list = player_info.chat_ignore_list
+	if not ignore_list then
+		minetest.log("error", "[ch_core] online_charinfo["..player_name.."] does not have ignore_list!")
+		return false
+	end
+	name_to_ignore = ch_core.jmeno_na_prihlasovaci(name_to_ignore)
 	if not minetest.player_exists(name_to_ignore) then
-		ch_core.systemovy_kanal(player_name, "Hráč/ka " .. ch_core.na_jmeno_bez_barev(name_to_ignore) .. " neexistuje!")
+		ch_core.systemovy_kanal(player_name, "Postava " .. ch_core.prihlasovaci_na_zobrazovaci(name_to_ignore) .. " neexistuje!")
 	elseif name_to_ignore == player_name then
 		ch_core.systemovy_kanal(player_name, "Nemůžete ignorovat sám/a sebe!")
 	elseif minetest.check_player_privs(name_to_ignore, "protection_bypass") then
-		ch_core.systemovy_kanal(player_name, "Hráč/ka " .. ch_core.na_jmeno_bez_barev(name_to_ignore) .. " má právo protection_bypass, takže ho/ji nemůžete ignorovat!")
-	elseif ch_core.ignorovani_chatu[name_to_ignore .. ">>>>" .. player_name] then
-		ch_core.systemovy_kanal(player_name, "Hráče/ku " .. ch_core.na_jmeno_bez_barev(name_to_ignore) .. " již ignorujete!")
+		ch_core.systemovy_kanal(player_name, "Postava " .. ch_core.prihlasovaci_na_zobrazovaci(name_to_ignore) .. " má právo protection_bypass, takže ji nemůžete ignorovat!")
+	elseif ignore_list[name_to_ignore] then
+		ch_core.systemovy_kanal(player_name, "Postavu " .. ch_core.prihlasovaci_na_zobrazovaci(name_to_ignore) .. " již ignorujete!")
 	else
-		ch_core.ignorovani_chatu[name_to_ignore .. ">>>>" .. player_name] = 1
-		if ch_core.doslech[name_to_ignore] then -- pokud je hráč/ka online...
-			ch_core.systemovy_kanal(name_to_ignore, "Hráč/ka " .. ch_core.na_jmeno_bez_barev(player_name) .. " vás nyní ignoruje.")
+		ignore_list[name_to_ignore] = 1
+		ch_core.systemovy_kanal(player_name, "Nyní postavu " .. ch_core.prihlasovaci_na_zobrazovaci(name_to_ignore) .. " ignorujete. Toto platí, než se odhlásíte ze hry nebo než ignorování zrušíte příkazem /neignorovat.")
+		local target_info = ch_core.online_charinfo[name_to_ignore]
+		if target_info then -- pokud je hráč/ka online...
+			ch_core.systemovy_kanal(name_to_ignore, "Postava " .. ch_core.prihlasovaci_na_zobrazovaci(player_name) .. " vás nyní ignoruje.")
 		end
 	end
 	return true
 end
 
-local function unset_ignorovat(player_name, name_to_unignore)
-	if ch_core.ignorovani_chatu[name_to_unignore .. ">>>>" .. player_name] then
-		ch_core.ignorovani_chatu[name_to_unignore .. ">>>>" .. player_name] = nil
-		ch_core.systemovy_kanal(player_name, "Ignorování hráče/ky " .. ch_core.na_jmeno_bez_barev(name_to_unignore) .. " zrušeno.")
+function ch_core.unset_ignorovat(player_name, name_to_unignore)
+	local player_info = ch_core.online_charinfo[player_name]
+	if not player_info then
+		minetest.log("error", "[ch_core] cannot found online_charinfo["..player_name.."]")
+		return false
+	end
+	local ignore_list = player_info.chat_ignore_list
+	if not ignore_list then
+		minetest.log("error", "[ch_core] online_charinfo["..player_name.."] does not have ignore_list!")
+		return false
+	end
+
+	if ignore_list[name_to_unignore] then
+		ignore_list[name_to_unignore] = nil
+		ch_core.systemovy_kanal(player_name, "Ignorování postavy " .. ch_core.prihlasovaci_na_zobrazovaci(name_to_unignore) .. " zrušeno.")
+		local target_info = ch_core.online_charinfo[name_to_unignore]
+		if target_info then -- pokud je hráč/ka online...
+			ch_core.systemovy_kanal(name_to_unignore, "Postava " .. ch_core.prihlasovaci_na_zobrazovaci(player_name) .. " vás přestala ignorovat. Nyní již můžete této postavě psát.")
+		end
 	else
-		ch_core.systemovy_kanal(player_name, "Hráč/ka " .. ch_core.na_jmeno_bez_barev(name_to_unignore) .. " není vámi ignorován/a.")
+		ch_core.systemovy_kanal(player_name, "Postava " .. ch_core.prihlasovaci_na_zobrazovaci(name_to_unignore) .. " není vámi ignorována.")
 	end
 	return true
 end
 
 minetest.register_on_chat_message(on_chat_message)
-minetest.register_on_joinplayer(on_joinplayer)
-minetest.register_on_leaveplayer(on_leaveplayer)
+
+minetest.override_chatcommand("me", {func = function(player_name, message)
+	local player = minetest.get_player_by_name(player_name)
+	if not player then
+		return false
+	end
+	return ch_core.rp_kanal(player_name, message, player:get_pos())
+end})
+
+minetest.override_chatcommand("msg", {func = function(player_name, text)
+	local player = minetest.get_player_by_name(player_name)
+	if not string.find(text, " ") or not player then
+		return false
+	end
+	return on_chat_message(player_name, "\"" .. text)
+end})
+
 minetest.register_chatcommand("doslech", {
 	params = "[<metrů>]",
 	description = "Nastaví omezený doslech v chatu. Hodnota musí být celé číslo v rozsahu 0 až 65535. Bez parametru nastaví 65535.",
 	privs = { shout = true },
-	func = set_doslech,
+	func = function(player_name, param)
+		return ch_core.set_doslech(player_name, param)
+	end,
 })
 minetest.register_chatcommand("ignorovat", {
 	params = "<jménohráče/ky>",
 	description = "Do vašeho odhlášení nebudete dostávat žádné zprávy od daného hráče/ky, ledaže má právo protection_bypass.",
 	privs = {},
-	func = set_ignorovat,
+	func = function(player_name, name_to_ignore)
+		return ch_core.set_ignorovat(player_name, name_to_ignore)
+	end,
 })
 minetest.register_chatcommand("neignorovat", {
 	params = "<jménohráče/ky>",
 	description = "Zruší omezení zadané příkazem /ignorovat.",
 	privs = {},
-	func = unset_ignorovat,
+	func = function(player_name, name_to_unignore)
+		return ch_core.unset_ignorovat(player_name, name_to_unignore)
+	end,
 })
-minetest.override_chatcommand("me", {func = function(player_name, message)
-	return ch_core.rp_kanal(player_name, message, minetest.get_player_by_name(player_name):get_pos())
-end})
-minetest.override_chatcommand("msg", {func = function(player_name, text)
-	if not string.find(text, " ") then
-		return false
-	end
-	return on_chat_message(player_name, "\"" .. text)
-end})
+
+minetest.register_chatcommand("nastavit_barvu_jmena", {
+	params = "<prihlasovaci_jmeno_postavy> [#RRGGBB]",
+	description = "Nastaví nebo zruší postavě barevné jméno",
+	privs = { server = true },
+	func = function(player_name, param)
+		local i = string.find(param, " ")
+		local login, color
+		if not i then
+			login = param
+			color = ""
+		else
+			login = param:sub(1, i - 1)
+			color = param:sub(i + 1, -1)
+		end
+		if not minetest.player_exists(login) then
+			return false, "Postava s přihlašovacím jménem "..login.." neexistuje!"
+		end
+		local offline_charinfo = ch_core.get_offline_charinfo(login)
+		local jmeno = offline_charinfo.jmeno or login
+		if color == "" then
+			offline_charinfo.barevne_jmeno = nil
+		else
+			if jmeno == "Administrace" then
+				offline_charinfo.barevne_jmeno = minetest.get_color_escape_sequence("#cc5257").."Admin"..minetest.get_color_escape_sequence("#6693ff").."istrace"..color_reset
+			else
+				offline_charinfo.barevne_jmeno = minetest.get_color_escape_sequence(string.lower(color))..jmeno..color_reset
+			end
+		end
+		ch_core.update_player_nametag(login)
+		ch_core.save_offline_charinfo(login, "string", "barevne_jmeno")
+		-- if (color:sub(1, 1) ~= "#") then
+		return true
+	end,
+})
+
+minetest.register_chatcommand("nastavit_jmeno", {
+	params = "<nové jméno postavy>",
+	description = "Nastaví zobrazované jméno postavy",
+	privs = { server = true },
+	func = function(player_name, param)
+		local login = ch_core.odstranit_diakritiku(param):gsub(" ", "_")
+		if not minetest.player_exists(login) then
+			return false, "Postava '"..login.."' neexistuje!"
+		end
+		local offline_charinfo = ch_core.get_offline_charinfo(login)
+		local puvodni_jmeno = offline_charinfo.jmeno or login
+		if puvodni_jmeno ~= param then
+			offline_charinfo.jmeno = param
+			local barevne_jmeno = offline_charinfo.barevne_jmeno
+			if barevne_jmeno then
+				offline_charinfo.barevne_jmeno = barevne_jmeno:gsub(puvodni_jmeno, param)
+				ch_core.save_offline_charinfo(login, "string", "barevne_jmeno")
+			end
+			ch_core.save_offline_charinfo(login, "string", "jmeno")
+			ch_core.update_player_nametag(login)
+			return true, "Jméno nastaveno: "..login.." > "..param
+		else
+			ch_core.update_player_nametag(login)
+			return true, "Titulek obnoven: "..login.." > "..param
+		end
+	end,
+})
+
+minetest.register_chatcommand("nastavit_titul", {
+	params = "<prihlasovaci_jmeno_postavy> [text titulu]",
+	description = "Nastaví nebo zruší postavě titul nad jménem",
+	privs = { server = true },
+	func = function(player_name, param)
+		local i = string.find(param, " ")
+		if i then
+			return ch_core.set_titul(param:sub(1, i - 1), param:sub(i + 1))
+		else
+			return ch_core.set_titul(param, "")
+		end
+	end,
+})
