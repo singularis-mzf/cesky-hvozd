@@ -126,7 +126,6 @@ for _, col in ipairs(all_colours) do
 
 				if self.gotten ~= false
 				or self.child ~= false
-				or name ~= self.owner
 				or not minetest.get_modpath("wool") then
 					return
 				end

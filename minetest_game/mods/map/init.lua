@@ -7,7 +7,7 @@ map = {}
 
 -- Load support for MT game translation.
 local S = minetest.get_translator("map")
-
+--[[
 
 -- Update HUD flags
 -- Global to allow overriding
@@ -15,12 +15,11 @@ local S = minetest.get_translator("map")
 function map.update_hud_flags(player)
 	local creative_enabled = minetest.is_creative_enabled(player:get_player_name())
 
-	local minimap_enabled = creative_enabled or
-		player:get_inventory():contains_item("main", "map:mapping_kit")
+	-- local minimap_enabled = creative_enabled or player:get_inventory():contains_item("main", "map:mapping_kit")
 	local radar_enabled = creative_enabled
 
 	player:hud_set_flags({
-		minimap = minimap_enabled,
+		-- minimap = minimap_enabled,
 		minimap_radar = radar_enabled
 	})
 end
@@ -31,10 +30,11 @@ end
 minetest.register_on_joinplayer(function(player)
 	map.update_hud_flags(player)
 end)
-
+]]
 
 -- Cyclic update of HUD flags
 
+--[[
 local function cyclic_update()
 	for _, player in ipairs(minetest.get_connected_players()) do
 		map.update_hud_flags(player)
@@ -43,7 +43,7 @@ local function cyclic_update()
 end
 
 minetest.after(5.3, cyclic_update)
-
+]]
 
 -- Mapping kit item
 
@@ -53,9 +53,11 @@ minetest.register_craftitem("map:mapping_kit", {
 	stack_max = 1,
 	groups = {flammable = 3},
 
+                                                --[[
 	on_use = function(itemstack, user, pointed_thing)
 		map.update_hud_flags(user)
 	end,
+                                                ]]
 })
 
 

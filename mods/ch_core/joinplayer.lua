@@ -10,9 +10,13 @@ local function on_newplayer(player)
 end
 
 local function on_joinplayer(player, last_login)
-	print("DEBUG: on_joinplayer("..player:get_player_name().."): will update nametag")
+	-- print("DEBUG: on_joinplayer("..player:get_player_name().."): will update nametag")
 	ch_core.update_player_nametag(player:get_player_name())
-	print("DEBUG: on_joinplayer("..player:get_player_name()..").")
+	player:hud_set_flags({
+		minimap = true, -- enable minimap for everyone
+		minimap_radar = minetest.check_player_privs(player, "creative"), -- radar if the player has creative priv
+	}) 
+	-- print("DEBUG: on_joinplayer("..player:get_player_name()..").")
 	return true
 end
 
