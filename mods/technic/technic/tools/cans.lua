@@ -84,7 +84,7 @@ technic.register_can({
 	can_name = "technic:water_can",
 	can_description = S("Water Can"),
 	can_inventory_image = "technic_water_can.png",
-	can_capacity = 16,
+	can_capacity = 64,
 	liquid_source_name = "default:water_source",
 	liquid_flowing_name = "default:water_flowing",
 })
@@ -102,7 +102,7 @@ technic.register_can({
 	can_name = "technic:lava_can",
 	can_description = S("Lava Can"),
 	can_inventory_image = "technic_lava_can.png",
-	can_capacity = 8,
+	can_capacity = 64,
 	liquid_source_name = "default:lava_source",
 	liquid_flowing_name = "default:lava_flowing",
 })
@@ -120,7 +120,7 @@ technic.register_can({
 	can_name = 'technic:river_water_can',
 	can_description = S("River Water Can"),
 	can_inventory_image = "technic_river_water_can.png",
-	can_capacity = 16,
+	can_capacity = 64,
 	liquid_source_name = "default:river_water_source",
 	liquid_flowing_name = "default:river_water_flowing",
 })
