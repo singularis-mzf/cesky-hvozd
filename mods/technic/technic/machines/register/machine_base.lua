@@ -46,8 +46,8 @@ function technic.register_base_machine(data)
 		groups.tubedevice = 1
 		groups.tubedevice_receiver = 1
 	end
-	local active_groups = {not_in_creative_inventory = 1}
-	for k, v in pairs(groups) do active_groups[k] = v end
+	local active_groups = table.copy(groups)
+	active_groups.not_in_creative_inventory = 1
 
 	local formspec =
 		"size[8,9;]"..
@@ -159,7 +159,7 @@ function technic.register_base_machine(data)
 		tentry = ""
 	end
 
-	minetest.register_node(data.modname..":"..ltier.."_"..machine_name, {
+	local def = {
 		description = machine_desc:format(S(tier)),
 		tiles = {
 			data.modname.."_"..ltier.."_"..machine_name.."_top.png",
@@ -228,9 +228,16 @@ function technic.register_base_machine(data)
 			end
 			meta:set_string("formspec", formspec..form_buttons)
 		end,
-	})
+	}
+	local override = data.def_override
+	if override then
+		for k, v in pairs(override) do
+			def[k] = v
+		end
+	end
+	minetest.register_node(data.modname..":"..ltier.."_"..machine_name, def)
 
-	minetest.register_node(data.modname..":"..ltier.."_"..machine_name.."_active",{
+	def = {
 		description = machine_desc:format(tier),
 		tiles = {
 			data.modname.."_"..ltier.."_"..machine_name.."_top.png",
@@ -273,7 +280,14 @@ function technic.register_base_machine(data)
 			end
 			meta:set_string("formspec", formspec..form_buttons)
 		end,
-	})
+	}
+	override = data.def_override_active
+	if override then
+		for k, v in pairs(override) do
+			def[k] = v
+		end
+	end
+	minetest.register_node(data.modname..":"..ltier.."_"..machine_name.."_active", def)
 
 	technic.register_machine(tier, data.modname..":"..ltier.."_"..machine_name,            technic.receiver)
 	technic.register_machine(tier, data.modname..":"..ltier.."_"..machine_name.."_active", technic.receiver)
