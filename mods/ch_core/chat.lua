@@ -356,3 +356,10 @@ minetest.register_chatcommand("nastavit_titul", {
 		end
 	end,
 })
+
+minetest.send_join_message = function(player_name)
+	return ch_core.systemovy_kanal("", "Připojila se postava: "..ch_core.prihlasovaci_na_zobrazovaci(player_name))
+end
+minetest.send_leave_message = function(player_name, is_timedout)
+	return ch_core.systemovy_kanal("", "Odpojila se postava: "..ch_core.prihlasovaci_na_zobrazovaci(player_name))
+end
