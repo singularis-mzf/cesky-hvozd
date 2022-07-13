@@ -16,7 +16,7 @@ dofile(minetest.get_modpath("infinite_chest").."/api.lua")
 
 -- register nodes
 minetest.register_node("infinite_chest:chest", {
-	description = "Infinite Chest",
+	description = "Nekonečná truhla",
 	tiles = {"default_chest_top.png", "default_chest_top.png", "default_chest_side.png", "default_chest_side.png", "default_chest_side.png", "default_chest_front.png"},
 	paramtype2 = "facedir",
 	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2},
@@ -26,11 +26,11 @@ minetest.register_node("infinite_chest:chest", {
 	on_construct = infinite_chest.on_construct,
 	on_receive_fields = infinite_chest.on_receive_fields,
 	on_metadata_inventory_move = infinite_chest.on_metadata_inventory_move,
-    on_metadata_inventory_put = infinite_chest.on_metadata_inventory_put,
-    on_metadata_inventory_take = infinite_chest.on_metadata_inventory_take,
+	on_metadata_inventory_put = infinite_chest.on_metadata_inventory_put,
+	on_metadata_inventory_take = infinite_chest.on_metadata_inventory_take,
 })
 minetest.register_node("infinite_chest:chest_locked", {
-	description = "Locked Infinite Chest",
+	description = "Zamykatelná nekonečná truhla",
 	tiles = {"default_chest_top.png", "default_chest_top.png", "default_chest_side.png", "default_chest_side.png", "default_chest_side.png", "default_chest_lock.png"},
 	paramtype2 = "facedir",
 	groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2},
@@ -41,30 +41,9 @@ minetest.register_node("infinite_chest:chest_locked", {
 	can_dig = infinite_chest.can_dig,
 	after_place_node = infinite_chest.after_place_node,
 	allow_metadata_inventory_move = infinite_chest.allow_metadata_inventory_move,
-    allow_metadata_inventory_put = infinite_chest.allow_metadata_inventory_put,
-    allow_metadata_inventory_take = infinite_chest.allow_metadata_inventory_take,
+	allow_metadata_inventory_put = infinite_chest.allow_metadata_inventory_put,
+	allow_metadata_inventory_take = infinite_chest.allow_metadata_inventory_take,
 	on_metadata_inventory_move = infinite_chest.on_metadata_inventory_move,
-    on_metadata_inventory_put = infinite_chest.on_metadata_inventory_put,
-    on_metadata_inventory_take = infinite_chest.on_metadata_inventory_take,
+	on_metadata_inventory_put = infinite_chest.on_metadata_inventory_put,
+	on_metadata_inventory_take = infinite_chest.on_metadata_inventory_take,
 })
-
--- register crafts
-minetest.register_craft({
-	output = 'infinite_chest:chest',
-	recipe = {
-		{'default:chest', 'default:chest', 'default:chest'},
-		{'default:chest', '', 'default:chest'},
-		{'default:chest', 'default:chest', 'default:chest'},
-	}
-})
-minetest.register_craft({
-	output = 'infinite_chest:chest_locked',
-	recipe = {
-		{'default:chest_locked', 'default:chest_locked', 'default:chest_locked'},
-		{'default:chest_locked', 'default:mese', 'default:chest_locked'},
-		{'default:chest_locked', 'default:chest_locked', 'default:chest_locked'},
-	}
-})
-
--- log that we started
-minetest.log("action", "[MOD]"..minetest.get_current_modname().." -- loaded from "..minetest.get_modpath(minetest.get_current_modname()))

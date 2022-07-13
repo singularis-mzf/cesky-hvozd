@@ -19,9 +19,9 @@ end
 
 infinite_chest.formspec = function(pos,page)
 	local formspec = "size[15,11]"
-		.."button[12,10;1,0.5;go;Go]"
+		.."button[12,10;1,0.5;go;Přejít]"
 	if page=="main" then
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		local pages = infinite_chest.get_pages(meta)
 		local x,y = 0,0
 		local p
@@ -36,22 +36,23 @@ infinite_chest.formspec = function(pos,page)
 		end
 		if #pages == 0 then
 			formspec = formspec
-				.."label[4,3; --== Infinite Chest ==--]"
-				.."label[4,4.5; Create as many inventory slots as you like!]"
-				.."label[4,5.0; Simply enter a name for your inventory slot]"
-				.."label[4,5.5; then click Go.]"
+				.."label[4,3; --== Nekonečná truhla ==--]"
+				.."label[4,4.5; Vytvořte přihrádek, kolik chcete!]"
+				.."label[4,5.0; Jednoduše zadejte jméno pro přihrádku]"
+				.."label[4,5.5; a klikněte na Přejít. Používejte prosím jména bez diakritiky.]"
 		end
 		return formspec
 			.."field[10.5,10.1;2,1;page;;]"
-			.."label[0,0;Infinite Chest]"
+			.."label[0,0;Nekonečná truhla]"
 	end
 	return formspec
 		.."field[10.5,10.1;2,1;page;;"..page.."]"
-		.."label[0,0;Infinite Chest - page: " .. page .. "]"
-		.."button[13,10;2,0.5;back;Back]"
-		.."button[13,6.5;2,0.5;delete;Delete]"
+		.."label[0,0;Nekonečná truhla - přihrádka: " .. page .. "]"
+		.."button[13,10;2,0.5;back;Přehled]"
+		.."button[13,6.5;2,0.5;delete;Smazat\nprázdnou přihrádku]"
 		.."list[current_name;"..page..";0,1;15,5;]"
 		.."list[current_player;main;0,7;8,4;]"
+		.."listring[]"
 end
 
 infinite_chest.get_pages = function(meta)
@@ -64,7 +65,7 @@ infinite_chest.get_pages = function(meta)
 end
 
 infinite_chest.add_page = function(pos,page)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local invs = meta:get_string("infinite_chest_list")
 	local pages = {}
 	for p in string.gmatch(invs, "[^%s]+") do
@@ -82,7 +83,7 @@ infinite_chest.add_page = function(pos,page)
 end
 
 infinite_chest.remove_page = function(pos,page)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local invs = meta:get_string("infinite_chest_list")
 	local inv = meta:get_inventory()
 	if not inv:is_empty(page) then
@@ -103,7 +104,7 @@ infinite_chest.remove_page = function(pos,page)
 end
 
 infinite_chest.on_receive_fields = function(pos, formname, fields, sender)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	local page
 	if fields.go ~= nil and fields.page ~= "" then
 		page = string.lower(string.gsub(fields.page, "%W", "_"))
@@ -118,7 +119,7 @@ infinite_chest.on_receive_fields = function(pos, formname, fields, sender)
 	end
 	if fields.delete ~= nil then
 		if not infinite_chest.remove_page(pos,fields.page) then
-			minetest.chat_send_player(sender:get_player_name(), "cannot delete \""..fields.page.."\" - page is not empty")
+			minetest.chat_send_player(sender:get_player_name(), "nemohu smazat přihrádku \""..fields.page.."\", protože není prázdná")
 			return
 		end
 	end
@@ -126,18 +127,18 @@ infinite_chest.on_receive_fields = function(pos, formname, fields, sender)
 end
 
 infinite_chest.on_construct = function(pos)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	meta:set_string("formspec", infinite_chest.formspec(pos,"main"))
-	meta:set_string("infotext", "Infinite Chest")
+	meta:set_string("infotext", "Nekonečná truhla")
 end
 
 infinite_chest.can_dig = function(pos,player)
-	local meta = minetest.env:get_meta(pos);
+	local meta = minetest.get_meta(pos);
 	local pages = infinite_chest.get_pages(meta)
 	local inv = meta:get_inventory()
 	for i,page in pairs(pages) do
 		if not inv:is_empty(page) then
-			minetest.chat_send_player(player:get_player_name(), "cannot dig - page \""..page.."\" is not empty")
+			minetest.chat_send_player(player:get_player_name(), "nemohu odstranit truhlu - přihrádka \""..page.."\" není prázdná")
 			return false
 		end
 	end
@@ -145,13 +146,13 @@ infinite_chest.can_dig = function(pos,player)
 end
 
 infinite_chest.after_place_node = function(pos, placer)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	meta:set_string("owner", placer:get_player_name() or "")
-	meta:set_string("infotext", "Locked Infinite Chest (owned by "..meta:get_string("owner")..")")
+	meta:set_string("infotext", "Zamykatelná nekonečná truhla (vlastník/ice: "..meta:get_string("owner")..")")
 end
 
 infinite_chest.allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	if not infinite_chest.has_locked_chest_privilege(meta, player) then
 		infinite_chest.log(player:get_player_name().." tried to access a locked chest belonging to "..meta:get_string("owner").." at "..minetest.pos_to_string(pos))
 		return 0
@@ -160,7 +161,7 @@ infinite_chest.allow_metadata_inventory_move = function(pos, from_list, from_ind
 end
 
 infinite_chest.allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	if not infinite_chest.has_locked_chest_privilege(meta, player) then
 		infinite_chest.log(player:get_player_name().." tried to access a locked chest belonging to "..meta:get_string("owner").." at "..minetest.pos_to_string(pos))
 		return 0
@@ -169,7 +170,7 @@ infinite_chest.allow_metadata_inventory_put = function(pos, listname, index, sta
 end
 
 infinite_chest.allow_metadata_inventory_take = function(pos, listname, index, stack, player)
-	local meta = minetest.env:get_meta(pos)
+	local meta = minetest.get_meta(pos)
 	if not infinite_chest.has_locked_chest_privilege(meta, player) then
 		infinite_chest.log(player:get_player_name()..
 				" tried to access a locked chest belonging to "..
@@ -181,7 +182,7 @@ infinite_chest.allow_metadata_inventory_take = function(pos, listname, index, st
 end
 
 infinite_chest.has_locked_chest_privilege = function(meta, player)
-	if meta:get_string("owner") ~= "" and player:get_player_name() ~= meta:get_string("owner") then
+	if meta:get_string("owner") ~= "" and player:get_player_name() ~= meta:get_string("owner") and not minetest.check_player_privs(player, "protection_bypass") then
 		return false
 	end
 	return true
