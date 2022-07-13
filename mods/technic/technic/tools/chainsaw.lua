@@ -89,7 +89,7 @@ local function recursive_dig(origin, remaining_charge)
 	while queue_begin < queue_end and dig_count < dig_count_max do
 		-- dequeue a node
 		local pos = queue[queue_begin]
-		queue[queue_begin] = nil -- keep the queue short
+		-- queue[queue_begin] = nil -- keep the queue short
 		queue_begin = queue_begin + 1
 
 		local node_name = minetest.get_node(pos).name
