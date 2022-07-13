@@ -189,6 +189,9 @@ function homedecor.register_furnace(name, furnacedef)
 		interval = 1.0,
 		chance = 1,
 		action = function(pos, node, active_object_count, active_object_count_wider)
+			if not minetest.registered_nodes[nname] then
+				return -- node unregistered -> disable this abm
+			end
 			local meta = minetest.get_meta(pos)
 			for i, pname in ipairs({
 					"fuel_totaltime",

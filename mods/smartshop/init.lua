@@ -383,23 +383,23 @@ smartshop.showform=function(pos,player,re)
 		end
 
 		gui=""
-		.."size[8,10]"
+		.."size[15,12]"
 
-		.."button_exit[6,0;1.5,1;customer;" .. S("Customer") .. "]"
-		-- .."button[7.2,0;1,1;sellall;" .. S("All") .. "]"
-		.."label[0,0.2;" .. S("Item:") .. "]"
-		.."label[0,1.2;" .. S("Price:") .. "]"
-		.."list[nodemeta:" .. spos .. ";give1;1,0;1,1;]"
-		.."list[nodemeta:" .. spos .. ";pay1;1,1;1,1;]"
-		.."list[nodemeta:" .. spos .. ";give2;2,0;1,1;]"
-		.."list[nodemeta:" .. spos .. ";pay2;2,1;1,1;]"
-		.."list[nodemeta:" .. spos .. ";give3;3,0;1,1;]"
-		.."list[nodemeta:" .. spos .. ";pay3;3,1;1,1;]"
-		.."list[nodemeta:" .. spos .. ";give4;4,0;1,1;]"
-		.."list[nodemeta:" .. spos .. ";pay4;4,1;1,1;]"
+		.."button_exit[9,0;1.5,1;customer;" .. S("Customer") .. "]"
+		-- .."button[10.2,0;1,1;sellall;" .. S("All") .. "]"
+		.."label[3,0.2;" .. S("Item:") .. "]"
+		.."label[3,1.2;" .. S("Price:") .. "]"
+		.."list[nodemeta:" .. spos .. ";give1;4,0;1,1;]"
+		.."list[nodemeta:" .. spos .. ";pay1;4,1;1,1;]"
+		.."list[nodemeta:" .. spos .. ";give2;5,0;1,1;]"
+		.."list[nodemeta:" .. spos .. ";pay2;5,1;1,1;]"
+		.."list[nodemeta:" .. spos .. ";give3;6,0;1,1;]"
+		.."list[nodemeta:" .. spos .. ";pay3;6,1;1,1;]"
+		.."list[nodemeta:" .. spos .. ";give4;7,0;1,1;]"
+		.."list[nodemeta:" .. spos .. ";pay4;7,1;1,1;]"
 --[[
-		.."button_exit[5,0;1,1;tsend;" .. S("Send") .. "]"
-		.."button_exit[5,1;1,1;trefill;" .. S("Refil") .. "]"
+		.."button_exit[8,0;1,1;tsend;" .. S("Send") .. "]"
+		.."button_exit[8,1;1,1;trefill;" .. S("Refil") .. "]"
 
 		local tsend=smartshop.strpos(meta:get_string("item_send"),1)
 		local trefill=smartshop.strpos(meta:get_string("item_refill"),1)
@@ -431,12 +431,12 @@ smartshop.showform=function(pos,player,re)
 ]]
 
 		if creative==1 then
-			gui=gui .."label[0.5,-0.4;" .. S("Your stock is unlimited because you have creative or give") .. "]"
-			.."button[6,1;2.2,1;toogleee;" .. S("Toogle limit") .."]"
+			gui=gui .."label[3.5,-0.4;" .. S("Your stock is unlimited because you have creative or give") .. "]"
+			.."button[9,1;2.2,1;toogleee;" .. S("Toogle limit") .."]"
 		end
 		gui=gui
-		.."list[nodemeta:" .. spos .. ";main;0,2;8,4;]"
-		.."list[current_player;main;0,6.2;8,4;]"
+		.."list[nodemeta:" .. spos .. ";main;0,2;15,6;]"
+		.."list[current_player;main;3,8.2;8,4;]"
 		.."listring[nodemeta:" .. spos .. ";main]"
 		.."listring[current_player;main]"
 	else
@@ -521,15 +521,16 @@ after_place_node = function(pos, placer)
 on_construct = function(pos)
 		local meta=minetest.get_meta(pos)
 		meta:set_int("state", 0)
-		meta:get_inventory():set_size("main", 32)
-		meta:get_inventory():set_size("give1", 1)
-		meta:get_inventory():set_size("pay1", 1)
-		meta:get_inventory():set_size("give2", 1)
-		meta:get_inventory():set_size("pay2", 1)
-		meta:get_inventory():set_size("give3", 1)
-		meta:get_inventory():set_size("pay3", 1)
-		meta:get_inventory():set_size("give4", 1)
-		meta:get_inventory():set_size("pay4", 1)
+		local inv = meta:get_inventory()
+		inv:set_size("main", 90)
+		inv:set_size("give1", 1)
+		inv:set_size("pay1", 1)
+		inv:set_size("give2", 1)
+		inv:set_size("pay2", 1)
+		inv:set_size("give3", 1)
+		inv:set_size("pay3", 1)
+		inv:set_size("give4", 1)
+		inv:set_size("pay4", 1)
 	end,
 on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		smartshop.showform(pos,player)
