@@ -80,8 +80,8 @@ local function recursive_dig(origin, remaining_charge)
 	local queue_begin = 1
 	local queue_end = 2
 
-	local hashkey = 65536 * (origin.x - x_min) + 256 * (origin.y - y_min) + (origin.z - z_min) -- .z must have a coefficient "1"
-	local hashset = {[hashkey] = 1}
+	local hash_node_position = minetest.hash_node_position
+	local hashset = {[hash_node_position(origin)] = origin}
 
 	local dig_count = 0
 	local dig_count_max = math.floor(remaining_charge / chainsaw_charge_per_node)
@@ -104,27 +104,39 @@ local function recursive_dig(origin, remaining_charge)
 			minetest.check_for_falling(pos)
 
 			-- Enqueue surroundings
-			local z = pos.z
+			local z, new_pos, hash
+			z = pos.z
 			for y = pos.y - 1, pos.y + 1 do
 				if y_min <= y and y <= y_max then
 					for x = pos.x - 1, pos.x + 1 do
 						if x_min <= x and x <= x_max then
-							-- inner z-cycle is optimized off:
-							hashkey = 65536 * (x - x_min) + 256 * (y - y_min) + (z - z_min);
 
-							if not hashset[hashkey - 1] and z_min <= z - 1 then
-								hashset[hashkey - 1] = 1
-								queue[queue_end] = vector.new(x, y, z - 1)
+							new_pos = vector.new(x, y, z - 1)
+
+							hash = hash_node_position(new_pos)
+							if z_min <= z - 1 and not hashset[hash] then
+								hashset[hash] = hashset
+								queue[queue_end] = new_pos
 								queue_end = queue_end + 1
+								new_pos = vector.new(x, y, z)
+							else
+								new_pos.z = z -- recycle the vector
 							end
-							if not hashset[hashkey] then
-								hashset[hashkey] = 1
-								queue[queue_end] = vector.new(x, y, z)
+
+							hash = hash_node_position(new_pos)
+							if not hashset[hash] then
+								hashset[hash] = hashset
+								queue[queue_end] = new_pos
 								queue_end = queue_end + 1
+								new_pos = vector.new(x, y, z + 1)
+							else
+								new_pos.z = z + 1 -- recycle the vector
 							end
-							if not hashset[hashkey + 1] and z + 1 <= z_max then
-								hashset[hashkey + 1] = 1
-								queue[queue_end] = vector.new(x, y, z + 1)
+
+							hash = hash_node_position(new_pos)
+							if z + 1 <= z_max and not hashset[hash] then
+								hashset[hash] = hashset
+								queue[queue_end] = new_pos
 								queue_end = queue_end + 1
 							end
 						end
