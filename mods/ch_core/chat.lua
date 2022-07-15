@@ -29,14 +29,31 @@ function ch_core.systemovy_kanal(komu, zprava)
 	end
 end
 
-function ch_core.mistni_kanal(odkoho, zprava, pozice, max_dosah)
+function ch_core.chat(rezim, odkoho, zprava, pozice)
 	pozice = vector.new(pozice.x, pozice.y, pozice.z)
 
-	local pocitadlo = 0
-	local odkoho_info = ch_core.online_charinfo[odkoho] or {}
-	local odkoho_doslech = odkoho_info.doslech or 65535
-	local barva_zpravy = max_dosah and color_sepot or color_mistni
-	local odkoho_s_diakritikou = ch_core.prihlasovaci_na_zobrazovaci(odkoho)
+	if rezim == "rp" then
+		return ch_core.rp_kanal(odkoho, zprava, pozice)
+	end
+	if rezim ~= "celoserverovy" and rezim ~= "mistni" and rezim ~= "sepot" then
+		minetest.log("error", "ch_core.chat(): invalid chat mode '"..rezim.."'!!!")
+		return false
+	end
+
+	local pocitadlo, odkoho_info, odkoho_doslech, odkoho_s_diakritikou, barva_zpravy, posl_adresat
+	pocitadlo = 0
+	posl_adresat = ""
+	odkoho_info = ch_core.online_charinfo[odkoho] or {}
+	odkoho_doslech = odkoho_info.doslech or 65535
+	odkoho_s_diakritikou = ch_core.prihlasovaci_na_zobrazovaci(odkoho)
+
+	if rezim == "celoserverovy" then
+		barva_zpravy = color_celoserverovy
+	elseif rezim == "sepot" then
+		barva_zpravy = color_sepot
+	else
+		barva_zpravy = color_mistni
+	end
 
 	for _, komu_player in pairs(minetest.get_connected_players()) do
 		local komu = komu_player:get_player_name()
@@ -44,13 +61,35 @@ function ch_core.mistni_kanal(odkoho, zprava, pozice, max_dosah)
 		if komu_info and komu ~= odkoho and (not komu_info.chat_ignore_list[odkoho] or minetest.check_player_privs(odkoho, "protection_bypass")) then
 			local vzdalenost_odkoho_komu = math.ceil(vector.distance(pozice, komu_player:get_pos()))
 			local komu_doslech = komu_info.doslech or 65535
-			if (not max_dosah or vzdalenost_odkoho_komu <= max_dosah) and vzdalenost_odkoho_komu <= komu_doslech then
-				minetest.chat_send_player(komu, barva_zpravy .. odkoho_s_diakritikou .. (vzdalenost_odkoho_komu > odkoho_doslech and " (m.d.)" or "") .. ": " .. zprava .. color_systemovy.. " (" .. vzdalenost_odkoho_komu .. " m)" .. color_reset)
+			local v_doslechu
+			if rezim == "celoserverovy" then
+				v_doslechu = true
+			else
+				v_doslechu = vzdalenost_odkoho_komu <= komu_doslech
+				if v_doslechu and rezim == "sepot" then
+					v_doslechu = vzdalenost_odkoho_komu <= 5
+				end
+			end
+			if v_doslechu then
+				local extra_spec
+				if odkoho_info.chat_ignore_list[komu] then
+					extra_spec = " (ign.)"
+				elseif vzdalenost_odkoho_komu > odkoho_doslech then
+					extra_spec = " (m.d.)"
+				else
+					extra_spec = ""
+				end
+				minetest.chat_send_player(komu, barva_zpravy..odkoho_s_diakritikou..extra_spec..": "..zprava..color_systemovy.." ("..vzdalenost_odkoho_komu.." m)"..color_reset)
 				pocitadlo = pocitadlo + 1
+				posl_adresat = komu
 			end
 		end
 	end
-	minetest.chat_send_player(odkoho, barva_zpravy .. odkoho_s_diakritikou .. ": " .. zprava .. color_systemovy .. " (" .. pocitadlo .. " post.)" .. color_reset)
+	minetest.chat_send_player(odkoho, barva_zpravy..odkoho_s_diakritikou..": "..zprava..color_systemovy.." ["..pocitadlo.." post.]"..color_reset)
+	if rezim == "sepot" then
+		zprava = minetest.sha1(zprava:gsub("%s", ""))
+	end
+	minetest.log("action", "CHAT:"..rezim..":"..odkoho..">"..pocitadlo.." characters(ex.:"..posl_adresat.."): "..zprava)
 	return true
 end
 
@@ -72,31 +111,7 @@ function ch_core.rp_kanal(odkoho, zprava, pozice)
 		end
 	end
 	minetest.chat_send_player(odkoho, color_rp .. "*" .. ch_core.prihlasovaci_na_zobrazovaci(odkoho) .. " " .. zprava .. "*" .. color_systemovy .. " (" .. pocitadlo .. " post.)" .. color_reset)
-	return true
-end
-
-function ch_core.celoserverovy_kanal(odkoho, zprava)
-	local pocitadlo = 0
-	local odkoho_player = minetest.get_player_by_name(odkoho)
-	local odkoho_pos = odkoho_player and odkoho_player:get_pos()
-	if not odkoho_pos then
-		minetest.log("warning", "[ch_core] celoserverovy_kanal(): cannot found info about player '"..odkoho.."'!")
-		return false
-	end
-	local odkoho_info = ch_core.online_charinfo[odkoho] or {}
-	local odkoho_doslech = odkoho_info.doslech or 65535
-	local odkoho_s_diakritikou = ch_core.prihlasovaci_na_zobrazovaci(odkoho)
-	for _, komu_player in pairs(minetest.get_connected_players()) do
-		local komu = komu_player:get_player_name()
-		local komu_info = ch_core.online_charinfo[komu]
-		if komu_info and komu ~= odkoho and (not komu_info.chat_ignore_list[odkoho] or minetest.check_player_privs(odkoho, "protection_bypass")) then
-			local vzdalenost_odkoho_komu = math.ceil(vector.distance(odkoho_pos, komu_player:get_pos()))
-			local komu_doslech = komu_info.doslech or 65535
-			minetest.chat_send_player(komu, color_celoserverovy .. odkoho_s_diakritikou .. (vzdalenost_odkoho_komu > odkoho_doslech and " (m.d.)" or "") .. ": " .. zprava .. color_systemovy.. " (" .. vzdalenost_odkoho_komu .. " m)" .. color_reset)
-			pocitadlo = pocitadlo + 1
-		end
-	end
-	minetest.chat_send_player(odkoho, color_celoserverovy .. odkoho_s_diakritikou .. ": " .. zprava .. color_systemovy .. " (" .. pocitadlo .. " post.)" .. color_reset)
+	minetest.log("action", "CHAT:rp:"..odkoho..": "..zprava)
 	return true
 end
 
@@ -126,6 +141,7 @@ function ch_core.soukroma_zprava(odkoho, komu, zprava)
 		minetest.chat_send_player(odkoho, color_soukromy .. "-> ".. ch_core.prihlasovaci_na_zobrazovaci(komu)..": "..zprava .. color_reset)
 		minetest.chat_send_player(komu, color_soukromy .. ch_core.prihlasovaci_na_zobrazovaci(odkoho)..": "..zprava .. color_reset)
 		odkoho_info.posl_soukr_adresat = komu
+		minetest.log("action", "CHAT:soukroma_zprava:"..odkoho..">"..komu..": "..minetest.sha1(zprava:gsub("%s", "")))
 		return true
 	end
 	ch_core.systemovy_kanal(odkoho, komu .. " není ve hře!")
@@ -139,6 +155,11 @@ local function on_chat_message(jmeno, zprava)
 		minetest.log("warning", "No info found about player "..jmeno.."!")
 		return true
 	end
+	local info_pos = info:get_pos()
+	if not info_pos then
+		minetest.log("warning", "No position of player "..jmeno.."!")
+		return true
+	end
 	local c = zprava:sub(1, 1)
 	if c == "!" then
 		-- celoserverový kanál
@@ -147,15 +168,15 @@ local function on_chat_message(jmeno, zprava)
 			return false
 		end
 		-- zprava = zprava:sub(zprava:sub(2,2) == " " and 3 or 2, #zprava)
-		return ch_core.celoserverovy_kanal(jmeno, zprava)
+		return ch_core.chat("celoserverovy", jmeno, zprava, info_pos)
 	elseif c == "_" then
 		-- šepot
 		-- zprava = zprava:sub(zprava:sub(2,2) == " " and 3 or 2, #zprava)
-		return ch_core.mistni_kanal(jmeno, zprava, info:get_pos(), 5)
+		return ch_core.chat("sepot", jmeno, zprava, info_pos)
 	elseif c == "*" then
 		-- kanál hraní role
 		zprava = zprava:sub(zprava:sub(2,2) == " " and 3 or 2, #zprava)
-		return ch_core.rp_kanal(jmeno, zprava, info:get_pos())
+		return ch_core.chat("rp", jmeno, zprava, info_pos)
 	elseif c == "\"" then
 		-- soukromá zpráva
 		local i = string.find(zprava, " ")
@@ -165,7 +186,7 @@ local function on_chat_message(jmeno, zprava)
 		return ch_core.soukroma_zprava(jmeno, ch_core.odstranit_diakritiku(zprava:sub(2, i - 1)), zprava:sub(i + 1))
 	else
 		-- místní zpráva
-		return ch_core.mistni_kanal(jmeno, zprava, info:get_pos(), nil)
+		return ch_core.chat("mistni", jmeno, zprava, info_pos)
 	end
 end
 
