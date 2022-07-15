@@ -372,7 +372,7 @@ function unifieddyes.getpaletteidx(color, palette_type)
 
 	if palette_type == "wallmounted" then
 		if color == "green" and shade == "light" then return 48,3
-		elseif color == "brown" or (color == "orange" and shade == "medium") then return 17,1
+		elseif color == "brown" then return 17,1
 		elseif color == "pink" or (color == "red" and shade == "light") then return 56,7
 		elseif color == "blue" and shade == "light" then return 40,5
 		elseif unifieddyes.gpidx_hues_wallmounted[color] and unifieddyes.gpidx_shades_wallmounted[shade] then
