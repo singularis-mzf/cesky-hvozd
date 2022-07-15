@@ -186,29 +186,29 @@ smartshop.update_info=function(pos)
 	local count=0
 	local stuff={}
 	for i=1,4,1 do
-		stuff["count" ..i]=inv:get_stack("give" .. i,1):get_count()
-		stuff["name" ..i]=inv:get_stack("give" .. i,1):get_name()
-		stuff["stock" ..i]=gve*stuff["count" ..i]
-		stuff["buy" ..i]=0
-		for ii=1,smartshop_capacity,1 do
-			name=inv:get_stack("main",ii):get_name()
-			count=inv:get_stack("main",ii):get_count()
-			if name==stuff["name" ..i] then
-				stuff["stock" ..i]=stuff["stock" ..i]+count
+		local stuff_count = inv:get_stack("give" .. i,1):get_count()
+		local stuff_name = inv:get_stack("give" .. i,1):get_name()
+		local stuff_stock = gve * stuff_count
+		for ii = 1, smartshop_capacity, 1 do
+			name = inv:get_stack("main",ii):get_name()
+			count = inv:get_stack("main",ii):get_count()
+			if name == stuff_name then
+				stuff_stock = stuff_stock + count
 			end
 		end
-		local nstr=(stuff["stock" ..i]/stuff["count" ..i]) ..""
-		nstr=nstr.split(nstr, ".")
-		stuff["buy" ..i]=tonumber(nstr[1])
+		local stuff_buy  = tonumber((""..(stuff_stock / stuff_count)):split(".")[1])
 
-		if stuff["name" ..i]=="" or stuff["buy" ..i]==0 then
+		if stuff_name == "" or stuff_buy == 0 then
 			stuff["buy" ..i]=""
 			stuff["name" ..i]=""
 		else
-			if string.find(stuff["name" ..i],":")~=nil then
-				stuff["name" ..i]=stuff["name" ..i].split(stuff["name" ..i],":")[2]
+			local def = minetest.registered_items[stuff_name] or minetest.registered_nodes[stuff_name] or minetest.registered_tools[stuff_name] or minetest.register_craftitems[stuff_name]
+			if def and def.description then
+				stuff["name"..i] = def.description
+			elseif string.find(stuff["name" ..i],":")~=nil then
+				stuff["name" ..i] = stuff["name" ..i].split(stuff["name" ..i],":")[2]
 			end
-			stuff["buy" ..i]="(" ..stuff["buy" ..i] ..") "
+			stuff["buy" ..i]="("..stuff_buy..") "
 			stuff["name" ..i]=stuff["name" ..i] .."\n"
 		end
 	end
