@@ -43,7 +43,7 @@ local function cyclic_update()
 end
 
 minetest.after(5.3, cyclic_update)
-]]
+
 
 -- Mapping kit item
 
@@ -53,11 +53,11 @@ minetest.register_craftitem("map:mapping_kit", {
 	stack_max = 1,
 	groups = {flammable = 3},
 
-                                                --[[
+                                                --[ [
 	on_use = function(itemstack, user, pointed_thing)
 		map.update_hud_flags(user)
 	end,
-                                                ]]
+                                                ] ]
 })
 
 
@@ -80,3 +80,4 @@ minetest.register_craft({
 	recipe = "map:mapping_kit",
 	burntime = 5,
 })
+]]

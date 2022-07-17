@@ -513,6 +513,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: LGPL 3.0 pro kód, CC-BY-SA 4.0 pro média
 * [ContentDB](https://content.minetest.net/packages/VanessaE/moretrees/)
 
+## Orienteering (minetest\_orienteering)
+
+* Zdroj: [https://repo.or.cz/minetest\_orienteering.git](https://repo.or.cz/minetest\_orienteering.git), revize 986b776c90f24f463dc8f88f80344d033826256d
+* Původní licence: MIT
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/Wuzzy/orienteering/)
+
 ## Pillars (pillars)
 
 * Zdroj: [https://github.com/CivtestGame/Pillars](https://github.com/CivtestGame/Pillars), revize 43e9b355ed1843e596331433b29926e20206055e
