@@ -308,6 +308,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: GPLv3
 * [ContentDB](https://content.minetest.net/packages/Sokomine/cottages/)
 
+## Craftable Lava (craftable\_lava)
+
+* Zdroj: [https://github.com/MikeRedwood/craftable\_lava](https://github.com/MikeRedwood/craftable\_lava), revize 5d2af72a69d61a8664a4753e73720ec18092ab59
+* Původní licence: LGPLv2.1
+* Licence úprav: LGPLv2.1
+* [ContentDB](https://content.minetest.net/packages/MikeRedwood/craftable\_lava/)
+
 ## Dark Age (darkage)
 
 * Zdroj: [https://github.com/kakalak-lumberJack/darkage](https://github.com/kakalak-lumberJack/darkage), revize 34d5ddd21b57fe73eeaf2b2d83324ff526cd7c1f
