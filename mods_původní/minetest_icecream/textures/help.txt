@@ -1,0 +1,4 @@
+.pxo - Pixelorama (https://orama-interactive.itch.io/pixelorama)
+.kra - Krita (https://krita.org/es/)
+.lua - Editado en Geany (https://www.geany.org/)
+.odt - Writer (https://es.libreoffice.org/)

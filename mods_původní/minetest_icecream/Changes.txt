@@ -1,0 +1,24 @@
+v1.5:
+add Vanilla with Cookies, Chocolate with Cookies
+
+v1.4:
+add Strawberry, Blueberries
+
+v1.3: 
+
+Change mobs:egg to group:food_egg
+add Changes.txt
+add Mint, Pumpkin, Vanilla
+
+v1.2: 
+
+Correction
+
+v1.1: 
+
+add Cone-shaped dough
+
+v1.0: 
+
+Add Ice Creams, Cone, Dough
+Apple, Banana, Carrot, Chocolate, Watermelon, Orange, Pineapple.

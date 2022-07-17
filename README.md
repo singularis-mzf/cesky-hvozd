@@ -393,6 +393,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: CC0
 * [ContentDB](https://content.minetest.net/packages/Hume2/hiking/)
 
+## Ice Cream Mod (minetest\_icecream)
+
+* Zdroj: [https://github.com/Can202/minetest\_icecream](https://github.com/Can202/minetest\_icecream), revize ff9a89b6395dc37e1a4db0106fb2d3321d280ad9
+* Původní licence: GPLv3
+* Licence úprav: GPLv3
+* [ContentDB](https://content.minetest.net/packages/Can202/icecream/)
+
 ## Infinite Chest (minetest-infinite_chest)
 
 * Zdroj: [https://github.com/cornernote/minetest-infinite\_chest](https://github.com/cornernote/minetest-infinite\_chest), revize bd6685640c07185679df0110b5e8fc2b1e0f3119
@@ -701,6 +708,7 @@ resp. *ostatní\_zdroje*.
 * Původní licence: MIT (kód), textury převážně CC-BY-3.0
 * Licence úprav: MIT (kód)
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/wine/)
+* Poznámka: mód obsahuje a používá model sudu z módu Cottages od Sokomine; autorství a licence modelu nejsou spolehlivě známy, protože mód Cottages je nezmiňuje; vycházím však z předpokladu, že model byl považován za součást kódu, a tedy podléhá licenci GPLv3 a autorem/kou je Sokomine.
 
 # Ostatní použité zdroje
 
