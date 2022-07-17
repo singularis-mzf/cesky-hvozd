@@ -703,6 +703,12 @@ resp. *ostatní\_zdroje*.
 * Původní licence: LGPLv2.1+ (kód), CC-BY-SA-3.0 (textury), CC-BY-3.0 (zvuky)
 * [ContentDB](https://content.minetest.net/packages/Grizzly%20Adam/bbq/)
 
+## Digistuff (digistuff)
+
+* Zdroj: [https://cheapiesystems.com/git/digistuff](https://cheapiesystems.com/git/digistuff), revize 32641893e75f11903489a38a201bd661c8f99b50
+* Původní licence: LGPLv2.1+ (kód), CC-BY-SA-3.0 (textury), CC-BY-3.0 (zvuky)
+* [ContentDB](https://content.minetest.net/packages/cheapie/digistuff/)
+
 ## Ethereal NG (ethereal)
 
 * Zdroj: [https://notabug.org/tenplus1/ethereal](https://notabug.org/tenplus1/ethereal), revize 769fb8111edd0a895514db3a2df316c0b49b0252
