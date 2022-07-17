@@ -695,6 +695,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: (mod je zatím bez úprav)
 * [ContentDB](https://content.minetest.net/packages/bell07/wielded\_light/)
 
+## Wine (wine)
+
+* Zdroj: [https://notabug.org/tenplus1/wine](https://notabug.org/tenplus1/wine), revize b5f94f49dab6212d46b032cea8ada47abf1ee62e
+* Původní licence: MIT (kód), textury převážně CC-BY-3.0
+* Licence úprav: MIT (kód)
+* [ContentDB](https://content.minetest.net/packages/TenPlus1/wine/)
+
 # Ostatní použité zdroje
 
 ## Your Dad's BBQ Mod (BBQ)
