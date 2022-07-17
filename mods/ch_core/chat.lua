@@ -245,6 +245,7 @@ function ch_core.unset_ignorovat(player_name, name_to_unignore)
 		return false
 	end
 
+	name_to_unignore = ch_core.jmeno_na_prihlasovaci(name_to_unignore)
 	if ignore_list[name_to_unignore] then
 		ignore_list[name_to_unignore] = nil
 		ch_core.systemovy_kanal(player_name, "Ignorování postavy " .. ch_core.prihlasovaci_na_zobrazovaci(name_to_unignore) .. " zrušeno.")
