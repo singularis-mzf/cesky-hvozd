@@ -25,36 +25,14 @@ local is_uninv = minetest.global_exists("unified_inventory") or false
 -- is thirsty mod active
 local thirsty_mod = minetest.get_modpath("thirsty")
 
-
 -- Intllib support
-local S
-if minetest.get_translator then
-	S = minetest.get_translator("wine")
-elseif minetest.get_modpath("intllib") then
-	S = intllib.Getter()
-else
-	S = function(s, a, ...)
-		if a == nil then
-			return s
-		end
-		a = {a, ...}
-		return s:gsub("(@?)@(%(?)(%d+)(%)?)",
-			function(e, o, n, c)
-				if e == ""then
-					return a[tonumber(n)] .. (o == "" and c or "")
-				else
-					return "@" .. o .. n .. c
-				end
-			end)
-	end
-end
-
+local S = minetest.get_translator("wine")
 
 -- Unified Inventory hints
 if is_uninv then
 
 	unified_inventory.register_craft_type("barrel", {
-		description = "Barrel",
+		description = "fermentace",
 		icon = 'wine_barrel.png',
 		width = 1,
 		height = 1
@@ -67,10 +45,9 @@ local ferment = {
 	{"farming:barley", "wine:glass_beer"},
 	{"mobs:honey", "wine:glass_mead"},
 	{"xdecor:honey", "wine:glass_mead"}, -- for when xdcecor is installed
-	{"default:apple", "wine:glass_cider"},
-	{"default:papyrus", "wine:glass_rum"},
+--	{"default:apple", "wine:glass_apple_juice"},
+--	{"default:papyrus", "wine:glass_lemonade"},
 	{"wine:blue_agave", "wine:glass_tequila"},
-	{"farming:wheat", "wine:glass_wheat_beer"},
 	{"farming:rice", "wine:glass_sake"},
 	{"farming:corn", "wine:glass_bourbon"},
 	{"farming:baked_potato", "wine:glass_vodka"},
@@ -78,10 +55,53 @@ local ferment = {
 	{"wine:glass_champagne_raw", "wine:glass_champagne"}
 }
 
-if mcl then
-	ferment[4] = {"mcl_core:apple", "wine:glass_cider"}
-	ferment[5] = {"mcl_core:paper", "wine:glass_rum"}
-end
+minetest.register_craft({
+	output = "wine:glass_apple_juice",
+	recipe = {
+		{"default:apple"},
+		{"farming:juicer"},
+		{"vessels:drinking_glass"},
+	},
+	replacements = {
+		{"group:food_juicer", "farming:juicer"}
+	},
+})
+
+minetest.register_craft({
+	output = "wine:glass_lemonade",
+	recipe = {
+		{"ethereal:orange"},
+		{"farming:juicer"},
+		{"vessels:drinking_glass"},
+	},
+	replacements = {
+		{"group:food_juicer", "farming:juicer"}
+	},
+})
+
+minetest.register_craft({
+	output = "wine:glass_lemonade",
+	recipe = {
+		{"farming:strawberry"},
+		{"farming:juicer"},
+		{"vessels:drinking_glass"},
+	},
+	replacements = {
+		{"group:food_juicer", "farming:juicer"}
+	},
+})
+
+minetest.register_craft({
+	output = "wine:glass_lemonade",
+	recipe = {
+		{"farming:pineapple"},
+		{"farming:juicer"},
+		{"vessels:drinking_glass"},
+	},
+	replacements = {
+		{"group:food_juicer", "farming:juicer"}
+	},
+})
 
 
 if is_uninv then
@@ -120,13 +140,13 @@ end
 local beverages = {
 	{"wine", "Wine", true, 2, 5},
 	{"beer", "Beer", true, 2, 8},
-	{"rum", "Rum", true, 2, 5},
+	{"lemonade", "Lemonade", true, 2, 5},
 	{"tequila", "Tequila", true, 2, 3},
-	{"wheat_beer", "Wheat Beer", true, 2, 8},
+	-- {"wheat_beer", "Wheat Beer", true, 2, 8},
 	{"sake", "Sake", true, 2, 3},
-	{"bourbon", "Bourbon", true, 2, 3},
+	{"bourbon", "Bourbon", false, 2, 3},
 	{"vodka", "Vodka", true, 2, 3},
-	{"cider", "Cider", true, 2, 6},
+	{"apple_juice", "Apple Juice", true, 2, 6},
 	{"mead", "Honey-Mead", true, 4, 5},
 	{"mint", "Mint Julep", true, 4, 3},
 	{"brandy", "Brandy", true, 3, 4},
@@ -239,7 +259,7 @@ if minetest.get_modpath("farming")
 and farming.mod and (farming.mod == "undo" or farming.mod == "redo") then
 
 	minetest.register_craftitem("wine:glass_champagne_raw", {
-		description = "Raw Champagne",
+		description = "Sklenice slazeného vína",
 		inventory_image = "wine_champagne_raw_glass.png",
 		groups = {vessel = 1, flammable = 3}
 	})
@@ -352,7 +372,7 @@ minetest.register_craft({
 
 -- cook blue agave into a sugar syrup
 minetest.register_craftitem("wine:agave_syrup", {
-	description = "Agave Syrup",
+	description = S("Agave Syrup"),
 	inventory_image = "wine_agave_syrup.png",
 	groups = {food_sugar = 1, vessel = 1, flammable = 3}
 })
@@ -661,10 +681,10 @@ if minetest.get_modpath("lucky_block") then
 		{"fal", {"default:water_source"}, 1, true, 4},
 		{"dro", {"wine:glass_wine"}, 5},
 		{"dro", {"wine:glass_beer"}, 5},
-		{"dro", {"wine:glass_wheat_beer"}, 5},
+		-- {"dro", {"wine:glass_wheat_beer"}, 5},
 		{"dro", {"wine:glass_mead"}, 5},
-		{"dro", {"wine:glass_cider"}, 5},
-		{"dro", {"wine:glass_rum"}, 5},
+		{"dro", {"wine:glass_apple_juice"}, 5},
+		{"dro", {"wine:glass_lemonade"}, 5},
 		{"dro", {"wine:glass_sake"}, 5},
 		{"dro", {"wine:glass_tequila"}, 5},
 		{"dro", {"wine:glass_bourbon"}, 5},
@@ -678,8 +698,8 @@ if minetest.get_modpath("lucky_block") then
 		{"nod", "default:chest", 0, {
 			{name = "wine:bottle_wine", max = 1},
 			{name = "wine:bottle_tequila", max = 1},
-			{name = "wine:bottle_rum", max = 1},
-			{name = "wine:bottle_cider", max = 1},
+			{name = "wine:bottle_lemonade", max = 1},
+			{name = "wine:bottle_apple_juice", max = 1},
 			{name = "wine:bottle_bourbon", max = 1},
 			{name = "wine:bottle_vodka", max = 1},
 			{name = "wine:wine_barrel", max = 1},
@@ -687,13 +707,10 @@ if minetest.get_modpath("lucky_block") then
 			{name = "wine:bottle_mint", max = 1},
 			{name = "wine:bottle_mead", max = 1},
 			{name = "wine:bottle_beer", max = 1},
-			{name = "wine:bottle_wheat_beer", max = 1},
+			-- {name = "wine:bottle_wheat_beer", max = 1},
 			{name = "wine:bottle_coffee_liquor", max = 1},
 			{name = "wine:bottle_brandy", max = 1},
 			{name = "wine:bottle_champagne", max = 1},
 			{name = "wine:blue_agave", max = 4}}},
 	})
 end
-
-
-print ("[MOD] Wine loaded")

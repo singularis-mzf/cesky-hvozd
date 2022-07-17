@@ -22,10 +22,7 @@ THE SOFTWARE.
 
 Textures by TenPlus1 unless listed below (CC-By-3.0)
 
-Mikhail Miroscnichenko @ dreamstime.com (royalty free license)
-  wine_bourbon_bottle.png
-
-RiverKpocc @ deviantart.com
+TenPlus1, modified by Singularis (CC-By-3.0)
   wine_beer_glass.png
   wine_wheat_beer_glass.png
 
@@ -36,7 +33,7 @@ Textures by Darkstalker (cc-by-3.0 license)
 Textures by Darkstalker and edited by Felfa (cc-by-3.0 license)
   wine_beer_bottle.png
   wine_wheat_beer_bottle.png
-  wine_cider.bottle.png
+  wine_apple_juice_bottle.png
   wine_mead_bottle.png
 
 Textures by Felfa (CC0)
