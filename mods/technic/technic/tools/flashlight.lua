@@ -31,27 +31,15 @@ local player_positions = {}
 local was_wielding = {}
 
 local function check_for_flashlight(player)
-	if player == nil then
-		return false
-	end
-	local inv = player:get_inventory()
-	local hotbar = inv:get_list("main")
-	local hotbar_length = player:hud_get_hotbar_itemcount()
+	local hotbar = player:get_inventory():get_list("main")
+	local flashlights = ch_core.predmety_na_liste(player, true)["technic:flashlight"]
 
-	if not hotbar_length then
-		hotbar_length = 8
-	elseif hotbar_length > 32 then
-		hotbar_length = 32
-	elseif hotbar_length < 1 then
-		hotbar_length = 1
-	end
-
-	for i = 1, hotbar_length do
-		if hotbar[i]:get_name() == "technic:flashlight" then
+	if flashlights then
+		for _, i in ipairs(flashlights) do
 			local meta = minetest.deserialize(hotbar[i]:get_metadata())
 			local charge = meta and meta.charge
 			if charge and charge >= 2 then
-				if not technic.creative_mode then
+				if not minetest.is_creative_enabled(player:get_player_name()) then
 					meta.charge = charge - 2;
 					technic.set_RE_wear(hotbar[i], meta.charge, flashlight_max_charge)
 					hotbar[i]:set_metadata(minetest.serialize(meta))
@@ -61,6 +49,7 @@ local function check_for_flashlight(player)
 			end
 		end
 	end
+
 	return false
 end
 

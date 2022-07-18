@@ -30,7 +30,7 @@ dye.dyes = {
 for _, row in ipairs(dye.dyes) do
 	local name = row[1]
 	local description = row[2]
-	local groups = {dye = 1}
+	local groups = {dye = 1, basic_dye = 1}
 	groups["color_" .. name] = 1
 
 	minetest.register_craftitem("dye:" .. name, {

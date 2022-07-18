@@ -283,18 +283,12 @@ end
 -- Checks whether a certain orienteering tool is “active” and ready for use
 function orienteering.tool_active(player, item)
 	-- Requirement: player carries the tool in the hotbar
-	local inv = player:get_inventory()
-	-- Exception: MTG's Mapping Kit can be anywhere
-	if item == "map:mapping_kit" then
-		return inv:contains_item("main", item)
+	local result = ch_core.predmety_na_liste(player, false)[item]
+	if result then
+		return true
+	else
+		return false
 	end
-	local hotbar = player:hud_get_hotbar_itemcount()
-	for i=1, hotbar do
-		if inv:get_stack("main", i):get_name() == item then
-			return true
-		end
-	end
-	return false
 end
 
 function orienteering.init_hud(player)
@@ -317,33 +311,18 @@ end
 
 function orienteering.update_hud_displays(player)
 	local toDegrees=180/math.pi
+	local lista = ch_core.predmety_na_liste(player, false)
 	local name = player:get_player_name()
 	local gps, altimeter, triangulator, compass, sextant, watch, speedometer, quadcorder
 
-	if orienteering.tool_active(player, "orienteering:gps") then
-		gps = true
-	end
-	if orienteering.tool_active(player, "orienteering:altimeter") then
-		altimeter = true
-	end
-	if orienteering.tool_active(player, "orienteering:triangulator") then
-		triangulator = true
-	end
-	if orienteering.tool_active(player, "orienteering:compass") then
-		compass = true
-	end
-	if orienteering.tool_active(player, "orienteering:sextant") then
-		sextant = true
-	end
-	if orienteering.tool_active(player, "orienteering:watch") then
-		watch = true
-	end
-	if orienteering.tool_active(player, "orienteering:speedometer") then
-		speedometer = true
-	end
-	if orienteering.tool_active(player, "orienteering:quadcorder") then
-		quadcorder = true
-	end
+	gps = lista["orienteering:gps"]
+	altimeter = lista["orienteering:altimeter"]
+	triangulator = lista["orienteering:triangulator"]
+	compass = lista["orienteering:compass"]
+	sextant = lista["orienteering:sextant"]
+	watch = lista["orienteering:watch"]
+	speedometer = lista["orienteering:speedometer"]
+	quadcorder = lista["orienteering:quadcorder"]
 
 	local str_pos, str_angles, str_time, str_speed
 	local pos = vector.round(player:get_pos())

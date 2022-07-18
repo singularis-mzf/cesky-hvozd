@@ -406,12 +406,8 @@ end
 local copy_rotation_callback
 
 local function rhotator_on_placenode(pos, newnode, player, oldnode, itemstack, pointed_thing)
-	if not player then
-		return
-	end
-	local player_inv = player:get_inventory()
-	if not player_inv or not player_inv:contains_item("main", "rhotator:memory") then
-		return -- do nothing without memory tool
+	if not ch_core.predmety_na_liste(player, false)["rhotator:memory"] then
+		return -- do nothing without memory tool on the hotbar
 	end
 	local playername = player:get_player_name()
 	local key = "memory_" .. playername

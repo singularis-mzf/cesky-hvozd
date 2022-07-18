@@ -111,7 +111,7 @@ notify.__call = function(self, player, message, params)
 		player_name = player:get_player_name()
 	end
 
-	message = ("[%s] %s"):format(mod_name, message)
+	message = ("[%s] %s"):format("rotátor", message)
 
 	local hud_info = hud_info_by_player_name[player_name]
 	local hud_def
