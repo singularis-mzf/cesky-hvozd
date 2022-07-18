@@ -47,9 +47,12 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 -- adds a function to check ownership of a node; taken from VanessaEs homedecor mod
 dofile(minetest.get_modpath("replacer").."/check_owner.lua");
 
-replacer = {};
+replacer = {
+	blacklist = {},
+};
 
-replacer.blacklist = {};
+local max_charge = 50000
+local power_usage = 200
 
 -- playing with tnt and creative building are usually contradictory
 -- (except when doing large-scale landscaping in singleplayer)
@@ -72,9 +75,73 @@ dofile(minetest.get_modpath("replacer").."/fs_history.lua");
 -- and allows to replace the *material* while keeping shape - or vice versa
 dofile(minetest.get_modpath("replacer").."/mode_of_replacement.lua");
 
+local function replacer_on_place(itemstack, placer, pointed_thing)
+	if not placer or not pointed_thing then
+		return itemstack
+	end
+	local player_name = placer:get_player_name()
+	local meta = minetest.deserialize(itemstack:get_metadata())
+	local charge = meta and meta.charge
+	if not player_name or not charge or charge < power_usage then
+		return itemstack
+	end
+	local player_keys = placer:get_player_control()
+
+	if not player_keys.sneak and not player_keys.aux1 then
+		itemstack = replacer.replace(itemstack, placer, pointed_thing, 0) or itemstack
+	elseif pointed_thing.type ~= "node" then
+		ch_core.systemovy_kanal(player_name, "Elektrický nahrazovač: CHYBA: Není vybrán žádný blok.")
+		return nil
+	else
+		local pos = minetest.get_pointed_thing_position(pointed_thing, false) -- node under
+		local node = minetest.get_node_or_nil(pos)
+		local pattern
+		if node and node.name then
+			pattern = node.name.." "..node.param1.." "..node.param2
+		else
+			pattern = "default:dirt 0 0"
+		end
+		itemstack = replacer.set_to(player_name, pattern, placer, itemstack) or itemstack -- nothing consumed but data changed
+	end
+
+	if not minetest.is_creative_enabled(player_name) then
+		meta.charge = charge - power_usage
+		technic.set_RE_wear(itemstack, meta.charge, max_charge)
+		itemstack:set_metadata(minetest.serialize(meta))
+	end
+	return itemstack
+end
+
+local function replacer_on_use(itemstack, user, pointed_thing)
+	if not user or not pointed_thing then
+		return itemstack
+	end
+	local player_name = user:get_player_name()
+	local meta = minetest.deserialize(itemstack:get_metadata())
+	local charge = meta and meta.charge
+	if not player_name or not charge or charge < power_usage then
+		return itemstack
+	end
+	local pos = minetest.get_pointed_thing_position(pointed_thing, false)
+	minetest.sound_play("mining_drill", {
+		pos = pos,
+		gain = 1.0,
+		max_hear_distance = 10,
+	})
+	itemstack = replacer.replace(itemstack, user, pointed_thing, false) or itemstack
+	if not minetest.is_creative_enabled(player_name) then
+		meta.charge = charge - power_usage
+		technic.set_RE_wear(itemstack, meta.charge, max_charge)
+		itemstack:set_metadata(minetest.serialize(meta))
+	end
+	return itemstack
+end
+
+technic.register_power_tool("replacer:replacer", max_charge)
+
 minetest.register_tool( "replacer:replacer",
 {
-    description = "Nahrazovač",
+    description = "Elektrický nahrazovač",
     groups = {}, 
     inventory_image = "replacer_replacer.png",
     wield_image = "",
@@ -95,44 +162,11 @@ minetest.register_tool( "replacer:replacer",
     },
 --]]
     node_placement_prediction = nil,
-
-    on_place = function(itemstack, placer, pointed_thing)
-
-       if( placer == nil or pointed_thing == nil) then
-          return itemstack; -- nothing consumed
-       end
-       local name = placer:get_player_name();
-       --minetest.chat_send_player( name, "You PLACED this on "..minetest.serialize( pointed_thing )..".");
-
-       local keys=placer:get_player_control();
-    
-       -- just place the stored node if no new one is to be selected
-       if( not( keys["sneak"] ) and not( keys["aux1"])) then
-
-          return replacer.replace( itemstack, placer, pointed_thing, 0  ); end
-
- 
-       if( pointed_thing.type ~= "node" ) then
-          minetest.chat_send_player( name, "  Chyba: Není vybrán žádný blok.");
-          return nil;
-       end
-
-       local pos  = minetest.get_pointed_thing_position( pointed_thing, false ); -- node under
-       local node = minetest.get_node_or_nil( pos );
-       
-       local pattern = "default:dirt 0 0";
-       if( node ~= nil and node.name ) then
-          pattern = node.name..' '..node.param1..' '..node.param2;
-       end
-
-       return replacer.set_to(name, pattern, placer, itemstack) -- nothing consumed but data changed
-    end,
-     
-
-    on_use = function(itemstack, user, pointed_thing)
-
-       return replacer.replace( itemstack, user, pointed_thing, false );
-    end,
+    on_place = replacer_on_place,
+    on_use = replacer_on_use,
+	-- technic:
+	wear_represents = "technic_RE_charge",
+	on_refill = technic.refill_RE_charge,
 })
 
 

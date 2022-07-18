@@ -129,7 +129,7 @@ replacer.get_formspec = function(player_name, current_pattern, player)
 		"label[6,0;Nastavení a záznamy nahrazovače]"..
 		"button_exit[8,9.4;2,0.8;quit;Zavřít]"..
 		"label[0.2,8.5;Poznámka: Nastavený režim a historie se ztratí při restartu serveru.\n"..
-			"Poznámka: Vybraný typ objektu platí pro *všechny* vámi používané nahrazovače. "..
+			"Poznámka: Vybraný režim platí pro *všechny* vámi používané nahrazovače. "..
 			"Uložený vzor platí jen pro *tento konkrétní* nahrazovač.]"..
 		"label[0.2,0.6;Zvolit režim: Při nahrazování (levým tlačítkem) nebo "..
 			"umísťování (pravým tlačítkem) bloku, ..]"..
@@ -160,7 +160,7 @@ replacer.get_formspec = function(player_name, current_pattern, player)
 				parts[1] = "default:dirt"
 			end
 			if(counted_inv[ parts[1] ]) then
-				amount_left = "#00FF00,"..tostring(counted_inv[ parts[1] ]).." available:"..
+				amount_left = "#00FF00,"..tostring(counted_inv[ parts[1] ]).." dostupných:"..
 					",#00FF00"
 			else
 				amount_left = "#FF0000,nic nezbývá!,#CFCFCF"

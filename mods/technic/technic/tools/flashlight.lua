@@ -31,21 +31,30 @@ local player_positions = {}
 local was_wielding = {}
 
 local function check_for_flashlight(player)
-	local hotbar = player:get_inventory():get_list("main")
 	local flashlights = ch_core.predmety_na_liste(player, true)["technic:flashlight"]
 
 	if flashlights then
-		for _, i in ipairs(flashlights) do
-			local meta = minetest.deserialize(hotbar[i]:get_metadata())
+		if minetest.is_creative_enabled(player:get_player_name()) then
+			return true
+		end
+		local inv = player:get_inventory()
+		local hotbar = inv:get_list("main")
+		local i = 1
+		local flashlight_index = flashlights[i]
+
+		while flashlight_index do
+			local item = hotbar[flashlight_index]
+			local meta = minetest.deserialize(item:get_metadata())
 			local charge = meta and meta.charge
 			if charge and charge >= 2 then
-				if not minetest.is_creative_enabled(player:get_player_name()) then
-					meta.charge = charge - 2;
-					technic.set_RE_wear(hotbar[i], meta.charge, flashlight_max_charge)
-					hotbar[i]:set_metadata(minetest.serialize(meta))
-					inv:set_stack("main", i, hotbar[i])
-				end
+				meta.charge = charge - 2
+				technic.set_RE_wear(item, meta.charge, flashlight_max_charge)
+				item:set_metadata(minetest.serialize(meta))
+				inv:set_stack("main", flashlight_index, item)
 				return true
+			else
+				i = i + 1
+				flashlight_index = flashlights[i]
 			end
 		end
 	end
