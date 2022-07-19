@@ -653,6 +653,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: LGPL 2.1
 * [ContentDB](https://content.minetest.net/packages/Emojiminetest/technic\_hv\_extend/)
 
+## Tower Crane (towercrane)
+
+* Zdroj: [https://github.com/minetest-mods/towercrane](https://github.com/minetest-mods/towercrane), revize 3975b970ee7bc33c10237e0e5bd4c84616e70e78
+* Původní licence: LGPL 2.1+
+* Licence úprav: LGPL 2.1+
+* [ContentDB](https://content.minetest.net/packages/joe7575/towercrane/)
+
 ## Trash Can (trash\_can)
 
 * Zdroj: [https://github.com/minetest-mods/trash\_can](https://github.com/minetest-mods/trash\_can), revize 423b0f26a827fd3b0092d29d859199ff6776b212
