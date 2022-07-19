@@ -589,6 +589,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/entuland/rhotator/)
 
+## Ropes (ropes)
+
+* Zdroj: [https://github.com/minetest-mods/ropes](https://github.com/minetest-mods/ropes), revize b89f6c6a217b9a473bbf5e47896c642b503d507a
+* Původní licence: MIT
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/FaceDeer/ropes/)
+
 ## Round Tree Trunks (round\_trunks)
 
 * Zdroj: [https://codeberg.org/Hamlet/round\_trunks](https://codeberg.org/Hamlet/round\_trunks), revize b8de39e76c8c958f46ce5a6a40ff0c72aa8c0606
