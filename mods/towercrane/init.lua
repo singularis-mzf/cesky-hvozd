@@ -52,7 +52,7 @@ local function formspec(height, width)
 	end
 	return "size[5,4]"..
 		"label[0,0;"..S("Construction area size").."]" ..
-		"field[1,1.5;3,1;size;height,width;"..text.."]" ..
+		"field[1,1.5;3,1;size;"..S("height,width")..";"..text.."]" ..
 		"button_exit[1,2;2,1;exit;"..S("Build").."]"
 end
 
