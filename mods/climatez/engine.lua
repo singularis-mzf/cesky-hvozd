@@ -137,11 +137,11 @@ local function register_downfall(name, def)
 end
 
 register_downfall("rain", {
-	min_pos = {x = -15, y = 10, z = -15},
-	max_pos = {x = 15, y = 10, z = 15},
+	min_pos = {x = -15, y = 20, z = -15},
+	max_pos = {x = 15, y = 20, z = 15},
 	falling_speed = climatez.settings.rain_falling_speed,
 	amount = climatez.settings.rain_particles,
-	exptime = 1,
+	exptime = 2,
 	size = 1.75,
 	texture = {"climatez_rain.png", "climatez_rain2.png", "climatez_rain3.png"},
 })
