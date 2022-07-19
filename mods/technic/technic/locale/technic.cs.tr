@@ -209,6 +209,20 @@ Sonic Screwdriver (left-click rotates face, right-click rotates axis)=Sonický �
 Tree Tap=Kohoutek na stromy
 Prospector=Detektor kovů a jiných materiálů
 
+## Prospector
+Right-click to set target block type=Klikněte pravým tlačítkem na blok pro nastavení hledaného materiálu
+Current target:=Nyní hledaný materiál:
+No target set=Materiál není nastaven
+May set new target:=Mohu nastavit nový materiál:
+Set target=Nastavit
+No new target available=Nový cíl není dostupný
+Region cross section:=Prohledávaný půdorys (souř. x, z)
+Set region cross section:=Nastavit rozměr půdorysu:
+Region depth:=Hloubka k prohledání
+Set region depth:=Nastavit hloubku:
+Accuracy:=Přesnost:
+
+
 ## Craft descriptions
 Alloy cooking=slévání
 Grinding=drcení

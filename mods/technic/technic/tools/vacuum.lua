@@ -47,8 +47,10 @@ local function vacuum_onuse(itemstack, user, pointed_thing, max_charge, charge_p
 		end
 	end
 
-	technic.set_RE_wear(itemstack, meta.charge, max_charge)
-	itemstack:set_metadata(minetest.serialize(meta))
+	if not minetest.is_creative_enabled(user:get_player_name()) then
+		technic.set_RE_wear(itemstack, meta.charge, max_charge)
+		itemstack:set_metadata(minetest.serialize(meta))
+	end
 	return itemstack
 end
 

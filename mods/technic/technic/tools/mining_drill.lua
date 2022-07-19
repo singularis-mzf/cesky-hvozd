@@ -301,7 +301,7 @@ local function mining_drill_mk2_handler(itemstack, user, pointed_thing)
 	if meta.charge >= charge_to_take then
 		local pos = minetest.get_pointed_thing_position(pointed_thing, false)
 		drill_dig_it(pos, user, meta.mode)
-		if not technic.creative_mode then
+		if not minetest.is_creative_enabled(user:get_player_name()) then
 			meta.charge = meta.charge - charge_to_take
 			itemstack:set_metadata(minetest.serialize(meta))
 			technic.set_RE_wear(itemstack, meta.charge, max_charge[2])
@@ -323,7 +323,7 @@ local function mining_drill_mk3_handler(itemstack, user, pointed_thing)
 	if meta.charge >= charge_to_take then
 		local pos = minetest.get_pointed_thing_position(pointed_thing, false)
 		drill_dig_it(pos, user, meta.mode)
-		if not technic.creative_mode then
+		if not minetest.is_creative_enabled(user:get_player_name()) then
 			meta.charge = meta.charge - charge_to_take
 			itemstack:set_metadata(minetest.serialize(meta))
 			technic.set_RE_wear(itemstack, meta.charge, max_charge[3])
@@ -352,7 +352,7 @@ minetest.register_tool("technic:mining_drill", {
 		if meta.charge >= charge_to_take then
 			local pos = minetest.get_pointed_thing_position(pointed_thing, false)
 			drill_dig_it(pos, user, 1)
-			if not technic.creative_mode then
+			if not minetest.is_creative_enabled(user:get_player_name()) then
 				meta.charge = meta.charge - charge_to_take
 				itemstack:set_metadata(minetest.serialize(meta))
 				technic.set_RE_wear(itemstack, meta.charge, max_charge[1])

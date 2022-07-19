@@ -239,7 +239,7 @@ local function chainsaw_onuse(max_charge, itemstack, user, pointed_thing)
 	-- Send current charge to digging function so that the
 	-- chainsaw will stop after digging a number of nodes
 	meta.charge = chainsaw_dig(pointed_thing.under, meta.charge)
-	if not technic.creative_mode then
+	if not minetest.is_creative_enabled(name) then
 		technic.set_RE_wear(itemstack, meta.charge, max_charge)
 		itemstack:set_metadata(minetest.serialize(meta))
 	end

@@ -20,7 +20,9 @@ minetest.register_tool("wrench:wrench", {
 			end
 			return
 		end
-		itemstack:add_wear(65535 / 20)
+		if not minetest.is_creative_enabled(name) then
+			itemstack:add_wear(65535 / 20)
+		end
 		return itemstack
 	end,
 })

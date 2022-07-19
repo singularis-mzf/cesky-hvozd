@@ -116,7 +116,7 @@ for _, m in pairs(mining_lasers_list) do
 			end
 			laser_shoot(user, range, "technic_laser_beam_mk" .. m[1] .. ".png",
 				"technic_laser_mk" .. m[1])
-			if not technic.creative_mode then
+			if not minetest.is_creative_enabled(user:get_player_name()) then
 				meta.charge = math.max(meta.charge - m[4], 0)
 				technic.set_RE_wear(itemstack, meta.charge, m[3])
 				itemstack:set_metadata(minetest.serialize(meta))
