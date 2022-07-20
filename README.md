@@ -527,6 +527,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: LGPL 3.0 pro kód, CC-BY-SA 4.0 pro média
 * [ContentDB](https://content.minetest.net/packages/VanessaE/moretrees/)
 
+## New Campfire (new\_campfire)
+
+* Zdroj: [https://github.com/mt-mods/new\_campfire](https://github.com/mt-mods/new\_campfire), revize 92578c3875730ce0cb79663e1a571e499e64175d
+* Původní licence: LGPLv2.1+ pro kód (podle [příspěvku na fóru](https://forum.minetest.net/viewtopic.php?p=250137#p250137), repozitář obsahuje licenci, ale už ne odkaz na ni), CC-BY-SA 3.0 pro textury, CC-BY-SA-?? pro model
+* Licence úprav: LGPLv2.1+ pro kód, CC-BY-SA 3.0 pro ostatní
+* [ContentDB](https://content.minetest.net/packages/VanessaE/new\_campfire/)
+
 ## Orienteering (minetest\_orienteering)
 
 * Zdroj: [https://repo.or.cz/minetest\_orienteering.git](https://repo.or.cz/minetest\_orienteering.git), revize 986b776c90f24f463dc8f88f80344d033826256d
