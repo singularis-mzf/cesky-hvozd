@@ -4,6 +4,7 @@ Version: 0.3.0
 
 # License of source code:
 - Copyright (C) 2017 Pavel Litvinoff <googolgl@gmail.com>
+- License LGPL 2.1+ according to https://forum.minetest.net/viewtopic.php?p=250137#p250137
 
 - Authors of media (contained_campfire.obj) and (campfire.png) files:
 - Nathan Salapat

@@ -136,7 +136,7 @@ local function infotext_edit(meta)
 	meta:set_string('infotext', infotext)
 end
 
-local function cooking(pos, itemstack)
+local function cooking(pos, itemstack, is_creative)
 	local meta = minetest.get_meta(pos)
 	local cooked, _ = minetest.get_craft_result({method = "cooking", width = 1, items = {itemstack}})
 	local cookable = cooked.time ~= 0
@@ -178,7 +178,9 @@ local function cooking(pos, itemstack)
 				end
 			end)
 
-			if not minetest.setting_getbool("creative_mode") then
+			print("cooking() is_creative = "..(is_creative and "true" or "false"))
+
+			if not is_creative then
 				itemstack:take_item()
 				return itemstack
 			end
@@ -186,7 +188,7 @@ local function cooking(pos, itemstack)
 	end
 end
 
-local function add_stick(pos, itemstack)
+local function add_stick(pos, itemstack, is_creative)
 	local meta = minetest.get_meta(pos)
 	local name = itemstack:get_name()
 	if itemstack:get_definition().groups.stick == 1 then
@@ -201,7 +203,7 @@ local function add_stick(pos, itemstack)
 			6
 		)
 		infotext_edit(meta)
-		if not minetest.setting_getbool("creative_mode") then
+		if not is_creative then
 			itemstack:take_item()
 			return itemstack
 		end
@@ -256,14 +258,14 @@ minetest.register_node('new_campfire:fireplace', {
 	buildable_to = false,
 	sunlight_propagates = false,
 	paramtype = 'light',
-	groups = {dig_immediate=3, flammable=0, not_in_creative_inventory=1},
+	groups = {dig_immediate=2, flammable=0},
 	selection_box = sbox,
 	sounds = default.node_sound_stone_defaults(),
-	drop = {max_items = 3, items = {{items = {"stairs:slab_cobble 3"}}}},
+	--drop = {max_items = 3, items = {{items = {"stairs:slab_cobble 3"}}}},
 
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local name = itemstack:get_name()
-		local a=add_stick(pos, itemstack)
+		local a=add_stick(pos, itemstack, minetest.is_creative_enabled(player:get_player_name()))
 		if a then
 			minetest.swap_node(pos, {name = "new_campfire:campfire"})
 		elseif name == "new_campfire:grille" then
@@ -353,7 +355,7 @@ minetest.register_node('new_campfire:campfire_active', {
 	selection_box = sbox,
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local name = itemstack:get_name()
-		local a=add_stick(pos, itemstack)
+		local a=add_stick(pos, itemstack, minetest.is_creative_enabled(player:get_player_name()))
 		if not a then
 			if name == "new_campfire:grille" then
 				itemstack:take_item()
@@ -408,7 +410,7 @@ minetest.register_node('new_campfire:fireplace_with_embers', {
 
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local name = itemstack:get_name()
-		local a=add_stick(pos, itemstack)
+		local a=add_stick(pos, itemstack, minetest.is_creative_enabled(player:get_player_name()))
 		if a then
 			minetest.swap_node(pos, {name = "new_campfire:campfire"})
 			minetest.after(new_campfire.flare_up, function()
@@ -468,7 +470,7 @@ minetest.register_node('new_campfire:fireplace_with_embers_with_grille', {
 	},
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local name = itemstack:get_name()
-		local a=add_stick(pos, itemstack)
+		local a=add_stick(pos, itemstack, minetest.is_creative_enabled(player:get_player_name()))
 		if a then
 			minetest.swap_node(pos, {name = "new_campfire:campfire_with_grille"})
 			minetest.after(new_campfire.flare_up, function()
@@ -521,7 +523,7 @@ minetest.register_node('new_campfire:fireplace_with_grille', {
 	end,
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local name = itemstack:get_name()
-		local a=add_stick(pos, itemstack)
+		local a=add_stick(pos, itemstack, minetest.is_creative_enabled(player:get_player_name()))
 		if a then
 			minetest.swap_node(pos, {name = "new_campfire:campfire_with_grille"})
 		end
@@ -615,9 +617,10 @@ minetest.register_node('new_campfire:campfire_active_with_grille', {
 
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local name = itemstack:get_name()
-		local a=add_stick(pos, itemstack)
+		local is_creative = minetest.is_creative_enabled(player:get_player_name())
+		local a=add_stick(pos, itemstack, is_creative)
 		if not a then
-			cooking(pos, itemstack)
+			return cooking(pos, itemstack, is_creative)
 		end
 	end,
 
@@ -732,6 +735,25 @@ minetest.register_craft({
 		{'stairs:slab_cobble','group:stick', 'stairs:slab_cobble'},
 		{'', 'stairs:slab_cobble', ''},
 	}
+})
+
+minetest.register_craft({
+	output = "new_campfire:campfire",
+	recipe = {
+		{'group:stick', '', ''},
+		{'group:stick', '', ''},
+		{'new_campfire:fireplace', '', ''},
+	}
+})
+
+minetest.register_craft({
+	output = "new_campfire:fireplace",
+	recipe = {{"stairs:slab_cobble", "", "stairs:slab_cobble"}, {"", "stairs:slab_cobble", ""}, {"", "", ""}},
+})
+
+minetest.register_craft({
+	output = "stairs:slab_cobble 3",
+	recipe = {{"new_campfire:fireplace"}},
 })
 
 -- ITEMS
