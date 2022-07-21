@@ -32,10 +32,7 @@ end
 function ch_core.chat(rezim, odkoho, zprava, pozice)
 	pozice = vector.new(pozice.x, pozice.y, pozice.z)
 
-	if rezim == "rp" then
-		return ch_core.rp_kanal(odkoho, zprava, pozice)
-	end
-	if rezim ~= "celoserverovy" and rezim ~= "mistni" and rezim ~= "sepot" then
+	if rezim ~= "celoserverovy" and rezim ~= "mistni" and rezim ~= "sepot" and rezim ~= "rp" then
 		minetest.log("error", "ch_core.chat(): invalid chat mode '"..rezim.."'!!!")
 		return false
 	end
@@ -51,6 +48,8 @@ function ch_core.chat(rezim, odkoho, zprava, pozice)
 		barva_zpravy = color_celoserverovy
 	elseif rezim == "sepot" then
 		barva_zpravy = color_sepot
+	elseif rezim == "rp" then
+		barva_zpravy = color_rp
 	else
 		barva_zpravy = color_mistni
 	end
@@ -71,47 +70,33 @@ function ch_core.chat(rezim, odkoho, zprava, pozice)
 				end
 			end
 			if v_doslechu then
-				local extra_spec
-				if odkoho_info.chat_ignore_list[komu] then
-					extra_spec = " (ign.)"
-				elseif vzdalenost_odkoho_komu > odkoho_doslech then
-					extra_spec = " (m.d.)"
+				if rezim ~= "rp" then
+					local extra_spec
+					if odkoho_info.chat_ignore_list[komu] then
+						extra_spec = " (ign.)"
+					elseif vzdalenost_odkoho_komu > odkoho_doslech then
+						extra_spec = " (m.d.)"
+					else
+						extra_spec = ""
+					end
+					minetest.chat_send_player(komu, barva_zpravy..odkoho_s_diakritikou..extra_spec..": "..zprava..color_systemovy.." ("..vzdalenost_odkoho_komu.." m)"..color_reset)
 				else
-					extra_spec = ""
+					minetest.chat_send_player(komu, barva_zpravy.."*"..odkoho_s_diakritikou.." "..zprava.."*"..color_systemovy.." ("..vzdalenost_odkoho_komu.." m)"..color_reset)
 				end
-				minetest.chat_send_player(komu, barva_zpravy..odkoho_s_diakritikou..extra_spec..": "..zprava..color_systemovy.." ("..vzdalenost_odkoho_komu.." m)"..color_reset)
 				pocitadlo = pocitadlo + 1
 				posl_adresat = komu
 			end
 		end
 	end
-	minetest.chat_send_player(odkoho, barva_zpravy..odkoho_s_diakritikou..": "..zprava..color_systemovy.." ["..pocitadlo.." post.]"..color_reset)
+	if rezim ~= "rp" then
+		minetest.chat_send_player(odkoho, barva_zpravy..odkoho_s_diakritikou..": "..zprava..color_systemovy.." ["..pocitadlo.." post.]"..color_reset)
+	else
+		minetest.chat_send_player(odkoho, barva_zpravy.."*"..odkoho_s_diakritikou.." "..zprava.."*"..color_systemovy.." ["..pocitadlo.." post.]"..color_reset)
+	end
 	if rezim == "sepot" then
 		zprava = minetest.sha1(zprava:gsub("%s", ""))
 	end
 	minetest.log("action", "CHAT:"..rezim..":"..odkoho..">"..pocitadlo.." characters(ex.:"..posl_adresat.."): "..zprava)
-	return true
-end
-
-function ch_core.rp_kanal(odkoho, zprava, pozice)
-	pozice = vector.new(pozice.x, pozice.y, pozice.z)
-
-	local pocitadlo = 0
-	local barevna_zprava = color_rp .. "*" .. ch_core.prihlasovaci_na_zobrazovaci(odkoho) .. " " .. zprava .. "*" .. color_reset
-	for _, komu_player in pairs(minetest.get_connected_players()) do
-		local komu = komu_player:get_player_name()
-		local komu_info = ch_core.online_charinfo[komu]
-		if komu_info and komu ~= odkoho and (not komu_info.chat_ignore_list[odkoho] or minetest.check_player_privs(odkoho, "protection_bypass")) then
-			local vzdalenost_odkoho_komu = math.ceil(vector.distance(pozice, komu_player:get_pos()))
-			local komu_doslech = komu_info.doslech or 65535
-			if vzdalenost_odkoho_komu <= komu_doslech  then
-				minetest.chat_send_player(komu, barevna_zprava)
-				pocitadlo = pocitadlo + 1
-			end
-		end
-	end
-	minetest.chat_send_player(odkoho, color_rp .. "*" .. ch_core.prihlasovaci_na_zobrazovaci(odkoho) .. " " .. zprava .. "*" .. color_systemovy .. " (" .. pocitadlo .. " post.)" .. color_reset)
-	minetest.log("action", "CHAT:rp:"..odkoho..": "..zprava)
 	return true
 end
 
