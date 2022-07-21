@@ -254,6 +254,7 @@ minetest.register_node('new_campfire:fireplace', {
 		"new_campfire_empty_tile.png",
 		"new_campfire_empty_tile.png"
 	},
+	use_texture_alpha = "clip",
 	walkable = false,
 	buildable_to = false,
 	sunlight_propagates = false,
@@ -292,6 +293,7 @@ minetest.register_node('new_campfire:campfire', {
 		"new_campfire_empty_tile.png",
 		"new_campfire_empty_tile.png"
 	},
+	use_texture_alpha = "clip",
 	inventory_image = "new_campfire_campfire.png",
 	walkable = false,
 	buildable_to = false,
@@ -342,6 +344,7 @@ minetest.register_node('new_campfire:campfire_active', {
 		"new_campfire_empty_tile.png",
 		"new_campfire_empty_tile.png"
 	},
+	use_texture_alpha = "clip",
 	inventory_image = "new_campfire_campfire.png",
 	walkable = false,
 	buildable_to = false,
@@ -398,6 +401,7 @@ minetest.register_node('new_campfire:fireplace_with_embers', {
 			}
 		}
 	},
+	use_texture_alpha = "clip",
 	walkable = false,
 	buildable_to = false,
 	sunlight_propagates = false,
@@ -450,6 +454,7 @@ minetest.register_node('new_campfire:fireplace_with_embers_with_grille', {
 			}
 		}
 	},
+	use_texture_alpha = "clip",
 	walkable = false,
 	buildable_to = false,
 	sunlight_propagates = false,
@@ -499,6 +504,7 @@ minetest.register_node('new_campfire:fireplace_with_grille', {
 		"default_steel_block.png",
 		"new_campfire_empty_tile.png"
 	},
+	use_texture_alpha = "clip",
 	buildable_to = false,
 	sunlight_propagates = false,
 	paramtype = 'light',
@@ -540,6 +546,7 @@ minetest.register_node('new_campfire:campfire_with_grille', {
 		"default_steel_block.png",
 		"new_campfire_empty_tile.png"
 	},
+	use_texture_alpha = "clip",
 	inventory_image = "new_campfire_campfire.png",
 	buildable_to = false,
 	sunlight_propagates = true,
@@ -595,6 +602,7 @@ minetest.register_node('new_campfire:campfire_active_with_grille', {
 		"default_steel_block.png",
 		"new_campfire_empty_tile.png"
 	},
+	use_texture_alpha = "clip",
 	inventory_image = "new_campfire_campfire.png",
 	buildable_to = false,
 	sunlight_propagates = true,
