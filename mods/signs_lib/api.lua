@@ -946,9 +946,10 @@ function signs_lib.after_place_node(pos, placer, itemstack, pointed_thing, locke
 	local meta = minetest.get_meta(pos)
 	if locked then
 		meta:set_string("owner", playername)
-		meta:set_string("infotext", S("Locked sign, owned by @1\n", playername))
+		meta:set_string("infotext", S("Locked sign, owned by @1\n", ch_core.prihlasovaci_na_zobrazovaci(playername)))
 	end
 	meta:set_string("unifont", 1)
+	meta:set_int("widefont", 1)
 end
 
 function signs_lib.register_fence_with_sign()

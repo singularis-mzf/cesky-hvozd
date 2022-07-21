@@ -186,6 +186,8 @@ signs_lib.register_sign("basic_signs:vevystavbe", {
 	after_place_node = function(pos, placer, itemstack, pointed_thing)
 		signs_lib.after_place_node(pos, placer, itemstack, pointed_thing, false)
 		-- signs_lib.update_sign(pos, { text = "VE VÝSTAVBĚ" })
+		local meta = minetest.get_meta(pos)
+		meta:set_string("infotext", "Ve výstavbě.\nCeduli umístil/a: "..ch_core.prihlasovaci_na_zobrazovaci(placer:get_player_name()))
 		return true
 	end,
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
