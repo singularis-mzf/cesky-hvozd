@@ -157,15 +157,24 @@ else
 	metal_sounds = default.node_sound_stone_defaults()
 end
 
+local function set_anvil_infotext(meta, owner, is_shared)
+	local view_name = ch_core.prihlasovaci_na_zobrazovaci(owner)
+	if is_shared then
+		meta:set_string("infotext", S("Shared anvil, placed by @1", view_name))
+	else
+		meta:set_string("infotext", S("@1's anvil", view_name))
+	end
+end
+
 minetest.register_node("anvil:anvil", {
 	drawtype = "nodebox",
-	description = S("Private anvil"),
+	description = S("Anvil"),
 	_doc_items_longdesc = S("A tool for repairing other tools in conjunction with a blacksmith's hammer."),
 	_doc_items_usagehelp = S("Right-click on this anvil with a damaged tool to place the damaged tool upon it. You can then repair the damaged tool by striking it with a blacksmith's hammer. Repeated blows may be necessary to fully repair a badly worn tool. To retrieve the tool either punch or right-click the anvil with an empty hand."),
 	tiles = {"default_stone.png"},
 	paramtype  = "light",
 	paramtype2 = "facedir",
-	groups = {cracky=2},
+	groups = {cracky=2,padlockable=1},
 	sounds = metal_sounds,
 	-- the nodebox model comes from realtest
 	node_box = {
@@ -195,23 +204,10 @@ minetest.register_node("anvil:anvil", {
 
 	after_place_node = function(pos, placer, itemstack)
 		local meta = minetest.get_meta(pos)
-		local stackmeta = itemstack:get_meta()
-		if stackmeta:get_int("shared") == 1 then
-			meta:set_int("shared", 1)
-			meta:set_string("infotext", S("Shared anvil"))
-		else
-			meta:set_string("owner", placer:get_player_name() or "")
-			meta:set_string("infotext", S("@1's anvil", placer:get_player_name()))
-		end
-	end,
-
-	preserve_metadata = function(pos, oldnode, oldmeta, drops)
-		if next(drops) and tonumber(oldmeta.shared) == 1 then
-			local meta = drops[next(drops)]:get_meta()
-			meta:set_int("shared", 1)
-			meta:set_string("description", S("Shared anvil"))
-		end
-		return drops
+		local owner = placer:get_player_name() or ""
+		meta:set_string("owner", owner)
+		meta:set_int("shared", 1)
+		set_anvil_infotext(meta, owner, true)
 	end,
 
 	can_dig = function(pos,player)
@@ -221,6 +217,7 @@ minetest.register_node("anvil:anvil", {
 		if not inv:is_empty("input") then
 			return false
 		end
+		ch_core.dig_padlock(pos, player)
 		return true
 	end,
 
@@ -272,11 +269,7 @@ minetest.register_node("anvil:anvil", {
 				inv:set_stack("input", 1, nil)
 				local wield_index = clicker:get_wield_index()
 				clicker:get_inventory():set_stack("main", wield_index, return_stack)
-				if shared then
-					meta:set_string("infotext", S("Shared anvil"))
-				else
-					meta:set_string("infotext", S("@1's anvil", owner))
-				end
+				set_anvil_infotext(meta, owner, shared)
 				remove_item(pos, node)
 				return return_stack
 			end
@@ -289,11 +282,7 @@ minetest.register_node("anvil:anvil", {
 			inv:add_item("input", s)
 			local meta_description = s:get_meta():get_string("description")
 			if "" ~= meta_description then
-				if shared then
-					meta:set_string("infotext", S("Shared anvil"))
-				else
-					meta:set_string("infotext", S("@1's anvil", owner) .. "\n" .. meta_description)
-				end
+				set_anvil_infotext(meta, owner, shared) -- "\n" .. meta_description)
 			end
 			meta:set_int("informed", 0)
 			update_item(pos,node)
@@ -322,11 +311,7 @@ minetest.register_node("anvil:anvil", {
 				inv:set_stack("input", 1, nil)
 				local wield_index = puncher:get_wield_index()
 				puncher:get_inventory():set_stack("main", wield_index, return_stack)
-				if shared then
-					meta:set_string("infotext", S("Shared anvil"))
-				else
-					meta:set_string("infotext", S("@1's anvil", owner))
-				end
+				set_anvil_infotext(meta, owner, shared)
 				remove_item(pos, node)
 			end
 		end
@@ -425,6 +410,27 @@ minetest.register_node("anvil:anvil", {
 		puncher:set_wielded_item( wielded )
 	end,
 	is_ground_content = false,
+
+	-- padlock
+	on_padlock_place = function(player, pos, owner)
+		local meta = minetest.get_meta(pos)
+		if not (meta:get_int("shared") == 1) then
+			return false
+		end
+		meta:set_int("shared", 0)
+		set_anvil_infotext(meta, owner, false)
+		return true
+	end,
+	on_padlock_remove = function(player, pos, owner)
+		local meta = minetest.get_meta(pos)
+		local player_name = player:get_player_name()
+		if meta:get_int("shared") == 1 then
+			return false -- already shared
+		end
+		meta:set_int("shared", "1")
+		set_anvil_infotext(meta, owner, true)
+		return true
+	end,
 })
 
 -- automatically restore entities lost due to /clearobjects or similar
@@ -463,23 +469,9 @@ minetest.register_lbm({
 ---------------------------------------------------------------------------------------
 -- crafting receipes
 ---------------------------------------------------------------------------------------
-minetest.register_craft({
-	output = "anvil:anvil",
-	type = "shapeless",
-	recipe = { "anvil:anvil" }
-})
-
-local shared_anvil_craft_stack = ItemStack("anvil:anvil")
-shared_anvil_craft_stack:get_meta():set_int("shared", 1)
-shared_anvil_craft_stack:get_meta():set_string("description", S("Shared anvil"))
-minetest.register_craft({
-	output = "anvil:anvil",
-	type = "shapeless",
-	recipe = { shared_anvil_craft_stack:to_string(), "default:paper" }
-})
 
 minetest.register_craft({
-	output = shared_anvil_craft_stack:to_string(),
+	output = "anvil:anvil",
 	recipe = {
 		{"default:steel_ingot","default:steel_ingot","default:steel_ingot"},
 		{'',                   "default:steel_ingot",''                   },
