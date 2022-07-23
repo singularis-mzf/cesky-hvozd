@@ -42,7 +42,7 @@ else
 		on_place = function(itemstack, placer, pointed_thing)
 			local pos = minetest.get_pointed_thing_position(pointed_thing, false)
 			local nodename = pos and minetest.get_node(pos).name
-			if minetest.registered_nodes["farming:banana_1"] and nodename and (nodename == "farming:soil" or nodename == "farming:soil_wet") then
+			if minetest.registered_nodes["farming:banana_1"] and nodename and minetest.get_item_group(nodename, "field") > 0 then
 				return farming.place_seed(itemstack, placer, pointed_thing, "farming:banana_1")
 			else
 				return minetest.item_place(itemstack, placer, pointed_thing)
