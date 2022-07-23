@@ -153,7 +153,8 @@ minetest.register_abm({
 
 		local ndef = minetest.registered_nodes[node.name]
 		if not ndef or not ndef.soil or not ndef.soil.wet
-		or not ndef.soil.base or not ndef.soil.dry then return end
+		or not ndef.soil.base or not ndef.soil.dry
+		or node.name == ndef.soil.wet then return end
 
 		pos.y = pos.y + 1
 		local nn = minetest.get_node_or_nil(pos)

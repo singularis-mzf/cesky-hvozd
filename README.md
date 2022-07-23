@@ -377,7 +377,7 @@ resp. *ostatní\_zdroje*.
 * Původní licence: MIT a další (včetně CC-BY-ND-SA)
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/farming/)
-* Implantovány jahody z módu Ethereal NG (licence: MIT).
+* Implantovány jahody z módu Ethereal NG (licence: MIT) a banány a len z módu Cucina Vegana (licence textur: LGPLv3).
 
 ## Funny Shadows (shadows)
 
@@ -752,6 +752,12 @@ resp. *ostatní\_zdroje*.
 * Zdroj: [https://github.com/Grizzly-Adam/BBQ](https://github.com/Grizzly-Adam/BBQ), revize 1a72f7c2baacc6798033a7973545ab74cc52341e
 * Původní licence: LGPLv2.1+ (kód), CC-BY-SA-3.0 (textury), CC-BY-3.0 (zvuky)
 * [ContentDB](https://content.minetest.net/packages/Grizzly%20Adam/bbq/)
+
+## Cucina Vegana (cucina\_vegana)
+
+* Zdroj: [https://github.com/acmgit/cucina\_vegana](https://github.com/acmgit/cucina\_vegana), revize 8be3c946ea99d32b2f25a517d938fba26084b930
+* Původní licence: LGPLv3
+* [ContentDB](https://content.minetest.net/packages/Clyde/cucina\_vegana/)
 
 ## Digistuff (digistuff)
 

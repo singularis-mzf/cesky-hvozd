@@ -23,7 +23,7 @@ dofile(modpath .. "/stairsplus/init.lua")
 
 if minetest.get_modpath("default") then
     dofile(modpath .. "/nodes.lua")
-    dofile(modpath .. "/redefinitions.lua")
+    -- dofile(modpath .. "/redefinitions.lua")
     dofile(modpath .. "/crafting.lua")
     dofile(modpath .. "/aliases.lua")
 end

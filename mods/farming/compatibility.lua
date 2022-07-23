@@ -38,7 +38,16 @@ else
 		},
 		groups = {food_banana = 1, fleshy = 3, dig_immediate = 3, flammable = 2},
 		on_use = minetest.item_eat(2),
-		sounds = default.node_sound_leaves_defaults()
+		sounds = default.node_sound_leaves_defaults(),
+		on_place = function(itemstack, placer, pointed_thing)
+			local pos = minetest.get_pointed_thing_position(pointed_thing, false)
+			local nodename = pos and minetest.get_node(pos).name
+			if minetest.registered_nodes["farming:banana_1"] and nodename and (nodename == "farming:soil" or nodename == "farming:soil_wet") then
+				return farming.place_seed(itemstack, placer, pointed_thing, "farming:banana_1")
+			else
+				return minetest.item_place(itemstack, placer, pointed_thing)
+			end
+		end,
 	})
 
 	minetest.register_node(":ethereal:bananaleaves", {

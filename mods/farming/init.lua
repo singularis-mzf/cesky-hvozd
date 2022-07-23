@@ -661,6 +661,8 @@ farming.sunflower = 0.001
 farming.grains = true
 farming.rice = true
 farming.strawberry = true
+farming.flax = true
+farming.banana = true
 farming.rarety = 0.002
 
 
@@ -735,6 +737,8 @@ ddoo("artichoke.lua", farming.artichoke)
 ddoo("parsley.lua", farming.parsley)
 ddoo("sunflower.lua", farming.sunflower)
 ddoo("strawberry.lua", farming.strawberry)
+ddoo("flax.lua", farming.flax)
+ddoo("banana.lua", farming.banana)
 
 dofile(farming.path .. "/food.lua")
 dofile(farming.path .. "/mapgen.lua")
