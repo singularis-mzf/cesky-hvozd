@@ -1,3 +1,4 @@
+local S = minetest.get_translator("rocks")
 
 --Register Rockset does all the heavy lifting for the mod:
 
@@ -15,10 +16,10 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
     --glove
     --spike
     --stub
-    
+
     ---Register the round rock
     minetest.register_node("rocks:".. name .."_round", {
-        description = "Round " .. name .. " Rock",
+        description = S("Round @1 Rock", S(name)),
         drawtype = "mesh",
         mesh = "round.obj",
         sunlight_propagates = true,
@@ -39,11 +40,11 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
         },
 
         tiles = {image},
-        
+
         groups = { cracky=2 },
 
     })
-    
+
     minetest.register_craft({
         output = "rocks:".. name .."_round 1",
         recipe = {
@@ -52,10 +53,10 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             {"",            recipe_cobble,  ""},
         },
     })
-    
+
     -- Now for pillar_90
      minetest.register_node("rocks:".. name .."_pillar_90", {
-        description = name .. " Pillar 90",
+        description = S("@1 Pillar 90", S(name)),
         drawtype = "mesh",
         mesh = "pillar_90.obj",
         sunlight_propagates = true,
@@ -76,12 +77,11 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
 
         tiles = {image},
 
-        
         groups = { cracky=2 },
 
     })
 
-    
+
     minetest.register_craft({
         output = "rocks:".. name .."_pillar_90 1",
         recipe = {
@@ -93,7 +93,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
 
     -- Now for pillar_45
      minetest.register_node("rocks:".. name .."_pillar_45", {
-        description = name .. " Pillar 45",
+        description = S("@1 Pillar 45", S(name)),
         drawtype = "mesh",
         mesh = "pillar_45.obj",
         sunlight_propagates = true,
@@ -115,12 +115,11 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
 
         tiles = {image},
 
-        
         groups = { cracky=2 },
 
     })
 
-    
+
     minetest.register_craft({
         output = "rocks:".. name .."_pillar_45 1",
         recipe = {
@@ -129,10 +128,10 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             {"",    recipe_cobble,  ""},
         },
     })
-    
+
     -- Now for large_flat
      minetest.register_node("rocks:".. name .."_large_flat", {
-        description = "Large Flat ".. name .. " Rock",
+        description = S("Large Flat @1 Rock", S(name)),
         drawtype = "mesh",
         mesh = "large_flat.obj",
         sunlight_propagates = true,
@@ -154,12 +153,11 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
 
         tiles = {image},
 
-        
         groups = { cracky=2 },
 
     })
 
-    
+
     minetest.register_craft({
         output = "rocks:".. name .."_large_flat 1",
         recipe = {
@@ -168,10 +166,10 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             {recipe_cobble,     recipe_cobble,   recipe_cobble},
         },
     })
-    
+
     -- Now for flat
      minetest.register_node("rocks:".. name .."_flat", {
-        description = "Flat ".. name .. " Rock",
+        description = S("Flat @1 Rock", S(name)),
         drawtype = "mesh",
         mesh = "flat.obj",
         sunlight_propagates = true,
@@ -191,12 +189,11 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
 
         tiles = {image},
 
-        
         groups = { cracky=2 },
 
     })
 
-    
+
     minetest.register_craft({
         output = "rocks:".. name .."_flat 1",
         recipe = {
@@ -208,7 +205,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
 
     -- Now for glove
     minetest.register_node("rocks:".. name .."_glove", {
-        description =  name .. " Glove Rock",
+        description = S("@1 Glove Rock", S(name)),
         drawtype = "mesh",
         mesh = "glove.obj",
         sunlight_propagates = true,
@@ -230,12 +227,11 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
 
         tiles = {image},
 
-        
         groups = { cracky=2 },
 
     })
 
-    
+
     minetest.register_craft({
         output = "rocks:".. name .."_glove 1",
         recipe = {
@@ -244,10 +240,10 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             {"",     recipe_cobble,   ""},
         },
     })
-    
+
     -- Now for spike
     minetest.register_node("rocks:".. name .."_spike", {
-        description =  name .. " Spike",
+        description = S("@1 Spike", S(name)),
         drawtype = "mesh",
         mesh = "spike.obj",
         sunlight_propagates = true,
@@ -270,12 +266,10 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
 
         tiles = {image},
 
-        
         groups = { cracky=2 },
 
     })
 
-    
     minetest.register_craft({
         output = "rocks:".. name .."_spike 1",
         recipe = {
@@ -284,10 +278,10 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             {recipe_cobble,     recipe_cobble,   recipe_cobble},
         },
     })
-    
+
     -- Now for stub
     minetest.register_node("rocks:".. name .."_stub", {
-        description =  name .. " Stub",
+        description = S("@1 Stub", S(name)),
         drawtype = "mesh",
         mesh = "stub.obj",
         sunlight_propagates = true,
@@ -308,12 +302,10 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
 
         tiles = {image},
 
-        
         groups = { cracky=2 },
 
     })
 
-    
     minetest.register_craft({
         output = "rocks:".. name .."_stub 1",
         recipe = {

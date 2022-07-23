@@ -1,0 +1,16 @@
+# textdomain:rocks
+
+Flat @1 Rock=balvan @1
+@1 Glove Rock=balvan ve tvaru brambory @1
+Large Flat @1 Rock=obří balvan @1
+@1 Pillar 45=skloněný skalní hrot @1
+@1 Pillar 90=skalní hrot @1
+Round @1 Rock=kulatý balvan @1
+@1 Spike=obří skalní hrot @1
+@1 Stub=výčnělek @1
+
+desert_sand=z pouštního pískovce
+desert_stone=z pouštního kamene
+sand=ze žlutého pískovce
+silver_sand=z bílého pískovce
+stone=ze skalního kamene
