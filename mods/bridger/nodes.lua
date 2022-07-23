@@ -35,7 +35,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 	}
 
 	for _, row in ipairs(bridge_colors) do
-		local bridge_desc = row[1]
+		local bridge_desc = S(row[1])
 		local bridge_color = row[2]
 
 		minetest.register_node("bridger:foundation", {
@@ -64,7 +64,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 		})
 
 		minetest.register_node("bridger:block_" .. bridge_color, {
-			description = S("@1 Block", S(bridge_desc)),
+			description = S("@1 Block", bridge_desc),
 			drawtype = "normal",
 			tiles = {"bridges_" .. bridge_color .. ".png"},
 			paramtype = "light",
@@ -74,7 +74,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 
 		if minetest.get_modpath("moreblocks") then
 			stairsplus:register_all("bridger", "block_" .. bridge_color, "bridger:block_" .. bridge_color, {
-				description = S("@1 Block", S(bridge_desc)),
+				description = S("@1 Block", bridge_desc),
 				tiles = {"bridges_" .. bridge_color .. ".png"},
 				groups = {cracky=3},
 				sounds = default.node_sound_metal_defaults(),
