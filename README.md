@@ -315,6 +315,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: LGPLv2.1
 * [ContentDB](https://content.minetest.net/packages/MikeRedwood/craftable\_lava/)
 
+## Currency (currency)
+
+* Zdroj: [https://github.com/mt-mods/currency](https://github.com/mt-mods/currency), revize f74ee653b8f8c60ea4f78e7dd827dcc568649dee
+* Původní licence: LGPLv3 pro kód, CC-BY-SA-4.0 pro vše ostatní
+* Licence úprav: LGPLv3 pro kód, CC-BY-SA-4.0 pro vše ostatní
+* [ContentDB](https://content.minetest.net/packages/VanessaE/currency/)
+
 ## Dark Age (darkage)
 
 * Zdroj: [https://github.com/kakalak-lumberJack/darkage](https://github.com/kakalak-lumberJack/darkage), revize 34d5ddd21b57fe73eeaf2b2d83324ff526cd7c1f
