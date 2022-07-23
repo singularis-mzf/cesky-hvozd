@@ -45,11 +45,11 @@ minetest.register_node("currency:safe", {
 	after_place_node = function(pos, placer)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("owner", placer:get_player_name() or "")
-		meta:set_string("infotext", S("Safe (owned by @1)", meta:get_string("owner")))
+		meta:set_string("infotext", S("Safe (owned by @1)", ch_core.prihlasovaci_na_zobrazovaci(meta:get_string("owner"))))
 	end,
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
-		meta:set_string("infotext", "Safe")
+		meta:set_string("infotext", S("Safe"))
 		meta:set_string("owner", "")
 		local inv = meta:get_inventory()
 		inv:set_size("main", 6*2)

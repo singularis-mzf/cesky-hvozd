@@ -1,7 +1,7 @@
 currency
 ========
 
-Repo for Currency Mod
+Currency Mod, heavily modified for Český hvozd server.
 
 # Settings
 

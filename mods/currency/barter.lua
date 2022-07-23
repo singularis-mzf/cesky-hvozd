@@ -4,7 +4,7 @@ barter = currency.barter -- Kept as a global variable for compatibility
 local S = minetest.get_translator("currency")
 
 barter.chest = {}
-barter.chest.expire_after = tonumber(minetest.settings:get('barter.chest.expireafter')) or 15 * 60
+barter.chest.expire_after = 15 * 60
 barter.chest.formspec = {
 	main = "size[8,9]"..
 		"list[current_name;pl1;0,0;3,4;]"..
@@ -47,8 +47,8 @@ barter.chest.check_privilege = function(listname,playername,meta)
 end
 
 barter.chest.update_formspec = function(meta)
-	formspec = barter.chest.formspec.main
-	pl_formspec = function (n)
+	local formspec = barter.chest.formspec.main
+	for _, n in ipairs({"pl1", "pl2"}) do
 		if meta:get_int(n.."step")==0 then
 			formspec = formspec .. barter.chest.formspec[n].start
 		else
@@ -60,12 +60,11 @@ barter.chest.update_formspec = function(meta)
 			end
 		end
 	end
-	pl_formspec("pl1") pl_formspec("pl2")
 	meta:set_string("formspec",formspec)
 end
 
 barter.chest.give_inventory = function(inv,list,playername)
-	player = minetest.get_player_by_name(playername)
+	local player = minetest.get_player_by_name(playername)
 	if player then
 		for k,v in ipairs(inv:get_list(list)) do
 			if player:get_inventory():room_for_item("main",v) then
@@ -144,7 +143,7 @@ minetest.register_node("currency:barter", {
 	on_receive_fields = function(pos, formname, fields, sender)
 		local meta = minetest.get_meta(pos)
 		barter.chest.start_timer(pos, meta)
-		pl_receive_fields = function(n)
+		for _, n in ipairs({"pl1", "pl2"}) do
 			if fields[n.."_start"] and meta:get_string(n) == "" then
 				meta:set_string(n,sender:get_player_name())
 			end
@@ -165,7 +164,6 @@ minetest.register_node("currency:barter", {
 				if fields[n.."_cancel"] then barter.chest.cancel(meta) end
 			end
 		end
-		pl_receive_fields("pl1") pl_receive_fields("pl2")
 		-- End
 		barter.chest.update_formspec(meta)
 	end,

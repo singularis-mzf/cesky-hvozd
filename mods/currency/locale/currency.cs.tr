@@ -1,0 +1,15 @@
+# textdomain: currency
+
+
+### barter.lua ###
+
+Barter Table=Obchodní stolek
+Cancel=Zrušit
+Confirm=Uzavřít@nnabídku
+Start=Otevřít nabídku
+Exchange=Schválit@nvýměnu
+
+### safe.lua ###
+
+Safe=Trezor
+Safe (owned by @1)=Trezor (vlastník/ice: @1)
