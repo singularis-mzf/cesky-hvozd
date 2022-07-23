@@ -596,6 +596,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/entuland/rhotator/)
 
+## Rocks (rocks)
+
+* Zdroj: [https://github.com/ExeVirus/Rocks](https://github.com/ExeVirus/Rocks), revize 7b8a47737c7dfe45b47d29b269abb6de673ebd73
+* Původní licence: MIT
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/Just\_Visiting/rocks/)
+
 ## Ropes (ropes)
 
 * Zdroj: [https://github.com/minetest-mods/ropes](https://github.com/minetest-mods/ropes), revize b89f6c6a217b9a473bbf5e47896c642b503d507a
