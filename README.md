@@ -159,12 +159,12 @@ resp. *ostatní\_zdroje*.
 * Původní licence: AGPLv3
 * Licence úprav: AGPLv3
 
-## Agree Rules (agreerules)
+## Wilhelmines Animal World (animalworld)
 
-* Zdroj: [https://github.com/AiTechEye/agreerules](https://github.com/AiTechEye/agreerules), revize b7064cab5d64f0529e5d14e385d8501741425ed0
-* Původní licence: LGPL-2.1 (jeden soubor uvádí LGPL-2.1, druhý CC0; předpokládám, že platí restriktivnější varianta)
-* Licence úprav: LGPL-2.1
-* [ContentDB](https://content.minetest.net/packages/AiTechEye/agreerules/)
+* Zdroj: [https://github.com/Skandarella/animalworld](https://github.com/Skandarella/animalworld), revize d4387aa71167e9534516d20395b4acb0444bc900
+* Původní licence: kód, textury, modely a animace MIT; zvuky různé (převážně „Creative Commons“ z freesound.org)
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/Liil/animalworld/)
 
 ## Anvil (anvil)
 
