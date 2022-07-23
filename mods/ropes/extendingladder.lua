@@ -18,8 +18,8 @@ local steel_name = S("Steel Extendable Ladder")
 
 if ropes.replace_default_ladders then
 
-minetest.unregister_item("default:ladder_wood")
-minetest.unregister_item("default:ladder_steel")
+-- minetest.unregister_item("default:ladder_wood")
+-- minetest.unregister_item("default:ladder_steel")
 minetest.clear_craft({output = "default:ladder_wood"})
 minetest.clear_craft({output = "default:ladder_steel"})
 
@@ -32,6 +32,7 @@ local wallmounted_to_facedir =
 [5] = 2, -- -Z
 }
 
+--[[
 minetest.register_lbm({
     label = "Switch from wallmounted default ladders to rope mod extending ladders",
     name = "ropes:wallmounted_ladder_to_facedir_ladder",
@@ -47,6 +48,7 @@ minetest.register_lbm({
 		minetest.set_node(pos, new_node)
 	end,
 })
+]]
 
 wood_recipe = {
 		{"group:stick", "", "group:stick"},
@@ -65,12 +67,12 @@ steel_name = S("Steel Ladder")
 end
 
 minetest.register_craft({
-	output = "ropes:ladder_wood 5",
+	output = "default:ladder_wood 5",
 	recipe = wood_recipe,
 })
 
 minetest.register_craft({
-	output = 'ropes:ladder_steel 15',
+	output = 'default:ladder_steel 15',
 	recipe = steel_recipe,
 })
 
@@ -126,7 +128,19 @@ local ladder_extender = function(pos, node, clicker, itemstack, pointed_thing, l
 	return clicked_stack
 end
 
-minetest.register_node("ropes:ladder_wood", {
+local ladder_wood_box = {
+	type = "fixed",
+	fixed = {
+		{-0.375, -0.5, 0.375, -0.25, 0.5, 0.5}, -- Upright1
+		{0.25, -0.5, 0.375, 0.375, 0.5, 0.5}, -- Upright2
+		{-0.4375, 0.3125, 0.4375, 0.4375, 0.4375, 0.5}, -- Rung_4
+		{-0.4375, -0.1875, 0.4375, 0.4375, -0.0625, 0.5}, -- Rung_2
+		{-0.4375, -0.4375, 0.4375, 0.4375, -0.3125, 0.5}, -- Rung_1
+		{-0.4375, 0.0625, 0.4375, 0.4375, 0.1875, 0.5}, -- Rung_3
+	},
+}
+
+minetest.override_item("default:ladder_wood", {
 	description = wood_name,
 	_doc_items_longdesc = ropes.doc.ladder_longdesc,
 	_doc_items_usagehelp = ropes.doc.ladder_usagehelp,
@@ -142,25 +156,28 @@ minetest.register_node("ropes:ladder_wood", {
 	is_ground_content = false,
 	drawtype = "nodebox",
 	paramtype = "light",
-	node_box = {
-		type = "fixed",
-		fixed = {
-			{-0.375, -0.5, 0.375, -0.25, 0.5, 0.5}, -- Upright1
-			{0.25, -0.5, 0.375, 0.375, 0.5, 0.5}, -- Upright2
-			{-0.4375, 0.3125, 0.4375, 0.4375, 0.4375, 0.5}, -- Rung_4
-			{-0.4375, -0.1875, 0.4375, 0.4375, -0.0625, 0.5}, -- Rung_2
-			{-0.4375, -0.4375, 0.4375, 0.4375, -0.3125, 0.5}, -- Rung_1
-			{-0.4375, 0.0625, 0.4375, 0.4375, 0.1875, 0.5}, -- Rung_3
-		}
-	},
+	node_box = ladder_wood_box,
+	selection_box = ladder_wood_box,
 	groups = {choppy = 2, oddly_breakable_by_hand = 3, flammable = 2, flow_through = 1},
 	sounds = default.node_sound_wood_defaults(),
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-		return ladder_extender(pos, node, clicker, itemstack, pointed_thing, "ropes:ladder_wood", ropes.extending_wood_ladder_limit)
+		return ladder_extender(pos, node, clicker, itemstack, pointed_thing, "default:ladder_wood", ropes.extending_wood_ladder_limit)
 	end,
 })
 
-minetest.register_node("ropes:ladder_steel", {
+local ladder_steel_box = {
+	type = "fixed",
+	fixed = {
+		{-0.4375, -0.5, 0.3125, -0.25, 0.5, 0.5}, -- Upright1
+		{0.25, -0.5, 0.3125, 0.4375, 0.5, 0.5}, -- Upright2
+		{-0.25, 0.3125, 0.375, 0.25, 0.4375, 0.5}, -- Rung_4
+		{-0.25, -0.1875, 0.375, 0.25, -0.0625, 0.5}, -- Rung_2
+		{-0.25, -0.4375, 0.375, 0.25, -0.3125, 0.5}, -- Rung_1
+		{-0.25, 0.0625, 0.375, 0.25, 0.1875, 0.5}, -- Rung_3
+	},
+}
+
+minetest.override_item("default:ladder_steel", {
 	description = steel_name,
 	_doc_items_longdesc = ropes.doc.ladder_longdesc,
 	_doc_items_usagehelp = ropes.doc.ladder_usagehelp,
@@ -175,21 +192,12 @@ minetest.register_node("ropes:ladder_steel", {
 	climbable = true,
 	is_ground_content = false,
 	drawtype = "nodebox",
-	node_box = {
-		type = "fixed",
-		fixed = {
-			{-0.4375, -0.5, 0.3125, -0.25, 0.5, 0.5}, -- Upright1
-			{0.25, -0.5, 0.3125, 0.4375, 0.5, 0.5}, -- Upright2
-			{-0.25, 0.3125, 0.375, 0.25, 0.4375, 0.5}, -- Rung_4
-			{-0.25, -0.1875, 0.375, 0.25, -0.0625, 0.5}, -- Rung_2
-			{-0.25, -0.4375, 0.375, 0.25, -0.3125, 0.5}, -- Rung_1
-			{-0.25, 0.0625, 0.375, 0.25, 0.1875, 0.5}, -- Rung_3
-		}
-	},
+	node_box = ladder_steel_box,
+	selection_box = ladder_steel_box,
 	groups = {cracky = 2, flow_through = 1},
 	sounds = default.node_sound_metal_defaults(),
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-		return ladder_extender(pos, node, clicker, itemstack, pointed_thing, "ropes:ladder_steel", ropes.extending_steel_ladder_limit)
+		return ladder_extender(pos, node, clicker, itemstack, pointed_thing, "default:ladder_steel", ropes.extending_steel_ladder_limit)
 	end,
 })
 
@@ -214,13 +222,14 @@ local facedir_to_wallmounted_map = {
 	1, 4, 3, 2,
 }
 
+--[[
 minetest.register_lbm({
     label = "Switch from ropes ladders to wallmounted default ladders",
     name = "ropes:facedir_ladder_to_wallmounted_ladder",
     nodenames = {"ropes:ladder_wood", "ropes:ladder_steel"},
     run_at_every_load = false,
     action = function(pos, node)
-		local new_node = {param2 = facedir_to_wallmounted[facedir_to_wallmounted_map[node.param2 % 32]]}
+		local new_node = {param2 = facedir_to_wallmounted[facedir_to_wallmounted_map[node.param2 % 32] ]}
 		if (node.name == "ropes:ladder_wood") then
 			new_node.name = "default:ladder_wood"
 		else
@@ -229,5 +238,6 @@ minetest.register_lbm({
 		minetest.set_node(pos, new_node)
 	end,
 })
+]]
 
 end

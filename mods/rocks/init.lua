@@ -38,7 +38,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             type = "fixed",
             fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}, 
         },
-
+        sounds = default.node_sound_stone_defaults(),
         tiles = {image},
 
         groups = { cracky=2 },
@@ -74,7 +74,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             type = "fixed",
             fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
         },
-
+        sounds = default.node_sound_stone_defaults(),
         tiles = {image},
 
         groups = { cracky=2 },
@@ -112,7 +112,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             type = "fixed",
             fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
         },
-
+        sounds = default.node_sound_stone_defaults(),
         tiles = {image},
 
         groups = { cracky=2 },
@@ -150,7 +150,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             type = "fixed",
             fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
         },
-
+        sounds = default.node_sound_stone_defaults(),
         tiles = {image},
 
         groups = { cracky=2 },
@@ -186,7 +186,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             type = "fixed",
             fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
         },
-
+        sounds = default.node_sound_stone_defaults(),
         tiles = {image},
 
         groups = { cracky=2 },
@@ -224,7 +224,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             type = "fixed",
             fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
         },
-
+        sounds = default.node_sound_stone_defaults(),
         tiles = {image},
 
         groups = { cracky=2 },
@@ -263,7 +263,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             type = "fixed",
             fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
         },
-
+        sounds = default.node_sound_stone_defaults(),
         tiles = {image},
 
         groups = { cracky=2 },
@@ -299,7 +299,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             type = "fixed",
             fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
         },
-
+        sounds = default.node_sound_stone_defaults(),
         tiles = {image},
 
         groups = { cracky=2 },
