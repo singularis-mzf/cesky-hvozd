@@ -43,7 +43,7 @@ minetest.register_on_joinplayer(function(player)
 	end)
 end)
 
-minetest.register_chatcommand("hotbar", {
+local chatcommand_def = {
 	params = "[délka]",
 	description = "Nastaví délku vaší výběrové lišty, od 1 do 32 slotů, výchozí délka je 16",
 	func = function(name, slots)
@@ -59,5 +59,9 @@ minetest.register_chatcommand("hotbar", {
 			f:close()
 		end
 	end,
-})
+}
+minetest.register_chatcommand("lišta", chatcommand_def)
+minetest.register_chatcommand("lista", chatcommand_def)
+minetest.register_chatcommand("hotbar", chatcommand_def)
+
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
