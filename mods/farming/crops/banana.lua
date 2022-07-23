@@ -46,6 +46,7 @@ def.tiles = {"cucina_vegana_banana_5.png"}
 def.drop = {
 	items = {
 		{items = banana_item_t, rarity = 3},
+		{items = {"ethereal:bananaleaves"}, rarity = 3},
 	}
 }
 minetest.register_node("farming:banana_5", table.copy(def))
@@ -55,6 +56,7 @@ def.tiles = {"cucina_vegana_banana_6.png"}
 def.drop = {
 	items = {
 		{items = banana_item_t, rarity = 1},
+		{items = {"ethereal:bananaleaves"}, rarity = 3},
 	}
 }
 minetest.register_node("farming:banana_6", table.copy(def))
@@ -65,6 +67,7 @@ def.drop = {
 	items = {
 		{items = banana_item_t, rarity = 1},
 		{items = {banana_item.." 2"}, rarity = 2},
+		{items = {"ethereal:bananaleaves"}, rarity = 2},
 	}
 }
 minetest.register_node("farming:banana_7", table.copy(def))
@@ -76,6 +79,7 @@ def.drop = {
 		{items = {banana_item.." 2"}, rarity = 1},
 		{items = {banana_item.." 2"}, rarity = 2},
 		{items = banana_item_t, rarity = 3},
+		{items = {"ethereal:bananaleaves"}, rarity = 1},
 	}
 }
 def.groups.growing = nil
