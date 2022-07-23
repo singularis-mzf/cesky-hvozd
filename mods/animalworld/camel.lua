@@ -1,3 +1,4 @@
+local S = minetest.get_translator("animalworld")
 mobs:register_mob("animalworld:camel", {
 	stepheight = 1,
 	type = "animal",
@@ -85,7 +86,7 @@ mobs:spawn({
 })
 end
 
-mobs:register_egg("animalworld:camel", ("Camel"), "acamel.png")
+mobs:register_egg("animalworld:camel", S("Camel"), "acamel.png")
 
 
 mobs:alias_mob("animalworld:camel", "animalworld:camel") -- compatibility

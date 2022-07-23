@@ -1,3 +1,4 @@
+local S = minetest.get_translator("animalworld")
 mobs:register_mob("animalworld:snail", {
 	stepheight = 3,
 	type = "animal",
@@ -74,13 +75,13 @@ mobs:spawn({
 })
 end
 
-mobs:register_egg("animalworld:snail", ("Snail"), "asnail.png")
+mobs:register_egg("animalworld:snail", S("Snail"), "asnail.png")
 
 
 mobs:alias_mob("animalworld:snail", "animalworld:snail") -- compatibility
 
 minetest.register_craftitem(":animalworld:escargots", {
-	description = ("Escargots"),
+	description = S("Escargots"),
 	inventory_image = "animalworld_escargots.png",
 	on_use = minetest.item_eat(2),
 	groups = {food_meat_raw = 1, flammable = 2},
@@ -91,6 +92,6 @@ minetest.register_craft({
 	output = "animalworld:escargots",
 	type = "shapeless",
 	recipe = 
-		{"animalworld:snail", "farming:garlic_clove", "animalworld:butter", "farming:bread"}
+		{"animalworld:snail", "farming:garlic_clove", "mobs:butter", "farming:bread"}
 })
 

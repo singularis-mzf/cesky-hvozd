@@ -1,3 +1,4 @@
+local S = minetest.get_translator("animalworld")
 mobs:register_mob("animalworld:carp", {
 stepheight = 0.0,
 	type = "animal",
@@ -78,11 +79,11 @@ mobs:spawn({
 })
 end
 
-mobs:register_egg("animalworld:carp", ("Carp"), "acarp.png")
+mobs:register_egg("animalworld:carp", S("Carp"), "acarp.png")
 
 -- raw fish
 minetest.register_craftitem(":animalworld:rawfish", {
-	description = ("Raw Fish"),
+	description = S("Raw Fish"),
 	inventory_image = "animalworld_rawfish.png",
 	on_use = minetest.item_eat(3),
 	groups = {food_meat_raw = 1, flammable = 2},
@@ -90,7 +91,7 @@ minetest.register_craftitem(":animalworld:rawfish", {
 
 -- cooked fish
 minetest.register_craftitem(":animalworld:cookedfish", {
-	description = ("Cooked Fish"),
+	description = S("Cooked Fish"),
 	inventory_image = "animalworld_cookedfish.png",
 	on_use = minetest.item_eat(5),
 	groups = {food_meat = 1, flammable = 2},

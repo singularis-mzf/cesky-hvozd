@@ -1,3 +1,4 @@
+local S = minetest.get_translator("animalworld")
 mobs:register_mob("animalworld:elephant", {
 stepheight = 2,
 	type = "monster",
@@ -82,4 +83,4 @@ mobs:spawn({
 })
 end
 
-mobs:register_egg("animalworld:elephant", ("Elephant"), "aelephant.png")
+mobs:register_egg("animalworld:elephant", S("Elephant"), "aelephant.png")
