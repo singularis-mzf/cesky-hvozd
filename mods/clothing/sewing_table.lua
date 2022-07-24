@@ -121,134 +121,192 @@ appliances.register_craft_type("clothing_sewing", {
     width = 3,
     height = 3,
   })
-  
+
 for color, data in pairs(clothing.colors) do
-  local fabric = "clothing:fabric_"..color;
-  local yarn = "clothing:yarn_spool_"..color;
-  if (data.key1) then
-    yarn = "clothing:yarn_spool_"..data.key1;
-  end
-  sewing_table:recipe_register_input(
-    "",
-    {
-      inputs = {fabric, fabric, fabric,
-                fabric, yarn, fabric,
-                "", "", "",
-               },
-      outputs = {{"clothing:hat_"..color,"clothing:yarn_spool_empty"}},
-      production_time = 30,
-      consumption_step_size = 1,
-    });
-  sewing_table:recipe_register_input(
-    "",
-    {
-      inputs = {fabric, "clothing:undershirt_"..color, fabric,
-                fabric, yarn, fabric,
-                "", "", "",
-               },
-      outputs = {{"clothing:shirt_"..color,"clothing:yarn_spool_empty"}},
-      production_time = 60,
-      consumption_step_size = 1,
-    });
-  sewing_table:recipe_register_input(
-    "",
-    {
-      inputs = {fabric, fabric, fabric,
-                fabric, yarn, fabric,
-                fabric, "", fabric,
-               },
-      outputs = {{"clothing:pants_"..color,"clothing:yarn_spool_empty"}},
-      production_time = 60,
-      consumption_step_size = 1,
-    });
-  sewing_table:recipe_register_input(
-    "",
-    {
-      inputs = {fabric, fabric, yarn,
-                fabric, fabric, "",
-                fabric, fabric, "",
-               },
-      outputs = {{"clothing:cape_"..color,"clothing:yarn_spool_empty"}},
-      production_time = 30,
-      consumption_step_size = 1,
-    });
-  sewing_table:recipe_register_input(
-    "",
-    {
-      inputs = {fabric, fabric, fabric,
-                "", fabric, "",
-                fabric, yarn, fabric,
-               },
-      outputs = {{"clothing:hood_mask_"..color,"clothing:yarn_spool_empty"}},
-      production_time = 45,
-      consumption_step_size = 1,
-    });
-  sewing_table:recipe_register_input(
-    "",
-    {
-      inputs = {fabric, yarn, "",
-                "", "", "",
-                "", "", "",
-               },
-      outputs = {{"clothing:glove_left_"..color,"clothing:yarn_spool_empty"}},
-      production_time = 30,
-      consumption_step_size = 1,
-    });
-  sewing_table:recipe_register_input(
-    "",
-    {
-      inputs = {yarn, fabric, "",
-                "", "", "",
-                "", "", "",
-               },
-      outputs = {{"clothing:glove_right_"..color,"clothing:yarn_spool_empty"}},
-      production_time = 30,
-      consumption_step_size = 1,
-    });
-  sewing_table:recipe_register_input(
-    "",
-    {
-      inputs = {fabric, "clothing:undershirt_"..color, fabric,
-                "", yarn, "",
-                "", "", "",
-               },
-      outputs = {{"clothing:shortshirt_"..color,"clothing:yarn_spool_empty"}},
-      production_time = 30,
-      consumption_step_size = 1,
-    });
-  sewing_table:recipe_register_input(
-    "",
-    {
-      inputs = {fabric, yarn, fabric,
-                fabric, fabric, fabric,
-                fabric, fabric, fabric,
-               },
-      outputs = {{"clothing:undershirt_"..color,"clothing:yarn_spool_empty"}},
-      production_time = 45,
-      consumption_step_size = 1,
-    });
-  sewing_table:recipe_register_input(
-    "",
-    {
-      inputs = {"", yarn, "",
-                fabric, fabric, fabric,
-                fabric, "", fabric,
-               },
-      outputs = {{"clothing:shorts_"..color,"clothing:yarn_spool_empty"}},
-      production_time = 45,
-      consumption_step_size = 1,
-    });
-  sewing_table:recipe_register_input(
-    "",
-    {
-      inputs = {yarn, "", yarn,
-                fabric, "", fabric,
-                fabric, "", fabric,
-               },
-      outputs = {{"clothing:shoes_"..color,"clothing:yarn_spool_empty 2"}},
-      production_time = 60,
-      consumption_step_size = 1,
-    });
+	local fabric, yarn, yarn2, def
+
+	fabric = "clothing:fabric_"..color
+	if data.key1 and data.key1 ~= data.key2 then
+		yarn = "clothing:yarn_spool_"..data.key1;
+		yarn2 = "clothing:yarn_spool_"..data.key2;
+	else
+		yarn = "clothing:yarn_spool_"..color
+	end
+	def = {consumption_step_size = 1}
+
+	-- hat
+	def.outputs = {{"clothing:hat_"..color,"clothing:yarn_spool_empty"}}
+	def.inputs = {
+		fabric, fabric, fabric,
+		fabric, yarn, fabric,
+		"", "", "",
+	}
+	def.production_time = 30
+	sewing_table:recipe_register_input("", table.copy(def))
+	if yarn2 then
+		def.inputs = {
+			fabric, fabric, fabric,
+			fabric, yarn2, fabric,
+			"", "", "",
+		}
+		sewing_table:recipe_register_input("", table.copy(def))
+	end
+
+	-- shirt
+	def.outputs = {{"clothing:shirt_"..color,"clothing:yarn_spool_empty"}}
+	def.inputs = {
+		fabric, "clothing:undershirt_"..color, fabric,
+		fabric, yarn, fabric,
+		"", "", "",
+	}
+	def.production_time = 60
+	sewing_table:recipe_register_input("", table.copy(def))
+	if yarn2 then
+		def.inputs = {
+			fabric, "clothing:undershirt_"..color, fabric,
+			fabric, yarn2, fabric,
+			"", "", "",
+		}
+		sewing_table:recipe_register_input("", table.copy(def))
+	end
+
+	-- pants
+	def.outputs = {{"clothing:pants_"..color,"clothing:yarn_spool_empty"}}
+	def.inputs = {
+		fabric, fabric, fabric,
+		fabric, yarn, fabric,
+		fabric, "", fabric,
+	}
+	def.production_time = 60
+	sewing_table:recipe_register_input("", table.copy(def))
+	if yarn2 then
+		def.inputs = {
+			fabric, fabric, fabric,
+			fabric, yarn2, fabric,
+			fabric, "", fabric,
+		}
+		sewing_table:recipe_register_input("", table.copy(def))
+	end
+
+	-- cape
+	def.outputs = {{"clothing:cape_"..color,"clothing:yarn_spool_empty"}}
+	def.inputs = {
+		fabric, fabric, yarn,
+		fabric, fabric, "",
+		fabric, fabric, "",
+	}
+	def.production_time = 30
+	sewing_table:recipe_register_input("", table.copy(def))
+	if yarn2 then
+		def.inputs = {
+			fabric, fabric, yarn2,
+			fabric, fabric, "",
+			fabric, fabric, "",
+		}
+		sewing_table:recipe_register_input("", table.copy(def))
+	end
+
+	-- hood mask
+	def.outputs = {{"clothing:hood_mask_"..color,"clothing:yarn_spool_empty"}}
+	def.inputs = {
+		fabric, fabric, fabric,
+		"", fabric, "",
+		fabric, yarn, fabric,
+	}
+	def.production_time = 45
+	sewing_table:recipe_register_input("", table.copy(def))
+	if yarn2 then
+		def.inputs = {
+			fabric, fabric, fabric,
+			"", fabric, "",
+			fabric, yarn2, fabric,
+		}
+		sewing_table:recipe_register_input("", table.copy(def))
+	end
+
+	-- glove left
+	def.outputs = {{"clothing:glove_left_"..color,"clothing:yarn_spool_empty"}}
+	def.inputs = {
+		fabric, yarn, "",
+		"", "", "",
+		"", "", "",
+	}
+	def.production_time = 30
+	sewing_table:recipe_register_input("", table.copy(def))
+	if yarn2 then
+		def.inputs = {
+			fabric, yarn2, "",
+			"", "", "",
+			"", "", "",
+		}
+		sewing_table:recipe_register_input("", table.copy(def))
+	end
+
+	-- glove right
+	def.outputs = {{"clothing:glove_right_"..color,"clothing:yarn_spool_empty"}}
+	def.inputs = {
+		fabric, yarn, "",
+		"", "", "",
+		"", "", "",
+	}
+	-- def.production_time = 30 -- the same as glove left
+	sewing_table:recipe_register_input("", table.copy(def))
+	if yarn2 then
+		def.inputs = {
+			fabric, yarn2, "",
+			"", "", "",
+			"", "", "",
+		}
+		sewing_table:recipe_register_input("", table.copy(def))
+	end
+
+	-- shortshirt
+	def.outputs = {{"clothing:shortshirt_"..color,"clothing:yarn_spool_empty"}}
+	def.inputs = {
+		fabric, yarn, fabric,
+		fabric, fabric, fabric,
+		fabric, fabric, fabric,
+	}
+	def.production_time = 45
+	sewing_table:recipe_register_input("", table.copy(def))
+	if yarn2 then
+		def.inputs = {
+			fabric, yarn2, fabric,
+			fabric, fabric, fabric,
+			fabric, fabric, fabric,
+		}
+		sewing_table:recipe_register_input("", table.copy(def))
+	end
+
+	-- shorts
+	def.outputs = {{"clothing:shorts_"..color,"clothing:yarn_spool_empty"}}
+	def.inputs = {
+		"", yarn, "",
+		fabric, fabric, fabric,
+		fabric, "", fabric,
+	}
+	def.production_time = 45
+	sewing_table:recipe_register_input("", table.copy(def))
+	if yarn2 then
+		def.inputs = {
+			"", yarn2, "",
+			fabric, fabric, fabric,
+			fabric, "", fabric,
+		}
+		sewing_table:recipe_register_input("", table.copy(def))
+	end
+
+	-- shoes
+	if not yarn2 then
+		def.outputs = {{"clothing:shoes_"..color,"clothing:yarn_spool_empty 2"}}
+		def.inputs = {
+			yarn, "", yarn,
+			fabric, "", fabric,
+			fabric, "", fabric,
+		}
+		def.production_time = 60
+		sewing_table:recipe_register_input("", table.copy(def))
+	end
 
   for picture, pic_data in pairs(clothing.pictures) do
     local inputs = {};

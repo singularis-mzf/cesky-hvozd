@@ -230,18 +230,20 @@ for color, data in pairs(clothing.colors) do
   -- shoes
   local inv_img = "(clothing_inv_shoes.png^[multiply:#"..data.hex..")";
   local uv_img = "(clothing_uv_shoes.png^[multiply:#"..data.hex..")";
-  if data.hex2 then
-    inv_img = inv_img.."^(((clothing_inv_shoes.png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-    uv_img = uv_img.."^(((clothing_uv_shoes.png^clothing_uv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-  end
+  if not data.hex2 then
+    -- inv_img = inv_img.."^(((clothing_inv_shoes.png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
+    -- uv_img = uv_img.."^(((clothing_uv_shoes.png^clothing_uv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
+  -- end
 	minetest.register_craftitem("clothing:shoes_"..color, {
 		description = desc.."é boty",
 		inventory_image = inv_img,
 		uv_image = uv_img,
-		groups = groups_clothing,
+		-- groups = groups_clothing,
+		groups = groups_clothing_in_ci, -- temporarily...
 	})
-  if data.alias then
-	  minetest.register_alias("clothing:shoes_"..data.alias, "clothing:shoes_"..color)
+	if data.alias then
+		minetest.register_alias("clothing:shoes_"..data.alias, "clothing:shoes_"..color)
+	end
   end
 
   -- shorts
