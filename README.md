@@ -464,6 +464,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/Just\_Visiting/markdown2formspec/)
 
+## Mask (mask)
+
+* Zdroj: [https://github.com/GenesisMT/mask](https://github.com/GenesisMT/mask), revize 4aac39df7778d855048833fb3295e59573bb32da
+* Původní licence: MIT
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/GenesisMT/mask/)
+
 ## Matrix Math Library (lua-matrix)
 
 * Zdroj: [https://github.com/entuland/lua-matrix](https://github.com/entuland/lua-matrix), revize b7322ea304ecf05f4dff9f230a3930168c204037
