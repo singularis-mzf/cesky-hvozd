@@ -86,11 +86,15 @@ for color, data in pairs(basic_colors) do
   end
 end
 
-colors["white"].in_creative_inventory = 1
-local tmp = colors["white_red"] or colors["red_white"]
+for color, data in pairs(colors) do
+	data.in_creative_inventory = 0
+end
+colors.white.in_creative_inventory = 1
+local tmp = colors.white_red or colors.red_white
 if tmp then
 	tmp.in_creative_inventory = 1
 end
+colors.black.in_creative_inventory = 1
 
 local pictures = {
   minetest = {

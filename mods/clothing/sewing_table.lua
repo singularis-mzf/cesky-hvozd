@@ -238,6 +238,17 @@ for color, data in pairs(clothing.colors) do
       production_time = 45,
       consumption_step_size = 1,
     });
+  sewing_table:recipe_register_input(
+    "",
+    {
+      inputs = {yarn, "", yarn,
+                fabric, "", fabric,
+                fabric, "", fabric,
+               },
+      outputs = {{"clothing:shoes_"..color,"clothing:yarn_spool_empty 2"}},
+      production_time = 60,
+      consumption_step_size = 1,
+    });
 
   for picture, pic_data in pairs(clothing.pictures) do
     local inputs = {};

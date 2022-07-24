@@ -36,7 +36,7 @@ local groups_cape_not_in_ci = {cape = 1, not_in_creative_inventory = 1}
 for color, data in pairs(clothing.colors) do
 	local desc, groups_clothing, groups_cape
 	desc = data.color
-	if data.in_creative_inventory then
+	if data.in_creative_inventory > 0 then
 		groups_clothing = groups_clothing_in_ci
 		groups_cape = groups_cape_in_ci
 	else
@@ -70,7 +70,7 @@ for color, data in pairs(clothing.colors) do
 	  minetest.register_alias("clothing:skullcap_"..data.alias, "clothing:skullcap_"..color)
 	  minetest.register_alias("clothing:hat_"..data.alias, "clothing:skullcap_"..color)
   end
-  
+
   -- t-shirt
   local inv_img = "(clothing_inv_shirt.png^[multiply:#"..data.hex..")";
   local uv_img = "(clothing_uv_shirt.png^[multiply:#"..data.hex..")";
@@ -226,7 +226,24 @@ for color, data in pairs(clothing.colors) do
   if data.alias then
 	  minetest.register_alias("clothing:shortshirt_"..data.alias, "clothing:shortshirt_"..color)
   end
-  
+
+  -- shoes
+  local inv_img = "(clothing_inv_shoes.png^[multiply:#"..data.hex..")";
+  local uv_img = "(clothing_uv_shoes.png^[multiply:#"..data.hex..")";
+  if data.hex2 then
+    inv_img = inv_img.."^(((clothing_inv_shoes.png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
+    uv_img = uv_img.."^(((clothing_uv_shoes.png^clothing_uv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
+  end
+	minetest.register_craftitem("clothing:shoes_"..color, {
+		description = desc.."é boty",
+		inventory_image = inv_img,
+		uv_image = uv_img,
+		groups = groups_clothing,
+	})
+  if data.alias then
+	  minetest.register_alias("clothing:shoes_"..data.alias, "clothing:shoes_"..color)
+  end
+
   -- shorts
   local inv_img = "(clothing_inv_shorts.png^[multiply:#"..data.hex..")";
   local uv_img = "(clothing_uv_shorts.png^[multiply:#"..data.hex..")";
@@ -243,8 +260,7 @@ for color, data in pairs(clothing.colors) do
   if data.alias then
 	  minetest.register_alias("clothing:shorts_"..data.alias, "clothing:shorts_"..color)
   end
-  
-  
+
   for picture, pic_data in pairs(clothing.pictures) do
     -- t-shirt
     local inv_img = "(clothing_inv_shirt.png^[multiply:#"..data.hex..")";
