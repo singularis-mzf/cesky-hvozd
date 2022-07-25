@@ -339,6 +339,24 @@ local function valid_def(def)
 		and def.description ~= ""
 end
 
+local filter_translate = {
+	["typ:barvitelné"] = "group:ud_param2_colorable",
+	["typ:barvy"] = "group:basic_dye",
+	["typ:cestbudky"] = "group:travelnet",
+	["typ:oblečení"] = "group:clothing", -- vše oblékatelné včetně obuvi, ale kromě plášťů
+	["typ:kmeny"] = "group:tree",
+	["typ:květiny"] = "group:flower", -- včetně bonsají
+	["typ:listí_a_jehličí"] = "group:leaves", -- včetně břečťanu a liány
+	["typ:na_cnc"] = "group:na_cnc",
+	["typ:na_cnc_i_kp"] = "group:na_cnc,na_kp",
+	["typ:na_kp"] = "group:na_kp",
+	["typ:na_kp_i_cnc"] = "group:na_cnc,na_kp",
+	["typ:pláště"] = "group:cape",
+	["typ:všechny_barvy"] = "group:dye",
+}
+local filter_translate_extended = false
+
+
 --apply filter to the inventory list (create filtered copy of full one)
 function ui.apply_filter(player, filter, search_dir)
 	if not player then
@@ -359,6 +377,20 @@ function ui.apply_filter(player, filter, search_dir)
 			return string.lower(ui.string_remove_extended_chars(s))
 		end
 		lfilter = string.lower(filter)
+	end
+
+	if filter ~= "" and not filter_translate_extended then
+		filter_translate_extended = true -- do this only once
+		for k, v in pairs(table.copy(filter_translate)) do
+			local k2 = ui.string_remove_extended_chars(k)
+			if k2 ~= k then
+				filter_translate[k2] = v
+			end
+		end
+	end
+
+	if filter_translate[lfilter] then
+		lfilter = filter_translate[lfilter]
 	end
 
 	if lfilter:sub(1, 6) == "group:" then

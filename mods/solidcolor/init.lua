@@ -25,7 +25,7 @@ local tile_groups = {
 	},
 	stonebrick = {
 		description = "Barvitelné kamenné cihly",
-		tiles = {"default_stone_brick.png"},
+		tiles = {"default_stone_brick.png^[brighten"},
 		material_groups = {cracky = 2, stone = 1},
 	},
 }
