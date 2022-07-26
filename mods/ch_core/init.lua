@@ -24,7 +24,7 @@ dofile(modpath .. "/privs.lua")
 dofile(modpath .. "/data.lua")
 dofile(modpath .. "/lib.lua") -- : data
 dofile(modpath .. "/chat.lua") -- : data, lib, privs
-dofile(modpath .. "/hud.lua")
+dofile(modpath .. "/hud.lua") -- : data, lib
 dofile(modpath .. "/joinplayer.lua") -- : data, lib
 dofile(modpath .. "/nodes.lua")
 dofile(modpath .. "/padlock.lua") -- : data, lib
@@ -99,8 +99,10 @@ local function globalstep(dtime)
 					--
 				elseif new_controls.aux1 and not old_controls.aux1 then
 					print(player_name.." pressed aux1")
+					ch_core.show_player_list(player, online_charinfo)
 				elseif not new_controls.aux1 and old_controls.aux1 then
 					print(player_name.." leaved aux1")
+					ch_core.hide_player_list(player, online_charinfo)
 				end
 
 				disrupt_pryc_flag = true
