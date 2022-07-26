@@ -151,6 +151,4 @@ end
 unified_inventory.string_lower_extended = ch_core.na_mala_pismena
 unified_inventory.string_remove_extended_chars = ch_core.odstranit_diakritiku
 
-
-
 ch_core.submod_loaded("lib")

@@ -8,12 +8,13 @@ local nametag_color_blue = minetest.get_color_escape_sequence("#6693ff");
 local nametag_color_green = minetest.get_color_escape_sequence("#48cc3d");
 local nametag_color_yellow = minetest.get_color_escape_sequence("#fff966");
 local nametag_color_aqua = minetest.get_color_escape_sequence("#66f8ff");
-local nametag_color_gray = minetest.get_color_escape_sequence("#999999");
+local nametag_color_grey = minetest.get_color_escape_sequence("#cccccc");
 local color_reset = minetest.get_color_escape_sequence("#ffffff");
 
-local nametag_color_bgcolor = {r = 0, g = 0, b = 0, a = 0}
-local nametag_color_normal = {r = 255, g = 255, b = 255, a = 255}
-local nametag_color_unregistered = {r = 153, g = 153, b = 153, a = 255}
+local nametag_color_bgcolor_table = {r = 0, g = 0, b = 0, a = 0}
+local nametag_color_normal_table = {r = 255, g = 255, b = 255, a = 255}
+local nametag_color_unregistered_table = {r = 204, g = 204, b = 204, a = 255} -- 153?
+local nametag_color_unregistered = nametag_color_grey
 
 -- POZICE A OBLASTI
 -- ===========================================================================
@@ -58,7 +59,10 @@ function ch_core.get_joining_online_charinfo(player_name)
 	local result = ch_core.online_charinfo[player_name]
 	if not result then
 		-- the first call => create a new online_charinfo
-		result = { join_timestamp = os.time() }
+		local os_time = os.time()
+		result = {
+			join_timestamp = os_time,
+		}
 		ch_core.online_charinfo[player_name] = result
 		old_online_charinfo[player_name] = nil
 		print("JOIN PLAYER(" .. player_name ..") at "..result.join_timestamp);
@@ -114,37 +118,75 @@ function ch_core.set_titul(player_name, titul)
 	return ch_core.update_player_nametag(player_name)
 end
 
+-- ch_core.set_temporary_titul() -- Nastaví či zruší dočasný titul postavy.
+--
+function ch_core.set_temporary_titul(player_name, titul, titul_enabled)
+	local online_charinfo = ch_core.online_charinfo[player_name]
+	if not online_charinfo or not titul or titul == "" then return false end
+	local dtituly = online_charinfo.docasne_tituly
+	if not dtituly then
+		dtituly = {}
+		online_charinfo.docasne_tituly = dtituly
+	end
+	if titul_enabled then
+		dtituly[titul] = 1
+	else
+		dtituly[titul] = nil
+	end
+	return ch_core.update_player_nametag(player_name)
+end
+
 function ch_core.update_player_nametag(player_name)
+	local online_charinfo = ch_core.online_charinfo[player_name] -- may be null
 	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
 	local player = minetest.get_player_by_name(player_name)
-	local player_info = ch_core.get_offline_charinfo(player_name)
 
-	if not player or not player_info then
-		minetest.log("warning", "update_player_nametag() called, but player or player_info are missing for player '"..player_name.."'!")
+	if not player or not offline_charinfo then
+		minetest.log("warning", "update_player_nametag() called, but player or offline_charinfo are missing for player '"..player_name.."'!")
 		return false
 	end
 
-	local nametag = {bgcolor = nametag_color_bgcolor}
-	local barevne_jmeno = player_info.barevne_jmeno or player_info.jmeno or player_name
+	local nametag = {
+		bgcolor = nametag_color_bgcolor_table,
+	}
 
-	print("DEBUG: barevne_jmeno = "..(player_info.barevne_jmeno or "nil")..", jmeno = "..(player_info.jmeno or "nil"))
+	local titul, barevne_jmeno, local_color_reset, staly_titul
 
 	if string.sub(player_name, -2) == "PP" then
+		-- pomocná postava
+		local_color_reset = nametag_color_grey
 		nametag.color = nametag_color_unregistered
-		nametag.text = "*pomocná postava*\n"..barevne_jmeno
+		staly_titul = "pomocná postava"
 	elseif minetest.check_player_privs(player, "ch_registered_player") then
-		nametag.color = nametag_color_normal
-		nametag.text = player_info.titul or ""
-		if nametag.text == "" then
-			nametag.text = barevne_jmeno
-		else
-			nametag.text = "*"..nametag.text.."*\n"..barevne_jmeno
+		local_color_reset = color_reset
+		nametag.color = nametag_color_normal_table
+		staly_titul = offline_charinfo.titul
+		if staly_titul and staly_titul == "" then
+			staly_titul = nil
 		end
 	else
-		nametag.color = nametag_color_unregistered
-		nametag.text = "*nová postava*\n"..barevne_jmeno
+		-- neregistrovaná postava
+		local_color_reset = nametag_color_grey
+		nametag.color = nametag_color_unregistered_table
+		staly_titul = "nová postava"
 	end
-	print("DEBUG: will set nametag attributes: text = "..nametag.text.." (delka="..#(nametag.text)..")")
+
+	local docasne_tituly = (online_charinfo and online_charinfo.docasne_tituly) or {}
+	for dtitul, _ in pairs(docasne_tituly) do
+		titul = (titul or "").."*"..dtitul.."*\n"
+	end
+	if titul then
+		-- dočasný titul
+		titul = nametag_color_green..titul..local_color_reset
+	elseif staly_titul then
+		-- trvalý titul
+		titul = "*"..staly_titul.."*\n"
+	else
+		titul = ""
+	end
+
+	barevne_jmeno = offline_charinfo.barevne_jmeno or offline_charinfo.jmeno or player_name
+	nametag.text = titul..barevne_jmeno
 
 	player:set_nametag_attributes(nametag)
 	return true

@@ -30,6 +30,7 @@ dofile(modpath .. "/nodes.lua")
 dofile(modpath .. "/padlock.lua") -- : data, lib
 dofile(modpath .. "/sickles.lua")
 dofile(modpath .. "/hotbar.lua")
+dofile(modpath .. "/pryc.lua") -- : data, lib, chat, privs
 dofile(modpath .. "/zacatek.lua") -- : privs
 
 -- KOHOUT: při přechodu mezi dnem a nocí přehraje zvuk
@@ -67,6 +68,8 @@ local function globalstep(dtime)
 	for _, player in pairs(connected_players) do
 		local player_name = player:get_player_name()
 		local online_charinfo = ch_core.online_charinfo[player_name]
+		local disrupt_pryc_flag = false
+
 		if online_charinfo then
 			-- ÚHEL HLAVY:
 			local puvodni_uhel_hlavy = online_charinfo.uhel_hlavy or 0
@@ -85,15 +88,27 @@ local function globalstep(dtime)
 			end
 
 			-- REAGOVAT NA KLÁVESY:
-			local old_controls = online_charinfo.klavesy
-			local new_controls = player:get_player_control()
-			online_charinfo.klavesy = new_controls
-			if not old_controls then
-				--
-			elseif new_controls.aux1 and not old_controls.aux1 then
-				print(player_name.." pressed aux1")
-			elseif not new_controls.aux1 and old_controls.aux1 then
-				print(player_name.." leaved aux1")
+			local old_control_bits = online_charinfo.klavesy_b or 0
+			local new_control_bits = player:get_player_control_bits()
+			if not (new_control_bits == old_control_bits) then
+				local old_controls = online_charinfo.klavesy
+				local new_controls = player:get_player_control()
+				online_charinfo.klavesy = new_controls
+				online_charinfo.klavesy_b = new_control_bits
+				if not old_controls then
+					--
+				elseif new_controls.aux1 and not old_controls.aux1 then
+					print(player_name.." pressed aux1")
+				elseif not new_controls.aux1 and old_controls.aux1 then
+					print(player_name.." leaved aux1")
+				end
+
+				disrupt_pryc_flag = true
+			end
+
+			-- ZRUŠIT /pryč:
+			if disrupt_pryc_flag and online_charinfo.pryc then
+				online_charinfo.pryc(player, online_charinfo)
 			end
 		end
 	end

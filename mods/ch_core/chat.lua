@@ -136,15 +136,27 @@ end
 local function on_chat_message(jmeno, zprava)
 	-- minetest.log("info", "on_chat_message("..jmeno..","..zprava..")") -- DEBUGGING ONLY!
 	local info = minetest.get_player_by_name(jmeno)
+	local info_pos = info:get_pos()
+	local online_charinfo = ch_core.online_charinfo[jmeno]
 	if not info then
 		minetest.log("warning", "No info found about player "..jmeno.."!")
 		return true
 	end
-	local info_pos = info:get_pos()
 	if not info_pos then
 		minetest.log("warning", "No position of player "..jmeno.."!")
 		return true
 	end
+	if not online_charinfo then
+		minetest.log("warning", "No online_charinfo of character "..jmeno.."!")
+		return true
+	end
+
+	-- disrupt /pryč:
+	local pryc_func = online_charinfo.pryc
+	if pryc_func then
+		pryc_func(info, online_charinfo)
+	end
+
 	local c = zprava:sub(1, 1)
 	if c == "!" then
 		-- celoserverový kanál
@@ -168,9 +180,40 @@ local function on_chat_message(jmeno, zprava)
 		if not i then
 			return true
 		end
-		return ch_core.soukroma_zprava(jmeno, ch_core.odstranit_diakritiku(zprava:sub(2, i - 1)), zprava:sub(i + 1))
+		local komu
+		if i > 2 then
+			local kandidati = {}
+			local predpona = zprava:sub(2, i - 1)
+			for prihlasovaci, _ in pairs(ch_core.online_charinfo) do
+				local zobrazovaci = ch_core.prihlasovaci_na_zobrazovaci(prihlasovaci)
+				if (#prihlasovaci >= #predpona and prihlasovaci:sub(1, #predpona) == predpona)
+				   or (#zobrazovaci >= #predpona and zobrazovaci:sub(1, #predpona) == predpona) then
+					table.insert(kandidati, prihlasovaci)
+				end
+			end
+			if #kandidati > 1 then
+				local s
+				if #kandidati < 5 then
+					s = "možnosti"
+				else
+					s = "možností"
+				end
+				ch_core.systemovy_kanal(jmeno, "CHYBA: Nejednoznačná předpona „"..predpona.."“ ("..#kandidati.." "..s..")")
+				return true
+			elseif #kandidati == 1 then
+				komu = kandidati[1]
+			else
+				komu = predpona
+			end
+		else
+			komu = ""
+		end
+		return ch_core.soukroma_zprava(jmeno, komu, zprava:sub(i + 1))
 	else
 		-- místní zpráva
+		if c == "=" then
+			zprava = zprava:sub(2, -1)
+		end
 		return ch_core.chat("mistni", jmeno, zprava, info_pos)
 	end
 end
@@ -247,11 +290,7 @@ end
 minetest.register_on_chat_message(on_chat_message)
 
 minetest.override_chatcommand("me", {func = function(player_name, message)
-	local player = minetest.get_player_by_name(player_name)
-	if not player then
-		return false
-	end
-	return ch_core.rp_kanal(player_name, message, player:get_pos())
+	return on_chat_message(player_name, "*"..message)
 end})
 
 minetest.override_chatcommand("msg", {func = function(player_name, text)
@@ -370,3 +409,32 @@ end
 minetest.send_leave_message = function(player_name, is_timedout)
 	return ch_core.systemovy_kanal("", "Odpojila se postava: "..ch_core.prihlasovaci_na_zobrazovaci(player_name))
 end
+
+-- /info_o
+local function info_o(player_name, param)
+	param = ch_core.jmeno_na_prihlasovaci(param)
+	local offline_charinfo = ch_core.offline_charinfo[param]
+	if not offline_charinfo then
+		minetest.chat_send_player(player_name, "*** Nejsou uloženy žádné informace o "..param..".")
+		return true
+	end
+	minetest.chat_send_player(player_name, "*** Informace o "..param..":")
+	local online_charinfo = ch_core.online_charinfo[param]
+	local current_playtime = 0
+	if online_charinfo then
+		current_playtime = os.time() - online_charinfo.join_timestamp
+	end
+	local past_playtime = offline_charinfo.past_playtime or 0
+	minetest.chat_send_player(player_name, "* Odehraná doba [s]: "..current_playtime.." nyní+"..past_playtime.." dříve")
+	return true
+end
+
+
+minetest.register_chatcommand("info_o", {
+	params = "<Jméno postavy>",
+	description = "Vypíše systémové informace o postavě",
+	privs = { server = true },
+	func = info_o,
+})
+
+ch_core.submod_loaded("chat")
