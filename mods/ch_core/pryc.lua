@@ -57,6 +57,7 @@ local def = {
 		ch_core.systemovy_kanal("", ch_core.prihlasovaci_na_zobrazovaci(player_name).." jde pryč od počítače")
 	end
 }
+minetest.register_chatcommand("pop", def)
 minetest.register_chatcommand("pryč", def)
 minetest.register_chatcommand("pryc", def)
 
