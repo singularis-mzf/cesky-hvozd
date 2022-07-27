@@ -14,6 +14,10 @@ for k,v in pairs(trunk) do
 	ftrunk[k] = v
 	gftrunk[k] = v
 end
+ftrunk.groups = table.copy(ftrunk.groups)
+gftrunk.groups = table.copy(gftrunk.groups)
+ftrunk.groups.not_in_creative_inventory = 1
+gftrunk.groups.not_in_creative_inventory = 1
 ftrunk.tiles = {}
 gftrunk.tiles = {}
 for k,v in pairs(trunk.tiles) do

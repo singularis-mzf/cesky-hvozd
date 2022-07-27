@@ -42,6 +42,8 @@ ftrunk.tiles = {}
 for k,v in pairs(trunk.tiles) do
 	ftrunk.tiles[k] = v
 end
+ftrunk.groups = table.copy(ftrunk.groups)
+ftrunk.groups.not_in_creative_inventory = 1
 ftrunk.drop = "moretrees:date_palm_trunk"
 ftrunk.after_destruct = function(pos, oldnode)
 	local dates = minetest.find_nodes_in_area(
