@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 --[[
 
 Infinite Chest for Minetest
@@ -47,3 +48,4 @@ minetest.register_node("infinite_chest:chest_locked", {
 	on_metadata_inventory_put = infinite_chest.on_metadata_inventory_put,
 	on_metadata_inventory_take = infinite_chest.on_metadata_inventory_take,
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

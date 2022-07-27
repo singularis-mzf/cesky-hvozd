@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 local S = minetest.get_translator(minetest.get_current_modname())
 
 -- bell_positions are saved through server restart
@@ -372,3 +373,4 @@ if minetest.get_modpath("mcl_core") then
 		},
 	})
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

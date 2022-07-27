@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 -- Detect optional mods.
 local armor_path = minetest.get_modpath("3d_armor")
 
@@ -348,3 +349,4 @@ local box_entity = {
 }
 
 minetest.register_entity("elevator:box", box_entity)
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

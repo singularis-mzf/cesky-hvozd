@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 minetest.register_node("craftable_lava:hot_stone", {
     description = "Vřelá skála",
@@ -55,3 +56,4 @@ minetest.register_ore({
 		persist = 0.6
 	}
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -1,3 +1,5 @@
+local counter = 0
+
 for id,definition in pairs(minetest.registered_nodes) do
     local groups = definition.groups
     local origin = definition.mod_origin
@@ -6,7 +8,7 @@ for id,definition in pairs(minetest.registered_nodes) do
     local stair_or_slab = groups.stair or groups.slab
     local moreblocks_object = origin == 'moreblocks' and not circular_saw
 
-    if stair_or_slab or moreblocks_object then
+    if (stair_or_slab or moreblocks_object) and string.find(id, ":stair_") then
         local tiles = definition.tiles
         local target_tiles = {}
 
@@ -25,5 +27,8 @@ for id,definition in pairs(minetest.registered_nodes) do
         minetest.override_item(id, {
             tiles = target_tiles
         })
+		counter = counter + 1
     end
 end
+
+print("[redef] Aligned Textures:  "..counter.." nodes redefined")

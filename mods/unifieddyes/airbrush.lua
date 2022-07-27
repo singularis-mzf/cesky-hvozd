@@ -22,7 +22,7 @@ function unifieddyes.on_airbrush(itemstack, player, pointed_thing)
 	if not pos then
 		local look_angle = player:get_look_vertical()
 		if look_angle > -1.55 then
-			minetest.chat_send_player(player_name, "*** No node selected")
+			minetest.chat_send_player(player_name, S("*** No node selected"))
 		else
 			local hexcolor = unifieddyes.get_color_from_dye_name(painting_with)
 			if hexcolor then

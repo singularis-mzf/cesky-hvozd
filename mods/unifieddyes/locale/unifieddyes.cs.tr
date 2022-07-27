@@ -304,7 +304,7 @@ Show All Colors=Zobrazit@nvšechny barvy
 *** Ignoring it.=*** Volba ignorována.
 *** You need to set a color first.=*** Nejprve musíte zvolit barvu.
 *** Right-click any random node to open the color selector,=*** Klikněte pravým tlačítkem na libovolný blok a otevře se volba barvy
-*** or shift+right-click a colorized node to use its color.=nebo klikněte pravým tlačítkem se stisknutým Shift a použijete se barva daného bloku (musí podporovat barvení pistolí)
+*** or shift+right-click a colorized node to use its color.=nebo klikněte pravým tlačítkem se stisknutým Aux1 a použijete se barva daného bloku (musí podporovat barvení pistolí)
 *** Be sure to click "Accept", or the color you select will be ignored.=Aby byla barva zvolena, musíte ji potvrdit tlačítkem „Nastavit barvu“.
 *** Sorry, someone else owns that node.=*** Chyba! Blok je chráněný a nemáte právo ho nabarvit.
 *** That node can't be colored.=*** Tento blok nelze barvit pistolí.
@@ -315,5 +315,6 @@ Besides, @1 can't be applied to that node.=Mimochodem, @1 nelze na daný blok po
 *** @1 can't be applied to that node.=*** @1 nelze na daný blok použít.
 *** That node is uncolored.=*** Tento blok nemá nastavenou barvu.
 *** Switching to @1 for the airbrush, to match that node.=Přepínám barvu na @1 podle zvoleného bloku.
+*** No node selected=*** Není vybrán žádný blok.
 
 [UnifiedDyes] Loaded!=[UnifiedDyes] načten

@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 ropes = {
   name = 'ropes',
 }
@@ -63,4 +64,4 @@ minetest.register_alias("castle:ropes", "ropes:rope")
 minetest.register_alias("castle:ropebox", "ropes:steel1rope_block")
 minetest.register_alias("castle:box_rope", "ropes:rope")
 
-print("[Ropes] Loaded!")
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 -- Translation support
 local S = minetest.get_translator("powerbanks")
@@ -290,3 +291,4 @@ register_powerbank({  -- Powerbank Mk3
 	craft_base = "powerbanks:powerbank_mk2",
 	craft_crystal = "technic:blue_energy_crystal"
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -1,4 +1,3 @@
-
 appliances = {};
 
 print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

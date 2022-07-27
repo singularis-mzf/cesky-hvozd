@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 local S = minetest.get_translator("orienteering")
 local mod_map = nil -- minetest.get_modpath("map") -- map mod from Minetest Game
 
@@ -451,3 +452,4 @@ if minetest.get_modpath("awards") ~= nil and minetest.get_modpath("default") ~= 
 		}
 	})
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 local modpath = minetest.get_modpath("bbq_smoke")
 
 dofile(modpath.."/bbq.lua")
@@ -33,3 +34,4 @@ def.on_timer = function(pos)
 end
 def.drop = {}
 minetest.register_node("bbq_smoke:chimney_smoke_automatic", def)
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

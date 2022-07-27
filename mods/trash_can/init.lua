@@ -1,5 +1,7 @@
 -- standard compatibility switcher block.
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local moditems = {}  -- switcher
 moditems.iron_item = "default:steel_ingot" -- MTG iron ingot
 moditems.coal_item = "default:coalblock"   -- MTG coal block
@@ -247,3 +249,4 @@ minetest.register_craft({
 		{moditems.iron_item,moditems.iron_item,moditems.iron_item},
 	}
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

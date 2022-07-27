@@ -1,5 +1,7 @@
 wine = {}
 
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
 local def = minetest.get_modpath("default")
 local snd_d = def and default.node_sound_defaults()
 local snd_g = def and default.node_sound_glass_defaults()
@@ -32,7 +34,7 @@ local S = minetest.get_translator("wine")
 if is_uninv then
 
 	unified_inventory.register_craft_type("barrel", {
-		description = "fermentace",
+		description = "kvašení",
 		icon = 'wine_barrel.png',
 		width = 1,
 		height = 1
@@ -714,3 +716,4 @@ if minetest.get_modpath("lucky_block") then
 			{name = "wine:blue_agave", max = 4}}},
 	})
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

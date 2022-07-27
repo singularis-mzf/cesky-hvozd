@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 local S = minetest.get_translator("rocks")
 
 --Register Rockset does all the heavy lifting for the mod:
@@ -324,3 +325,4 @@ register_rockset("desert_sand", "default:desert_sand", "default:desert_sandstone
 register_rockset("desert_stone", "default:desert_stone", "default:desert_cobble", "desert_stone.png")
 register_rockset("sand", "default:sand", "default:sandstone", "sand.png")
 register_rockset("silver_sand", "default:silver_sand", "default:silver_sandstone", "silver_sand.png")
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 -- Translation support
 local S = minetest.get_translator("new_campfire")
 
@@ -782,3 +783,4 @@ if not minetest.get_modpath("campfire") then
 	minetest.register_alias("campfire:campfire", "new_campfire:campfire")
 	minetest.register_alias("campfire:campfire_active", "new_campfire:campfire")
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

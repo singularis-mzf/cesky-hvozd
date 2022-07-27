@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 local S = minetest.get_translator("letters")
 
 letters = {
@@ -641,3 +642,4 @@ minetest.register_craft({
 		{"default:tree", "default:steel_ingot", "default:tree"},
 	},
 })
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

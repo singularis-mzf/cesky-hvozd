@@ -1,3 +1,4 @@
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 --[[
 
 Ice Cream Mod by Can202
@@ -18,3 +19,4 @@ dofile(modpath.."/src/craft.lua")
 if minetest.get_modpath("awards") then
 	dofile(modpath.."/src/awards.lua")
 end
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

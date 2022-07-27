@@ -291,7 +291,7 @@ end
 local function mining_drill_mk2_handler(itemstack, user, pointed_thing)
 	local keys = user:get_player_control()
 	local meta = minetest.deserialize(itemstack:get_metadata())
-	if not meta or not meta.mode or keys.sneak then
+	if not meta or not meta.mode or keys.aux1 then
 		return mining_drill_mk2_setmode(user, itemstack)
 	end
 	if pointed_thing.type ~= "node" or not pos_is_pointable(pointed_thing.under) or not meta.charge then
@@ -313,7 +313,7 @@ end
 local function mining_drill_mk3_handler(itemstack, user, pointed_thing)
 	local keys = user:get_player_control()
 	local meta = minetest.deserialize(itemstack:get_metadata())
-	if not meta or not meta.mode or keys.sneak then
+	if not meta or not meta.mode or keys.aux1 then
 		return mining_drill_mk3_setmode(user, itemstack)
 	end
 	if pointed_thing.type ~= "node" or not pos_is_pointable(pointed_thing.under) or not meta.charge then
