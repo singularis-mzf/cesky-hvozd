@@ -96,11 +96,13 @@ minetest.register_abm({
 
 		-- Get what to cook if anything
 		local result = technic.get_recipe("alloy", inv:get_list("src"))
+		local sound_timer_counter = meta:get_int("sound_timer") or 0
 
 		local was_active = false
 
 		if meta:get_float("fuel_time") < meta:get_float("fuel_totaltime") then
 			was_active = true
+			meta:set_int("sound_timer", sound_timer_counter + 1)
 			meta:set_int("fuel_time", meta:get_int("fuel_time") + 1)
 			if result then
 				meta:set_int("src_time", meta:get_int("src_time") + 1)
@@ -110,12 +112,21 @@ minetest.register_abm({
 					if inv:room_for_item("dst", result_stack) then
 						inv:set_list("src", result.new_input)
 						inv:add_item("dst", result_stack)
+						minetest.sound_play("default_cool_lava", {pos = pos, max_hear_distance = 16, gain = 0.1}, true)
 					end
 				end
 			else
 				meta:set_int("src_time", 0)
 			end
+			print("was_active="..(was_active and "true" or "false")..", sound_timer="..sound_timer_counter)
+			if sound_timer_counter == 0 or sound_timer_counter > 5 then
+				minetest.sound_play("default_furnace_active", {pos = pos, max_hear_distance = 16, gain = 0.5}, true)
+				meta:set_int("sound_timer", 1)
+			end
+		elseif sound_timer_counter > 1 then
+			meta:set_int("sound_timer", 0)
 		end
+
 
 		if meta:get_float("fuel_time") < meta:get_float("fuel_totaltime") then
 			local percent = math.floor(meta:get_float("fuel_time") /

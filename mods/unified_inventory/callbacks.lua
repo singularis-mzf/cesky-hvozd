@@ -228,6 +228,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		end
 		if items ~= "" then
 			minetest.log("action", "Player "..player_name.." trashed in the craft grid: "..items:sub(3, -1))
+			minetest.sound_play("trash_all", {to_player=player_name, gain = 1.0})
 		end
 	end
 

@@ -140,6 +140,11 @@ function technic.register_base_machine(data)
 					break
 				end
 				inv:add_item("dst_tmp", o)
+				if machine_name == "electric_furnace" or machine_name == "alloy_furnace" then
+					minetest.sound_play("default_cool_lava", {pos = pos, max_hear_distance = 16, gain = 0.1}, true)
+				elseif machine_name == "oven_white" or machine_name == "oven_steel" or machine_name == "microwave_oven" then
+					minetest.sound_play("default_cool_lava", {pos = pos, max_hear_distance = 8, gain = 0.05}, true)
+				end
 			end
 			if not room_for_output then
 				technic.swap_node(pos, machine_node)
