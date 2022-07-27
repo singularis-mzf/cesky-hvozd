@@ -29,6 +29,9 @@ minetest.register_craft({
 
 local player_positions = {}
 local was_wielding = {}
+local light_to_water = {["technic:light"] = ""}
+local water_to_light = {["air"] = "technic:light"}
+local water_source_to_flowing = {}
 
 local function check_for_flashlight(player)
 	local flashlights = ch_core.predmety_na_liste(player, true)["technic:flashlight"]
@@ -76,8 +79,13 @@ minetest.register_on_leaveplayer(function(player)
 	local player_name = player:get_player_name()
 	local pos = player_positions[player_name]
 	local nodename = minetest.get_node(pos).name
-	if nodename == "technic:light" then
-		minetest.remove_node(pos)
+	local new_node = light_to_water[nodename]
+	if new_node then
+		if new_node == "" then
+			minetest.remove_node(pos)
+		else
+			minetest.swap_node(pos, {name = new_node})
+		end
 	end
 	player_positions[player_name] = nil
 end)
@@ -100,17 +108,36 @@ minetest.register_globalstep(function(dtime)
 		if was_wielding[player_name] and not flashlight_weared then
 			was_wielding[player_name] = false
 			local node = minetest.get_node_or_nil(old_pos)
-			if node and node.name == "technic:light" then
-				minetest.remove_node(old_pos)
+			local new_node = node and light_to_water[node.name]
+			if new_node then
+				if new_node == "" then
+					minetest.remove_node(old_pos)
+				else
+					minetest.swap_node(old_pos, {name = new_node})
+				end
 			end
 		elseif (player_moved or not was_wielding[player_name]) and flashlight_weared then
 			local node = minetest.get_node_or_nil(rounded_pos)
-			if node and node.name == "air" then
-				minetest.set_node(rounded_pos, {name="technic:light"})
+			local new_node = node and water_to_light[node.name]
+			if new_node then
+				local node_below = minetest.get_node(vector.new(rounded_pos.x, rounded_pos.y - 1, rounded_pos.z)).name
+				if node_below ~= (water_source_to_flowing[node.name] or "ignore") then
+					-- place a new light
+					if node == "air" then
+						minetest.set_node(rounded_pos, {name = new_node})
+					else
+						minetest.swap_node(rounded_pos, {name = new_node})
+					end
+				end
 			end
 			node = minetest.get_node_or_nil(old_pos)
-			if node and node.name == "technic:light" then
-				minetest.remove_node(old_pos)
+			new_node = node and light_to_water[node.name]
+			if new_node then
+				if new_node == "" then
+					minetest.remove_node(old_pos)
+				else
+					minetest.swap_node(old_pos, {name = new_node})
+				end
 			end
 			player_positions[player_name] = rounded_pos
 			was_wielding[player_name] = true
@@ -118,7 +145,7 @@ minetest.register_globalstep(function(dtime)
 	end
 end)
 
-minetest.register_node("technic:light", {
+local light_def = {
 	drawtype = "glasslike",
 	tiles = {"technic_light.png"},
 	paramtype = "light",
@@ -129,4 +156,31 @@ minetest.register_node("technic:light", {
 	sunlight_propagates = true,
 	light_source = minetest.LIGHT_MAX,
 	pointable = false,
-})
+}
+minetest.register_node("technic:light", light_def)
+
+local function register_light_in_water(name, water_source, water_flowing)
+	local orig_def = minetest.registered_nodes[water_source]
+	if not orig_def then
+		minetest.log("error", "Required water node "..water_source.." does not exist!")
+		return false
+	end
+	local def = table.copy(orig_def)
+	def.groups = table.copy(def.groups)
+	def.groups.not_in_creative_inventory = 1
+	def.liquid_alternative_source = name
+	def.liquid_alternative_flowing = name
+	def.liquid_range = 0
+	def.paramtype = "light"
+	def.light_source = minetest.LIGHT_MAX
+	def.sunlight_propagates = true
+	minetest.register_node(name, def)
+
+	water_to_light[water_source] = name
+	light_to_water[name] = water_source
+	water_source_to_flowing[water_source] = water_flowing
+	return true
+end
+
+register_light_in_water("technic:light_water_source", "default:water_source", "default:water_flowing")
+register_light_in_water("technic:light_river_water_source", "default:river_water_source", "default:river_water_flowing")
