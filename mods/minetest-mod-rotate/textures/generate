@@ -1,0 +1,211 @@
+#! /bin/bash
+
+# Script to (re)generate most of the wrench images.
+# Requires imagemagick.
+#
+# Base images needed:
+#	- wrench_master_diagonal.png
+#	- wrench_master_horizontal.png
+# Both in grayscale colors.
+#
+
+if ! { test -f generate \
+	&& test -f wrench_master_diagonal_16.png \
+	&& test -f wrench_master_horizontal_16.png \
+	&& test -f wrench_master_diagonal_128.png \
+	&& test -f wrench_master_horizontal_128.png; }; then
+    echo "The generate script must be run inside the textures directory" 1>&2
+    exit 1
+fi
+
+materials="
+	wood	#6C4913 100
+	steel	#FFFFFF	130
+	copper	#F6A860	100
+	gold	#FFe900	130
+	"
+
+echo "$materials" \
+| while read material color tint; do
+    if [ -z "$material" ]; then continue; fi
+    for set in "" "128"; do
+	if [ -z "$set" ]; then
+	    suffix="_16"
+	    dir="."
+	    convert "wrench_master_diagonal${suffix}.png" -fill "$color" -tint "$tint" -bordercolor none -border 1 "wrench_${material}.png"
+	    convert "wrench_master_horizontal${suffix}.png" -fill "$color" -tint "$tint" -bordercolor none -border 1 "wrench_${material}_left.png"
+	else
+	    suffix="${set:+_$set}"
+	    dir="$set/"
+	    mkdir -p "$dir"
+	    convert "wrench_master_diagonal${suffix}.png" -fill "$color" -tint "$tint" "${dir}/wrench_${material}.png"
+	    convert "wrench_master_horizontal${suffix}.png" -fill "$color" -tint "$tint" "${dir}/wrench_${material}_left.png"
+	fi
+	(
+	    cd "$dir"
+	    convert "wrench_${material}.png" -rotate -90 "wrench_${material}_cw.png"
+	    convert "wrench_${material}_cw.png" -flop "wrench_${material}_ccw.png"
+	    convert "wrench_${material}_left.png" -flop "wrench_${material}_right.png"
+	    convert "wrench_${material}_left.png" -rotate -90 "wrench_${material}_down.png"
+	    convert "wrench_${material}_right.png" -rotate -90 "wrench_${material}_up.png"
+	    )
+    done
+done
+
+#
+# Generate axis/rotation mode indicator images
+#
+black=16
+modes="
+	apos	RGB(200,16,16)
+	rpos	RGB(32,32,255)
+	"
+
+echo "$modes" \
+| while read mode rgb; do
+    if [ -z "$mode" ]; then continue; fi
+    for axismode in 0 1 2 3 4 5; do
+	convert \
+	    -size 18x18 \
+	    -matte \
+	    "xc:RGBA(0,0,0,0)" \
+	    -fill "RGB($black,$black,$black)" \
+	    -draw "line 15,1 15,6" \
+	    -fill "$rgb" \
+	    -draw "point 15,$((axismode + 1))" \
+	    "wrench_axismode_${axismode}_${mode}.png"
+    done
+    for rotmode in 0 1 2 3; do
+	convert \
+	    -size 18x18 \
+	    -matte \
+	    "xc:RGBA(0,0,0,0)" \
+	    -fill "RGB($black,$black,$black)" \
+	    -draw "line 16,1 16,4" \
+	    -fill "$rgb" \
+	    -draw "point 16,$((rotmode + 1))" \
+	    "wrench_rotmode_${rotmode}_${mode}.png"
+    done
+done
+
+#
+# Generate cube mode indicator images
+#
+
+cube_size=2
+
+echo "$modes" \
+| while read mode rgb; do
+    if [ -z "$mode" ]; then continue; fi
+    if ((cube_size == 1)); then
+	convert \
+	    -size 18x18 \
+	    -matte \
+	    "xc:RGBA(0,0,0,0)" \
+	    -fill "RGB($black,$black,$black)" \
+	    -draw "line 13,1 14,1" \
+	    -draw "line 16,1 16,1" \
+	    -draw "line 13,3 14,3" \
+	    -draw "line 16,3 16,3" \
+	    "wrench_mode_cube_${mode}.png"
+    else
+	convert \
+	    -size 16x16 \
+	    -matte \
+	    "xc:RGBA(0,0,0,0)" \
+	    -fill "RGB($black,$black,$black)" \
+	    -draw "line 11,0 11,0" \
+	    -draw "line 14,0 14,0" \
+	    -draw "line 8,1 11,1" \
+	    -draw "line 14,1 15,1" \
+	    -draw "line 8,4 11,4" \
+	    -draw "line 14,4 15,4" \
+	    -draw "line 11,5 11,5" \
+	    -draw "line 14,5 14,5" \
+	    -fill "$rgb" \
+	    -draw "point 15,0" \
+	    -background none -gravity northeast -extent 18x18 \
+	    "wrench_mode_cube_${mode}.png"
+    fi
+done
+
+cube_sides="
+	front	RGB(200,200,200)
+	back	RGB(48,48,48)
+	left	RGB(200,24,24)
+	right	RGB(24,200,24)
+	top	RGB(32,32,255)
+	bottom	RGB(130,50,0)
+	"
+
+cube_directions="
+	north	14,1	6,1
+	south	12,1	4,1
+	east	13,1	5,1
+	west	15,1	7,1
+	up	14,0	6,0
+	down	14,2	6,2
+	"
+
+echo "$cube_sides" \
+| while read side rgb; do
+    if [ -z "$side" ]; then continue; fi
+    echo "$cube_directions" \
+    | while read dir pos1 pos2; do
+	if [ -z "$dir" ]; then continue; fi
+	if ((cube_size == 1)); then
+	    convert \
+		-size 16x16 \
+		-matte \
+		"xc:RGBA(0,0,0,0)" \
+		-fill "$rgb" \
+		-draw "point $pos1" \
+		-bordercolor none -border 1 \
+		"wrench_mode_${side}_${dir}.png"
+	else
+	    convert \
+		-size 8x8 \
+		-matte \
+		"xc:RGBA(0,0,0,0)" \
+		-fill "$rgb" \
+		-draw "point $pos2" \
+		-scale 200% \
+		-background none -gravity northeast -extent 18x18 \
+		"wrench_mode_${side}_${dir}.png"
+	fi
+    done
+done
+
+# Nothing fancy for mode images for 128x128 resolution - just scale to desired size
+for file in wrench_axismode_*.png wrench_rotmode_*.png wrench_mode_*.png; do
+    convert "$file" \
+        -crop 16x16+2+0 \
+	-scale 700% \
+	-background none -gravity northeast -extent 128x128 \
+	"128/$file"
+done
+
+images="
+	wrench_wood.png
+	wrench_steel.png
+	wrench_copper.png
+	wrench_gold.png
+	wrench_copper.png
+	wrench_copper_cw.png
+	wrench_copper_ccw.png
+	wrench_copper_left.png
+	wrench_copper_right.png
+	wrench_copper_up.png
+	wrench_copper_down.png
+	"
+
+echo "$images" \
+| while read file; do
+    if [ -z "$file" ]; then continue; fi
+    convert \
+	"$file" \
+	-scale 400% \
+	"../images/${file%.png}_16.png"
+done
+
+

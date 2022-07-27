@@ -1,0 +1,12 @@
+v1.2
+	Added an option for a rotation privilege. Off by default
+v1.1
+	Dependency on default is now optional
+	Provide an API for other mods to define their own wrenches
+
+	Improvements to README & switch to rst format
+	Fix invalid item when right-clicking a non-facedir node
+	Remove usage of lua bit operators (they're not available everywhere)
+	
+v1.0
+	Initial version

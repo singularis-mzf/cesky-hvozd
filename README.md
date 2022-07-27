@@ -603,13 +603,6 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: GPLv3+
 * [ContentDB](https://content.minetest.net/packages/Sokomine/replacer/)
 
-## Rhotator (rhotator)
-
-* Zdroj: [https://github.com/entuland/rhotator](https://github.com/entuland/rhotator), revize e2a928349e5896b438c0ab779ef3a632884d90b8
-* Původní licence: MIT
-* Licence úprav: MIT
-* [ContentDB](https://content.minetest.net/packages/entuland/rhotator/)
-
 ## Rocks (rocks)
 
 * Zdroj: [https://github.com/ExeVirus/Rocks](https://github.com/ExeVirus/Rocks), revize 7b8a47737c7dfe45b47d29b269abb6de673ebd73
@@ -623,6 +616,13 @@ resp. *ostatní\_zdroje*.
 * Původní licence: MIT
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/FaceDeer/ropes/)
+
+## Rotate: Wrench - node rotation tool
+
+* Zdroj: [https://github.com/Rogier-5/minetest-mod-rotate](https://github.com/Rogier-5/minetest-mod-rotate), revize 65125539e1d79464d168f9cd0b3ebf77463379a4
+* Původní licence: LGPLv2.1 pro kód, CC BY-SA-3.0 pro obrázky
+* Licence úprav: LGPLv2.1 pro kód, CC BY-SA-3.0 pro obrázky
+* [ContentDB](https://content.minetest.net/packages/Argos/rotate/)
 
 ## Round Tree Trunks (round\_trunks)
 

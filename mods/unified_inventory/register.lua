@@ -352,7 +352,7 @@ ui.register_page("craftguide", {
 
 		formspec[n+1] = string.format("textarea[%f,%f;10,1;;%s: %s;]",
 				perplayer_formspec.craft_guide_resultstr_x, perplayer_formspec.craft_guide_resultstr_y,
-				F(role_text[dir]), item_name_shown)
+				F(role_text[dir]), F(item_name_shown))
 		n = n + 2
 
 		local giveme_form = table.concat({

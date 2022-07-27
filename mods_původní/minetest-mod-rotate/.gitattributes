@@ -1,0 +1,2 @@
+*.png diff=png -whitespace
+LICENSE.LGPLv2.1 -whitespace
