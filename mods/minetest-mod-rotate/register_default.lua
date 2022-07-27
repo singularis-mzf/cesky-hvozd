@@ -13,11 +13,11 @@ local wrench_materials = {
 	-- Wooden wrench is an extra - for players who have not mined metals yet
 	-- Its low usage count is intentional: it is dirt-cheap, and they shouldn't
 	-- be needed anyway.
-	wood = {
+	--[[ wood = {
 		description = "Wooden",
 		ingredient = "group:stick",
 		use_parameter = 10,			-- integral, so interpreted as absolute number
-		},
+		}, ]]
 	steel = {
 		description = "Steel",
 		ingredient = "default:steel_ingot",

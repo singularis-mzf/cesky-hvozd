@@ -1,0 +1,13 @@
+# textdomain:rotate
+left-click rotates, right-click cycles mode=levý klik otáčí, pravý klik přepíná režim
+left-click positions, right-click sets mode=levý klik otočí nastaveným způsobem, pravý klik nastavuje režim
+ALERT: Wrench is not configured yet. Right-click to set / cycle modes=CHYBA: Klíč není nastaven. Klikněte pravým tlačítkem pro nastavení či přepnutí režimu
+cw=po směru h.r.
+ccw=proti směru h.r.
+left=doleva
+right=doprava
+up=nahoru
+down=dolu
+Copper wrench=měděný klíč
+Steel wrench=železný klíč
+Gold wrench=zlatý klíč

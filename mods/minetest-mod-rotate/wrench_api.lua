@@ -1,7 +1,7 @@
 
 local mod_name = "rotate"
-
 local mod_name_upper=string.upper(mod_name)
+local S = minetest.get_translator("rotate")
 
 if _G[mod_name] == nil then
 	error(string.format("[%s] global data not found - is the mod name correct ??", mod_name_upper))
@@ -370,7 +370,7 @@ local dpos_to_pointing_map = {
 local function player_node_state(player, pointed_thing)
 	local c
 	local v
-	local player_pos = player:getpos()
+	local player_pos = player:get_pos()
 	local node_pos = pointed_thing.under
 
 	-- TODO: compute pitch based on actual eye position (is that possible at all ??)
@@ -471,8 +471,7 @@ end
 
 local function creative_mode(player)
 	-- support unified inventory's creative priv.
-	return minetest.setting_getbool("creative_mode") or
-		minetest.get_player_privs(player:get_player_name()).creative
+	return minetest.is_creative_enabled(player:get_player_name())
 end
 
 local function register_rotation_privilege()
@@ -669,13 +668,13 @@ local function register_wrench_rotating(wrench_mod_name, material, material_desc
 	end
 	known_wrenches[wrench_mod_name .. ":wrench_" .. material .. sep .. mode] = true
 	minetest.register_tool(wrench_mod_name .. ":wrench_" .. material .. sep .. mode, {
-		description = material_descr .. " wrench (" .. mode .. descr_extra .. "left-click rotates, right-click cycles mode)",
+		description = S(material_descr .. " wrench").."\n(" .. S(mode) .. descr_extra .. S("left-click rotates, right-click cycles mode")..")",
 		wield_image = "wrench_" .. material .. ".png",
 		inventory_image = "wrench_" .. material .. sep .. mode ..".png",
 		groups = { wrench = 1, ["wrench_"..material.."_rot"] = 1, not_in_creative_inventory = notcrea },
 		on_use = function(itemstack, player, pointed_thing)
 			if mode == "" then
-				minetest.chat_send_player(player:get_player_name(), "ALERT: Wrench is not configured yet. Right-click to set / cycle modes")
+				minetest.chat_send_player(player:get_player_name(), S("ALERT: Wrench is not configured yet. Right-click to set / cycle modes"))
 				return
 			end
 			wrench_handler(itemstack, player, pointed_thing, mode, material, uses)
@@ -711,7 +710,7 @@ local function register_wrench_positioning(wrench_mod_name, material, material_d
 
 	known_wrenches[wrench_mod_name .. ":wrench_" .. material .. "_" .. mode] = true
 	minetest.register_tool(wrench_mod_name .. ":wrench_" .. material .. "_" .. mode, {
-		description = material_descr .. " wrench (" .. mode .. "; left-click positions, right-click sets mode)",
+		description = S(material_descr .. " wrench").."\n(" .. S(mode) .. "; "..S("left-click positions, right-click sets mode")..")",
 		wield_image = "wrench_" .. material .. ".png",
 		inventory_image = wrench_image .. "^" .. orientation_image,
 		groups = { wrench = 1, ["wrench_"..material.."_"..string.sub(mode,1,1).."pos"] = 1, not_in_creative_inventory = notcrea },
