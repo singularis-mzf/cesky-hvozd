@@ -590,6 +590,7 @@ function appliance:update_formspec(meta, production_time, production_goal, consu
     consumption_percent = math.floor(consumption_time / consumption_goal * 100);
   end
   meta:set_string("formspec", self:get_formspec(meta, production_percent, consumption_percent));
+  meta:set_string(self.meta_infotext, self.node_description.. " - produkce: "..production_percent.." %, spotřeba: "..consumption_percent.." %")
 end
 
 appliance.SoundStore = {}
@@ -738,7 +739,7 @@ end
 function appliance:running(pos, meta)
   appliances.swap_node(pos, self.node_name_active);
   self:power_need(pos, meta)
-	meta:set_string(self.meta_infotext, self:get_infotext(pos, meta, "running"))
+	-- meta:set_string(self.meta_infotext, self:get_infotext(pos, meta, "running"))
   self:call_running(pos, meta)
   self:cb_running(pos, meta)
   self:update_state(pos, meta, "running")
