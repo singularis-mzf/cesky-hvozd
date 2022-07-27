@@ -215,6 +215,22 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		end
 	end
 
+	if fields.trash_craft then
+		local inv = player:get_inventory()
+		local empty_stack = ItemStack(nil)
+		local items = ""
+		for i = 1, 9, 1 do
+			local stack = inv:get_stack("craft", i)
+			if not stack:is_empty() then
+				items = items..", "..stack:to_string()
+				inv:set_stack("craft", i, empty_stack)
+			end
+		end
+		if items ~= "" then
+			minetest.log("action", "Player "..player_name.." trashed in the craft grid: "..items:sub(3, -1))
+		end
+	end
+
 	-- alternate buttons
 	if not (fields.alternate or fields.alternate_prev) then
 		return
