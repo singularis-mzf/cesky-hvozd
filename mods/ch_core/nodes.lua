@@ -78,6 +78,6 @@ minetest.register_craft({
 	recipe = {"default:gravel", "technic:wrought_iron_dust"},
 })
 
-
+stairsplus:register_slabs_and_slopes("ch_core", "railway_gravel", "ch_core:railway_gravel", def)
 
 ch_core.submod_loaded("nodes")

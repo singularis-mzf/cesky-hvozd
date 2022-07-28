@@ -9,6 +9,17 @@ function round_new(vec)
 	return {x=math.floor(vec.x+0.5), y=math.floor(vec.y+0.3), z=math.floor(vec.z+0.5)}
 end
 
+function parse_attributes(s)
+	local result = {}
+	if s then
+		for _, full_part in ipairs(string.split(s, " ", false)) do
+			local part = string.trim(full_part)
+			result[string.lower(ch_core.odstranit_diakritiku(part))] = part
+		end
+	end
+	return result
+end
+
 advtrains.register_wagon("construction_train", {
 	mesh="advtrains_subway_wagon.b3d",
 	textures = {"advtrains_subway_wagon.png"},
@@ -82,45 +93,58 @@ advtrains.register_wagon("construction_train", {
 	drops={"advtrains:construction_train"},
 	horn_sound = "advtrains_subway_horn",
 	custom_on_step = function (self, dtime)
-	   if self:train().velocity == 0 then
-	      return
-	   end
-	   local command = self:train().text_inside or ""
-	   local rpos = round_new(self.object:get_pos())
-	   rpos.y = rpos.y -1
-	   -- Find train tracks, if we find train tracks, we will only replace blocking nodes
-	   local tracks_below = false
-	   for y =-1,0 do
-	      for x = -2,2 do
-		 for z = -2,2 do
-		    local ps = {x=rpos.x+x, y=rpos.y+y, z=rpos.z+z}
-		    if minetest.get_item_group(minetest.get_node(ps).name, "advtrains_track") > 0 then
-		       tracks_below = true
-		       break
-		    end
-		 end
-	      end
-	   end
-	   local gravel_node
-	   if command == "use_railway_gravel" and minetest.registered_nodes["ch_core:railway_gravel"] then
-		gravel_node = {name = "ch_core:railway_gravel"}
-	   else
-		gravel_node = {name = "default:gravel"}
-	   end
-	   local cobble_node = {name = "default:cobble"}
-	   for x = -1,1 do
-	      for z = -1,1 do
-		 local ps = {x=rpos.x+x, y=rpos.y, z=rpos.z+z}
-		 local name = minetest.get_node(ps).name
-		 if (not tracks_below) or (minetest.get_item_group(name, "not_blocking_trains") ==  0 and minetest.registered_nodes[name].walkable ) then
-		    minetest.set_node(ps, gravel_node)
-		    ps.y = ps.y-1
-		    if not minetest.registered_nodes[minetest.get_node(ps).name].walkable then
-		       minetest.set_node(ps, cobble_node)
-		    end
-		 end
-	      end
-	   end
+		local train = self:train()
+		if train.velocity == 0 then
+			return
+		end
+		local command = train.text_inside or ""
+		local command_cache = train.ch_command_cache
+		local attributes
+		if command_cache and command_cache.input == command then
+			attributes = command_cache.output
+		else
+			attributes = parse_attributes(command)
+			train.ch_command_cache = {input = command, output = attributes}
+		end
+
+		if attributes.vyp then -- "vyp" => disabled
+			return
+		end
+		local rpos = round_new(self.object:get_pos())
+		rpos.y = rpos.y -1
+		-- Find train tracks, if we find train tracks, we will only replace blocking nodes
+		local tracks_below = false
+		for y =-1,0 do
+			for x = -2,2 do
+				for z = -2,2 do
+					local ps = {x=rpos.x+x, y=rpos.y+y, z=rpos.z+z}
+					if minetest.get_item_group(minetest.get_node(ps).name, "advtrains_track") > 0 then
+						tracks_below = true
+						break
+					end
+				end
+			end
+		end
+		local gravel_node -- "železniční" => use railway_gravel
+		if attributes.zeleznicni and minetest.registered_nodes["ch_core:railway_gravel"] then
+			gravel_node = {name = "ch_core:railway_gravel"}
+		else
+			gravel_node = {name = "default:gravel"}
+		end
+		local cobble_node = {name = "default:cobble"}
+		for x = -1,1 do
+			for z = -1,1 do
+				local ps = {x=rpos.x+x, y=rpos.y, z=rpos.z+z}
+				local name = minetest.get_node(ps).name
+				if (not tracks_below) or (minetest.get_item_group(name, "not_blocking_trains") ==  0 and minetest.registered_nodes[name].walkable ) then
+					minetest.set_node(ps, gravel_node)
+					ps.y = ps.y-1
+					if not minetest.registered_nodes[minetest.get_node(ps).name].walkable then
+						minetest.set_node(ps, cobble_node)
+					end
+				end
+			end
+		end
 	end,
 	custom_on_velocity_change = function(self, velocity, old_velocity, dtime)
 		if not velocity or not old_velocity then return end

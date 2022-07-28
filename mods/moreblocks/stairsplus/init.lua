@@ -42,6 +42,33 @@ function stairsplus:prepare_groups(groups)
 	return result
 end
 
+local slabs_and_slopes_subset = {
+	{ "micro", "" },
+	{ "slab",  "" },
+	{ "slab",  "_quarter" },
+	{ "slab",  "_three_quarter" },
+	{ "slab",  "_1" },
+	{ "slab",  "_2" },
+	{ "slab",  "_14" },
+	{ "slab",  "_15" },
+	{ "slope", "" },
+	{ "slope", "_half" },
+	{ "slope", "_half_raised" },
+	{ "slope", "_inner" },
+	{ "slope", "_inner_half" },
+	{ "slope", "_inner_half_raised" },
+	{ "slope", "_inner_cut" },
+	{ "slope", "_inner_cut_half" },
+	{ "slope", "_inner_cut_half_raised" },
+	{ "slope", "_outer" },
+	{ "slope", "_outer_half" },
+	{ "slope", "_outer_half_raised" },
+	{ "slope", "_outer_cut" },
+	{ "slope", "_outer_cut_half" },
+	{ "slope", "_outer_cut_half_raised" },
+	{ "slope", "_cut" },
+}
+
 function stairsplus:register_all(modname, subname, recipeitem, fields)
 	self:register_stair(modname, subname, recipeitem, fields)
 	self:register_slab(modname, subname, recipeitem, fields)
@@ -50,6 +77,10 @@ function stairsplus:register_all(modname, subname, recipeitem, fields)
 	self:register_micro(modname, subname, recipeitem, fields)
 
 	stairsplus.recipeitems_list[recipeitem] = modname .. ":" .. subname
+end
+
+function stairsplus:register_slabs_and_slopes(modname, subname, recipeitem, fields)
+	return self:register_custom_subset(slabs_and_slopes_subset, modname, subname, recipeitem, fields)
 end
 
 function stairsplus:register_alias_all(modname_old, subname_old, modname_new, subname_new)

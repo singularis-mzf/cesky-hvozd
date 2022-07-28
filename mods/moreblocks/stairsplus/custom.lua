@@ -71,6 +71,7 @@ local function register_custom_subset(subset, modname, subname, recipeitem, grou
 		light_source = light,
 		sounds = moreblocks.node_sound_stone_defaults(),
 	})
+	stairsplus.recipeitems_list[recipeitem] = modname .. ":" .. subname
 end
 
 function stairsplus:register_custom_subset_alias(subset, modname_old, subname_old, modname_new, subname_new)
