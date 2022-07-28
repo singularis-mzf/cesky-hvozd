@@ -510,6 +510,7 @@ end
 
 -- Register default stairs and slabs
 
+--[[
 my_register_stair_and_slab(
 	"wood",
 	"default:wood",
@@ -981,7 +982,7 @@ stairs.register_stair_outer(
 	false,
 	S("Obsidian Glass")
 )
-
+]]
 -- Dummy calls to S() to allow translation scripts to detect the strings.
 -- To update this add this code to my_register_stair_and_slab:
 -- for _,x in ipairs({"","Inner ","Outer "}) do print(("S(%q)"):format(x..desc_stair)) end

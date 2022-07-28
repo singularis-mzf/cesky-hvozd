@@ -48,6 +48,7 @@ local head_bone_name = "Head"
 local head_bone_position = vector.new(0, 6.35, 0)
 local head_bone_angle = vector.new(0, 0, 0)
 local uhel_hlavy = ch_core.uhel_hlavy
+local emoting = (minetest.get_modpath("emote") and emote.emoting) or {}
 
 local function globalstep(dtime)
 -- DEN: 5:30 .. 19:00
@@ -72,19 +73,25 @@ local function globalstep(dtime)
 
 		if online_charinfo then
 			-- ÚHEL HLAVY:
-			local puvodni_uhel_hlavy = online_charinfo.uhel_hlavy or 0
-			local novy_uhel_hlavy = player:get_look_vertical()
-			local rozdil = novy_uhel_hlavy - puvodni_uhel_hlavy
-			if rozdil > 0.001 or rozdil < -0.001 then
-				if rozdil > 0.3 then
-					-- omezit pohyb hlavy
-					novy_uhel_hlavy = puvodni_uhel_hlavy + 0.3
-				elseif rozdil < -0.3 then
-					novy_uhel_hlavy = puvodni_uhel_hlavy - 0.3
+			local emote = emoting[player]
+			if not emote or emote ~= "lehni" then
+				local puvodni_uhel_hlavy = online_charinfo.uhel_hlavy or 0
+				local novy_uhel_hlavy = player:get_look_vertical()
+				local rozdil = novy_uhel_hlavy - puvodni_uhel_hlavy
+				if rozdil > 0.001 or rozdil < -0.001 then
+					if rozdil > 0.3 then
+						-- omezit pohyb hlavy
+						novy_uhel_hlavy = puvodni_uhel_hlavy + 0.3
+					elseif rozdil < -0.3 then
+						novy_uhel_hlavy = puvodni_uhel_hlavy - 0.3
+					end
+					head_bone_angle.x = -0.5 * deg(puvodni_uhel_hlavy + novy_uhel_hlavy)
+					player:set_bone_position(head_bone_name, head_bone_position, head_bone_angle)
+					online_charinfo.uhel_hlavy = novy_uhel_hlavy
 				end
-				head_bone_angle.x = -0.5 * deg(puvodni_uhel_hlavy + novy_uhel_hlavy)
+			else
+				head_bone_angle.x = 0
 				player:set_bone_position(head_bone_name, head_bone_position, head_bone_angle)
-				online_charinfo.uhel_hlavy = novy_uhel_hlavy
 			end
 
 			-- REAGOVAT NA KLÁVESY:

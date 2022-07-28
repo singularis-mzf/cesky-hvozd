@@ -1,5 +1,5 @@
 local S = emote.S
-local facedir_to_look_horizontal = emote.facedir_to_look_horizontal
+local facedir_to_look_horizontal = emote.util.facedir_to_look_horizontal
 local vector_rotate_xz = emote.util.vector_rotate_xz
 
 emote.emotes = {}
@@ -11,8 +11,8 @@ emote.emoting = {}
 
 function emote.register_emote(name, def)
     emote.emotes[name] = def
-
-	minetest.register_chatcommand(name, {
+	local alias = def.alias
+	local def = {
 		description = S(("Makes your character perform the %s emote"):format(name)),
 		func = function(playername)
 			local player = minetest.get_player_by_name(playername)
@@ -26,7 +26,11 @@ function emote.register_emote(name, def)
 				end
 			end
 		end,
-	})
+	}
+	minetest.register_chatcommand(name, def)
+	if alias then
+		minetest.register_chatcommand(alias, def)
+	end
 end
 
 function emote.start(player, emote_name)
@@ -47,7 +51,7 @@ function emote.start(player, emote_name)
 		emote.emoting[player] = nil
 		player_api.player_attached[player_name] = nil
 	else
-		emote.emoting[player] = true
+		emote.emoting[player] = emote_name
 		player_api.player_attached[player_name] = true
 	end
 
@@ -90,7 +94,7 @@ function emote.attach_to_node(player, pos, locked)
 		eye_offset = def.eye_offset or {x = 0, y = 1/2, z = 0},
 		player_offset = def.player_offset or {x = 0, y = 0, z = 0},
 		look_horizontal_offset = def.look_horizontal_offset or 0,
-		emotestring = def.emotestring or "sit",
+		emotestring = def.emotestring or "sedni",
 	}
 
 	local look_horizontal = facedir_to_look_horizontal(node.param2)
@@ -98,7 +102,7 @@ function emote.attach_to_node(player, pos, locked)
 	local rotation = look_horizontal + emotedef.look_horizontal_offset
 	local new_pos = vector.add(pos, offset)
 
-	emote.set_animation(player, emotedef.emotestring)
+	emote.start(player, emotedef.emotestring)
 
 	if locked then
 		local object = minetest.add_entity(new_pos, "emote:attacher")
@@ -112,9 +116,9 @@ function emote.attach_to_node(player, pos, locked)
 		end
 
 	else
-		emote.set_animation(player, emotedef.emotestring)
+		emote.start(player, emotedef.emotestring)
 
-		player:setpos(new_pos)
+		player:set_pos(new_pos)
 		player:set_eye_offset(emotedef.eye_offset, {x = 0, y = 0, z = 0})
 	end
 

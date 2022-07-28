@@ -24,32 +24,27 @@ emote.dofile("entity")
 
 local model = player_api.registered_models["character.b3d"]
 
-emote.register_emote("stand", {
+emote.register_emote("vstaň", {
+	alias = "vstan",
 	anim_name = "stand",
 	speed = 30,
 	description = S("stands up")
 })
 
-emote.register_emote("sit", {
+emote.register_emote("sedni", {
 	anim_name = "sit",
 	speed = 30,
 	description = S("sits")
 })
 
-emote.register_emote("lay", {
+emote.register_emote("lehni", {
 	anim_name = "lay",
 	speed = 30,
 	description = S("lies down")
 })
 
-emote.register_emote("sleep", { -- alias for lay
-	anim_name = "lay",
-	speed = 30,
-	description = S("falls asleep")
-})
-
 model.animations.wave = {x = 192, y = 196, override_local = true}
-emote.register_emote("wave", {
+emote.register_emote("ahoj", {
 	anim_name = "wave",
 	speed = 15,
 	stop_after = 4,
@@ -57,22 +52,25 @@ emote.register_emote("wave", {
 })
 
 model.animations.point = {x = 196, y = 196, override_local = true}
-emote.register_emote("point", {
+emote.register_emote("ukaž", {
+	alias = "ukaz",
 	anim_name = "point",
 	speed = 30,
 	description = S("points")
 })
 
+--[[
 model.animations.freeze = {x = 205, y = 205, override_local = true}
 emote.register_emote("freeze", {
 	anim_name = "freeze",
 	speed = 30,
 	description = S("freezes")
 })
+]]
 
 --[[
 -- testing tool - punch any node to test attachment code
-]]--
+] ]--
 minetest.register_tool("emote:sleep", {
 	description = "use me on a bed bottom",
 	groups = {not_in_creative_inventory = 1},
@@ -83,3 +81,4 @@ minetest.register_tool("emote:sleep", {
 		minetest.after(0.5, emote.attach_to_node, user, pointed_thing.under)
 	end
 })
+]]

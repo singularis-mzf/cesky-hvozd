@@ -1,0 +1,11 @@
+# textdomain:emote
+
+#Makes your character perform the %s emote=
+#you %s=
+#you fail to %s=
+
+Makes your character perform the lehni emote=Nechá vaši postavu si lehnout
+Makes your character perform the ahoj emote=Zamává
+Makes your character perform the sedni emote=Nechá vaši postavu si sednout
+Makes your character perform the ukaž emote=Nechá vaši postavu ukázat dopředu
+Makes your character perform the vstaň emote=Zruší probírající animaci (postava vstane)
