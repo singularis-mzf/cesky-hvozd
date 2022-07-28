@@ -432,11 +432,6 @@ resp. *ostatní\_zdroje*.
 * Původní licence: GPLv3
 * Licence úprav: GPLv3
 
-## Koruna československá (kcs)
-
-* Kód: vlastní práce; textury: vlastní práce založená na fotografiích (CC-BY-SA-4.0)
-* Licence: kód MIT, textury CC-BY-SA-4.0
-
 ## Letters (letters)
 
 * Zdroj: [https://github.com/minetest-mods/letters](https://github.com/minetest-mods/letters), revize d44b88fa908682d5f68a27b491f6d0e57e66fa4c
@@ -808,3 +803,22 @@ resp. *ostatní\_zdroje*.
 * Zdroj: [https://github.com/AntumMT/mod-wardrobe\_outfits](https://github.com/AntumMT/mod-wardrobe\_outfits), revize 7a874cf83d7109ea4cd81f1b15506f7bdb331d71
 * Původní licence: kód MIT, textury postav všechny CC-BY-SA-3.0
 * [ContentDB](https://content.minetest.net/packages/AntumDeluge/wardrobe\_outfits/)
+
+# Zcela nové módy
+
+## ch\_core
+
+* Licence: kód LGPLv2.1, média: různé svobodné (viz license.txt)
+
+## ch\_falling\_farming
+
+* Licence: kód LGPLv2.1, média: CC-BY-SA-3.0
+
+## ch\_overrides
+
+* Licence: kód LGPLv2.1
+
+## Koruna československá (kcs)
+
+* Kód: vlastní práce; textury: vlastní práce založená na fotografiích (CC-BY-SA-4.0)
+* Licence: kód MIT, textury CC-BY-SA-4.0

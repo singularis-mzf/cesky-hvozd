@@ -77,6 +77,21 @@ function technic.register_can(d)
 			set_can_wear(stack, data.can_capacity, data.can_capacity)
 			return stack
 		end,
+		get_can_capacity = function()
+			return data.can_capacity
+		end,
+		get_can_level = get_can_level, -- function(itemstack)
+		set_can_level = function(itemstack, new_level)
+			local capacity = data.can_capacity
+			if new_level < 0 then
+				new_level = 0
+			elseif new_level > capacity then
+				new_level = capacity
+			end
+			itemstack:set_metadata(tostring(new_level))
+			set_can_wear(itemstack, new_level, capacity)
+			return itemstack
+		end
 	})
 end
 

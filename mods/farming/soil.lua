@@ -145,7 +145,7 @@ minetest.register_alias("farming:desert_sand_soil_wet", dry_soil .. "_wet")
 -- if water near soil then change to wet soil
 minetest.register_abm({
 	nodenames = {"group:field"},
-	interval = 15,
+	interval = 60,
 	chance = 4,
 	catch_up = false,
 
@@ -177,8 +177,8 @@ minetest.register_abm({
 
 		-- check if water is within 3 nodes horizontally and 2 below
 		if #minetest.find_nodes_in_area(
-				{x = pos.x + 3, y = pos.y - 2, z = pos.z + 3},
-				{x = pos.x - 3, y = pos.y    , z = pos.z - 3},
+				{x = pos.x + 3, y = pos.y - 1, z = pos.z + 3},
+				{x = pos.x - 3, y = pos.y + 1, z = pos.z - 3},
 				{"group:water"}) > 0 then
 
 			minetest.set_node(pos, {name = ndef.soil.wet})

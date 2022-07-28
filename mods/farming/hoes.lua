@@ -86,8 +86,8 @@ function farming.hoe_on_use(itemstack, user, pointed_thing, uses)
 		return
 	end
 
-	-- check if the node above the pointed thing is air
-	if above.name ~= "air" then
+	-- check if the node above the pointed thing is air or water
+	if above.name ~= "air" and minetest.get_item_group(above.name, "water") == 0 then
 		return
 	end
 
