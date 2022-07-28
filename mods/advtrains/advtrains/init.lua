@@ -222,7 +222,7 @@ dofile(advtrains.modpath.."/craft_items.lua")
 
 dofile(advtrains.modpath.."/log.lua")
 dofile(advtrains.modpath.."/passive.lua")
-if mesecon then
+if minetest.get_modpath("mesecons") then
 	dofile(advtrains.modpath.."/p_mesecon_iface.lua")
 end
 

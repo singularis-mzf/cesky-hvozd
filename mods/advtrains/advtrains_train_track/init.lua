@@ -169,6 +169,27 @@ minetest.register_craft({
 	},
 })
 
+advtrains.register_tracks("default", {
+	nodename_prefix="advtrains:dtrack_rg",
+	texture_prefix="advtrains_dtrack_rg",
+	models_prefix="advtrains_dtrack",
+	models_suffix=".obj",
+	shared_texture="advtrains_dtrack_shared.png",
+	second_texture="default_gravel.png^[multiply:#956338",
+	description=attrans("Track with Railway Gravel"),
+	formats={vst1={true, false, true}, vst2={true, false, true}, vst31={true}, vst32={true}, vst33={true}},
+}, advtrains.ap.t_30deg_slope)
+
+minetest.register_craft({
+	type = "shapeless",
+	output = 'advtrains:dtrack_rg_slopeplacer 2',
+	recipe = {
+		"advtrains:dtrack_placer",
+		"advtrains:dtrack_placer",
+		"ch_core:railway_gravel",
+	},
+})
+
 
 --bumpers
 advtrains.register_tracks("default", {
@@ -398,7 +419,7 @@ minetest.register_craft({
 })
 
 
-if mesecon then
+if minetest.get_modpath("mesecons") then
 	advtrains.register_tracks("default", {
 		nodename_prefix="advtrains:dtrack_detector_off",
 		texture_prefix="advtrains_dtrack_detector",

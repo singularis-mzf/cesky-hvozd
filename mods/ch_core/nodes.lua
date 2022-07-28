@@ -1,5 +1,5 @@
 local def = {
-	description = "Vlajka České republiky",
+	description = "vlajka České republiky",
 	drawtype = "nodebox",
 	node_box = {
 		type = "fixed",
@@ -29,7 +29,7 @@ local def = {
 minetest.register_node("ch_core:czech_flag", def)
 
 def = table.copy(def)
-def.description = "Vlajka Slovenska"
+def.description = "vlajka Slovenska"
 def.tiles = {"ch_core_white_pixel.png^[multiply:#ffffff",
              "ch_core_white_pixel.png^[multiply:#d7141a",
              "ch_core_sk_flag.png",
@@ -57,4 +57,27 @@ minetest.register_craft({
 		{"dye:red", "", ""},
 	},
 })
+
+-- RAILWAY GRAVEL
+def = table.copy(minetest.registered_nodes["default:gravel"])
+def.description = "železniční štěrk"
+def.tiles = {
+	"default_gravel.png^[multiply:#956338"
+}
+minetest.register_node("ch_core:railway_gravel", def)
+
+minetest.register_craft({
+	output = "ch_core:railway_gravel 2",
+	type = "shapeless",
+	recipe = {"default:gravel", "default:gravel", "default:iron_lump"},
+})
+
+minetest.register_craft({
+	output = "ch_core:railway_gravel",
+	type = "shapeless",
+	recipe = {"default:gravel", "technic:wrought_iron_dust"},
+})
+
+
+
 ch_core.submod_loaded("nodes")

@@ -36,6 +36,7 @@ Can't place: There's no slope of length @1=Kolej nelze umístit: Není tu svah o
 Can't place: no supporting node at upper end.=Kolej nelze umístit: chybí podpora na horním konci svahu.
 Deprecated Track=Zastaralý typ koleje
 Track=Kolej
+Track with Railway Gravel=Kolej s železničním štěrkem
 Bumper=Zarážka
 Detector Rail=Detekující kolej
 Speed:=Rychlost:

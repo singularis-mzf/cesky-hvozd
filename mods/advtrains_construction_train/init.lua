@@ -81,11 +81,12 @@ advtrains.register_wagon("construction_train", {
 	-- drops={"default:steelblock 4"},
 	drops={"advtrains:construction_train"},
 	horn_sound = "advtrains_subway_horn",
-	custom_on_step = function (self, dtime )
+	custom_on_step = function (self, dtime)
 	   if self:train().velocity == 0 then
 	      return
 	   end
-	   local rpos = round_new(self.object:getpos())
+	   local command = self:train().text_inside or ""
+	   local rpos = round_new(self.object:get_pos())
 	   rpos.y = rpos.y -1
 	   -- Find train tracks, if we find train tracks, we will only replace blocking nodes
 	   local tracks_below = false
@@ -97,21 +98,28 @@ advtrains.register_wagon("construction_train", {
 		       tracks_below = true
 		       break
 		    end
-		 end	      
+		 end
 	      end
 	   end
+	   local gravel_node
+	   if command == "use_railway_gravel" and minetest.registered_nodes["ch_core:railway_gravel"] then
+		gravel_node = {name = "ch_core:railway_gravel"}
+	   else
+		gravel_node = {name = "default:gravel"}
+	   end
+	   local cobble_node = {name = "default:cobble"}
 	   for x = -1,1 do
 	      for z = -1,1 do
 		 local ps = {x=rpos.x+x, y=rpos.y, z=rpos.z+z}
 		 local name = minetest.get_node(ps).name
 		 if (not tracks_below) or (minetest.get_item_group(name, "not_blocking_trains") ==  0 and minetest.registered_nodes[name].walkable ) then
-		    minetest.set_node(ps, {name = "default:gravel"})
+		    minetest.set_node(ps, gravel_node)
 		    ps.y = ps.y-1
 		    if not minetest.registered_nodes[minetest.get_node(ps).name].walkable then
-		       minetest.set_node(ps, {name = "default:cobble"})
+		       minetest.set_node(ps, cobble_node)
 		    end
 		 end
-	      end	      
+	      end
 	   end
 	end,
 	custom_on_velocity_change = function(self, velocity, old_velocity, dtime)
