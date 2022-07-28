@@ -357,6 +357,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: LGPL 3.0
 * [ContentDB](https://content.minetest.net/packages/VanessaE/dreambuilder\_hotbar/)
 
+## Emote (emote)
+
+* Zdroj: [https://github.com/minetest-mods/emote](https://github.com/minetest-mods/emote), revize 402a6f07f5ace5ca1a072664608ac3ce30f7d84c
+* Původní licence: LGPLv2.1
+* Licence úprav: LGPLv2.1
+* [ContentDB](https://content.minetest.net/packages/sofar/emote/)
+
 ## Extra Doors (extra\_doors)
 
 * Zdroj: [https://bitbucket.org/sorcerykid/extra\_doors](https://bitbucket.org/sorcerykid/extra\_doors), revize 76bca11478fd59adbe6c615de1189e12c75bd32b
