@@ -739,6 +739,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: (mod je zatím bez úprav)
 * [ContentDB](https://content.minetest.net/packages/bell07/wielded\_light/)
 
+## Windmill (windmill)
+
+* Zdroj: [https://github.com/Sokomine/windmill](https://github.com/Sokomine/windmill), revize 47b029dc5df9d1ed4ac26561185a31d75c98305c
+* Původní licence: WTFPL
+* Licence úprav: WTFPL
+* [ContentDB](https://content.minetest.net/packages/Sokomine/windmill/)
+
 ## Wine (wine)
 
 * Zdroj: [https://notabug.org/tenplus1/wine](https://notabug.org/tenplus1/wine), revize b5f94f49dab6212d46b032cea8ada47abf1ee62e
