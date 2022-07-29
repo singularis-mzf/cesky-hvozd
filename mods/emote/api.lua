@@ -7,6 +7,8 @@ emote.emotes = {}
 emote.attached_to_node = {}
 emote.emoting = {}
 
+local stand_name = "vstaň"
+
 -- API functions
 
 function emote.register_emote(name, def)
@@ -17,13 +19,9 @@ function emote.register_emote(name, def)
 		func = function(playername)
 			local player = minetest.get_player_by_name(playername)
 			if emote.start(player, name) then
-				if not emote.settings.announce_in_chat then
-					return true, S(("you %s"):format(name))
-				end
+				return true -- , S(("you %s"):format(name))
 			else
-				if not emote.settings.announce_in_chat then
-					return false, S(("you fail to %s"):format(name))
-				end
+				return false, S(("animace se nepodařila: %s"):format(name))
 			end
 		end,
 	}
@@ -47,7 +45,7 @@ function emote.start(player, emote_name)
 
 	local player_name = player:get_player_name()
 	player_api.set_animation(player, emote_def.anim_name, emote_def.speed)
-	if emote_name == "stand" then
+	if emote_name == stand_name then
 		emote.emoting[player] = nil
 		player_api.player_attached[player_name] = nil
 	else
@@ -67,7 +65,7 @@ function emote.start(player, emote_name)
 end
 
 function emote.stop(player)
-	emote.start(player, "stand")
+	emote.start(player, stand_name)
 end
 
 function emote.list()
