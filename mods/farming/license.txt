@@ -136,6 +136,8 @@ Created by TenPlus1 (CC BY 3.0)
   farming_tofu*.png
 
 Created by TenPlus1 (MIT)
+  ethereal_fishing_bob.png
+  ethereal_fishing_rod.png
   ethereal_strawberry_1.png
   ethereal_strawberry_2.png
   ethereal_strawberry_3.png
@@ -144,6 +146,7 @@ Created by TenPlus1 (MIT)
   ethereal_strawberry_6.png
   ethereal_strawberry_7.png
   ethereal_strawberry_8.png
+  ethereal_worm.png
 
 Created by ademant (CC-BY-3.0)
   farming_rye*.png

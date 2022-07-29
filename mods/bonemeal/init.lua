@@ -666,21 +666,16 @@ minetest.register_craft({
 
 
 -- add bones to dirt
-minetest.override_item("default:dirt", {
-	drop = {
-		max_items = 1,
-		items = {
-			{
-				items = {"bonemeal:bone"},
-				rarity = 40
-			},
-			{
-				items = {"default:dirt"}
-			}
-		}
-	}
-})
-
+local dirt_drop = minetest.registered_nodes["default:dirt"].drop or {}
+local dirt_drop_items = (dirt_drop and dirt_drop.items) or {{items = {"default:dirt"}}}
+local orig_count = #dirt_drop_items
+dirt_drop.max_items = 1
+dirt_drop.items = dirt_drop_items
+for i = orig_count, 1, -1 do
+	dirt_drop_items[i + 1] = dirt_drop_items[i]
+end
+dirt_drop_items[1] = {items = {"bonemeal:bone"}, rarity = 40}
+minetest.override_item("default:dirt", {drop = dirt_drop})
 
 -- add support for other mods
 dofile(path .. "/mods.lua")

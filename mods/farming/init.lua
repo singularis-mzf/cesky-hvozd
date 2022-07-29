@@ -743,6 +743,7 @@ ddoo("banana.lua", farming.banana)
 dofile(farming.path .. "/food.lua")
 dofile(farming.path .. "/mapgen.lua")
 dofile(farming.path .. "/compatibility.lua") -- Farming Plus compatibility
+dofile(farming.path .. "/fishing.lua")
 dofile(farming.path .. "/lucky_block.lua")
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
