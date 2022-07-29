@@ -10,13 +10,13 @@ if clothing.have_skinsdb then
       clothing_skin:set_texture("clothing_character_male.png")
       clothing_skin:set_meta("format", '1.0')
       clothing_skin:set_meta("_sort_id", 0)
-      clothing_skin:set_meta("name", "Nahé tělo mužského pohlaví")
+      clothing_skin:set_meta("name", "výchozí nahé tělo mužského pohlaví")
       
       -- unclothed female
       local clothing_skin = skins.new("clothing_skin_female")
       clothing_skin:set_texture("clothing_character_female.png")
       clothing_skin:set_meta("format", '1.0')
       clothing_skin:set_meta("_sort_id", 0)
-      clothing_skin:set_meta("name", "Nahé tělo ženského pohlaví")
+      clothing_skin:set_meta("name", "výchozí nahé tělo ženského pohlaví")
     end)
 end
