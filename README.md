@@ -373,7 +373,7 @@ resp. *ostatní\_zdroje*.
 
 ## Factory Bridges (factory\_bridges)
 
-* Zdroj: [https://github.com/pandorabox-io/factory_bridges](https://github.com/pandorabox-io/factory_bridges), revize d1f7d6b3784053b87258a8636f7ed42d3f2ff54b
+* Zdroj: [https://github.com/pandorabox-io/factory\_bridges](https://github.com/pandorabox-io/factory\_bridges), revize d1f7d6b3784053b87258a8636f7ed42d3f2ff54b
 * Původní licence: LGPL 2.1
 * Licence úprav: LGPL 2.1
 * [ContentDB](https://content.minetest.net/packages/narrnika/factory\_bridges/)
@@ -385,6 +385,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/farming/)
 * Implantovány jahody z módu Ethereal NG (licence: MIT) a banány a len z módu Cucina Vegana (licence textur: LGPLv3).
+
+## Fireworkz (fireworkz)
+
+* Zdroj: [https://github.com/runsy/fireworkz](https://github.com/runsy/fireworkz), revize e5b1c06bbb3048645a5fea4e8f6709a9bbfa3345
+* Původní licence: LGPL 2.1 pro kód, textury CC BY-SA-4.0, zvuky různé svobodné
+* Licence úprav: LGPL 2.1 pro kód, CC-BY-SA-4.0 pro textury
+* [ContentDB](https://content.minetest.net/packages/runs/fireworkz/)
 
 ## Funny Shadows (shadows)
 
