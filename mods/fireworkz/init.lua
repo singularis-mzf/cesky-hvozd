@@ -160,10 +160,10 @@ local rocket = {
 minetest.register_entity("fireworkz:rocket", rocket)
 
 function rocket:on_activate(staticdata)
-	minetest.sound_play("fireworkz_rocket", {pos=self.object:getpos(), max_hear_distance = fireworkz.settings.max_hear_distance_launch, gain = 1,})
+	minetest.sound_play("fireworkz_rocket", {pos=self.object:get_pos(), max_hear_distance = fireworkz.settings.max_hear_distance_launch, gain = 1,})
 	self.rocket_flytime = math.random(13,15)/10
-	self.object:setvelocity({x=0, y=9, z=0})
-	self.object:setacceleration({x= math.random(-5, 5), y= 33, z= math.random(-5, 5)})
+	self.object:set_velocity({x=0, y=9, z=0})
+	self.object:set_acceleration({x= math.random(-5, 5), y= 33, z= math.random(-5, 5)})
 end
 
 -- Called periodically
@@ -171,7 +171,7 @@ function rocket:on_step(dtime)
 	self.timer = self.timer + dtime
 	self.rocket_firetime = self.rocket_firetime + dtime
 	if self.rocket_firetime > 0.1 then
-		local pos = self.object:getpos()
+		local pos = self.object:get_pos()
 		self.rocket_firetime = 0
 		local xrand = math.random(-15, 15) / 10
 		minetest.add_particle({
@@ -191,7 +191,7 @@ function rocket:on_step(dtime)
 		if #self.rdt > 0 then
 			minetest.sound_play("fireworkz_bang", {pos= self.object:get_pos(), max_hear_distance = fireworkz.settings.max_hear_distance_bang, gain = 3,})
 			for _, i in pairs(self.rdt) do
-				local pos = self.object:getpos()
+				local pos = self.object:get_pos()
 				if i.figure == "ball" then
 					partcl_gen(pos, ball_figure(0.1), 4, 4, i.color)
 				elseif i.figure == "default" then
