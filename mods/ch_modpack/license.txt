@@ -1,0 +1,3 @@
+Every mod in this modpack has its own license, see license.md, license.txt or LICENSE file in the mod's directory.
+
+License of this file and modpack.conf: CC0
