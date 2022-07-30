@@ -76,13 +76,13 @@ clothing.set_player_clothing = function(self, player)
 		cape = {},
 	}
 
-  local player_meta = player:get_meta();
+	local player_meta = player:get_meta();
 	--local clothing_meta = player:get_attribute("clothing:inventory")
 	local clothing_meta = player_meta:get_string("clothing:inventory")
 	local clothes = clothing_meta and minetest.deserialize(clothing_meta) or {}
 
 	local capes = {}
-	for i=1, 6 do
+	for i=1, 9 do
 		local stack = ItemStack(clothes[i])
 		if stack:get_count() == 1 then
 			local def = stack:get_definition()

@@ -32,10 +32,10 @@ elseif minetest.get_modpath("unified_inventory") and
 			local name = player:get_player_name()
       local formspec = perplayer_formspec.standard_inv_bg..
         perplayer_formspec.standard_inv..
-        ui.make_inv_img_grid(gridx, gridy, 2, 3)..
+        ui.make_inv_img_grid(gridx, gridy, 3, 3)..
         string.format("label[%f,%f;%s]",
           perplayer_formspec.form_header_x, perplayer_formspec.form_header_y, F(S("Clothing")))..
-        string.format("list[detached:%s_clothing;clothing;%f,%f;2,3;]",
+        string.format("list[detached:%s_clothing;clothing;%f,%f;3,3;]",
 				name, gridx + ui.list_img_offset, gridy + ui.list_img_offset) ..
 				"listring[current_player;main]"..
 				"listring[detached:"..name.."_clothing;clothing]"
@@ -49,7 +49,7 @@ elseif minetest.get_modpath("sfinv") then
 		get = function(self, player, context)
 			local name = player:get_player_name()
 			local formspec = clothing.formspec..
-				"list[detached:"..name.."_clothing;clothing;0,0.5;2,3;]"..
+				"list[detached:"..name.."_clothing;clothing;0,0.5;3,3;]"..
 				"listring[current_player;main]"..
 				"listring[detached:"..name.."_clothing;clothing]"
 			return sfinv.make_formspec(player, context,
@@ -62,7 +62,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local name = player:get_player_name()
 	if clothing.inv_mod == "inventory_plus" and fields.clothing then
 		inventory_plus.set_inventory_formspec(player, clothing.formspec..
-			"list[detached:"..name.."_clothing;clothing;0,0.5;2,3;]"..
+			"list[detached:"..name.."_clothing;clothing;0,0.5;3,3;]"..
 			"listring[current_player;main]"..
 			"listring[detached:"..name.."_clothing;clothing]")
 	end
@@ -77,7 +77,7 @@ local function save_clothing_metadata(player, clothing_inv)
 	local player_inv = player:get_inventory()
 	local is_empty = true
 	local clothes = {}
-	for i = 1, 6 do
+	for i = 1, 9 do
 		local stack = clothing_inv:get_stack("clothing", i)
 		-- Move all non-clothes back to the player inventory
 		if not stack:is_empty() and not is_clothing(stack:get_name()) then
@@ -107,7 +107,7 @@ local function load_clothing_metadata(player, clothing_inv)
 	local dirty_meta = false
 	if not clothing_meta then
 		-- Backwards compatiblity
-		for i = 1, 6 do
+		for i = 1, 9 do
 			local stack = player_inv:get_stack("clothing", i)
 			if not stack:is_empty() then
 				clothes[i] = stack:to_string()
@@ -116,8 +116,8 @@ local function load_clothing_metadata(player, clothing_inv)
 		end
 	end
 	-- Fill detached slots
-	clothing_inv:set_size("clothing", 6)
-	for i = 1, 6 do
+	clothing_inv:set_size("clothing", 9)
+	for i = 1, 9 do
 		clothing_inv:set_stack("clothing", i, clothes[i] or "")
 		clothing:run_callbacks("on_load", player, i, ItemStack(clothes[i]))
 	end

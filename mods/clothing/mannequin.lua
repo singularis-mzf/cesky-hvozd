@@ -7,7 +7,7 @@ local mannequin_stand_formspec = "size[8,7]" ..
   default.gui_bg_img ..
   default.gui_slots ..
   default.get_hotbar_bg(0,3) ..
-  "list[current_name;clothing;3,0.0;2,3;]" ..
+  "list[current_name;clothing;2,0.0;3,3;]" ..
   "list[current_player;main;0,3;8,1;]" ..
   "list[current_player;main;0,4.25;8,3;8]"
 
@@ -181,7 +181,7 @@ minetest.register_node("clothing:mannequin_stand", {
     meta:set_string("formspec", mannequin_stand_formspec)
     meta:set_string("infotext", S("Mannequin Stand"))
     local inv = meta:get_inventory()
-    inv:set_size("clothing", 6)
+    inv:set_size("clothing", 9)
   end,
   can_dig = function(pos, player)
     local meta = minetest.get_meta(pos)
