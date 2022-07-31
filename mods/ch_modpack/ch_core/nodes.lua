@@ -64,6 +64,7 @@ def.description = "železniční štěrk"
 def.tiles = {
 	"default_gravel.png^[multiply:#956338"
 }
+def.drop = nil
 minetest.register_node("ch_core:railway_gravel", def)
 
 minetest.register_craft({
