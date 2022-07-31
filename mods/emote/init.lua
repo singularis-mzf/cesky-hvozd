@@ -6,6 +6,11 @@ emote = {
 	modname = modname,
 	modpath = modpath,
 
+	extra_animations = {
+		wave = {x = 192, y = 196, override_local = true},
+		point = {x = 196, y = 196, override_local = true},
+	},
+
 	S = S,
 
 	log = function(level, messagefmt, ...)
@@ -23,6 +28,10 @@ emote.dofile("api")
 emote.dofile("entity")
 
 local model = player_api.registered_models["character.b3d"]
+
+for anim_name, anim_def in pairs(emote.extra_animations) do
+	model.animations[anim_name] = anim_def
+end
 
 emote.register_emote("vstaň", {
 	alias = "vstan",
@@ -43,7 +52,6 @@ emote.register_emote("lehni", {
 	description = S("lies down")
 })
 
-model.animations.wave = {x = 192, y = 196, override_local = true}
 emote.register_emote("ahoj", {
 	anim_name = "wave",
 	speed = 15,
@@ -51,7 +59,6 @@ emote.register_emote("ahoj", {
 	description = S("waves")
 })
 
-model.animations.point = {x = 196, y = 196, override_local = true}
 emote.register_emote("ukaž", {
 	alias = "ukaz",
 	anim_name = "point",

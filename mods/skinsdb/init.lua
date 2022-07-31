@@ -60,6 +60,20 @@ minetest.register_on_leaveplayer(function(player)
 	skins.ui_context[player:get_player_name()] = nil
 end)
 
+local model_animations = {
+	stand = {x=0, y=79},
+	lay = {x=162, y=166},
+	walk = {x=168, y=187},
+	mine = {x=189, y=198},
+	walk_mine = {x=200, y=219},
+	sit = {x=81, y=160},
+}
+
+if minetest.global_exists("emote") and emote.extra_animations then
+	for anim_name, anim_def in pairs(emote.extra_animations) do
+		model_animations[anim_name] = anim_def
+	end
+end
 player_api.register_model("skinsdb_3d_armor_character_5.b3d", {
 	animation_speed = 30,
 	textures = {
@@ -68,14 +82,7 @@ player_api.register_model("skinsdb_3d_armor_character_5.b3d", {
 		"blank.png",
 		"blank.png"
 	},
-	animations = {
-		stand = {x=0, y=79},
-		lay = {x=162, y=166},
-		walk = {x=168, y=187},
-		mine = {x=189, y=198},
-		walk_mine = {x=200, y=219},
-		sit = {x=81, y=160},
-	},
+	animations = model_animations,
 })
 
 -- Register default character.png if not part of this mod
