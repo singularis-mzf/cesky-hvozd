@@ -85,21 +85,21 @@ local shape_groups = {
 		group = "slabs3",
 	},
 	slab_east_y3 = {
-		description = "deska na východ (+X) trojitá nahoru-dolu",
+		description = "deska na východ (+X) svisle trojitá",
 		node_box = {type = "fixed", fixed = {0.5 - slab_width, -one_and_a_half, -0.5, 0.5, one_and_a_half, 0.5}},
 		group = "slabs3",
 	},
-	slab_east_z3 = {
+	--[[slab_east_z3 = {
 		description = "deska na východ (+X) trojitá vlevo-vpravo",
 		node_box = {type = "fixed", fixed = {0.5 - slab_width, -0.5, -one_and_a_half, 0.5, 0.5, one_and_a_half}},
 		group = "slabs3",
-	},
+	},]]
 	slab_west_y3 = {
-		description = "deska na západ (-X) trojitá nahoru-dolu",
+		description = "deska na západ (-X) svisle trojitá",
 		node_box = {type = "fixed", fixed = {-0.5, -one_and_a_half, -0.5, slab_width - 0.5, one_and_a_half, 0.5}},
 		group = "slabs3",
 	},
-	slab_west_z3 = {
+	--[[slab_west_z3 = {
 		description = "deska na západ (-X) trojitá vlevo-vpravo",
 		node_box = {type = "fixed", fixed = {-0.5, -0.5, -one_and_a_half, slab_width - 0.5, 0.5, one_and_a_half}},
 		group = "slabs3",
@@ -108,9 +108,9 @@ local shape_groups = {
 		description = "deska na sever (+Z) trojitá vlevo-vpravo",
 		node_box = {type = "fixed", fixed = {-one_and_a_half, -0.5, 0.5 - slab_width, one_and_a_half, 0.5, 0.5}},
 		group = "slabs3",
-	},
+	},]]
 	slab_north_y3 = {
-		description = "deska na sever (+Z) trojitá nahoru-dolu",
+		description = "deska na sever (+Z) svisle trojitá",
 		node_box = {type = "fixed", fixed = {-0.5, -one_and_a_half, 0.5 - slab_width, 0.5, one_and_a_half, 0.5}},
 		group = "slabs3",
 	},
@@ -119,11 +119,11 @@ local shape_groups = {
 		node_box = {type = "fixed", fixed = {-0.5, -one_and_a_half, -0.5, 0.5, one_and_a_half, slab_width - 0.5}},
 		group = "slabs3",
 	},
-	slab_south_x3 = {
+	--[[slab_south_x3 = {
 		description = "deska na jih (-Z) vodorovně trojitá",
 		node_box = {type = "fixed", fixed = {-one_and_a_half, -0.5, -0.5, one_and_a_half, 0.5, slab_width - 0.5}},
 		group = "slabs3",
-	},
+	},]]
 }
 
 local node_count = 0
