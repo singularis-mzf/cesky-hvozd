@@ -50,6 +50,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: AGPL v3
 * [ContentDB](https://content.minetest.net/packages/orwell/basic\_trains/)
 
+## Beauty Pack (beauty\_pack)
+
+* Zdroj: [https://github.com/runsy/beauty\_pack](https://github.com/runsy/beauty\_pack), revize 9df3ce21d1c4af542d589ce1c324da188522c451
+* Původní licence: GPL v3 (kód), CC-BY-SA-4.0 (textury), ? (modely)
+* Licence úprav: GPL v3
+* Použity jen vybrané módy
+
 ## Cool Trees (cool\_trees)
 
 * Zdroj: [https://github.com/runsy/cool\_trees/](https://github.com/runsy/cool\_trees/), revize af8e445c475efb050c1291da459336812b84591e

@@ -1,0 +1,3 @@
+local modpath = ...
+
+assert(loadfile(modpath .. "/api/api_vanity.lua"))()
