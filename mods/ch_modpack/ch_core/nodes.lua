@@ -81,4 +81,34 @@ minetest.register_craft({
 
 stairsplus:register_slabs_and_slopes("ch_core", "railway_gravel", "ch_core:railway_gravel", def)
 
+--[[ PLAKÁTY
+local box = {
+		type = "fixed",
+		-- fixed = {-0.5, -0.5, 7/16, 0.5, 0.5, 8/16}
+		fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
+}
+def = {
+	description = "plakát 1: levý díl",
+	drawtype = "normal",
+	-- node_box = box,
+	-- selection_box = box,
+	tiles = {"ch_core_plakat_yf1.png"},
+	inventory_image = "ch_core_plakat_yf1.png",
+	wield_image = "ch_core_plakat_yf1.png",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	sunlight_propagates = false,
+	groups = {choppy = 2, dig_immediate = 2},
+	legacy_wallmounted = true,
+	sounds = default.node_sound_leaves_defaults(),
+}
+
+minetest.register_node("ch_core:plakat_yf_left", table.copy(def))
+def.description = "plakát 1: pravý díl"
+def.tiles = {"ch_core_plakat_yf2.png"}
+def.inventory_image = "ch_core_plakat_yf2.png"
+def.weild_image = "ch_core_plakat_yf2.png"
+minetest.register_node("ch_core:plakat_yf_right", table.copy(def))
+]]
+
 ch_core.submod_loaded("nodes")
