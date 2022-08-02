@@ -111,6 +111,78 @@ local active_node = {
 
 sewing_table:register_nodes(node_def, inactive_node, active_node)
 
+local function recipe_skullcap(fabric, yarn)
+	return {
+		fabric, fabric, fabric,
+		fabric, yarn, fabric,
+		"", "", "",
+	}
+end
+
+local function recipe_pants(fabric, yarn)
+	return {
+		fabric, fabric, fabric,
+		fabric, yarn, fabric,
+		fabric, "", fabric,
+	}
+end
+
+local function recipe_cape(fabric, yarn)
+	return {
+		fabric, fabric, yarn,
+		fabric, fabric, "",
+		fabric, fabric, "",
+	}
+end
+
+local function recipe_hood_mask(fabric, yarn)
+	return {
+		fabric, fabric, fabric,
+		"", fabric, "",
+		fabric, yarn, fabric,
+	}
+end
+
+local function recipe_glove_left(fabric, yarn)
+	return {
+		fabric, yarn, "",
+		"", "", "",
+		"", "", "",
+	}
+end
+
+local function recipe_glove_right(fabric, yarn)
+	return {
+		"", yarn, fabric,
+		"", "", "",
+		"", "", "",
+	}
+end
+
+local function recipe_undershirt(fabric, yarn)
+	return {
+		fabric, yarn, fabric,
+		fabric, fabric, fabric,
+		fabric, fabric, fabric,
+	}
+end
+
+local function recipe_shorts(fabric, yarn)
+	return {
+		"", yarn, "",
+		fabric, fabric, fabric,
+		fabric, "", fabric,
+	}
+end
+
+local function recipe_shoes(fabric, yarn)
+	return {
+		yarn, "", yarn,
+		fabric, "", fabric,
+		fabric, "", fabric,
+	}
+end
+
 -------------------------
 -- Recipe Registration --
 -------------------------
@@ -122,10 +194,16 @@ appliances.register_craft_type("clothing_sewing", {
     height = 3,
   })
 
+local registered_items = minetest.registered_craftitems
+
 for color, data in pairs(clothing.colors) do
-	local fabric, yarn, yarn2, def
+	local fabric, fabric_stripy, yarn, yarn2, def
 
 	fabric = "clothing:fabric_"..color
+	fabric_stripy = "clothing:fabric_"..color.."_stripy"
+	if not registered_items[fabric_stripy] then
+		fabric_stripy = nil
+	end
 	if data.key1 and data.key1 ~= data.key2 then
 		yarn = "clothing:yarn_spool_"..data.key1;
 		yarn2 = "clothing:yarn_spool_"..data.key2;
@@ -134,22 +212,21 @@ for color, data in pairs(clothing.colors) do
 	end
 	def = {consumption_step_size = 1}
 
-	-- hat
-	def.outputs = {{"clothing:hat_"..color,"clothing:yarn_spool_empty"}}
-	def.inputs = {
-		fabric, fabric, fabric,
-		fabric, yarn, fabric,
-		"", "", "",
-	}
+	-- skullcap
+	def.outputs = {{"clothing:skullcap_"..color,"clothing:yarn_spool_empty"}}
+	def.inputs = recipe_skullcap(fabric, yarn)
 	def.production_time = 30
 	sewing_table:recipe_register_input("", table.copy(def))
 	if yarn2 then
-		def.inputs = {
-			fabric, fabric, fabric,
-			fabric, yarn2, fabric,
-			"", "", "",
-		}
+		def.inputs = recipe_skullcap(fabric, yarn2)
 		sewing_table:recipe_register_input("", table.copy(def))
+		if fabric_stripy and registered_items["clothing:skullcap_"..color.."_stripy"] then
+			def.outputs = {{"clothing:skullcap_"..color.."_stripy","clothing:yarn_spool_empty"}}
+			def.inputs = recipe_skullcap(fabric_stripy, yarn)
+			sewing_table:recipe_register_input("", table.copy(def))
+			def.inputs = recipe_skullcap(fabric_stripy, yarn2)
+			sewing_table:recipe_register_input("", table.copy(def))
+		end
 	end
 
 	-- shirt
@@ -168,142 +245,179 @@ for color, data in pairs(clothing.colors) do
 			"", "", "",
 		}
 		sewing_table:recipe_register_input("", table.copy(def))
+		if fabric_stripy and registered_items["clothing:shirt_"..color.."_stripy"] then
+			def.outputs = {{"clothing:shirt_"..color.."_stripy","clothing:yarn_spool_empty"}}
+			def.inputs = {
+				fabric_stripy, "clothing:undershirt_"..color, fabric_stripy,
+				fabric_stripy, yarn, fabric_stripy,
+				"", "", "",
+			}
+			sewing_table:recipe_register_input("", table.copy(def))
+			def.inputs = {
+				fabric_stripy, "clothing:undershirt_"..color, fabric_stripy,
+				fabric_stripy, yarn2, fabric_stripy,
+				"", "", "",
+			}
+			sewing_table:recipe_register_input("", table.copy(def))
+		end
 	end
 
 	-- pants
 	def.outputs = {{"clothing:pants_"..color,"clothing:yarn_spool_empty"}}
-	def.inputs = {
-		fabric, fabric, fabric,
-		fabric, yarn, fabric,
-		fabric, "", fabric,
-	}
+	def.inputs = recipe_pants(fabric, yarn)
 	def.production_time = 60
 	sewing_table:recipe_register_input("", table.copy(def))
 	if yarn2 then
-		def.inputs = {
-			fabric, fabric, fabric,
-			fabric, yarn2, fabric,
-			fabric, "", fabric,
-		}
+		def.inputs = recipe_pants(fabric, yarn2)
 		sewing_table:recipe_register_input("", table.copy(def))
+		if fabric_stripy and registered_items["clothing:pants_"..color.."_stripy"] then
+			def.outputs = {{"clothing:pants_"..color.."_stripy","clothing:yarn_spool_empty"}}
+			def.inputs = recipe_pants(fabric_stripy, yarn)
+			sewing_table:recipe_register_input("", table.copy(def))
+			def.inputs = recipe_pants(fabric_stripy, yarn2)
+			sewing_table:recipe_register_input("", table.copy(def))
+		end
 	end
 
 	-- cape
 	def.outputs = {{"clothing:cape_"..color,"clothing:yarn_spool_empty"}}
-	def.inputs = {
-		fabric, fabric, yarn,
-		fabric, fabric, "",
-		fabric, fabric, "",
-	}
+	def.inputs = recipe_cape(fabric, yarn)
 	def.production_time = 30
 	sewing_table:recipe_register_input("", table.copy(def))
 	if yarn2 then
-		def.inputs = {
-			fabric, fabric, yarn2,
-			fabric, fabric, "",
-			fabric, fabric, "",
-		}
+		def.inputs = recipe_cape(fabric, yarn2)
 		sewing_table:recipe_register_input("", table.copy(def))
+		if fabric_stripy and registered_items["clothing:cape_"..color.."_stripy"] then
+			def.outputs = {{"clothing:cape_"..color.."_stripy","clothing:yarn_spool_empty"}}
+			def.inputs = recipe_cape(fabric_stripy, yarn)
+			sewing_table:recipe_register_input("", table.copy(def))
+			def.inputs = recipe_cape(fabric_stripy, yarn2)
+			sewing_table:recipe_register_input("", table.copy(def))
+		end
 	end
 
 	-- hood mask
 	def.outputs = {{"clothing:hood_mask_"..color,"clothing:yarn_spool_empty"}}
-	def.inputs = {
-		fabric, fabric, fabric,
-		"", fabric, "",
-		fabric, yarn, fabric,
-	}
+	def.inputs = recipe_hood_mask(fabric, yarn)
 	def.production_time = 45
 	sewing_table:recipe_register_input("", table.copy(def))
 	if yarn2 then
-		def.inputs = {
-			fabric, fabric, fabric,
-			"", fabric, "",
-			fabric, yarn2, fabric,
-		}
+		def.inputs = recipe_hood_mask(fabric, yarn2)
 		sewing_table:recipe_register_input("", table.copy(def))
+		if fabric_stripy and registered_items["clothing:hood_mask_"..color.."_stripy"] then
+			def.outputs = {{"clothing:hood_mask_"..color.."_stripy","clothing:yarn_spool_empty"}}
+			def.inputs = recipe_hood_mask(fabric_stripy, yarn)
+			sewing_table:recipe_register_input("", table.copy(def))
+			def.inputs = recipe_hood_mask(fabric_stripy, yarn2)
+			sewing_table:recipe_register_input("", table.copy(def))
+		end
 	end
 
 	-- glove left
 	def.outputs = {{"clothing:glove_left_"..color,"clothing:yarn_spool_empty"}}
-	def.inputs = {
-		fabric, yarn, "",
-		"", "", "",
-		"", "", "",
-	}
+	def.inputs = recipe_glove_left(fabric, yarn)
 	def.production_time = 30
 	sewing_table:recipe_register_input("", table.copy(def))
 	if yarn2 then
-		def.inputs = {
-			fabric, yarn2, "",
-			"", "", "",
-			"", "", "",
-		}
+		def.inputs = recipe_glove_left(fabric, yarn2)
 		sewing_table:recipe_register_input("", table.copy(def))
+		if fabric_stripy and registered_items["clothing:glove_left_"..color.."_stripy"] then
+			def.outputs = {{"clothing:glove_left_"..color.."_stripy","clothing:yarn_spool_empty"}}
+			def.inputs = recipe_glove_left(fabric_stripy, yarn)
+			sewing_table:recipe_register_input("", table.copy(def))
+			def.inputs = recipe_glove_left(fabric_stripy, yarn2)
+			sewing_table:recipe_register_input("", table.copy(def))
+		end
 	end
 
 	-- glove right
 	def.outputs = {{"clothing:glove_right_"..color,"clothing:yarn_spool_empty"}}
-	def.inputs = {
-		fabric, yarn, "",
-		"", "", "",
-		"", "", "",
-	}
+	def.inputs = recipe_glove_right(fabric, yarn)
 	-- def.production_time = 30 -- the same as glove left
 	sewing_table:recipe_register_input("", table.copy(def))
 	if yarn2 then
-		def.inputs = {
-			fabric, yarn2, "",
-			"", "", "",
-			"", "", "",
-		}
+		def.inputs = recipe_glove_right(fabric, yarn2)
 		sewing_table:recipe_register_input("", table.copy(def))
+		if fabric_stripy and registered_items["clothing:glove_right_"..color.."_stripy"] then
+			def.outputs = {{"clothing:glove_right_"..color.."_stripy","clothing:yarn_spool_empty"}}
+			def.inputs = recipe_glove_right(fabric_stripy, yarn)
+			sewing_table:recipe_register_input("", table.copy(def))
+			def.inputs = recipe_glove_right(fabric_stripy, yarn2)
+			sewing_table:recipe_register_input("", table.copy(def))
+		end
 	end
 
 	-- shortshirt
 	def.outputs = {{"clothing:shortshirt_"..color,"clothing:yarn_spool_empty"}}
 	def.inputs = {
-		fabric, yarn, fabric,
-		fabric, fabric, fabric,
-		fabric, fabric, fabric,
+		fabric, "clothing:undershirt_"..color, fabric,
+		"", yarn, "",
+		"", "", "",
 	}
 	def.production_time = 45
 	sewing_table:recipe_register_input("", table.copy(def))
 	if yarn2 then
 		def.inputs = {
-			fabric, yarn2, fabric,
-			fabric, fabric, fabric,
-			fabric, fabric, fabric,
+			fabric, "clothing:undershirt_"..color, fabric,
+			"", yarn2, "",
+			"", "", "",
 		}
 		sewing_table:recipe_register_input("", table.copy(def))
+		if fabric_stripy and registered_items["clothing:shortshirt_"..color.."_stripy"] then
+			def.outputs = {{"clothing:shortshirt_"..color.."_stripy","clothing:yarn_spool_empty"}}
+			def.inputs = {
+				fabric_stripy, "clothing:undershirt_"..color.."_stripy", fabric_stripy,
+				"", yarn, "",
+				"", "", "",
+			}
+			sewing_table:recipe_register_input("", table.copy(def))
+			def.inputs = {
+				fabric_stripy, "clothing:undershirt_"..color.."_stripy", fabric_stripy,
+				"", yarn2, "",
+				"", "", "",
+			}
+			sewing_table:recipe_register_input("", table.copy(def))
+		end
+	end
+
+	-- undershirt
+	def.outputs = {{"clothing:undershirt_"..color,"clothing:yarn_spool_empty"}}
+	def.inputs = recipe_undershirt(fabric, yarn)
+	def.production_time = 45
+	sewing_table:recipe_register_input("", table.copy(def))
+	if yarn2 then
+		def.inputs = recipe_undershirt(fabric, yarn2)
+		sewing_table:recipe_register_input("", table.copy(def))
+		if fabric_stripy and registered_items["clothing:undershirt_"..color.."_stripy"] then
+			def.outputs = {{"clothing:undershirt_"..color.."_stripy","clothing:yarn_spool_empty"}}
+			def.inputs = recipe_undershirt(fabric_stripy, yarn)
+			sewing_table:recipe_register_input("", table.copy(def))
+			def.inputs = recipe_undershirt(fabric_stripy, yarn2)
+			sewing_table:recipe_register_input("", table.copy(def))
+		end
 	end
 
 	-- shorts
 	def.outputs = {{"clothing:shorts_"..color,"clothing:yarn_spool_empty"}}
-	def.inputs = {
-		"", yarn, "",
-		fabric, fabric, fabric,
-		fabric, "", fabric,
-	}
+	def.inputs = recipe_shorts(fabric, yarn)
 	def.production_time = 45
 	sewing_table:recipe_register_input("", table.copy(def))
 	if yarn2 then
-		def.inputs = {
-			"", yarn2, "",
-			fabric, fabric, fabric,
-			fabric, "", fabric,
-		}
+		def.inputs = recipe_shorts(fabric, yarn2)
 		sewing_table:recipe_register_input("", table.copy(def))
+		if fabric_stripy and registered_items["clothing:shorts_"..color.."_stripy"] then
+			def.outputs = {{"clothing:shorts_"..color.."_stripy","clothing:yarn_spool_empty"}}
+			def.inputs = recipe_shorts(fabric_stripy, yarn)
+			sewing_table:recipe_register_input("", table.copy(def))
+			def.inputs = recipe_shorts(fabric_stripy, yarn2)
+			sewing_table:recipe_register_input("", table.copy(def))
+		end
 	end
 
 	-- shoes
 	if not yarn2 then
 		def.outputs = {{"clothing:shoes_"..color,"clothing:yarn_spool_empty 2"}}
-		def.inputs = {
-			yarn, "", yarn,
-			fabric, "", fabric,
-			fabric, "", fabric,
-		}
+		def.inputs = recipe_shoes(fabric, yarn)
 		def.production_time = 60
 		sewing_table:recipe_register_input("", table.copy(def))
 	end

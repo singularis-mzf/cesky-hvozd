@@ -35,12 +35,20 @@ for color, data in pairs(clothing.colors) do
     groups = {not_in_creative_inventory = 1}
   end
   minetest.register_craftitem("clothing:fabric_"..color, {
-    description = desc.."á látka",
+    description = "kostičkovaná "..desc.."á látka",
     inventory_image = inv_img,
     groups = groups,
   });
   if data.alias then
     minetest.register_alias("clothing:fabric_"..data.alias, "clothing:fabric_"..color)
+  end
+
+  if data.hex2 then
+	minetest.register_craftitem("clothing:fabric_"..color.."_stripy", {
+		description = "pruhovaná "..desc.."á látka",
+		inventory_image = "(clothing_fabric.png^[multiply:#"..data.hex..")^(((clothing_fabric.png^clothing_inv_stripy_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")",
+		groups = groups,
+	});
   end
 end
 

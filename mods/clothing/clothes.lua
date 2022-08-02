@@ -33,6 +33,100 @@ local groups_cape_not_in_ci = {cape = 1, not_in_creative_inventory = 1}
 -- groups_cape_in_ci = groups_cape_not_in_ci
 -- groups_clothing_in_ci = groups_clothing_not_in_ci
 
+local clothing_types = {
+	-- required keys: cloth_desc, color_suffix
+	-- optional keys: cape, single_color = true, dual_color = true, stripy, pictures = {inv_pos, uv_pos}
+	--                on_load, on_equip, on_unequip
+	cape = {
+		cloth_desc = "plášť",
+		color_suffix = "ý",
+		cape = true,
+		-- pictures = { inv_pos = "16x16:4,4", uv_pos = "64x32:56,22" },
+		stripy = false, -- not supported yet
+	},
+	glove_left = {
+		cloth_desc = "levá rukavice",
+		color_suffix = "á",
+		stripy = true,
+	},
+	glove_right = {
+		cloth_desc = "pravá rukavice",
+		color_suffix = "á",
+		stripy = true,
+	},
+	gloves = {
+		cloth_desc = "rukavice",
+		color_suffix = "é",
+		stripy = true,
+	},
+	hood_mask = {
+		cloth_desc = "kukla",
+		color_suffix = "á",
+		stripy = true,
+		on_load = hood_mask_load,
+		on_equip = hood_mask_equip,
+		on_unequip = hood_mask_unequip,
+	},
+	pants = {
+		cloth_desc = "kalhoty",
+		color_suffix = "é",
+		stripy = true,
+	},
+	shirt = {
+		cloth_desc = "tričko",
+		color_suffix = "é",
+		-- pictures = { inv_pos = "16x16:4,4", uv_pos = "64x64:44,78" },
+		stripy = true,
+	},
+	shoes = {
+		cloth_desc = "boty",
+		color_suffix = "é",
+		dual_color = false,
+		stripy = false,
+	},
+	shorts = {
+		cloth_desc = "krátké kalhoty",
+		color_suffix = "é",
+		stripy = true,
+	},
+	shortshirt = {
+		cloth_desc = "tričko s krátkým rukávem",
+		color_suffix = "é",
+		stripy = true,
+	},
+	skullcap = {
+		cloth_desc = "čepice",
+		color_suffix = "á",
+		stripy = true,
+	},
+	undershirt = {
+		cloth_desc = "tílko",
+		color_suffix = "é",
+		stripy = true,
+	},
+}
+
+-- if pictures_def is not nil, this will register a new clothing item
+-- based on definition "def" for every supported picture
+-- name_base: the base of the name of the item (e. g. "clothing:hood_mask_yellow_green")
+-- def: original item definition used in minetest.register_craftitem()
+-- pictures_def: pictures settings or nil
+-- name_base_alias: alias to name_base or nil
+local function register_clothes_with_pictures(name_base, def, pictures_def, name_base_alias)
+	if pictures_def then
+		for picture, pic_data in pairs(clothing.pictures) do
+			local ndef = table.copy(def)
+			ndef.description = def.description.." s obrázkem"
+			ndef.inventory_image = def.inventory_image.."^[combine:"..pictures_def.inv_pos.."="..pic_data.texture
+			ndef.uv_image = def.uv_image.."^[combine:"..pictures_def.uv_pos.."="..pic_data.texture
+			minetest.register_craftitem(name_base.."_picture_"..picture, ndef)
+			if name_base_alias then
+				minetest.register_alias(name_base_alias.."_picture_"..picture, name_base.."_picture_"..picture)
+			end
+		end
+	end
+end
+
 for color, data in pairs(clothing.colors) do
 	local desc, groups_clothing, groups_cape
 	desc = data.color
@@ -44,225 +138,71 @@ for color, data in pairs(clothing.colors) do
 		groups_cape = groups_cape_not_in_ci
 	end
 
-  -- clothes
-  -- skullcap (old hat)
-  local inv_img = "(clothing_inv_skullcap.png^[multiply:#"..data.hex..")";
-  local uv_img = "(clothing_uv_skullcap.png^[multiply:#"..data.hex..")";
-  if data.hex2 then
-    inv_img = inv_img.."^(((clothing_inv_skullcap.png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-    uv_img = uv_img.."^(((clothing_uv_skullcap.png^clothing_uv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-  end
-	minetest.register_craftitem("clothing:skullcap_"..color, {
-		description = desc.."á čepice",
-		inventory_image = inv_img,
-		uv_image = uv_img,
-		groups = groups_clothing,
+	for cloth_type, cloth_def in pairs(clothing_types) do
+		local inv_img = "(clothing_inv_"..cloth_type..".png^[multiply:#"..data.hex..")"
+		local uv_img = "(clothing_uv_"..cloth_type..".png^[multiply:#"..data.hex..")"
+		local groups, def
 
-    on_load = function(player, index, stack)
-      -- change old :hat item to :skullcap item
-      local count = stack:get_count()
-      stack:set_name("clothing:skullcap_"..color)
-      stack:set_count(count)
-    end,
-	})
-	minetest.register_alias("clothing:hat_"..color, "clothing:skullcap_"..color)
-  if data.alias then
-	  minetest.register_alias("clothing:skullcap_"..data.alias, "clothing:skullcap_"..color)
-	  minetest.register_alias("clothing:hat_"..data.alias, "clothing:skullcap_"..color)
-  end
+		if cloth_def.cape then
+			groups = groups_cape
+		else
+			groups = groups_clothing
+		end
 
-  -- t-shirt
-  local inv_img = "(clothing_inv_shirt.png^[multiply:#"..data.hex..")";
-  local uv_img = "(clothing_uv_shirt.png^[multiply:#"..data.hex..")";
-  if data.hex2 then
-    inv_img = inv_img.."^(((clothing_inv_shirt.png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-    uv_img = uv_img.."^(((clothing_uv_shirt.png^clothing_uv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-  end
-	minetest.register_craftitem("clothing:shirt_"..color, {
-		description = desc.."é tričko",
-		inventory_image = inv_img,
-		uv_image = uv_img,
-		groups = groups_clothing,
-	})
-  if data.alias then
-	  minetest.register_alias("clothing:shirt_"..data.alias, "clothing:shirt_"..color)
-  end
-  
-  -- pants
-  local inv_img = "(clothing_inv_pants.png^[multiply:#"..data.hex..")";
-  local uv_img = "(clothing_uv_pants.png^[multiply:#"..data.hex..")";
-  if data.hex2 then
-    inv_img = inv_img.."^(((clothing_inv_pants.png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-    uv_img = uv_img.."^(((clothing_uv_pants.png^clothing_uv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-  end
-	minetest.register_craftitem("clothing:pants_"..color, {
-		description = desc.."é kalhoty",
-		inventory_image = inv_img,
-		uv_image = uv_img,
-		groups = groups_clothing,
-	})
-  if data.alias then
-	  minetest.register_alias("clothing:pants_"..data.alias, "clothing:pants_"..color)
-  end
-  
-  -- cape
-  local inv_img = "(clothing_inv_cape.png^[multiply:#"..data.hex..")";
-  local uv_img = "(clothing_uv_cape.png^[multiply:#"..data.hex..")";
-  if data.hex2 then
-    inv_img = inv_img.."^(((clothing_inv_cape.png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-    uv_img = uv_img.."^(((clothing_uv_cape.png^clothing_uv_cape_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-  end
-	minetest.register_craftitem("clothing:cape_"..color, {
-		description = desc.."ý plášť",
-		inventory_image = inv_img,
-		uv_image = uv_img,
-		groups = groups_cape,
-	})
-  if data.alias then
-	  minetest.register_alias("clothing:cape_"..data.alias, "clothing:cape_"..color)
-  end
-  
-  -- hood mask
-  local inv_img = "(clothing_inv_hood_mask.png^[multiply:#"..data.hex..")";
-  local uv_img = "(clothing_uv_hood_mask.png^[multiply:#"..data.hex..")";
-  if data.hex2 then
-    inv_img = inv_img.."^(((clothing_inv_hood_mask.png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-    uv_img = uv_img.."^(((clothing_uv_hood_mask.png^clothing_uv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-  end
-	minetest.register_craftitem("clothing:hood_mask_"..color, {
-		description = desc.."á kukla",
-		inventory_image = inv_img,
-		uv_image = uv_img,
-		groups = groups_clothing,
-    on_load = hood_mask_load,
-    on_equip = hood_mask_equip,
-    on_unequip = hood_mask_unequip,
-	})
-  if data.alias then
-	  minetest.register_alias("clothing:hood_mask_"..data.alias, "clothing:hood_mask_"..color)
-  end
-  
-  -- right glove
-  local inv_img = "(clothing_inv_glove_right.png^[multiply:#"..data.hex..")";
-  local uv_img = "(clothing_uv_glove_right.png^[multiply:#"..data.hex..")";
-  if data.hex2 then
-    inv_img = inv_img.."^(((clothing_inv_glove_right.png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-    uv_img = uv_img.."^(((clothing_uv_glove_right.png^clothing_uv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-  end
-	minetest.register_craftitem("clothing:glove_right_"..color, {
-		description = desc.."á pravá rukavice",
-		inventory_image = inv_img,
-		uv_image = uv_img,
-		groups = groups_clothing,
-	})
-  if data.alias then
-	  minetest.register_alias("clothing:glove_right_"..data.alias, "clothing:glove_right_"..color)
-  end
-  
-  -- left glove
-  local inv_img = "(clothing_inv_glove_left.png^[multiply:#"..data.hex..")";
-  local uv_img = "(clothing_uv_glove_left.png^[multiply:#"..data.hex..")";
-  if data.hex2 then
-    inv_img = inv_img.."^(((clothing_inv_glove_left.png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-    uv_img = uv_img.."^(((clothing_uv_glove_left.png^clothing_uv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-  end
-	minetest.register_craftitem("clothing:glove_left_"..color, {
-		description = desc.."á levá rukavice",
-		inventory_image = inv_img,
-		uv_image = uv_img,
-		groups = groups_clothing,
-	})
-  if data.alias then
-	  minetest.register_alias("clothing:glove_left_"..data.alias, "clothing:glove_left_"..color)
-  end
-  
-  -- gloves
-  local inv_img = "(clothing_inv_gloves.png^[multiply:#"..data.hex..")";
-  local uv_img = "(clothing_uv_gloves.png^[multiply:#"..data.hex..")";
-  if data.hex2 then
-    inv_img = inv_img.."^(((clothing_inv_gloves.png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-    uv_img = uv_img.."^(((clothing_uv_gloves.png^clothing_uv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-  end
-	minetest.register_craftitem("clothing:gloves_"..color, {
-		description = desc.."é rukavice",
-		inventory_image = inv_img,
-		uv_image = uv_img,
-		groups = groups_clothing,
-	})
-  if data.alias then
-	  minetest.register_alias("clothing:gloves_"..data.alias, "clothing:gloves_"..color)
-  end
-  
-  -- undershirt
-  local inv_img = "(clothing_inv_undershirt.png^[multiply:#"..data.hex..")";
-  local uv_img = "(clothing_uv_undershirt.png^[multiply:#"..data.hex..")";
-  if data.hex2 then
-    inv_img = inv_img.."^(((clothing_inv_undershirt.png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-    uv_img = uv_img.."^(((clothing_uv_undershirt.png^clothing_uv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-  end
-	minetest.register_craftitem("clothing:undershirt_"..color, {
-		description = desc.."é tílko",
-		inventory_image = inv_img,
-		uv_image = uv_img,
-		groups = groups_clothing,
-	})
-  if data.alias then
-	  minetest.register_alias("clothing:undershirt_"..data.alias, "clothing:undershirt_"..color)
-  end
-  
-  -- t-shirt short sleeve
-  local inv_img = "(clothing_inv_shortshirt.png^[multiply:#"..data.hex..")";
-  local uv_img = "(clothing_uv_shortshirt.png^[multiply:#"..data.hex..")";
-  if data.hex2 then
-    inv_img = inv_img.."^(((clothing_inv_shortshirt.png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-    uv_img = uv_img.."^(((clothing_uv_shortshirt.png^clothing_uv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-  end
-	minetest.register_craftitem("clothing:shortshirt_"..color, {
-		description = desc.."é tričko s krátkým rukávem",
-		inventory_image = inv_img,
-		uv_image = uv_img,
-		groups = groups_clothing,
-	})
-  if data.alias then
-	  minetest.register_alias("clothing:shortshirt_"..data.alias, "clothing:shortshirt_"..color)
-  end
+		if cloth_def.single_color ~= false and not data.hex2 then
+			def = {
+				description = data.color..cloth_def.color_suffix.." "..cloth_def.cloth_desc,
+				inventory_image = inv_img,
+				uv_image = uv_img,
+				groups = groups,
+				on_load = cloth_def.on_load,
+				on_equip = cloth_def.on_equip,
+				on_unequip = cloth_def.on_unequip,
+			}
 
-  -- shoes
-  local inv_img = "(clothing_inv_shoes.png^[multiply:#"..data.hex..")";
-  local uv_img = "(clothing_uv_shoes.png^[multiply:#"..data.hex..")";
-  if not data.hex2 then
-    -- inv_img = inv_img.."^(((clothing_inv_shoes.png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-    -- uv_img = uv_img.."^(((clothing_uv_shoes.png^clothing_uv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-  -- end
-	minetest.register_craftitem("clothing:shoes_"..color, {
-		description = desc.."é boty",
-		inventory_image = inv_img,
-		uv_image = uv_img,
-		-- groups = groups_clothing,
-		groups = groups_clothing_in_ci, -- temporarily...
-	})
-	if data.alias then
-		minetest.register_alias("clothing:shoes_"..data.alias, "clothing:shoes_"..color)
+			minetest.register_craftitem("clothing:"..cloth_type.."_"..color, def)
+			-- register_clothes_with_pictures(name_base, def, pictures_def, name_base_alias)
+			register_clothes_with_pictures("clothing:"..cloth_type.."_"..color, def, cloth_def.pictures, data.alias)
+		end
+
+		if data.hex2 then
+			if cloth_def.dual_color ~= false then
+				local clothing_uv_second_color = "clothing_uv_second_color.png"
+				if cloth_def.cape then
+					clothing_uv_second_color = "clothing_uv_cape_second_color.png"
+				end
+
+				def = {
+					description = data.color..cloth_def.color_suffix.." "..cloth_def.cloth_desc,
+					inventory_image = inv_img.."^(((clothing_inv_"..cloth_type..".png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")",
+					uv_image = uv_img.."^(((clothing_uv_"..cloth_type..".png^"..clothing_uv_second_color..")^[makealpha:0,0,0)^[multiply:#"..data.hex2..")",
+					groups = groups,
+					on_load = cloth_def.on_load,
+					on_equip = cloth_def.on_equip,
+					on_unequip = cloth_def.on_unequip,
+				}
+				minetest.register_craftitem("clothing:"..cloth_type.."_"..color, def)
+				minetest.register_alias("clothing:"..cloth_type.."_"..data.alias, "clothing:"..cloth_type.."_"..color)
+				register_clothes_with_pictures("clothing:"..cloth_type.."_"..color, def, cloth_def.pictures, "clothing:"..cloth_type.."_"..data.alias)
+			end
+			if cloth_def.stripy then
+				def = {
+					description = "pruhovan"..cloth_def.color_suffix.." "..data.color..cloth_def.color_suffix.." "..cloth_def.cloth_desc,
+					inventory_image = inv_img.."^(((clothing_inv_"..cloth_type..".png^clothing_inv_stripy_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")",
+					uv_image = uv_img.."^(((clothing_uv_"..cloth_type..".png^clothing_uv_stripy_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")",
+					groups = groups,
+					on_load = cloth_def.on_load,
+					on_equip = cloth_def.on_equip,
+					on_unequip = cloth_def.on_unequip,
+				}
+				minetest.register_craftitem("clothing:"..cloth_type.."_"..color.."_stripy", def)
+				minetest.register_alias("clothing:"..cloth_type.."_"..data.alias.."_stripy", "clothing:"..cloth_type.."_"..color.."_stripy")
+				register_clothes_with_pictures("clothing:"..cloth_type.."_"..color.."_stripy", def, cloth_def.pictures, "clothing:"..cloth_type.."_"..data.alias.."_stripy")
+			end
+		end
 	end
-  end
 
-  -- shorts
-  local inv_img = "(clothing_inv_shorts.png^[multiply:#"..data.hex..")";
-  local uv_img = "(clothing_uv_shorts.png^[multiply:#"..data.hex..")";
-  if data.hex2 then
-    inv_img = inv_img.."^(((clothing_inv_shorts.png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-    uv_img = uv_img.."^(((clothing_uv_shorts.png^clothing_uv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")";
-  end
-	minetest.register_craftitem("clothing:shorts_"..color, {
-		description = desc.."é krátké kalhoty",
-		inventory_image = inv_img,
-		uv_image = uv_img,
-		groups = groups_clothing,
-	})
-  if data.alias then
-	  minetest.register_alias("clothing:shorts_"..data.alias, "clothing:shorts_"..color)
-  end
-
+--[[
   for picture, pic_data in pairs(clothing.pictures) do
     -- t-shirt
     local inv_img = "(clothing_inv_shirt.png^[multiply:#"..data.hex..")";
@@ -298,5 +238,5 @@ for color, data in pairs(clothing.colors) do
       minetest.register_alias("clothing:cape_"..data.alias.."_picture_"..picture, "clothing:cape_"..color.."_picture_"..picture)
     end
   end
+]]
 end
-

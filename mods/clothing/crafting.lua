@@ -86,18 +86,32 @@ end
 
 
 for color, data in pairs(clothing.colors) do
-  minetest.register_craft({
-    type = "shapeless",
-    output = "clothing:gloves_"..color,
-    recipe = {"clothing:glove_right_"..color,
-              "clothing:glove_left_"..color},
-  })
-  minetest.register_craft({
-    type = "shapeless",
-    output = "clothing:glove_right_"..color,
-    recipe = {"clothing:gloves_"..color},
-    replacements = {
-      {"clothing:gloves_"..color, "clothing:glove_left_"..color},
-    },
-  })
+	minetest.register_craft({
+		type = "shapeless",
+		output = "clothing:gloves_"..color,
+		recipe = {"clothing:glove_right_"..color, "clothing:glove_left_"..color},
+	})
+	minetest.register_craft({
+		type = "shapeless",
+		output = "clothing:glove_right_"..color,
+		recipe = {"clothing:gloves_"..color},
+		replacements = {
+			{"clothing:gloves_"..color, "clothing:glove_left_"..color},
+		},
+	})
+	if data.hex2 then
+		minetest.register_craft({
+			type = "shapeless",
+			output = "clothing:gloves_"..color.."_stripy",
+			recipe = {"clothing:glove_right_"..color.."_stripy", "clothing:glove_left_"..color.."_stripy"},
+		})
+		minetest.register_craft({
+			type = "shapeless",
+			output = "clothing:glove_right_"..color.."_stripy",
+			recipe = {"clothing:gloves_"..color.."_stripy"},
+			replacements = {
+				{"clothing:gloves_"..color.."_stripy", "clothing:glove_left_"..color.."_stripy"},
+			},
+		})
+	end
 end

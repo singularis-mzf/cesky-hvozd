@@ -174,16 +174,32 @@ for color, data in pairs(clothing.colors) do
   else
     local spool = "clothing:yarn_spool_"..data.key1;
     local spool2 = "clothing:yarn_spool_"..data.key2;
-    loom:recipe_register_input(
-      "",
-      {
-        inputs = {spool2, spool,
-                  spool, spool2,
-                 },
-        outputs = {{"clothing:fabric_"..color,"clothing:yarn_spool_empty 4"},},
-        production_time = 30,
-        consumption_step_size = 1,
-      });
+	local def = {
+		inputs = {
+			spool2, spool,
+			spool, spool2,
+		},
+		outputs = {{"clothing:fabric_"..color,"clothing:yarn_spool_empty 4"},},
+		production_time = 30,
+		consumption_step_size = 1,
+	}
+	loom:recipe_register_input("", table.copy(def));
+	def.inputs = {
+		spool, spool2,
+		spool2, spool,
+	}
+	loom:recipe_register_input("", table.copy(def));
+	def.outputs = {{"clothing:fabric_"..color.."_stripy","clothing:yarn_spool_empty 4"}}
+	def.inputs = {
+		spool, spool,
+		spool2, spool2,
+	}
+	loom:recipe_register_input("", table.copy(def));
+	def.inputs = {
+		spool2, spool2,
+		spool, spool,
+	}
+	loom:recipe_register_input("", table.copy(def));
   end
 end
 

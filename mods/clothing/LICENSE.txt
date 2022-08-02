@@ -1,7 +1,9 @@
 Clothing - Visible Player Clothing
 ==================================
 
-Source Code: Stuart Jones, SFENCE - LGPL v2.1
+Source Code:
+	Stuart Jones, SFENCE - LGPL v2.1
+	Singularis - LGPL v2.1
 
 Wool Textures: Based on minetest_game wool - CC BY-SA 3.0
 
@@ -12,7 +14,6 @@ SFENCE - CC BY-SA 3.0:
   clothing_spinning_machine_*.png
   clothing_sewing_table_*.png
   clothing_dye_machine_*.png
-  clothing_picture_minetest.png
   clothing_dirty_water*.png - based on minetest_game default river_water textures
   clothing_bucket_dirty.png - based on minetest_game bucket river water texture
   clothing_loom_*.png -> based on old clothing:loom textures by Stuard jones.
