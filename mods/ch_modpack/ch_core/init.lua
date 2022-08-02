@@ -24,6 +24,7 @@ dofile(modpath .. "/privs.lua")
 dofile(modpath .. "/data.lua")
 dofile(modpath .. "/lib.lua") -- : data
 dofile(modpath .. "/chat.lua") -- : data, lib, privs
+dofile(modpath .. "/dennoc.lua") -- : privs, chat
 dofile(modpath .. "/hud.lua") -- : data, lib
 dofile(modpath .. "/joinplayer.lua") -- : data, lib
 dofile(modpath .. "/nodes.lua")
