@@ -439,7 +439,7 @@ core.register_lbm({
 		-- create drawer upgrade inventory
 		meta:get_inventory():set_size("upgrades", 5)
 		-- set the formspec
-		meta:set_string("formspec", drawers.drawer_formspec)
+		meta:set_string("formspec", "")
 
 		-- count the drawer visuals
 		local drawerType = core.registered_nodes[node.name].groups.drawer

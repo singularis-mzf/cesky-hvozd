@@ -26,7 +26,8 @@ SOFTWARE.
 
 -- Load support for intllib.
 local MP = core.get_modpath(core.get_current_modname())
-local S, NS = dofile(MP.."/intllib.lua")
+local S = minetest.get_translator("drawers")
+local NS = S
 
 drawers = {}
 drawers.drawer_visuals = {}
@@ -88,7 +89,7 @@ if core.get_modpath("default") and default then
 			"drawers_wood.png"),
 		groups = {choppy = 3, oddly_breakable_by_hand = 2},
 		sounds = drawers.WOOD_SOUNDS,
-		drawer_stack_max_factor = 32, -- 4 * 8 normal chest size
+		drawer_stack_max_factor = 100, -- 4 * 8 normal chest size
 		material = drawers.WOOD_ITEMSTRING
 	})
 	drawers.register_drawer("drawers:acacia_wood", {
@@ -101,7 +102,7 @@ if core.get_modpath("default") and default then
 			"drawers_acacia_wood.png"),
 		groups = {choppy = 3, oddly_breakable_by_hand = 2},
 		sounds = drawers.WOOD_SOUNDS,
-		drawer_stack_max_factor = 32, -- 4 * 8 normal mcl chest size
+		drawer_stack_max_factor = 100, -- 4 * 8 normal mcl chest size
 		material = "default:acacia_wood"
 	})
 	drawers.register_drawer("drawers:aspen_wood", {
@@ -114,7 +115,7 @@ if core.get_modpath("default") and default then
 			"drawers_aspen_wood.png"),
 		groups = {choppy = 3, oddly_breakable_by_hand = 2},
 		sounds = drawers.WOOD_SOUNDS,
-		drawer_stack_max_factor = 32, -- 4 * 8 normal chest size
+		drawer_stack_max_factor = 100, -- 4 * 8 normal chest size
 		material = "default:aspen_wood"
 	})
 	drawers.register_drawer("drawers:junglewood", {
@@ -127,7 +128,7 @@ if core.get_modpath("default") and default then
 			"drawers_junglewood.png"),
 		groups = {choppy = 3, oddly_breakable_by_hand = 2},
 		sounds = drawers.WOOD_SOUNDS,
-		drawer_stack_max_factor = 32, -- 4 * 8 normal mcl chest size
+		drawer_stack_max_factor = 100, -- 4 * 8 normal mcl chest size
 		material = "default:junglewood"
 	})
 	drawers.register_drawer("drawers:pine_wood", {
@@ -140,9 +141,41 @@ if core.get_modpath("default") and default then
 			"drawers_pine_wood.png"),
 		groups = {choppy = 3, oddly_breakable_by_hand = 2},
 		sounds = drawers.WOOD_SOUNDS,
-		drawer_stack_max_factor = 32, -- 4 * 8 normal chest size
+		drawer_stack_max_factor = 100, -- 4 * 8 normal chest size
 		material = "default:pine_wood"
 	})
+	if core.get_modpath("moretrees") then
+		drawers.register_drawer("drawers:oakwood", {
+			description = S("Oak Wood"),
+			tiles1 = drawers.node_tiles_front_other("drawers_oak_wood_front_1.png", "drawers_oak_wood.png"),
+			tiles2 = drawers.node_tiles_front_other("drawers_oak_wood_front_2.png", "drawers_oak_wood.png"),
+			tiles4 = drawers.node_tiles_front_other("drawers_oak_wood_front_4.png", "drawers_oak_wood.png"),
+			groups = {choppy = 3, oddly_breakable_by_hand = 2},
+			sounds = drawers.WOOD_SOUNDS,
+			drawer_stack_max_factor = 100,
+			material = "moretrees:oak_planks",
+		})
+		drawers.register_drawer("drawers:birchwood", {
+			description = S("Birch Wood"),
+			tiles1 = drawers.node_tiles_front_other("drawers_birch_wood_front_1.png", "drawers_birch_wood.png"),
+			tiles2 = drawers.node_tiles_front_other("drawers_birch_wood_front_2.png", "drawers_birch_wood.png"),
+			tiles4 = drawers.node_tiles_front_other("drawers_birch_wood_front_4.png", "drawers_birch_wood.png"),
+			groups = {choppy = 3, oddly_breakable_by_hand = 2},
+			sounds = drawers.WOOD_SOUNDS,
+			drawer_stack_max_factor = 100,
+			material = "moretrees:birch_planks",
+		})
+		drawers.register_drawer("drawers:sprucewood", {
+			description = S("Spruce Wood"),
+			tiles1 = drawers.node_tiles_front_other("drawers_spruce_wood_front_1.png", "drawers_spruce_wood.png"),
+			tiles2 = drawers.node_tiles_front_other("drawers_spruce_wood_front_2.png", "drawers_spruce_wood.png"),
+			tiles4 = drawers.node_tiles_front_other("drawers_spruce_wood_front_4.png", "drawers_spruce_wood.png"),
+			groups = {choppy = 3, oddly_breakable_by_hand = 2},
+			sounds = drawers.WOOD_SOUNDS,
+			drawer_stack_max_factor = 100, -- 4 * 9 normal mcl chest size
+			material = "moretrees:spruce_planks",
+		})
+	end
 elseif core.get_modpath("mcl_core") and mcl_core then
 	drawers.register_drawer("drawers:oakwood", {
 		description = S("Oak Wood"),
@@ -255,7 +288,7 @@ else
 	})
 end
 
-
+--[[
 --
 -- Register drawer upgrades
 --
@@ -333,6 +366,7 @@ if core.get_modpath("moreores") then
 		recipe_item = "moreores:mithril_ingot"
 	})
 end
+]]
 
 --
 -- Register drawer trim
@@ -367,6 +401,7 @@ core.register_craft({
 -- Register drawer upgrade template
 --
 
+--[[
 core.register_craftitem("drawers:upgrade_template", {
 	description = S("Drawer Upgrade Template"),
 	inventory_image = "drawers_upgrade_template.png"
@@ -380,4 +415,4 @@ core.register_craft({
 		{"group:stick", "group:stick", "group:stick"}
 	}
 })
-
+]]

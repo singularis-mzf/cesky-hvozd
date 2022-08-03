@@ -27,7 +27,8 @@ SOFTWARE.
 
 -- Load support for intllib.
 local MP = core.get_modpath(core.get_current_modname())
-local S, NS = dofile(MP.."/intllib.lua")
+local S = minetest.get_translator("drawers")
+local NS = S
 
 drawers.node_box_simple = {
 	{-0.5, -0.5, -0.4375, 0.5, 0.5, 0.5},
@@ -81,7 +82,7 @@ function drawers.drawer_on_construct(pos)
 	meta:get_inventory():set_size("upgrades", 5)
 
 	-- set the formspec
-	meta:set_string("formspec", drawers.drawer_formspec)
+	-- meta:set_string("formspec", drawers.drawer_formspec)
 end
 
 -- destruct drawer
@@ -403,6 +404,7 @@ function drawers.register_drawer(name, def)
 end
 
 function drawers.register_drawer_upgrade(name, def)
+	--[[
 	def.groups = def.groups or {}
 	def.groups.drawer_upgrade = def.groups.drawer_upgrade or 100
 	def.inventory_image = def.inventory_image or "drawers_upgrade_template.png"
@@ -423,5 +425,6 @@ function drawers.register_drawer_upgrade(name, def)
 			}
 		})
 	end
+	]]
 end
 
