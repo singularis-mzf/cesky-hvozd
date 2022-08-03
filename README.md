@@ -357,6 +357,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/FaceDeer/digtron/)
 
+## Drawers (drawers)
+
+* Zdroj: [https://github.com/minetest-mods/drawers](https://github.com/minetest-mods/drawers), revize 7ab68688ed51db80cffa61fc9ce08453aeabb986
+* Původní licence: kód MIT, překlady CC0-1.0, média CC-BY-3.0 nebo MIT, vše ostatní MIT
+* Licence úprav: kód MIT, překlad CC0-1.0, vše ostatní MIT
+* [ContentDB](https://content.minetest.net/packages/LNJ/drawers/)
+
 ## Dreambuilder hotbar expander (dreambuilder\_hotbar)
 
 * Zdroj: [https://github.com/mt-mods/dreambuilder\_hotbar](https://github.com/mt-mods/dreambuilder\_hotbar), revize 41432618a0c41e2fd762ccb1f4cb9a2db329806e
