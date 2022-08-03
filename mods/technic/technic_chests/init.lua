@@ -27,7 +27,11 @@ technic.chests.colors = {
 function technic.chests.change_allowed(pos, player, owned, protected)
 	if owned then
 		if minetest.is_player(player) and not default.can_interact_with_node(player, pos) then
-			return false
+			local meta = minetest.get_meta(pos)
+			local owner2 = meta:get_string("owner2")
+			if owner2 == "" or player:get_player_name() ~= owner2 then
+				return false
+			end
 		end
 	elseif protected then
 		if minetest.is_protected(pos, player:get_player_name()) then

@@ -59,32 +59,44 @@ function technic.chests.register_chest(nodename, data)
 
 	data.formspec = technic.chests.get_formspec(data)
 	local def = {
+		drawtype = data.drawtype,
+		mesh = data.mesh,
 		description = data.description,
 		tiles = data.tiles or get_tiles(data),
+		use_texture_alpha = data.use_texture_alpha,
+		paramtype = data.paramtype,
+		visual_scale = data.visual_scale,
+		wield_scale = data.wield_scale,
+		selection_box = data.selection_box,
+		sunlight_propagates = data.sunlight_propagates,
+		is_ground_content = data.is_ground_content,
+
 		paramtype2 = "facedir",
 		legacy_facedir_simple = true,
-		groups = node_groups,
-		sounds = default.node_sound_wood_defaults(),
+		groups = data.groups or node_groups,
+		sounds = data.sounds or default.node_sound_wood_defaults(),
 		drop = nodename,
 		after_place_node = function(pos, placer)
 			local meta = minetest.get_meta(pos)
 			if data.locked then
-				local owner = placer:get_player_name() or ""
-				meta:set_string("owner", owner)
-				meta:set_string("infotext", S("@1 (owned by @2)", data.description, owner))
-			else
-				meta:set_string("infotext", data.description)
+				-- local owner = placer:get_player_name() or ""
+				meta:set_string("owner", placer:get_player_name() or "")
+				-- meta:set_string("infotext", S("@1 (owned by @2)", data.description, owner))
+			-- else
+				-- meta:set_string("infotext", data.description)
 			end
-			if has_pipeworks then
+			if has_pipeworks and not (data.tube == false) then
 				pipeworks.after_place(pos)
 			end
+			technic.chests.set_infotext(meta, data.description)
+			technic.chests.update_formspec(pos, data)
 		end,
 		after_dig_node = function(pos)
-			if has_pipeworks then
+			if has_pipeworks and not (data.tube == false) then
 				pipeworks.after_dig(pos)
 			end
 		end,
-		tube = {
+		tube = data.tube or {
 			insert_object = function(pos, node, stack)
 				local meta = minetest.get_meta(pos)
 				if data.digilines and meta:get_int("send_inject") == 1 then
@@ -197,6 +209,12 @@ function technic.chests.register_chest(nodename, data)
 		end,
 		on_receive_fields = technic.chests.get_receive_fields(nodename, data),
 	}
+	if data.tube == false then
+		def.tube = nil
+		def.groups = table.copy(def.groups)
+		def.groups.tubedevice = nil
+		def.groups.tubedevice_receiver = nil
+	end
 	if data.locked then
 		def.on_skeleton_key_use = function(pos, player, newsecret)
 			-- Copied from default chests.lua

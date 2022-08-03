@@ -60,7 +60,7 @@ local function get_digilines_fs(x, y, meta)
 end
 
 local function get_infotext_fs(editing, meta)
-	local infotext = minetest.formspec_escape(meta:get_string("infotext"))
+	local infotext = minetest.formspec_escape(technic.chests.get_infotext(meta, false))
 	if editing then
 		return "image_button[0,0.1;0.8,0.8;technic_checkmark_icon.png;save_infotext;]"..
 			"field[1,0.3;4,1;infotext;;"..infotext.."]"
@@ -127,9 +127,49 @@ function technic.chests.get_formspec(data)
 	return formspec
 end
 
+local function append_ownership(infotext, owner, owner2)
+	if not owner or owner == "" then
+		return infotext
+	end
+	if infotext ~= "" then
+		infotext = infotext.."\n"
+	end
+	if owner2 and owner2 ~= "" then
+		infotext = infotext.."(adresát/ka: "
+	else
+		infotext = infotext.."(vlastník/ice: "
+	end
+	infotext = infotext..ch_core.prihlasovaci_na_zobrazovaci(owner)..")"
+	return infotext
+end
+
+function technic.chests.get_infotext(meta, include_ownership)
+	local infotext = meta:get_string("infotext")
+	local owner = meta:get_string("owner")
+	if owner == "" then
+		return infotext
+	end
+	for i = #infotext, 1, -1 do
+		if infotext:sub(i, i) == "\n" then
+			infotext = infotext:sub(1, i - 1)
+			break
+		end
+	end
+	if include_ownership then
+		return append_ownership(infotext, owner, meta:get_string("owner2"))
+	else
+		return infotext
+	end
+end
+
+function technic.chests.set_infotext(meta, new_infotext)
+	meta:set_string("infotext", append_ownership(new_infotext or technic.chests.get_infotext(meta, false), meta:get_string("owner"), meta:get_string("owner2")))
+end
+
 function technic.chests.update_formspec(pos, data, edit_infotext)
 	local formspec = data.formspec.base
 	local meta = minetest.get_meta(pos)
+	local node_has_pipeworks = minetest.get_item_group(minetest.get_node(pos).name, "tubedevice_receiver") > 0
 	if data.infotext then
 		formspec = formspec..get_infotext_fs(edit_infotext, meta)
 	end
@@ -139,7 +179,7 @@ function technic.chests.update_formspec(pos, data, edit_infotext)
 			formspec = formspec..get_autosort_fs(data.formspec.width - 5, meta)
 		end
 	end
-	if has_pipeworks then
+	if has_pipeworks and node_has_pipeworks then
 		local offset = data.quickmove and (data.formspec.padding * 2 + 3) or data.formspec.padding
 		formspec = formspec..get_pipeworks_fs(offset, data.height + 1, meta)
 	end
@@ -246,7 +286,40 @@ function technic.chests.get_receive_fields(nodename, data)
 				technic.chests.update_formspec(pos, data, true)
 				return
 			elseif fields.save_infotext and fields.infotext then
-				meta:set_string("infotext", fields.infotext)
+				if data.locked and #fields.infotext >= 3 and fields.infotext:sub(1, 3) == ">>>" then
+					local owner = meta:get_string("owner")
+					local owner2 = meta:get_string("owner2")
+					if #fields.infotext == 3 then
+						-- ">>>" => delete the second owner (the second owner is not allowed to do this)
+						if owner2 == "" then
+							minetest.chat_send_player(player:get_player_name(), "*** CHYBA: dárek nemá adresáta")
+						elseif owner == player:get_player_name() then
+							minetest.chat_send_player(player:get_player_name(), "*** CHYBA: jako adresát se nemůžete vzdát dárku")
+						else
+							meta:set_string("owner", owner2)
+							meta:set_string("owner2", "")
+							minetest.log("action", player:get_player_name().." set the ownership of the chest at "..minetest.pos_to_string(pos).." to 1="..meta:get_string("owner").."/2="..meta:get_string("owner2"))
+							technic.chests.set_infotext(meta, nil)
+						end
+					else
+						-- ">>>Jméno" => set the second owner
+						local new_owner = ch_core.jmeno_na_prihlasovaci(fields.infotext:sub(4, -1))
+						if minetest.player_exists(new_owner) then
+							if owner2 == "" then
+								meta:set_string("owner2", owner)
+								owner2 = owner
+							end
+							meta:set_string("owner", new_owner)
+							minetest.log("action", player:get_player_name().." set the ownership of the chest at "..minetest.pos_to_string(pos).." to 1="..meta:get_string("owner").."/2="..meta:get_string("owner2"))
+							technic.chests.set_infotext(meta, nil)
+						else
+							-- player not exists!
+							minetest.chat_send_player(player:get_player_name(), "*** CHYBA: postava se zadaným jménem '"..fields.infotext:sub(4, -1).."' neexistuje!")
+						end
+					end
+				else
+					technic.chests.set_infotext(meta, fields.infotext)
+				end
 			end
 		end
 		technic.chests.update_formspec(pos, data)
