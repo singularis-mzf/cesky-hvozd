@@ -67,8 +67,8 @@ for i, colortab in ipairs( box_colors ) do
 			}
 		},
 
-		width = 5,
-		height = 5,
+		width = 4,
+		height = 4,
 		sort = true,
 		infotext = true,
 		autosort = false,
