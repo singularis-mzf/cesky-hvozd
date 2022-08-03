@@ -407,6 +407,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: GNU Affero GPLv3
 * [ContentDB](https://content.minetest.net/packages/x2048/shadows/)
 
+## Giftbox2 (minetest\_giftbox2)
+
+* Zdroj: [https://repo.or.cz/minetest\_giftbox2.git](https://repo.or.cz/minetest\_giftbox2.git), revize d0c150741f2d6bb840623a5f24c09890a1220aa9
+* Původní licence: zdrojový kód LGPL-3.0, ostatní soubory CC BY-SA 3.0
+* Licence úprav: ve zdrojovém kódu LGPL-3.0, v ostatních souborech CC BY-SA 3.0
+* [ContentDB](https://content.minetest.net/packages/Wuzzy/giftbox2/)
+
 ## Guinea Pig (guinea\_pig)
 
 * Zdroj: [https://github.com/DrPlamsa/guinea\_pig](https://github.com/DrPlamsa/guinea\_pig), revize 281739351ee06fa5eb5e0146113920d846a22aeb

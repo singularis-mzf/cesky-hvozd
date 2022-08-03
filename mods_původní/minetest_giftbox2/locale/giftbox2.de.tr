@@ -1,0 +1,24 @@
+# textdomain: giftbox2
+Black Gift Box=Schwarze Geschenkkiste
+Blue Gift Box=Blaue Geschenkkiste
+Cyan Gift Box=Türkise Geschenkkiste
+Green Gift Box=Grüne Geschenkkiste
+Magenta Gift Box=Magenta Geschenkkiste
+Red Gift Box=Rote Geschenkkiste
+White Gift Box=Weiße Geschenkkiste
+Yellow Gift Box=Gelbe Geschenkkiste
+Orange Gift Box=Orange Geschenkkiste
+Violet Gift Box=Violette Geschenkkiste
+@1 (from @2)=@1 (von @2)
+Save=Speichern
+Anonymous Sender=Anonymer Absender
+Personalize your greeting (or leave blank for the default):=Ihre Grußnachricht anpassen (freilassen für Standard):
+Recipient:=Empfänger:
+The specified message is too short.=Die angegebene Nachricht ist zu kurz.
+The specified message is too long.=Die angegebene Nachricht ist zu lang.
+You cannot give a gift to yourself.=Sie können sich nicht selbst beschenken.
+The specified recipient is invalid.=Der angegebene Empfänger ist ungültig.
+Gift Box=Geschenkkiste
+“@1”=„@1“
+Gift Box for @1=Geschenkkiste für @1
+Dear @1: “@2”=Für @1: „@2“
