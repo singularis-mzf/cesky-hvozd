@@ -1,0 +1,24 @@
+# textdomain: giftbox2
+Black Gift Box=černý dárek
+Blue Gift Box=modrý dárek
+Cyan Gift Box=tykrysový dárek
+Green Gift Box=zelený dárek
+Magenta Gift Box=magentový dárek
+Red Gift Box=červený dárek
+White Gift Box=bílý dárek
+Yellow Gift Box=žlutý dárek
+Orange Gift Box=oranžový dárek
+Violet Gift Box=fialový dárek
+@1 (from @2)=@1 (od @2)
+Save=uložit
+Anonymous Sender=anonymní odesilatel/ka
+# Personalize your greeting (or leave blank for the default):=
+Recipient:=Adresát/ka:
+# The specified message is too short.=
+# The specified message is too long.=
+# You cannot give a gift to yourself.=
+# The specified recipient is invalid.=
+Gift Box=dárek
+“@1”=„@1“
+Gift Box for @1=dárek pro @1
+Dear @1: “@2”=Drahý/á @1: „@2“
