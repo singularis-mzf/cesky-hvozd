@@ -1,0 +1,3 @@
+Night Line Couchette Wagon=Night Line Liegewagen
+Night Line Seat Wagon=Night Line Sitzwagen
+

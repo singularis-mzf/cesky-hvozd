@@ -107,6 +107,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/doxygen\_spammer/morelights\_dim/)
 
+## Moretrains (moretrains)
+
+* Zdroj: [https://git.bananach.space/moretrains.git/](https://git.bananach.space/moretrains.git/), revize 59ee0e4f1577b75ab8736c8a8115c774eeaea3c7
+* Původní licence: LGPLv2.1 pro kód, CC-BY-SA 3.0 pro média
+* Licence úprav: LGPLv2.1 pro kód, CC-BY-SA 3.0 pro média
+* [ContentDB](https://content.minetest.net/packages/gpcf/moretrains/)
+
 ## Plantlife (plantlife)
 
 * Zdroj: [https://github.com/mt-mods/plantlife\_modpack](https://github.com/mt-mods/plantlife\_modpack), revize d33907ca75383598ba47fc97942575d816c81eee
