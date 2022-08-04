@@ -1,9 +1,4 @@
-local S
-if minetest.get_modpath("intllib") then
-    S = intllib.Getter()
-else
-    S = function(s,a,...)a={a,...}return s:gsub("@(%d+)",function(n)return a[tonumber(n)]end)end
-end
+local S = minetest.get_translator("advtrains")
 
 local bed = 'wool:white'
 if  minetest.get_modpath("beds") then
@@ -48,7 +43,7 @@ advtrains.register_wagon("moretrains_nightline_couchette", {
 	},
 	seat_groups = {
 		pass={
-			name = "Passenger area",
+			name = S("Passenger area"),
 			access_to = {},
 			require_doors_open=true,
 		},
@@ -68,7 +63,7 @@ advtrains.register_wagon("moretrains_nightline_couchette", {
 	visual_size = {x=1, y=1},
 	wagon_span=3,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock"},
+	-- drops={"default:steelblock"},
 }, S("Night Line Couchette Wagon"), "moretrains_nightline_couchette_inv.png")
 
 minetest.register_craft({
@@ -113,7 +108,7 @@ advtrains.register_wagon("moretrains_nightline_seat_car", {
 	},
 	seat_groups = {
 		pass={
-			name = "Passenger area",
+			name = S("Passenger area"),
 			access_to = {},
 			require_doors_open=true,
 		},
@@ -133,7 +128,7 @@ advtrains.register_wagon("moretrains_nightline_seat_car", {
 	visual_size = {x=1, y=1},
 	wagon_span=3,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock"},
+	drops={"default:steelblock 3", "dye:blue", "default:glass", "wool:blue", door, "advtrains:wheel 2"},
 }, S("Night Line Seat Wagon"), "moretrains_nightline_seat_car_inv.png")
 
 minetest.register_craft({

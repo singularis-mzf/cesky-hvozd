@@ -1,9 +1,4 @@
-local S
-if minetest.get_modpath("intllib") then
-    S = intllib.Getter()
-else
-    S = function(s,a,...)a={a,...}return s:gsub("@(%d+)",function(n)return a[tonumber(n)]end)end
-end
+local S = minetest.get_translator("advtrains")
 
 advtrains.register_wagon("moretrains_engine_japan", {
 	mesh="moretrains_japan_bullet_engine.b3d",
@@ -44,13 +39,13 @@ advtrains.register_wagon("moretrains_engine_japan", {
 	},
 	seat_groups = {
 		dstand={
-			name = "Driver Stand",
+			name = S("Driver Stand"),
 			access_to = {"pass"},
 			require_doors_open=true,
 			driving_ctrl_access=true,
 		},
 		pass={
-			name = "Passenger area",
+			name = S("Passenger area"),
 			access_to = {"dstand"},
 			require_doors_open=true,
 		},
@@ -71,7 +66,7 @@ advtrains.register_wagon("moretrains_engine_japan", {
 	wagon_span=3.1,
 	is_locomotive=true,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock"},
+	-- drops={"default:steelblock"},
 	horn_sound = "moretrains_japan_horn",
 }, S("Japanese Train Engine (moretrains)"), "moretrains_engine_japan_inv.png")
 
@@ -120,7 +115,7 @@ advtrains.register_wagon("moretrains_wagon_japan", {
 	},
 	seat_groups = {
 		pass={
-			name = "Passenger area",
+			name = S("Passenger area"),
 			access_to = {},
 			require_doors_open=true,
 		},

@@ -1,8 +1,11 @@
-local S
-if minetest.get_modpath("intllib") then
-    S = intllib.Getter()
-else
-    S = function(s,a,...)a={a,...}return s:gsub("@(%d+)",function(n)return a[tonumber(n)]end)end
+local S = minetest.get_translator("advtrains")
+
+local inventory_list_sizes = {box=15*8}
+local function get_inventory_formspec(self, pname, invname)
+	return "size[15,13]"..
+			"list["..invname..";box;0,0;15,8;]"..
+			"list[current_player;main;3,9;8,4;]"..
+			"listring[]"
 end
 
 advtrains.register_wagon("moretrains_wagon_tank", {
@@ -14,17 +17,10 @@ advtrains.register_wagon("moretrains_wagon_tank", {
 	visual_size = {x=1, y=1},
 	wagon_span=2.719,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock 2"},
+	-- drops={"default:steelblock 2"},
 	has_inventory = true,
-	get_inventory_formspec = function(self, pname, invname)
-		return "size[8,11]"..
-			"list["..invname..";box;0,0;8,3;]"..
-			"list[current_player;main;0,5;8,4;]"..
-			"listring[]"
-	end,
-	inventory_list_sizes = {
-		box=8*3,
-	},
+	get_inventory_formspec = get_inventory_formspec,
+	inventory_list_sizes = inventory_list_sizes,
 }, S("Industrial tank wagon (silver)"), "moretrains_wagon_tank_inv.png")
 
 advtrains.register_wagon("moretrains_wagon_tank2", {
@@ -36,19 +32,11 @@ advtrains.register_wagon("moretrains_wagon_tank2", {
 	visual_size = {x=1, y=1},
 	wagon_span=2.719,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock 2"},
+	-- drops={"default:steelblock 2"},
 	has_inventory = true,
-	get_inventory_formspec = function(self, pname, invname)
-		return "size[8,11]"..
-			"list["..invname..";box;0,0;8,3;]"..
-			"list[current_player;main;0,5;8,4;]"..
-			"listring[]"
-	end,
-	inventory_list_sizes = {
-		box=8*3,
-	},
+	get_inventory_formspec = get_inventory_formspec,
+	inventory_list_sizes = inventory_list_sizes,
 }, S("Industrial tank wagon (blue)"), "moretrains_wagon_tank2_inv.png")
-
 
 advtrains.register_wagon("moretrains_wagon_wood", {
 	mesh="moretrains_wagon_wood.b3d",
@@ -59,17 +47,10 @@ advtrains.register_wagon("moretrains_wagon_wood", {
 	visual_size = {x=1, y=1},
 	wagon_span=2.784,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock"},
+	-- drops={"default:steelblock"},
 	has_inventory = true,
-	get_inventory_formspec = function(self, pname, invname)
-		return "size[8,11]"..
-			"list["..invname..";box;0,0;8,3;]"..
-			"list[current_player;main;0,5;8,4;]"..
-			"listring[]"
-	end,
-	inventory_list_sizes = {
-		box=8*3,
-	},
+	get_inventory_formspec = get_inventory_formspec,
+	inventory_list_sizes = inventory_list_sizes,
 }, S("Industrial wood wagon (empty)"), "moretrains_wagon_wood_inv.png")
 
 advtrains.register_wagon("moretrains_wagon_wood_loaded", {
@@ -81,17 +62,10 @@ advtrains.register_wagon("moretrains_wagon_wood_loaded", {
 	visual_size = {x=1, y=1},
 	wagon_span=2.784,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock"},
+	-- drops={"default:steelblock"},
 	has_inventory = true,
-	get_inventory_formspec = function(self, pname, invname)
-		return "size[8,11]"..
-			"list["..invname..";box;0,0;8,3;]"..
-			"list[current_player;main;0,5;8,4;]"..
-			"listring[]"
-	end,
-	inventory_list_sizes = {
-		box=8*3,
-	},
+	get_inventory_formspec = get_inventory_formspec,
+	inventory_list_sizes = inventory_list_sizes,
 }, S("Industrial wood wagon (default tree)"), "moretrains_wagon_wood_loaded_inv.png")
 
 advtrains.register_wagon("moretrains_wagon_wood_acacia", {
@@ -103,17 +77,10 @@ advtrains.register_wagon("moretrains_wagon_wood_acacia", {
 	visual_size = {x=1, y=1},
 	wagon_span=2.784,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock"},
+	-- drops={"default:steelblock"},
 	has_inventory = true,
-	get_inventory_formspec = function(self, pname, invname)
-		return "size[8,11]"..
-			"list["..invname..";box;0,0;8,3;]"..
-			"list[current_player;main;0,5;8,4;]"..
-			"listring[]"
-	end,
-	inventory_list_sizes = {
-		box=8*3,
-	},
+	get_inventory_formspec = get_inventory_formspec,
+	inventory_list_sizes = inventory_list_sizes,
 }, S("Industrial wood wagon (acacia)"), "moretrains_wagon_wood_acacia_inv.png")
 
 advtrains.register_wagon("moretrains_wagon_wood_jungle", {
@@ -125,17 +92,10 @@ advtrains.register_wagon("moretrains_wagon_wood_jungle", {
 	visual_size = {x=1, y=1},
 	wagon_span=2.784,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock"},
+	-- drops={"default:steelblock"},
 	has_inventory = true,
-	get_inventory_formspec = function(self, pname, invname)
-		return "size[8,11]"..
-			"list["..invname..";box;0,0;8,3;]"..
-			"list[current_player;main;0,5;8,4;]"..
-			"listring[]"
-	end,
-	inventory_list_sizes = {
-		box=8*3,
-	},
+	get_inventory_formspec = get_inventory_formspec,
+	inventory_list_sizes = inventory_list_sizes,
 }, S("Industrial wood wagon (jungle)"), "moretrains_wagon_wood_jungle_inv.png")
 
 advtrains.register_wagon("moretrains_wagon_wood_pine", {
@@ -147,17 +107,10 @@ advtrains.register_wagon("moretrains_wagon_wood_pine", {
 	visual_size = {x=1, y=1},
 	wagon_span=2.784,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock"},
+	-- drops={"default:steelblock"},
 	has_inventory = true,
-	get_inventory_formspec = function(self, pname, invname)
-		return "size[8,11]"..
-			"list["..invname..";box;0,0;8,3;]"..
-			"list[current_player;main;0,5;8,4;]"..
-			"listring[]"
-	end,
-	inventory_list_sizes = {
-		box=8*3,
-	},
+	get_inventory_formspec = get_inventory_formspec,
+	inventory_list_sizes = inventory_list_sizes,
 }, S("Industrial wood wagon (pine)"), "moretrains_wagon_wood_pine_inv.png")
 
 advtrains.register_wagon("moretrains_wagon_wood_aspen", {
@@ -169,20 +122,11 @@ advtrains.register_wagon("moretrains_wagon_wood_aspen", {
 	visual_size = {x=1, y=1},
 	wagon_span=2.784,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock"},
+	-- drops={"default:steelblock"},
 	has_inventory = true,
-	get_inventory_formspec = function(self, pname, invname)
-		return "size[8,11]"..
-			"list["..invname..";box;0,0;8,3;]"..
-			"list[current_player;main;0,5;8,4;]"..
-			"listring[]"
-	end,
-	inventory_list_sizes = {
-		box=8*3,
-	},
+	get_inventory_formspec = get_inventory_formspec,
+	inventory_list_sizes = inventory_list_sizes,
 }, S("Industrial wood wagon (aspen)"), "moretrains_wagon_wood_aspen_inv.png")
-
-
 
 advtrains.register_wagon("moretrains_wagon_box", {
 	mesh="moretrains_wagon_box.b3d",
@@ -193,17 +137,10 @@ advtrains.register_wagon("moretrains_wagon_box", {
 	visual_size = {x=1, y=1},
 	wagon_span=2.672,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock"},
+	-- drops={"default:steelblock"},
 	has_inventory = true,
-	get_inventory_formspec = function(self, pname, invname)
-		return "size[8,11]"..
-			"list["..invname..";box;0,0;8,3;]"..
-			"list[current_player;main;0,5;8,4;]"..
-			"listring[]"
-	end,
-	inventory_list_sizes = {
-		box=8*3,
-	},
+	get_inventory_formspec = get_inventory_formspec,
+	inventory_list_sizes = inventory_list_sizes,
 }, S("Box wagon"), "moretrains_wagon_box_inv.png")
 
 minetest.register_craft({

@@ -1,11 +1,4 @@
-local S
-if minetest.get_modpath("intllib") then
-    S = intllib.Getter()
-else
-    S = function(s,a,...)a={a,...}return s:gsub("@(%d+)",function(n)return a[tonumber(n)]end)end
-end
-
-
+local S = minetest.get_translator("advtrains")
 
 advtrains.register_wagon("moretrains_draisine", {
 	mesh="moretrains_draisine.b3d",
@@ -28,13 +21,13 @@ advtrains.register_wagon("moretrains_draisine", {
 	},
 	seat_groups = {
 		dstand={
-			name = "Driver Stand",
+			name = S("Driver Stand"),
 			access_to = {"pass"},
 			require_doors_open=true,
 			driving_ctrl_access=true,
 		},
 		pass={
-			name = "Passenger area",
+			name = S("Passenger area"),
 			access_to = {"dstand"},
 			require_doors_open=true,
 		},
@@ -50,9 +43,8 @@ advtrains.register_wagon("moretrains_draisine", {
 			self.old_anim_velocity=advtrains.abs_ceil(velocity)
 		end
 	end,
-	drops={"default:wood"},
+	drops={"default:wood 3", "advtrains:wheel 2", "moretrains_vintage:item_draisine_lever"},
 }, S("Draisine"), "moretrains_draisine_inv.png")
-
 
 advtrains.register_wagon("moretrains_minecart", {
 	mesh="moretrains_minecart.b3d",
@@ -63,7 +55,7 @@ advtrains.register_wagon("moretrains_minecart", {
 	visual_size = {x=1, y=1},
 	wagon_span=1.06,
 	collisionbox = {-0.8,-0.5,-0.7, 0.8,2,0.7},
-	drops={"default:wood"},
+	drops={"default:wood 3", "default:steel_ingot 2", "advtrains:wheel 2"},
 	has_inventory = true,
 	get_inventory_formspec = function(self, pname, invname)
 		return "size[8,11]"..
@@ -85,7 +77,7 @@ advtrains.register_wagon("moretrains_minecart_loaded", {
 	visual_size = {x=1, y=1},
 	wagon_span=1.06,
 	collisionbox = {-0.8,-0.5,-0.7, 0.8,2,0.7},
-	drops={"default:wood"},
+	drops={"default:wood 3", "default:steel_ingot 2", "advtrains:wheel 2", "default:coalblock"},
 	has_inventory = true,
 	get_inventory_formspec = function(self, pname, invname)
 		return "size[8,11]"..
@@ -98,7 +90,6 @@ advtrains.register_wagon("moretrains_minecart_loaded", {
 	},
 
 }, S("Minecart (loaded)"), "moretrains_minecart_loaded_inv.png")
-
 
 advtrains.register_wagon("moretrains_minecart_engine", {
 	mesh="moretrains_minecart_engine.b3d",
@@ -121,13 +112,13 @@ advtrains.register_wagon("moretrains_minecart_engine", {
 	},
 	seat_groups = {
 		dstand={
-			name = "Driver Stand",
+			name = S("Driver Stand"),
 			access_to = {"pass"},
 			require_doors_open=true,
 			driving_ctrl_access=true,
 		},
 		pass={
-			name = "Passenger area",
+			name = S("Passenger area"),
 			access_to = {"dstand"},
 			require_doors_open=true,
 		},
@@ -138,7 +129,7 @@ advtrains.register_wagon("moretrains_minecart_engine", {
 	wagon_span=1.06,
 	is_locomotive=true,
 	collisionbox = {-0.8,-0.5,-0.7, 0.8,2,0.7},
-	drops={"default:wood"},
+	drops={"default:wood 3", "default:steel_ingot 2", "advtrains:wheel 2", "default:steelblock"},
 	
 }, S("Minecart with Engine"), "moretrains_minecart_engine_inv.png")
 

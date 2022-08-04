@@ -1,9 +1,4 @@
-local S
-if minetest.get_modpath("intllib") then
-    S = intllib.Getter()
-else
-    S = function(s,a,...)a={a,...}return s:gsub("@(%d+)",function(n)return a[tonumber(n)]end)end
-end
+local S = minetest.get_translator("advtrains")
 
 -- length of the steam engine loop sound
 local SND_LOOP_LEN = 5
@@ -30,7 +25,7 @@ advtrains.register_wagon("moretrains_steam_train", {
 	},
 	seat_groups = {
 		dstand={
-			name = "Driver Stand",
+			name = S("Driver Stand"),
 			driving_ctrl_access=true,
 			access_to = {},
 		},
@@ -86,7 +81,7 @@ advtrains.register_wagon("moretrains_steam_train", {
 			attached = self.object,
 		})
 	end,
-	drops={"default:steelblock 1"},
+	drops={"advtrains:driver_cab", "advtrains:chimney", "dye:blue", "advtrains:boiler", "advtrains:wheel 3"},
 	horn_sound = "advtrains_steam_whistle",
 }, S("Steam Train #1"), "moretrains_steam_train_inv.png")
 
@@ -99,7 +94,7 @@ advtrains.register_wagon("moretrains_tender", {
 	visual_size = {x=1, y=1},
 	wagon_span=1.667,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock 1"},
+	drops={"default:steel_ingot 5", "default:coalblock", "advtrains:wheel 2"},
 	has_inventory = true,
 	get_inventory_formspec = function(self, pname, invname)
 		return "size[8,11]"..
@@ -111,7 +106,6 @@ advtrains.register_wagon("moretrains_tender", {
 		box=1*8,
 	},
 }, S("Tender #1"), "moretrains_steam_tender_inv.png")
-
 
 
 minetest.register_craft({

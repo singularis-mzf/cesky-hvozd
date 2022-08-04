@@ -1,10 +1,4 @@
-local S
-if minetest.get_modpath("intllib") then
-    S = intllib.Getter()
-else
-    S = function(s,a,...)a={a,...}return s:gsub("@(%d+)",function(n)return a[tonumber(n)]end)end
-end
-
+local S = minetest.get_translator("advtrains")
 
 advtrains.register_wagon("moretrains_railroad_car", {
 	mesh="moretrains_railroad_car.b3d",
@@ -51,7 +45,7 @@ advtrains.register_wagon("moretrains_railroad_car", {
 	},
 	seat_groups = {
 		pass={
-			name = "Passenger area",
+			name = S("Passenger area"),
 			access_to = {},
 			require_doors_open=true,
 		},
@@ -71,7 +65,7 @@ advtrains.register_wagon("moretrains_railroad_car", {
 	visual_size = {x=1, y=1},
 	wagon_span=2.94,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock"},
+	-- drops={"default:steelblock"},
 }, S("Railroad Car"), "moretrains_railroad_car_inv.png")
 
 advtrains.register_wagon("moretrains_silberling", {
@@ -119,7 +113,7 @@ advtrains.register_wagon("moretrains_silberling", {
 	},
 	seat_groups = {
 		pass={
-			name = "Passenger area",
+			name = S("Passenger area"),
 			access_to = {},
 			require_doors_open=true,
 		},
@@ -139,7 +133,7 @@ advtrains.register_wagon("moretrains_silberling", {
 	visual_size = {x=1, y=1},
 	wagon_span=3,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock"},
+	-- drops={"default:steelblock"},
 }, S("MT Silberling Wagon"), "moretrains_silberling_inv.png")
 
 advtrains.register_wagon("moretrains_silberling_dining", {
@@ -187,7 +181,7 @@ advtrains.register_wagon("moretrains_silberling_dining", {
 	},
 	seat_groups = {
 		pass={
-			name = "Passenger area",
+			name = S("Passenger area"),
 			access_to = {},
 			require_doors_open=true,
 		},
@@ -207,7 +201,7 @@ advtrains.register_wagon("moretrains_silberling_dining", {
 	visual_size = {x=1, y=1},
 	wagon_span=3,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock"},
+	-- drops={"default:steelblock"},
 }, S("MT Silberling Dining Wagon"), "moretrains_silberling_dining_inv.png")
 
 advtrains.register_wagon("moretrains_diesel_german", {
@@ -227,7 +221,7 @@ advtrains.register_wagon("moretrains_diesel_german", {
 	},
 	seat_groups = {
 		dstand={
-			name = "Driver Stand",
+			name = S("Driver Stand"),
 			access_to = {},
 			driving_ctrl_access = true,
 		},
@@ -237,7 +231,7 @@ advtrains.register_wagon("moretrains_diesel_german", {
 	wagon_span=2.8,
 	is_locomotive=true,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock 4"},
+	-- drops={"default:steelblock 4"},
 	horn_sound = "advtrains_industrial_horn",
 }, S("Old German Diesel"), "moretrains_diesel_german_inv.png")
 
@@ -292,12 +286,12 @@ advtrains.register_wagon("moretrains_silberling_train", {
 	},
 	seat_groups = {
 		dstand={
-			name = "Driver Stand",
+			name = S("Driver Stand"),
 			access_to = {"pass"},
 			driving_ctrl_access=true,
 		},
 		pass={
-			name = "Passenger area",
+			name = S("Passenger area"),
 			access_to = {"dstand"},
 			require_doors_open=true,
 		},
@@ -317,7 +311,7 @@ advtrains.register_wagon("moretrains_silberling_train", {
 	wagon_span=3,
 	is_locomotive=false,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock 4"},
+	-- drops={"default:steelblock 4"},
 	horn_sound = "advtrains_industrial_horn",
 }, S("MT Silberling Cab Car"), "moretrains_silberling_train_inv.png")
 
