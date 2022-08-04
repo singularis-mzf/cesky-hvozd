@@ -37,9 +37,11 @@ advtrains.register_wagon("engine_industrial", {
 	wagon_span=2.6,
 	is_locomotive=true,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock 4"},
+	drops={"default:steelblock 5", "advtrains:driver_cab", "advtrains:wheel"},
 	horn_sound = "advtrains_industrial_horn",
 }, S("Industrial Train Engine"), "advtrains_engine_industrial_inv.png")
+
+--[[
 --big--
 advtrains.register_wagon("engine_industrial_big", {
 	mesh="advtrains_engine_industrial_big.b3d",
@@ -79,6 +81,7 @@ advtrains.register_wagon("engine_industrial_big", {
 	drops={"default:steelblock 4"},
 	horn_sound = "advtrains_industrial_horn",
 }, S("Big Industrial Train Engine"), "advtrains_engine_industrial_inv.png")
+]]
 advtrains.register_wagon("wagon_tank", {
 	mesh="advtrains_wagon_tank.b3d",
 	textures = {"advtrains_wagon_tank.png"},
@@ -90,13 +93,15 @@ advtrains.register_wagon("wagon_tank", {
 	visual_size = {x=1, y=1},
 	wagon_span=2.2,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock 4"},
+	drops={"default:steelblock 5", "default:steel_ingot", "advtrains:wheel 2"},
 	has_inventory = true,
 	get_inventory_formspec = advtrains.standard_inventory_formspec,
 	inventory_list_sizes = {
 		box=8*3,
 	},
 }, S("Industrial tank wagon"), "advtrains_wagon_tank_inv.png")
+
+--[[
 advtrains.register_wagon("wagon_wood", {
 	mesh="advtrains_wagon_wood.b3d",
 	textures = {"advtrains_wagon_wood.png"},
@@ -115,6 +120,7 @@ advtrains.register_wagon("wagon_wood", {
 		box=8*3,
 	},
 }, S("Industrial wood wagon"), "advtrains_wagon_wood_inv.png")
+]]
 
 -- Craftings
 
@@ -127,7 +133,7 @@ minetest.register_craft({
 	},
 })
 
---Engine Industrial Big
+--[[Engine Industrial Big
 minetest.register_craft({
 	output = 'advtrains:engine_industrial_big',
 	recipe = {
@@ -136,26 +142,27 @@ minetest.register_craft({
 		{'advtrains:wheel', 'advtrains:wheel', 'advtrains:wheel'},
 	},
 })
-
+]]
 
 --Industrial tank wagon
 minetest.register_craft({
 	output = 'advtrains:wagon_tank',
 	recipe = {
 		{'default:steelblock', 'default:steel_ingot', 'default:steelblock'},
-		{'advtrains:steelblock', '', 'default:steelblock'},
+		{'default:steelblock', '', 'default:steelblock'},
 		{'advtrains:wheel', 'default:steelblock', 'advtrains:wheel'},
 	},
 })
 
+--[[
 --Industrial wood wagon
 minetest.register_craft({
 	output = 'advtrains:wagon_wood',
 	recipe = {
 		{'default:steel_ingot', '', 'default:steel_ingot'},
-		{'advtrains:steelblock', 'default:steelblock', 'default:steelblock'},
+		{'default:steelblock', 'default:steelblock', 'default:steelblock'},
 		{'advtrains:wheel', '', 'advtrains:wheel'},
 	},
 })
-
+]]
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

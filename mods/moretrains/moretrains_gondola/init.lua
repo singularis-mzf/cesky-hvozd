@@ -83,7 +83,7 @@ advtrains.register_wagon("moretrains_wagon_gondola", {
 	visual_size = {x=1, y=1},
 	wagon_span=2.784,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	-- drops={"default:steelblock"},
+	drops={"default:wood 2", "default:chest", "advtrains:wheel 2"},
 	has_inventory = true,
 	get_inventory_formspec = get_inventory_formspec,
 	inventory_list_sizes = inventory_list_sizes,

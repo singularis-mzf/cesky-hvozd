@@ -5,6 +5,7 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 -- length of the steam engine loop sound
 local SND_LOOP_LEN = 5
 
+--[[
 advtrains.register_wagon("newlocomotive", {
 	mesh="advtrains_engine_steam.b3d",
 	textures = {"advtrains_engine_steam.png"},
@@ -75,6 +76,7 @@ advtrains.register_wagon("newlocomotive", {
 	drops={"default:steelblock 1"},
 	horn_sound = "advtrains_steam_whistle",
 }, S("Steam Engine"), "advtrains_engine_steam_inv.png")
+]]
 
 advtrains.register_wagon("detailed_steam_engine", {
 	mesh="advtrains_detailed_steam_engine.b3d",
@@ -156,10 +158,11 @@ advtrains.register_wagon("detailed_steam_engine", {
 			attached = self.object,
 		})
 	end,
-	drops={"default:steelblock 1"},
+	drops={"advtrains:chimney", "advtrains:driver_cab", "dye:green", "advtrains:boiler", "advtrains:wheel 3"},
 	horn_sound = "advtrains_steam_whistle",
 }, S("Detailed Steam Engine"), "advtrains_detailed_engine_steam_inv.png")
 
+--[[
 advtrains.register_wagon("wagon_default", {
 	mesh="advtrains_passenger_wagon.b3d",
 	textures = {"advtrains_wagon.png"},
@@ -235,7 +238,7 @@ minetest.register_craft({
 		{'advtrains:wheel', 'advtrains:wheel', 'advtrains:wheel'},
 	},
 })
-
+]]
 minetest.register_craft({
 	output = 'advtrains:detailed_steam_engine',
 	recipe = {
@@ -245,6 +248,7 @@ minetest.register_craft({
 	},
 })
 
+--[[
 minetest.register_craft({
 	output = 'advtrains:wagon_default',
 	recipe = {
@@ -261,5 +265,5 @@ minetest.register_craft({
 		{'advtrains:wheel', '', 'advtrains:wheel'},
 	},
 })
-
+]]
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

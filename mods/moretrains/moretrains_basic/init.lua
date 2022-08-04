@@ -1,5 +1,13 @@
 local S = minetest.get_translator("advtrains")
 
+local block = 'default:steelblock'
+local ingot = 'default:steel_ingot'
+if  minetest.get_modpath("moreores") then
+	block = 'moreores:silver_block'
+	ingot = 'moreores:silver_ingot'
+	
+end
+
 advtrains.register_wagon("moretrains_railroad_car", {
 	mesh="moretrains_railroad_car.b3d",
 	textures = {"moretrains_railroad_car.png"},
@@ -65,7 +73,7 @@ advtrains.register_wagon("moretrains_railroad_car", {
 	visual_size = {x=1, y=1},
 	wagon_span=2.94,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	-- drops={"default:steelblock"},
+	drops={"default:steelblock 4", "advtrains:wheel 2", "default:tin_ingot", "default:glass"},
 }, S("Railroad Car"), "moretrains_railroad_car_inv.png")
 
 advtrains.register_wagon("moretrains_silberling", {
@@ -133,7 +141,7 @@ advtrains.register_wagon("moretrains_silberling", {
 	visual_size = {x=1, y=1},
 	wagon_span=3,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	-- drops={"default:steelblock"},
+	drops={"default:steelblock 2", "advtrains:wheel 2", "default:glass", block, ingot.." 2"},
 }, S("MT Silberling Wagon"), "moretrains_silberling_inv.png")
 
 advtrains.register_wagon("moretrains_silberling_dining", {
@@ -201,7 +209,7 @@ advtrains.register_wagon("moretrains_silberling_dining", {
 	visual_size = {x=1, y=1},
 	wagon_span=3,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	-- drops={"default:steelblock"},
+	drops={"default:steelblock 2", "advtrains:wheel 2", "default:furnace", block, ingot.." 2"},
 }, S("MT Silberling Dining Wagon"), "moretrains_silberling_dining_inv.png")
 
 advtrains.register_wagon("moretrains_diesel_german", {
@@ -231,7 +239,7 @@ advtrains.register_wagon("moretrains_diesel_german", {
 	wagon_span=2.8,
 	is_locomotive=true,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	-- drops={"default:steelblock 4"},
+	drops={"default:steelblock 2", "advtrains:wheel 3", "advtrains:driver_cab", "default:glass", "dye:red"},
 	horn_sound = "advtrains_industrial_horn",
 }, S("Old German Diesel"), "moretrains_diesel_german_inv.png")
 
@@ -311,7 +319,7 @@ advtrains.register_wagon("moretrains_silberling_train", {
 	wagon_span=3,
 	is_locomotive=false,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	-- drops={"default:steelblock 4"},
+	drops={"default:steelblock 2", "advtrains:wheel 3", "default:glass", block.." 2", ingot},
 	horn_sound = "advtrains_industrial_horn",
 }, S("MT Silberling Cab Car"), "moretrains_silberling_train_inv.png")
 
@@ -324,14 +332,6 @@ minetest.register_craft({
 		{'advtrains:wheel', 'advtrains:wheel', 'advtrains:wheel'},
 	},
 })
-
-local block = 'default:steelblock'
-local ingot = 'default:steel_ingot'
-if  minetest.get_modpath("moreores") then
-	block = 'moreores:silver_block'
-	ingot = 'moreores:silver_ingot'
-	
-end
 
 minetest.register_craft({
 	output = 'advtrains:moretrains_silberling',

@@ -1342,8 +1342,13 @@ function advtrains.register_wagon(sysname_p, prototype, desc, inv_img, nincreati
 	advtrains.wagon_prototypes[sysname] = prototype
 	
 	--group classification to make recipe searching easier
-	local wagon_groups = { not_in_creative_inventory = nincreative and 1 or 0}
-	if prototype.is_locomotive then wagon_groups['at_loco'] = 1 end
+	local wagon_groups = {
+		not_in_creative_inventory = nincreative and 1 or 0,
+		at_wagon = 1,
+	}
+	if prototype.is_locomotive then
+		wagon_groups['at_loco'] = 1
+	end
 	if prototype.seat_groups then
 		if prototype.seat_groups.dstand then wagon_groups['at_control'] = 1 end
 		if prototype.seat_groups.pass then wagon_groups['at_pax'] = 1 end

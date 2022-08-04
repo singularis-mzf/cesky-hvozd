@@ -347,11 +347,13 @@ local filter_translate = {
 	["typ:kmeny"] = "group:tree",
 	["typ:květiny"] = "group:flower", -- včetně bonsají
 	["typ:listí_a_jehličí"] = "group:leaves", -- včetně břečťanu a liány
+	["typ:lokomotivy"] = "group:at_loco",
 	["typ:na_cnc"] = "group:na_cnc",
 	["typ:na_cnc_i_kp"] = "group:na_cnc,na_kp",
 	["typ:na_kp"] = "group:na_kp",
 	["typ:na_kp_i_cnc"] = "group:na_cnc,na_kp",
 	["typ:pláště"] = "group:cape",
+	["typ:vlaky"] = "group:at_wagon", -- všechny typy vagonů, lokomotiv, apod.
 	["typ:všechny_barvy"] = "group:dye",
 }
 local filter_translate_extended = false
