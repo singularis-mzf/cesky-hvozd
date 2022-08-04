@@ -65,11 +65,13 @@ From http://www.clker.com (Public Domain, CC-BY-4.0):
   * [`bags_large.png` / `ui_bags_icon.png`](http://www.clker.com/clipart-backpack-green-brown.html)
   * `ui_trash_icon.png`: <http://www.clker.com/clipart-29090.html> and <http://www.clker.com/clipart-trash.html>
   * [`ui_search_icon.png`](http://www.clker.com/clipart-24887.html)
-  * [`ui_off_icon.png` / `ui_on_icon.png`](http://www.clker.com/clipart-on-off-switches.html)
   * [`ui_waypoints_icon.png`](http://www.clker.com/clipart-map-pin-red.html)
   * [`ui_circular_arrows_icon.png`](http://www.clker.com/clipart-circular-arrow-pattern.html)
   * [`ui_pencil_icon.pnc`](http://www.clker.com/clipart-2256.html)
   * [`ui_waypoint_set_icon.png`](http://www.clker.com/clipart-larger-flag.html)
+
+From http://www.clker.com (Public Domain), modified by Singularis (CC BY-SA 3.0)
+  * [`ui_off_icon.png` / `ui_on_icon.png`](http://www.clker.com/clipart-on-off-switches.html)
 
 Everaldo Coelho (YellowIcon) (LGPL v2.1+):
 
