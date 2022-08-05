@@ -286,6 +286,7 @@ minetest.register_node("advtrains:across_off", {
 	mesecons = {effector = {
 		rules = advtrains.meseconrules,
 		action_on = function (pos, node)
+			minetest.get_meta(pos):set_int("crossing_state", 0)
 			advtrains.ndb.swap_node(pos, {name = "advtrains:across_on", param2 = node.param2}, true)
 		end
 	}},
@@ -293,12 +294,14 @@ minetest.register_node("advtrains:across_off", {
 		getstate = "off",
 		setstate = function(pos, node, newstate)
 			if newstate == "on" then
+				minetest.get_meta(pos):set_int("crossing_state", 0)
 				advtrains.ndb.swap_node(pos, {name = "advtrains:across_on", param2 = node.param2}, true)
 			end
 		end,
 	},
 	on_rightclick=function(pos, node, player)
 		if advtrains.check_turnout_signal_protection(pos, player:get_player_name()) then
+			minetest.get_meta(pos):set_int("crossing_state", 0)
 			advtrains.ndb.swap_node(pos, {name = "advtrains:across_on", param2 = node.param2}, true)
 		end
 	end,
@@ -350,14 +353,21 @@ minetest.register_abm(
 	{
         label = "Sound for Level Crossing",
         nodenames = {"advtrains:across_on"},
-        interval = 3,
+        interval = 1,
         chance = 1,
         action = function(pos, node, active_object_count, active_object_count_wider)
-			minetest.sound_play("advtrains_crossing_bell", {
-				pos = pos,
-				gain = 1.0, -- default
-				max_hear_distance = 16, -- default, uses an euclidean metric
-			})
+			local meta = minetest.get_meta(pos)
+			local state = meta:get_int("crossing_state")
+			if state <= 0 then
+				minetest.sound_play("advtrains_crossing_bell", {
+					pos = pos,
+					gain = 1.0, -- default
+					max_hear_distance = 16, -- default, uses an euclidean metric
+				})
+				meta:set_int("crossing_state", 2)
+			else
+				meta:set_int("crossing_state", state - 1)
+			end
         end,
     }
 )

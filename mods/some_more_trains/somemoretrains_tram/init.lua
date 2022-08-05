@@ -98,7 +98,7 @@ advtrains.register_wagon("tram", {
 	max_speed=8,
 	seats = {
 		{
-			name="Driver stand",
+			name=S("Driver stand"),
 			attach_offset={x=0, y=0, z=12},
 			view_offset={x=0, y=0, z=0},
 			group="dstand",
@@ -147,7 +147,7 @@ advtrains.register_wagon("tram", {
 	--collisionbox = {-1.0,-0.5,-1.8, 1.0,2.5,1.8},
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	is_locomotive=true,
-	drops={"default:steelblock 4"},
+	drops={"default:steelblock 5", "default:wood 3", "default:glass"},
 	horn_sound = "somemoretrains_tram_horn",
 	custom_on_velocity_change = function(self, velocity, old_velocity, dtime)
 		if not velocity or not old_velocity then return end
