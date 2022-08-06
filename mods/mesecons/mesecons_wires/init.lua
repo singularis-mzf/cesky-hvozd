@@ -196,9 +196,9 @@ local function register_wires()
 			offstate = "mesecons:wire_"..nodeid.."_off"
 		}}
 
-		local groups_on = {dig_immediate = 3, mesecon_conductor_craftable = 1,
+		local groups_on = {dig_immediate = 2, mesecon_conductor_craftable = 1,
 			not_in_creative_inventory = 1, not_in_craft_guide = 1}
-		local groups_off = {dig_immediate = 3, mesecon_conductor_craftable = 1}
+		local groups_off = {dig_immediate = 2, mesecon_conductor_craftable = 1}
 		if nodeid ~= "00000000" then
 			groups_off["not_in_creative_inventory"] = 1
 			groups_off["not_in_craft_guide"] = 1
@@ -215,7 +215,7 @@ local function register_wires()
 			sunlight_propagates = true,
 			selection_box = selectionbox,
 			node_box = nodebox,
-			walkable = false,
+			walkable = true,
 			drop = "mesecons:wire_00000000_off",
 			mesecon_wire = true,
 			sounds = mesecon.node_sound.default,

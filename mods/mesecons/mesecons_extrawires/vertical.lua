@@ -79,7 +79,7 @@ end
 mesecon.register_node("mesecons_extrawires:vertical", {
 	description = "Svislý mesespoj",
 	drawtype = "nodebox",
-	walkable = false,
+	walkable = true,
 	paramtype = "light",
 	is_ground_content = false,
 	sunlight_propagates = true,
@@ -92,7 +92,7 @@ mesecon.register_node("mesecons_extrawires:vertical", {
 	sounds = mesecon.node_sound.default,
 },{
 	tiles = {"mesecons_wire_off.png"},
-	groups = {dig_immediate=3},
+	groups = {dig_immediate=2},
 	mesecons = {conductor = {
 		state = mesecon.state.off,
 		onstate = "mesecons_extrawires:vertical_on",
@@ -100,7 +100,7 @@ mesecon.register_node("mesecons_extrawires:vertical", {
 	}}
 },{
 	tiles = {"mesecons_wire_on.png"},
-	groups = {dig_immediate=3, not_in_creative_inventory=1},
+	groups = {dig_immediate=2, not_in_creative_inventory=1},
 	mesecons = {conductor = {
 		state = mesecon.state.on,
 		offstate = "mesecons_extrawires:vertical_off",
@@ -112,11 +112,11 @@ mesecon.register_node("mesecons_extrawires:vertical", {
 mesecon.register_node("mesecons_extrawires:vertical_top", {
 	description = "Svislý mesespoj",
 	drawtype = "nodebox",
-	walkable = false,
+	walkable = true,
 	paramtype = "light",
 	is_ground_content = false,
 	sunlight_propagates = true,
-	groups = {dig_immediate=3, not_in_creative_inventory=1},
+	groups = {dig_immediate=2, not_in_creative_inventory=1},
 	selection_box = top_box,
 	node_box = top_box,
 	is_vertical_conductor = true,
@@ -144,11 +144,11 @@ mesecon.register_node("mesecons_extrawires:vertical_top", {
 mesecon.register_node("mesecons_extrawires:vertical_bottom", {
 	description = "Svislý mesespoj",
 	drawtype = "nodebox",
-	walkable = false,
+	walkable = true,
 	paramtype = "light",
 	is_ground_content = false,
 	sunlight_propagates = true,
-	groups = {dig_immediate = 3, not_in_creative_inventory = 1},
+	groups = {dig_immediate = 2, not_in_creative_inventory = 1},
 	selection_box = bottom_box,
 	node_box = bottom_box,
 	is_vertical_conductor = true,

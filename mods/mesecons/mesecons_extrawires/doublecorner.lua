@@ -38,7 +38,7 @@ local wire2_states = { "off", "on", "off", "on" }
 for k, state in ipairs(doublecorner_states) do
 	local w1 = wire1_states[k]
 	local w2 = wire2_states[k]
-	local groups =  { dig_immediate = 3 }
+	local groups =  { dig_immediate = 2 }
 	if k ~= 1 then groups.not_in_creative_inventory = 1 end
 	minetest.register_node(state, {
 		drawtype = "mesh",
@@ -53,7 +53,7 @@ for k, state in ipairs(doublecorner_states) do
 		paramtype = "light",
 		paramtype2 = "facedir",
 		is_ground_content = false,
-		walkable = false,
+		walkable = true,
 		sunlight_propagates = true,
 		selection_box = doublecorner_selectionbox,
 		groups = groups,

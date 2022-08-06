@@ -28,10 +28,10 @@ minetest.register_node("mesecons_extrawires:crossover_off", {
 	},
 	paramtype = "light",
 	is_ground_content = false,
-	walkable = false,
+	walkable = true,
 	-- stack_max = 99,
 	selection_box = {type="fixed", fixed={-16/32, -16/32, -16/32, 16/32, -5/32, 16/32}},
-	groups = {dig_immediate=3, mesecon=3},
+	groups = {dig_immediate=2, mesecon=3},
 	sounds = mesecon.node_sound.default,
 	mesecons = {
 		conductor = {
@@ -55,10 +55,10 @@ minetest.register_node("mesecons_extrawires:crossover_01", {
 	},
 	paramtype = "light",
 	is_ground_content = false,
-	walkable = false,
+	walkable = true,
 	-- stack_max = 99,
 	selection_box = {type="fixed", fixed={-16/32, -16/32, -16/32, 16/32, -5/32, 16/32}},
-	groups = {dig_immediate=3, mesecon=3, not_in_creative_inventory=1},
+	groups = {dig_immediate=2, mesecon=3, not_in_creative_inventory=1},
 	sounds = mesecon.node_sound.default,
 	mesecons = {
 		conductor = {
@@ -82,10 +82,10 @@ minetest.register_node("mesecons_extrawires:crossover_10", {
 	},
 	paramtype = "light",
 	is_ground_content = false,
-	walkable = false,
+	walkable = true,
 	-- stack_max = 99,
 	selection_box = {type="fixed", fixed={-16/32, -16/32, -16/32, 16/32, -5/32, 16/32}},
-	groups = {dig_immediate=3, mesecon=3, not_in_creative_inventory=1},
+	groups = {dig_immediate=2, mesecon=3, not_in_creative_inventory=1},
 	sounds = mesecon.node_sound.default,
 	mesecons = {
 		conductor = {
@@ -109,10 +109,10 @@ minetest.register_node("mesecons_extrawires:crossover_on", {
 	},
 	paramtype = "light",
 	is_ground_content = false,
-	walkable = false,
+	walkable = true,
 	-- stack_max = 99,
 	selection_box = {type="fixed", fixed={-16/32, -16/32, -16/32, 16/32, -5/32, 16/32}},
-	groups = {dig_immediate=3, mesecon=3, not_in_creative_inventory=1},
+	groups = {dig_immediate=2, mesecon=3, not_in_creative_inventory=1},
 	sounds = mesecon.node_sound.default,
 	mesecons = {
 		conductor = {

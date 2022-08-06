@@ -22,7 +22,7 @@ minetest.register_node("mesecons_insulated:insulated_on", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	is_ground_content = false,
-	walkable = false,
+	walkable = true,
 	sunlight_propagates = true,
 	selection_box = {
 		type = "fixed",
@@ -33,7 +33,7 @@ minetest.register_node("mesecons_insulated:insulated_on", {
 		-- ±0.001 is to prevent z-fighting
 		fixed = { -16/32-0.001, -17/32, -3/32, 16/32+0.001, -13/32, 3/32 }
 	},
-	groups = {dig_immediate = 3, not_in_creative_inventory = 1},
+	groups = {dig_immediate = 2, not_in_creative_inventory = 1},
 	drop = "mesecons_insulated:insulated_off",
 	sounds = mesecon.node_sound.default,
 	mesecons = {conductor = {
@@ -59,7 +59,7 @@ minetest.register_node("mesecons_insulated:insulated_off", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	is_ground_content = false,
-	walkable = false,
+	walkable = true,
 	sunlight_propagates = true,
 	selection_box = {
 		type = "fixed",
@@ -70,7 +70,7 @@ minetest.register_node("mesecons_insulated:insulated_off", {
 		-- ±0.001 is to prevent z-fighting
 		fixed = { -16/32-0.001, -17/32, -3/32, 16/32+0.001, -13/32, 3/32 }
 	},
-	groups = {dig_immediate = 3},
+	groups = {dig_immediate = 2},
 	sounds = mesecon.node_sound.default,
 	mesecons = {conductor = {
 		state = mesecon.state.off,
