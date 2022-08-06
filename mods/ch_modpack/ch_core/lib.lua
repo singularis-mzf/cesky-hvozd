@@ -137,6 +137,44 @@ function ch_core.jmeno_na_prihlasovaci(jmeno)
 	return ch_core.odstranit_diakritiku(jmeno):gsub(" ", "_")
 end
 
+-- vrátí dva vektory: první s minimálními souřadnicemi a druhý s maximálními,
+-- obojí zaokrouhlené na celočíselné souřadnice
+function ch_core.positions_to_area(v1, v2)
+	local x1, x2, y1, y2, z1, z2
+
+	if v1.x <= v2.x then
+		x1 = v1.x
+		x2 = v2.x
+	else
+		x1 = v2.x
+		x2 = v1.x
+	end
+
+	if v1.y <= v2.y then
+		y1 = v1.y
+		y2 = v2.y
+	else
+		y1 = v2.y
+		y2 = v1.y
+	end
+
+	if v1.z <= v2.z then
+		z1 = v1.z
+		z2 = v2.z
+	else
+		z1 = v2.z
+		z2 = v1.z
+	end
+
+	return vector.round(vector.new(x1, y1, z1)), vector.round(vector.new(x2, y2, z2))
+end
+
+function ch_core.pos_in_area(pos, v_min, v_max)
+	return v_min.x <= pos.x and pos.x <= v_max.x and
+			v_min.y <= pos.y and pos.y <= v_max.y and
+			v_min.z <= pos.z and pos.z <= v_max.z
+end
+
 local dbg_table = ch_core.storage:to_table()
 if not dbg_table then
 	print("STORAGE: nil")

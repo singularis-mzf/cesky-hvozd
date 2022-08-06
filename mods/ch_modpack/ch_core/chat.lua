@@ -355,7 +355,7 @@ minetest.register_chatcommand("nastavit_barvu_jmena", {
 			end
 		end
 		ch_core.update_player_nametag(login)
-		ch_core.save_offline_charinfo(login, "string", "barevne_jmeno")
+		ch_core.save_offline_charinfo(login, "barevne_jmeno")
 		-- if (color:sub(1, 1) ~= "#") then
 		return true
 	end,
@@ -377,9 +377,9 @@ minetest.register_chatcommand("nastavit_jmeno", {
 			local barevne_jmeno = offline_charinfo.barevne_jmeno
 			if barevne_jmeno then
 				offline_charinfo.barevne_jmeno = barevne_jmeno:gsub(puvodni_jmeno, param)
-				ch_core.save_offline_charinfo(login, "string", "barevne_jmeno")
+				ch_core.save_offline_charinfo(login, "barevne_jmeno")
 			end
-			ch_core.save_offline_charinfo(login, "string", "jmeno")
+			ch_core.save_offline_charinfo(login, "jmeno")
 			ch_core.update_player_nametag(login)
 			return true, "Jméno nastaveno: "..login.." > "..param
 		else

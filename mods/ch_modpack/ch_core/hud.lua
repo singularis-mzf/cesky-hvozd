@@ -76,4 +76,35 @@ function ch_core.hide_player_list(player, online_charinfo)
 	return true
 end
 
+function ch_core.show_prison_hud(player, online_charinfo, trest)
+	if not player then
+		return false
+	end
+	local hud = online_charinfo.prison_hud
+	local text = "Výše trestu: "..(trest or "nil")
+	if hud then
+		player:hud_change(hud, "text", text)
+	else
+		hud = {
+			hud_elem_type = "text",
+			position = {x = 0.5, y = 0.85},
+			alignment = {x = 0, y = -1},
+			scale = { x = 100, y = 100},
+			offset = {x = 0, y = 0},
+			text = text,
+			number = 0xFFFFFF,
+		}
+		online_charinfo.prison_hud = player:hud_add(hud)
+	end
+end
+
+function ch_core.hide_prison_hud(player, online_charinfo)
+	if not player or not online_charinfo.prison_hud then
+		return false
+	end
+	player:hud_remove(online_charinfo.prison_hud)
+	online_charinfo.prison_hud = nil
+	return true
+end
+
 ch_core.submod_loaded("hud")

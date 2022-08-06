@@ -5,8 +5,12 @@ ch_core = {
 	storage = minetest.get_mod_storage(),
 	submods_loaded = {}, -- submod => true
 
-	klavesy = {}, -- player_name => {sneak => true|false, aux1 => true|false, ...}
-	uhel_hlavy = {}, -- player_name => posledni_uhel
+	vezeni_data = {
+		min = vector.new(-1000, -1000, -1000),
+		max = vector.new(1000, 1000, 1000),
+		-- dvere = nil,
+		stred = vector.new(0, 0, 0),
+	},
 }
 
 function ch_core.require_submod(current_submod, wanted_submod)
@@ -29,10 +33,11 @@ dofile(modpath .. "/hud.lua") -- : data, lib
 dofile(modpath .. "/joinplayer.lua") -- : data, lib
 dofile(modpath .. "/nodes.lua")
 dofile(modpath .. "/padlock.lua") -- : data, lib
+dofile(modpath .. "/vezeni.lua") -- : privs, data, lib, chat, hud
 dofile(modpath .. "/sickles.lua")
 dofile(modpath .. "/hotbar.lua")
 dofile(modpath .. "/pryc.lua") -- : data, lib, chat, privs
-dofile(modpath .. "/zacatek.lua") -- : privs
+dofile(modpath .. "/zacatek.lua") -- : data, lib, chat, privs
 
 -- KOHOUT: při přechodu mezi dnem a nocí přehraje zvuk
 -- TODO: přehrávat, jen když je postava na povrchu (tzn. ne v hlubokém podzemí)
@@ -48,11 +53,13 @@ local gain_1 = {gain = 1.0}
 local head_bone_name = "Head"
 local head_bone_position = vector.new(0, 6.35, 0)
 local head_bone_angle = vector.new(0, 0, 0)
-local uhel_hlavy = ch_core.uhel_hlavy
 local emoting = (minetest.get_modpath("emote") and emote.emoting) or {}
+local globstep_dtime_accumulated = 0.0
 
 local function globalstep(dtime)
--- DEN: 5:30 .. 19:00
+	globstep_dtime_accumulated = globstep_dtime_accumulated + dtime
+
+	-- DEN: 5:30 .. 19:00
 	local tod = get_timeofday()
 	local byla_noc = last_timeofday < 0.2292 or last_timeofday > 0.791666
 	local je_noc = tod < 0.2292 or tod > 0.791666
@@ -69,7 +76,9 @@ local function globalstep(dtime)
 	local connected_players = minetest.get_connected_players()
 	for _, player in pairs(connected_players) do
 		local player_name = player:get_player_name()
+		local player_pos = player:get_pos()
 		local online_charinfo = ch_core.online_charinfo[player_name]
+		local offline_charinfo = ch_core.get_offline_charinfo(player_name)
 		local disrupt_pryc_flag = false
 
 		if online_charinfo then
@@ -114,6 +123,17 @@ local function globalstep(dtime)
 				end
 
 				disrupt_pryc_flag = true
+			end
+
+			-- VĚZENÍ:
+			if ch_core.submods_loaded["vezeni"] and offline_charinfo.trest > 0 then
+				local vezeni_data = ch_core.vezeni_data
+				if not ch_core.pos_in_area(player_pos, vezeni_data.min, vezeni_data.max) then
+					player:set_pos(vezeni_data.stred)
+				elseif (online_charinfo.pristi_kontrola_krumpace or 0.0) < globstep_dtime_accumulated then
+					online_charinfo.pristi_kontrola_krumpace = (online_charinfo.pristi_kontrola_krumpace or 0.0) + 900.0
+					ch_core.vezeni_kontrola_krumpace(player)
+				end
 			end
 
 			-- ZRUŠIT /pryč:

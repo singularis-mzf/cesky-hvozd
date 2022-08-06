@@ -24,7 +24,23 @@ ch_core.registered_spawn = ch_core.unregistered_spawn
 
 -- DATA O POSTAVÁCH
 -- ===========================================================================
--- TODO: Separate!
+-- key => "int|float", unknown keys are deserialized as strings
+local offline_charinfo_data_types = {
+	past_playtime = "float",
+	trest = "int",
+}
+
+local initial_offline_charinfo = {}
+for k, t in pairs(offline_charinfo_data_types) do
+	local v = ""
+	if t == "int" then
+		v = 0
+	elseif t == "float" then
+		v = 0.0
+	end
+	initial_offline_charinfo[k] = v
+end
+
 local storage = ch_core.storage
 
 ch_core.online_charinfo = {}
@@ -35,22 +51,10 @@ function ch_core.get_offline_charinfo(player_name)
 	local result = ch_core.offline_charinfo[player_name]
 	if not result then
 		minetest.log("action", "Will create offline_charinfo for player '"..player_name.."'")
-		result = {}
+		result = table.copy(initial_offline_charinfo)
 		ch_core.offline_charinfo[player_name] = result
 	end
 	return result
-end
-
-function ch_core.delete_offline_charinfo(player_name)
-	ch_core.offline_charinfo[player_name] = nil
-	for key, _ in pairs((storage:to_table() or {}).fields or {}) do
-		local i = string.find(key, "/")
-		if i == #player_name + 1 and key:sub(1, #player_name) == player_name then
-			storage:set_string(key, "")
-			minetest.log("info", "[ch_core] Key '"..key.."' removed from mod storage.")
-		end
-	end
-	return true
 end
 
 -- Vrátí online_charinfo připojující se postavy;
@@ -88,33 +92,65 @@ function ch_core.get_leaving_online_charinfo(player_name)
 end
 
 -- datatype = "string"|"int"|"float"|"nil"
-function ch_core.save_offline_charinfo(player_name, data_type, key)
+function ch_core.save_offline_charinfo(player_name, keys)
+	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	if not offline_charinfo then
+		return 0
+	end
+	if type(keys) ~= "table" then
+		keys = {keys}
+	end
+	local counter = 0
+	for _, key in ipairs(keys) do
+		local value = offline_charinfo[key]
+		local full_key = player_name.."/"..key
+		local data_type = offline_charinfo_data_types[key]
+		if data_type == "int" then
+			storage:set_int(full_key, value or 0)
+		elseif data_type == "float" then
+			storage:set_float(full_key, value or 0.0)
+		else
+			storage:set_string(full_key, value or "")
+		end
+		counter = counter + 1
+	end
+	return counter
+end
+
+function ch_core.delete_offline_charinfo(player_name, keys)
+	local delete_all = not keys
+	if delete_all then
+		-- delete all keys
+		keys = {}
+		for full_key, _ in pairs((storage:to_table() or {}).fields or {}) do
+			local name, key = full_key:match("^([^/]+)/(.+)$")
+			if name and name == player_name then
+				storage:set_string(full_key, "")
+				minetest.log("info", "[ch_core] Key '"..full_key.."' removed from mod storage.")
+			end
+		end
+		ch_core.offline_charinfo[player_name] = nil
+		return true
+	end
+	if type(keys) ~= "table" then
+		keys = {keys}
+	end
+
 	local offline_charinfo = ch_core.offline_charinfo[player_name]
 	if not offline_charinfo then
 		return false
 	end
-	local value = offline_charinfo[key]
-	key = player_name.."/"..key
-	if data_type ~= "nil" and value then
-		if data_type == "string" then
-			storage:set_string(key, value)
-		elseif data_type == "int" then
-			storage:set_int(key, value)
-		elseif data_type == "float" then
-			storage:set_float(key, value)
-		else
-			error("Unsupported data type '"..datatype.."'!")
-		end
-	else
-		-- delete key
-		storage:set_string(key, "")
+	for _, key in ipairs(keys) do
+		storage:set_string(player_name.."/"..key, "")
+		offline_charinfo[key] = initial_offline_charinfo[key]
+		minetest.log("info", "[ch_core] Key '"..key.."' removed from mod storage.")
 	end
 	return true
 end
 
 function ch_core.set_titul(player_name, titul)
 	ch_core.get_offline_charinfo(player_name).titul = titul
-	ch_core.save_offline_charinfo(player_name, "string", "titul")
+	ch_core.save_offline_charinfo(player_name, "titul")
 	return ch_core.update_player_nametag(player_name)
 end
 
@@ -194,16 +230,22 @@ end
 
 -- restore offline data from the storage
 local counter = 0
-for key, value in pairs((storage:to_table() or {}).fields or {}) do
-	local i = string.find(key, "/")
-	if i then
-		local player_name = key:sub(1, i - 1)
-		local table_key = key:sub(i + 1, -1)
+for full_key, value in pairs((storage:to_table() or {}).fields or {}) do
+	local player_name, key = full_key:match("^([^/]*)/(.+)$")
+	if player_name and player_name ~= "" then
 		local offline_charinfo = ch_core.get_offline_charinfo(player_name)
-		offline_charinfo[table_key] = value
+		local data_type = offline_charinfo_data_types[key]
+		if data_type == "int" then
+			offline_charinfo[key] = math.round(tonumber(value))
+		elseif data_type == "float" then
+			offline_charinfo[key] = tonumber(value)
+		else
+			offline_charinfo[key] = value
+		end
 		counter = counter + 1
 	else
-		minetest.log("warning", "Invalid key '"..key.."' in mod storage!")
+		storage:set_string(full_key, "")
+		minetest.log("warning", "Invalid key '"..full_key.."' (value "..value..") removed from mod storage!")
 	end
 end
 print("[ch_core] Restored "..counter.." data pairs from the mod storage.")
@@ -223,7 +265,7 @@ local function on_leaveplayer(player, timedout)
 		local total_playtime = (offline_info.past_playtime or 0) + current_playtime
 
 		offline_info.past_playtime = total_playtime
-		ch_core.save_offline_charinfo(player_name, "float", "past_playtime")
+		ch_core.save_offline_charinfo(player_name, "past_playtime")
 		online_info.join_timestamp = nil
 		print("PLAYER(" .. player_name .."): played seconds: " .. current_playtime .. " / " .. total_playtime);
 	end
@@ -237,7 +279,7 @@ local function on_shutdown()
 			local total_playtime = (offline_info.past_playtime or 0) + current_playtime
 
 			offline_info.past_playtime = total_playtime
-			ch_core.save_offline_charinfo(player_name, "float", "past_playtime")
+			ch_core.save_offline_charinfo(player_name, "past_playtime")
 			online_info.join_timestamp = nil
 		end
 	end
