@@ -1,3 +1,14 @@
+
+-- wire groups
+
+mesecon.wire_groups_in_ci = {dig_immediate = 2, not_blocking_trains = 1}
+mesecon.wire_groups_not_in_ci = table.copy(mesecon.wire_groups_in_ci)
+mesecon.wire_groups_not_in_ci.not_in_creative_inventory = 1
+mesecon.wire_groups_mesecon3_in_ci = table.copy(mesecon.wire_groups_in_ci)
+mesecon.wire_groups_mesecon3_in_ci.mesecon = 3
+mesecon.wire_groups_mesecon3_not_in_ci = table.copy(mesecon.wire_groups_mesecon3_in_ci)
+mesecon.wire_groups_mesecon3_not_in_ci.not_in_creative_inventory = 1
+
 function mesecon.move_node(pos, newpos)
 	local node = minetest.get_node(pos)
 	local meta = minetest.get_meta(pos):to_table()
@@ -422,6 +433,10 @@ function mesecon.vm_swap_node(pos, name, update_light)
 	node.name = name
 	tbl.vm:set_node_at(pos, node)
 	tbl.dirty = true
+end
+
+function mesecon.is_wire_walkable()
+	return true
 end
 
 -- Gets the node at a given position, regardless of whether it is loaded or

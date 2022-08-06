@@ -1,4 +1,7 @@
 print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
+local are_wires_walkable = mesecon.is_wire_walkable()
+
 local function insulated_wire_get_rules(node)
 	local rules = 	{{x = 1,  y = 0,  z = 0},
 			 {x =-1,  y = 0,  z = 0}}
@@ -22,7 +25,7 @@ minetest.register_node("mesecons_insulated:insulated_on", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	is_ground_content = false,
-	walkable = true,
+	walkable = are_wires_walkable,
 	sunlight_propagates = true,
 	selection_box = {
 		type = "fixed",
@@ -33,7 +36,7 @@ minetest.register_node("mesecons_insulated:insulated_on", {
 		-- ±0.001 is to prevent z-fighting
 		fixed = { -16/32-0.001, -17/32, -3/32, 16/32+0.001, -13/32, 3/32 }
 	},
-	groups = {dig_immediate = 2, not_in_creative_inventory = 1},
+	groups = mesecon.wire_groups_not_in_ci,
 	drop = "mesecons_insulated:insulated_off",
 	sounds = mesecon.node_sound.default,
 	mesecons = {conductor = {
@@ -59,7 +62,7 @@ minetest.register_node("mesecons_insulated:insulated_off", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	is_ground_content = false,
-	walkable = true,
+	walkable = are_wires_walkable,
 	sunlight_propagates = true,
 	selection_box = {
 		type = "fixed",
@@ -70,7 +73,7 @@ minetest.register_node("mesecons_insulated:insulated_off", {
 		-- ±0.001 is to prevent z-fighting
 		fixed = { -16/32-0.001, -17/32, -3/32, 16/32+0.001, -13/32, 3/32 }
 	},
-	groups = {dig_immediate = 2},
+	groups = table.copy(mesecon.wire_groups_in_ci),
 	sounds = mesecon.node_sound.default,
 	mesecons = {conductor = {
 		state = mesecon.state.off,

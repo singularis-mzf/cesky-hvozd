@@ -1,3 +1,5 @@
+local are_wires_walkable = mesecon.is_wire_walkable()
+
 local tjunction_nodebox = {
 	type = "fixed",
 	-- ±0.001 is to prevent z-fighting
@@ -36,11 +38,11 @@ minetest.register_node("mesecons_extrawires:tjunction_on", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	is_ground_content = false,
-	walkable = true,
+	walkable = are_wires_walkable,
 	sunlight_propagates = true,
 	selection_box = tjunction_selectionbox,
 	node_box = tjunction_nodebox,
-	groups = {dig_immediate = 2, not_in_creative_inventory = 1},
+	groups = mesecon.wire_groups_not_in_ci,
 	drop = "mesecons_extrawires:tjunction_off",
 	sounds = mesecon.node_sound.default,
 	mesecons = {conductor =
@@ -67,11 +69,11 @@ minetest.register_node("mesecons_extrawires:tjunction_off", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	is_ground_content = false,
-	walkable = true,
+	walkable = are_wires_walkable,
 	sunlight_propagates = true,
 	selection_box = tjunction_selectionbox,
 	node_box = tjunction_nodebox,
-	groups = {dig_immediate = 2},
+	groups = mesecon.wire_groups_in_ci,
 	sounds = mesecon.node_sound.default,
 	mesecons = {conductor =
 	{

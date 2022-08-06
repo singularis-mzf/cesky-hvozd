@@ -1,3 +1,5 @@
+local are_wires_walkable = mesecon.is_wire_walkable()
+
 local doublecorner_selectionbox = {
 	type = "fixed",
 	fixed = { -8/16, -8/16, -8/16, 8/16, -6/16, 8/16 },
@@ -38,8 +40,12 @@ local wire2_states = { "off", "on", "off", "on" }
 for k, state in ipairs(doublecorner_states) do
 	local w1 = wire1_states[k]
 	local w2 = wire2_states[k]
-	local groups =  { dig_immediate = 2 }
-	if k ~= 1 then groups.not_in_creative_inventory = 1 end
+	local groups
+	if k ~= 1 then
+		groups = mesecon.wire_groups_in_ci
+	else
+		groups = mesecon.wire_groups_not_in_ci
+	end
 	minetest.register_node(state, {
 		drawtype = "mesh",
 		mesh = "mesecons_extrawires_doublecorner.obj",
@@ -53,7 +59,7 @@ for k, state in ipairs(doublecorner_states) do
 		paramtype = "light",
 		paramtype2 = "facedir",
 		is_ground_content = false,
-		walkable = true,
+		walkable = are_wires_walkable,
 		sunlight_propagates = true,
 		selection_box = doublecorner_selectionbox,
 		groups = groups,

@@ -15,6 +15,8 @@ local corner_get_rules = function (node)
 	return rules
 end
 
+local are_wires_walkable = mesecon.is_wire_walkable()
+
 minetest.register_node("mesecons_extrawires:corner_on", {
 	drawtype = "mesh",
 	mesh = "mesecons_extrawires_corner.obj",
@@ -25,10 +27,10 @@ minetest.register_node("mesecons_extrawires:corner_on", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	is_ground_content = false,
-	walkable = true,
+	walkable = are_wires_walkable,
 	sunlight_propagates = true,
 	selection_box = corner_selectionbox,
-	groups = {dig_immediate = 2, not_in_creative_inventory = 1},
+	groups = mesecon.wire_groups_not_in_ci,
 	drop = "mesecons_extrawires:corner_off",
 	sounds = mesecon.node_sound.default,
 	mesecons = {conductor =
@@ -55,7 +57,7 @@ minetest.register_node("mesecons_extrawires:corner_off", {
 	walkable = true,
 	sunlight_propagates = true,
 	selection_box = corner_selectionbox,
-	groups = {dig_immediate = 2},
+	groups = mesecon.wire_groups_in_ci,
 	sounds = mesecon.node_sound.default,
 	mesecons = {conductor =
 	{

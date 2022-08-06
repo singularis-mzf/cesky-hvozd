@@ -1,3 +1,5 @@
+local are_wires_walkable = mesecon.is_wire_walkable()
+
 local crossover_rules = {
 	{--first wire
 		{x=-1,y=0,z=0},
@@ -28,10 +30,10 @@ minetest.register_node("mesecons_extrawires:crossover_off", {
 	},
 	paramtype = "light",
 	is_ground_content = false,
-	walkable = true,
+	walkable = are_wires_walkable,
 	-- stack_max = 99,
 	selection_box = {type="fixed", fixed={-16/32, -16/32, -16/32, 16/32, -5/32, 16/32}},
-	groups = {dig_immediate=2, mesecon=3},
+	groups = mesecon.wire_groups_mesecon3_in_ci,
 	sounds = mesecon.node_sound.default,
 	mesecons = {
 		conductor = {
@@ -55,10 +57,10 @@ minetest.register_node("mesecons_extrawires:crossover_01", {
 	},
 	paramtype = "light",
 	is_ground_content = false,
-	walkable = true,
+	walkable = are_wires_walkable,
 	-- stack_max = 99,
 	selection_box = {type="fixed", fixed={-16/32, -16/32, -16/32, 16/32, -5/32, 16/32}},
-	groups = {dig_immediate=2, mesecon=3, not_in_creative_inventory=1},
+	groups = mesecon.wire_groups_mesecon3_not_in_ci,
 	sounds = mesecon.node_sound.default,
 	mesecons = {
 		conductor = {
@@ -82,10 +84,10 @@ minetest.register_node("mesecons_extrawires:crossover_10", {
 	},
 	paramtype = "light",
 	is_ground_content = false,
-	walkable = true,
+	walkable = are_wires_walkable,
 	-- stack_max = 99,
 	selection_box = {type="fixed", fixed={-16/32, -16/32, -16/32, 16/32, -5/32, 16/32}},
-	groups = {dig_immediate=2, mesecon=3, not_in_creative_inventory=1},
+	groups = mesecon.wire_groups_mesecon3_not_in_ci,
 	sounds = mesecon.node_sound.default,
 	mesecons = {
 		conductor = {
@@ -109,10 +111,10 @@ minetest.register_node("mesecons_extrawires:crossover_on", {
 	},
 	paramtype = "light",
 	is_ground_content = false,
-	walkable = true,
+	walkable = are_wires_walkable,
 	-- stack_max = 99,
 	selection_box = {type="fixed", fixed={-16/32, -16/32, -16/32, 16/32, -5/32, 16/32}},
-	groups = {dig_immediate=2, mesecon=3, not_in_creative_inventory=1},
+	groups = mesecon.wire_groups_mesecon3_not_in_ci,
 	sounds = mesecon.node_sound.default,
 	mesecons = {
 		conductor = {

@@ -1,3 +1,5 @@
+local are_wires_walkable = mesecon.is_wire_walkable()
+
 local vertical_box = {
 	type = "fixed",
 	fixed = {-1/16, -8/16, -1/16, 1/16, 8/16, 1/16}
@@ -79,7 +81,7 @@ end
 mesecon.register_node("mesecons_extrawires:vertical", {
 	description = "Svislý mesespoj",
 	drawtype = "nodebox",
-	walkable = true,
+	walkable = are_wires_walkable,
 	paramtype = "light",
 	is_ground_content = false,
 	sunlight_propagates = true,
@@ -92,7 +94,7 @@ mesecon.register_node("mesecons_extrawires:vertical", {
 	sounds = mesecon.node_sound.default,
 },{
 	tiles = {"mesecons_wire_off.png"},
-	groups = {dig_immediate=2},
+	groups = mesecon.wire_groups_in_ci,
 	mesecons = {conductor = {
 		state = mesecon.state.off,
 		onstate = "mesecons_extrawires:vertical_on",
@@ -100,7 +102,7 @@ mesecon.register_node("mesecons_extrawires:vertical", {
 	}}
 },{
 	tiles = {"mesecons_wire_on.png"},
-	groups = {dig_immediate=2, not_in_creative_inventory=1},
+	groups = mesecon.wire_groups_not_in_ci,
 	mesecons = {conductor = {
 		state = mesecon.state.on,
 		offstate = "mesecons_extrawires:vertical_off",
@@ -112,11 +114,11 @@ mesecon.register_node("mesecons_extrawires:vertical", {
 mesecon.register_node("mesecons_extrawires:vertical_top", {
 	description = "Svislý mesespoj",
 	drawtype = "nodebox",
-	walkable = true,
+	walkable = are_wires_walkable,
 	paramtype = "light",
 	is_ground_content = false,
 	sunlight_propagates = true,
-	groups = {dig_immediate=2, not_in_creative_inventory=1},
+	groups = mesecon.wire_groups_not_in_ci,
 	selection_box = top_box,
 	node_box = top_box,
 	is_vertical_conductor = true,
@@ -144,11 +146,11 @@ mesecon.register_node("mesecons_extrawires:vertical_top", {
 mesecon.register_node("mesecons_extrawires:vertical_bottom", {
 	description = "Svislý mesespoj",
 	drawtype = "nodebox",
-	walkable = true,
+	walkable = are_wires_walkable,
 	paramtype = "light",
 	is_ground_content = false,
 	sunlight_propagates = true,
-	groups = {dig_immediate = 2, not_in_creative_inventory = 1},
+	groups = mesecon.wire_groups_not_in_ci,
 	selection_box = bottom_box,
 	node_box = bottom_box,
 	is_vertical_conductor = true,
