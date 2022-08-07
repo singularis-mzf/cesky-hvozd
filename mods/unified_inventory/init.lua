@@ -205,4 +205,19 @@ end
 dofile(modpath.."/item_names.lua")
 dofile(modpath.."/waypoints.lua")
 dofile(modpath.."/legacy.lua") -- mod compatibility
+
+minetest.register_on_mods_loaded(function()
+	local pipeworks = {}
+	for name, _ in pairs(minetest.registered_items) do
+		if name:match("^pipeworks:") then
+			pipeworks[name] = 1
+		end
+	end
+	if minetest.registered_items["technic:injector"] then
+		pipeworks["technic:injector"] = 1
+	end
+	
+	unified_inventory.virtual_groups.pipeworks = pipeworks
+end)
+
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

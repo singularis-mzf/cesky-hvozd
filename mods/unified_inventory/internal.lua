@@ -353,8 +353,10 @@ local filter_translate = {
 	["typ:na_kp"] = "group:na_kp",
 	["typ:na_kp_i_cnc"] = "group:na_cnc,na_kp",
 	["typ:pláště"] = "group:cape",
+	["typ:roury"] = "group:pipeworks",
 	["typ:vlaky"] = "group:at_wagon", -- všechny typy vagonů, lokomotiv, apod.
 	["typ:všechny_barvy"] = "group:dye",
+	["typ:zvířata"] = "group:spawn_egg",
 }
 local filter_translate_extended = false
 
