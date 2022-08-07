@@ -1,8 +1,5 @@
 local S = technic.getter
 
-local infinite_stacks = minetest.settings:get_bool("creative_mode")
-	and minetest.get_modpath("unified_inventory") == nil
-
 local frames_pos = {}
 
 -- Helpers
@@ -316,7 +313,7 @@ for zp = 0, 1 do
 				minetest.set_node(pos, { name = itemstack:get_name() })
 			end
 
-			if not infinite_stacks then
+			if not minetest.is_creative_enabled(placer:get_player_name()) then
 				itemstack:take_item()
 			end
 			return itemstack

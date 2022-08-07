@@ -116,7 +116,7 @@ local ladder_extender = function(pos, node, clicker, itemstack, pointed_thing, l
 					minetest.record_protection_violation(pos, clicker:get_player_name())
 				else
 					minetest.set_node(pos, {name=ladder_node, param2=param2})
-					if not minetest.settings:get_bool("creative_mode") then
+					if not minetest.is_creative_enabled(clicker:get_player_name()) then
 						clicked_stack:take_item(1)
 					end
 				end
