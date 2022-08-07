@@ -435,6 +435,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/DrPlamsa/guinea\_pig/)
 
+## Hang-Gliders (minetest-hangglider)
+
+* Zdroj: [https://notabug.org/Piezo\_/minetest-hangglider](https://notabug.org/Piezo\_/minetest-hangglider), revize 206704ffabcdddc61150ed798c88add9965a110d
+* Původní licence: GPLv3 pro kód, CC-BY-SA-3.0 nebo CC-BY-SA-4.0 pro ostatní
+* Licence úprav: GPLv3 pro kód, CC-BY-SA-4.0 pro ostatní
+* [ContentDB](https://content.minetest.net/packages/Piezo\_/hangglider/)
+
 ## Hiking Redo (hiking)
 
 * Zdroj: [https://gitlab.com/h2mm/hiking](https://gitlab.com/h2mm/hiking), revize e2fad69f04e7533a4dd25b3946d9ddee77433ab9

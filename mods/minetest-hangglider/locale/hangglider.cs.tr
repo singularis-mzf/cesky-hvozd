@@ -1,0 +1,10 @@
+# textdomain:hangglider
+
+Glider=závěsný kluzák
+Protected area! You will be shot down in two seconds by anti-aircraft guns!=Bezletová zóna! Do dvou sekund budete sestřelen/a!
+Toggle airspace restrictions for area <ID>=Přepne označení zóny <ID> jako bezletové
+Invalid usage, see /help area_flak.=Chybné použití, zadejte /help area_flak.
+Area @1 does not exist or is not owned by you.=Zóna @1 neexistuje nebo ji nevlastníte.
+Area's airspace @1.=Vzdušný prostor zóny je @1.
+closed=uzavřený
+opened=otevřený
