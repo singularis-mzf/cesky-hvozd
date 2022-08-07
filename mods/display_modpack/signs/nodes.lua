@@ -96,7 +96,16 @@ local function on_receive_fields_poster(pos, formname, fields, player)
 				meta:set_string("text", fields.text)
 				local infotext = "\""..fields.display_text .."\"\n"
 				if #(fields.text) > 200 then
-					infotext = infotext .. S("(right-click to read more text)") .. "\n" .. string.sub(fields.text, 1, 200) .. "(...)"
+					local slength = 200
+					local b = string.byte(fields.text, slength)
+					while slength > 1 and 128 <= b and b <= 191 do
+						slength = slength - 1
+						b = string.byte(fields.text, slength)
+					end
+					if b >= 128 then
+						slength = slength - 1
+					end
+					infotext = infotext .. S("(right-click to read more text)") .. "\n" .. string.sub(fields.text, 1, slength) .. "(...)"
 				else
 					infotext = infotext .. fields.text
 				end
