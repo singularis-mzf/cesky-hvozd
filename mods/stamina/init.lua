@@ -169,14 +169,11 @@ local function poison_tick(player_name, ticks, interval, elapsed)
 	elseif elapsed > ticks then
 		stamina.set_poisoned(player, false)
 	else
-		return
-		--[[
 		local hp = player:get_hp() - 1
 		if hp > 0 then
 			player:set_hp(hp)
 		end
 		minetest.after(interval, poison_tick, player_name, ticks, interval, elapsed + 1)
-		]]
 	end
 end
 
@@ -373,7 +370,6 @@ local function stamina_tick()
 	end
 end
 
---[[
 local function health_tick()
 	-- heal or damage player, depending on saturation
 	for _,player in ipairs(minetest.get_connected_players()) do
@@ -390,28 +386,27 @@ local function health_tick()
 			and not stamina.is_poisoned(player)
 		)
 		-- or damage player by 1 hp if saturation is < 2 (of 30)
-		local is_starving = (
+		local is_starving = false --[[ (
 			saturation < settings.starve_lvl and
 			hp > 0
-		)
+		)]]
 
 		if should_heal then
 			player:set_hp(hp + settings.heal)
 			stamina.exhaust_player(player, settings.exhaust_lvl, stamina.exhaustion_reasons.heal)
-		elseif is_starving then
-			player:set_hp(hp - settings.starve)
+		--[[elseif is_starving then
+			player:set_hp(hp - settings.starve)]]
 		end
 	end
 end
-]]
 
 local stamina_timer = 0
--- local health_timer = 0
+local health_timer = 0
 local action_timer = 0
 
 local function stamina_globaltimer(dtime)
 	stamina_timer = stamina_timer + dtime
-	-- health_timer = health_timer + dtime
+	health_timer = health_timer + dtime
 	action_timer = action_timer + dtime
 
 	if action_timer > settings.move_tick then
@@ -424,12 +419,10 @@ local function stamina_globaltimer(dtime)
 		stamina_tick()
 	end
 
-	--[[
 	if health_timer > settings.health_tick then
 		health_timer = 0
 		health_tick()
 	end
-	]]
 end
 
 -- override minetest.do_item_eat() so we can redirect hp_change to stamina
@@ -558,4 +551,14 @@ end)
 minetest.register_on_respawnplayer(function(player)
 	stamina.update_saturation(player, settings.visual_max)
 end)
+
+minetest.register_on_player_hpchange(function(player, hp_change, reason)
+	local old_hp = player:get_hp()
+	if old_hp + hp_change <= 0 then
+		return 1 - old_hp
+	else
+		return hp_change
+	end
+end, true)
+
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
