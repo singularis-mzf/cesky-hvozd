@@ -92,7 +92,7 @@ mobs:register_mob("mobs_animal:cow", {
 
 		-- milk cow with empty bucket
 		if item == "bucket:bucket_empty"
-		or item == "wooden_bucket:bucket_wood_empty" then
+		or item == "bucket_wooden:bucket_empty" then
 
 			--if self.gotten == true
 			if self.child == true then
@@ -112,8 +112,8 @@ mobs:register_mob("mobs_animal:cow", {
 
 			-- which bucket are we using
 			local ret_item = "mobs:bucket_milk"
-			if item == "wooden_bucket:bucket_wood_empty" then
-				ret_item = "mobs:wooden_bucket_milk"
+			if item == "bucket_wooden:bucket_empty" then
+				ret_item = "mobs:bucket_wooden_milk"
 			end
 
 			if inv:room_for_item("main", {name = ret_item}) then
@@ -165,12 +165,12 @@ mobs:alias_mob("mobs:cow", "mobs_animal:cow") -- compatibility
 
 
 -- bucket of milk
-minetest.register_craftitem(":mobs:bucket_milk", {
-	description = S("Bucket of Milk"),
+bucket.register_full_bucket(":mobs:bucket_milk", "bucket:bucket_empty", "", {
+	description = "kbelík mléka",
 	inventory_image = "mobs_bucket_milk.png",
-	stack_max = 1,
+	groups = {milk_bucket = 1, food_milk = 1, flammable = 3, drink = 1},
 	on_use = minetest.item_eat(8, "bucket:bucket_empty"),
-	groups = {food_milk = 1, flammable = 3, drink = 1},
+	node_name = ":mobs:bucket_milk_placed",
 })
 
 -- glass of milk
@@ -265,14 +265,14 @@ minetest.register_craft({
 
 
 -- check for wooden bucket mod and add compatibility
-if minetest.get_modpath("wooden_bucket") then
+if minetest.get_modpath("bucket_wooden") then
 
-	minetest.register_craftitem(":mobs:wooden_bucket_milk", {
-		description = S("Wooden Bucket of Milk"),
+	bucket.register_full_bucket(":mobs:bucket_wooden_milk", "bucket_wooden:bucket_empty", "", {
+		description = "vědro mléka",
 		inventory_image = "mobs_wooden_bucket_milk.png",
-		stack_max = 1,
-		on_use = minetest.item_eat(8, "wooden_bucket:bucket_wood_empty"),
-		groups = {food_milk = 1, flammable = 3, drink = 1}
+		groups = {milk_bucket = 1, food_milk = 1, flammable = 3, drink = 1},
+		on_use = minetest.item_eat(8, "bucket_wooden:bucket_empty"),
+		node_name = ":mobs:bucket_wooden_milk_placed",
 	})
 
 	minetest.register_craft({
@@ -280,17 +280,17 @@ if minetest.get_modpath("wooden_bucket") then
 		recipe = {
 			{"vessels:drinking_glass", "vessels:drinking_glass"},
 			{"vessels:drinking_glass", "vessels:drinking_glass"},
-			{"mobs:wooden_bucket_milk", ""}
+			{"mobs:bucket_wooden_milk", ""}
 		},
-		replacements = {{"mobs:wooden_bucket_milk", "wooden_bucket:bucket_wood_empty"}}
+		replacements = {{"mobs:bucket_wooden_milk", "bucket_wooden:bucket_empty"}}
 	})
 
 	minetest.register_craft({
-		output = "mobs:wooden_bucket_milk",
+		output = "mobs:bucket_wooden_milk",
 		recipe = {
 			{"group:food_milk_glass", "group:food_milk_glass"},
 			{"group:food_milk_glass", "group:food_milk_glass"},
-			{"wooden_bucket:bucket_wood_empty", ""}
+			{"bucket_wooden:bucket_empty", ""}
 		},
 		replacements = {
 			{"group:food_milk_glass", "vessels:drinking_glass 4"}
@@ -299,7 +299,21 @@ if minetest.get_modpath("wooden_bucket") then
 
 	minetest.register_craft({
 		output = "mobs:butter",
-		recipe = {{"mobs:wooden_bucket_milk", salt_item}},
-		replacements = {{"mobs:wooden_bucket_milk", "wooden_bucket:bucket_wood_empty"}}
+		recipe = {{"mobs:bucket_wooden_milk", salt_item}},
+		replacements = {{"mobs:bucket_wooden_milk", "bucket_wooden:bucket_empty"}}
+	})
+
+	minetest.register_craft({
+		output = "mobs:bucket_wooden_milk",
+		type = "shapeless",
+		recipe = {"mobs:bucket_milk", "bucket_wooden:bucket_empty"},
+		replacements = {{"mobs:bucket_milk", "bucket:bucket_empty"}},
+	})
+
+	minetest.register_craft({
+		output = "mobs:bucket_milk",
+		type = "shapeless",
+		recipe = {"mobs:bucket_wooden_milk", "bucket:bucket_empty"},
+		replacements = {{"mobs:bucket_wooden_milk", "bucket_wooden:bucket_empty"}},
 	})
 end

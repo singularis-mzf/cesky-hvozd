@@ -1,10 +1,7 @@
-
 local S = farming.intllib
-
 
 -- default dry soil node
 local dry_soil = "farming:soil"
-
 
 -- add soil types to existing dirt blocks
 minetest.override_item("default:dirt", {
@@ -50,6 +47,20 @@ if minetest.registered_nodes["default:dirt_with_coniferous_litter"] then
 	})
 end
 
+-- watering
+local function on_watered(pos)
+	local node = minetest.get_node_or_nil(pos)
+	if node then
+		local ndef = minetest.registered_nodes[node.name]
+		if ndef and ndef.soil then
+			local wet_soil = ndef.soil.wet
+			if wet_soil then
+				minetest.swap_node(pos, {name = wet_soil})
+			end
+		end
+	end
+	return true
+end
 
 -- savanna soil
 if minetest.registered_nodes["default:dry_dirt"] then
@@ -77,13 +88,14 @@ if minetest.registered_nodes["default:dry_dirt"] then
 			"default_dry_dirt.png"
 		},
 		drop = "default:dry_dirt",
-		groups = {crumbly = 3, not_in_creative_inventory = 1, soil = 2, field = 1},
+		groups = {crumbly = 3, not_in_creative_inventory = 1, soil = 2, field = 1, waterable = 1},
 		sounds = default.node_sound_dirt_defaults(),
 		soil = {
 			base = "default:dry_dirt",
 			dry = "farming:dry_soil",
 			wet = "farming:dry_soil_wet"
-		}
+		},
+		on_watered = on_watered,
 	})
 
 	minetest.register_node("farming:dry_soil_wet", {
@@ -110,13 +122,14 @@ minetest.register_node("farming:soil", {
 	description = S("Soil"),
 	tiles = {"default_dirt.png^farming_soil.png", "default_dirt.png"},
 	drop = "default:dirt",
-	groups = {crumbly = 3, not_in_creative_inventory = 1, soil = 2, field = 1},
+	groups = {crumbly = 3, not_in_creative_inventory = 1, soil = 2, field = 1, waterable = 1},
 	sounds = default.node_sound_dirt_defaults(),
 	soil = {
 		base = "default:dirt",
 		dry = "farming:soil",
 		wet = "farming:soil_wet"
-	}
+	},
+	on_watered = on_watered,
 })
 
 -- wet soil
@@ -141,8 +154,38 @@ minetest.register_node("farming:soil_wet", {
 minetest.register_alias("farming:desert_sand_soil", dry_soil)
 minetest.register_alias("farming:desert_sand_soil_wet", dry_soil .. "_wet")
 
+local random_gen = PcgRandom(os.clock())
 
--- if water near soil then change to wet soil
+function farming.has_watering(pos)
+	local watering_nodes = minetest.find_nodes_in_area(vector.new(pos.x - 5, pos.y - 1, pos.z - 5), vector.new(pos.x + 5, pos.y + 3, pos.z + 5), "group:watering", true)
+	for node_name, positions in pairs(watering_nodes) do
+		local max_distance = minetest.get_item_group(node_name, "watering")
+		for _, wpos in ipairs(positions) do
+			if vector.distance(pos, wpos) <= max_distance then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+function farming.trigger_drying_soil(pos, randomly)
+	if randomly then
+		local random_value = random_gen:next(0, 4)
+		if random_value ~= 0 then
+			return true
+		end
+	end
+	local node = minetest.get_node_or_nil(pos)
+	if not node or minetest.get_item_group(node.name, "soil") ~= 3 or farming.has_watering(pos) then
+		return false
+	end
+	minetest.swap_node(pos, { name = minetest.registered_nodes[node.name].soil.dry })
+	return true
+end
+
+
+--[[ if water near soil then change to wet soil
 minetest.register_abm({
 	nodenames = {"group:field"},
 	interval = 60,
@@ -192,3 +235,4 @@ minetest.register_abm({
 		end
 	end
 })
+]]

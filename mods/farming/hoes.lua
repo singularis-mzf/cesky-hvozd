@@ -330,7 +330,7 @@ local function throw_potion(itemstack, player)
 end
 
 
--- hoe bomb item
+--[[ hoe bomb item
 minetest.register_craftitem("farming:hoe_bomb", {
 	description = S("Hoe Bomb (use or throw on grassy areas to hoe land)"),
 	inventory_image = "farming_hoe_bomb.png",
@@ -351,6 +351,7 @@ minetest.register_craftitem("farming:hoe_bomb", {
 		end
 	end,
 })
+]]
 
 -- Mithril Scythe (special item)
 

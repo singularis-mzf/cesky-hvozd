@@ -398,6 +398,9 @@ function farming.plant_growth_timer(pos, elapsed, node_name)
 		local p2 = minetest.registered_nodes[stages.stages_left[growth] ].place_param2 or 1
 
 		minetest.swap_node(pos, {name = stages.stages_left[growth], param2 = p2})
+		if growth == max_growth then
+			farming.trigger_drying_soil(vector.new(pos.x, pos.y - 1, pos.z), true)
+		end
 	else
 		return true
 	end
@@ -580,7 +583,7 @@ farming.register_plant = function(name, def)
 
 		-- Last step doesn't need growing=1 so Abm never has to check these
 		if i == def.steps then
-			g.growing = 0
+			g.growing = nil
 		end
 
 		local node_name = mname .. ":" .. pname .. "_" .. i

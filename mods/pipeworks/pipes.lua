@@ -91,7 +91,7 @@ for index, connects in ipairs(cconnects) do
 		pipenumber = index
 	})
 
-	local pgroups = {snappy = 3, pipe = 1, not_in_creative_inventory = 1, dig_generic = 4}
+	local pgroups = {snappy = 3, pipe = 1, not_in_creative_inventory = 1, dig_generic = 4, watering = 5}
 
 	minetest.register_node("pipeworks:pipe_"..index.."_loaded", {
 		description = pipedesc,

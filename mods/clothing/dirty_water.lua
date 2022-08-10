@@ -92,15 +92,23 @@ minetest.register_node("clothing:dirty_water_flowing", {
 	sounds = default.node_sound_water_defaults(),
 })
 
-bucket.register_liquid(
-	"clothing:dirty_water_source",
-	"clothing:dirty_water_flowing",
-	"clothing:bucket_dirty_water",
-	"clothing_bucket_dirty_water.png",
-	S("Dirty water bucket").."\n"..
-  S("Put dirty water on gravel and wait for cleaning it."),
-	{tool = 1}
-)
+bucket.register_full_bucket("clothing:bucket_dirty_water", "bucket:bucket_empty", "clothing:dirty_water_source", {
+	description = S("Dirty water bucket").."\n"..S("Put dirty water on gravel and wait for cleaning it."),
+	flowing = "clothing:dirty_water_flowing",
+	inventory_image = "clothing_bucket_dirty_water.png",
+	groups = {dirty_water_bucket = 1},
+	node_name = "clothing:bucket_dirty_water_placed",
+})
+
+if minetest.get_modpath("bucket_wooden") then
+	bucket.register_full_bucket("clothing:bucket_wooden_dirty_water", "bucket_wooden:bucket_empty", "clothing:dirty_water_source", {
+		description = S("Dirty water wooden bucket").."\n"..S("Put dirty water on gravel and wait for cleaning it."),
+		flowing = "clothing:dirty_water_flowing",
+		inventory_image = "clothing_bucket_dirty_water.png", -- TODO: image!
+		groups = {dirty_water_bucket = 1},
+		node_name = "clothing:bucket_wooden_dirty_water_placed",
+	})
+end
 
 minetest.register_abm({
   label = "Cleaning dirty water by gravel",

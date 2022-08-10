@@ -32,15 +32,23 @@ function technic.register_can(d)
 		on_use = function(itemstack, user, pointed_thing)
 			if pointed_thing.type ~= "node" then return end
 			local node = minetest.get_node(pointed_thing.under)
-			if node.name ~= data.liquid_source_name then return end
 			local charge = get_can_level(itemstack)
-			if charge == data.can_capacity then return end
-			if minetest.is_protected(pointed_thing.under, user:get_player_name()) then
-				minetest.log("action", user:get_player_name().." tried to take "..node.name.." at protected position "..minetest.pos_to_string(pointed_thing.under).." with a "..data.can_name)
-				return
+			if node.name == data.liquid_source_name then
+				if charge == data.can_capacity then return end
+				if minetest.is_protected(pointed_thing.under, user:get_player_name()) then
+					minetest.log("action", user:get_player_name().." tried to take "..node.name.." at protected position "..minetest.pos_to_string(pointed_thing.under).." with a "..data.can_name)
+					return
+				end
+				minetest.remove_node(pointed_thing.under)
+				charge = charge + 1
+			else
+				if charge == 0 or (data.liquid_source_name ~= "default:water_source" and data.liquid_source_name ~= "default:river_water_source") then return end
+				if minetest.is_protected(pointed_thing.under, user:get_player_name()) then
+					minetest.log("action", user:get_player_name().." tried to water "..node.name.." at protected position "..minetest.pos_to_string(pointed_thing.under).." with a "..data.can_name)
+					return
+				end
+				charge = math.floor(bucket.water_land(pointed_thing.under, 8 * charge) / 8)
 			end
-			minetest.remove_node(pointed_thing.under)
-			charge = charge + 1
 			itemstack:set_metadata(tostring(charge))
 			set_can_wear(itemstack, charge, data.can_capacity)
 			return itemstack

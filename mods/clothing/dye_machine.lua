@@ -79,20 +79,21 @@ minetest.register_node("clothing:dye_machine_empty", {
       "default_wood.png",
     },
     mesh = "clothing_dye_machine.obj",
-    
+
     on_punch = function(pos, node, puncher, pointed_thing)
-        if (puncher) then
-          local wielded_item = puncher:get_wielded_item();
-          local wielded_name = wielded_item:get_name();
-          
-          if ((wielded_name=="bucket:bucket_water") or
-              (wielded_name=="bucket:bucket_river_water")) then
-            node.name = "clothing:dye_machine_water";
-            minetest.set_node(pos, node);
-            puncher:set_wielded_item("bucket:bucket_empty");
-          end
-        end
-      end,
+		if puncher then
+			local wielded_item = puncher:get_wielded_item()
+			local wielded_name = wielded_item:get_name()
+			if minetest.get_item_group(wielded_name, "water_bucket") > 0 then
+				local empty_bucket, water_source = bucket.spill_bucket(wielded_item)
+				if empty_bucket then
+					node.name = "clothing:dye_machine_water"
+					minetest.set_node(pos, node)
+					puncher:set_wielded_item(empty_bucket)
+				end
+			end
+		end
+	end,
   })
 minetest.register_node("clothing:dye_machine_water", {
     description = S("Dye machine filled with water"),
@@ -153,30 +154,30 @@ minetest.register_node("clothing:dye_machine_water_dirty", {
       "clothing_dirty_water.png"
     },
     mesh = "clothing_dye_machine_fill.obj",
-    
+
     can_dig = function() return false; end,
-    
+
     on_punch = function(pos, node, puncher, pointed_thing)
-        if (puncher) then
-          local wielded_item = puncher:get_wielded_item();
-          local wielded_name = wielded_item:get_name();
-          
-          if (wielded_name=="bucket:bucket_empty") then
-            local inv = puncher:get_inventory();
-            local list = puncher:get_wield_list();
-            local bucket = ItemStack("clothing:bucket_dirty_water");
-            node.name = "clothing:dye_machine_empty";
-            minetest.set_node(pos, node);
-            wielded_item:take_item(1);
-            puncher:set_wielded_item(wielded_item);
-            if (inv:room_for_item(list, bucket)) then
-              inv:add_item(list, bucket);
-            else
-              minetest.item_drop(bucket, puncher, puncher:get_pos())
-            end
-          end
-        end
-      end,
+		if (puncher) then
+			local wielded_item = puncher:get_wielded_item();
+			local wielded_name = wielded_item:get_name();
+
+			local full_bucket_stack = bucket.fill_bucket(wielded_item, "clothing:dirty_water_source")
+			if full_bucket_stack then
+				local inv = puncher:get_inventory();
+				local list = puncher:get_wield_list();
+				local bucket = full_bucket_stack;
+				node.name = "clothing:dye_machine_empty";
+				minetest.set_node(pos, node);
+				puncher:set_wielded_item(wielded_item);
+				if (inv:room_for_item(list, bucket)) then
+					inv:add_item(list, bucket);
+				else
+					minetest.item_drop(bucket, puncher, puncher:get_pos())
+				end
+			end
+		end
+	end,
     allow_metadata_inventory_move = function() return 0; end,
     allow_metadata_inventory_put = function() return 0; end,
     on_metadata_inventory_take = function(pos)
