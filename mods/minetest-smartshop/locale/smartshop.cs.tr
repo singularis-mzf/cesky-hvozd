@@ -1,0 +1,34 @@
+# textdomain:smartshop
+smartshop=obchodní terminál
+Smartshop admin=správce/yně obchodních terminálů
+for sale:=na prodej:
+price:=cena:
+customer view=jako zákazník/ice
+view the shop as a customer=zobrazí rozhraní pro zákazníky/ice
+strict meta?=včetně metadat?
+check this if you are buying or selling items with unique properties like written books or petz.=Zaškrtněte toto pole, prodáváte-li předměty s metadaty jako např. popsané knihy.
+private?=soukromý?
+uncheck this if you want to share control of the shop with anyone in the protected area.=Odškrtněte toto pole, chcete-li sdílet ovládání obchodního terminálu s ostatními v zabezpečené oblasti.
+freebies?=i zadarmo?
+check this if you want to be able to give/receive items without an exchange=Zaškrtněte toto pole, chcete-li mít možnost dávat či přijímat předměty bez protihodnoty.
+unlimited?=neomezeně
+check this allow exchanges ex nihilo. shop contents will be ignored=Zaškrtněte toto pole pro neomezenou nabídku. Inventář terminálu bude ignorován.
+purchase history=záznamy o transakcích
+view a log of purchases from the shop=zobrazí záznamy o transakcích provedených tímto terminálem
+Stock is unlimited=Nabídka je neomezená
+refill=doplnit
+send=odeslat
+payments sent to @1=platby odeslány do @1
+click to set send storage=kliknutím označte cílové úložiště
+automatically refilled from @1=automaticky doplněno z @1
+click to set refill storage=kliknutím označte zdrojové úložiště
+Smartshop=obchodní terminál
+Smartshop external storage=zásobník pro obchodní terminál
+
+# storage:
+External storage by: @1=vzdálený zásobník pro obchodní terminál (vlastník/ice: @1)
+used with connected smartshops=používáno s připojenými obchodními terminály
+save=uložit
+Private?=soukromé?
+uncheck this if you want to share control of the storage with anyone in the protected area.=Odškrtněte toto pole, chcete-li sdílet ovládání úložiště s ostatními v zabezpečené oblasti.
+@1 @2 bought @3 for @4=@1 @2 koupil/a @3 za @4

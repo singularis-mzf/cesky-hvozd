@@ -690,11 +690,11 @@ resp. *ostatní\_zdroje*.
 * [ContentDB](https://content.minetest.net/packages/bell07/skinsdb/)
 * K módu bez úprav přidány textury z módu Wardrobe Outfits, podléhající licenci CC-BY-SA-3.0.
 
-## Smart Shop (smartshop)
+## Smart Shop (minetest-smartshop)
 
-* Zdroj: [https://github.com/AiTechEye/smartshop](https://github.com/AiTechEye/smartshop), revize dd7bf29dea77f5728d88279d71f175693a1d6a18
-* Původní licence: LGPL 2.1 pro kód, CC-BY-SA-4.0 pro média
-* Licence úprav: LGPL 2.1 pro kód, CC-BY-SA 4.0 pro ostatní
+* Zdroj: [https://github.com/fluxionary/minetest-smartshop](https://github.com/fluxionary/minetest-smartshop), revize a16d56427c0795ae6ec02db7030d78deff219df7
+* Původní licence: AGPLv3 pro kód, CC BY-SA 3.0 pro textury
+* Licence úprav: AGPLv3 pro kód, CC BY-SA 3.0 pro ostatní
 * [ContentDB](https://content.minetest.net/packages/AiTechEye/smartshop/)
 
 ## Solid Color (solidcolor)
