@@ -456,12 +456,6 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: GPLv3
 * [ContentDB](https://content.minetest.net/packages/Can202/icecream/)
 
-## Infinite Chest (minetest-infinite_chest)
-
-* Zdroj: [https://github.com/cornernote/minetest-infinite\_chest](https://github.com/cornernote/minetest-infinite\_chest), revize bd6685640c07185679df0110b5e8fc2b1e0f3119
-* Původní licence: BSD-3-Clause
-* Licence úprav: BSD-3-Clause
-
 ## Itemshelf (itemshelf)
 
 * Zdroj: [https://github.com/hkzorman/itemshelf](https://github.com/hkzorman/itemshelf), revize 8d4e24717cc1392cd370bc700dae56dae29afb42
