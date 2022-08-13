@@ -220,7 +220,7 @@ ui.register_page("craft", {
 			n=n + 4
 		end
 
-		if ui.is_creative(player_name) then
+		if ui.is_creative(player_name) or minetest.check_player_privs(player_name, "server") then
 			formspec[n] = ui.single_slot(craftx - 2.5, crafty + 2.5)
 			formspec[n+1] = string.format("label[%f,%f;%s]", craftx - 2.3, crafty + 2.4,F(S("Refill:")))
 			formspec[n+2] = string.format("list[detached:%srefill;main;%f,%f;1,1;]",

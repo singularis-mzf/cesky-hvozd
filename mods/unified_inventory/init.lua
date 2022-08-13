@@ -33,6 +33,7 @@ unified_inventory = {
 	buttons = {},
 	initialized_callbacks = {},
 	craft_registered_callbacks = {},
+	last_giveme_item_per_player = {},
 
 	-- Virtual item groups
 	virtual_groups = {},

@@ -194,7 +194,13 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			-- Creative page: Add entire stack to inventory
 			local inv = player:get_inventory()
 			local stack = ItemStack(clicked_item)
-			stack:set_count(stack:get_stack_max())
+			local last_giveme_item = unified_inventory.last_giveme_item_per_player[player_name]
+			local now = os.clock()
+			if last_giveme_item and now - last_giveme_item.time < 2 and last_giveme_item.item == clicked_item then
+				-- full stack
+				stack:set_count(stack:get_stack_max())
+			end
+			unified_inventory.last_giveme_item_per_player[player_name] = { time = now, item = clicked_item }
 			if inv:room_for_item("main", stack) then
 				inv:add_item("main", stack)
 			end
