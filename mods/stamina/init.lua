@@ -17,6 +17,26 @@ local function get_setting(key, default)
 	return num_value or default
 end
 
+local function should_hide(hud_name, level)
+	if hud_name == "damage" then
+		return level == 0
+	elseif hud_name == "hlad" then
+		return level == 0
+	else
+		return false
+	end
+end
+
+local function should_unhide(hud_name, level)
+	if hud_name == "damage" then
+		return level > 0
+	elseif hud_name == "hlad" then
+		return level > 1
+	else
+		return false
+	end
+end
+
 stamina.settings = {
 	-- see settingtypes.txt for descriptions
 	eat_particles = minetest.settings:get_bool("stamina.eat_particles", true),
@@ -92,6 +112,16 @@ local function set_hud_id(player, hud_id)
 	hud_ids_by_player_name[player:get_player_name()] = hud_id
 end
 
+--- HUD BARS ---
+local hudbar_formatstring = "@1"
+local hudbar_formatstring_config = {
+	order = { "label" --[[, "value", "max_value"]] },
+	textdomain = "hudbars",
+}
+
+hb.register_hudbar("damage", 0xFFFFFF, "zranění", { icon = "hudbars_icon_health.png", bgicon = "hudbars_bgicon_health.png", bar = "hudbars_bar_health.png" }, 0, 19, false, hudbar_formatstring, hudbar_formatstring_config)
+hb.register_hudbar("hlad", 0xFFFFFF, "hlad", { icon = "default_apple.png", bgicon = nil, bar = "hudbars_bar_stamina.png" }, 0, 20, false, hudbar_formatstring, hudbar_formatstring_config)
+
 --- SATURATION API ---
 function stamina.get_saturation(player)
 	return tonumber(get_player_attribute(player, attribute.saturation))
@@ -99,11 +129,20 @@ end
 
 function stamina.set_saturation(player, level)
 	set_player_attribute(player, attribute.saturation, level)
-	player:hud_change(
+	--[[player:hud_change(
 		get_hud_id(player),
 		"number",
 		math.min(settings.visual_max, level)
 	)
+	]]
+	-- HUDBARS:
+	if hb.change_hudbar(player, "hlad", 20 - level) then
+		if should_unhide("hlad", 20 - level) then
+			hb.unhide_hudbar(player, "hlad")
+		elseif should_hide("hlad", 20 - level) then
+			hb.hide_hudbar(player, "hlad")
+		end
+	end
 end
 
 stamina.registered_on_update_saturations = {}
@@ -154,10 +193,12 @@ end
 function stamina.set_poisoned(player, poisoned)
 	local hud_id = get_hud_id(player)
 	if poisoned then
-		player:hud_change(hud_id, "text", "stamina_hud_poison.png")
+		-- player:hud_change(hud_id, "text", "stamina_hud_poison.png")
+		hb.change_hudbar(player, "hlad", nil, nil, nil, nil, "hudbars_bar_poison.png")
 		set_player_attribute(player, attribute.poisoned, "yes")
 	else
-		player:hud_change(hud_id, "text", "stamina_hud_fg.png")
+		-- player:hud_change(hud_id, "text", "stamina_hud_fg.png")
+		hb.change_hudbar(player, "hlad", nil, nil, nil, nil, "hudbars_bar_stamina.png")
 		set_player_attribute(player, attribute.poisoned, "no")
 	end
 end
@@ -509,7 +550,7 @@ end
 
 minetest.register_on_joinplayer(function(player)
 	local level = stamina.get_saturation(player) or settings.visual_max
-	local id = player:hud_add({
+	local id = 0 --[[ player:hud_add({
 		name = "stamina",
 		hud_elem_type = "statbar",
 		position = {x = 0.5, y = 1},
@@ -521,8 +562,15 @@ minetest.register_on_joinplayer(function(player)
 		alignment = {x = -1, y = -1},
 		offset = {x = -266, y = -110},
 		max = 0,
-	})
+	}) ]]
 	set_hud_id(player, id)
+
+	-- HUDBARS
+	local hud_level = 20 - player:get_hp()
+	hb.init_hudbar(player, "damage", hud_level, 19, not should_hide(hud_level))
+	hud_level = 20 - level
+	hb.init_hudbar(player, "hlad", hud_level, 20, not should_hide(hud_level))
+
 	stamina.set_saturation(player, level)
 	-- reset poisoned
 	stamina.set_poisoned(player, false)
@@ -554,11 +602,24 @@ end)
 
 minetest.register_on_player_hpchange(function(player, hp_change, reason)
 	local old_hp = player:get_hp()
-	if old_hp + hp_change <= 0 then
-		return 1 - old_hp
-	else
-		return hp_change
+	if minetest.is_creative_enabled(player:get_player_name()) then
+		hp_change = 20 - old_hp -- in creative mode always maximal HP
+	elseif old_hp + hp_change <= 0 then
+		hp_change = 1 - old_hp
 	end
+	local new_hp = old_hp + hp_change
+	if new_hp > 20 then
+		new_hp = 20
+	end
+	if hp_change ~= 0 then
+		hb.change_hudbar(player, "damage", 20 - new_hp)
+		if new_hp == 20 then
+			hb.hide_hudbar(player, "damage")
+		else
+			hb.unhide_hudbar(player, "damage")
+		end
+	end
+	return hp_change
 end, true)
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

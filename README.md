@@ -449,6 +449,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: CC0
 * [ContentDB](https://content.minetest.net/packages/Hume2/hiking/)
 
+## HUD Bars (minetest\_hudbars)
+
+* Zdroj: [https://codeberg.org/Wuzzy/minetest\_hudbars](https://codeberg.org/Wuzzy/minetest\_hudbars), revize dd2a9a008d63ae0be705903f1c56899f61029e7a
+* Původní licence: MIT, dvě textury CC-BY-SA-3.0
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/Wuzzy/hudbars/)
+
 ## Ice Cream Mod (minetest\_icecream)
 
 * Zdroj: [https://github.com/Can202/minetest\_icecream](https://github.com/Can202/minetest\_icecream), revize ff9a89b6395dc37e1a4db0106fb2d3321d280ad9
