@@ -66,6 +66,7 @@ function ch_core.get_joining_online_charinfo(player_name)
 		local os_time = os.time()
 		result = {
 			join_timestamp = os_time,
+			player_name = player_name,
 		}
 		ch_core.online_charinfo[player_name] = result
 		old_online_charinfo[player_name] = nil

@@ -35,6 +35,7 @@ dofile(modpath .. "/nodes.lua")
 dofile(modpath .. "/padlock.lua") -- : data, lib
 dofile(modpath .. "/vezeni.lua") -- : privs, data, lib, chat, hud
 dofile(modpath .. "/sickles.lua")
+dofile(modpath .. "/timers.lua") -- : data, chat, hud
 dofile(modpath .. "/hotbar.lua")
 dofile(modpath .. "/pryc.lua") -- : data, lib, chat, privs
 dofile(modpath .. "/zacatek.lua") -- : data, lib, chat, privs
@@ -55,9 +56,11 @@ local head_bone_position = vector.new(0, 6.35, 0)
 local head_bone_angle = vector.new(0, 0, 0)
 local emoting = (minetest.get_modpath("emote") and emote.emoting) or {}
 local globstep_dtime_accumulated = 0.0
+local ch_timer_hudbars = ch_core.count_of_ch_timer_hudbars
 
 local function globalstep(dtime)
 	globstep_dtime_accumulated = globstep_dtime_accumulated + dtime
+	local os_clock = os.clock()
 
 	-- DEN: 5:30 .. 19:00
 	local tod = get_timeofday()
@@ -139,6 +142,29 @@ local function globalstep(dtime)
 			-- ZRUŠIT /pryč:
 			if disrupt_pryc_flag and online_charinfo.pryc then
 				online_charinfo.pryc(player, online_charinfo)
+			end
+
+			-- ČASOVAČE
+			local timers = online_charinfo.ch_timers
+			if timers then
+				for timer_id, timer_def in pairs(table.copy(timers)) do
+					local remains = timer_def.run_at - os_clock
+					if remains <= 0.1 then
+						local func_to_run = timer_def.func
+						ch_core.cancel_ch_timer(online_charinfo, timer_id)
+						if func_to_run then
+							minetest.after(0.1, function()
+								return func_to_run()
+							end)
+						end
+					elseif timer_def.hudbar then
+						remains = math.ceil(remains)
+						if remains ~= timer_def.last_hud_value then
+							hb.change_hudbar(player, timer_def.hudbar, remains)
+							timer_def.last_hud_value = remains
+						end
+					end
+				end
 			end
 		end
 	end

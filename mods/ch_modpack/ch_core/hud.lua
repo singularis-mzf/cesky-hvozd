@@ -1,6 +1,7 @@
 ch_core.require_submod("hud", "data")
 ch_core.require_submod("hud", "lib")
 
+-- PLAYER LIST
 local base_y_offset = 90
 local y_scale = 20
 
@@ -76,35 +77,77 @@ function ch_core.hide_player_list(player, online_charinfo)
 	return true
 end
 
-function ch_core.show_prison_hud(player, online_charinfo, trest)
-	if not player then
-		return false
+-- CH_HUDBARS
+
+local has_hudbars = minetest.get_modpath("hudbars")
+if not has_hudbars then
+	ch_core.count_of_ch_hudbars = 0
+else
+	ch_core.count_of_ch_hudbars = 4
+
+	local hudbar_formatstring = "@1: @2"
+	local hudbar_formatstring_config = {
+		order = { "label", "value" },
+		textdomain = "hudbars",
+	}
+	local hudbar_defaults = {
+		icon = "default_snowball.png", bgicon = nil, bar = "hudbars_bar_timer.png"
+	}
+	for i = 1, ch_core.count_of_ch_hudbars, 1 do
+		hb.register_hudbar("ch_hudbar_"..i, 0xFFFFFF, "x", hudbar_defaults, 0, 100, true, hudbar_formatstring, hudbar_formatstring_config)
 	end
-	local hud = online_charinfo.prison_hud
-	local text = "Výše trestu: "..(trest or "nil")
-	if hud then
-		player:hud_change(hud, "text", text)
-	else
-		hud = {
-			hud_elem_type = "text",
-			position = {x = 0.5, y = 0.85},
-			alignment = {x = 0, y = -1},
-			scale = { x = 100, y = 100},
-			offset = {x = 0, y = 0},
-			text = text,
-			number = 0xFFFFFF,
-		}
-		online_charinfo.prison_hud = player:hud_add(hud)
-	end
+	minetest.register_on_joinplayer(function(player, last_login)
+		for i = 1, ch_core.count_of_ch_hudbars, 1 do
+			hb.init_hudbar(player, "ch_hudbar_"..i, 0, 100, true)
+		end
+	end)
 end
 
-function ch_core.hide_prison_hud(player, online_charinfo)
-	if not player or not online_charinfo.prison_hud then
+function ch_core.try_alloc_hudbar(player)
+	local online_charinfo = ch_core.online_charinfo[player:get_player_name()]
+	if online_charinfo then
+		local hudbars = online_charinfo.hudbars
+		if not hudbars then
+			hudbars = {}
+			online_charinfo.hudbars = hudbars
+		end
+		for i = 1, ch_core.count_of_ch_hudbars, 1 do
+			if not hudbars[i] then
+				local result = "ch_hudbar_"..i
+				hudbars[i] = result
+				return result
+			end
+		end
+	end
+	return nil
+end
+
+function ch_core.free_hudbar(player, hudbar_id)
+	local online_charinfo = ch_core.online_charinfo[player:get_player_name()]
+	if not online_charinfo then
+		minetest.log("warning", "Cannot get online_charinfo of player "..player:get_player_name().." to free a hudbar "..hudbar_id.."!")
 		return false
 	end
-	player:hud_remove(online_charinfo.prison_hud)
-	online_charinfo.prison_hud = nil
-	return true
+	local hudbars = online_charinfo.hudbars
+	if not hudbars then
+		hudbars = {}
+		online_charinfo.hudbars = hudbars
+	end
+
+	if hudbar_id:sub(1, 10) == "ch_hudbar_" then
+		local hudbar_index = tonumber(hudbar_id:sub(11, -1))
+		if 1 <= hudbar_index and hudbar_index <= ch_core.count_of_ch_hudbars then
+			if hudbars[hudbar_index] then
+				hudbars[hudbar_index] = nil
+				hb.hide_hudbar(player, hudbar_id)
+				return true
+			else
+				return false -- not allocated
+			end
+		end
+	end
+	minetest.log("error", "Invalid hudbar_id to free: "..hudbar_id)
+	return false
 end
 
 ch_core.submod_loaded("hud")

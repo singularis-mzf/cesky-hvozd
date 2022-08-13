@@ -130,6 +130,30 @@ local def = {
 }
 minetest.register_node("ch_core:prison_stone", def)
 
+local prison_bar_icon = "default_snowball.png"
+local prison_bar_bgicon = nil
+local prison_bar_bar = "hudbars_bar_prison.png"
+
+local function update_hudbar(online_charinfo, trest)
+	local player = minetest.get_player_by_name(online_charinfo.player_name)
+	if not player then
+		return false
+	end
+	local hudbar_id = online_charinfo.prison_hudbar
+	if not hudbar_id then
+		return false
+	end
+	if trest < 0 then
+		trest = 0
+	end
+	local old_max = online_charinfo.last_hudbar_trest_max
+	local new_max
+	if not old_max or trest > old_max then
+		new_max = trest
+	end
+	return hb.change_hudbar(player, hudbar_id, trest, new_max)
+end
+
 -- přesune online postavu do vězení
 local function do_vezeni(player_name, online_charinfo)
 	-- announcement
@@ -144,7 +168,19 @@ local function do_vezeni(player_name, online_charinfo)
 	end
 
 	-- HUD
-	ch_core.show_prison_hud(minetest.get_player_by_name(player_name), online_charinfo, offline_charinfo.trest or 0)
+	local hudbar_id = online_charinfo.prison_hudbar
+	if not hudbar_id then
+		hudbar_id = ch_core.try_alloc_hudbar(player)
+		if hudbar_id then
+			online_charinfo.prison_hudbar = hudbar_id
+		end
+	end
+	if hudbar_id then
+		online_charinfo.last_hudbar_trest_max = offline_charinfo.trest or 0
+		hb.change_hudbar(player, hudbar_id, online_charinfo.last_hudbar_trest_max, online_charinfo.last_hudbar_trest_max, prison_bar_icon, prison_bar_bgicon, prison_bar_bar, "trest", 0xFFFFFF)
+		update_hudbar(online_charinfo, offline_charinfo.trest or 0)
+		hb.unhide_hudbar(player, hudbar_id)
+	end
 
 	-- close the door
 	local door = vezeni_data.dvere and doors.get(vezeni_data.dvere)
@@ -159,6 +195,15 @@ local function propustit_z_vezeni(player_name, online_charinfo)
 	ch_core.set_temporary_titul(player_name, "ve vězení", false)
 	ch_core.hide_prison_hud(minetest.get_player_by_name(player_name), online_charinfo)
 	ch_core.systemovy_kanal(player_name, "Byl/a jste propuštěn/a z vězení. Nyní se můžete volně pohybovat a používat teleportační příkazy.")
+
+	local hudbar_id = online_charinfo.prison_hudbar
+	if hudbar_id then
+		local player = minetest.get_player_by_name(player_name)
+		if player then
+			ch_core.free_hudbar(player, hudbar_id)
+		end
+		online_charinfo.prison_hudbar = nil
+	end
 
 	local door = vezeni_data.dvere and doors.get(vezeni_data.dvere)
 	if door then
@@ -210,7 +255,8 @@ function ch_core.trest(volajici, jmeno, vyse_trestu)
 
 			local online_charinfo = ch_core.online_charinfo[jmeno]
 			if online_charinfo then
-				ch_core.show_prison_hud(minetest.get_player_by_name(jmeno), online_charinfo, offline_charinfo.trest)
+				update_hudbar(online_charinfo, nova_vyse)
+
 				if trest > 0 and nova_vyse <= 0 then
 					propustit_z_vezeni(jmeno, online_charinfo)
 				elseif trest <= 0 and nova_vyse > 0 then
