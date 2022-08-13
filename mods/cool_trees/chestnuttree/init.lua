@@ -179,7 +179,7 @@ minetest.register_node("chestnuttree:trunk", {
 		"chestnuttree_trunk_top.png",
 		"chestnuttree_trunk.png"
 	},
-	groups = {tree = 1, choppy = 2, oddly_breakable_by_hand = 1, flammable = 2},
+	groups = {tree = 1, choppy = 2, flammable = 2},
 	sounds = default.node_sound_wood_defaults(),
 	paramtype2 = "facedir",
 	on_place = minetest.rotate_node,

@@ -8,9 +8,8 @@ minetest.register_tool("ch_core:sickle_wood", {
 		full_punch_interval = 1.4,
 		max_drop_level = 1,
 		groupcaps = {
-			snappy = {times = {3.0, 1.2, 0.5}, uses = 10, maxlevel = 1},
+			snappy = {times = {2.5, 1.2, 0.5}, uses = 10, maxlevel = 1},
 		},
-		damagegroups = {fleshy = 1},
 	},
 	sound = sickle_sounds,
 	groups = sickle_groups,
@@ -24,7 +23,6 @@ minetest.register_tool("ch_core:sickle_stone", {
 		groupcaps = {
 			snappy = {times = {2.5, 1.1, 0.4}, uses = 10, maxlevel = 3},
 		},
-		damagegroups = {fleshy = 1},
 	},
 	sound = sickle_sounds,
 	groups = sickle_groups,
@@ -38,7 +36,19 @@ minetest.register_tool("ch_core:sickle_steel", {
 		groupcaps = {
 			snappy = {times = {2.0, 1.0, 0.3}, uses = 40, maxlevel = 3},
 		},
-		damagegroups = {fleshy = 2},
+	},
+	sound = sickle_sounds,
+	groups = sickle_groups,
+})
+minetest.register_tool("ch_core:sickle_mese", {
+	description = "Meseový srp",
+	inventory_image = "ch_core_sickle_mese.png",
+	tool_capabilities = {
+		full_punch_interval = 1.0,
+		max_drop_level = 1,
+		groupcaps = {
+			snappy = {times = {1.0, 0.4, 0.2}, uses = 60, maxlevel = 3},
+		},
 	},
 	sound = sickle_sounds,
 	groups = sickle_groups,
@@ -67,6 +77,15 @@ minetest.register_craft({
 	recipe = {
 		{"default:steel_ingot", ""},
 		{"", "default:steel_ingot"},
+		{"group:stick", ""}
+	}
+})
+
+minetest.register_craft({
+	output = "ch_core:sickle_mese",
+	recipe = {
+		{"default:mese_crystal", ""},
+		{"", "default:mese_crystal"},
 		{"group:stick", ""}
 	}
 })
