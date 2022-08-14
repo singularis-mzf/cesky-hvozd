@@ -804,6 +804,13 @@ resp. *ostatní\_zdroje*.
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/wine/)
 * Poznámka: mód obsahuje a používá model sudu z módu Cottages od Sokomine; autorství a licence modelu nejsou spolehlivě známy, protože mód Cottages je nezmiňuje; vycházím však z předpokladu, že model byl považován za součást kódu, a tedy podléhá licenci GPLv3 a autorem/kou je Sokomine.
 
+## Wireless Mesecons (mesecons\_wireless)
+
+* Zdroj: [https://github.com/GreenXenith/mesecons\_wireless](https://github.com/GreenXenith/mesecons\_wireless), revize 8ca249c10bcef8f2a9304fe6ef0e68a7d2910bd8
+* Původní licence: MIT
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/GreenXenith/mesecons_wireless/)
+
 # Ostatní použité zdroje
 
 ## Your Dad's BBQ Mod (BBQ)
