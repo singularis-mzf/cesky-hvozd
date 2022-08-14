@@ -26,7 +26,7 @@ technic_cnc.register_all(
 technic_cnc.register_all(
 	"moreblocks:cactus_checker",
 	{stone = 1, cracky = 3, not_in_creative_inventory = 1},
-	{"moreblocks_cactus_checker.png"},
+	{"default_stone.png^moreblocks_cactus_checker.png"},
 	S("Cactus Checker")
 )
 

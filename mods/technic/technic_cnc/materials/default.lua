@@ -243,6 +243,20 @@ technic_cnc.register_all(
 	S("Gold")
 )
 
+technic_cnc.register_all(
+	"default:glass",
+	{cracky = 1, level = 2, not_in_creative_inventory = 1},
+	{"default_glass.png"},
+	S("Glass")
+)
+
+technic_cnc.register_all(
+	"default:obsidian_glass",
+	{cracky = 3, level = 2, not_in_creative_inventory = 1},
+	{"default_obsidian_glass.png"},
+	S("Obsidian Glass")
+)
+
 if minetest.get_modpath("technic_worldgen") then
 	technic_cnc.register_all(
 		"default:steelblock",

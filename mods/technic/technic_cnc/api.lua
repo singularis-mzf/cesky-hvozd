@@ -6,39 +6,51 @@ local S = technic_cnc.getter
 -- Generic function for registering all the different node types
 function technic_cnc.register_program(recipeitem, suffix, model, groups, images, description, cbox, sbox)
 
-	local dtype
-	local nodeboxdef
-	local meshdef
-	local node_def = minetest.registered_nodes[recipeitem]
-
-	if type(model) ~= "string" then -- assume a nodebox if it's a table or function call
-		dtype = "nodebox"
-		nodeboxdef = {
-			type  = "fixed",
-			fixed = model
-		}
-	else
-		dtype = "mesh"
-		meshdef = model
-	end
-
 	if cbox and not sbox then sbox = cbox end
+	groups.not_in_creative_inventory = 1
 
-	minetest.register_node(":"..recipeitem.."_"..suffix, {
-		description   = description,
-		drawtype      = dtype,
-		node_box      = nodeboxdef,
-		mesh          = meshdef,
+	local def = {
+		description   = "neznámý materiál "..description,
 		tiles         = images,
-		use_texture_alpha = "clip", -- must be here because of leaves
 		paramtype     = "light",
 		paramtype2    = "facedir",
 		walkable      = true,
 		groups        = groups,
 		selection_box = sbox,
 		collision_box = cbox,
-		sounds        = node_def and node_def.sounds,
-	})
+	}
+
+	if type(model) ~= "string" then -- assume a nodebox if it's a table or function call
+		def.drawtype = "nodebox"
+		def.node_box = {
+			type  = "fixed",
+			fixed = model
+		}
+	else
+		def.drawtype = "mesh"
+		def.mesh = model
+	end
+
+	local node_def = minetest.registered_nodes[recipeitem]
+	if node_def then
+		if node_def.description then
+			def.description = node_def.description.." "..description
+		end
+		if node_def.use_texture_alpha then
+			def.use_texture_alpha = node_def.use_texture_alpha
+		elseif node_def.drawtype == "allfaces_optional" then
+			def.use_texture_alpha = "clip" --leaves
+		end
+		if node_def.drawtype == "glasslike_framed_optional" then
+			def.visual_scale = 0.995
+		end
+		if node_def.walkable ~= nil then
+			def.walkable = node_def.walkable
+		end
+		def.sounds = node_def.sounds
+	end
+
+	minetest.register_node(":"..recipeitem.."_"..suffix, def)
 end
 
 local cnc_recipe_items = {}
@@ -62,7 +74,7 @@ function technic_cnc.register_all(recipeitem, groups, images, description)
 		-- Create the node if it passes the test
 		if do_register then
 			technic_cnc.register_program(recipeitem, data.suffix, data.model,
-				groups, images, description.." "..data.desc, data.cbox, data.sbox)
+				groups, images, data.desc, data.cbox, data.sbox)
 		end
 	end
 	cnc_recipe_items[recipeitem] = 1
