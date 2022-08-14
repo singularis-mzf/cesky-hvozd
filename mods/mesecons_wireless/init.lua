@@ -25,7 +25,7 @@
 ]]--
 
 local storage = minetest.get_mod_storage()
-local range_max = 20
+local range_max = 1000
 local connection_max = 100
 local rules = {
 	{x = 1, y = 0, z = 0},
@@ -90,7 +90,7 @@ end
 
 -- Signal Transmitter
 mesecon.register_node("mesecons_wireless:transmitter", {
-	description = "Wireless Mesecon Transmitter",
+	description = "mesespojový vysílač",
 	overlay_tiles = {
 		"",
 		"",
@@ -136,7 +136,7 @@ mesecon.register_node("mesecons_wireless:transmitter", {
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_int("range", 15)
-		meta:set_string("formspec", "field[channel;Channel;${channel}]field[range;Range (1-"..range_max..");${range}")
+		meta:set_string("formspec", "field[channel;kanál;${channel}]field[range;dosah (1-"..range_max..");${range}")
 		minetest.get_node_timer(pos):set(1, 0)
 	end,
 	on_destruct = function(pos)
@@ -259,7 +259,7 @@ mesecon.register_node("mesecons_wireless:transmitter", {
 )
 
 mesecon.register_node("mesecons_wireless:receiver", {
-	description = "Wireless Mesecon Receiver",
+	description = "mesespojový přijímač",
 	overlay_tiles = {
 		"",
 		"",
@@ -280,7 +280,7 @@ mesecon.register_node("mesecons_wireless:receiver", {
 		minetest.get_node_timer(pos):set(1, 0)
 	end,
 	on_construct = function(pos)
-		minetest.get_meta(pos):set_string("formspec", "field[channel;Channel;${channel}]")
+		minetest.get_meta(pos):set_string("formspec", "field[channel;kanál;${channel}]")
 		minetest.get_node_timer(pos):set(1, 0)
 	end,
 	on_destruct = function(pos)
@@ -395,12 +395,12 @@ minetest.register_lbm({
 
 -- Crafting
 minetest.register_craftitem("mesecons_wireless:antenna", {
-	description = "Antenna",
+	description = "anténa",
 	inventory_image = "mesecons_wireless_antenna.png",
 })
 
 minetest.register_craftitem("mesecons_wireless:dish", {
-	description = "Radio Dish",
+	description = "parabolická anténa",
 	inventory_image = "mesecons_wireless_dish.png",
 })
 
