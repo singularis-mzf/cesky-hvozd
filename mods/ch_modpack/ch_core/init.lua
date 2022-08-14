@@ -38,7 +38,7 @@ dofile(modpath .. "/sickles.lua")
 dofile(modpath .. "/timers.lua") -- : data, chat, hud
 dofile(modpath .. "/hotbar.lua")
 dofile(modpath .. "/pryc.lua") -- : data, lib, chat, privs
-dofile(modpath .. "/zacatek.lua") -- : data, lib, chat, privs
+dofile(modpath .. "/teleportace.lua") -- : data, lib, chat, privs, timers
 
 -- KOHOUT: při přechodu mezi dnem a nocí přehraje zvuk
 -- TODO: přehrávat, jen když je postava na povrchu (tzn. ne v hlubokém podzemí)
@@ -82,6 +82,7 @@ local function globalstep(dtime)
 		local player_pos = player:get_pos()
 		local online_charinfo = ch_core.online_charinfo[player_name]
 		local offline_charinfo = ch_core.get_offline_charinfo(player_name)
+		local disrupt_teleport_flag = false
 		local disrupt_pryc_flag = false
 
 		if online_charinfo then
@@ -126,6 +127,9 @@ local function globalstep(dtime)
 				end
 
 				disrupt_pryc_flag = true
+				if not disrupt_teleport_flag and (new_controls.up or new_controls.down or new_controls.left or new_controls.right or new_controls.jump or new_controls.dig or new_controls.place) then
+					disrupt_teleport_flag = true
+				end
 			end
 
 			-- VĚZENÍ:
@@ -164,6 +168,21 @@ local function globalstep(dtime)
 							timer_def.last_hud_value = remains
 						end
 					end
+				end
+			end
+
+			-- ZRUŠIT teleport
+			local teleport_def = ch_core.get_ch_timer_info(online_charinfo, "teleportace")
+			if teleport_def then
+				if not disrupt_teleport_flag then
+					local ts_pos = teleport_def.start_pos
+					if ts_pos then
+						disrupt_teleport_flag = abs(ts_pos.x - player_pos.x) > 0.5 or abs(ts_pos.z - player_pos.z) > 0.5
+					end
+				end
+				if disrupt_teleport_flag then
+					ch_core.cancel_ch_timer(online_charinfo, "teleportace")
+					ch_core.systemovy_kanal(player_name, "Teleportace zrušena v důsledku akce hráče/ky nebo postavy.")
 				end
 			end
 		end

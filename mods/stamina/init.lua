@@ -567,9 +567,11 @@ minetest.register_on_joinplayer(function(player)
 
 	-- HUDBARS
 	local hud_level = 20 - player:get_hp()
-	hb.init_hudbar(player, "damage", hud_level, 19, not should_hide(hud_level))
+	local start_hidden = should_hide("damage", hud_level)
+	hb.init_hudbar(player, "damage", hud_level, 19, start_hidden)
 	hud_level = 20 - level
-	hb.init_hudbar(player, "hlad", hud_level, 20, not should_hide(hud_level))
+	start_hidden = should_hide("hlad", hud_level)
+	hb.init_hudbar(player, "hlad", hud_level, 20, start_hidden)
 
 	stamina.set_saturation(player, level)
 	-- reset poisoned
