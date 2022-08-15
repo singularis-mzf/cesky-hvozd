@@ -837,6 +837,11 @@ resp. *ostatní\_zdroje*.
 * Původní licence: kód MIT, textury různé, ale neoznačené také MIT
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/ethereal/)
 
+## hdx-64-master texture pack by VanessaE (hdx-64)
+
+* Zdroj: [https://gitlab.com/VanessaE/hdx-64/tree/master](https://gitlab.com/VanessaE/hdx-64/tree/master), revize f6d2c003006b296ec974be264a4539ce051614c6
+* Původní licence: GFDLv1.3 (vybrané soubory pod jinými svobodnými licencemi)
+
 ## Scythes & Sickles (sickles)
 
 * Zdroj: [https://github.com/t-affeldt/sickles](https://github.com/t-affeldt/sickles), revize 64f88263e223c0eb22a0721cda0e9680c65f5267
