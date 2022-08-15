@@ -251,6 +251,13 @@ technic_cnc.register_all(
 )
 
 technic_cnc.register_all(
+	"default:meselamp",
+	{cracky = 1, level = 2, not_in_creative_inventory = 1},
+	minetest.registered_items["default:meselamp"].tiles or {"default_meselamp.png"},
+	S("Mese Lamp")
+)
+
+technic_cnc.register_all(
 	"default:obsidian_glass",
 	{cracky = 3, level = 2, not_in_creative_inventory = 1},
 	{"default_obsidian_glass.png"},

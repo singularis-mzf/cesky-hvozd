@@ -47,6 +47,9 @@ function technic_cnc.register_program(recipeitem, suffix, model, groups, images,
 		if node_def.walkable ~= nil then
 			def.walkable = node_def.walkable
 		end
+		if node_def.light_source ~= nil then
+			def.light_source = node_def.light_source
+		end
 		def.sounds = node_def.sounds
 	end
 

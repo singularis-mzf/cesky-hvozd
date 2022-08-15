@@ -29,7 +29,7 @@ minetest.register_on_joinplayer(function(player)
 	-- Refill slot
 	local refill = minetest.create_detached_inventory(player_name.."refill", {
 		allow_put = function(inv, listname, index, stack, player)
-			if unified_inventory.is_creative(player_name) then
+			if unified_inventory.is_creative(player_name) or minetest.check_player_privs(player_name, "server") then
 				return stack:get_count()
 			else
 				return 0
