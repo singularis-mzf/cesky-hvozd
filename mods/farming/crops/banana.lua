@@ -39,6 +39,7 @@ minetest.register_node("farming:banana_3", table.copy(def))
 
 -- stage 4
 def.tiles = {"cucina_vegana_banana_4.png"}
+def.move_resistance = 1
 minetest.register_node("farming:banana_4", table.copy(def))
 
 -- stage 5

@@ -64,6 +64,7 @@ minetest.register_node("farming:flax_2", table.copy(def))
 
 -- stage 3
 def.tiles = {"cucina_vegana_flax_3.png"}
+def.move_resistance = 1
 minetest.register_node("farming:flax_3", table.copy(def))
 
 -- stage 4

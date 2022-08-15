@@ -138,6 +138,7 @@ Created by TenPlus1 (CC BY 3.0)
 Created by TenPlus1 (MIT)
   ethereal_fishing_bob.png
   ethereal_fishing_rod.png
+  ethereal_glostone.png
   ethereal_strawberry_1.png
   ethereal_strawberry_2.png
   ethereal_strawberry_3.png

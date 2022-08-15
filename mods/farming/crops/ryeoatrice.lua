@@ -19,8 +19,8 @@ minetest.override_item("farming:rye", {
 })
 
 minetest.override_item("farming:rye_1", {drop = {}})
-minetest.override_item("farming:rye_2", {drop = {}})
-minetest.override_item("farming:rye_3", {drop = {}})
+minetest.override_item("farming:rye_2", {drop = {}, move_resistance = 1})
+minetest.override_item("farming:rye_3", {drop = {}, move_resistance = 1})
 
 minetest.register_craft({
 	output = "farming:flour",
@@ -47,8 +47,8 @@ minetest.override_item("farming:oat", {
 })
 
 minetest.override_item("farming:oat_1", {drop = {}})
-minetest.override_item("farming:oat_2", {drop = {}})
-minetest.override_item("farming:oat_3", {drop = {}})
+minetest.override_item("farming:oat_2", {drop = {}, move_resistance = 1})
+minetest.override_item("farming:oat_3", {drop = {}, move_resistance = 1})
 
 minetest.register_craft({
 	output = "farming:flour",

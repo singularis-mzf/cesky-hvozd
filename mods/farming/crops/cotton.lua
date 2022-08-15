@@ -116,6 +116,7 @@ minetest.register_node("farming:cotton_2", table.copy(def))
 
 -- stage 3
 def.tiles = {"farming_cotton_3.png"}
+def.move_resistance = 1
 minetest.register_node("farming:cotton_3", table.copy(def))
 
 -- stage 4

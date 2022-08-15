@@ -156,6 +156,7 @@ local def = {
 	place_param2 = 3,
 	sunlight_propagates = true,
 	walkable = false,
+	move_resistance = 1,
 	buildable_to = true,
 	drop = "",
 	selection_box = farming.select,
@@ -179,6 +180,7 @@ minetest.register_node("farming:wheat_3", table.copy(def))
 
 -- stage 4
 def.tiles = {"farming_wheat_4.png"}
+def.move_resistance = 2
 minetest.register_node("farming:wheat_4", table.copy(def))
 
 -- stage 5

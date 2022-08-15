@@ -116,6 +116,7 @@ minetest.register_node("farming:garlic_4", table.copy(def))
 
 -- stage 5
 def.tiles = {"crops_garlic_plant_5.png"}
+def.move_resistance = 1
 def.groups.growing = nil
 def.drop = {
 	items = {

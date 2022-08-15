@@ -175,3 +175,6 @@ alias("farming_plus:tomato", "farming:tomato_8")
 
 -- Weed
 alias("farming:weed", "default:grass_2")
+
+-- Use glostone texture for mese lamp
+minetest.override_item("default:meselamp", {tiles = {"ethereal_glostone.png"}})

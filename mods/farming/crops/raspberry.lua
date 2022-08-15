@@ -52,6 +52,7 @@ minetest.register_node("farming:raspberry_1", table.copy(def))
 
 -- stage 2
 def.tiles = {"farming_raspberry_2.png"}
+def.move_resistance = 1
 minetest.register_node("farming:raspberry_2", table.copy(def))
 
 -- stage 3

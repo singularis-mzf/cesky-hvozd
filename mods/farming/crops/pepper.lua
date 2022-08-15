@@ -109,6 +109,7 @@ minetest.register_node("farming:pepper_3", table.copy(def))
 
 -- stage 4
 def.tiles = {"crops_pepper_plant_4.png"}
+def.move_resistance = 1
 minetest.register_node("farming:pepper_4", table.copy(def))
 
 -- stage 5 (green pepper)

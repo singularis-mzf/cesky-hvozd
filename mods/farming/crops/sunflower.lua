@@ -115,6 +115,7 @@ minetest.register_node("farming:sunflower_2", table.copy(def))
 
 -- stage 3
 def.tiles = {"farming_sunflower_3.png"}
+def.move_resistance = 1
 minetest.register_node("farming:sunflower_3", table.copy(def))
 
 -- stage 4

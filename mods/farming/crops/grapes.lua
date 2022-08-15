@@ -184,7 +184,8 @@ local def = {
 		snappy = 3, flammable = 3, not_in_creative_inventory = 1,
 		attached_node = 1, growing = 1, plant = 1
 	},
-	sounds = default.node_sound_leaves_defaults()
+	sounds = default.node_sound_leaves_defaults(),
+	move_resistance = 1,
 }
 
 -- stage 1
