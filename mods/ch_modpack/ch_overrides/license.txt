@@ -16,3 +16,83 @@ https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 
 Licenses of media (textures)
 ----------------------------
+
+default_river_water.png
+default_river_water_flowing_animated.png
+default_river_water_source_animated.png
+default_water.png
+default_water_flowing_animated.png
+default_water_source_animated.png
+	Author: VanessaE
+	Source: hdx-64 texture pack
+	License: GFDLv1.3
+	Used source: https://commons.wikimedia.org/wiki/File:D_Zyl.jpg
+
+default_desert_sand.png
+default_sand.png
+default_silver_sand.png
+	Author: VanessaE
+	Source: hdx-64 texture pack
+	License: GFDLv1.3
+	Used source: https://commons.wikimedia.org/wiki/File:Sand.jpg
+
+default_gravel.png
+	Author: VanessaE
+	Source: hdx-64 texture pack
+	License: GFDLv1.3
+	Used source: https://commons.wikimedia.org/wiki/File:Gravel_small_stones.jpg
+
+letters_al_overlay.png
+letters_au_overlay.png
+letters_bl_overlay.png
+letters_bu_overlay.png
+letters_cl_overlay.png
+letters_cu_overlay.png
+letters_dl_overlay.png
+letters_du_overlay.png
+letters_el_overlay.png
+letters_eu_overlay.png
+letters_fl_overlay.png
+letters_fu_overlay.png
+letters_gl_overlay.png
+letters_gu_overlay.png
+letters_hl_overlay.png
+letters_hu_overlay.png
+letters_il_overlay.png
+letters_iu_overlay.png
+letters_jl_overlay.png
+letters_ju_overlay.png
+letters_kl_overlay.png
+letters_ku_overlay.png
+letters_ll_overlay.png
+letters_lu_overlay.png
+letters_ml_overlay.png
+letters_mu_overlay.png
+letters_nl_overlay.png
+letters_nu_overlay.png
+letters_ol_overlay.png
+letters_ou_overlay.png
+letters_pl_overlay.png
+letters_pu_overlay.png
+letters_ql_overlay.png
+letters_qu_overlay.png
+letters_rl_overlay.png
+letters_ru_overlay.png
+letters_sl_overlay.png
+letters_su_overlay.png
+letters_tl_overlay.png
+letters_tu_overlay.png
+letters_ul_overlay.png
+letters_uu_overlay.png
+letters_vl_overlay.png
+letters_vu_overlay.png
+letters_wl_overlay.png
+letters_wu_overlay.png
+letters_xl_overlay.png
+letters_xu_overlay.png
+letters_yl_overlay.png
+letters_yu_overlay.png
+letters_zl_overlay.png
+	Author: VanessaE
+	Source: hdx-64 texture pack
+	License: GFDLv1.3
