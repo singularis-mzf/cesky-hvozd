@@ -842,6 +842,11 @@ resp. *ostatní\_zdroje*.
 * Zdroj: [https://gitlab.com/VanessaE/hdx-64/tree/master](https://gitlab.com/VanessaE/hdx-64/tree/master), revize f6d2c003006b296ec974be264a4539ce051614c6
 * Původní licence: GFDLv1.3 (vybrané soubory pod jinými svobodnými licencemi)
 
+## Mesh Beds (mesh\_beds)
+
+* Zdroj: [https://forum.minetest.net/viewtopic.php?t=11817](https://forum.minetest.net/viewtopic.php?t=11817), soubor mesh\_beds.zip
+* Původní licence: WTFPL (u modelů to není řečeno, ale lze předpokládat, že jsou považovány za kód)
+
 ## Scythes & Sickles (sickles)
 
 * Zdroj: [https://github.com/t-affeldt/sickles](https://github.com/t-affeldt/sickles), revize 64f88263e223c0eb22a0721cda0e9680c65f5267

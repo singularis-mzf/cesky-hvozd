@@ -25,7 +25,7 @@ For more details:
 https://opensource.org/licenses/MIT
 
 
-Licenses of media (textures)
+Licenses of textures beds_bed.png and beds_bed_fancy.png
 ----------------------------
 
 Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
@@ -59,3 +59,15 @@ rights may limit how you use the material.
 
 For more details:
 http://creativecommons.org/licenses/by-sa/3.0/
+
+Licenses of models (*.obj) an textures fancy_bed.png and simple_bed.png
+----------------------------
+License: WTFPL
+
+(c) Copyright BlockMen (2014-2015)
+
+This program is free software. It comes without any warranty, to
+the extent permitted by applicable law. You can redistribute it
+and/or modify it under the terms of the Do What The Fuck You Want
+To Public License, Version 2, as published by Sam Hocevar. See
+http://sam.zoy.org/wtfpl/COPYING for more details.

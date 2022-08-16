@@ -66,6 +66,8 @@ emote.register_emote("ukaž", {
 	description = S("points")
 })
 
+emote.dofile("beds")
+
 --[[
 model.animations.freeze = {x = 205, y = 205, override_local = true}
 emote.register_emote("freeze", {
