@@ -13,10 +13,8 @@
 ]]--
 
 local S = minetest.get_translator("techpack_stairway")
-
--- Test MT 5.4 new string mode
-local CLIP = minetest.features.use_texture_alpha_string_modes and "clip" or false
-
+local CLIP = "clip"
+local stairway_groups = {cracky = 2}
 
 minetest.register_node("techpack_stairway:grating", {
 	description = S("TechPack Grating"),
@@ -46,7 +44,7 @@ minetest.register_node("techpack_stairway:grating", {
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = {cracky = 2},
+	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
 })
 
@@ -78,7 +76,7 @@ minetest.register_node("techpack_stairway:handrail1", {
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = {cracky = 2},
+	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
 })
 
@@ -112,7 +110,7 @@ minetest.register_node("techpack_stairway:handrail2", {
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = {cracky = 2},
+	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
 })
 
@@ -146,7 +144,7 @@ minetest.register_node("techpack_stairway:handrail3", {
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = {cracky = 2},
+	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
 })
 
@@ -182,7 +180,7 @@ minetest.register_node("techpack_stairway:handrail4", {
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = {cracky = 2},
+	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
 })
 
@@ -215,7 +213,7 @@ minetest.register_node("techpack_stairway:bridge1", {
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = {cracky = 2},
+	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
 })
 
@@ -249,7 +247,7 @@ minetest.register_node("techpack_stairway:bridge2", {
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = {cracky = 2},
+	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
 })
 
@@ -283,7 +281,7 @@ minetest.register_node("techpack_stairway:bridge3", {
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = {cracky = 2},
+	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
 })
 
@@ -318,7 +316,7 @@ minetest.register_node("techpack_stairway:bridge4", {
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = {cracky = 2},
+	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
 })
 
@@ -357,7 +355,7 @@ minetest.register_node("techpack_stairway:stairway", {
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = {cracky = 2},
+	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
 })
 
@@ -389,7 +387,7 @@ minetest.register_node("techpack_stairway:ladder1", {
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = {cracky = 2},
+	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
 })
 
@@ -422,7 +420,7 @@ minetest.register_node("techpack_stairway:ladder2", {
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = {cracky = 2},
+	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
 })
 
@@ -455,7 +453,7 @@ minetest.register_node("techpack_stairway:ladder3", {
 	use_texture_alpha = CLIP,
     sunlight_propagates = true,
     is_ground_content = false,
-    groups = {cracky = 2},
+    groups = stairway_groups,
     sounds = default.node_sound_metal_defaults(),
 })
 
@@ -486,7 +484,7 @@ minetest.register_node("techpack_stairway:ladder4", {
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = {cracky = 2},
+	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
 })
 
@@ -519,7 +517,7 @@ minetest.register_node("techpack_stairway:lattice", {
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = {cracky = 2},
+	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
 })
 
@@ -562,13 +560,13 @@ minetest.register_node("techpack_stairway:lattice_slop", {
 			end
 		end
 	end,
-		
+
 	paramtype2 = "facedir",
 	paramtype = "light",
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = {cracky = 2},
+	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
 })
 
