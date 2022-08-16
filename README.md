@@ -719,12 +719,12 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: LGPL 2.1
 * [ContentDB](https://content.minetest.net/packages/sofar/stamina/)
 
-## Stairs (stairs)
+## TechPack Stairway (techpack\_stairway)
 
-* Z Minetest Game, upraveno. Odnož byla nutná, protože původní mod neposkytuje dostatečné možnosti lokalizace.
-* Zdroj: [https://github.com/minetest/minetest\_game](https://github.com/minetest/minetest\_game), revize ???
-* Původní licence: LGPL 2.1+
-* Licence úprav: LGPL 2.1+
+* Zdroj: [https://github.com/joe7575/techpack\_stairway](https://github.com/joe7575/techpack\_stairway), revize 7b3deb474df44344677b59f8050e5cfe81d19db9
+* Původní licence: LGPL 2.1+ pro kód, textury, zvuk a dokumentace CC BY-SA 3.0
+* Licence úprav: LGPL 2.1+ pro kód, ostatní CC BY-SA 3.0
+* [ContentDB](https://content.minetest.net/packages/joe7575/techpack\_stairway/)
 
 ## Technic HV Extend (technic\_hv\_extend)
 
