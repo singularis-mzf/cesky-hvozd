@@ -167,6 +167,13 @@ resp. *ostatní\_zdroje*.
 
 # Samostatné módy
 
+## 3D Armor Fly & Swim (3d\_armor\_flyswim)
+
+* Zdroj: [https://github.com/sirrobzeroone/3d\_armor\_flyswim](https://github.com/sirrobzeroone/3d\_armor\_flyswim), revize 586d4501c0e5f700c3055c6bf0820856fe37036c
+* Původní licence: kód LGPLv2.1 (malá část MIT), modely CC BY-SA 3.0, textury různé
+* Licence úprav: LGPLv2.1
+* [ContentDB](https://content.minetest.net/packages/sirrobzeroone/3d\_armor\_flyswim/)
+
 ## Advtrains Construction Train
 
 * Zdroj: [https://git.bananach.space/advtrains\_construction\_train.git/](https://git.bananach.space/advtrains\_construction\_train.git/), revize 2b27b8d8f1a629ff10f295cb8432225a3a9a943b
