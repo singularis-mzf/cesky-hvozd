@@ -773,20 +773,24 @@ function mob_class:update_tag()
 
 	if self.horny == true then
 
-		text = "\nLoving: " .. (self.hornytimer - (HORNY_TIME + HORNY_AGAIN_TIME))
+		text = "\núroveň lásky: " .. (self.hornytimer - (HORNY_TIME + HORNY_AGAIN_TIME))
 
 	elseif self.child == true then
 
-		text = "\nGrowing: " .. (self.hornytimer - CHILD_GROW_TIME)
+		text = "\núroveň růstu: " .. (self.hornytimer - CHILD_GROW_TIME)
 
 	elseif self._breed_countdown then
 
-		text = "\nBreeding: " .. self._breed_countdown
+		text = "\núroveň plození: " .. self._breed_countdown
 
 	end
 
-	self.infotext = "Health: " .. self.health .. " / " .. self.hp_max
-		.. (self.owner == "" and "" or "\n" .. "Owner: " .. self.owner)
+	local nt = self.nametag or ""
+	if nt ~= "" then
+		nt = nt.."\n"
+	end
+	self.infotext = nt.."zdraví: " .. self.health .. " / " .. self.hp_max
+		.. (self.owner == "" and "" or "\n" .. "vlastník/ice: " .. self.owner)
 		.. text
 
 	-- set changes

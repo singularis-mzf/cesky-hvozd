@@ -714,10 +714,10 @@ resp. *ostatní\_zdroje*.
 
 ## Stamina (stamina)
 
-* Zdroj: [https://github.com/minetest-mods/stamina](https://github.com/minetest-mods/stamina), revize 1a6e893f096dd0c120719e918fc1998e9a6175f8
+* Zdroj: [https://notabug.org/TenPlus1/stamina](https://notabug.org/TenPlus1/stamina), revize 96570a558e165f23b42389a501ceebaf20e0f3a8
 * Původní licence: LGPL 2.1+ pro kód, média různě (CC-BY-3.0 a WTFPL)
 * Licence úprav: LGPL 2.1
-* [ContentDB](https://content.minetest.net/packages/sofar/stamina/)
+* [ContentDB](https://content.minetest.net/packages/TenPlus1/stamina/)
 
 ## TechPack Stairway (techpack\_stairway)
 
