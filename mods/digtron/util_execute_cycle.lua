@@ -118,7 +118,8 @@ digtron.execute_dig_cycle = function(pos, clicker)
 	local fuel_burning = meta:get_float("fuel_burning") -- get amount of burned fuel left over from last cycle
 	local status_text = S("Heat remaining in controller furnace: @1", math.floor(math.max(0, fuel_burning)))
 	local exhaust = meta:get_int("on_coal")
-	
+	local digtron_creative_mode = minetest.check_player_privs(clicker, "creative") and meta:get_string("creative_mode") == "true"
+
 	local layout = DigtronLayout.create(pos, clicker)
 
 	local status_text, return_code = neighbour_test(layout, status_text, dir)
@@ -130,15 +131,15 @@ digtron.execute_dig_cycle = function(pos, clicker)
 	if size_check_error then
 		return pos, size_check_error, 8
 	end
-	
+
 	local controlling_coordinate = digtron.get_controlling_coordinate(pos, facing)
-	
+
 	----------------------------------------------------------------------------------------------------------------------
-	
+
 	local items_dropped = {}
 	local digging_fuel_cost = 0
 	local particle_systems = {}
-	
+
 	-- execute the execute_dig method on all digtron components that have one
 	-- This builds a set of nodes that will be dug and returns a list of products that will be generated
 	-- but doesn't actually dig the nodes yet. That comes later.
@@ -163,9 +164,8 @@ digtron.execute_dig_cycle = function(pos, clicker)
 			end
 		end
 	end
-	
+
 	----------------------------------------------------------------------------------------------------------------------
-	
 	-- test if any digtrons are obstructed by non-digtron nodes that haven't been marked
 	-- as having been dug.
 	local can_move = true
@@ -175,11 +175,11 @@ digtron.execute_dig_cycle = function(pos, clicker)
 			can_move = false
 		end
 	end
-	
+
 	if test_stop_block(pos, items_dropped) then
 		can_move = false
 	end
-	
+
 	if not can_move then
 		-- mark this node as waiting, will clear this flag in digtron.config.cycle_time seconds
 		minetest.get_meta(pos):set_string("waiting", "true")
@@ -190,7 +190,7 @@ digtron.execute_dig_cycle = function(pos, clicker)
 	end
 
 	----------------------------------------------------------------------------------------------------------------------
-	
+
 	-- ask each builder node if it can get what it needs from inventory to build this cycle.
 	-- This is a complicated test because each builder needs to actually *take* the item it'll
 	-- need from inventory, and then we put it all back afterward.
@@ -203,12 +203,18 @@ digtron.execute_dig_cycle = function(pos, clicker)
 	local test_fuel_items = {}
 	local test_build_fuel_cost = 0
 	if layout.builders ~= nil then
+		local inventories
+		if digtron_creative_mode then
+			inventories = true
+		else
+			inventories = layout.inventories
+		end
 		for k, location in pairs(layout.builders) do
 			local target = minetest.get_node(location.pos)
 			local targetdef = minetest.registered_nodes[target.name]
 			local test_location = vector.add(location.pos, dir)
 			if targetdef.test_build ~= nil then
-				test_build_return_code, test_build_return_items, failed_to_find = targetdef.test_build(location.pos, test_location, layout.inventories, layout.protected, layout.nodes_dug, controlling_coordinate, layout.controller)
+				test_build_return_code, test_build_return_items, failed_to_find = targetdef.test_build(location.pos, test_location, inventories, layout.protected, layout.nodes_dug, controlling_coordinate, layout.controller)
 				for k, return_item in pairs(test_build_return_items) do
 					table.insert(test_items, return_item)
 					test_build_fuel_cost = test_build_fuel_cost + digtron.config.build_cost
@@ -259,12 +265,12 @@ digtron.execute_dig_cycle = function(pos, clicker)
 	for k, item_return in pairs(test_items) do
 		digtron.place_in_specific_inventory(item_return.item, item_return.location, layout.inventories, layout.controller)
 	end
-	
-	if test_fuel_needed > fuel_burning + test_fuel_burned then
+
+	if not digtron_creative_mode and test_fuel_needed > fuel_burning + test_fuel_burned then
 		minetest.sound_play("buzzer", {gain=0.5, pos=pos})
 		return pos, S("Digtron needs more fuel."), 4 -- abort, don't dig and don't build.
 	end
-	
+
 	if not can_build then
 		minetest.get_meta(pos):set_string("waiting", "true")
 		minetest.get_node_timer(pos):start(digtron.config.cycle_time)
@@ -281,6 +287,11 @@ digtron.execute_dig_cycle = function(pos, clicker)
 		end
 		return pos, return_string .. status_text, return_code --Abort, don't dig and don't build.
 	end	
+
+	if digtron_creative_mode then
+		items_dropped = {}
+		digging_fuel_cost = 0
+	end
 
 	----------------------------------------------------------------------------------------------------------------------
 	
@@ -310,7 +321,7 @@ digtron.execute_dig_cycle = function(pos, clicker)
 	pos = vector.add(pos, dir)
 	meta = minetest.get_meta(pos)
 	if move_player then
-		clicker:moveto(vector.add(dir, clicker:get_pos()), true)
+		clicker:move_to(vector.add(dir, clicker:get_pos()), true)
 	end
 	
 	-- store or drop the products of the digger heads
@@ -323,12 +334,18 @@ digtron.execute_dig_cycle = function(pos, clicker)
 	local strange_failure = false
 	-- execute_build on all digtron components that have one
 	if layout.builders ~= nil then
+		local inventories
+		if digtron_creative_mode then
+			inventories = true
+		else
+			inventories = layout.inventories
+		end
 		for k, location in pairs(layout.builders) do
 			local target = minetest.get_node(location.pos)
 			local targetdef = minetest.registered_nodes[target.name]
 			if targetdef.execute_build ~= nil then
 				--using the old location of the controller as fallback so that any leftovers land with the rest of the digger output. Not that there should be any.
-				local build_return = targetdef.execute_build(location.pos, clicker, layout.inventories, layout.protected, layout.nodes_dug, controlling_coordinate, oldpos)
+				local build_return = targetdef.execute_build(location.pos, clicker, inventories, layout.protected, layout.nodes_dug, controlling_coordinate, oldpos)
 				if build_return < 0 then
 					-- This happens if there's insufficient inventory, but we should have confirmed there was sufficient inventory during test phase.
 					-- So this should never happen. However, "should never happens" happen sometimes. So
@@ -363,9 +380,14 @@ digtron.execute_dig_cycle = function(pos, clicker)
 		minetest.sound_play("buzzer", {gain=0.5, pos=pos})
 		status_text = S("Digtron unexpectedly failed to execute one or more build operations, likely due to an inventory error.") .. "\n"
 	end
-	
-	local total_fuel_cost = math.max(digging_fuel_cost + building_fuel_cost - power_from_cables, 0)
-	
+
+	local total_fuel_cost
+	if digtron_creative_mode then
+		total_fuel_cost = 0
+	else
+		total_fuel_cost = math.max(digging_fuel_cost + building_fuel_cost - power_from_cables, 0)
+	end
+
 	-- actually burn the fuel needed
 	fuel_burning = fuel_burning - total_fuel_cost
 	if digtron.config.particle_effects and exhaust == 1 then
@@ -379,7 +401,7 @@ digtron.execute_dig_cycle = function(pos, clicker)
 			fuel_burning = fuel_burning + digtron.burn(layout.fuelstores, -fuel_burning, false)
 		end
 	end
-	                                        
+
 	meta:set_float("fuel_burning", fuel_burning)
 	meta:set_int("on_coal", exhaust)
 	status_text = status_text .. S("Heat remaining in controller furnace: @1", math.floor(math.max(0, fuel_burning)))
@@ -388,7 +410,7 @@ digtron.execute_dig_cycle = function(pos, clicker)
 	for _, particles in pairs(particle_systems) do
 		minetest.add_particlespawner(particles)
 	end
-	
+
 	-- finally, dig out any nodes remaining to be dug. Some of these will have had their flag revoked because
 	-- a builder put something there or because they're another digtron node.
 	local node_to_dig, whether_to_dig = layout.nodes_dug:pop()
@@ -449,7 +471,7 @@ digtron.execute_move_cycle = function(pos, clicker)
 	
 	pos = vector.add(pos, dir)
 	if move_player then
-		clicker:moveto(vector.add(clicker:get_pos(), dir), true)
+		clicker:move_to(vector.add(clicker:get_pos(), dir), true)
 	end
 	return pos, "", 0
 end
@@ -469,7 +491,8 @@ digtron.execute_downward_dig_cycle = function(pos, clicker)
 	local fuel_burning = meta:get_float("fuel_burning") -- get amount of burned fuel left over from last cycle
 	local status_text = S("Heat remaining in controller furnace: @1", math.floor(math.max(0, fuel_burning)))
 	local exhaust = meta:get_int("on_coal")
-	                                        
+	local digtron_creative_mode = minetest.check_player_privs(clicker, "creative") and meta:get_string("creative_mode") == "true"
+
 	local layout = DigtronLayout.create(pos, clicker)
 
 	local status_text, return_code = neighbour_test(layout, status_text, dir)
@@ -541,8 +564,13 @@ digtron.execute_downward_dig_cycle = function(pos, clicker)
 		return pos, S("Digtron is obstructed.") .. "\n" .. status_text, 3 --Abort, don't dig and don't build.
 	end
 
+	if digtron_creative_mode then
+		items_dropped = {}
+		digging_fuel_cost = 0
+	end
+
 	----------------------------------------------------------------------------------------------------------------------
-	
+
 	-- All tests passed, ready to go for real!
 	minetest.sound_play("construction", {gain=1.0, pos=pos})
 
@@ -569,7 +597,7 @@ digtron.execute_downward_dig_cycle = function(pos, clicker)
 	pos = vector.add(pos, dir)
 	meta = minetest.get_meta(pos)
 	if move_player then
-		clicker:moveto(vector.add(clicker:get_pos(), dir), true)
+		clicker:move_to(vector.add(clicker:get_pos(), dir), true)
 	end
 	
 	-- store or drop the products of the digger heads
@@ -577,7 +605,7 @@ digtron.execute_downward_dig_cycle = function(pos, clicker)
 		digtron.place_in_inventory(itemname, layout.inventories, oldpos)
 	end
 	digtron.award_item_dug(items_dropped, clicker) -- Achievements mod hook
-	
+
 	local status_text = ""
 	
 	-- actually burn the fuel needed

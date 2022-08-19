@@ -100,3 +100,6 @@ Fuel items=Palivo
 Digtron Fuel Storage=Palivový modul digtronu
 Digtron Combined Storage=Kombinovaný úložný modul digtronu
 Digtron Core=Digtronové jádro
+
+Creative Mode=režim usnadnění
+If the player has creative privilege, the Digtron in this mode will not use or check inventories.@nIt will dig and build, but no fuel will be burnt, no dug nodes returned or built nodes demanded.=Má-li postava právo usnadnění hry (creative), digtron v režimu usnadnění nebude používat nebo kontrolovat svoje inventáře.@nBude těžit a stavět, ale nespotřebuje žádné palivo, nevrátí vytěžené bloky ani nespotřebuje bloky stavěné.

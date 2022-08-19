@@ -51,7 +51,7 @@ minetest.register_node("digtron:controller", {
 		meta:set_float("fuel_burning", 0.0)
 		meta:set_string("infotext", S("Heat remaining in controller furnace: @1", 0))
 	end,
-	
+
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		local meta = minetest.get_meta(pos)
 		if meta:get_string("waiting") == "true" then
@@ -60,12 +60,12 @@ minetest.register_node("digtron:controller", {
 		end
 	
 		local newpos, status, return_code = digtron.execute_dig_cycle(pos, clicker)
-		
+
 		meta = minetest.get_meta(newpos)
 		if status ~= nil then
 			meta:set_string("infotext", status)
 		end
-		
+
 		-- Start the delay before digtron can run again.
 		minetest.get_meta(newpos):set_string("waiting", "true")
 		minetest.get_node_timer(newpos):start(digtron.config.cycle_time)
@@ -78,12 +78,13 @@ minetest.register_node("digtron:controller", {
 
 -- Auto-controller
 ---------------------------------------------------------------------------------------------------------------
-
 local auto_formspec = "size[8,6.2]" ..
 	default.gui_bg ..
 	default.gui_bg_img ..
 	default.gui_slots ..
-	"container[2.0,0]" ..
+	"checkbox[0,0;creative_mode;"..S("Creative Mode")..";${creative_mode}]" ..
+	"tooltip[creative_mode;"..S("If the player has creative privilege, the Digtron in this mode will not use or check inventories.\nIt will dig and build, but no fuel will be burnt, no dug nodes returned or built nodes demanded.").."]" ..
+	"container[3.0,0]" ..
 	"field[0.0,0.8;1,0.1;cycles;" .. S("Cycles").. ";${cycles}]" ..
 	"tooltip[cycles;" .. S("When triggered, this controller will try to run for the given number of cycles.\nThe cycle count will decrement as it runs, so if it gets halted by a problem\nyou can fix the problem and restart.").. "]" ..
 	"button_exit[0.7,0.5;1,0.1;set;" .. S("Set").. "]" ..
@@ -111,6 +112,10 @@ if minetest.get_modpath("doc") then
 	"tooltip[help;" .. S("Show documentation about this block").. "]"
 end	
 
+local function get_auto_formspec(meta)
+	return auto_formspec:gsub("${creative_mode}", meta:get_string("creative_mode"))
+end
+
 local function auto_cycle(pos)
 	local node = minetest.get_node(pos)
 	local controlling_coordinate = digtron.get_controlling_coordinate(pos, node.param2)
@@ -136,7 +141,7 @@ local function auto_cycle(pos)
 				end
 				minetest.after(meta:get_int("period"), auto_cycle, newpos)
 			else
-				meta:set_string("formspec", auto_formspec)
+				meta:set_string("formspec", get_auto_formspec(meta))
 			end
 		else
 			meta = minetest.get_meta(newpos)
@@ -158,7 +163,7 @@ local function auto_cycle(pos)
 			end
 			minetest.after(meta:get_int("period"), auto_cycle, newpos)
 		else
-			meta:set_string("formspec", auto_formspec)
+			meta:set_string("formspec", get_auto_formspec(meta))
 		end
 		return
 	end
@@ -173,7 +178,7 @@ local function auto_cycle(pos)
 	if cycle > 0 then
 		minetest.after(meta:get_int("period"), auto_cycle, newpos)
 	else
-		meta:set_string("formspec", auto_formspec)
+		meta:set_string("formspec", get_auto_formspec(meta))
 	end
 end
 
@@ -199,24 +204,26 @@ minetest.register_node("digtron:auto_controller", {
 		"digtron_plate.png^[colorize:" .. digtron.auto_controller_colorize,
 		"digtron_plate.png^digtron_control.png^[colorize:" .. digtron.auto_controller_colorize,
 	},
-	
+
 	drawtype = "nodebox",
 	node_box = {
 		type = "fixed",
 		fixed = controller_nodebox,
 	},
-	
+
 	on_construct = function(pos)
         local meta = minetest.get_meta(pos)
 		meta:set_float("fuel_burning", 0.0)
 		meta:set_string("infotext", S("Heat remaining in controller furnace: @1", 0))
-		meta:set_string("formspec", auto_formspec)
 		-- Reusing offset and period to keep the digtron node-moving code simple, and the names still fit well
 		meta:set_int("period", digtron.config.cycle_time)
 		meta:set_int("offset", 0)
 		meta:set_int("cycles", 0)
 		meta:set_int("slope", 0)
-		
+		meta:set_string("creative_mode", "false")
+
+		meta:set_string("formspec", get_auto_formspec(meta))
+
 		local inv = meta:get_inventory()
 		inv:set_size("stop", 1)
 	end,
@@ -237,14 +244,14 @@ minetest.register_node("digtron:auto_controller", {
 		inv:set_stack(listname, index, ItemStack(""))
 		return 0
 	end,
-	
+
 	on_receive_fields = function(pos, formname, fields, sender)
         local meta = minetest.get_meta(pos)
 		local offset = tonumber(fields.offset)
 		local period = tonumber(fields.period)
 		local slope = tonumber(fields.slope)
 		local cycles = tonumber(fields.cycles)
-		
+
 		if period and period > 0 then
 			meta:set_int("period", math.max(digtron.config.cycle_time, math.floor(period)))
 		end
@@ -292,13 +299,18 @@ minetest.register_node("digtron:auto_controller", {
 		if fields.help and minetest.get_modpath("doc") then --check for mod in case someone disabled it after this digger was built
 			minetest.after(0.5, doc.show_entry, sender:get_player_name(), "nodes", "digtron:auto_controller", true)
 		end
+
+		if fields.creative_mode ~= nil then
+			meta:set_string("creative_mode", fields.creative_mode)
+			meta:set_string("formspec", get_auto_formspec(meta))
+		end
 	end,	
 	
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("infotext", meta:get_string("infotext") .. "\n" .. S("Interrupted!"))
 		meta:set_string("waiting", "true")
-		meta:set_string("formspec", auto_formspec)
+		meta:set_string("formspec", get_auto_formspec(meta))
 	end,
 })
 

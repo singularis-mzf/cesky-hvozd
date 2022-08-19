@@ -274,12 +274,15 @@ minetest.register_node("digtron:builder", {
 				--managed one more cycle. That's not a bad outcome for a digtron array that was built stupidly to begin with.
 				return 1, return_items
 			end
-			
-			local source_location = digtron.take_from_inventory(item_stack:get_name(), inventory_positions)
-			if source_location ~= nil then
-				table.insert(return_items, {item=item_stack, location=source_location})
-			else
-				return 2, return_items, item_stack -- error code for "needed an item but couldn't get it from inventory"
+
+			if inventory_positions ~= true then -- in the creative digtron mode, inventory_positions is set to true,
+                                                -- so we don't check inventories at all
+				local source_location = digtron.take_from_inventory(item_stack:get_name(), inventory_positions)
+				if source_location ~= nil then
+					table.insert(return_items, {item=item_stack, location=source_location})
+				else
+					return 2, return_items, item_stack -- error code for "needed an item but couldn't get it from inventory"
+				end
 			end
 			extrusion_count = extrusion_count + 1
 			buildpos = digtron.find_new_pos(buildpos, facing)
@@ -287,7 +290,7 @@ minetest.register_node("digtron:builder", {
 		
 		return 1, return_items
 	end,
-	
+
 	execute_build = function(pos, player, inventory_positions, protected_nodes, nodes_dug, controlling_coordinate, controller_pos)
 		local meta = minetest.get_meta(pos)
 		local build_facing = tonumber(meta:get_int("build_facing"))
@@ -330,10 +333,13 @@ minetest.register_node("digtron:builder", {
 				end
 			end
 		
-			local sourcepos = digtron.take_from_inventory(item_stack:get_name(), inventory_positions)
-			if sourcepos == nil then
-				-- item not in inventory! Need to sound the angry buzzer to let the player know, so return a negative number.
-				return (built_count + 1) * -1
+			local sourcepos
+			if inventory_positions ~= true then
+				sourcepos = digtron.take_from_inventory(item_stack:get_name(), inventory_positions)
+				if sourcepos == nil then
+					-- item not in inventory! Need to sound the angry buzzer to let the player know, so return a negative number.
+					return (built_count + 1) * -1
+				end
 			end
 			local returned_stack, success = digtron.item_place_node(ItemStack(item_stack), player, buildpos, build_facing)
 			if success == true then
@@ -345,7 +351,9 @@ minetest.register_node("digtron:builder", {
 			else
 				--failed to build, target node probably obstructed. Put the item back in inventory.
 				--Should probably never reach this since we're guarding against can_build_to, above, but this makes things safe if we somehow do.
-				digtron.place_in_specific_inventory(item_stack, sourcepos, inventory_positions, controller_pos)
+				if inventory_positions ~= true then
+					digtron.place_in_specific_inventory(item_stack, sourcepos, inventory_positions, controller_pos)
+				end
 				return built_count
 			end
 
