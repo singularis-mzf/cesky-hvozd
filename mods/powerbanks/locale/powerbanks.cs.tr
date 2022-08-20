@@ -1,10 +1,10 @@
 # textdomain: powerbanks
 
-Powerbank Mk@1: @2 / @3 @4=Přenosná nabíječka značky @1: @2 / @3 @4
+Powerbank Mk@1: @2 / @3 @4=přenosná nabíječka značky @1: @2 / @3 @4
 Charging Slots=Nabíjecí konektory
-Powerbank Mk@1=Přenosná nabíječka značky @1
+Powerbank Mk@1=přenosná nabíječka značky @1
 Power Remaining: @1=Zbývá: @1
-Powerbank Mk@1 Node=Přenosná nabíječka značky @1
+Powerbank Mk@1 Node=přenosná nabíječka značky @1
 Powerbank is owned by @1=Přenosnou nabíječku vlastní: @1
 Powerbank cannot be removed because it is not empty=Přenosnou nabíječku nelze vzít, protože není prázdná
 Charging=nabíjí

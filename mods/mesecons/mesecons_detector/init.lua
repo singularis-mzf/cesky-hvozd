@@ -73,7 +73,7 @@ minetest.register_node("mesecons_detector:object_detector_off", {
 	is_ground_content = false,
 	walkable = true,
 	groups = {cracky=3},
-	description="Detektor hráčských postav",
+	description="detektor hráčských postav",
 	mesecons = {receptor = {
 		state = mesecon.state.off,
 		rules = mesecon.rules.pplate
@@ -249,7 +249,7 @@ minetest.register_node("mesecons_detector:node_detector_off", {
 	is_ground_content = false,
 	walkable = true,
 	groups = {cracky=3},
-	description="Detektor předmětů",
+	description="detektor předmětů",
 	mesecons = {receptor = {
 		state = mesecon.state.off
 	}},

@@ -130,7 +130,7 @@ mesecon.register_movestone("mesecons_movestones:movestone", {
 		"jeija_movestone_arrows.png",
 	},
 	groups = {cracky = 3},
-    description = "Pohyblivý blok",
+    description = "pohyblivý blok",
 	sounds = mesecon.node_sound.stone
 }, false, false)
 
@@ -144,7 +144,7 @@ mesecon.register_movestone("mesecons_movestones:sticky_movestone", {
 		"jeija_sticky_movestone.png",
 	},
 	groups = {cracky = 3},
-    description = "Lepící pohyblivý blok",
+    description = "lepící pohyblivý blok",
 	sounds = mesecon.node_sound.stone,
 }, true, false)
 
@@ -158,7 +158,7 @@ mesecon.register_movestone("mesecons_movestones:movestone_vertical", {
 		"jeija_movestone_arrows.png^[transformR90",
 	},
 	groups = {cracky = 3},
-    description = "Svisle pohyblivý blok",
+    description = "svisle pohyblivý blok",
 	sounds = mesecon.node_sound.stone
 }, false, true)
 
@@ -172,7 +172,7 @@ mesecon.register_movestone("mesecons_movestones:sticky_movestone_vertical", {
 		"jeija_movestone_arrows.png^[transformR90",
 	},
 	groups = {cracky = 3},
-    description = "Lepící svisle pohyblivý blok",
+    description = "lepící svisle pohyblivý blok",
 	sounds = mesecon.node_sound.stone,
 }, true, true)
 

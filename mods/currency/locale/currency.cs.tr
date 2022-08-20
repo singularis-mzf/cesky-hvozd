@@ -3,7 +3,7 @@
 
 ### barter.lua ###
 
-Barter Table=Obchodní stolek
+Barter Table=obchodní stolek
 Cancel=Zrušit
 Confirm=Uzavřít@nnabídku
 Start=Otevřít nabídku
@@ -11,5 +11,5 @@ Exchange=Schválit@nvýměnu
 
 ### safe.lua ###
 
-Safe=Trezor
+Safe=trezor
 Safe (owned by @1)=Trezor (vlastník/ice: @1)

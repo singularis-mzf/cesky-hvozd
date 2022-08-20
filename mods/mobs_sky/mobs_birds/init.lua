@@ -21,10 +21,10 @@ end
 if ENABLE_GULLS then
 
 	local gulls = {
-		{"default", "Racek obecný", {"animal_gull_mesh.png"}, false, "default_cloud.png"},
-		{"black", "Racek černý", {"gull_black.png"}, false, "default_cloud.png^[colorize:#000000:240"},
-		{"gray", "Racek šedý", {"gull_gray.png"}, false, "default_cloud.png^[colorize:#999999:240"},
-		{"grayblue", "Racek modrošedý", {"gull_grayblue.png"}, false, "default_cloud.png^[colorize:#73778a:240"},
+		{"default", "racek obecný", {"animal_gull_mesh.png"}, false, "default_cloud.png"},
+		{"black", "racek černý", {"gull_black.png"}, false, "default_cloud.png^[colorize:#000000:240"},
+		{"gray", "racek šedý", {"gull_gray.png"}, false, "default_cloud.png^[colorize:#999999:240"},
+		{"grayblue", "racek modrošedý", {"gull_grayblue.png"}, false, "default_cloud.png^[colorize:#73778a:240"},
 	}
 	
 	local gull_template = {

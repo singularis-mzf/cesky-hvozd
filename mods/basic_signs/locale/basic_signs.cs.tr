@@ -4,28 +4,28 @@
 #
 
 Write=Napsat
-Locked sign, owned by @1@n=Zamčená cedule (vlastní: @1)@n
+Locked sign, owned by @1@n=zamčená cedule (vlastní: @1)@n
 locked =zamčená 
 # @1 wrote "@2" to @3sign at @4=@1 napsal/a "@2" na @3ceduli v @4
 Sign=Cedule
 Can edit all locked signs=Může upravovat všechny zamčené cedule
-# Sign (@1, metal)=Cedule (@1, kovová)
+# Sign (@1, metal)=cedule (@1, kovová)
 Attempt to register unknown node as fence=Pokus registrovat neznámý uzel jako plot
 Registered @1 and @2=Registrováno @1 a @2
 [MOD] signs loaded=[MOD] signs načten
 
-Locked Sign=Zamčená dřevěná cedule (6 řádek)
-Glass Sign=Skleněná cedule (6 řádek)
-Obsidian Glass Sign=Cedule z obsidiánového skla (6 řádek)
-Plastic Sign=Plastová cedule (6 řádek)
-Sign (green, steel)=Zelená kovová cedule (6 řádek)
-Sign (yellow, steel)=Žlutá kovová cedule (6 řádek)
-Sign (red, steel)=Červená kovová cedule (6 řádek)
-Sign (white_red, steel)=Bílá kovová cedule s červeným okrajem (6 řádek)
-Sign (white_black, steel)=Bílá kovová cedule s černým okrajem (6 řádek)
-Sign (orange, steel)=Oranžová kovová cedule (6 řádek)
-Sign (blue, steel)=Modrá kovová cedule (6 řádek)
-Sign (brown, steel)=Hnědá kovová cedule (6 řádek)
+Locked Sign=zamčená dřevěná cedule (6 řádek)
+Glass Sign=skleněná cedule (6 řádek)
+Obsidian Glass Sign=cedule z obsidiánového skla (6 řádek)
+Plastic Sign=plastová cedule (6 řádek)
+Sign (green, steel)=zelená kovová cedule (6 řádek)
+Sign (yellow, steel)=žlutá kovová cedule (6 řádek)
+Sign (red, steel)=červená kovová cedule (6 řádek)
+Sign (white_red, steel)=bílá kovová cedule s červeným okrajem (6 řádek)
+Sign (white_black, steel)=bílá kovová cedule s černým okrajem (6 řádek)
+Sign (orange, steel)=oranžová kovová cedule (6 řádek)
+Sign (blue, steel)=modrá kovová cedule (6 řádek)
+Sign (brown, steel)=hnědá kovová cedule (6 řádek)
 
 # green=zelená
 # yellow=žlutá

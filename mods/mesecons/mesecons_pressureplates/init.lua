@@ -100,7 +100,7 @@ end
 
 mesecon.register_pressure_plate(
 	"mesecons_pressureplates:pressure_plate_wood",
-	"Dřevěný pedál",
+	"dřevěný pedál",
 	{"jeija_pressure_plate_wood_off.png","jeija_pressure_plate_wood_off.png","jeija_pressure_plate_wood_off_edges.png"},
 	{"jeija_pressure_plate_wood_on.png","jeija_pressure_plate_wood_on.png","jeija_pressure_plate_wood_on_edges.png"},
 	"jeija_pressure_plate_wood_wield.png",
@@ -111,7 +111,7 @@ mesecon.register_pressure_plate(
 
 mesecon.register_pressure_plate(
 	"mesecons_pressureplates:pressure_plate_stone",
-	"Kamenný pedál",
+	"kamenný pedál",
 	{"jeija_pressure_plate_stone_off.png","jeija_pressure_plate_stone_off.png","jeija_pressure_plate_stone_off_edges.png"},
 	{"jeija_pressure_plate_stone_on.png","jeija_pressure_plate_stone_on.png","jeija_pressure_plate_stone_on_edges.png"},
 	"jeija_pressure_plate_stone_wield.png",

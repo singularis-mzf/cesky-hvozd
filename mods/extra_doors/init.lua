@@ -16,7 +16,7 @@ doors.register( "door_woodpanel1", {
 	-- Colonial Style (6 panel)
 	tiles = { { name = "doors_door_woodpanel1.png", backface_culling = true } },
 	use_texture_alpha = "clip",
-	description = "Dřevěné koloniální dveře",
+	description = "dřevěné koloniální dveře",
 	inventory_image = "doors_item_woodpanel1.png",
 	groups = { choppy = 2, oddly_breakable_by_hand = 2, flammable = 2 },
 	recipe = {
@@ -30,7 +30,7 @@ doors.register( "door_woodglass1", {
 	-- Cambridge Style (2 panel)
 	tiles = { { name = "doors_door_woodglass1.png", backface_culling = true } },
 	use_texture_alpha = "clip",
-	description = "Dřevěné dveře jednosloupcové",
+	description = "dřevěné dveře jednosloupcové",
 	inventory_image = "doors_item_woodglass1.png",
 	groups = { choppy = 2, oddly_breakable_by_hand = 2, flammable = 2 },
 	recipe = {
@@ -44,7 +44,7 @@ doors.register( "door_woodglass2", {
 	-- Atherton Style (4 panel)
 	tiles = { { name = "doors_door_woodglass2.png", backface_culling = true } },
 	use_texture_alpha = "clip",
-	description = "Dřevěné dveře dvousloupcové",
+	description = "dřevěné dveře dvousloupcové",
 	inventory_image = "doors_item_woodglass2.png",
 	groups = { choppy = 2, oddly_breakable_by_hand = 2, flammable = 2 },
 	recipe = {
@@ -57,7 +57,7 @@ doors.register( "door_woodglass2", {
 doors.register( "door_japanese", {
 	tiles = { { name = "doors_door_japanese.png", backface_culling = true } },
 	use_texture_alpha = "opaque",
-	description = "Japonské dveře",
+	description = "japonské dveře",
 	inventory_image = "doors_item_japanese.png",
 	groups = { choppy = 2, oddly_breakable_by_hand = 2, flammable = 2 },
 	recipe = {
@@ -70,7 +70,7 @@ doors.register( "door_japanese", {
 doors.register( "door_french", {
 	tiles = { { name = "doors_door_french.png", backface_culling = true } },
 	use_texture_alpha = "clip",
-	description = "Francouzské dveře",
+	description = "francouzské dveře",
 	inventory_image = "doors_item_french.png",
 	groups = { choppy = 2, oddly_breakable_by_hand = 2, flammable = 2 },
 	recipe = {
@@ -83,7 +83,7 @@ doors.register( "door_french", {
 doors.register( "door_cottage1", {
 	tiles = { { name = "doors_door_cottage1.png", backface_culling = true } },
 	use_texture_alpha = "opaque",
-	description = "Dveře do interiéru chaty",
+	description = "dveře do interiéru chaty",
 	inventory_image = "doors_item_cottage1.png",
 	groups = { choppy = 2, oddly_breakable_by_hand = 2, flammable = 2 },
 	recipe = {
@@ -96,7 +96,7 @@ doors.register( "door_cottage1", {
 doors.register( "door_cottage2", {
 	tiles = { { name = "doors_door_cottage2.png", backface_culling = true } },
 	use_texture_alpha = "clip",
-	description = "Venkovní dveře na chatu",
+	description = "venkovní dveře na chatu",
 	inventory_image = "doors_item_cottage2.png",
 	groups = { choppy = 2, oddly_breakable_by_hand = 2, flammable = 2 },
 	recipe = {
@@ -109,7 +109,7 @@ doors.register( "door_cottage2", {
 doors.register( "door_barn1", {
 	tiles = { { name = "doors_door_barn1.png", backface_culling = true } },
 	use_texture_alpha = "opaque",
-	description = "Vnitřní stájové dveře",
+	description = "vnitřní stájové dveře",
 	inventory_image = "doors_item_barn1.png",
 	groups = { choppy = 2, oddly_breakable_by_hand = 2, flammable = 2 },
 	recipe = {
@@ -122,7 +122,7 @@ doors.register( "door_barn1", {
 doors.register( "door_barn2", {
 	tiles = { { name = "doors_door_barn2.png", backface_culling = true } },
 	use_texture_alpha = "opaque",
-	description = "Vnější stájové dveře",
+	description = "vnější stájové dveře",
 	inventory_image = "doors_item_barn2.png",
 	groups = { choppy = 2, oddly_breakable_by_hand = 2, flammable = 2 },
 	recipe = {
@@ -135,7 +135,7 @@ doors.register( "door_barn2", {
 doors.register( "door_castle1", {
 	tiles = { { name = "doors_door_castle1.png", backface_culling = true } },
 	use_texture_alpha = "opaque",
-	description = "Vnitřní hradní dveře",
+	description = "vnitřní hradní dveře",
 	inventory_image = "doors_item_castle1.png",
 	groups = { choppy = 2, oddly_breakable_by_hand = 2, flammable = 2 },
 	recipe = {
@@ -148,7 +148,7 @@ doors.register( "door_castle1", {
 doors.register( "door_castle2", {
 	tiles = { { name = "doors_door_castle2.png", backface_culling = true } },
 	use_texture_alpha = "opaque",
-	description = "Vnější hradní dveře",
+	description = "vnější hradní dveře",
 	inventory_image = "doors_item_castle2.png",
 	groups = { choppy = 2, oddly_breakable_by_hand = 2, flammable = 2 },
 	recipe = {
@@ -161,7 +161,7 @@ doors.register( "door_castle2", {
 doors.register( "door_mansion1", {
 	tiles = { { name = "doors_door_mansion1.png", backface_culling = true } },
 	use_texture_alpha = "opaque",
-	description = "Interiérové dveře do vily",
+	description = "interiérové dveře do vily",
 	inventory_image = "doors_item_mansion1.png",
 	groups = { choppy = 2, oddly_breakable_by_hand = 2, flammable = 2 },
 	recipe = {
@@ -174,7 +174,7 @@ doors.register( "door_mansion1", {
 doors.register( "door_mansion2", {
 	tiles = { { name = "doors_door_mansion2.png", backface_culling = true } },
 	use_texture_alpha = "opaque",
-	description = "Venkovní dveře do vily",
+	description = "venkovní dveře do vily",
 	inventory_image = "doors_item_mansion2.png",
 	groups = { choppy = 2, oddly_breakable_by_hand = 2, flammable = 2 },
 	recipe = {
@@ -187,7 +187,7 @@ doors.register( "door_mansion2", {
 doors.register("door_dungeon1", {
 	tiles = { { name = "doors_door_dungeon1.png", backface_culling = true } },
 	use_texture_alpha = "opaque",
-	description = "Vnitřní dveře do žaláře",
+	description = "vnitřní dveře do žaláře",
 	inventory_image = "doors_item_dungeon1.png",
 	protected = true,
 	groups = { cracky = 1, level = 2 },
@@ -204,7 +204,7 @@ doors.register("door_dungeon1", {
 doors.register( "door_dungeon2", {
 	tiles = { { name = "doors_door_dungeon2.png", backface_culling = true } },
 	use_texture_alpha = "clip",
-	description = "Vnější dveře do žaláře",
+	description = "vnější dveře do žaláře",
 	inventory_image = "doors_item_dungeon2.png",
 	protected = true,
 	groups = { cracky = 1, level = 2 },
@@ -221,7 +221,7 @@ doors.register( "door_dungeon2", {
 doors.register( "door_steelpanel1", {
 	tiles = { { name = "doors_door_steelpanel1.png", backface_culling = true } },
 	use_texture_alpha = "opaque",
-	description = "Kovové koloniální dveře",
+	description = "kovové koloniální dveře",
 	inventory_image = "doors_item_steelpanel1.png",
 	protected = true,
 	groups = { cracky = 1, level = 2 },
@@ -238,7 +238,7 @@ doors.register( "door_steelpanel1", {
 doors.register( "door_steelglass1", {
 	tiles = { { name = "doors_door_steelglass1.png", backface_culling = true } },
 	use_texture_alpha = "clip",
-	description = "Kovové jednosloupcové dveře",
+	description = "kovové jednosloupcové dveře",
 	inventory_image = "doors_item_steelglass1.png",
 	protected = true,
 	groups = { cracky = 1, level = 2 },
@@ -255,7 +255,7 @@ doors.register( "door_steelglass1", {
 doors.register( "door_steelglass2", {
 	tiles = { { name = "doors_door_steelglass2.png", backface_culling = true } },
 	use_texture_alpha = "clip",
-	description = "Kovové dvousloupcové dveře",
+	description = "kovové dvousloupcové dveře",
 	inventory_image = "doors_item_steelglass2.png",
 	protected = true,
 	groups = { cracky = 1, level = 2 },

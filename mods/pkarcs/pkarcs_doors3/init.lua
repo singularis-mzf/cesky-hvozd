@@ -148,7 +148,7 @@ for _, row in ipairs(pkarcs_doors3.door) do
 
 
 	local Ldoor_def = {
-		description = "Zaoblené dveře levé (výška 3 m) " .. desc,
+		description = "zaoblené dveře levé (výška 3 m) " .. desc,
 		inventory_image = "pkarcs_doors3_" ..name.. "_item.png",
 		wield_image = "pkarcs_doors3_" ..name.. "_item.png",
 		drawtype = "mesh",
@@ -237,7 +237,7 @@ for _, row in ipairs(pkarcs_doors3.door) do
 	minetest.register_node(":pkarcs_doors3:" ..name.. "_Ldoor_open", Ldoor_open_def)
 
 	local Rdoor_def = {
-		description = "Zaoblené dveře pravé (výška 3 m) " .. desc,
+		description = "zaoblené dveře pravé (výška 3 m) " .. desc,
 		inventory_image = "pkarcs_doors3_" ..name.. "_item.png^[transformFXX",
 		wield_image = "pkarcs_doors3_" ..name.. "_item.png^[transformFXX",
 		drawtype = "mesh",

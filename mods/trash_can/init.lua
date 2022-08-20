@@ -83,7 +83,7 @@ local dumpster_nodebox = {
 
 -- Normal Trash Can
 local trash_can_def = {
-	description = "Odpadkový koš",
+	description = "odpadkový koš",
 	drawtype="nodebox",
 	paramtype = "light",
 	tiles = {

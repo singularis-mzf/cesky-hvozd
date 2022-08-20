@@ -182,7 +182,7 @@ local function can_dig(pos, player)
 end
 
 minetest.register_node("mesecons_commandblock:commandblock_off", {
-	description = "Příkazový blok",
+	description = "příkazový blok",
 	tiles = {"jeija_commandblock_off.png"},
 	inventory_image = minetest.inventorycube("jeija_commandblock_off.png"),
 	is_ground_content = false,

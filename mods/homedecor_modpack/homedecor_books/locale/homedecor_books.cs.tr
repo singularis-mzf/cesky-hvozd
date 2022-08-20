@@ -4,7 +4,7 @@
 ### init.lua ###
 
 @1 has written in a book (title: "@2"): "@3" at location @4=@1 napsal/a do knihy (název: „@2”) na pozici @4: „@3”
-Writable Book (@1)=Rozevírací kniha (@1)
+Writable Book (@1)=rozevírací kniha (@1)
 blue=modrá
 brown=hnědá
 green=zelená

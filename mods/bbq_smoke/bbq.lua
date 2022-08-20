@@ -5,7 +5,7 @@
 
 -- Chimeny Smoke
 minetest.register_node("bbq_smoke:chimney_smoke", {
-	description = "Permantentní kouř",
+	description = "permantentní kouř",
 	inventory_image = "bbq_chimney_smoke.png",
 	wield_image = "bbq_chimney_smoke.png",
 	drawtype = "plantlike",

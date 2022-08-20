@@ -98,10 +98,10 @@ minetest.register_craft({
 })
 ]]
 
-mobs:register_egg("guinea_pig:guinea_pig", "Morče", "guinea_pig_inv.png")
+mobs:register_egg("guinea_pig:guinea_pig", "morče", "guinea_pig_inv.png")
 
 minetest.register_node("guinea_pig:pellets", {
-	description = "Bobky morčat",
+	description = "bobky morčat",
 	inventory_image = "farming_cotton_seed.png",
 	wield_image = "farming_cotton_seed.png",
 	paramtype = "light",

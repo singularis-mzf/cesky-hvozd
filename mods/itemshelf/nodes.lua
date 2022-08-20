@@ -41,7 +41,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 	if material_name ~= "" then material_name = material_name.."_" end
 
 	itemshelf.register_shelf(material_name.."small_shelf", {
-		description = "Hluboká výkladní skříňka na 4 věci (" .. display_prefix..")",
+		description = "hluboká výkladní skříňka na 4 věci (" .. display_prefix..")",
 		textures = {
 			texture,
 			texture,
@@ -65,7 +65,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 	})
 
 	itemshelf.register_shelf(material_name.."large_shelf", {
-		description = "Hluboká výkladní skříňka na 6 věcí (" .. display_prefix..")",
+		description = "hluboká výkladní skříňka na 6 věcí (" .. display_prefix..")",
 		textures = {
 			texture,
 			texture,
@@ -89,7 +89,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 	})
 
 	itemshelf.register_shelf(material_name.."half_depth_shelf_small", {
-		description = "Mělká výkladní skříňka na 4 věci (" .. display_prefix..")",
+		description = "mělká výkladní skříňka na 4 věci (" .. display_prefix..")",
 		textures = {
 			texture,
 			texture,
@@ -114,7 +114,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 	})
 
 	itemshelf.register_shelf(material_name.."half_depth_shelf_large", {
-		description = "Mělká výkladní skříňka na 6 věcí (" .. display_prefix..")",
+		description = "mělká výkladní skříňka na 6 věcí (" .. display_prefix..")",
 		textures = {
 			texture,
 			texture,
@@ -140,7 +140,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 
 	-- Half-depth open-back shelf, 4 items
 	itemshelf.register_shelf(material_name.."half_depth_open_shelf", {
-		description = "Výkladní regál na 4 věci (" .. display_prefix..")",
+		description = "výkladní regál na 4 věci (" .. display_prefix..")",
 		textures = {
 			texture,
 			texture,
@@ -166,7 +166,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 
 	-- Half-depth open-back shelf, 6 items
 	itemshelf.register_shelf(material_name.."half_depth_open_shelf_large", {
-		description = "Výkladní regál na 6 věci (" .. display_prefix..")",
+		description = "výkladní regál na 6 věci (" .. display_prefix..")",
 		textures = {
 			texture,
 			texture,

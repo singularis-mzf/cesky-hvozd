@@ -51,7 +51,7 @@ minetest.register_node("mesecons_lamp:lamp_off", {
 	node_box = mesecon_lamp_box,
 	selection_box = mesecon_lamp_box,
 	groups = {dig_immediate=3, mesecon_receptor_off = 1, mesecon_effector_off = 1},
-	description = "Lampa (mesespoje)",
+	description = "lampa (mesespoje)",
 	sounds = mesecon.node_sound.glass,
 	mesecons = {effector = {
 		action_on = function (pos, node)

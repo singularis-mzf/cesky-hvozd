@@ -3,8 +3,8 @@
 
 ### crafts.lua ###
 
-Small Wooden Drawer=Dřevěná zásuvka
-Terracotta Roof Tile=Křidlice
+Small Wooden Drawer=dřevěná zásuvka
+Terracotta Roof Tile=křidlice
 
 ### expansion.lua ###
 
@@ -20,7 +20,7 @@ Someone already owns the spot where the headboard goes.=Předmět nelze umístit
 @1 (empty)=@1 (prázdná)
 @1 (out of fuel)=@1 (bez paliva)
 @1 (output bins are full)=@1 (výstupní mřížka je plná)
-Furnace=Trouba
+Furnace=trouba
 
 ### inventory.lua ###
 

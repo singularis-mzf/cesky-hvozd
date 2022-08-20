@@ -3,24 +3,23 @@
 
 ### init.lua ###
 
-Copper pans=Dvě měděné pánve (jen ozdoba)
-Dishwasher=Myčka nádobí
-Dishwasher (@1)=Myčka nádobí (povrch: @1)
-Half-height Kitchen Cabinet (on ceiling)=Poloviční kuchyňská skříňka (ke stropu)
-Kitchen Cabinet=Kuchyňská skříňka
-Kitchen Cabinet (@1 top)=Kuchyňská skříňka (povrch: @1)
-Kitchen Cabinet with drawers=Kuchyňská skříňka se zásuvkami
-Kitchen Cabinet with drawers (@1 top)=Kuchyňská skříňka se zásuvkami (povrch: @1)
-Kitchen Cabinet with sink=Kuchyňská skříňka s dřezem
-Kitchen Faucet=Kuchyňský kohoutek
-Kitchen chair=Kuchyňská židle@n(případný polštář lze barvit)
-Microwave Oven=Mikrovlnná trouba
-Oven=Sporák s troubou (bílý)
-Oven (stainless steel)=Sporák s troubou (nerezový)
-Paper towels=Papírové útěrky na tyči
-Refrigerator=Lednice (bílá)
-Refrigerator (stainless steel)=Lednice (nerezová)
-# Under-sink cabinet=Waschbeckenunterschrank
+Copper pans=dvě měděné pánve (jen ozdoba)
+Dishwasher=myčka nádobí
+Dishwasher (@1)=myčka nádobí (povrch: @1)
+Half-height Kitchen Cabinet (on ceiling)=moloviční kuchyňská skříňka (ke stropu)
+Kitchen Cabinet=kuchyňská skříňka
+Kitchen Cabinet (@1 top)=kuchyňská skříňka (povrch: @1)
+Kitchen Cabinet with drawers=kuchyňská skříňka se zásuvkami
+Kitchen Cabinet with drawers (@1 top)=kuchyňská skříňka se zásuvkami (povrch: @1)
+Kitchen Cabinet with sink=kuchyňská skříňka s dřezem
+Kitchen Faucet=kuchyňský kohoutek
+Kitchen chair=kuchyňská židle@n(případný polštář lze barvit)
+Microwave Oven=mikrovlnná trouba
+Oven=sporák s troubou (bílý)
+Oven (stainless steel)=sporák s troubou (nerezový)
+Paper towels=papírové útěrky na tyči
+Refrigerator=lednice (bílá)
+Refrigerator (stainless steel)=lednice (nerezová)
 granite=žula
 marble=mramor
 steel=nerez

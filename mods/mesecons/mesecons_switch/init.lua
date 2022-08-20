@@ -4,7 +4,7 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 
 mesecon.register_node("mesecons_switch:mesecon_switch", {
 	paramtype2="facedir",
-	description="Přepínač",
+	description="přepínač",
 	is_ground_content = false,
 	sounds = mesecon.node_sound.stone,
 	on_rightclick = function (pos, node)

@@ -847,7 +847,7 @@ for d = 0, 1 do
 	}
 
 	minetest.register_node(node_name, {
-		description = "Kontrolér jazyka Lua",
+		description = "kontrolér jazyka Lua",
 		drawtype = "nodebox",
 		tiles = {
 			top,

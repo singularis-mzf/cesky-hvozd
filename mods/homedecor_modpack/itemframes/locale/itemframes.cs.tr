@@ -3,9 +3,9 @@
 
 ### init.lua ###
 
-Item frame=Fotografie v rámu
-Item frame (brown)=Fotografie v rámu (tmavé pozadí)
-Item frame (invisible)=Fotografie bez rámu
-Item frame (owned by @1)=Fotografie (vlastní: @1)
-Pedestal=Piedestal
-Pedestal (owned by @1)=Piedestal (vlastní: @1)
+Item frame=fotografie v rámu
+Item frame (brown)=fotografie v rámu (tmavé pozadí)
+Item frame (invisible)=fotografie bez rámu
+Item frame (owned by @1)=fotografie (vlastní: @1)
+Pedestal=piedestal
+Pedestal (owned by @1)=piedestal (vlastní: @1)

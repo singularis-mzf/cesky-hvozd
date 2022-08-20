@@ -45,7 +45,7 @@ minetest.register_node("mesecons_extrawires:corner_on", {
 
 minetest.register_node("mesecons_extrawires:corner_off", {
 	drawtype = "mesh",
-	description = "Izolovaný mesespoj: roh",
+	description = "izolovaný mesespoj: roh",
 	mesh = "mesecons_extrawires_corner.obj",
 	tiles = {
 		{ name = "jeija_insulated_wire_sides_off.png", backface_culling = true },

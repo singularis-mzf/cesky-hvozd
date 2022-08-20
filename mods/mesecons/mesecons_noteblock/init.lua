@@ -1,7 +1,7 @@
 print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 minetest.register_node("mesecons_noteblock:noteblock", {
-	description = "Hudební blok",
+	description = "hudební blok",
 	tiles = {"mesecons_noteblock.png"},
 	is_ground_content = false,
 	groups = {snappy=2, choppy=2, oddly_breakable_by_hand=2},

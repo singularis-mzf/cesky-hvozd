@@ -13,7 +13,7 @@ end
 
 minetest.register_node("mesecons_insulated:insulated_on", {
 	drawtype = "nodebox",
-	description = "Izolovaný mesespoj",
+	description = "izolovaný mesespoj",
 	tiles = {
 		"jeija_insulated_wire_sides_on.png",
 		"jeija_insulated_wire_sides_on.png",
@@ -50,7 +50,7 @@ minetest.register_node("mesecons_insulated:insulated_on", {
 
 minetest.register_node("mesecons_insulated:insulated_off", {
 	drawtype = "nodebox",
-	description = "Izolovaný mesespoj",
+	description = "izolovaný mesespoj",
 	tiles = {
 		"jeija_insulated_wire_sides_off.png",
 		"jeija_insulated_wire_sides_off.png",

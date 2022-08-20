@@ -22,7 +22,7 @@ local on_timer = function (pos)
 end
 
 mesecon.register_node("mesecons_blinkyplant:blinky_plant", {
-	description="Mrkající květina",
+	description="mrkající květina",
 	drawtype = "plantlike",
 	inventory_image = "jeija_blinky_plant_off.png",
 	paramtype = "light",

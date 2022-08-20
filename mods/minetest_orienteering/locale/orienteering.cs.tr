@@ -1,15 +1,15 @@
 # textdomain:orienteering
-Altimeter=Výškoměr
-Triangulator=Triangulátor
-Compass=Kompas
-Sextant=Sextant
-Quadcorder=Čtyřkodér
-Watch=Hodinky
-Speedometer=Rychloměr
-Map=Mapa
-Radar Mapper=Ruční radar
-GPS device=Zařízení GPS
-Binoculars=Dalekohled
+Altimeter=výškoměr
+Triangulator=triangulátor
+Compass=kompas
+Sextant=sextant
+Quadcorder=čtyřkodér
+Watch=hodinky
+Speedometer=rychloměr
+Map=mapa
+Radar Mapper=ruční radar
+GPS device=zařízení GPS
+Binoculars=dalekohled
 
 Yaw: @1° (@2), pitch: @3°=Směr: @1° (@2), sklon: @3°
 Yaw: @1° (@2)=Směr: @1° (@2)

@@ -4,27 +4,27 @@ local one_and_a_half = 1.5
 
 local tile_groups = {
 	solid = {
-		description = "Barvitelný materiál homogenní",
+		description = "barvitelný materiál homogenní",
 		tiles = {"solidcolor_white.png"},
 		material_groups = {dig_immediate = 2},
 	},
 	clay = {
-		description = "Barvitelná omítka",
+		description = "barvitelná omítka",
 		tiles = {"default_clay.png"},
 		material_groups = {dig_immediate = 2},
 	},
 	cobble = {
-		description = "Barvitelný dlažební kámen",
+		description = "barvitelný dlažební kámen",
 		tiles = {"default_cobble.png"},
 		material_groups = {cracky = 3, stone = 2},
 	},
 	stoneblock = {
-		description = "Barvitelný kamenný blok",
+		description = "barvitelný kamenný blok",
 		tiles = {"solidcolor_stone_block.png"},
 		material_groups = {cracky = 2, stone = 1},
 	},
 	stonebrick = {
-		description = "Barvitelné kamenné cihly",
+		description = "barvitelné kamenné cihly",
 		tiles = {"default_stone_brick.png^[brighten"},
 		material_groups = {cracky = 2, stone = 1},
 	},

@@ -1,6 +1,6 @@
 # textdomain: wrench
 
-Wrench=Klíč na truhly
+Wrench=klíč na truhly
 @1 with items=@1 s obsahem
 
 Cannot pickup node. Owned by @1.=Nelze zvednout truhlu, je vlastněna: @1

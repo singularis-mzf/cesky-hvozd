@@ -3,23 +3,23 @@
 # SPDX-License-Identifier: CC0-1.0 OR MIT
 # textdomain:minitram_konstal_105_liveries
 
-Back Area=Zadní prostor
-Bumper=Nárazník
-Bumper bar=Spřáhlo
-Doors=Dveře
-Front Area=Přední prostor
-Front lights=Přední světla
+Back Area=zadní prostor
+Bumper=nárazník
+Bumper bar=spřáhlo
+Doors=dveře
+Front Area=přední prostor
+Front lights=přední světla
 Gdansk (and many other Polish cities)=Gdaňsk (a mnoho dalších polských měst)
 Katowice (Tramwaje Śląskie)=Katovice
 Kraków (MPK Kraków)=Krakov
 Łódź (MPK Łódź)=Lodž
-Lower skirt=Spodní okraj
+Lower skirt=spodní okraj
 Poznań (Beige) (MPK Poznań)=Poznaň (béžová)
 Poznań (Yellow) (MPK Poznań)=Poznaň (žlutá)
-Side walls=Boční stěny
-Stripes on skirt=Pruhy na okraji
+Side walls=boční stěny
+Stripes on skirt=pruhy na okraji
 Szczecin (Green) (Tramwaje Szczecińskie)=Štětín (zelená)
 Szczecin (Red) (Tramwaje Szczecińskie)=Štětín (červená)
 Warszawa (Tramwaje Warszawskie)=Varšava
-Window background strip=Pruh na pozadí okna
-Window detail=Detail okna
+Window background strip=pruh na pozadí okna
+Window detail=detail okna

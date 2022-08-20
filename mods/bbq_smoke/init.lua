@@ -17,7 +17,7 @@ local smoking_items = {
 	["technic:hv_generator_active"] = 1,
 }
 
-def.description = "Kouř (dočasný)"
+def.description = "kouř (dočasný)"
 def.on_construct = function(pos)
 	minetest.get_node_timer(pos):start(3)
 end

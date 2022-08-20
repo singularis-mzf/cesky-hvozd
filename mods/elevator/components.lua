@@ -15,7 +15,7 @@ if homedecor_path then
 else
     -- Placeholder node, in the style of homedecor.
     minetest.register_node("elevator:placeholder", {
-        description = "Místodržící blok pro růst",
+        description = "místodržící blok pro růst",
         selection_box = {
             type = "fixed",
             fixed = {0, 0, 0, 0, 0, 0},
@@ -79,7 +79,7 @@ if minetest.global_exists("screwdriver") then
 end
 
 minetest.register_node("elevator:shaft", {
-    description = "Šachta výtahu",
+    description = "šachta výtahu",
     -- _doc_items_longdesc = "An elevator shaft that connects elevators to other elevators and motors.",
     -- _doc_items_usagehelp = "Building a vertical stack of elevators and shafts with an elevator motor on top allows vertical transportation.",
     tiles = { moditems.el_shaft_gfx },
@@ -122,7 +122,7 @@ minetest.register_node("elevator:shaft", {
   })
 
 minetest.register_node("elevator:motor", {
-    description = "Motor výtahu",
+    description = "motor výtahu",
     -- _doc_items_longdesc = "The engine powering an elevator shaft. Placed at the top.",
     -- _doc_items_usagehelp = "Place the motor on the top of a stack of elevators and elevator shafts. The elevators will activate and you can then use them.",
     tiles = {
@@ -167,7 +167,7 @@ local box_box = {
 
 -- Elevator box node. Not intended to be placeable.
 minetest.register_node("elevator:elevator_box", {
-    description = "Stanice výtahu",
+    description = "stanice výtahu",
     drawtype = "nodebox",
     paramtype = 'light',
     paramtype2 = "facedir",
@@ -235,7 +235,7 @@ for _,mode in ipairs({"on", "off"}) do
         cbox = box
     end
     minetest.register_node(nodename, {
-        description = "Stanice výtahu",
+        description = "stanice výtahu",
         drawtype = "nodebox",
         sunlight_propagates = false,
         paramtype = "light",

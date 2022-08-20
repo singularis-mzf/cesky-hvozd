@@ -267,7 +267,7 @@ local piston_on_box = {
 -- Normal (non-sticky) Pistons:
 -- offstate
 minetest.register_node("mesecons_pistons:piston_normal_off", {
-	description = "Píst",
+	description = "píst",
 	tiles = {
 		"mesecons_piston_top.png",
 		"mesecons_piston_bottom.png",
@@ -292,7 +292,7 @@ minetest.register_node("mesecons_pistons:piston_normal_off", {
 
 -- onstate
 minetest.register_node("mesecons_pistons:piston_normal_on", {
-	description = "Základna pístu (aktivní)",
+	description = "základna pístu (aktivní)",
 	drawtype = "nodebox",
 	tiles = {
 		"mesecons_piston_top.png",
@@ -321,7 +321,7 @@ minetest.register_node("mesecons_pistons:piston_normal_on", {
 
 -- pusher
 minetest.register_node("mesecons_pistons:piston_pusher_normal", {
-	description = "Deska pístu",
+	description = "deska pístu",
 	drawtype = "nodebox",
 	tiles = {
 		"mesecons_piston_pusher_top.png",
@@ -346,7 +346,7 @@ minetest.register_node("mesecons_pistons:piston_pusher_normal", {
 -- Sticky ones
 -- offstate
 minetest.register_node("mesecons_pistons:piston_sticky_off", {
-	description = "Lepící píst",
+	description = "lepící píst",
 	tiles = {
 		"mesecons_piston_top.png",
 		"mesecons_piston_bottom.png",
@@ -371,7 +371,7 @@ minetest.register_node("mesecons_pistons:piston_sticky_off", {
 
 -- onstate
 minetest.register_node("mesecons_pistons:piston_sticky_on", {
-	description = "Základna lepícího pístu (aktivní)",
+	description = "základna lepícího pístu (aktivní)",
 	drawtype = "nodebox",
 	tiles = {
 		"mesecons_piston_top.png",
@@ -400,7 +400,7 @@ minetest.register_node("mesecons_pistons:piston_sticky_on", {
 
 -- pusher
 minetest.register_node("mesecons_pistons:piston_pusher_sticky", {
-	description = "Deska lepícího pístu",
+	description = "deska lepícího pístu",
 	drawtype = "nodebox",
 	tiles = {
 		"mesecons_piston_pusher_top.png",

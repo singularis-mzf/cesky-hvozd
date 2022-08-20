@@ -4,7 +4,7 @@
 print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 mesecon.register_node("mesecons_walllever:wall_lever", {
-	description="Pákový vypínač",
+	description="pákový vypínač",
 	drawtype = "mesh",
 	inventory_image = "jeija_wall_lever_inv.png",
 	wield_image = "jeija_wall_lever_inv.png",

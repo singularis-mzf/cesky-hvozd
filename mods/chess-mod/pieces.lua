@@ -10,8 +10,8 @@
 -- ======================================
 
 local colors = { "black", "white", "gray" }
-local colornames_y = {"Černý", "Bílý", "Šedý"}
-local colornames_a = {"Černá", "Bílá", "Šedá"}
+local colornames_y = {"černý", "bílý", "šedý"}
+local colornames_a = {"černá", "bílá", "šedá"}
 
 local def = {
     drawtype = "nodebox",

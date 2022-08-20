@@ -3,41 +3,41 @@
 # Czech translation by Singularis
 
 # * direction sign
-Black direction sign=Černá směrovka (2 řádky)
-Blue direction sign=Modrá směrovka (2 řádky)
-Brown direction sign=Hnědá směrovka (2 řádky)
-Green direction sign=Zelená směrovka (2 řádky)
-Red direction sign=Červená směrovka (2 řádky)
-White direction sign=Bílá směrovka (2 řádky)
-Yellow direction sign=Žlutá směrovka (2 řádky)
+Black direction sign=černá směrovka (2 řádky)
+Blue direction sign=modrá směrovka (2 řádky)
+Brown direction sign=hnědá směrovka (2 řádky)
+Green direction sign=zelená směrovka (2 řádky)
+Red direction sign=červená směrovka (2 řádky)
+White direction sign=bílá směrovka (2 řádky)
+Yellow direction sign=žlutá směrovka (2 řádky)
 
 # * sign
-Black road sign=Černá cedule (2 řádky)
-Blue road sign=Modrá cedule (2 řádky)
-Brown road sign=Hnědá cedule (2 řádky)
-Green road sign=Zelená cedule (2 řádky)
-Red road sign=Červená cedule (2 řádky)
-White road sign=Bílá cedule (2 řádky)
-Yellow road sign=Žlutá cedule (2 řádky)
+Black road sign=černá cedule (2 řádky)
+Blue road sign=modrá cedule (2 řádky)
+Brown road sign=hnědá cedule (2 řádky)
+Green road sign=zelená cedule (2 řádky)
+Red road sign=červená cedule (2 řádky)
+White road sign=bílá cedule (2 řádky)
+Yellow road sign=žlutá cedule (2 řádky)
 
 # Large * banner
-Large banner=Velká bílá cedule (5×1 m)
-Large black banner=Velká černá cedule (5×1 m)
-Large blue banner=Velká modrá cedule (5×1 m)
-Large brown banner=Velká hnědá cedule (5×1 m)
-Large green banner=Velká zelená cedule (5×1 m)
-Large red banner=Velká červená cedule (5×1 m)
-Large yellow banner=Velká žlutá cedule (5×1 m)
+Large banner=velká bílá cedule (5×1 m)
+Large black banner=velká černá cedule (5×1 m)
+Large blue banner=velká modrá cedule (5×1 m)
+Large brown banner=velká hnědá cedule (5×1 m)
+Large green banner=velká zelená cedule (5×1 m)
+Large red banner=velká červená cedule (5×1 m)
+Large yellow banner=velká žlutá cedule (5×1 m)
 
 # Invisible sign
 
-Invisible sign with black text=Neviditelná cedule s černým textem (4 řádky)
-Invisible sign with white text=Neviditelná cedule s bílým textem (4 řádky)
+Invisible sign with black text=neviditelná cedule s černým textem (4 řádky)
+Invisible sign with white text=neviditelná cedule s bílým textem (4 řádky)
 
 # Large invisible banner
-Large invisible banner with black text=Velká neviditelná cedule s černým textem
-Large invisible banner with white text=Velká neviditelná cedule s bílým textem
+Large invisible banner with black text=velká neviditelná cedule s černým textem
+Large invisible banner with white text=velká neviditelná cedule s bílým textem
 
 # Special
-Blue street sign=Tmavomodrá cedule (3 řádky)
-Red and white town sign= Bílá cedule s červeným rámem
+Blue street sign=tmavomodrá cedule (3 řádky)
+Red and white town sign=bílá cedule s červeným rámem

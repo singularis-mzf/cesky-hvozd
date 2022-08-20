@@ -3,13 +3,13 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 minetest.register_craftitem("mesecons_materials:glue", {
 	image = "mesecons_glue.png",
 	on_place_on_ground = minetest.craftitem_place_item,
-	description="Lepidlo",
+	description="lepidlo",
 })
 
 minetest.register_craftitem("mesecons_materials:fiber", {
 	image = "mesecons_fiber.png",
 	on_place_on_ground = minetest.craftitem_place_item,
-	description="Vláknina",
+	description="vláknina",
 })
 
 minetest.register_craft({
@@ -30,7 +30,7 @@ minetest.register_craft({
 minetest.register_craftitem("mesecons_materials:silicon", {
 	image = "mesecons_silicon.png",
 	on_place_on_ground = minetest.craftitem_place_item,
-	description="Křemík (mesespoje)",
+	description="křemík (mesespoje)",
 })
 
 minetest.register_craft({

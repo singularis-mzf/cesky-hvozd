@@ -83,7 +83,7 @@ if i > 1 then
 end
 
 local off_state = {
-	description = "Zpožďovač",
+	description = "zpožďovač",
 	tiles = {
 		"mesecons_delayer_off_"..tostring(i)..".png",
 		"mesecons_delayer_bottom.png",

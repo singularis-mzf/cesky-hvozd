@@ -207,7 +207,7 @@ local function register_wires()
 		end
 
 		mesecon.register_node(":mesecons:wire_"..nodeid, {
-			description = "Mesespoj",
+			description = "mesespoj",
 			drawtype = "nodebox",
 			inventory_image = "mesecons_wire_inv.png",
 			wield_image = "mesecons_wire_inv.png",

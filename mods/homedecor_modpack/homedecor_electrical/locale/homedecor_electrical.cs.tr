@@ -3,6 +3,6 @@
 
 ### init.lua ###
 
-Doorbell=Domovní zvonek
-Light switch=Vypínač (domácí)
-Power Outlet=Elektrická zásuvka
+Doorbell=domovní zvonek
+Light switch=vypínač (domácí)
+Power Outlet=elektrická zásuvka

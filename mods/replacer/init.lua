@@ -141,7 +141,7 @@ technic.register_power_tool("replacer:replacer", max_charge)
 
 minetest.register_tool( "replacer:replacer",
 {
-    description = "Elektrický nahrazovač",
+    description = "elektrický nahrazovač",
     groups = {}, 
     inventory_image = "replacer_replacer.png",
     wield_image = "",

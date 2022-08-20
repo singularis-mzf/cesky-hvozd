@@ -77,7 +77,7 @@ if ENABLE_WALKERS then
 		max_height = 10,
 	})
 
-	mobs:register_egg("mobs_crocs:crocodile", "Krokodýl (chodivé povahy)", "default_grass.png", 1)
+	mobs:register_egg("mobs_crocs:crocodile", "krokodýl (chodivé povahy)", "default_grass.png", 1)
 end
 
 -- float
@@ -134,7 +134,7 @@ if ENABLE_FLOATERS then
 		max_height = 10,
 	})
 
-	mobs:register_egg("mobs_crocs:crocodile_float", "Krokodýl (vznášivé povahy)",
+	mobs:register_egg("mobs_crocs:crocodile_float", "krokodýl (vznášivé povahy)",
 		"default_grass.png", 1)
 end
 
@@ -191,7 +191,7 @@ if ENABLE_SWIMMERS then
 		max_height = 10,
 	})
 
-	mobs:register_egg("mobs_crocs:crocodile_swim", "Krokodýl (plavavé povahy)",
+	mobs:register_egg("mobs_crocs:crocodile_swim", "krokodýl (plavavé povahy)",
 		"default_grass.png", 1)
 end
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

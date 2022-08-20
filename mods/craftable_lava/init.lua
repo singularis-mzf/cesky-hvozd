@@ -1,7 +1,7 @@
 print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 minetest.register_node("craftable_lava:hot_stone", {
-    description = "Vřelá skála",
+    description = "vřelá skála",
 	tiles = {"default_stone.png^craftable_lava_hot_stone.png"},
     tiles = {
 	    {

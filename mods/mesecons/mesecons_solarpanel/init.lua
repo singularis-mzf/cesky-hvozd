@@ -1,7 +1,7 @@
 -- Solar Panel
 print("[MOD BEGIN]" .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 mesecon.register_node("mesecons_solarpanel:solar_panel", {
-	description = "Solární panel (mesespoje)",
+	description = "solární panel (mesespoje)",
 	drawtype = "nodebox",
 	tiles = {"mesecons_solarpanel.png"},
 	inventory_image = "mesecons_solarpanel.png",

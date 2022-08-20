@@ -164,39 +164,39 @@ end
 local default_lib_nodes = {
     -- Define all pillars from stone
     
-    {"stone", "Pilíř ze skalního kamene"},
-    {"cobble", "Pilíř z dlažebního kamene"},
-    {"stonebrick", "Pilíř z kamenných cihel", "stone_brick"},
-    {"stone_block", "Pilíř z kamenných bloků"},
-    {"mossycobble", "Pilíř z dlažebního kamene porostlého mechem"},
+    {"stone", "pilíř ze skalního kamene"},
+    {"cobble", "pilíř z dlažebního kamene"},
+    {"stonebrick", "pilíř z kamenných cihel", "stone_brick"},
+    {"stone_block", "pilíř z kamenných bloků"},
+    {"mossycobble", "pilíř z dlažebního kamene porostlého mechem"},
     
-    {"desert_stone", "Pilíř z pouštního skalního kamene"},
-    {"desert_cobble", "Pilíř z pouštního dlažebního kamene"},
-    {"desert_stonebrick", "Pilíř z cihel z pouštního kamene", "desert_stone_brick"},
-    {"desert_stone_block", "Pilíř z bloků pouštního kamene"},
+    {"desert_stone", "pilíř z pouštního skalního kamene"},
+    {"desert_cobble", "pilíř z pouštního dlažebního kamene"},
+    {"desert_stonebrick", "pilíř z cihel z pouštního kamene", "desert_stone_brick"},
+    {"desert_stone_block", "pilíř z bloků pouštního kamene"},
     
-    {"sandstone", "Pilíř ze žlutého pískovce"},
-    {"sandstonebrick", "Pilíř ze žlutých pískovcových cihel", "sandstone_brick"},
-    {"sandstone_block", "Pilíř ze žlutých pískovcových bloků"},
+    {"sandstone", "pilíř ze žlutého pískovce"},
+    {"sandstonebrick", "pilíř ze žlutých pískovcových cihel", "sandstone_brick"},
+    {"sandstone_block", "pilíř ze žlutých pískovcových bloků"},
     
-    {"desert_sandstone", "Pilíř z pouštního pískovce"},
-    {"desert_sandstone_brick", "Pilíř z pouštních pískovcových cihel"},
-    {"desert_sandstone_block", "Pilíř z pouštních pískovcových bloků"},
+    {"desert_sandstone", "pilíř z pouštního pískovce"},
+    {"desert_sandstone_brick", "pilíř z pouštních pískovcových cihel"},
+    {"desert_sandstone_block", "pilíř z pouštních pískovcových bloků"},
     
-    {"silver_sandstone", "Pilíř z bílého pískovce"},
-    {"silver_sandstone_brick", "Pilíř z bílých pískovcových cihel"},
-    {"silver_sandstone_block", "Pilíř z bílých pískovcových bloků"},
+    {"silver_sandstone", "pilíř z bílého pískovce"},
+    {"silver_sandstone_brick", "pilíř z bílých pískovcových cihel"},
+    {"silver_sandstone_block", "pilíř z bílých pískovcových bloků"},
     
-    {"obsidian", "Pilíř z obsidiánu"},
-    {"obsidianbrick", "Pilíř z obsidiánových cihel", "obsidian_brick"},
-    {"obsidian_block", "Pilíř z obsidiánových bloků"},
+    {"obsidian", "pilíř z obsidiánu"},
+    {"obsidianbrick", "pilíř z obsidiánových cihel", "obsidian_brick"},
+    {"obsidian_block", "pilíř z obsidiánových bloků"},
     
     -- Define all pillar from wood planks
-    {"wood", "Pilíř z jabloňového dřeva", sound = default.node_sound_wood_defaults()},
-    {"junglewood", "Pilíř z dřeva džunglovníku", sound = default.node_sound_wood_defaults()},
-    {"pine_wood", "Pilíř z borového dřeva", sound = default.node_sound_wood_defaults()},
-    {"acacia_wood", "Pilíř z akáciového dřeva", sound = default.node_sound_wood_defaults()},
-    {"aspen_wood", "Pilíř z osikového dřeva", sound = default.node_sound_wood_defaults()},
+    {"wood", "pilíř z jabloňového dřeva", sound = default.node_sound_wood_defaults()},
+    {"junglewood", "pilíř z dřeva džunglovníku", sound = default.node_sound_wood_defaults()},
+    {"pine_wood", "pilíř z borového dřeva", sound = default.node_sound_wood_defaults()},
+    {"acacia_wood", "pilíř z akáciového dřeva", sound = default.node_sound_wood_defaults()},
+    {"aspen_wood", "pilíř z osikového dřeva", sound = default.node_sound_wood_defaults()},
 }
 
 for k, v in pairs(default_lib_nodes) do

@@ -49,7 +49,7 @@ for k, state in ipairs(doublecorner_states) do
 	minetest.register_node(state, {
 		drawtype = "mesh",
 		mesh = "mesecons_extrawires_doublecorner.obj",
-		description = "Izolovaný mesespoj: dvojitý roh",
+		description = "izolovaný mesespoj: dvojitý roh",
 		tiles = {
 			{ name = "jeija_insulated_wire_sides_" .. w1 .. ".png", backface_culling = true },
 			{ name = "jeija_insulated_wire_ends_" .. w1 .. ".png", backface_culling = true },

@@ -5,7 +5,7 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 -- All sides sticky block
 minetest.register_node("mesecons_stickyblocks:sticky_block_all", {
 	-- TODO: Rename to “All-Faces Sticky Block” when other sticky blocks become available
-	description = "Blok lepící ze všech stran",
+	description = "blok lepící ze všech stran",
 	tiles = {"mesecons_stickyblocks_sticky.png"},
 	is_ground_content = false,
 	groups = {choppy=3, oddly_breakable_by_hand=2},

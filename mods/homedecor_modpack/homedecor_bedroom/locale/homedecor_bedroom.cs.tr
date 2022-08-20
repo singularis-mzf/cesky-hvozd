@@ -3,11 +3,11 @@
 
 ### init.lua ###
 
-Bed=Postel jedoduchá s barvitelným povlečením
-Bed (king sized)=Postel dvojitá s barvitelným povlečením
-Nightstand with One Drawer (@1)=Noční stolek s jednou zásuvkou (@1)
-Nightstand with Two Drawers (@1)=Noční stolek se dvěma zásuvkami (@1)
-One-drawer Nightstand=Noční stolek s jednou zásuvkou
-Two-drawer Nightstand=Noční stolek se dvěma zásuvkami
+Bed=postel jedoduchá s barvitelným povlečením
+Bed (king sized)=postel dvojitá s barvitelným povlečením
+Nightstand with One Drawer (@1)=noční stolek s jednou zásuvkou (@1)
+Nightstand with Two Drawers (@1)=noční stolek se dvěma zásuvkami (@1)
+One-drawer Nightstand=noční stolek s jednou zásuvkou
+Two-drawer Nightstand=noční stolek se dvěma zásuvkami
 mahogany=hnědý
 oak=dubové dřevo

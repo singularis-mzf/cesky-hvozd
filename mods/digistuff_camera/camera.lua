@@ -25,7 +25,7 @@ minetest.register_node("digistuff_camera:camera", {
 				{-0.1,-0.5,-0.34,0.1,-0.3,0.3}, --Camera Body
 			}
 	},
-	description = "Kamera",
+	description = "kamera",
 	sounds = default and default.node_sound_stone_defaults()
 })
 

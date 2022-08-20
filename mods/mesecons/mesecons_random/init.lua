@@ -6,7 +6,7 @@ minetest.register_node("mesecons_random:removestone", {
 	is_ground_content = false,
 	inventory_image = minetest.inventorycube("jeija_removestone_inv.png"),
 	groups = {cracky=3},
-	description="Trvale mizící blok",
+	description="trvale mizící blok",
 	sounds = mesecon.node_sound.stone,
 	mesecons = {effector = {
 		action_on = function (pos, node)
@@ -30,7 +30,7 @@ minetest.register_craft({
 -- GHOSTSTONE
 
 minetest.register_node("mesecons_random:ghoststone", {
-	description="Dočasně mizící blok",
+	description="dočasně mizící blok",
 	tiles = {"jeija_ghoststone.png"},
 	is_ground_content = false,
 	inventory_image = minetest.inventorycube("jeija_ghoststone_inv.png"),

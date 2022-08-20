@@ -7,30 +7,30 @@ Color Filter: @1=Barevná značka: @1
 Edit chest description:=Upravit popisek:
 
 # Colors
-Black=Černá
-Blue=Modrá
-Brown=Hnědá
-Cyan=Tyrkysová
-Dark Green=Tmavozelená
-Dark Grey=Tmavě šedá
-Green=Světle zelená
-Grey=Šedá
-Magenta=Magentová
-Orange=Oranžová
-Pink=Růžová
-Red=Červená
-Violet=Fialová
-White=Bílá
-Yellow=Žlutá
-None=Bez barvy
+Black=černá
+Blue=modrá
+Brown=hnědá
+Cyan=tyrkysová
+Dark Green=tmavozelená
+Dark Grey=tmavě šedá
+Green=světle zelená
+Grey=šedá
+Magenta=magentová
+Orange=oranžová
+Pink=růžová
+Red=červená
+Violet=fialová
+White=bílá
+Yellow=žlutá
+None=bez barvy
 
 # Materials
-Copper=Měděná
-Gold=Zlatá
-Iron=Železná
-Mithril=Mitrilová
-Silver=Stříbrná
-Wooden=Dřevěná
+Copper=měděná
+Gold=zlatá
+Iron=železná
+Mithril=mitrilová
+Silver=stříbrná
+Wooden=dřevěná
 
 # Sorting
 Sort=Seřadit

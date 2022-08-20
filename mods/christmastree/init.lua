@@ -16,7 +16,7 @@ local outdoortreebox = {
 }
 
 minetest.register_node("christmastree:indoortree", {
-	description = "Nazdobený vánoční stromeček",
+	description = "nazdobený vánoční stromeček",
 	drawtype = "mesh",
 	paramtype = "light",
 	light_source = 12,
@@ -31,7 +31,7 @@ minetest.register_node("christmastree:indoortree", {
 })
 
 minetest.register_node("christmastree:outdoortree", {
-	description = "Nazdobený vánoční strom",
+	description = "nazdobený vánoční strom",
 	drawtype = "mesh",
 	paramtype = "light",
 	light_source = 12,
@@ -46,7 +46,7 @@ minetest.register_node("christmastree:outdoortree", {
 })
 
 minetest.register_node("christmastree:outdoortree_snow", {
-	description = "Nazdobený vánoční strom pokrytý sněhem",
+	description = "nazdobený a zasněžený vánoční strom",
 	drawtype = "mesh",
 	paramtype = "light",
 	light_source = 12,
@@ -61,7 +61,7 @@ minetest.register_node("christmastree:outdoortree_snow", {
 })
 
 minetest.register_node("christmastree:christmas_wreath", {
-	description = "Vánoční věnec",
+	description = "vánoční věnec",
 	drawtype = "mesh",
 	paramtype = "light",
 	light_source = 12,

@@ -19,7 +19,7 @@ local crossover_states = {
 }
 
 minetest.register_node("mesecons_extrawires:crossover_off", {
-	description = "Izolovaný mesespoj: křížení",
+	description = "izolovaný mesespoj: křížení",
 	drawtype = "mesh",
 	mesh = "mesecons_extrawires_crossover.b3d",
 	tiles = {

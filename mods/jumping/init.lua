@@ -39,7 +39,7 @@ end
 
 for i = 1, 6 do
 	minetest.register_node("jumping:trampoline"..i, {
-		description = "Trampolína",
+		description = "trampolína",
 		drawtype = "nodebox",
 		node_box = trampolinebox,
 		selection_box = trampolinebox,
@@ -66,7 +66,7 @@ for i = 1, 6 do
 end
 
 minetest.register_node("jumping:cushion", {
-	description = "Polštář",
+	description = "polštář",
 	drawtype = "nodebox",
 	node_box = cushionbox,
 	selection_box = cushionbox,

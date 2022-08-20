@@ -8,10 +8,10 @@ hiking.base_material = "dye:white"
 
 --You can add another colours here.
 hiking.colours = {
-	{name = "red", title = "Červená", colour = "FF0000", material = "dye:red"},
-	{name = "blue", title = "Modrá", colour = "0000FF", material = "dye:blue"},
-	{name = "green", title = "Zelená", colour = "00C000", material = "dye:green"},
-	{name = "yellow", title = "Žlutá", colour = "FFFF00", material = "dye:yellow"},
+	{name = "red", title = "červená", colour = "FF0000", material = "dye:red"},
+	{name = "blue", title = "modrá", colour = "0000FF", material = "dye:blue"},
+	{name = "green", title = "zelená", colour = "00C000", material = "dye:green"},
+	{name = "yellow", title = "žlutá", colour = "FFFF00", material = "dye:yellow"},
 	--Uncomment this line to add Polish black signs
 	-- {name = "black", title = "Černá", colour = "000000", material = "dye:black"}
 }
