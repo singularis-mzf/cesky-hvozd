@@ -3,25 +3,37 @@ local S = minetest.get_translator(minetest.get_current_modname())
 
 local has_pipeworks = minetest.get_modpath("pipeworks")
 
+local function formspec_pos(x)
+	local padding = 3/8
+	local spacing = 5/4
+	return x * spacing + padding
+end
+
+local function formspec_sz(x)
+	local padding = 3/8
+	local spacing = 5/4
+	return (x - 1) * spacing + 2 * padding + 1
+end
+
 local function get_pipeworks_fs(x, y, meta)
 	-- Use a container to reposition the pipeworks button.
-	return "container["..x..","..(y - 4.3).."]"..
+	return "container["..formspec_pos(x)..","..formspec_pos(y - 4.7).."]"..
 		pipeworks.fs_helpers.cycling_button(
 			meta,
-			pipeworks.button_base,
+			pipeworks.button_base_4,
 			"splitstacks",
 			{
 				pipeworks.button_off,
 				pipeworks.button_on
 			}
-		)..pipeworks.button_label.."container_end[]"
+		)..pipeworks.button_label_4.."container_end[]"
 end
 
 local function get_color_fs(x, y, meta)
 	local fs = ""
 	for a = 0, 3 do
 		for b = 0, 3 do
-			fs = fs.."image_button["..(x + b * 0.73)..","..(y + 0.1 + a * 0.79)..";0.8,0.8;"..
+			fs = fs.."image_button["..formspec_pos(x + b * 0.73)..","..formspec_pos(y + 0.1 + a * 0.79)..";0.8,0.8;"..
 				"technic_colorbutton"..(a * 4 + b)..".png;color_button"..(a * 4 + b + 1)..";]"
 		end
 	end
@@ -32,15 +44,15 @@ local function get_color_fs(x, y, meta)
 	else
 		color = S("None")
 	end
-	return fs.."label["..(x + 0.1)..","..(y + 3.4)..";"..S("Selected Color: @1", color).."]"
+	return fs.."label["..formspec_pos(x + 0.1)..","..formspec_pos(y + 3.4)..";"..S("Selected Color: @1", color).."]"
 end
 
 local function get_quickmove_fs(x, y)
-	return "button["..x..","..y..";3,1;existing_to_chest;"..S("Move existing to Chest").."]"..
-		"label["..(x + 0.1)..","..(y + 1.15)..";"..S("Move specific")..":\n("..S("Drop to move")..")]"..
-		"list[context;quickmove;"..(x + 1.8)..","..(y + 1.15)..";1,1]"..
-		"button["..x..","..(y + 2.3)..";3,1;all_to_chest;"..S("Move all to Chest").."]"..
-		"button["..x..","..(y + 3.2)..";3,1;all_to_inv;"..S("Move all to Inventory").."]"
+	return "button["..formspec_pos(x)..","..formspec_pos(y)..";4,1;existing_to_chest;"..S("Move existing to Chest").."]"..
+		"label["..formspec_pos(x + 0.1)..","..formspec_pos(y + 1.15)..";"..S("Move specific")..":\n("..S("Drop to move")..")]"..
+		"list[context;quickmove;"..formspec_pos(x + 2.4)..","..formspec_pos(y + 1.15)..";1,1]"..
+		"button["..formspec_pos(x)..","..formspec_pos(y + 2.3)..";4,1;all_to_chest;"..S("Move all to Chest").."]"..
+		"button["..formspec_pos(x)..","..formspec_pos(y + 3.2)..";4,1;all_to_inv;"..S("Move all to Inventory").."]"
 end
 
 local function get_digilines_fs(x, y, meta)
@@ -50,55 +62,57 @@ local function get_digilines_fs(x, y, meta)
 	local inject = meta:get_int("send_inject") == 1 and "true" or "false"
 	local pull = meta:get_int("send_pull") == 1 and "true" or "false"
 	local overflow = meta:get_int("send_overflow") == 1 and "true" or "false"
-	return "field["..(x + 0.3)..","..(y + 0.5)..";3,1;channel;Digiline Channel:;"..channel.."]"..
-		"button["..(x + 0.5)..","..(y + 1.1)..";2,1;save_channel;Save Channel]"..
-		"checkbox["..(x + 0.1)..","..(y + 1.8)..";send_put;"..S("Send player put messages")..";"..put.."]"..
-		"checkbox["..(x + 0.1)..","..(y + 2.2)..";send_take;"..S("Send player take messages")..";"..take.."]"..
-		"checkbox["..(x + 0.1)..","..(y + 2.6)..";send_inject;"..S("Send tube inject messages")..";"..inject.."]"..
-		"checkbox["..(x + 0.1)..","..(y + 3.0)..";send_pull;"..S("Send tube pull messages")..";"..pull.."]"..
-		"checkbox["..(x + 0.1)..","..(y + 3.4)..";send_overflow;"..S("Send overflow messages")..";"..overflow.."]"
+	return "field["..formspec_pos(x + 0.3)..","..formspec_pos(y + 0.5)..";3,1;channel;Digiline Channel:;"..channel.."]"..
+		"button["..formspec_pos(x + 0.5)..","..formspec_pos(y + 1.1)..";2,1;save_channel;Save Channel]"..
+		"checkbox["..formspec_pos(x + 0.1)..","..formspec_pos(y + 1.8)..";send_put;"..S("Send player put messages")..";"..put.."]"..
+		"checkbox["..formspec_pos(x + 0.1)..","..formspec_pos(y + 2.2)..";send_take;"..S("Send player take messages")..";"..take.."]"..
+		"checkbox["..formspec_pos(x + 0.1)..","..formspec_pos(y + 2.6)..";send_inject;"..S("Send tube inject messages")..";"..inject.."]"..
+		"checkbox["..formspec_pos(x + 0.1)..","..formspec_pos(y + 3.0)..";send_pull;"..S("Send tube pull messages")..";"..pull.."]"..
+		"checkbox["..formspec_pos(x + 0.1)..","..formspec_pos(y + 3.4)..";send_overflow;"..S("Send overflow messages")..";"..overflow.."]"
 end
 
 local function get_infotext_fs(editing, meta)
 	local infotext = minetest.formspec_escape(technic.chests.get_infotext(meta, false))
 	if editing then
-		return "image_button[0,0.1;0.8,0.8;technic_checkmark_icon.png;save_infotext;]"..
-			"field[1,0.3;4,1;infotext;;"..infotext.."]"
+		return "image_button["..formspec_pos(0)..","..formspec_pos(0.1)..";0.8,0.8;technic_checkmark_icon.png;save_infotext;]"..
+			"field["..formspec_pos(1)..","..formspec_pos(0)..";4,1;infotext;;"..infotext.."]"
 	else
-		return "image_button[0,0.1;0.8,0.8;technic_pencil_icon.png;edit_infotext;]"..
-			"label[1,0;"..infotext.."]"
+		return "image_button["..formspec_pos(0)..","..formspec_pos(0.1)..";0.8,0.8;technic_pencil_icon.png;edit_infotext;]"..
+			"label["..formspec_pos(1)..","..(formspec_pos(0.4))..";"..infotext.."]"
 	end
 end
 
 local function get_autosort_fs(x, meta)
 	if meta:get_int("autosort") == 1 then
-		return "button["..x..",0;2,1;autosort;"..S("Auto-sort is On").."]"
+		return "button["..formspec_pos(x)..","..formspec_pos(0)..";3,1;autosort;"..S("Auto-sort is On").."]"
 	else
-		return "button["..x..",0;2,1;autosort;"..S("Auto-sort is Off").."]"
+		return "button["..formspec_pos(x)..","..formspec_pos(0)..";3,1;autosort;"..S("Auto-sort is Off").."]"
 	end
 end
 
 local function get_sort_fs(x, meta)
 	local mode = meta:get_int("sort_mode")
-	local fs = "button["..(x + 2)..",0;1,1;sort;"..S("Sort").."]"
+	local fs = "button["..formspec_pos(x + 2.5)..","..formspec_pos(0)..";1.5,1;sort;"..S("Sort").."]"
+	local mode_desc
 	if mode == 1 then
-		return fs.."button["..x..",0;2,1;sort_mode;"..S("Sort by Quantity").."]"
+		mode_desc = S("Sort by Quantity")
 	elseif mode == 2 then
-		return fs.."button["..x..",0;2,1;sort_mode;"..S("Sort by Type").."]"
+		mode_desc = S("Sort by Type")
 	elseif mode == 3 then
-		return fs.."button["..x..",0;2,1;sort_mode;"..S("Sort by Wear").."]"
+		mode_desc = S("Sort by Wear")
 	elseif mode == 4 then
-		return fs.."button["..x..",0;2,1;sort_mode;"..S("Natural sort").."]"
+		mode_desc = S("Natural sort")
 	else
-		return fs.."button["..x..",0;2,1;sort_mode;"..S("Sort by Item").."]"
+		mode_desc = S("Sort by Item")
 	end
+	return fs.."button["..formspec_pos(x)..","..formspec_pos(0)..";3,1;sort_mode;"..mode_desc.."]"
 end
 
 function technic.chests.get_formspec(data)
 	local formspec = {}
 	local top_width = (data.infotext and 6 or 0) + (data.autosort and 2 or 0) + (data.sort and 3 or 0)
 	local bottom_width = (data.quickmove and 3 or 0) + ((data.color or data.digilines) and 3 or 0) + 8
-	local width = math.max(top_width, bottom_width, data.width)
+	local width = math.max(top_width, bottom_width, 0.96 * data.width)
 	local padding = (width - bottom_width) / 2
 	if data.quickmove and (data.color or data.digilines) then
 		padding = (width - bottom_width) / 4
@@ -111,16 +125,18 @@ function technic.chests.get_formspec(data)
 	end
 	local player_inv_top = data.height + (has_pipeworks and 1.6 or 1.3)
 	local height = data.height + (has_pipeworks and 5.4 or 5.1)
-	local chest_inv_left = (width - data.width) / 2
+	local chest_inv_left = 0 -- (width - data.width) / 2
 	formspec.base =
-		"size["..width..","..height.."]"..
-		"list[context;main;"..chest_inv_left..",1;"..data.width..","..data.height..";]"..
-		"list[current_player;main;"..player_inv_left..","..player_inv_top..";8,4;]"..
+		"formspec_version[5]"..
+		"size["..formspec_sz(width)..","..formspec_sz(height).."]"..
+		"style_type[list;spacing=0.2,0.2]"..
+		"list[context;main;"..formspec_pos(chest_inv_left)..","..formspec_pos(1)..";"..data.width..","..data.height..";]"..
+		"list[current_player;main;"..formspec_pos(player_inv_left)..","..formspec_pos(player_inv_top)..";8,4;]"..
 		"listring[context;main]"..
-		"listring[current_player;main]"..
-		default.get_hotbar_bg(player_inv_left, player_inv_top)
+		"listring[current_player;main]"
+		-- default.get_hotbar_bg(formspec_pos(player_inv_left + 1), formspec_pos(player_inv_top))
 	if data.quickmove then
-		formspec.base = formspec.base..get_quickmove_fs(padding, data.height + 1.2)
+		formspec.base = formspec.base..get_quickmove_fs(padding - 0.25, data.height + 1.2)
 	end
 	formspec.padding = padding
 	formspec.width = width
@@ -174,9 +190,9 @@ function technic.chests.update_formspec(pos, data, edit_infotext)
 		formspec = formspec..get_infotext_fs(edit_infotext, meta)
 	end
 	if data.sort then
-		formspec = formspec..get_sort_fs(data.formspec.width - 3, meta)
+		formspec = formspec..get_sort_fs(data.formspec.width - 4, meta)
 		if data.autosort then
-			formspec = formspec..get_autosort_fs(data.formspec.width - 5, meta)
+			formspec = formspec..get_autosort_fs(data.formspec.width - 7, meta)
 		end
 	end
 	if has_pipeworks and node_has_pipeworks then

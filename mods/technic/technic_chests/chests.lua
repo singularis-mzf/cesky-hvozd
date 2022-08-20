@@ -128,7 +128,7 @@ register_crafts(
 -- Gold
 register_chests({
 	description = "Gold",
-	width = 15,
+	width = 17,
 	height = 6,
 	sort = true,
 	infotext = true,
@@ -147,8 +147,8 @@ register_crafts(
 -- Mithril
 register_chests({
 	description = "Mithril",
-	width = 15,
-	height = 6,
+	width = 24,
+	height = 8,
 	sort = true,
 	infotext = true,
 	autosort = true,

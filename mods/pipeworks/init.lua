@@ -62,6 +62,9 @@ pipeworks.button_on    = {text="", texture="pipeworks_button_on.png",  addopts="
 pipeworks.button_base  = "image_button[0,4.3;1,0.6"
 pipeworks.button_label = "label[0.9,4.31;"..S("Allow splitting incoming stacks from tubes").."]"
 
+pipeworks.button_base_4  = "image_button[0.375,5.75;1,0.6"
+pipeworks.button_label_4 = "label[1.5,6.05;"..S("Allow splitting incoming stacks from tubes").."]"
+
 -- Helper functions
 
 function pipeworks.fix_image_names(table, replacement)
