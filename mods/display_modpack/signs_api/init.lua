@@ -226,6 +226,18 @@ function signs_api.register_sign(mod, name, model)
 				signs_api.set_formspec(pos)
 				display_api.update_entities(pos)
 			end,
+		can_dig = function(pos, player)
+				local controls = player and player:is_player() and player:get_player_control()
+				if not controls or controls.aux1 then return true end
+				if minetest.get_modpath("technic") then
+					local wielded_item = player:get_wielded_item()
+					if not wielded_item:is_empty() and technic.power_tools[wielded_item:get_name()] then
+						return true
+					end
+				end
+				minetest.chat_send_player(player:get_player_name(), "*** pro odstranění většiny cedulí, štítku, směrovek a plakátů musíte při odstraňování držet Aux1 nebo použít elektrický nástroj")
+				return false
+			end,
 	}
 
 	-- Node fields override

@@ -17,10 +17,12 @@ STAMINA_EXHAUST_CRAFT = 2	-- .. if player crafts
 STAMINA_EXHAUST_PUNCH = 40	-- .. if player punches another player
 STAMINA_EXHAUST_LVL = 160	-- at what exhaustion player saturation gets lowered
 
-STAMINA_HEAL = 1			-- number of HP player gets healed after STAMINA_HEALTH_TICK
+STAMINA_HEAL = 2			-- number of HP player gets healed after STAMINA_HEALTH_TICK
 STAMINA_HEAL_LVL = 5		-- lower level of saturation needed to get healed
 
 STAMINA_VISUAL_MAX = 20		-- hud bar extends only to 20
+STAMINA_MAX_STAMINA = 60
+STAMINA_HUNGER_LEVEL = 30   -- levels of stamina < this are considered hunger
 STAMINA_DRUNK_SECONDS = 60
 
 SPRINT_SPEED = 0.3			-- how much faster player can run if satiated
@@ -31,7 +33,7 @@ local function should_hide(hud_name, level)
 	if hud_name == "damage" then
 		return level == 0
 	elseif hud_name == "hlad" then
-		return level == 0
+		return level < 5
 	elseif hud_name == "opilost" then
 		return level == 0
 	else
@@ -43,7 +45,7 @@ local function should_unhide(hud_name, level)
 	if hud_name == "damage" then
 		return level > 0
 	elseif hud_name == "hlad" then
-		return level > 1
+		return level > 5
 	elseif hud_name == "opilost" then
 		return level > 0
 	else
@@ -68,6 +70,73 @@ local function get_int_attribute(player)
 	return nil
 end
 
+local function stamina_update_hud(player, stamina_level)
+	local player_data, hud_status, is_hunger, hud_maxvalue, hud_value
+	local player_data = stamina.players[player:get_player_name()]
+	-- hud_status: "normal", "poisoned", "drunk"
+	-- is_hunger: true, false
+
+	is_hunger = stamina_level < STAMINA_HUNGER_LEVEL
+	if is_hunger then
+		hud_value = STAMINA_HUNGER_LEVEL - stamina_level
+		hud_maxvalue = STAMINA_HUNGER_LEVEL
+	else
+		hud_value = stamina_level - STAMINA_HUNGER_LEVEL
+		hud_maxvalue = STAMINA_MAX_STAMINA - STAMINA_HUNGER_LEVEL
+	end
+
+	if not player_data.hud_status then
+		-- init
+		hud_status = "normal"
+		player_data.hud_status = hud_status
+		player_data.hud_value = hud_value
+		player_data.was_hunger = not is_hunger -- trigger update
+		hb.init_hudbar(player, "hlad", 0, hud_maxvalue, true)
+	end
+
+	if player_data.poisoned then
+		hud_status = "poisoned"
+	elseif player_data.drunk then
+		hud_status = "drunk"
+	else
+		hud_status = "normal"
+	end
+
+	local result
+	if player_data.hud_status ~= hud_status or player_data.was_hunger ~= is_hunger then
+		-- update everything
+		local hud_icon, hud_bgicon, hud_bar, hud_label
+
+		if hud_status == "poisoned" then
+			hud_label = is_hunger and "otrava+hlad" or "otrava"
+			hud_bar = "hudbars_bar_poison.png"
+		elseif hud_status == "drunk" then
+			hud_label = is_hunger and "hlad" or "sytost"
+			hud_bar = "hudbars_bar_poison.png"
+		else
+			hud_label = is_hunger and "hlad" or "sytost"
+			hud_bar = "hudbars_bar_stamina.png"
+		end
+
+		player_data.hud_status = hud_status
+		player_data.was_hunger = is_hunger
+		player_data.hud_value = hud_value
+		hb.unhide_hudbar(player, "hlad")
+		result = hb.change_hudbar(player, "hlad", hud_value, hud_maxvalue, hud_icon, hud_bgicon, hud_bar, hud_label)
+	elseif player_data.hud_value ~= hud_value then
+		-- update only the value
+		player_data.hud_value = hud_value
+		result = hb.change_hudbar(player, "hlad", hud_value)
+	else
+		result = false
+	end
+	if hud_status ~= "normal" or hud_value > 5 then
+		hb.unhide_hudbar(player, "hlad")
+	elseif hud_value < 4 then
+		hb.hide_hudbar(player, "hlad")
+	end
+	return result
+end
 
 local function stamina_update_level(player, level)
 
@@ -78,8 +147,8 @@ local function stamina_update_level(player, level)
 
 	local old = get_int_attribute(player)
 
-	if level > STAMINA_VISUAL_MAX then
-		level = STAMINA_VISUAL_MAX
+	if level > STAMINA_MAX_STAMINA then
+		level = STAMINA_MAX_STAMINA
 	end
 
 	if level == old then -- To suppress HUD update
@@ -93,23 +162,11 @@ local function stamina_update_level(player, level)
 
 	local meta = player and player:get_meta() ; if not meta then return end
 
+	-- minetest.log("action", "stamina change: "..player:get_player_name()..": "..old.." -> "..level)
+
 	meta:set_string("stamina:level", level)
 
-	if hb.change_hudbar(player, "hlad", 20 - level) then
-		if should_unhide("hlad", 20 - level) then
-			hb.unhide_hudbar(player, "hlad")
-		elseif should_hide("hlad", 20 - level) then
-			hb.hide_hudbar(player, "hlad")
-		end
-	end
-
-	--[[
-	player:hud_change(
-		stamina.players[player:get_player_name()].hud_id,
-		"number",
-		math.min(STAMINA_VISUAL_MAX, level)
-	)
-	]]
+	stamina_update_hud(player, level)
 end
 
 
@@ -122,11 +179,11 @@ stamina.change = function(player, change)
 		return false
 	end
 
-	local level = get_int_attribute(player) + change
+	local level = (get_int_attribute(player) or 0) + change
 
 	if level < 0 then level = 0 end
 
-	if level > STAMINA_VISUAL_MAX then level = STAMINA_VISUAL_MAX end
+	if level > STAMINA_MAX_STAMINA then level = STAMINA_MAX_STAMINA end
 
 	stamina_update_level(player, level)
 
@@ -155,7 +212,7 @@ local function exhaust_player(player, v)
 
 		exhaustion = 0
 
-		local h = get_int_attribute(player)
+		local h = get_int_attribute(player) or 0
 
 		if h > 0 then
 			stamina_update_level(player, h - 1)
@@ -223,9 +280,7 @@ local function drunk_tick()
 				stamina.players[name].drunk = nil
 				stamina.players[name].units = 0
 
-				if not stamina.players[name].poisoned then
-					hb.change_hudbar(player, "hlad", nil, nil, nil, nil, "hudbars_bar_stamina.png")
-				end
+				stamina_update_hud(player, get_int_attribute(player) or 0)
 				hb.hide_hudbar(player, "opilost")
 			else
 				hb.change_hudbar(player, "opilost", stamina.players[name].drunk)
@@ -253,16 +308,17 @@ local function health_tick()
 
 			local air = player:get_breath() or 0
 			local hp = player:get_hp()
-			local h = get_int_attribute(player)
+			local h = get_int_attribute(player) or 0
 
-			-- don't heal if drowning or dead or poisoned
-			if h and h >= STAMINA_HEAL_LVL
-			and h >= hp
-			and hp > 0
-			and air > 0
-			and not stamina.players[name].poisoned then
+			if hp < STAMINA_VISUAL_MAX -- don't heal if fully healed
+			and hp > 0 -- don't heal if dead
+			and h -- don't heal if the stamina level is unknown
+			and h >= STAMINA_HEAL_LVL -- don't heal if the stamina level is too low
+			and 20 * h >= hp * 30 then
 
-				player:set_hp(hp + STAMINA_HEAL)
+				if not stamina.players[name].poisoned and air > 0 then -- don't heal if poisoned or drowning
+					player:set_hp(hp + STAMINA_HEAL)
+				end
 
 				stamina_update_level(player, h - 1)
 			end
@@ -319,13 +375,8 @@ local function poison_tick()
 		elseif name
 		and stamina.players[name]
 		and stamina.players[name].poisoned then
-
-			if not stamina.players[name].drunk then
-
-				hb.change_hudbar(player, "hlad", nil, nil, nil, nil, "hudbars_bar_stamina.png")
-			end
-
 			stamina.players[name].poisoned = nil
+			stamina_update_hud(player, get_int_attribute(player) or 0)
 		end
 	end
 end
@@ -351,7 +402,7 @@ local hudbar_formatstring_config = {
 }
 hb.register_hudbar("damage", 0xFFFFFF, "zranění", { icon = "hudbars_icon_health.png", bgicon = "hudbars_bgicon_health.png", bar = "hudbars_bar_health.png" }, 0, 19, false, hudbar_formatstring, hudbar_formatstring_config)
 
-hb.register_hudbar("hlad", 0xFFFFFF, "hlad", { icon = "default_apple.png", bgicon = nil, bar = "hudbars_bar_stamina.png" }, 0, 20, false, hudbar_formatstring, hudbar_formatstring_config)
+hb.register_hudbar("hlad", 0xFFFFFF, "hlad", { icon = "default_apple.png", bgicon = nil, bar = "hudbars_bar_stamina.png" }, 0, STAMINA_MAX_STAMINA, false, hudbar_formatstring, hudbar_formatstring_config)
 
 hb.register_hudbar("opilost", 0xFFFFFF, "opilost", { icon = "stamina_wine_bottle.png", bgicon = nil, bar = "hudbars_bar_drunk.png" }, 0, STAMINA_DRUNK_SECONDS, false, hudbar_formatstring, hudbar_formatstring_config)
 
@@ -426,9 +477,9 @@ function stamina.eat(hp_change, replace_with_item, itemstack, user, pointed_thin
 
 	local level = get_int_attribute(user) or 0
 
-	if level >= STAMINA_VISUAL_MAX then
-		return itemstack
-	end
+	-- if level >= STAMINA_VISUAL_MAX then
+	--	return itemstack
+	--end
 
 	local name = user:get_player_name()
 
@@ -439,9 +490,8 @@ function stamina.eat(hp_change, replace_with_item, itemstack, user, pointed_thin
 	elseif hp_change < 0 then
 
 		-- assume hp_change < 0
-		hb.change_hudbar(user, "hlad", nil, nil, nil, nil, "hudbars_bar_poison.png")
-
 		stamina.players[name].poisoned = -hp_change
+		stamina_update_hud(user, level)
 	end
 
 	-- if {drink=1} group set then use sip sound instead of default eat
@@ -501,7 +551,7 @@ function stamina.eat(hp_change, replace_with_item, itemstack, user, pointed_thin
 			stamina.players[name].drunk = STAMINA_DRUNK_SECONDS
 			stamina.players[name].units = 0
 
-			hb.change_hudbar(user, "hlad", nil, nil, nil, nil, "hudbars_bar_poison.png")
+			stamina_update_hud(user, get_int_attribute(user) or 0)
 			hb.change_hudbar(user, "opilost", stamina.players[name].drunk)
 			hb.unhide_hudbar(user, "opilost")
 
@@ -517,13 +567,12 @@ end
 minetest.register_on_joinplayer(function(player)
 	if not player then return end
 
-	local level = STAMINA_VISUAL_MAX -- TODO
+	local level = STAMINA_MAX_STAMINA
 
 	if get_int_attribute(player) then
-		level = math.min(get_int_attribute(player), STAMINA_VISUAL_MAX)
+		level = math.min(get_int_attribute(player), STAMINA_MAX_STAMINA)
 	else
 		local meta = player:get_meta()
-
 		meta:set_string("stamina:level", level)
 	end
 
@@ -534,9 +583,9 @@ minetest.register_on_joinplayer(function(player)
 	local start_hidden = should_hide("damage", hud_level)
 	hb.init_hudbar(player, "damage", hud_level, 19, start_hidden)
 
-	hud_level = 20 - level
-	start_hidden = should_hide("hlad", hud_level)
-	hb.init_hudbar(player, "hlad", hud_level, 20, start_hidden)
+	-- hud_level = STAMINA_MAX_STAMINA - level
+	-- start_hidden = should_hide("hlad", hud_level)
+	-- hb.init_hudbar(player, "hlad", hud_level, STAMINA_MAX_STAMINA, start_hidden)
 
 	hb.init_hudbar(player, "opilost", 0, STAMINA_DRUNK_SECONDS, true)
 
@@ -547,23 +596,24 @@ minetest.register_on_joinplayer(function(player)
 		drunk = nil,
 		sprint = nil
 	}
+	stamina_update_hud(player, level)
 end)
 
 minetest.register_on_respawnplayer(function(player)
 
 	local name = player:get_player_name() ; if not name then return end
 
-	if stamina.players[name].poisoned
+	--[[ if stamina.players[name].poisoned
 	or stamina.players[name].drunk then
 		hb.change_hudbar(player, "hlad", nil, nil, nil, nil, "hudbars_bar_stamina.png")
-	end
+	end ]]
 
 	stamina.players[name].exhaustion = 0
 	stamina.players[name].poisoned = nil
 	stamina.players[name].drunk = nil
 	stamina.players[name].sprint = nil
 
-	stamina_update_level(player, STAMINA_VISUAL_MAX)
+	stamina_update_level(player, STAMINA_MAX_STAMINA)
 end)
 
 minetest.register_globalstep(stamina_globaltimer)
