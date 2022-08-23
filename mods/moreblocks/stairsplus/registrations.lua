@@ -158,6 +158,10 @@ end
 -- Alias cuts of split_stone_tile_alt which was renamed checker_stone_tile.
 stairsplus:register_alias_all("moreblocks", "split_stone_tile_alt", "moreblocks", "checker_stone_tile")
 
+if minetest.get_modpath("ch_core") then
+	stairsplus:register_slabs_and_slopes("ch_core", "railway_gravel", "ch_core:railway_gravel", minetest.registered_nodes["ch_core:railway_gravel"])
+end
+
 -- The following LBM is necessary because the name stair_split_stone_tile_alt
 -- conflicts with another node and so the alias for that specific node gets
 -- ignored.

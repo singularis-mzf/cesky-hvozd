@@ -180,6 +180,13 @@ resp. *ostatní\_zdroje*.
 * Původní licence: AGPLv3
 * Licence úprav: AGPLv3
 
+## Ambience Lite (minetest-mod-ambience)
+
+* Zdroj: [https://notabug.org/minenux/minetest-mod-ambience](https://notabug.org/minenux/minetest-mod-ambience), revize e6ed64b1e518ba6bdd33c306895634b2c9622413 (odnož původního repozitáře)
+* Původní licence: kód MIT, zvuky různé (některé nedovolují komerční použití!)
+* Licence úprav: kód MIT, zvuky uvedeny individuálně
+* [ContentDB](https://content.minetest.net/packages/TenPlus1/ambience/)
+
 ## Wilhelmines Animal World (animalworld)
 
 * Zdroj: [https://github.com/Skandarella/animalworld](https://github.com/Skandarella/animalworld), revize d4387aa71167e9534516d20395b4acb0444bc900
