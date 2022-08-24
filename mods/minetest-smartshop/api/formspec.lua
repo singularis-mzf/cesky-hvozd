@@ -41,6 +41,7 @@ function api.build_owner_formspec(shop)
 	local is_strict_meta = shop:is_strict_meta()
 	local is_private = shop:is_private()
 	local allow_freebies = shop:allow_freebies()
+	local allow_icons = shop:allow_icons()
 	local owner = shop:get_owner()
 
 	local fs_parts = {
@@ -51,24 +52,38 @@ function api.build_owner_formspec(shop)
 		("list[nodemeta:%s;give2;2,0;1,1;]"):format(fpos),
 		("list[nodemeta:%s;give3;3,0;1,1;]"):format(fpos),
 		("list[nodemeta:%s;give4;4,0;1,1;]"):format(fpos),
+		("list[nodemeta:%s;give5;5,0;1,1;]"):format(fpos),
+		("list[nodemeta:%s;give6;6,0;1,1;]"):format(fpos),
+		("list[nodemeta:%s;give7;7,0;1,1;]"):format(fpos),
+		("list[nodemeta:%s;give8;8,0;1,1;]"):format(fpos),
+		("list[nodemeta:%s;give9;9,0;1,1;]"):format(fpos),
+		("list[nodemeta:%s;give10;10,0;1,1;]"):format(fpos),
 		("label[0,1.2;%s]"):format(FS("price:")),
 		("list[nodemeta:%s;pay1;1,1;1,1;]"):format(fpos),
 		("list[nodemeta:%s;pay2;2,1;1,1;]"):format(fpos),
 		("list[nodemeta:%s;pay3;3,1;1,1;]"):format(fpos),
 		("list[nodemeta:%s;pay4;4,1;1,1;]"):format(fpos),
+		("list[nodemeta:%s;pay5;5,1;1,1;]"):format(fpos),
+		("list[nodemeta:%s;pay6;6,1;1,1;]"):format(fpos),
+		("list[nodemeta:%s;pay7;7,1;1,1;]"):format(fpos),
+		("list[nodemeta:%s;pay8;8,1;1,1;]"):format(fpos),
+		("list[nodemeta:%s;pay9;9,1;1,1;]"):format(fpos),
+		("list[nodemeta:%s;pay10;10,1;1,1;]"):format(fpos),
 
-		("button[6,0;2,1;customer;%s]"):format(FS("customer view")),
+		("button[12,0;2,1;customer;%s]"):format(FS("customer view")),
 		("tooltip[customer;%s]"):format(FS("view the shop as a customer")),
 
-		("checkbox[6,0.9;strict_meta;%s;%s]"):format(FS("strict meta?"), tostring(is_strict_meta)),
+		("checkbox[12,0.9;strict_meta;%s;%s]"):format(FS("strict meta?"), tostring(is_strict_meta)),
 		("tooltip[strict_meta;%s]"):format(FS("check this if you are buying or selling items with unique properties " ..
 			"like written books or petz.")),
-		("checkbox[6,1.2;private;%s;%s]"):format(FS("private?"), tostring(is_private)),
+		("checkbox[12,1.2;private;%s;%s]"):format(FS("private?"), tostring(is_private)),
 		("tooltip[private;%s]"):format(FS("uncheck this if you want to share control of the shop with anyone in the " ..
 			"protected area.")),
-		("checkbox[6,1.5;freebies;%s;%s]"):format(FS("freebies?"), tostring(allow_freebies)),
+		("checkbox[12,1.5;freebies;%s;%s]"):format(FS("freebies?"), tostring(allow_freebies)),
 		("tooltip[freebies;%s]"):format(FS("check this if you want to be able to give/receive items without " ..
 			"an exchange")),
+		("checkbox[12,1.8;icons;%s;%s]"):format(FS("icons?"), tostring(allow_icons)),
+		("tooltip[icons;%s]"):format(FS("check this if you want to display item icons on the shop")),
 
 		"list[current_player;main;0,9.2;8,4;]",
 		("listring[nodemeta:%s;main]"):format(fpos),
@@ -77,7 +92,7 @@ function api.build_owner_formspec(shop)
 
 	if player_is_admin(owner) then
 		table.insert_all(fs_parts, {
-			("checkbox[6,0.6;is_unlimited;%s;%s]"):format(FS("unlimited?"), tostring(is_unlimited)),
+			("checkbox[12,0.6;is_unlimited;%s;%s]"):format(FS("unlimited?"), tostring(is_unlimited)),
 			("tooltip[is_unlimited;%s]"):format(FS("check this allow exchanges ex nihilo. " ..
 				"shop contents will be ignored")),
 		})
@@ -85,7 +100,7 @@ function api.build_owner_formspec(shop)
 
 	if history_max ~= 0 then
 		table.insert_all(fs_parts, {
-			("button[5,2;2.5,1;history;%s]"):format(FS("purchase history")),
+			("button[9,2;2.5,1;history;%s]"):format(FS("purchase history")),
 			("tooltip[history;%s]"):format(FS("view a log of purchases from the shop")),
 		})
 	end
@@ -96,8 +111,8 @@ function api.build_owner_formspec(shop)
 	else
 		table.insert_all(fs_parts, {
 			("list[nodemeta:%s;main;0,3;15,6;]"):format(fpos),
-			("button_exit[5,0;1,1;trefill;%s]"):format(FS("refill")),
-			("button_exit[5,1;1,1;tsend;%s]"):format(FS("send")),
+			("button_exit[11,0;1,1;trefill;%s]"):format(FS("refill")),
+			("button_exit[11,1;1,1;tsend;%s]"):format(FS("send")),
 		})
 
 		if send then
@@ -128,9 +143,9 @@ function api.build_client_formspec(shop)
 
 	local fs_parts = {
 		"formspec_version[3]",
-		"size[10.5,8]",
+		"size[15.5,8]",
 		"style_type[image_button;bgcolor=#00000000;bgimg=blank.png;border=false]",
-		"list[current_player;main;0.375,3.125;8,4;]",
+		"list[current_player;main;2.875,3.125;8,4;]",
 		("label[0.375,0.625;%s]"):format(FS("for sale:")),
 		("label[0.375,1.875;%s]"):format(FS("price:")),
 	}
@@ -203,7 +218,7 @@ function api.build_client_formspec(shop)
 		end
 	end
 
-	for i = 1, 4 do
+	for i = 1, 10 do
 		table.insert(fs_parts, give_i(i))
 		table.insert(fs_parts, buy_i(i))
 	end

@@ -198,10 +198,14 @@ function api.get_image_type(shop, index)
 		return "sprite"
 	end
 end
-
+-- 
 function api.update_entities(shop)
 	-- TODO https://github.com/fluxionary/minetest-smartshop/issues/32
 	shop:clear_entities()
+
+	if not shop:allow_icons() then
+		return -- entities not allowed
+	end
 
 	local seen = {}
 	local empty_count = 0

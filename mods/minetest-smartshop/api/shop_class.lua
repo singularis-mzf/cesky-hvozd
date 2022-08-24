@@ -41,6 +41,7 @@ function shop_class:initialize_metadata(player)
     self:set_unlimited(is_admin)
     self:set_strict_meta(false)
     self:set_freebies(false)
+    self:set_icons(false)
 end
 
 function shop_class:initialize_inventory()
@@ -48,7 +49,7 @@ function shop_class:initialize_inventory()
 
     local inv = self.inv
     inv:set_size("main", 90)
-    for i = 1, 4 do
+    for i = 1, 10 do
         inv:set_size(("give%i"):format(i), 1)
         inv:set_size(("pay%i"):format(i), 1)
     end
@@ -170,6 +171,15 @@ end
 
 function shop_class:allow_freebies()
     return self.meta:get_int("freebies") == 1
+end
+
+function shop_class:set_icons(value)
+    self.meta:set_int("icons", value and 1 or 0)
+    self.meta:mark_as_private("icons")
+end
+
+function shop_class:allow_icons()
+    return self.meta:get_int("icons") == 1
 end
 
 function shop_class:get_purchase_history()
@@ -519,7 +529,7 @@ function shop_class:show_history(player)
 end
 
 local function get_buy_index(pressed)
-    for i = 1, 4 do
+    for i = 1, 10 do
         if pressed["buy" .. i .. "a"] or pressed["buy" .. i .. "b"] then
             return i
         end
@@ -564,6 +574,10 @@ function shop_class:receive_fields(player, fields)
         end
         if fields.freebies then
             self:set_freebies(fields.freebies == "true")
+            changed = true
+        end
+        if fields.icons then
+            self:set_icons(fields.icons == "true")
             changed = true
         end
     end
@@ -613,7 +627,7 @@ function shop_class:update_info()
     local lines = {S("(obchodní terminál, vlastník/ice: @1)", owner)}
 
     local info_lines = {}
-    for i = 1, 4 do
+    for i = 1, 10 do
         local line = self:get_info_line(i)
         if line then
             table.insert(info_lines, line)
@@ -649,12 +663,12 @@ function shop_class:compute_variant()
         return "smartshop:shop_admin"
     end
 
-    local n_total = 4
+    local n_total = 10
     local n_have_give = 0
     local n_have_pay = 0
     local n_can_exchange = 0
 
-    for i = 1, 4 do
+    for i = 1, 10 do
         if not self:pay_is_valid(i) or not self:give_is_valid(i) then
             n_total = n_total - 1
         else
