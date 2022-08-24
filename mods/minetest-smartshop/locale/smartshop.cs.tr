@@ -24,6 +24,10 @@ automatically refilled from @1=automaticky doplněno z @1
 click to set refill storage=kliknutím označte zdrojové úložiště
 Smartshop=obchodní terminál
 Smartshop external storage=zásobník pro obchodní terminál
+icons?=zobrazit ikony a titulek?
+check this if you want to display item icons on the shop=Zaškrtněte toto pole, abyste umožnil/a@nzobrazení ikon zboží a titulku obchodního terminálu.
+save title=uložit titulek
+save the title of the shop; to remove the title, set the title to an empty string=Uloží titulek obchodního terminálu. Pro smazání titulku ho nastavte na prázdný řetězec.
 
 # storage:
 External storage by: @1=vzdálený zásobník pro obchodní terminál (vlastník/ice: @1)

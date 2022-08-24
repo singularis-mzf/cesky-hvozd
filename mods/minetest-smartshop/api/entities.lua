@@ -166,9 +166,9 @@ function api.get_quad_image(items)
 		if image == "unknown_node.png" then
 			image = "blank.png"
 		end
-		table.insert(images, escape_texture(image .. "^[resize:32x32"))
+		table.insert(images, escape_texture(image .. "^[resize:64x64"))
 	end
-	return ("[combine:68x68:1,1=%s:1,36=%s:36,1=%s:36,36=%s"):format(unpack(images))
+	return ("[combine:136x136:1,1=%s:1,72=%s:72,1=%s:72,72=%s"):format(unpack(images))
 end
 
 function api.is_complicated_drawtype(drawtype)
@@ -225,26 +225,27 @@ function api.update_entities(shop)
 		seen[item] = true
 	end
 
+	local obj
+
 	-- luacheck: push ignore 542
 	if empty_count == 4 then
 		-- just remove any entities
 		-- luacheck: pop
 
 	elseif empty_count == 3 and sprite_count == 1 then
-		local obj = smartshop.entities.add_single_upright_sprite(shop, last_sprite_index)
+		obj = smartshop.entities.add_single_upright_sprite(shop, last_sprite_index)
 		if obj then
 			api.record_entity(shop.pos, obj)
 		end
 
 	elseif (sprite_count + empty_count) == 4 then
-		local obj = smartshop.entities.add_quad_upright_sprite(shop)
+		obj = smartshop.entities.add_quad_upright_sprite(shop)
 		if obj then
 			api.record_entity(shop.pos, obj)
 		end
 
 	else
 		for index, image_type in pairs(entity_types) do
-			local obj
 			if image_type == "sprite" then
 				obj = smartshop.entities.add_single_sprite(shop, index)
 			elseif image_type == "wielditem" then
@@ -254,5 +255,19 @@ function api.update_entities(shop)
 				api.record_entity(shop.pos, obj)
 			end
 		end
+	end
+
+	local shop_title = shop:get_shop_title()
+	if shop_title and shop_title ~= "" and obj then
+		local attrs = {
+			color = {r = 255, g = 255, b = 255, a = 255},
+			bgcolor = {r = 0, g = 0, b = 0, a = 240},
+			text = shop_title,
+		}
+		if shop_title == "" then
+			attrs.color.a = 0
+			attrs.bgcolor.a = 0
+		end
+		obj:set_nametag_attributes(attrs)
 	end
 end

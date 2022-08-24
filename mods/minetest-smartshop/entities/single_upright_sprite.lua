@@ -54,9 +54,6 @@ function smartshop.entities.add_single_upright_sprite(shop, index)
 	obj:set_yaw(math.pi * (2 - (param2 / 2)))
 	obj:set_properties({textures = {texture}})
 
-	-- experiment:
-	obj:set_nametag_attributes({color = {r = 255, g = 255, b = 255, a = 250}, bgcolor = {r = 0, g = 0, b = 0, a = 255}, text = "Obchodní terminál"})
-
 	local entity = obj:get_luaentity()
 
 	entity.pos = shop_pos

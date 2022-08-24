@@ -182,6 +182,15 @@ function shop_class:allow_icons()
     return self.meta:get_int("icons") == 1
 end
 
+function shop_class:set_shop_title(text)
+    self.meta:set_string("shop_title", text or "")
+    self.meta:mark_as_private("shop_title")
+end
+
+function shop_class:get_shop_title()
+    return self.meta:get_string("shop_title")
+end
+
 function shop_class:get_purchase_history()
     local history = self.meta:get("purchase_history")
     if history then
@@ -580,6 +589,11 @@ function shop_class:receive_fields(player, fields)
             self:set_icons(fields.icons == "true")
             changed = true
         end
+		if fields.save_title then
+			self:set_shop_title(fields.title or "")
+			minetest.log("action", "Shop title set to: "..(fields.title or ""))
+			changed = true
+		end
     end
 
     if changed then

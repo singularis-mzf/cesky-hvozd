@@ -42,6 +42,7 @@ function api.build_owner_formspec(shop)
 	local is_private = shop:is_private()
 	local allow_freebies = shop:allow_freebies()
 	local allow_icons = shop:allow_icons()
+	local shop_title = shop:get_shop_title()
 	local owner = shop:get_owner()
 
 	local fs_parts = {
@@ -85,6 +86,10 @@ function api.build_owner_formspec(shop)
 		("checkbox[12,1.8;icons;%s;%s]"):format(FS("icons?"), tostring(allow_icons)),
 		("tooltip[icons;%s]"):format(FS("check this if you want to display item icons on the shop")),
 
+		"field[0.5,2.0;7,1.8;title;;"..F(shop_title).."]",
+		("button[7,2;2,1;save_title;%s]"):format(FS("save title")),
+		("tooltip[save_title;%s]"):format(FS("save the title of the shop; to remove the title, set the title to an empty string")),
+
 		"list[current_player;main;0,9.2;8,4;]",
 		("listring[nodemeta:%s;main]"):format(fpos),
 		"listring[current_player;main]",
@@ -106,7 +111,7 @@ function api.build_owner_formspec(shop)
 	end
 
 	if is_unlimited then
-		table.insert(fs_parts, ("label[0.5,2.5;%s]"):format(FS("Stock is unlimited")))
+		table.insert(fs_parts, ("label[0.5,3.0;%s]"):format(FS("Stock is unlimited")))
 
 	else
 		table.insert_all(fs_parts, {
