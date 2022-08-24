@@ -1,8 +1,4 @@
-ch_core.require_submod("vezeni", "chat")
-ch_core.require_submod("vezeni", "data")
-ch_core.require_submod("vezeni", "lib")
-ch_core.require_submod("vezeni", "privs")
-ch_core.require_submod("vezeni", "hud")
+ch_core.open_submod("vezeni", {chat = true, data = true, lib = true, privs = true, hud = true})
 
 local trest_min = -100
 local trest_max = 1000000
@@ -334,4 +330,4 @@ def = {
 minetest.register_chatcommand("dveře_vězení", def)
 minetest.register_chatcommand("dvere_vezeni", def)
 
-ch_core.submod_loaded("vezeni")
+ch_core.close_submod("vezeni")

@@ -1,5 +1,4 @@
-ch_core.require_submod("zacatek", "data")
-ch_core.require_submod("zacatek", "lib")
+ch_core.open_submod("zacatek", {data = true, lib = true})
 
 --[[
 
@@ -76,4 +75,4 @@ function ch_core.dig_padlock(pos, player)
 	return true
 end
 
-ch_core.submod_loaded("padlock")
+ch_core.close_submod("padlock")

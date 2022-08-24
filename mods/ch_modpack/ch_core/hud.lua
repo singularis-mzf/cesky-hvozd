@@ -1,5 +1,4 @@
-ch_core.require_submod("hud", "data")
-ch_core.require_submod("hud", "lib")
+ch_core.open_submod("hud", {data = true, lib = true})
 
 -- PLAYER LIST
 local base_y_offset = 90
@@ -150,4 +149,4 @@ function ch_core.free_hudbar(player, hudbar_id)
 	return false
 end
 
-ch_core.submod_loaded("hud")
+ch_core.close_submod("hud")

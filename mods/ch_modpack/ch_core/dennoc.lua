@@ -1,5 +1,4 @@
-ch_core.require_submod("dennoc", "privs")
-ch_core.require_submod("dennoc", "chat")
+ch_core.open_submod("dennoc", {privs = true, chat = true})
 
 --[[
 	/dennoc
@@ -41,4 +40,4 @@ local def = {
 }
 minetest.register_chatcommand("dennoc", def)
 
-ch_core.submod_loaded("dennoc")
+ch_core.close_submod("dennoc")

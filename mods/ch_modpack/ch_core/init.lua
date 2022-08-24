@@ -5,6 +5,7 @@ ch_core = {
 	storage = minetest.get_mod_storage(),
 	submods_loaded = {}, -- submod => true
 
+	cas = 0,
 	vezeni_data = {
 		min = vector.new(-1000, -1000, -1000),
 		max = vector.new(1000, 1000, 1000),
@@ -13,24 +14,27 @@ ch_core = {
 	},
 }
 
-function ch_core.require_submod(current_submod, wanted_submod)
-	if ch_core.submods_loaded[wanted_submod] then
-		return true
+function ch_core.open_submod(submod, required_submods)
+	for s, c in pairs(required_submods or {}) do
+		if c and not ch_core.submods_loaded[s] then
+			error("ch_core submodule '"..s.."' is required to be loaded before '"..submod.."'!")
+		end
 	end
-	error("ch_core submodule '"..wanted_submod.."' is required to be loaded before '"..current_submod.."'!")
+	return true
 end
-function ch_core.submod_loaded(current_submod)
-	ch_core.submods_loaded[current_submod] = true
+function ch_core.close_submod(submod)
+	ch_core.submods_loaded[submod] = true
 	return true
 end
 
 dofile(modpath .. "/privs.lua")
 dofile(modpath .. "/data.lua")
 dofile(modpath .. "/lib.lua") -- : data
-dofile(modpath .. "/chat.lua") -- : data, lib, privs
+dofile(modpath .. "/nametag.lua") -- : data, lib
+dofile(modpath .. "/chat.lua") -- : data, lib, privs, nametag
 dofile(modpath .. "/dennoc.lua") -- : privs, chat
 dofile(modpath .. "/hud.lua") -- : data, lib
-dofile(modpath .. "/joinplayer.lua") -- : data, lib
+dofile(modpath .. "/joinplayer.lua") -- : data, lib, nametag
 dofile(modpath .. "/nodes.lua")
 dofile(modpath .. "/padlock.lua") -- : data, lib
 dofile(modpath .. "/vezeni.lua") -- : privs, data, lib, chat, hud
@@ -60,7 +64,8 @@ local ch_timer_hudbars = ch_core.count_of_ch_timer_hudbars
 
 local function globalstep(dtime)
 	globstep_dtime_accumulated = globstep_dtime_accumulated + dtime
-	local os_clock = os.clock()
+	ch_core.cas = globstep_dtime_accumulated
+	local ch_core_cas = ch_core.cas
 
 	-- DEN: 5:30 .. 19:00
 	local tod = get_timeofday()
@@ -152,7 +157,7 @@ local function globalstep(dtime)
 			local timers = online_charinfo.ch_timers
 			if timers then
 				for timer_id, timer_def in pairs(table.copy(timers)) do
-					local remains = timer_def.run_at - os_clock
+					local remains = timer_def.run_at - ch_core_cas
 					if remains <= 0.1 then
 						local func_to_run = timer_def.func
 						ch_core.cancel_ch_timer(online_charinfo, timer_id)
@@ -184,6 +189,13 @@ local function globalstep(dtime)
 					ch_core.cancel_ch_timer(online_charinfo, "teleportace")
 					ch_core.systemovy_kanal(player_name, "Teleportace zrušena v důsledku akce hráče/ky nebo postavy.")
 				end
+			end
+
+			-- ZRUŠIT horkou zprávu
+			local horka_zprava = online_charinfo.horka_zprava
+			if horka_zprava and ch_core_cas >= horka_zprava.timeout then
+				online_charinfo.horka_zprava = nil
+				player:set_nametag_attributes(ch_core.compute_player_nametag(online_charinfo, offline_charinfo))
 			end
 		end
 	end

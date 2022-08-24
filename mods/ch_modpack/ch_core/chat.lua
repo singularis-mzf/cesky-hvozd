@@ -1,22 +1,27 @@
-ch_core.require_submod("chat", "privs")
-ch_core.require_submod("chat", "data")
-ch_core.require_submod("chat", "lib")
+ch_core.open_submod("chat", {privs = true, data = true, lib = true, nametag = true})
 
 minetest.register_on_joinplayer(function(player, last_login)
-	local player_name = player:get_player_name()
-	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
+	local online_charinfo = ch_core.get_joining_online_charinfo(player:get_player_name())
 	online_charinfo.doslech = 65535
 	online_charinfo.chat_ignore_list = {} -- player => true
 end)
 
+-- BARVY
+-- ===========================================================================
+
 local color_celoserverovy = minetest.get_color_escape_sequence("#ff8700")
 local color_mistni = minetest.get_color_escape_sequence("#fff297")
+local color_mistni_zblizka = minetest.get_color_escape_sequence("#64f231") -- 54cc29
 local color_rp = color_mistni
 local color_soukromy = minetest.get_color_escape_sequence("#ff4cf3")
 local color_sepot = minetest.get_color_escape_sequence("#fff297cc")
--- local color_skupinovy = minetest.get_color_escape_sequence("#54cc29")
 local color_systemovy = minetest.get_color_escape_sequence("#cccccc")
 local color_reset = minetest.get_color_escape_sequence("#ffffff")
+
+-- NASTAVENÍ
+-- ===========================================================================
+local vzdalenost_zblizka = 10 -- počet metrů, na které se ještě považuje hovor za hovor zblízka; nemá vliv na šepot
+local vzdalenost_pro_ignorovani = 150 -- poloměr koule, ve které se nesmí nacházet ignorující postava, aby se zobrazila zpráva nad postavou
 
 function ch_core.systemovy_kanal(komu, zprava)
 	if zprava == "" then
@@ -32,71 +37,123 @@ end
 function ch_core.chat(rezim, odkoho, zprava, pozice)
 	pozice = vector.new(pozice.x, pozice.y, pozice.z)
 
-	if rezim ~= "celoserverovy" and rezim ~= "mistni" and rezim ~= "sepot" and rezim ~= "rp" then
+	if rezim ~= "celoserverovy" and rezim ~= "mistni" and rezim ~= "sepot" then
 		minetest.log("error", "ch_core.chat(): invalid chat mode '"..rezim.."'!!!")
 		return false
 	end
 
-	local pocitadlo, odkoho_info, odkoho_doslech, odkoho_s_diakritikou, barva_zpravy, posl_adresat
-	pocitadlo = 0
-	posl_adresat = ""
-	odkoho_info = ch_core.online_charinfo[odkoho] or {}
-	odkoho_doslech = odkoho_info.doslech or 65535
-	odkoho_s_diakritikou = ch_core.prihlasovaci_na_zobrazovaci(odkoho)
+	local pocitadlo = 0
+	local posl_adresat = ""
+	local odkoho_info = ch_core.online_charinfo[odkoho] or {}
+	local odkoho_doslech = odkoho_info.doslech or 65535
+	local odkoho_s_diakritikou = ch_core.prihlasovaci_na_zobrazovaci(odkoho)
+	local barva_zpravy, barva_zpravy_zblizka, posl_adresat, min_vzdal_ignorujici, min_vzdal_adresat
 
 	if rezim == "celoserverovy" then
 		barva_zpravy = color_celoserverovy
+		barva_zpravy_zblizka = barva_zpravy
 	elseif rezim == "sepot" then
 		barva_zpravy = color_sepot
-	elseif rezim == "rp" then
-		barva_zpravy = color_rp
-	else
+		barva_zpravy_zblizka = barva_zpravy
+	else -- "mistni"
 		barva_zpravy = color_mistni
+		barva_zpravy_zblizka = color_mistni_zblizka
 	end
+
+	local casti_zpravy = {
+		barva_zpravy, -- [1] (neměnit, reprezentuje kanál)
+		"", -- [2]
+		odkoho_s_diakritikou, -- [3]
+		": ", -- [4] // mění se
+		barva_zpravy, -- [5] // mění se
+		zprava, -- [6]
+		"", -- [7]
+		color_systemovy, -- [8]
+		" (", -- [9]
+		0, -- [10] // mění se
+		" m)", -- [11]
+		color_reset, -- [12]
+	}
 
 	for _, komu_player in pairs(minetest.get_connected_players()) do
 		local komu = komu_player:get_player_name()
 		local komu_info = ch_core.online_charinfo[komu]
-		if komu_info and komu ~= odkoho and (not komu_info.chat_ignore_list[odkoho] or minetest.check_player_privs(odkoho, "protection_bypass")) then
+		if komu_info and komu ~= odkoho then
 			local vzdalenost_odkoho_komu = math.ceil(vector.distance(pozice, komu_player:get_pos()))
 			local komu_doslech = komu_info.doslech or 65535
-			local v_doslechu
-			if rezim == "celoserverovy" then
-				v_doslechu = true
-			else
-				v_doslechu = vzdalenost_odkoho_komu <= komu_doslech
-				if v_doslechu and rezim == "sepot" then
-					v_doslechu = vzdalenost_odkoho_komu <= 5
-				end
-			end
-			if v_doslechu then
-				if rezim ~= "rp" then
-					local extra_spec
-					if odkoho_info.chat_ignore_list[komu] then
-						extra_spec = " (ign.)"
-					elseif vzdalenost_odkoho_komu > odkoho_doslech then
-						extra_spec = " (m.d.)"
-					else
-						extra_spec = ""
-					end
-					minetest.chat_send_player(komu, barva_zpravy..odkoho_s_diakritikou..extra_spec..": "..zprava..color_systemovy.." ("..vzdalenost_odkoho_komu.." m)"..color_reset)
+			if not komu_info.chat_ignore_list[odkoho] or minetest.check_player_privs(odkoho, "protection_bypass") then
+				local v_doslechu
+				if rezim == "celoserverovy" then
+					v_doslechu = true
 				else
-					minetest.chat_send_player(komu, barva_zpravy.."*"..odkoho_s_diakritikou.." "..zprava.."*"..color_systemovy.." ("..vzdalenost_odkoho_komu.." m)"..color_reset)
+					v_doslechu = vzdalenost_odkoho_komu <= komu_doslech
+					if v_doslechu and rezim == "sepot" then
+						v_doslechu = vzdalenost_odkoho_komu <= 5
+					end
 				end
-				pocitadlo = pocitadlo + 1
-				posl_adresat = komu
+				if v_doslechu then
+					if vzdalenost_odkoho_komu <= vzdalenost_zblizka then
+						casti_zpravy[5] = barva_zpravy_zblizka
+					else
+						casti_zpravy[5] = barva_zpravy
+					end
+					if odkoho_info.chat_ignore_list[komu] then
+						casti_zpravy[4] = "(ign.): "
+					elseif vzdalenost_odkoho_komu > odkoho_doslech then
+						casti_zpravy[4] = "(m.d.): "
+					else
+						casti_zpravy[4] = ": "
+					end
+					casti_zpravy[10] = vzdalenost_odkoho_komu
+					minetest.chat_send_player(komu, table.concat(casti_zpravy))
+					pocitadlo = pocitadlo + 1
+
+					if not min_vzdal_adresat or vzdalenost_odkoho_komu < min_vzdal_adresat then
+						min_vzdal_adresat = vzdalenost_odkoho_komu
+						posl_adresat = komu
+					end
+				end
+			else
+				-- ignorující
+				if not min_vzdal_ignorujici or min_vzdal_ignorujici < vzdalenost_odkoho_komu then
+					min_vzdal_ignorujici = vzdalenost_odkoho_komu
+				end
 			end
 		end
 	end
-	if rezim ~= "rp" then
-		minetest.chat_send_player(odkoho, barva_zpravy..odkoho_s_diakritikou..": "..zprava..color_systemovy.." ["..pocitadlo.." post.]"..color_reset)
-	else
-		minetest.chat_send_player(odkoho, barva_zpravy.."*"..odkoho_s_diakritikou.." "..zprava.."*"..color_systemovy.." ["..pocitadlo.." post.]"..color_reset)
+
+	-- Zaslat postavě „odkoho“
+	casti_zpravy[5] = barva_zpravy_zblizka
+	casti_zpravy[9] = " ["
+	casti_zpravy[10] = pocitadlo
+	casti_zpravy[11] = " post.]"
+	minetest.chat_send_player(odkoho, table.concat(casti_zpravy))
+
+	-- Zobrazit nad postavou:
+	local zobrazeno_nad_postavou = "false"
+	if (rezim == "mistni" or rezim == "celoserverovy" or rezim == "rp")
+		and min_vzdal_adresat and min_vzdal_adresat <= vzdalenost_zblizka
+		and (not min_vzdal_ignorujici or min_vzdal_ignorujici > vzdalenost_pro_ignorovani)
+	then
+		local player = minetest.get_player_by_name(odkoho)
+		if player then
+			local horka_zprava = ch_core.utf8_wrap(zprava, 60)
+			horka_zprava[1] = barva_zpravy_zblizka..horka_zprava[1]
+			horka_zprava.timeout = ch_core.cas + 15
+			odkoho_info.horka_zprava = horka_zprava
+			player:set_nametag_attributes(ch_core.compute_player_nametag(odkoho_info, ch_core.get_offline_charinfo(odkoho)))
+			zobrazeno_nad_postavou = "true"
+		else
+			zobrazeno_nad_postavou = "fail"
+		end
 	end
+
+	-- Zapsat do logu:
 	if rezim == "sepot" then
 		zprava = minetest.sha1(zprava:gsub("%s", ""))
 	end
-	minetest.log("action", "CHAT:"..rezim..":"..odkoho..">"..pocitadlo.." characters(ex.:"..posl_adresat.."): "..zprava)
+	minetest.log("action", "CHAT:"..rezim..":"..odkoho..">"..pocitadlo.." characters(ex.:"..(posl_adresat or "nil")..", mv_adr="..(min_vzdal_adresat or "nil")..", znadpost="..zobrazeno_nad_postavou.."): "..zprava)
+
 	return true
 end
 
@@ -165,15 +222,11 @@ local function on_chat_message(jmeno, zprava)
 			return false
 		end
 		-- zprava = zprava:sub(zprava:sub(2,2) == " " and 3 or 2, #zprava)
-		return ch_core.chat("celoserverovy", jmeno, zprava, info_pos)
+		return ch_core.chat("celoserverovy", jmeno, zprava:sub(2, -1), info_pos)
 	elseif c == "_" then
 		-- šepot
 		-- zprava = zprava:sub(zprava:sub(2,2) == " " and 3 or 2, #zprava)
 		return ch_core.chat("sepot", jmeno, zprava, info_pos)
-	elseif c == "*" then
-		-- kanál hraní role
-		zprava = zprava:sub(zprava:sub(2,2) == " " and 3 or 2, #zprava)
-		return ch_core.chat("rp", jmeno, zprava, info_pos)
 	elseif c == "\"" then
 		-- soukromá zpráva
 		local i = string.find(zprava, " ")
@@ -287,10 +340,67 @@ function ch_core.unset_ignorovat(player_name, name_to_unignore)
 	return true
 end
 
+--[[
+	Vezme tabulku s údaji pro hráčský štítek a vygeneruje tabulku
+	s atributy pro metodu player:set_nametag_attributes().
+	Předaná tabulka musí obsahovat přinejmenším položku ["jmeno"]
+	obsahující barevné jméno.
+]]
+function ch_core.process_player_nametag(data)
+	local result = {color = nametag_color_normal_table} -- text, color, bgcolor
+	-- data:
+	--		- docasne_tituly = { [titul] = ?, [titul] = ? }
+	--		- titul
+	--		- jmeno -- musí být a musí obsahovat barvu
+	--		- cet = { [1], [2], [3] } -- je-li, musí obsahovat barvu
+	local parts = {}
+	local priznak = false
+
+	-- dočasné tituly
+	for titul, _ in pairs(data.docasne_tituly or {}) do
+		if not priznak then
+			table.insert(parts, nametag_color_green)
+			priznak = true
+		end
+		table.insert(parts, "*")
+		table.insert(parts, titul)
+		table.insert(parts, "*\n")
+	end
+	if not priznak and data.titul then
+		-- stálý titul
+		table.insert(parts, nametag_color_green)
+		table.insert(parts, "*")
+		table.insert(parts, titul)
+		table.insert(parts, "*\n")
+	end
+
+	-- jméno (barevné)
+	table.insert(parts, data.jmeno or "")
+
+	-- čet
+	if data.cet and data.cet[1] then
+		table.insert(parts, ":\n")
+		table.insert(parts, data.cet[1])
+		if data.cet[2] then
+			table.insert(parts, "\n")
+			table.insert(parts, data.cet[2])
+			if data.cet[3] then
+				table.insert(parts, "\n")
+				table.insert(data.cet[3])
+			end
+		end
+		result.bgcolor = nametag_chat_bgcolor_table
+	else
+		result.bgcolor = nametag_nochat_bgcolor_table
+	end
+	result.text = table.concat(parts)
+	return result
+end
+
 minetest.register_on_chat_message(on_chat_message)
 
 minetest.override_chatcommand("me", {func = function(player_name, message)
-	return on_chat_message(player_name, "*"..message)
+	return on_chat_message(player_name, "="..message)
 end})
 
 minetest.override_chatcommand("msg", {func = function(player_name, text)
@@ -326,79 +436,23 @@ minetest.register_chatcommand("neignorovat", {
 	end,
 })
 
-minetest.register_chatcommand("nastavit_barvu_jmena", {
-	params = "<prihlasovaci_jmeno_postavy> [#RRGGBB]",
-	description = "Nastaví nebo zruší postavě barevné jméno",
-	privs = { server = true },
+minetest.register_chatcommand("kdojsem", {
+	description = "Vypíše zobrazované jméno postavy (včetně případných barev).",
+	privs = {},
 	func = function(player_name, param)
-		local i = string.find(param, " ")
-		local login, color
-		if not i then
-			login = param
-			color = ""
-		else
-			login = param:sub(1, i - 1)
-			color = param:sub(i + 1, -1)
-		end
-		if not minetest.player_exists(login) then
-			return false, "Postava s přihlašovacím jménem "..login.." neexistuje!"
-		end
-		local offline_charinfo = ch_core.get_offline_charinfo(login)
-		local jmeno = offline_charinfo.jmeno or login
-		if color == "" then
-			offline_charinfo.barevne_jmeno = nil
-		else
-			if jmeno == "Administrace" then
-				offline_charinfo.barevne_jmeno = minetest.get_color_escape_sequence("#cc5257").."Admin"..minetest.get_color_escape_sequence("#6693ff").."istrace"..color_reset
+		if player_name then
+			local vysl
+			local offline_charinfo = ch_core.offline_charinfo[player_name]
+			if offline_charinfo then
+				vysl = offline_charinfo.barevne_jmeno or (color_reset..(offline_charinfo.jmeno or player_name))
 			else
-				offline_charinfo.barevne_jmeno = minetest.get_color_escape_sequence(string.lower(color))..jmeno..color_reset
+				vysl = color_reset..player_name
 			end
-		end
-		ch_core.update_player_nametag(login)
-		ch_core.save_offline_charinfo(login, "barevne_jmeno")
-		-- if (color:sub(1, 1) ~= "#") then
-		return true
-	end,
-})
-
-minetest.register_chatcommand("nastavit_jmeno", {
-	params = "<nové jméno postavy>",
-	description = "Nastaví zobrazované jméno postavy",
-	privs = { server = true },
-	func = function(player_name, param)
-		local login = ch_core.odstranit_diakritiku(param):gsub(" ", "_")
-		if not minetest.player_exists(login) then
-			return false, "Postava '"..login.."' neexistuje!"
-		end
-		local offline_charinfo = ch_core.get_offline_charinfo(login)
-		local puvodni_jmeno = offline_charinfo.jmeno or login
-		if puvodni_jmeno ~= param then
-			offline_charinfo.jmeno = param
-			local barevne_jmeno = offline_charinfo.barevne_jmeno
-			if barevne_jmeno then
-				offline_charinfo.barevne_jmeno = barevne_jmeno:gsub(puvodni_jmeno, param)
-				ch_core.save_offline_charinfo(login, "barevne_jmeno")
-			end
-			ch_core.save_offline_charinfo(login, "jmeno")
-			ch_core.update_player_nametag(login)
-			return true, "Jméno nastaveno: "..login.." > "..param
+			vysl = vysl..color_systemovy.."\n(přihlašovací jméno: "..player_name..")"
+			ch_core.systemovy_kanal(player_name, vysl)
+			return true
 		else
-			ch_core.update_player_nametag(login)
-			return true, "Titulek obnoven: "..login.." > "..param
-		end
-	end,
-})
-
-minetest.register_chatcommand("nastavit_titul", {
-	params = "<prihlasovaci_jmeno_postavy> [text titulu]",
-	description = "Nastaví nebo zruší postavě titul nad jménem",
-	privs = { server = true },
-	func = function(player_name, param)
-		local i = string.find(param, " ")
-		if i then
-			return ch_core.set_titul(param:sub(1, i - 1), param:sub(i + 1))
-		else
-			return ch_core.set_titul(param, "")
+			return false
 		end
 	end,
 })
@@ -422,7 +476,7 @@ local function info_o(player_name, param)
 	local online_charinfo = ch_core.online_charinfo[param]
 	local current_playtime = 0
 	if online_charinfo then
-		current_playtime = os.time() - online_charinfo.join_timestamp
+		current_playtime = ch_core.cas - online_charinfo.join_timestamp
 	end
 	local past_playtime = offline_charinfo.past_playtime or 0
 	minetest.chat_send_player(player_name, "* Odehraná doba [s]: "..current_playtime.." nyní+"..past_playtime.." dříve")
@@ -437,4 +491,4 @@ minetest.register_chatcommand("info_o", {
 	func = info_o,
 })
 
-ch_core.submod_loaded("chat")
+ch_core.close_submod("chat")

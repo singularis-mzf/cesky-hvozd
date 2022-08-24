@@ -1,6 +1,4 @@
-ch_core.require_submod("timers", "data")
-ch_core.require_submod("timers", "hud")
-ch_core.require_submod("timers", "chat")
+ch_core.open_submod("timers", {data = true, hud = true, chat = true})
 
 ch_core.count_of_ch_timer_hudbars = 4
 
@@ -26,7 +24,7 @@ function ch_core.start_ch_timer(online_charinfo, timer_id, delay, timer_def)
 	if delay < 0.0 then
 		error("Negative delay at start_ch_timer()!")
 	end
-	local now = os.clock()
+	local now = ch_core.cas
 	local new_timer = timer_def or {}
 	new_timer = table.copy(new_timer)
 	new_timer.started_at = now
@@ -79,20 +77,28 @@ local def = {
 	description = "Odpočítá zadaný počet sekund. Při použití bez parametru jen zruší probíhající odpočet.",
 	privs = {},
 	func = function(player_name, param)
+		if param == "" then
+			ch_core.cancel_ch_timer(online_charinfo, "custom_timer")
+			return true
+		end
+		local sekund = param:gsub(",", ".")
+		sekund = tonumber(sekund)
+		if not sekund or sekund < 0 then
+			return false, "Neplatné zadání!"
+		end
 		local online_charinfo = ch_core.online_charinfo[player_name]
 		if not online_charinfo then
 			return false, "Vnitřní chyba serveru."
 		end
 		ch_core.cancel_ch_timer(online_charinfo, "custom_timer")
-		if param ~= "" then
-			local timer_func = function()
-				ch_core.systemovy_kanal(player_name, "Nastavený časovač vypršel.")
-			end
-			ch_core.start_ch_timer(online_charinfo, "custom_timer", tonumber(param), {label = "odpočet", func = timer_func})
+		local timer_func = function()
+			ch_core.systemovy_kanal(player_name, "Nastavený časovač vypršel.")
 		end
+		ch_core.start_ch_timer(online_charinfo, "custom_timer", sekund, {label = "odpočet", func = timer_func})
 		return true
 	end,
 }
 minetest.register_chatcommand("odpočítat", def)
+minetest.register_chatcommand("odpocitat", def)
 
-ch_core.submod_loaded("timers")
+ch_core.close_submod("timers")

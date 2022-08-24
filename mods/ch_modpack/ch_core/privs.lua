@@ -1,3 +1,4 @@
+ch_core.open_submod("privs")
 -- právo značící registrovanou postavu
 minetest.register_privilege("ch_registered_player", "Odlišuje registrované postavy od čerstvě založených.")
 
@@ -26,4 +27,4 @@ local def = {
 }
 minetest.register_craftitem("ch_core:staff_of_creativity", def)
 
-ch_core.submod_loaded("privs")
+ch_core.close_submod("privs")

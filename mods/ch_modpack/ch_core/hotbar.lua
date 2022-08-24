@@ -1,3 +1,5 @@
+ch_core.open_submod("hotbar")
+
 function ch_core.predmety_na_liste(player, jako_pole)
 	local result = {}
 	if not player then
@@ -44,4 +46,4 @@ function ch_core.predmety_na_liste(player, jako_pole)
 	return result
 end
 
-ch_core.submod_loaded("hotbar")
+ch_core.close_submod("hotbar")

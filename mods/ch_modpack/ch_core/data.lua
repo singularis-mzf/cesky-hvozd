@@ -1,3 +1,4 @@
+ch_core.open_submod("data")
 local modpath = minetest.get_modpath("ch_core")
 
 -- BARVY
@@ -63,9 +64,8 @@ function ch_core.get_joining_online_charinfo(player_name)
 	local result = ch_core.online_charinfo[player_name]
 	if not result then
 		-- the first call => create a new online_charinfo
-		local os_time = os.time()
 		result = {
-			join_timestamp = os_time,
+			join_timestamp = ch_core.cas,
 			player_name = player_name,
 		}
 		ch_core.online_charinfo[player_name] = result
@@ -83,7 +83,7 @@ function ch_core.get_leaving_online_charinfo(player_name)
 	if result then
 		old_online_charinfo[player_name] = result
 		ch_core.online_charinfo[player_name] = nil
-		print("LEAVE PLAYER(" .. player_name ..") at "..os.time());
+		print("LEAVE PLAYER(" .. player_name ..") at "..ch_core.cas);
 		return result
 	else
 		return old_online_charinfo[player_name] or {}
@@ -150,9 +150,15 @@ function ch_core.delete_offline_charinfo(player_name, keys)
 end
 
 function ch_core.set_titul(player_name, titul)
-	ch_core.get_offline_charinfo(player_name).titul = titul
+	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
+	offline_charinfo.titul = titul
 	ch_core.save_offline_charinfo(player_name, "titul")
-	return ch_core.update_player_nametag(player_name)
+	local online_charinfo = ch_core.online_charinfo[player_name]
+	local player = minetest.get_player_by_name(player_name)
+	if player and online_charinfo and ch_core.compute_player_nametag then
+		player:set_nametag_attributes(ch_core.compute_player_nametag(online_charinfo, offline_charinfo))
+	end
+	return true
 end
 
 -- ch_core.set_temporary_titul() -- Nastaví či zruší dočasný titul postavy.
@@ -170,9 +176,16 @@ function ch_core.set_temporary_titul(player_name, titul, titul_enabled)
 	else
 		dtituly[titul] = nil
 	end
-	return ch_core.update_player_nametag(player_name)
+	local player = minetest.get_player_by_name(player_name)
+	if player and ch_core.compute_player_nametag then
+		player:set_nametag_attributes(ch_core.compute_player_nametag(online_charinfo, ch_core.get_offline_charinfo(player_name)))
+		return true
+	else
+		return false
+	end
 end
 
+--[[
 function ch_core.update_player_nametag(player_name)
 	local online_charinfo = ch_core.online_charinfo[player_name] -- may be null
 	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
@@ -228,6 +241,7 @@ function ch_core.update_player_nametag(player_name)
 	player:set_nametag_attributes(nametag)
 	return true
 end
+]]
 
 -- restore offline data from the storage
 local counter = 0
@@ -262,7 +276,7 @@ local function on_leaveplayer(player, timedout)
 
 	if online_info.join_timestamp then
 		local offline_info = ch_core.get_offline_charinfo(player_name)
-		local current_playtime = os.time() - online_info.join_timestamp
+		local current_playtime = ch_core.cas - online_info.join_timestamp
 		local total_playtime = (offline_info.past_playtime or 0) + current_playtime
 
 		offline_info.past_playtime = total_playtime
@@ -276,7 +290,7 @@ local function on_shutdown()
 	for player_name, online_info in pairs(table.copy(ch_core.online_charinfo)) do
 		if online_info.join_timestamp then
 			local offline_info = ch_core.get_offline_charinfo(player_name)
-			local current_playtime = os.time() - online_info.join_timestamp
+			local current_playtime = ch_core.cas - online_info.join_timestamp
 			local total_playtime = (offline_info.past_playtime or 0) + current_playtime
 
 			offline_info.past_playtime = total_playtime
@@ -298,4 +312,4 @@ storage:set_string("postavy/Stepanka/jmeno", "Štěpánka")
 storage:set_string("postavy/Zaneta_Novakova/jmeno", "Žaneta Nováková")
 ]]
 
-ch_core.submod_loaded("data")
+ch_core.close_submod("data")

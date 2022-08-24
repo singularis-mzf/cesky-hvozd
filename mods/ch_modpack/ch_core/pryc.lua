@@ -1,7 +1,4 @@
-ch_core.require_submod("pryc", "chat")
-ch_core.require_submod("pryc", "data")
-ch_core.require_submod("pryc", "lib")
-ch_core.require_submod("pryc", "privs")
+ch_core.open_submod("pryc", {chat = true, data = true, lib = true, privs = true})
 
 local disrupt_pryc = function(player, online_charinfo)
 	if not online_charinfo.pryc then
@@ -61,4 +58,4 @@ minetest.register_chatcommand("pop", def)
 minetest.register_chatcommand("pryč", def)
 minetest.register_chatcommand("pryc", def)
 
-ch_core.submod_loaded("pryc")
+ch_core.close_submod("pryc")

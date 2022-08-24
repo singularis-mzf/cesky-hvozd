@@ -1,3 +1,4 @@
+ch_core.open_submod("sickles")
 local sickle_sounds = {breaks = "default_tool_breaks"}
 local sickle_groups = {sickle = 1}
 
@@ -90,4 +91,4 @@ minetest.register_craft({
 	}
 })
 
-ch_core.submod_loaded("sickles")
+ch_core.close_submod("sickles")

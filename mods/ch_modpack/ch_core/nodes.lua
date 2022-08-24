@@ -1,3 +1,4 @@
+ch_core.open_submod("nodes")
 local def = {
 	description = "vlajka České republiky",
 	drawtype = "nodebox",
@@ -109,4 +110,4 @@ def.weild_image = "ch_core_plakat_yf2.png"
 minetest.register_node("ch_core:plakat_yf_right", table.copy(def))
 ]]
 
-ch_core.submod_loaded("nodes")
+ch_core.close_submod("nodes")

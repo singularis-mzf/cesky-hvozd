@@ -1,5 +1,4 @@
-ch_core.require_submod("joinplayer", "data")
-ch_core.require_submod("joinplayer", "lib")
+ch_core.open_submod("joinplayer", {data = true, lib = true, nametag = true})
 
 local function on_newplayer(player)
 	local player_name = player:get_player_name()
@@ -12,14 +11,10 @@ local function on_newplayer(player)
 end
 
 local function on_joinplayer(player, last_login)
-	-- print("DEBUG: on_joinplayer("..player:get_player_name().."): will update nametag")
-	ch_core.update_player_nametag(player:get_player_name())
-	--[[ player:hud_set_flags({
-		minimap = true, -- enable minimap for everyone
-		minimap_radar = minetest.check_player_privs(player, "creative"), -- radar if the player has creative priv
-	})
-	]]
-	-- print("DEBUG: on_joinplayer("..player:get_player_name()..").")
+	local player_name = player:get_player_name()
+	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
+	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
+	player:set_nametag_attributes(ch_core.compute_player_nametag(online_charinfo, offline_charinfo))
 	return true
 end
 
@@ -33,4 +28,4 @@ minetest.register_on_newplayer(on_newplayer)
 minetest.register_on_joinplayer(on_joinplayer)
 -- minetest.register_on_leaveplayer(on_leaveplayer)
 
-ch_core.submod_loaded("joinplayer")
+ch_core.close_submod("joinplayer")

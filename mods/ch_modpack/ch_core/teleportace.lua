@@ -1,8 +1,4 @@
-ch_core.require_submod("teleportace", "privs")
-ch_core.require_submod("teleportace", "data")
-ch_core.require_submod("teleportace", "chat")
-ch_core.require_submod("teleportace", "lib")
-ch_core.require_submod("teleportace", "timers")
+ch_core.open_submod("teleportace", {privs = true, data = true, chat = true, lib = true, timers = true})
 
 local teleport_delay = 30
 
@@ -136,4 +132,4 @@ def.func = domu
 minetest.register_chatcommand("domů", def);
 minetest.register_chatcommand("domu", def);
 
-ch_core.submod_loaded("teleportace")
+ch_core.close_submod("teleportace")
