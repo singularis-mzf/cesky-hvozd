@@ -94,22 +94,12 @@ local function on_receive_fields_poster(pos, formname, fields, player)
 			if (fields.write or fields.font or fields.key_enter) then
 				meta:set_string("display_text", fields.display_text)
 				meta:set_string("text", fields.text)
-				local infotext = "\""..fields.display_text .."\"\n"
-				if #(fields.text) > 200 then
-					local slength = 200
-					local b = string.byte(fields.text, slength)
-					while slength > 1 and 128 <= b and b <= 191 do
-						slength = slength - 1
-						b = string.byte(fields.text, slength)
-					end
-					if b >= 128 then
-						slength = slength - 1
-					end
-					infotext = infotext .. S("(right-click to read more text)") .. "\n" .. string.sub(fields.text, 1, slength) .. "(...)"
-				else
-					infotext = infotext .. fields.text
+				local infotext_lines = ch_core.utf8_wrap(fields.text, 50, {allow_empty_lines = false, max_result_lines = 7, line_separator = "\n"})
+				if #infotext_lines == 7 then
+					infotext_lines[6] = S("(right-click to read more text)")
+					infotext_lines[7] = nil
 				end
-				meta:set_string("infotext", infotext)
+				meta:set_string("infotext", table.concat(infotext_lines))
 				display_api.update_entities(pos)
 			end
 			if (fields.write or fields.key_enter) then

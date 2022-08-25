@@ -286,7 +286,7 @@ v UTF-8 znacích; v každé části vynechává mezery na začátku a na konci 
 přednostně dělí v místech mezer. Pro prázdný řetězec
 (nebo řetězec tvořený jen mezerami) vrací prázdné pole.
 ]]
-function ch_core.utf8_wrap(s, max_chars)
+function ch_core.utf8_wrap(s, max_chars, options)
 	local i = 1 		-- index do vstupního řetězce s
 	local s_bytes = string.len(s)
 	local result = {}	-- výstupní pole
@@ -297,39 +297,52 @@ function ch_core.utf8_wrap(s, max_chars)
 	local b				-- kód prvního bajtu aktuálního znaku
 	local c_bytes		-- počet bajtů aktuálního znaku
 
+	-- options
+	local allow_empty_lines, max_result_lines, line_separator
+	if options then
+		allow_empty_lines = options.allow_empty_lines -- true or false
+		max_result_lines = options.max_result_lines -- nil or number
+		line_separator = options.line_separator -- nil or string
+	end
+
 	while i <= s_bytes do
 		b = string.byte(s, i)
-		if r_chars > 0 or b ~= 32 then -- na začátku řádky ignorovat mezery
+		if r_chars > 0 or (b ~= 32 and (b ~= 10 or allow_empty_lines)) then -- na začátku řádky ignorovat mezery
 			if b < 192 then
 				c_bytes = 1
 			else
 				c_bytes = utf8_charlen[b]
 			end
-			-- vložit do r další znak
-			r_text = r_text..s:sub(i, i + c_bytes - 1)
-			r_chars = r_chars + 1
+			-- vložit do r další znak (není-li to konec řádky)
+			if b ~= 10 then
+				r_text = r_text..s:sub(i, i + c_bytes - 1)
+				r_chars = r_chars + 1
 
-			if b == 32 then
-				-- znak je mezera
-				if r_sp_begin then
-					if r_sp_end then
-						-- začátek nové skupiny mezer (už nějaká byla)
+				if b == 32 then
+					-- znak je mezera
+					if r_sp_begin then
+						if r_sp_end then
+							-- začátek nové skupiny mezer (už nějaká byla)
+							r_sp_begin = string.len(r_text)
+							r_sp_end = nil
+						end
+					elseif not r_sp_end then
+						-- začátek první skupiny mezer (ještě žádná nebyla)
 						r_sp_begin = string.len(r_text)
-						r_sp_end = nil
 					end
-				elseif not r_sp_end then
-					-- začátek první skupiny mezer (ještě žádná nebyla)
-					r_sp_begin = string.len(r_text)
-				end
-			else
-				-- znak není mezera
-				if r_sp_begin and not r_sp_end then
-					r_sp_end = string.len(r_text) - c_bytes -- uzavřít skupinu mezer
+				else
+					-- znak není mezera ani konec řádky
+					if r_sp_begin and not r_sp_end then
+						r_sp_end = string.len(r_text) - c_bytes -- uzavřít skupinu mezer
+					end
 				end
 			end
 
-			if r_chars >= max_chars then
+			if r_chars >= max_chars or b == 10 then
 				-- dosažen maximální počet znaků => uzavřít řádku
+				if line_separator and #result > 0 then
+					result[#result] = result[#result]..line_separator
+				end
 				if not r_sp_begin then
 					-- žádné mezery => tvrdé dělení
 					table.insert(result, r_text)
@@ -349,6 +362,9 @@ function ch_core.utf8_wrap(s, max_chars)
 					r_sp_begin = nil
 					r_sp_end = nil
 				end
+				if max_result_lines and #result >= max_result_lines then
+					return result -- skip reading other lines
+				end
 			end
 			i = i + c_bytes
 		else
@@ -356,6 +372,9 @@ function ch_core.utf8_wrap(s, max_chars)
 		end
 	end
 	if r_chars > 0 then
+		if line_separator and #result > 0 then
+			result[#result] = result[#result]..line_separator
+		end
 		if r_sp_begin and not r_sp_end then
 			-- průběžná skupina mezer
 			table.insert(result, r_text:sub(1, r_sp_begin - 1))
