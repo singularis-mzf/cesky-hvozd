@@ -28,6 +28,7 @@ icons?=zobrazit ikony a titulek?
 check this if you want to display item icons on the shop=Zaškrtněte toto pole, abyste umožnil/a@nzobrazení ikon zboží a titulku obchodního terminálu.
 save title=uložit titulek
 save the title of the shop; to remove the title, set the title to an empty string=Uloží titulek obchodního terminálu. Pro smazání titulku ho nastavte na prázdný řetězec.
+normal exchange=normální nákup
 
 # storage:
 External storage by: @1=vzdálený zásobník pro obchodní terminál (vlastník/ice: @1)
@@ -35,4 +36,4 @@ used with connected smartshops=používáno s připojenými obchodními terminá
 save=uložit
 Private?=soukromé?
 uncheck this if you want to share control of the storage with anyone in the protected area.=Odškrtněte toto pole, chcete-li sdílet ovládání úložiště s ostatními v zabezpečené oblasti.
-@1 @2 bought @3 for @4=@1 @2 koupil/a @3 za @4
+@1 @2 bought @3 for @4=@1 @2 koupil @3 za @4

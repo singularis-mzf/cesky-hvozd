@@ -23,6 +23,17 @@ local element_offset = {
       vector.new(0.1, -0.2, -0.2), vector.new(0.1, -0.2, 0.2) },
 }
 
+for i = 4, 23, 1 do
+	local dir = minetest.facedir_to_dir(i)
+	local rotation = vector.dir_to_rotation(vector.multiply(dir, -1))
+	local input = element_offset[1]
+	local output = {}
+	for j = 1, 4, 1 do
+		output[j] = vector.offset(vector.rotate(input[j], rotation), -0.25 * dir.x, 0.15 * dir.y, -0.25 * dir.z)
+	end
+	element_offset[i + 1] = output
+end
+
 -- for nodebox and mesh drawtypes without an inventory image, which can't be drawn well otherwise
 minetest.register_entity("smartshop:single_wielditem", {
 	visual = "wielditem",

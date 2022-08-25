@@ -18,6 +18,10 @@ local element_offset = {
     vector.new(0.1, 0, 0),
 }
 
+for i, dir in ipairs(element_dir) do
+	element_offset[i] = vector.new(0.1 * dir.x, -0.35 * dir.y, 0.1 * dir.z)
+end
+
 minetest.register_entity("smartshop:quad_upright_sprite", {
 	hp_max = 1,
 	visual = "upright_sprite",

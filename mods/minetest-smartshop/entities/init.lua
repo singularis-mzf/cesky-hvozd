@@ -8,6 +8,24 @@ smartshop.entities = {
 	entity_offset = vector.new(0.01, 6.5/16, 0.01),
 }
 
+local function flip1(x)
+	if x == 0 then
+		return 0
+	else
+		return -x
+	end
+end
+
+local function flip(v)
+	return vector.new(flip1(v.x), flip1(v.y), flip1(v.z))
+end
+
+for i = 0, 23, 1 do
+	smartshop.entities.element_dir[i + 1] = flip(minetest.facedir_to_dir(i))
+	--[[ local element_dir = smartshop.entities.element_dir
+	print("DEBUG: element_dir["..(i + 1).."] = ("..element_dir[i + 1].x..", "..element_dir[i + 1].y..", "..element_dir[i + 1].z..")") ]]
+end
+
 smartshop.dofile("entities", "quad_upright_sprite")
 smartshop.dofile("entities", "single_sprite")
 smartshop.dofile("entities", "single_upright_sprite")

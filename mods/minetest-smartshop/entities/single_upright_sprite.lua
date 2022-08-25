@@ -19,6 +19,10 @@ local element_offset = {
     vector.new(0.1, 0, 0),
 }
 
+for i, dir in ipairs(element_dir) do
+	element_offset[i] = vector.new(0.1 * dir.x, -0.35 * dir.y, 0.1 * dir.z)
+end
+
 minetest.register_entity("smartshop:single_upright_sprite", {
 	hp_max = 1,
 	visual = "upright_sprite",
@@ -51,7 +55,8 @@ function smartshop.entities.add_single_upright_sprite(shop, index)
 	local texture = api.get_image(item)
 	smartshop.log("info", "single texture = %s", texture)
 
-	obj:set_yaw(math.pi * (2 - (param2 / 2)))
+	local rotation = vector.dir_to_rotation(minetest.facedir_to_dir(param2))
+	obj:set_rotation(rotation)
 	obj:set_properties({textures = {texture}})
 
 	local entity = obj:get_luaentity()

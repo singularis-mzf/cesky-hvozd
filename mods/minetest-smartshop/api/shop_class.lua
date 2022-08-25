@@ -257,7 +257,7 @@ function shop_class:log_purchase(player, i, mechanic)
 
         history.index = next_index
         history[next_index] = {
-            player_name = player_name,
+            player_name = "někdo",
             give_item = give_item,
             give_count = give_count,
             pay_item = pay_item,

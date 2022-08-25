@@ -1,6 +1,15 @@
 -- luacheck: globals pipeworks
 local get_object = smartshop.api.get_object
 
+local function on_rotate(pos, node, user, mode, new_param2)
+	local result = pipeworks.on_rotate(pos, node, user, mode, new_param2)
+	local obj = get_object(pos)
+	if obj and obj.update_appearance then
+		obj:update_appearance()
+	end
+	return result
+end
+
 local function pipeworks_override(itemstring)
     local def = minetest.registered_nodes[itemstring]
     local after_place_node = def.after_place_node
@@ -50,7 +59,7 @@ local function pipeworks_override(itemstring)
 				bottom = 1
             },
 		},
-        on_rotate = pipeworks.on_rotate,
+        on_rotate = on_rotate,
     })
 end
 
