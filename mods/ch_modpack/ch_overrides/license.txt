@@ -96,3 +96,60 @@ letters_zl_overlay.png
 	Author: VanessaE
 	Source: hdx-64 texture pack
 	License: GFDLv1.3
+
+letters_aal_overlay.png
+letters_aau_overlay.png
+letters_ael_overlay.png
+letters_aeu_overlay.png
+letters_ccl_overlay.png
+letters_ccu_overlay.png
+letters_ddl_overlay.png
+letters_ddu_overlay.png
+letters_eel_overlay.png
+letters_eeu_overlay.png
+letters_ejel_overlay.png
+letters_ejeu_overlay.png
+letters_iil_overlay.png
+letters_iiu_overlay.png
+letters_ldl_overlay.png
+letters_ldu_overlay.png
+letters_lml_overlay.png
+letters_lmu_overlay.png
+letters_nnl_overlay.png
+letters_nnu_overlay.png
+letters_ool_overlay.png
+letters_oou_overlay.png
+letters_ouol_overlay.png
+letters_ouou_overlay.png
+letters_rrl_overlay.png
+letters_rru_overlay.png
+letters_rrrl_overlay.png
+letters_rrru_overlay.png
+letters_ssl_overlay.png
+letters_ssu_overlay.png
+letters_ttl_overlay.png
+letters_ttu_overlay.png
+letters_uoul_overlay.png
+letters_uouu_overlay.png
+letters_uul_overlay.png
+letters_uuu_overlay.png
+letters_yyl_overlay.png
+letters_yyu_overlay.png
+letters_zzl_overlay.png
+letters_zzu_overlay.png
+	Author: Singularis
+	Derived from work by: VanessaE (from hdx-64 texture pack)
+	License: GFDLv1.3
+
+letters_0_overlay.png
+letters_1_overlay.png
+letters_2_overlay.png
+letters_3_overlay.png
+letters_4_overlay.png
+letters_5_overlay.png
+letters_6_overlay.png
+letters_7_overlay.png
+letters_8_overlay.png
+letters_9_overlay.png
+	Author: Singularis
+	License: GFDLv1.3

@@ -54,6 +54,19 @@ local lower_letters = {
 	{"yyl", "ý"},
 	{"zl", "z"},
 	{"zzl", "ž"},
+	{"dot", ".", "Symbol"},
+	{"comma", ",", "Symbol"},
+	{"semicolon", ";", "Symbol"},
+	{"colon", ":", "Symbol"},
+	{"exm", "!", "Symbol"},
+	{"qm", "?", "Symbol"},
+	{"plus", "+", "Symbol"},
+	{"minus", "-", "Symbol"},
+	{"star", "*", "Symbol"},
+	{"slash", "/", "Symbol"},
+	{"bslash", "\\", "Symbol"},
+	{"uscore", "_", "Symbol"},
+	{"copy", "©", "Symbol"},
 }
 
 local upper_letters = {
@@ -103,16 +116,20 @@ local upper_letters = {
 	{"yyu", "Ý"},
 	{"zu", "Z"},
 	{"zzu", "Ž"},
-	{"0", "0", true},
-	{"1", "1", true},
-	{"2", "2", true},
-	{"3", "3", true},
-	{"4", "4", true},
-	{"5", "5", true},
-	{"6", "6", true},
-	{"7", "7", true},
-	{"8", "8", true},
-	{"9", "9", true},
+	{"0", "0", "Digit"},
+	{"1", "1", "Digit"},
+	{"2", "2", "Digit"},
+	{"3", "3", "Digit"},
+	{"4", "4", "Digit"},
+	{"5", "5", "Digit"},
+	{"6", "6", "Digit"},
+	{"7", "7", "Digit"},
+	{"8", "8", "Digit"},
+	{"9", "9", "Digit"},
+	{"zavinac", "@", "Symbol"},
+	{"hash", "#", "Symbol"},
+	{"percent", "%", "Symbol"},
+	{"eq", "=", "Symbol"},
 }
 
 local letter_cutter = {
@@ -156,11 +173,7 @@ local def, texture
 for _, letters_list in ipairs({lower_letters, upper_letters}) do
 	for _, row in ipairs(letters_list) do
 		def = table.copy(def_base)
-		if not row[3] then
-			def.description = S("Letter \"@1\"", row[2])
-		else
-			def.description = S("Digit \"@1\"", row[2])
-		end
+		def.description = S((row[3] or "Letter").." \"@1\"", row[2])
 		texture = "letters_pattern.png^letters_" ..row[1].. "_overlay.png^[makealpha:255,126,126"
 		def.inventory_image = texture
 		def.wield_image = texture
