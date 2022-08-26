@@ -67,12 +67,14 @@ minetest.register_entity("itemframes:item",{
 	end,
 })
 
+--[[
 local facedir = {}
 
 facedir[0] = {x = 0, y = 0, z = 1}
 facedir[1] = {x = 1, y = 0, z = 0}
 facedir[2] = {x = 0, y = 0, z = -1}
 facedir[3] = {x = -1, y = 0, z = 0}
+]]
 
 local remove_item = function(pos, node)
 	local objs = nil
@@ -95,7 +97,7 @@ local update_item = function(pos, node)
 	local meta = minetest.get_meta(pos)
 	if meta:get_string("item") ~= "" then
 		if is_frame[node.name] then
-			local posad = facedir[node.param2]
+			local posad = minetest.facedir_to_dir(node.param2)
 			if not posad then return end
 			pos.x = pos.x + posad.x * 6.5 / 16
 			pos.y = pos.y + posad.y * 6.5 / 16
@@ -107,8 +109,12 @@ local update_item = function(pos, node)
 		tmp.texture = ItemStack(meta:get_string("item")):get_name()
 		local e = minetest.add_entity(pos,"itemframes:item")
 		if is_frame[node.name] then
-			local yaw = math.pi * 2 - node.param2 * math.pi / 2
-			e:set_yaw(yaw)
+			local dir = minetest.facedir_to_dir(node.param2)
+			local dir2 = minetest.facedir_to_dir(node.param2 - node.param2 % 4 + (node.param2 + 1) % 4)
+			local rotation = vector.dir_to_rotation(dir, vector.cross(dir, dir2))
+			-- local yaw = math.pi * 2 - node.param2 * math.pi / 2
+			-- e:set_yaw(yaw)
+			e:set_rotation(rotation)
 		end
 	end
 end
@@ -126,6 +132,13 @@ local drop_item = function(pos, node)
 	end
 	]]
 	remove_item(pos, node)
+end
+
+local function on_rotate(pos, node, user, mode, new_param2)
+	node.param2 = new_param2
+	minetest.swap_node(pos, node)
+	update_item(pos, node)
+	return true
 end
 
 local frame_def = {
@@ -148,7 +161,7 @@ local frame_def = {
 	groups = {choppy = 2, dig_immediate = 2},
 	legacy_wallmounted = true,
 	sounds = default.node_sound_wood_defaults(),
-	on_rotate = sd_disallow or nil,
+	on_rotate = on_rotate,
 	after_place_node = function(pos, placer, itemstack)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("owner",placer:get_player_name())
@@ -220,6 +233,7 @@ frame_def.inventory_image = "itemframes_invisible_inv.png"
 frame_def.wield_image = "itemframes_invisible.png"
 frame_def.tiles = {frame_def.wield_image}
 frame_def.use_texture_alpha = "clip"
+frame_def.walkable = false
 minetest.register_node("itemframes:frame_invis", frame_def)
 
 minetest.register_node("itemframes:pedestal",{
