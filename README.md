@@ -392,6 +392,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: LGPL 3.0
 * [ContentDB](https://content.minetest.net/packages/VanessaE/dreambuilder\_hotbar/)
 
+## Drinks (drinks)
+
+* Zdroj: [https://github.com/minetest-mods/drinks](https://github.com/minetest-mods/drinks), revize 5d117257993e9e8788bbe3b796cae4b423efcdc4
+* Původní licence: kód MIT, vše ostatní CC BY-SA 3.0
+* Licence úprav: kód MIT, ostatní CC BY-SA 3.0
+* [ContentDB](https://content.minetest.net/packages/Nathan.S/drinks/)
+
 ## Emote (emote)
 
 * Zdroj: [https://github.com/minetest-mods/emote](https://github.com/minetest-mods/emote), revize 402a6f07f5ace5ca1a072664608ac3ce30f7d84c
