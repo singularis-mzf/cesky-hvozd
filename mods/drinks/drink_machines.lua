@@ -29,50 +29,58 @@ minetest.register_craft({
 
 local press_idle_formspec =
    'size[8,7]'..
-   'label[1.5,0;Organic juice is just a squish away.]' ..
-   'label[4.3,.75;Put fruit here ->]'..
-   'label[3.5,1.75;Put container here ->]'..
-   'label[0.2,1.8;4 fruits to a glass,]'..
-   'label[0.2,2.1;8 fruits to a bottle,]'..
-   'label[0.2,2.4;16 fruits to a bucket.]'..
-   'button[1,1;2,1;press;Start Juicing]'..
+   'label[1.5,0;Lis je připravený]' ..
+   'label[4.3,.75;Sem vložte ovoce ->]'..
+   'label[3.5,1.75;Sem vložte nádobu ->]'..
+   'label[0.2,1.8;4 ks/sklenici,]'..
+   'label[0.2,2.1;8 ks/láhev,]'..
+   'label[0.2,2.4;16 ks/kbelík.]'..
+   'button[1,1;2,1;press;Spustit lisování]'..
    'list[current_name;src;6.5,.5;1,1;]'..
    'list[current_name;dst;6.5,1.5;1,1;]'..
-   'list[current_player;main;0,3;8,4;]'
+   'list[current_player;main;0,3;8,4;]'..
+   'listring[current_name;dst]'..
+   'listring[current_player;main]'..
+   'listring[current_name;src]'
 
 local press_running_formspec =
    'size[8,7]'..
-   'label[1.5,0;Organic juice coming right up.]' ..
-   'label[4.3,.75;Put fruit here ->]'..
-   'label[3.5,1.75;Put container here ->]'..
-   'label[0.2,1.8;4 fruits to a glass,]'..
-   'label[0.2,2.1;8 fruits to a bottle,]'..
-   'label[0.2,2.4;16 fruits to a bucket.]'..
-   'button[1,1;2,1;press;Start Juicing]'..
+   'label[1.5,0;Lisování probíhá]' ..
+   'label[4.3,.75;Sem vložte ovoce ->]'..
+   'label[3.5,1.75;Sem vložte nádobu ->]'..
+   'label[0.2,1.8;4 ks/sklenici,]'..
+   'label[0.2,2.1;8 ks/láhev,]'..
+   'label[0.2,2.4;16 ks/kbelík.]'..
+   'button[1,1;2,1;press;Spustit lisování]'..
    'list[current_name;src;6.5,.5;1,1;]'..
    'list[current_name;dst;6.5,1.5;1,1;]'..
-   'list[current_player;main;0,3;8,4;]'
+   'list[current_player;main;0,3;8,4;]'..
+   'listring[current_name;dst]'..
+   'listring[current_player;main]'..
+   'listring[current_name;src]'
 
 local press_error_formspec =
    'size[8,7]'..
-   'label[1.5,0;You need to add more fruit.]' ..
-   'label[4.3,.75;Put fruit here ->]'..
-   'label[3.5,1.75;Put container here ->]'..
-   'label[0.2,1.8;4 fruits to a glass,]'..
-   'label[0.2,2.1;8 fruits to a bottle,]'..
-   'label[0.2,2.4;16 fruits to a bucket.]'..
-   'button[1,1;2,1;press;Start Juicing]'..
+   'label[1.5,0;Na lisování je potřeba víc ovoce.]' ..
+   'label[4.3,.75;Sem vložte ovoce ->]'..
+   'label[3.5,1.75;Sem vložte nádobu ->]'..
+   'label[0.2,1.8;4 ks/sklenici,]'..
+   'label[0.2,2.1;8 ks/láhev,]'..
+   'label[0.2,2.4;16 ks/kbelík.]'..
+   'button[1,1;2,1;press;Spustit lisování]'..
    'list[current_name;src;6.5,.5;1,1;]'..
    'list[current_name;dst;6.5,1.5;1,1;]'..
-   'list[current_player;main;0,3;8,4;]'
+   'list[current_player;main;0,3;8,4;]'..
+   'listring[current_name;dst]'..
+   'listring[current_player;main]'..
+   'listring[current_name;src]'
 
 minetest.register_node('drinks:juice_press', {
-   description = 'Juice Press',
-   _doc_items_longdesc = "A machine for creating drinks out of various fruits and vegetables.",
-   _doc_items_usagehelp = "Right-click the press to access inventory and begin juicing.",
+   description = 'lis na ovocnou šťávu',
    drawtype = 'mesh',
    mesh = 'drinks_press.obj',
    tiles = {name='drinks_press.png'},
+   use_texture_alpha = "oblique",
    groups = {choppy=2, dig_immediate=2,},
    paramtype = 'light',
    paramtype2 = 'facedir',
@@ -90,7 +98,7 @@ minetest.register_node('drinks:juice_press', {
       inv:set_size('main', 8*4)
       inv:set_size('src', 1)
       inv:set_size('dst', 1)
-      meta:set_string('infotext', 'Empty Juice Press')
+      meta:set_string('infotext', 'prázdný lis na ovoce')
       meta:set_string('formspec', press_idle_formspec)
    end,
    on_receive_fields = function(pos, formname, fields, sender)
@@ -100,58 +108,53 @@ minetest.register_node('drinks:juice_press', {
          local timer = minetest.get_node_timer(pos)
          local instack = inv:get_stack("src", 1)
          local fruitstack = instack:get_name()
-         local mod, fruit = fruitstack:match("([^:]+):([^:]+)")
-         if drinks.juiceable[fruit] then
-            if string.find(fruit, '_') then
-               local fruit, junk = fruit:match('([^_]+)_([^_]+)')
-               meta:set_string('fruit', fruit)
-            else
-               meta:set_string('fruit', fruit)
-            end
+         -- local mod, fruit = fruitstack:match("([^:]+):([^:]+)")
+         if drinks.juiceable[fruitstack] then
+			meta:set_string('fruit', drinks.juiceable[fruitstack])
             local outstack = inv:get_stack("dst", 1)
             local vessel = outstack:get_name()
             if vessel == 'vessels:drinking_glass' then
                if instack:get_count() >= 4 then
                   meta:set_string('container', 'jcu_')
                   meta:set_string('fruitnumber', 4)
-                  meta:set_string('infotext', 'Juicing...')
+                  meta:set_string('infotext', 'lis pracuje...')
                   meta:set_string('formspec', press_running_formspec)
                   timer:start(4)
                else
-                  meta:set_string('infotext', 'You need more fruit.')
+                  meta:set_string('infotext', 'lis má nedostatek ovoce')
                   meta:set_string('formspec', press_error_formspec)
                end
             elseif vessel == 'vessels:glass_bottle' then
                if instack:get_count() >= 8 then
                   meta:set_string('container', 'jbo_')
                   meta:set_string('fruitnumber', 8)
-                  meta:set_string('infotext', 'Juicing...')
+                  meta:set_string('infotext', 'lis pracuje...')
                   meta:set_string('formspec', press_running_formspec)
                   timer:start(8)
                else
-                  meta:set_string('infotext', 'You need more fruit.')
+                  meta:set_string('infotext', 'lis má nedostatek ovoce')
                   meta:set_string('formspec', press_error_formspec)
                end
             elseif vessel == 'vessels:steel_bottle' then
                if instack:get_count() >= 8 then
                   meta:set_string('container', 'jsb_')
                   meta:set_string('fruitnumber', 8)
-                  meta:set_string('infotext', 'Juicing...')
+                  meta:set_string('infotext', 'lis pracuje...')
                   meta:set_string('formspec', press_running_formspec)
                   timer:start(8)
                else
-                  meta:set_string('infotext', 'You need more fruit.')
+                  meta:set_string('infotext', 'lis má nedostatek ovoce')
                   meta:set_string('formspec', press_error_formspec)
                end
             elseif vessel == 'bucket:bucket_empty' then
                if instack:get_count() >= 16 then
                   meta:set_string('container', 'jbu_')
                   meta:set_string('fruitnumber', 16)
-                  meta:set_string('infotext', 'Juicing...')
+                  meta:set_string('infotext', 'lis pracuje...')
                   meta:set_string('formspec', press_running_formspec)
                   timer:start(16)
                else
-                  meta:set_string('infotext', 'You need more fruit.')
+                  meta:set_string('infotext', 'lis má nedostatek ovoce')
                   meta:set_string('formspec', press_error_formspec)
                end
             elseif vessel == 'default:papyrus' then
@@ -166,11 +169,11 @@ minetest.register_node('drinks:juice_press', {
                      if fruit == stored_fruit or stored_fruit == 'empty' then
                         meta:set_string('container', 'tube')
                         meta:set_string('fruitnumber', 2)
-                        meta:set_string('infotext', 'Juicing...')
+                        meta:set_string('infotext', 'lis pracuje...')
                         meta_u:set_string('fruit', fruit)
                         timer:start(4)
                      else
-                        meta:set_string('infotext', "You can't mix juices.")
+                        meta:set_string('infotext', "Míchání nápojů není dovoleno!")
                      end
                   elseif under_node_name_2.name == 'drinks:liquid_silo' then
                      local meta_u = minetest.get_meta(under_node_2)
@@ -178,14 +181,14 @@ minetest.register_node('drinks:juice_press', {
                      if fruit == stored_fruit or stored_fruit == 'empty' then
                         meta:set_string('container', 'tube')
                         meta:set_string('fruitnumber', 2)
-                        meta:set_string('infotext', 'Juicing...')
+                        meta:set_string('infotext', 'lis pracuje...')
                         meta_u:set_string('fruit', fruit)
                         timer:start(4)
                      else
-                        meta:set_string('infotext', "You can't mix juices.")
+                        meta:set_string('infotext', "Míchání nápojů není dovoleno!")
                      end
                   else
-                     meta:set_string('infotext', 'You need more fruit.')
+                     meta:set_string('infotext', 'lis má nedostatek ovoce')
                      meta:set_string('formspec', press_error_formspec)
                   end
                end
@@ -200,6 +203,7 @@ minetest.register_node('drinks:juice_press', {
       local instack = inv:get_stack("src", 1)
       local outstack = inv:get_stack("dst", 1)
       local fruit = meta:get_string('fruit')
+	  local fruit_desc = (drinks.drink_table[fruit] or {})[2] or fruit
       local fruitnumber = tonumber(meta:get_string('fruitnumber'))
       if container == 'tube' then
          local timer = minetest.get_node_timer(pos)
@@ -214,17 +218,17 @@ minetest.register_node('drinks:juice_press', {
             inv:set_stack('src', 1, instack)
             if fullness + 2 > 128 then
                timer:stop()
-               meta:set_string('infotext', 'Barrel is full of juice.')
+               meta:set_string('infotext', 'Barel je plný '..fruit_desc..'.')
                return
             else
                local fullness = fullness + 2
                meta_u:set_string('fullness', fullness)
-               meta_u:set_string('infotext', (math.floor((fullness/128)*100))..' % full of '..fruit..' juice.')
+               meta_u:set_string('infotext', "z "..(math.floor((fullness/128)*100))..' % plný '..fruit_desc..'.')
                meta_u:set_string('formspec', drinks.liquid_storage_formspec(fruit, fullness, 128))
                if instack:get_count() >= 2 then
                   timer:start(4)
                else
-                  meta:set_string('infotext', 'You need more fruit.')
+                  meta:set_string('infotext', 'lis má nedostatek ovoce')
                end
             end
          elseif under_node_name_2.name == 'drinks:liquid_silo' then
@@ -234,22 +238,22 @@ minetest.register_node('drinks:juice_press', {
             inv:set_stack('src', 1, instack)
             if fullness + 2 > 256 then
                timer:stop()
-               meta:set_string('infotext', 'Silo is full of juice.')
+               meta:set_string('infotext', 'Silo je plné '..fruit_desc..'.')
                return
             else
                local fullness = fullness + 2
                meta_u:set_string('fullness', fullness)
-               meta_u:set_string('infotext', (math.floor((fullness/256)*100))..' % full of '..fruit..' juice.')
+               meta_u:set_string('infotext', "z "..(math.floor((fullness/256)*100))..' % plné '..fruit_desc..'.')
                meta_u:set_string('formspec', drinks.liquid_storage_formspec(fruit, fullness, 256))
                if instack:get_count() >= 2 then
                   timer:start(4)
                else
-                  meta:set_string('infotext', 'You need more fruit.')
+                  meta:set_string('infotext', 'lis má nedostatek ovoce')
                end
             end
          end
       else
-      meta:set_string('infotext', 'Collect your juice.')
+      meta:set_string('infotext', 'Vyjměte hotovou šťávu.')
       meta:set_string('formspec', press_idle_formspec)
       instack:take_item(tonumber(fruitnumber))
       inv:set_stack('src', 1, instack)
@@ -261,13 +265,13 @@ minetest.register_node('drinks:juice_press', {
       local meta = minetest.get_meta(pos)
       local inv = meta:get_inventory()
       timer:stop()
-      meta:set_string('infotext', 'Ready for more juicing.')
+      meta:set_string('infotext', 'Připraven na další lisování.')
       meta:set_string('formspec', press_idle_formspec)
    end,
    on_metadata_inventory_put = function(pos, listname, index, stack, player)
       local meta = minetest.get_meta(pos)
       local inv = meta:get_inventory()
-      meta:set_string('infotext', 'Ready for juicing.')
+      meta:set_string('infotext', 'Připraven na lisování.')
    end,
    can_dig = function(pos)
       local meta = minetest.get_meta(pos);
@@ -281,7 +285,9 @@ minetest.register_node('drinks:juice_press', {
    end,
    allow_metadata_inventory_put = function(pos, listname, index, stack, player)
       if listname == 'dst' then
-         if stack:get_name() == ('bucket:bucket_empty') then
+		 if not minetest.get_meta(pos):get_inventory():is_empty("dst") then
+			return 0
+         elseif stack:get_name() == ('bucket:bucket_empty') then
             return 1
          elseif stack:get_name() == ('vessels:drinking_glass') then
             return 1
@@ -295,7 +301,7 @@ minetest.register_node('drinks:juice_press', {
             return 0
          end
       else
-         return 99
+         return 100
       end
    end,
 })
@@ -305,10 +311,11 @@ function drinks.drinks_liquid_sub(liq_vol, ves_typ, ves_vol, pos, able_to_fill, 
    local fullness = tonumber(meta:get_string('fullness'))
    local fruit = meta:get_string('fruit')
    local fruit_name = meta:get_string('fruit_name')
+   local fruit_desc = (drinks.drink_table[fruit] or {})[2] or fruit
    local inv = meta:get_inventory()
    local fullness = fullness - (liq_vol*able_to_fill)
    meta:set_string('fullness', fullness)
-   meta:set_string('infotext', (math.floor((fullness/ves_vol)*100))..' % full of '..fruit_name..' juice.')
+   meta:set_string('infotext', "z "..(math.floor((fullness/ves_vol)*100))..' % plné '..fruit_desc..'.')
    if ves_vol == 128 then
       meta:set_string('formspec', drinks.liquid_storage_formspec(fruit_name, fullness, 128))
    elseif ves_vol == 256 then
@@ -317,10 +324,10 @@ function drinks.drinks_liquid_sub(liq_vol, ves_typ, ves_vol, pos, able_to_fill, 
    if ves_typ == 'jcu' or ves_typ == 'jbo' or ves_typ == 'jsb' or ves_typ == 'jbu' then
       inv:set_stack('dst', 1, 'drinks:'..ves_typ..'_'..fruit..' '..able_to_fill)
       inv:set_stack('src', 1, outputstack..' '..leftover_count)
-   elseif ves_typ == 'thirsty:bronze_canteen' then
+   --[[ elseif ves_typ == 'thirsty:bronze_canteen' then
       inv:set_stack('dst', 1, {name="thirsty:bronze_canteen", count=1, wear=60, metadata=""})
    elseif ves_typ == 'thirsty:steel_canteen' then
-      inv:set_stack('dst', 1, {name="thirsty:steel_canteen", count=1, wear=40, metadata=""})
+      inv:set_stack('dst', 1, {name="thirsty:steel_canteen", count=1, wear=40, metadata=""}) ]]
    end
 end
 
@@ -341,15 +348,17 @@ function drinks.drinks_liquid_add(liq_vol, ves_typ, ves_vol, pos, inputcount, le
    local fullness = tonumber(meta:get_string('fullness'))
    local fruit = meta:get_string('fruit')
    local fruit_name = meta:get_string('fruit_name')
+   local fruit_desc = (drinks.drink_table[fruit] or {})[2] or fruit
    local inv = meta:get_inventory()
    local fullness = fullness + (liq_vol*inputcount)
    meta:set_string('fullness', fullness)
    inv:set_stack('src', 1, ves_typ..' '..inputcount)
    inv:set_stack('dst', 1, inputstack..' '..leftover_count)
-   meta:set_string('infotext', (math.floor((fullness/ves_vol)*100))..' % full of '..fruit_name..' juice.')
    if ves_vol == 256 then
+	  meta:set_string('infotext', "z "..(math.floor((fullness/ves_vol)*100))..' % plné '..fruit_desc.."")
       meta:set_string('formspec', drinks.liquid_storage_formspec(fruit_name, fullness, 256))
    elseif ves_vol == 128 then
+	  meta:set_string('infotext', "z "..(math.floor((fullness/ves_vol)*100))..' % plný '..fruit_desc.."")
       meta:set_string('formspec', drinks.liquid_storage_formspec(fruit_name, fullness, 128))
    end
 end
@@ -380,9 +389,7 @@ function drinks.drinks_silo(pos, inputstack, inputcount)
 end
 
 minetest.register_node('drinks:liquid_barrel', {
-   description = 'Barrel of Liquid',
-   _doc_items_longdesc = "A node that provides a simple way to store juice.",
-   _doc_items_usagehelp = "Add or remove liquids from the barrel using buckets, bottles, or cups.",
+   description = 'sud na nápoje',
    drawtype = 'mesh',
    mesh = 'drinks_liquid_barrel.obj',
    tiles = {name='drinks_barrel.png'},
@@ -405,15 +412,15 @@ minetest.register_node('drinks:liquid_barrel', {
       inv:set_size('dst', 1)
       meta:set_string('fullness', 0)
       meta:set_string('fruit', 'empty')
-      meta:set_string('infotext', 'Empty Drink Barrel')
+      meta:set_string('infotext', 'prázdný sud')
       meta:set_string('formspec', 'size[8,8]'..
-      'label[0,0;Fill with the drink of your choice,]'..
-      'label[0,.4;you can only add more of the same type of drink.]'..
-      'label[4.5,1.2;Add liquid ->]'..
-      'label[.75,1.75;The barrel is empty]'..
-      'label[4.5,2.25;Take liquid ->]'..
-      'label[2,3.2;(This empties the barrel completely)]'..
-      'button[0,3;2,1;purge;Purge]'..
+      'label[0,0;Plňte jedním druhem nápoje.]'..
+      'label[0,.4;Míchání nápojů není dovoleno!]'..
+      'label[4.5,1.2;Nápoj k přidání ->]'..
+      'label[.75,1.75;Sud je prázdný]'..
+      'label[4.5,2.25;Nádoba k naplnění ->]'..
+      'label[2,3.2;(Toto zcela vyprázdní sud)]'..
+      'button[0,3;2,1;purge;Vylít vše]'..
       'list[current_name;src;6.5,1;1,1;]'..
       'list[current_name;dst;6.5,2;1,1;]'..
       'list[current_player;main;0,4;8,5;]')
@@ -424,14 +431,14 @@ minetest.register_node('drinks:liquid_barrel', {
       local instack = inv:get_stack('src', 1)
       local outstack = inv:get_stack('dst', 1)
       local outputstack = outstack:get_name()
-      local inputstack = instack:get_name()
+      local inputstack = drinks.translate_alias(instack:get_name())
       local outputcount = outstack:get_count()
       local inputcount = instack:get_count()
       local fruit = string.sub(inputstack, 12, -1)
       local fruit_in = meta:get_string('fruit')
       if fruit_in == 'empty' then
          meta:set_string('fruit', fruit)
-         local fruit_name = minetest.registered_nodes[instack:get_name()]
+         local fruit_name = minetest.registered_items[instack:get_name()]
          meta:set_string('fruit_name', string.lower(fruit_name.juice_type))
          local vessel = string.sub(inputstack, 8, 10)
          drinks.drinks_barrel(pos, inputstack, inputcount)
@@ -448,10 +455,10 @@ minetest.register_node('drinks:liquid_barrel', {
       if fields['purge'] then
          local meta = minetest.get_meta(pos)
          local fullness = 0
-         local fruit_name = 'no'
+         local fruit_name = 'nic'
          meta:set_string('fullness', 0)
          meta:set_string('fruit', 'empty')
-         meta:set_string('infotext', 'Empty Drink Barrel')
+         meta:set_string('infotext', 'prázdný sud')
          meta:set_string('formspec', drinks.liquid_storage_formspec(fruit_name, fullness, 128))
       end
    end,
@@ -469,7 +476,7 @@ minetest.register_node('drinks:liquid_barrel', {
    allow_metadata_inventory_put = function(pos, listname, index, stack, player)
       local meta = minetest.get_meta(pos)
       if listname == 'src' then --adding liquid
-         local inputstack = stack:get_name()
+         local inputstack = drinks.translate_alias(stack:get_name())
          local inputcount = stack:get_count()
          local valid = string.sub(inputstack, 1, 8)
          if valid == 'drinks:j' then
@@ -481,7 +488,7 @@ minetest.register_node('drinks:liquid_barrel', {
          --make sure there is a liquid to remove
          local juice = meta:get_string('fruit')
          if juice ~= 'empty' then
-            local inputstack = stack:get_name()
+            local inputstack = drinks.translate_alias(stack:get_name())
             local inputcount = stack:get_count()
             local valid = string.sub(inputstack, 1, 7)
             if valid == 'vessels' or valid == 'bucket:' then
@@ -497,9 +504,7 @@ minetest.register_node('drinks:liquid_barrel', {
 })
 
 minetest.register_node('drinks:liquid_silo', {
-   description = 'Silo of Liquid',
-   _doc_items_longdesc = "A node that provides a simple way to store juice.",
-   _doc_items_usagehelp = "Add or remove liquids from the silo using buckets, bottles, or cups.",
+   description = 'silo na nápoje',
    drawtype = 'mesh',
    mesh = 'drinks_silo.obj',
    tiles = {name='drinks_silo.png'},
@@ -522,15 +527,15 @@ minetest.register_node('drinks:liquid_silo', {
       inv:set_size('dst', 1)
       meta:set_string('fullness', 0)
       meta:set_string('fruit', 'empty')
-      meta:set_string('infotext', 'Empty Drink Silo')
+      meta:set_string('infotext', 'prázdné silo na nápoje')
       meta:set_string('formspec', 'size[8,8]'..
-      'label[0,0;Fill with the drink of your choice,]'..
-      'label[0,.4;you can only add more of the same type of drink.]'..
-      'label[4.5,1.2;Add liquid ->]'..
-      'label[.75,1.75;The Silo is empty]'..
-      'label[4.5,2.25;Take liquid ->]'..
-      'label[2,3.2;(This empties the silo completely)]'..
-      'button[0,3;2,1;purge;Purge]'..
+      'label[0,0;Plňte jedním druhem nápoje.]'..
+      'label[0,.4;Míchání nápojů není dovoleno!]'..
+      'label[4.5,1.2;Nápoj k přidání ->]'..
+      'label[.75,1.75;Sud je prázdný]'..
+      'label[4.5,2.25;Nádoba k naplnění ->]'..
+      'label[2,3.2;(Toto zcela vyprázdní sud)]'..
+      'button[0,3;2,1;purge;Vylít vše]'..
       'list[current_name;src;6.5,1;1,1;]'..
       'list[current_name;dst;6.5,2;1,1;]'..
       'list[current_player;main;0,4;8,5;]')
@@ -541,14 +546,14 @@ minetest.register_node('drinks:liquid_silo', {
       local instack = inv:get_stack("src", 1)
       local outstack = inv:get_stack('dst', 1)
       local outputstack = outstack:get_name()
-      local inputstack = instack:get_name()
+      local inputstack = drinks.translate_alias(instack:get_name())
       local outputcount = outstack:get_count()
       local inputcount = instack:get_count()
       local fruit = string.sub(inputstack, 12, -1)
       local fruit_in = meta:get_string('fruit')
       if fruit_in == 'empty' then
          meta:set_string('fruit', fruit)
-         local fruit_name = minetest.registered_nodes[instack:get_name()]
+         local fruit_name = minetest.registered_items[instack:get_name()]
          meta:set_string('fruit_name', string.lower(fruit_name.juice_type))
          local vessel = string.sub(inputstack, 8, 10)
          drinks.drinks_silo(pos, inputstack, inputcount)
@@ -565,10 +570,10 @@ minetest.register_node('drinks:liquid_silo', {
       if fields['purge'] then
          local meta = minetest.get_meta(pos)
          local fullness = 0
-         local fruit_name = 'no'
+         local fruit_name = 'nic'
          meta:set_string('fullness', 0)
          meta:set_string('fruit', 'empty')
-         meta:set_string('infotext', 'Empty Drink Silo')
+         meta:set_string('infotext', 'prázdné silo na nápoje')
          meta:set_string('formspec', drinks.liquid_storage_formspec(fruit_name, fullness, 256))
       end
    end,
@@ -586,7 +591,7 @@ minetest.register_node('drinks:liquid_silo', {
    allow_metadata_inventory_put = function(pos, listname, index, stack, player)
       local meta = minetest.get_meta(pos)
       if listname == 'src' then --adding liquid
-         local inputstack = stack:get_name()
+         local inputstack = drinks.translate_alias(stack:get_name())
          local inputcount = stack:get_count()
          local valid = string.sub(inputstack, 1, 8)
          if valid == 'drinks:j' then
@@ -598,7 +603,7 @@ minetest.register_node('drinks:liquid_silo', {
          --make sure there is liquid to take_item
          local juice = meta:get_string('fruit')
          if juice ~= 'empty' then
-            local inputstack = stack:get_name()
+            local inputstack = drinks.translate_alias(stack:get_name())
             local inputcount = stack:get_count()
             local valid = string.sub(inputstack, 1, 7)
             if valid == 'vessels' or valid == 'bucket:' then
