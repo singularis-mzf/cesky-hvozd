@@ -25,8 +25,16 @@ function emote.bed_onrightclick(pos, node, clicker, itemstack, pointed_thing)
 		local dir = minetest.facedir_to_dir(facedir)
 		clicker:set_look_horizontal(look_yaw[facedir])
 		clicker:set_look_vertical(-0.9 * math.pi)
-		clicker:set_physics_override({speed = 0, jump = 0, gravity = 0})
-		clicker:set_pos(vector.new(pos.x + 0.5 * dir.x, pos.y + 0.5, pos.z + 0.5 * dir.z))
+		-- clicker:set_physics_override({speed = 0, jump = 0, gravity = 0})
+
+		local ndef = minetest.registered_nodes[node.name]
+		local cbox = ndef and ndef.collision_box
+		local y_shift = 0.5
+		if cbox and cbox.type == "fixed" and cbox.fixed then
+			y_shift = cbox.fixed[5]
+		end
+
+		clicker:set_pos(vector.new(pos.x + 0.5 * dir.x, pos.y + y_shift, pos.z + 0.5 * dir.z))
 
 		minetest.after(0.5, function()
 			local player = minetest.get_player_by_name(player_name)

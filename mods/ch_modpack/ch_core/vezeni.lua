@@ -189,7 +189,6 @@ end
 
 local function propustit_z_vezeni(player_name, online_charinfo)
 	ch_core.set_temporary_titul(player_name, "ve vězení", false)
-	ch_core.hide_prison_hud(minetest.get_player_by_name(player_name), online_charinfo)
 	ch_core.systemovy_kanal(player_name, "Byl/a jste propuštěn/a z vězení. Nyní se můžete volně pohybovat a používat teleportační příkazy.")
 
 	local hudbar_id = online_charinfo.prison_hudbar

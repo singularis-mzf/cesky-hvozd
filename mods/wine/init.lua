@@ -266,7 +266,7 @@ if minetest.get_modpath("farming")
 and farming.mod and (farming.mod == "undo" or farming.mod == "redo") then
 
 	minetest.register_craftitem("wine:glass_champagne_raw", {
-		description = "Sklenice slazeného vína",
+		description = "sklenice slazeného vína",
 		inventory_image = "wine_champagne_raw_glass.png",
 		groups = {vessel = 1, flammable = 3}
 	})
