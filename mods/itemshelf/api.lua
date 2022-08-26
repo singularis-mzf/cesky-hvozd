@@ -181,6 +181,7 @@ function itemshelf.register_shelf(name, def)
 	    		meta:set_float("itemshelf:depth_displacement", def.depth_offset)
 	    	end
 		end,
+		--[[
 		allow_metadata_inventory_move = function(pos, from_list, from_index,
 				to_list, to_index, count, player)
 			if minetest.is_protected(pos, player:get_player_name()) then
@@ -200,6 +201,7 @@ function itemshelf.register_shelf(name, def)
 			end
 			return stack:get_count()
 		end,
+		]]
 		on_metadata_inventory_put = update_shelf,
 		on_metadata_inventory_take = update_shelf,
 		can_dig = function(pos, player)
