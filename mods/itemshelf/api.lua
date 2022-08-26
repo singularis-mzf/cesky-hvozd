@@ -161,7 +161,7 @@ function itemshelf.register_shelf(name, def)
 		drawtype = drawtype,
 		node_box = def.nodebox,
 		mesh = def.mesh,
-		groups = {choppy = 2, itemshelf = 1, itemshelf_shown_items = def.shown_items or 4},
+		groups = {choppy = 2, oddly_breakable_by_hand = 1, itemshelf = 1, itemshelf_shown_items = def.shown_items or 4},
 		on_construct = function(pos)
 			-- Initialize inventory
 			local meta = minetest.get_meta(pos)
@@ -202,27 +202,20 @@ function itemshelf.register_shelf(name, def)
 		end,
 		on_metadata_inventory_put = update_shelf,
 		on_metadata_inventory_take = update_shelf,
-		on_dig = function(pos, node, digger)
+		can_dig = function(pos, player)
+			local result = minetest.get_meta(pos):get_inventory():is_empty("main")
+			if not result then
+				return false
+			end
 			-- Clear all object objects
 			local objs = minetest.get_objects_inside_radius(pos, 0.7)
 			for _,obj in pairs(objs) do
 				obj:remove()
 			end
-			-- Pop-up items
-			minetest.add_item(pos, node.name)
-			local meta = minetest.get_meta(pos)
-			local list = meta:get_inventory():get_list("main")
-			for _,item in pairs(list) do
-				local drop_pos = {
-					x=math.random(pos.x - 0.5, pos.x + 0.5),
-					y=pos.y,
-					z=math.random(pos.z - 0.5, pos.z + 0.5)}
-				minetest.add_item(pos, item:to_string())
-			end
-			-- Remove node
-			minetest.remove_node(pos)
+			return true
 		end,
 		on_blast = function(pos)
+			--[[
 			minetest.add_item(pos, minetest.get_node(pos).name)
 			local meta = minetest.get_meta(pos)
 			local list = meta:get_inventory():get_list("main")
@@ -234,7 +227,7 @@ function itemshelf.register_shelf(name, def)
 				minetest.add_item(pos, item:to_string())
 			end
 			-- Remove node
-			minetest.remove_node(pos)
+			minetest.remove_node(pos) ]]
 			return nil
 		end,
 		-- Screwdriver support
