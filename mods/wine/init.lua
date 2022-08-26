@@ -140,20 +140,20 @@ end
 
 -- list of beverages (name, desc, has bottle, hunger, thirst)
 local beverages = {
-	{"wine", "Wine", true, 2, 5},
-	{"beer", "Beer", true, 2, 8},
-	{"lemonade", "Lemonade", true, 2, 5},
-	{"tequila", "Tequila", true, 2, 3},
-	-- {"wheat_beer", "Wheat Beer", true, 2, 8},
-	{"sake", "Sake", true, 2, 3},
-	{"bourbon", "Bourbon", false, 2, 3},
-	{"vodka", "Vodka", true, 2, 3},
-	{"apple_juice", "Apple Juice", true, 2, 6},
-	{"mead", "Honey-Mead", true, 4, 5},
-	{"mint", "Mint Julep", true, 4, 3},
-	{"brandy", "Brandy", true, 3, 4},
-	{"coffee_liquor", "Coffee Liquor", true, 3, 4},
-	{"champagne", "Champagne", true, 4, 5}
+	{"wine", "Wine", true, 2, 5, 1},
+	{"beer", "Beer", true, 2, 8, 1},
+	{"lemonade", "Lemonade", true, 2, 5, 0},
+	{"tequila", "Tequila", true, 2, 3, 1},
+	-- {"wheat_beer", "Wheat Beer", true, 2, 8, 1},
+	{"sake", "Sake", true, 2, 3, 1},
+	{"bourbon", "Bourbon", false, 2, 3, 1},
+	{"vodka", "Vodka", true, 2, 3, 1},
+	{"apple_juice", "Apple Juice", true, 2, 6, 0},
+	{"mead", "Honey-Mead", true, 4, 5, 1},
+	{"mint", "Mint Julep", true, 4, 3, 1},
+	{"brandy", "Brandy", true, 3, 4, 1},
+	{"coffee_liquor", "Coffee Liquor", true, 3, 4, 1},
+	{"champagne", "Champagne", true, 4, 5, 1},
 }
 
 
@@ -161,6 +161,13 @@ local beverages = {
 function wine:add_drink(name, desc, has_bottle, num_hunger, num_thirst, alcoholic)
 
 	-- glass
+	local groups = {
+		vessel = 1, dig_immediate = 3,
+		attached_node = 1, drink = 1
+	}
+	if alcoholic and alcoholic ~= 0 then
+		groups.alcohol = alcoholic
+	end
 	minetest.register_node("wine:glass_" .. name, {
 		description = S("Glass of " .. desc),
 		drawtype = "plantlike",
@@ -176,10 +183,7 @@ function wine:add_drink(name, desc, has_bottle, num_hunger, num_thirst, alcoholi
 			type = "fixed",
 			fixed = {-0.15, -0.5, -0.15, 0.15, 0, 0.15}
 		},
-		groups = {
-			vessel = 1, dig_immediate = 3,
-			attached_node = 1, drink = 1, alcohol = alcoholic
-		},
+		groups = groups,
 		sounds = snd_g,
 		on_use = function(itemstack, user, pointed_thing)
 
@@ -242,8 +246,9 @@ for n = 1, #beverages do
 	local has_bottle = beverages[n][3]
 	local num_hunger = beverages[n][4]
 	local num_thirst = beverages[n][5]
+	local num_alcohol = beverages[n][6]
 
-	wine:add_drink(name, desc, has_bottle, num_hunger, num_thirst, 1)
+	wine:add_drink(name, desc, has_bottle, num_hunger, num_thirst, num_alcohol)
 end
 
 
