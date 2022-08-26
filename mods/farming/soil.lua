@@ -47,6 +47,14 @@ if minetest.registered_nodes["default:dirt_with_coniferous_litter"] then
 	})
 end
 
+-- add watering property to the default water sources
+local g = minetest.registered_nodes["default:water_source"].groups or {}
+g.watering = 3
+minetest.override_item("default:water_source", {groups = g})
+g = minetest.registered_nodes["default:river_water_source"].groups or {}
+g.watering = 3
+minetest.override_item("default:river_water_source", {groups = g})
+
 -- watering
 local function on_watered(pos)
 	local node = minetest.get_node_or_nil(pos)
@@ -157,82 +165,56 @@ minetest.register_alias("farming:desert_sand_soil_wet", dry_soil .. "_wet")
 local random_gen = PcgRandom(os.clock())
 
 function farming.has_watering(pos)
-	local watering_nodes = minetest.find_nodes_in_area(vector.new(pos.x - 5, pos.y - 1, pos.z - 5), vector.new(pos.x + 5, pos.y + 3, pos.z + 5), "group:watering", true)
-	for node_name, positions in pairs(watering_nodes) do
-		local max_distance = minetest.get_item_group(node_name, "watering")
-		for _, wpos in ipairs(positions) do
-			if vector.distance(pos, wpos) <= max_distance then
-				return true
-			end
+	local watering_nodes = minetest.find_nodes_in_area(
+		vector.new(pos.x - 5, pos.y - 1, pos.z - 5),
+		vector.new(pos.x + 5, pos.y + 3, pos.z + 5),
+		"group:watering")
+	if #watering_nodes == 0 then
+		return false
+	end
+	for _, wpos in pairs(watering_nodes) do
+		local max_distance = minetest.get_item_group(minetest.get_node(wpos).name, "watering") or 0
+		if math.abs(pos.x - wpos.x) <= max_distance and math.abs(pos.z - wpos.z) <= max_distance and math.abs(pos.y - wpos.y) <= max_distance then
+			return true
 		end
 	end
 	return false
 end
 
 function farming.trigger_drying_soil(pos, randomly)
-	if randomly then
+	-- temporarily disable drying randomization
+	--[[ if randomly then
 		local random_value = random_gen:next(0, 4)
 		if random_value ~= 0 then
 			return true
 		end
-	end
+	end ]]
 	local node = minetest.get_node_or_nil(pos)
 	if not node or minetest.get_item_group(node.name, "soil") ~= 3 or farming.has_watering(pos) then
 		return false
+	else
+		minetest.swap_node(pos, { name = minetest.registered_nodes[node.name].soil.dry })
+		return true
 	end
-	minetest.swap_node(pos, { name = minetest.registered_nodes[node.name].soil.dry })
-	return true
 end
 
-
---[[ if water near soil then change to wet soil
+-- if watering node is near waterable node then water it
 minetest.register_abm({
-	nodenames = {"group:field"},
-	interval = 60,
+	label = "Soil watering",
+	nodenames = {"group:waterable"},
+	interval = 15,
 	chance = 4,
 	catch_up = false,
 
-	action = function(pos, node)
-
-		local ndef = minetest.registered_nodes[node.name]
-		if not ndef or not ndef.soil or not ndef.soil.wet
-		or not ndef.soil.base or not ndef.soil.dry
-		or node.name == ndef.soil.wet then return end
-
-		pos.y = pos.y + 1
-		local nn = minetest.get_node_or_nil(pos)
-		pos.y = pos.y - 1
-
-		if nn then nn = nn.name else return end
-
-		-- what's on top of soil, if solid/not plant change soil to dirt
-		if minetest.registered_nodes[nn]
-		and minetest.registered_nodes[nn].walkable
-		and minetest.get_item_group(nn, "plant") == 0 then
-			minetest.set_node(pos, {name = ndef.soil.base})
-			return
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		-- minetest.chat_send_all("DEBUG: ABM called at pos "..pos.x..", "..pos.y..","..pos.z.."!")
+		if farming.has_watering(pos) then
+			local ndef = minetest.registered_nodes[node.name]
+			if ndef and ndef.soil and ndef.soil.wet then
+				minetest.swap_node(pos, { name = ndef.soil.wet })
+			else
+				minetest.log("warning", "Waterable node "..node.name.." does not have wet soil definition!")
+			end
 		end
-
-		-- if map around soil not loaded then skip until loaded
-		if minetest.find_node_near(pos, 3, {"ignore"}) then
-			return
-		end
-
-		-- check if water is within 3 nodes horizontally and 2 below
-		if #minetest.find_nodes_in_area(
-				{x = pos.x + 3, y = pos.y - 1, z = pos.z + 3},
-				{x = pos.x - 3, y = pos.y + 1, z = pos.z - 3},
-				{"group:water"}) > 0 then
-
-			minetest.set_node(pos, {name = ndef.soil.wet})
-
-		elseif node.name == ndef.soil.wet then
-			minetest.set_node(pos, {name = ndef.soil.dry})
-
-		elseif node.name == ndef.soil.dry
-		and minetest.get_item_group(nn, "plant") == 0 then
-			minetest.set_node(pos, {name = ndef.soil.base})
-		end
-	end
+	end,
 })
-]]

@@ -398,9 +398,7 @@ function farming.plant_growth_timer(pos, elapsed, node_name)
 		local p2 = minetest.registered_nodes[stages.stages_left[growth] ].place_param2 or 1
 
 		minetest.swap_node(pos, {name = stages.stages_left[growth], param2 = p2})
-		if growth == max_growth then
-			farming.trigger_drying_soil(vector.new(pos.x, pos.y - 1, pos.z), true)
-		end
+		farming.trigger_drying_soil(vector.offset(pos, 0, -1, 0), true)
 	else
 		return true
 	end
