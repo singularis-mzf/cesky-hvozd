@@ -789,6 +789,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: LGPLv2+
 * [ContentDB](https://content.minetest.net/packages/RealBadAngel/unified\_inventory/)
 
+## Watering Can (wateringcan)
+
+* Zdroj: [https://github.com/sfence/wateringcan](https://github.com/sfence/wateringcan), revize a360698809d992decd1117262fd15c8900faa873
+* Původní licence: MIT
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/SFENCE/wateringcan/)
+
 ## Wield 3D (wield3d)
 
 * Zdroj: [https://github.com/stujones11/wield3d](https://github.com/stujones11/wield3d), revize 668ea2682a89d6f6a6a6fdc2326b1db6d69257ac

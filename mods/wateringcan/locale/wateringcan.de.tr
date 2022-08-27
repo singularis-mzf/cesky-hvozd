@@ -1,0 +1,6 @@
+# textdomain:wateringcan
+Watering can with water=Gießkanne mit Wasser
+Empty watering can=Leere Gießkanne
+Watering can=Gießkanne
+Watering cans are used to collect a small amount of water in order to pour it on dry blocks. One filled watering can can be used 24 times, after which it has to be refilled. Watering cans don't wear out.=Gießkannen werden benutzt, um kleine Mengen an Wasser aufzunehmen, damit man Blöcke gießen kann. Eine gefüllte Gießkanne kann 24 mal benutzt werden, nachdem sie wieder befüllt werden muss. Gießkannen gehen nicht kaputt.
+Rightclick on water (or any other block belonging to the “@1” group) to fill or refill the watering can. Rightclick with the filled can on an appropriate block (or a plant above it) to wetten it. Soil, desert sand soil, and other blocks capable of becoming wet can be wettened. The tool wear indicator of the watering can indicates the amount of water left.=Klicken Sie mit der rechten Maustaste auf Wasser (oder einen anderen Block, der zur »@1«-Gruppe gehört), um die Gießkanne (neu) zu füllen. Rechtsklicken Sie mit der vollen Gießkanne auf einen geeigneten Block (oder einer Pflanze darüber), um ihn zu gießen. Ackerboden, Wüstenacker und andere Blöcke, die feucht werden können, können gegossen werden. Der Abnutzungsbalken der Gießkanne steht hier für die Menge an Wasser, die noch übrig ist.
