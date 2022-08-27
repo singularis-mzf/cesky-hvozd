@@ -69,7 +69,7 @@ local function run_autocrafter(pos, elapsed)
 	local output_item = craft.output.item
 	-- only use crafts that have an actual result
 	if output_item:is_empty() then
-		meta:set_string("infotext", S("unconfigured Autocrafter: unknown recipe"))
+		meta:set_string("infotext", S("unconfigured Autocrafter (owner: @1): unknown recipe", ch_core.prihlasovaci_na_zobrazovaci(meta:get_string("owner"))))
 		return false
 	end
 
@@ -102,7 +102,7 @@ local function after_recipe_change(pos, inventory)
 	if inventory:is_empty("recipe") then
 		minetest.get_node_timer(pos):stop()
 		autocrafterCache[minetest.hash_node_position(pos)] = nil
-		meta:set_string("infotext", S("unconfigured Autocrafter"))
+		meta:set_string("infotext", S("unconfigured Autocrafter (owner: @1)", ch_core.prihlasovaci_na_zobrazovaci(meta:get_string("owner"))))
 		inventory:set_stack("output", 1, "")
 		return
 	end
@@ -126,7 +126,7 @@ local function after_recipe_change(pos, inventory)
 	craft = craft or get_craft(pos, inventory, hash)
 	local output_item = craft.output.item
 	local description, name = get_item_info(output_item)
-	meta:set_string("infotext", S("'@1' Autocrafter (@2)", description, name))
+	meta:set_string("infotext", S("'@1' Autocrafter (@2) (owner: @3)", description, name, ch_core.prihlasovaci_na_zobrazovaci(meta:get_string("owner"))))
 	inventory:set_stack("output", 1, output_item)
 
 	after_inventory_change(pos)
@@ -169,9 +169,17 @@ local function on_output_change(pos, inventory, stack)
 end
 
 -- returns false if we shouldn't bother attempting to start the timer again after this
-local function update_meta(meta, enabled)
+local function update_meta(meta, enabled, locked)
+	if enabled == nil then
+		enabled = meta:get_int("enabled") == 1
+	end
+	if locked == nil then
+		locked = meta:get_int("locked") == 1
+	end
 	local state = enabled and "on" or "off"
+	local locked_state = locked and "on" or "off"
 	meta:set_int("enabled", enabled and 1 or 0)
+	meta:set_int("locked", locked and 1 or 0)
 	local list_backgrounds = ""
 	if minetest.get_modpath("i3") then
 		list_backgrounds = "style_type[box;colors=#666]"
@@ -201,6 +209,8 @@ local function update_meta(meta, enabled)
 		"image[4,1.45;1,1;[combine:16x16^[noalpha^[colorize:#141318:255]"..
 		"list[context;output;4,1.45;1,1;]"..
 		"image_button[4,2.6;1,0.6;pipeworks_button_" .. state .. ".png;" .. state .. ";;;false;pipeworks_button_interm.png]" ..
+		"image_button[0.22,4.1;1,0.6;pipeworks_button_" .. locked_state .. ".png;locked_" .. locked_state .. ";;;false;pipeworks_button_interm.png]" ..
+		"label[1.25,4.4;nastavení zamknuto]"..
 		"list[context;dst;5.28,0.22;4,3;]"..
 		"list[context;src;0.22,5;8,3;]"..
 		pipeworks.fs_helpers.get_inv(9)..
@@ -221,13 +231,13 @@ local function update_meta(meta, enabled)
 	-- this might be more written code, but actually executes less
 	local output = meta:get_inventory():get_stack("output", 1)
 	if output:is_empty() then -- doesn't matter if paused or not
-		meta:set_string("infotext", S("unconfigured Autocrafter"))
+		meta:set_string("infotext", S("unconfigured Autocrafter (owner: @1)", ch_core.prihlasovaci_na_zobrazovaci(meta:get_string("owner"))))
 		return false
 	end
 
 	local description, name = get_item_info(output)
-	local infotext = enabled and S("'@1' Autocrafter (@2)", description, name)
-				or S("paused '@1' Autocrafter", description)
+	local infotext = enabled and S("'@1' Autocrafter (@2) (owner: @3)", description, name, ch_core.prihlasovaci_na_zobrazovaci(meta:get_string("owner")))
+				or S("paused '@1' Autocrafter (owner: @2)", description, ch_core.prihlasovaci_na_zobrazovaci(meta:get_string("owner")))
 
 	meta:set_string("infotext", infotext)
 	return enabled
@@ -268,6 +278,12 @@ local function upgrade_autocrafter(pos, meta)
 	end
 end
 
+local function has_owner_rights(player, meta)
+	local player_name = player:get_player_name()
+	local owner = meta:get_string("owner")
+	return owner == "" or player_name == owner or minetest.check_player_privs(player, "protection_bypass")
+end
+
 minetest.register_node("pipeworks:autocrafter", {
 	description = S("Autocrafter"),
 	drawtype = "normal",
@@ -300,7 +316,10 @@ minetest.register_node("pipeworks:autocrafter", {
 		if (fields.quit and not fields.key_enter_field) or not pipeworks.may_configure(pos, sender) then
 			return
 		end
+		local player_name = sender:get_player_name()
 		local meta = minetest.get_meta(pos)
+		local owner = meta:get_string("owner")
+		local has_rights = owner == "" or owner == player_name or minetest.check_player_privs(sender, "protection_bypass")
 		if fields.on then
 			update_meta(meta, false)
 			minetest.get_node_timer(pos):stop()
@@ -308,6 +327,15 @@ minetest.register_node("pipeworks:autocrafter", {
 			if update_meta(meta, true) then
 				start_crafter(pos)
 			end
+		end
+		if has_rights then
+			if fields.locked_on then
+				update_meta(meta, nil, false)
+			elseif fields.locked_off then
+				update_meta(meta, nil, true)
+			end
+		elseif fields.locked_on or fields.locked_off then
+			minetest.chat_send_player(player_name, S("*** This Autocrafter is owned by @1!", owner))
 		end
 		if fields.channel then
 			meta:set_string("channel", fields.channel)
@@ -317,9 +345,16 @@ minetest.register_node("pipeworks:autocrafter", {
 		upgrade_autocrafter(pos)
 		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
-		return (inv:is_empty("src") and inv:is_empty("dst"))
+		return (inv:is_empty("src") and inv:is_empty("dst") and (meta:get_int("locked") ~= 1 or has_owner_rights(player, meta)))
 	end,
-	after_place_node = pipeworks.scan_for_tube_objects,
+	after_place_node = function(pos, placer)
+		pipeworks.scan_for_tube_objects(pos)
+		local meta = minetest.get_meta(pos)
+		if placer and placer.get_player_name then
+			meta:set_string("owner", placer:get_player_name() or "")
+			update_meta(meta, false)
+		end
+	end,
 	after_dig_node = function(pos)
 		pipeworks.scan_for_tube_objects(pos)
 	end,
@@ -327,10 +362,14 @@ minetest.register_node("pipeworks:autocrafter", {
 		autocrafterCache[minetest.hash_node_position(pos)] = nil
 	end,
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-		if not pipeworks.may_configure(pos, player) then return 0 end
+		if minetest.is_protected(pos, player:get_player_name()) then return 0 end
 		upgrade_autocrafter(pos)
 		local inv = minetest.get_meta(pos):get_inventory()
 		if listname == "recipe" then
+			local meta = minetest.get_meta(pos)
+			if meta:get_int("locked") == 1 and not has_owner_rights(player, meta) then
+				return 0
+			end
 			stack:set_count(1)
 			inv:set_stack(listname, index, stack)
 			after_recipe_change(pos, inv)
@@ -343,7 +382,8 @@ minetest.register_node("pipeworks:autocrafter", {
 		return stack:get_count()
 	end,
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
-		if not pipeworks.may_configure(pos, player) then
+		local meta = minetest.get_meta(pos)
+		if minetest.is_protected(pos, player:get_player_name()) or (listname == "recipe" and meta:get_int("locked") == 1 and not has_owner_rights(player, meta)) then
 			minetest.log("action", string.format("%s attempted to take from autocrafter at %s", player:get_player_name(), minetest.pos_to_string(pos)))
 			return 0
 		end
@@ -361,7 +401,8 @@ minetest.register_node("pipeworks:autocrafter", {
 		return stack:get_count()
 	end,
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
-		if not pipeworks.may_configure(pos, player) then return 0 end
+		local meta = minetest.get_meta(pos)
+		if minetest.is_protected(pos, player:get_player_name()) or ((from_list == "recipe" or to_list == "recipe") and meta:get_int("locked") == 1 and not has_owner_rights(player, meta)) then return 0 end
 		upgrade_autocrafter(pos)
 		local inv = minetest.get_meta(pos):get_inventory()
 		local stack = inv:get_stack(from_list, from_index)

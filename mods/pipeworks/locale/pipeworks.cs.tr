@@ -17,11 +17,16 @@ Automation components=Automatizace
 ## autocrafter
 Unknown item=Neznámá položka
 unconfigured Autocrafter: unknown recipe=Automat není nakonfigurován: neznámý recept
+unconfigured Autocrafter (owner: @1): unknown recipe=Automat (který postavil/a @1) není nakonfigurován: neznámý recept
 unconfigured Autocrafter=Automat není nakonfigurován
+unconfigured Autocrafter (owner: @1)=Automat není nakonfigurován (postavil/a ho: @1)
 '@1' Autocrafter (@2)=Automat na '@1' (@2)
+'@1' Autocrafter (@2) (owner: @3)=Automat na '@1' (@2) (postavil/a ho: @3)
 Save=Uložit
 paused '@1' Autocrafter=Automat na '@1' pozastaven
+paused '@1' Autocrafter (owner: @2)=Automat na '@1' pozastaven (postavil/a ho: @2)
 Autocrafter=výrobní automat
+*** This Autocrafter is owned by @1!=*** Tento automat patří postavě jménem @1!
 
 ## compat-furnaces
 Allow splitting incoming material (not fuel) stacks from tubes=Dovolit dělení dávek (kromě paliva) při vstupu z rour
