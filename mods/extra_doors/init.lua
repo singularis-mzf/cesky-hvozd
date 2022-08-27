@@ -93,6 +93,7 @@ doors.register( "door_cottage1", {
 	}
 } )
 
+--[[
 doors.register( "door_cottage2", {
 	tiles = { { name = "doors_door_cottage2.png", backface_culling = true } },
 	use_texture_alpha = "clip",
@@ -105,6 +106,7 @@ doors.register( "door_cottage2", {
 		{ "group:wood", "group:wood" },
 	}
 } )
+]]
 
 doors.register( "door_barn1", {
 	tiles = { { name = "doors_door_barn1.png", backface_culling = true } },
