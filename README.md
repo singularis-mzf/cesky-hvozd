@@ -242,13 +242,6 @@ resp. *ostatní\_zdroje*.
 * Původní licence: LGPL 3.0 pro kód a CC-BY-SA 4.0 pro vše ostatní
 * Licence úprav: CC-BY-SA 4.0
 
-## Beautiful Flowers (beautiflowers)
-
-* Zdroj: [https://github.com/minefaco/beautiflowers](https://github.com/minefaco/beautiflowers), revize a9c4f740cc6ddff4e71f0a3749753ed9d76bca00
-* Původní licence: GPLv3 pro kód, CC0 pro média
-* Licence úprav: GPLv3
-* [ContentDB](https://content.minetest.net/packages/1faco/beautiflowers/)
-
 ## Bell (bell)
 
 * Zdroj: [https://github.com/FaceDeer/bell](https://github.com/FaceDeer/bell), revize fbc13a7566e9787b5f05d8c8eb3ec989ba5792b2
