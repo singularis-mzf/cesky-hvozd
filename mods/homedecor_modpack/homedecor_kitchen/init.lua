@@ -371,7 +371,7 @@ homedecor.register("kitchen_cabinet_colorable_with_sink", {
 	palette = "unifieddyes_palette_colorwallmounted.png",
 	airbrush_replacement_node = "homedecor:kitchen_cabinet_colored_with_sink",
 	place_param2 = 0,
-	groups = { snappy = 3, ud_param2_colorable = 1, dig_tree=1 },
+	groups = { snappy = 3, ud_param2_colorable = 1, dig_tree=1, homedecor_sink = 1 },
 	sounds = default.node_sound_wood_defaults(),
 	infotext=S("Under-sink cabinet"),
 	inventory = {
@@ -416,7 +416,7 @@ homedecor.register("kitchen_cabinet_colored_with_sink", {
 			.."{"..ic_cabinet_sides_colored,
 	paramtype2 = "colorwallmounted",
 	palette = "unifieddyes_palette_colorwallmounted.png",
-	groups = { snappy = 3, ud_param2_colorable = 1,  not_in_creative_inventory = 1, dig_tree=1 },
+	groups = { snappy = 3, ud_param2_colorable = 1,  not_in_creative_inventory = 1, dig_tree=1, homedecor_sink = 1 },
 	sounds = default.node_sound_wood_defaults(),
 	infotext=S("Under-sink cabinet"),
 	inventory = {
@@ -472,17 +472,14 @@ homedecor.register("kitchen_faucet", {
 	walkable = false,
 	on_rotate = minetest.get_modpath("screwdriver") and screwdriver.disallow or nil,
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-		local below = minetest.get_node_or_nil({x=pos.x, y=pos.y-1, z=pos.z})
-		if below and string.find(below.name, "homedecor:.*sink") then
-			local particledef = {
-				outlet      = { x = 0, y = -0.19, z = 0.13 },
-				velocity_x  = { min = -0.05, max = 0.05 },
-				velocity_y  = -0.3,
-				velocity_z  = { min = -0.1,  max = 0 },
-				spread      = 0
-			}
-			homedecor.start_particle_spawner(pos, node, particledef, "homedecor_faucet")
-		end
+		local particledef = {
+			outlet      = { x = 0, y = -0.19, z = 0.13 },
+			velocity_x  = { min = -0.05, max = 0.05 },
+			velocity_y  = -0.3,
+			velocity_z  = { min = -0.1,  max = 0 },
+			spread      = 0
+		}
+		homedecor.start_particle_spawner(pos, node, particledef, "homedecor_faucet")
 		return itemstack
 	end,
 	on_destruct = homedecor.stop_particle_spawner

@@ -305,7 +305,7 @@ homedecor.register("sink", {
 	inventory_image="homedecor_bathroom_sink_inv.png",
 	selection_box = sink_sbox,
 	collision_box = sink_cbox,
-	groups = {cracky=3, dig_stone = 2},
+	groups = {cracky=3, dig_stone = 2, homedecor_sink = 1},
 	sounds = default.node_sound_stone_defaults(),
 	on_destruct = function(pos)
 		homedecor.stop_particle_spawner({x=pos.x, y=pos.y+1, z=pos.z})
@@ -323,20 +323,15 @@ homedecor.register("sink", {
 --Taps
 
 local function taps_on_rightclick(pos, node, clicker, itemstack, pointed_thing)
-	local below = minetest.get_node_or_nil({x=pos.x, y=pos.y-1, z=pos.z})
-	if below and
-	  below.name == "homedecor:shower_tray" or
-	  string.find(below.name, "homedecor:.*sink") then
-		local particledef = {
-			outlet      = { x = 0, y = -0.44, z = 0.28 },
-			velocity_x  = { min = -0.1, max = 0.1 },
-			velocity_y  = -0.3,
-			velocity_z  = { min = -0.1, max = 0 },
-			spread      = 0,
-			die_on_collision = true,
-		}
-		homedecor.start_particle_spawner(pos, node, particledef, "homedecor_faucet")
-	end
+	local particledef = {
+		outlet      = { x = 0, y = -0.44, z = 0.28 },
+		velocity_x  = { min = -0.1, max = 0.1 },
+		velocity_y  = -0.3,
+		velocity_z  = { min = -0.1, max = 0 },
+		spread      = 0,
+		die_on_collision = true,
+	}
+	homedecor.start_particle_spawner(pos, node, particledef, "homedecor_faucet")
 	return itemstack
 end
 
@@ -419,7 +414,7 @@ homedecor.register("shower_tray", {
 		},
 	},
 	selection_box = homedecor.nodebox.slab_y(0.1),
-	groups = {cracky=2, dig_stone = 2},
+	groups = {cracky=2, dig_stone = 2, homedecor_sink = 1},
 	sounds = default.node_sound_stone_defaults(),
 	on_destruct = function(pos)
 		homedecor.stop_particle_spawner({x=pos.x, y=pos.y+2, z=pos.z}) -- the showerhead
@@ -586,6 +581,38 @@ homedecor.register("bathroom_set", {
 				{ "", "homedecor:glass_table_small_round", "" },
 				{ "basic_materials:plastic_sheet", "homedecor:glass_table_small_round", "basic_materials:plastic_sheet" },
 				{ "group:stick", "basic_materials:plastic_sheet", "group:stick" }
+			},
+		}
+	}
+})
+
+-- Set and sink
+
+homedecor.register("bathroom_set_and_sink", {
+	description = S("Bathroom sundries set and sink"),
+	mesh = "homedecor_bathroom_set_and_sink.obj",
+	tiles = {
+		"building_blocks_marble.png",
+		water_tex,
+		"homedecor_bathroom_set_mirror.png",
+		"homedecor_bathroom_set_toothbrush.png",
+		"homedecor_bathroom_set_tray.png",
+		"homedecor_bathroom_set_toothpaste.png",
+	},
+	use_texture_alpha = "blend",
+	inventory_image="homedecor_bathroom_set_and_sink_inv.png",
+	selection_box = sink_sbox,
+	collision_box = sink_cbox,
+	groups = {cracky=3, dig_stone = 2, homedecor_sink = 1},
+	sounds = default.node_sound_stone_defaults(),
+	on_destruct = function(pos)
+		homedecor.stop_particle_spawner({x=pos.x, y=pos.y+1, z=pos.z})
+	end,
+	crafts = {
+		{
+			recipe = {
+				{ "homedecor:bathroom_set","", "" },
+				{ "homedecor:sink", "", "" }
 			},
 		}
 	}
