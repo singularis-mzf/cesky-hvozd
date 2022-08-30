@@ -358,8 +358,16 @@ local filter_translate = {
 	["typ:všechny_barvy"] = "group:dye",
 	["typ:zvířata"] = "group:spawn_egg",
 }
-local filter_translate_extended = false
 
+for k, v in pairs(table.copy(filter_translate)) do
+	local k2 = ch_core.odstranit_diakritiku(k)
+	if k2 ~= k then
+		if filter_translate[k2] then
+			error("filter_translate conflict: "..k2)
+		end
+		filter_translate[k2] = v
+	end
+end
 
 --apply filter to the inventory list (create filtered copy of full one)
 function ui.apply_filter(player, filter, search_dir)
@@ -369,28 +377,18 @@ function ui.apply_filter(player, filter, search_dir)
 	local player_name, contains_extended, lower, lfilter, ffilter
 
 	player_name = player:get_player_name()
-	contains_extended = filter ~= ui.string_remove_extended_chars(filter)
+	contains_extended = filter ~= ch_core.odstranit_diakritiku(filter)
 	if contains_extended then
 		-- pattern contains extended characters
-		lower = ui.string_lower_extended
+		lower = ch_core.na_mala_pismena
 		lfilter = lower(filter)
 	else
 		-- pattern does not contain extended characters
 		-- => remove extended characters from tested strings
 		lower = function(s)
-			return string.lower(ui.string_remove_extended_chars(s))
+			return string.lower(ch_core.odstranit_diakritiku(s))
 		end
 		lfilter = string.lower(filter)
-	end
-
-	if filter ~= "" and not filter_translate_extended then
-		filter_translate_extended = true -- do this only once
-		for k, v in pairs(table.copy(filter_translate)) do
-			local k2 = ui.string_remove_extended_chars(k)
-			if k2 ~= k then
-				filter_translate[k2] = v
-			end
-		end
 	end
 
 	if filter_translate[lfilter] then
@@ -401,9 +399,9 @@ function ui.apply_filter(player, filter, search_dir)
 		local groups = lfilter:sub(7):split(",")
 		ffilter = function(name, def)
 			for _, group in ipairs(groups) do
-				local virt_group = unified_inventory.virtual_groups[group]
-				if virt_group then
-					if not virt_group[name] then
+				local vgroup = ch_core.try_read_vgroup(group)
+				if vgroup then
+					if not vgroup[name] then
 						return false
 					end
 				elseif not def.groups[group] or def.groups[group] <= 0 then

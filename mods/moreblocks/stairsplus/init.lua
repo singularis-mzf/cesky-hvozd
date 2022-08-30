@@ -16,8 +16,8 @@ stairsplus.expect_infinite_stacks = false
 stairsplus.recipeitems_list = {}
 stairsplus.shapes_list = {}
 
-if minetest.get_modpath("unified_inventory") then
-	unified_inventory.virtual_groups.na_kp = stairsplus.recipeitems_list
+if minetest.get_modpath("ch_core") then
+	ch_core.create_private_vgroup("na_kp", stairsplus.recipeitems_list)
 end
 
 if

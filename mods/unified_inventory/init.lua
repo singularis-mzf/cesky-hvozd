@@ -35,9 +35,6 @@ unified_inventory = {
 	craft_registered_callbacks = {},
 	last_giveme_item_per_player = {},
 
-	-- Virtual item groups
-	virtual_groups = {},
-
 	-- Homepos stuff
 	home_pos = {},
 	home_filename =	worldpath.."/unified_inventory_home.home",
@@ -58,11 +55,11 @@ unified_inventory = {
 	standard_background = "bgcolor[#0000]background9[0,0;1,1;ui_formbg_9_sliced.png;true;16]",
 
 	-- Overridable functions for extended multi-byte characters
-	string_lower_extended = function(s)
-		return string.lower(s)
+	string_lower_extended = function()
+		error("should not be called!")
 	end,
-	string_remove_extended_chars = function(s)
-		return s
+	string_remove_extended_chars = function()
+		error("should not be called!")
 	end,
 
 	version = 4
@@ -208,17 +205,15 @@ dofile(modpath.."/waypoints.lua")
 dofile(modpath.."/legacy.lua") -- mod compatibility
 
 minetest.register_on_mods_loaded(function()
-	local pipeworks = {}
-	for name, _ in pairs(minetest.registered_items) do
-		if name:match("^pipeworks:") then
+	local pipeworks = ch_core.get_shared_vgroup("pipeworks")
+	for name, def in pairs(minetest.registered_items) do
+		if name:match("^pipeworks:") and not (def.groups or {}).not_in_creative_inventory then
 			pipeworks[name] = 1
 		end
 	end
 	if minetest.registered_items["technic:injector"] then
 		pipeworks["technic:injector"] = 1
 	end
-	
-	unified_inventory.virtual_groups.pipeworks = pipeworks
 end)
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

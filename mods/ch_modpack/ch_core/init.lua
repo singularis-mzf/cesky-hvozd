@@ -41,6 +41,7 @@ dofile(modpath .. "/vezeni.lua") -- : privs, data, lib, chat, hud
 dofile(modpath .. "/sickles.lua")
 dofile(modpath .. "/timers.lua") -- : data, chat, hud
 dofile(modpath .. "/hotbar.lua")
+dofile(modpath .. "/vgroups.lua")
 dofile(modpath .. "/pryc.lua") -- : data, lib, chat, privs
 dofile(modpath .. "/teleportace.lua") -- : data, lib, chat, privs, timers
 
