@@ -1,5 +1,6 @@
 print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
+-- homedecor_kitchen
 if minetest.get_modpath("homedecor_kitchen") then
 
 	local function override_homedecor_oven(hd_base_name, data)
@@ -52,5 +53,15 @@ if minetest.get_modpath("homedecor_kitchen") then
 	def.machine_desc = "NN sporák (nerezový)"
 	override_homedecor_oven("homedecor:oven_steel", def)
 end -- homedecor_kitchen
+
+-- moreblocks + technic
+if minetest.get_modpath("moreblocks") and minetest.get_modpath("technic") then
+	stairsplus:register_all("technic", "warning_block", "technic:warning_block", {
+		description = "varovný blok",
+		tiles = {"technic_hv_cable.png"},
+		groups = {cracky = 1},
+		sounds = default.node_sound_wood_defaults(),
+	})
+end
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

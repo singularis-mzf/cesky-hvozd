@@ -12,6 +12,9 @@ HV=VN
 MV=SN
 LV=NN
 
+## Nodes
+Warning Block=varovný blok
+
 ## Items
 Silicon Wafer=křemíkový wafer
 Doped Silicon Wafer=legovaný křemíkový wafer

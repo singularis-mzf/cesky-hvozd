@@ -24,6 +24,9 @@ sdzen (Elise Staudter) (CC BY-SA 3.0):
 leftshift (CC BY-SA 3.0):
   * technic_river_water_can.png
 
+RealBadAngel, modified by Singularis (WTFPL):
+  * technic_hv_cable.png
+
 RealBadAngel: (WTFPL)
   * Everything else.
 

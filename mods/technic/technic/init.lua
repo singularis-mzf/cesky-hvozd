@@ -31,6 +31,9 @@ dofile(modpath.."/items.lua")
 -- Craft recipes for items
 dofile(modpath.."/crafts.lua")
 
+-- Nodes
+dofile(modpath.."/nodes.lua")
+
 -- Register functions
 dofile(modpath.."/register.lua")
 

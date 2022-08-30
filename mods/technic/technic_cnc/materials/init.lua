@@ -10,6 +10,7 @@ local optional_mods = {
 	"cottages",
 	"ethereal",
 	"moreblocks",
+	"technic",
 	"technic_worldgen",
 }
 
