@@ -27,53 +27,425 @@ minetest.register_craft({
       }
 })
 
-local press_idle_formspec =
-   'size[8,7]'..
-   'label[1.5,0;Lis je připravený]' ..
-   'label[4.3,.75;Sem vložte ovoce ->]'..
-   'label[3.5,1.75;Sem vložte nádobu ->]'..
-   'label[0.2,1.8;4 ks/sklenici,]'..
-   'label[0.2,2.1;8 ks/láhev,]'..
-   'label[0.2,2.4;16 ks/kbelík.]'..
-   'button[1,1;2,1;press;Spustit lisování]'..
-   'list[current_name;src;6.5,.5;1,1;]'..
-   'list[current_name;dst;6.5,1.5;1,1;]'..
-   'list[current_player;main;0,3;8,4;]'..
-   'listring[current_name;dst]'..
-   'listring[current_player;main]'..
-   'listring[current_name;src]'
+local function drink_to_desc2(drink_id)
+	local def = drinks.registered_drinks[drink_id]
+	if def then
+		return def.drink_desc2 or def.drink_desc or drink_id
+	else
+		return drink_id
+	end
+end
 
-local press_running_formspec =
-   'size[8,7]'..
-   'label[1.5,0;Lisování probíhá]' ..
-   'label[4.3,.75;Sem vložte ovoce ->]'..
-   'label[3.5,1.75;Sem vložte nádobu ->]'..
-   'label[0.2,1.8;4 ks/sklenici,]'..
-   'label[0.2,2.1;8 ks/láhev,]'..
-   'label[0.2,2.4;16 ks/kbelík.]'..
-   'button[1,1;2,1;press;Spustit lisování]'..
-   'list[current_name;src;6.5,.5;1,1;]'..
-   'list[current_name;dst;6.5,1.5;1,1;]'..
-   'list[current_player;main;0,3;8,4;]'..
-   'listring[current_name;dst]'..
-   'listring[current_player;main]'..
-   'listring[current_name;src]'
+local barrel_capacity = 128
+local silo_capacity = 256
 
-local press_error_formspec =
-   'size[8,7]'..
-   'label[1.5,0;Na lisování je potřeba víc ovoce.]' ..
-   'label[4.3,.75;Sem vložte ovoce ->]'..
-   'label[3.5,1.75;Sem vložte nádobu ->]'..
-   'label[0.2,1.8;4 ks/sklenici,]'..
-   'label[0.2,2.1;8 ks/láhev,]'..
-   'label[0.2,2.4;16 ks/kbelík.]'..
-   'button[1,1;2,1;press;Spustit lisování]'..
-   'list[current_name;src;6.5,.5;1,1;]'..
-   'list[current_name;dst;6.5,1.5;1,1;]'..
-   'list[current_player;main;0,3;8,4;]'..
-   'listring[current_name;dst]'..
-   'listring[current_player;main]'..
-   'listring[current_name;src]'
+local update_barrel_formspec
+
+-- BARREL/SILO PUBLIC FUNCTIONS
+
+--[[ If there is a barrel or silo at pos, returns a table, for example:
+	{
+		capacity = 128,
+		drink_id = "pineapple",
+		units_stored = 18,
+		node_name = "drinks:liquid_barrel",
+	}
+	If there is no barrel nor silo at pos, returns nil.
+]]
+function drinks.get_barrel_state(pos)
+	local node_name = minetest.get_node(pos).name
+	local capacity
+	if node_name == "drinks:liquid_barrel" then
+		capacity = barrel_capacity
+	elseif node_name == "drinks:liquid_silo" then
+		capacity = silo_capacity
+	else
+		print("get_barrel_state: invalid node ("..node_name..")!")
+		return nil
+	end
+	local meta = minetest.get_meta(pos)
+	local result = {
+		capacity = capacity,
+		drink_id = meta:get_string("drink"),
+		units_stored = meta:get_int("fullness"),
+		node_name = node_name,
+	}
+	if result.units_stored == 0 or result.drink_id == "empty" then
+		result.units_stored = 0
+		result.drink_id = nil
+	end
+	result.units_available = result.capacity - result.units_stored
+	return result
+end
+
+--[[ If there is a barrel or silo at pos, tries to add or remove units of
+a drink. Always returns a table that contains at least "success",
+which is true for success and false for other conditions.
+	When success is true, the result contains also new_fullness
+(units_stored after the change) and capacity (container capacity).
+]]
+function drinks.try_change_barrel_state(pos, units, drink_id)
+	-- print("DEBUG: try_change_barrel_state("..dump2({pos = pos, units = units, drink_id = drink_id})..")")
+	local state = drinks.get_barrel_state(pos)
+	if not state then
+		return { success = false, not_a_barrel = true }
+	end
+	if units == 0 then
+		return { success = true, new_fullness = state.units_stored, capacity = state.capacity } -- no change
+	end
+	if drink_id and state.drink_id and drink_id ~= state.drink_id then
+		return { success = false, different_drinks = true }
+	end
+	if not drink_id then
+		if not state.drink_id then
+			return { success = false, unidentified_drink = true }
+		end
+		drink_id = state.drink_id
+	end
+	if state.units_stored + units < 0 then
+		return { success = false, negative_result = true }
+	end
+	if state.units_stored + units > state.capacity then
+		return { success = false, overflow = state.units_stored + units - capacity }
+	end
+	local new_fullness = state.units_stored + units
+	-- print("DEBUG: fullness: "..state.units_stored.." > "..new_fullness.." (change: "..units..")")
+	local word_ending
+
+	if state.node_name == "drinks:liquid_barrel" then
+		word_ending = "ý"
+	else
+		word_ending = "é"
+	end
+
+	local meta = minetest.get_meta(pos)
+	meta:set_int("fullness", new_fullness)
+	if new_fullness > 0 then
+		meta:set_string("drink", drink_id)
+	else
+		meta:set_string("drink", "empty")
+	end
+	update_barrel_formspec(pos)
+	return { success = true, new_fullness = new_fullness, capacity = state.capacity }
+end
+
+-- PRIVATE BARREL/SILO FUNCTIONS
+
+local function get_barrel_state_under(pos)
+	pos = vector.new(pos.x, pos.y - 1, pos.z)
+	local node = minetest.get_node_or_nil(pos)
+	if node and node.name == "drinks:liquid_barrel" then
+		local result = drinks.get_barrel_state(pos)
+		result.position = pos
+		return result
+	end
+	pos.y = pos. y - 1
+	node = minetest.get_node_or_nil(pos)
+	if node and node.name == "drinks:liquid_silo" then
+		local result = drinks.get_barrel_state(pos)
+		result.position = pos
+		return result
+	end
+	return nil
+end
+
+update_barrel_formspec = function(pos)
+	local state = drinks.get_barrel_state(pos)
+	if not state then
+		return false
+	end
+	local infotext
+	local formspec_parts = {
+		-- [1]
+		"size[8,8]"..
+		"label[0,0;Můžete plnit jedním libovolným typem šťávy či nápoje,]"..
+		"label[0,.4;míchání různých nápojů není dovoleno.]"..
+		"label[4.5,1.2;Nápoj k uložení ->]"..
+		"label[.5,1.2;",
+		-- [2]
+		"", -- "Ukládám "..drink_desc..".",
+		-- [3]
+		"]"..
+		"label[.5,1.65;",
+		-- [4]
+		"", -- "Naplnění: "..(fullness).." z "..(max).." dávek.",
+		-- [5]
+		"]"..
+		"label[4.5,2.25;Nádoba k naplnění ->]"..
+		"label[2,3.2;(Vylije pryč veškerý obsah)]"..
+		"button[0,3;2,1;purge;Vylít vše]"..
+		"list[current_name;src;6.5,1;1,1;]"..
+		"list[current_name;dst;6.5,2;1,1;]"..
+		"list[current_player;main;0,4;8,5;]"
+	}
+	if state.units_stored == 0 then
+		if state.node_name == "drinks:liquid_barrel" then
+			infotext = "prázdný sud"
+		else
+			infotext = "prázdné silo"
+		end
+		formspec_parts[2] = infotext
+	else
+		local drink_def = drinks.registered_drinks[state.drink_id]
+		local desc2 = (drink_def and (drink_def.drink_desc2 or drink_def.drink_desc)) or "neznámého nápoje"
+		local desc4 = (drink_def and (drink_def.drink_desc4 or drink_def.drink_desc)) or "neznámý nápoj"
+		local percent = math.floor(100 * state.units_stored / state.capacity)
+		if state.node_name == "drinks:liquid_barrel" then
+			infotext = string.format("sud z %d %% plný %s", percent, desc2)
+		else
+			infotext = string.format("silo z %d %% plné %s", percent, desc2)
+		end
+		formspec_parts[2] = "ukládám "..desc4
+	end
+	formspec_parts[4] = "obsazeno: "..state.units_stored.." z "..state.capacity.." dávek"
+	local meta = minetest.get_meta(pos)
+	meta:set_string("formspec", table.concat(formspec_parts))
+	meta:set_string("infotext", infotext)
+end
+
+local function barrel_allow_metadata_inventory_put(pos, listname, index, stack, player)
+	local barrel_state = drinks.get_barrel_state(pos)
+	if not barrel_state then
+		minetest.log("debug", "not barrel_state at "..minetest.pos_to_string(pos))
+		return 0
+	end
+	local meta = minetest.get_meta(pos)
+	local inv = meta:get_inventory()
+	if not inv:is_empty(listname) then
+		minetest.log("debug", "list "..listname.." is not empty!")
+		return 0
+	end
+	if listname == "src" then
+		local spill_from_result = drinks.spill_from(stack:get_name()) -- { drink_id, units_produced, empty_vessel_item }
+		if not spill_from_result then
+			minetest.log("debug", "no spill result for "..stack:get_name().."!")
+			return 0
+		end
+		if barrel_state.units_stored > 0 and barrel_state.drink_id ~= spill_from_result.drink_id then
+			minetest.log("debug", "wrong drink_id "..spill_from_result.drink_id.." for barrel with "..barrel_state.units_stored.." units of "..barrel_state.drink_id.."!")
+			return 0 -- wrong drink_id
+		end
+		local result = math.min(stack:get_count(), math.floor((barrel_state.capacity - barrel_state.units_stored) / spill_from_result.units_produced))
+		-- print("will return: "..result)
+		return result
+	elseif listname == "dst" then
+		if barrel_state.units_stored == 0 then
+			minetest.log("debug", "barrel is empty!")
+			return 0
+		end
+		local fill_to_result = drinks.fill_to(barrel_state.drink_id, stack:get_name())
+		if not fill_to_result then
+			minetest.log("debug", "not fill_to_result!")
+			return 0
+		end
+		local result = math.min(stack:get_count(), math.floor(barrel_state.units_stored / fill_to_result.units_required))
+		-- print("will return: "..result)
+		return result
+	else
+		return 0
+	end
+end
+
+local function barrel_on_metadata_inventory_put(pos, listname, index, stack, player)
+	local barrel_state = drinks.get_barrel_state(pos)
+	if not barrel_state then
+		return
+	end
+	local meta = minetest.get_meta(pos)
+	local inv = meta:get_inventory()
+	if listname == "src" then
+		local spill_from_result = drinks.spill_from(stack:get_name()) -- { drink_id, units_produced, empty_vessel_item }
+		if spill_from_result and drinks.try_change_barrel_state(pos, stack:get_count() * spill_from_result.units_produced, spill_from_result.drink_id).success then
+			inv:set_stack("src", 1, ItemStack(spill_from_result.empty_vessel_item.." "..stack:get_count()))
+		end
+	elseif listname == "dst" then
+		local fill_to_result = drinks.fill_to(barrel_state.drink_id, stack:get_name())
+		if barrel_state.units_stored > 0 and fill_to_result and drinks.try_change_barrel_state(pos, -stack:get_count() * fill_to_result.units_required, barrel_state.drink_id).success then
+			inv:set_stack("dst", 1, ItemStack(fill_to_result.full_vessel_item.." "..stack:get_count()))
+		end
+	end
+end
+
+local function barrel_on_receive_fields(pos, formname, fields, sender)
+	if fields.purge then
+		local meta = minetest.get_meta(pos)
+		meta:set_int("fullness", 0)
+		meta:set_string("drink", "empty")
+		update_barrel_formspec(pos)
+	end
+end
+
+-- PRIVATE JUICE PRESS FUNCTIONS
+local function set_juice_press_state(pos, state, description, plan)
+	local meta = minetest.get_meta(pos)
+	local timer = minetest.get_node_timer(pos)
+	local formspec_parts = {
+		-- [1]
+		"size[8,7]"..
+		"label[1.5,0;",
+		-- [2]
+		"", -- "Lisování probíhá",
+		-- [3]
+		"]"..
+		"label[4.3,.75;sem vložte ovoce ->]"..
+		"label[4.1,1.75;sem vložte nádobu ->]"..
+		"label[0.2,1.8;",
+		-- [4]
+		"", -- "zvolená kombinace:",
+		-- [5]
+		"]"..
+		"label[0.2,2.1;",
+		-- [6]
+		"", -- "není možná",
+		-- [7]
+		"]"..
+		-- "label[0.2,2.4;16 ks/kbelík.]"..
+		"button[1,1;2,1;press;spustit lisování]"..
+		"list[current_name;src;6.5,.5;1,1;]"..
+		"list[current_name;dst;6.5,1.5;1,1;]"..
+		"list[current_player;main;0,3;8,4;]"..
+		"listring[current_name;dst]"..
+		"listring[current_player;main]"..
+		"listring[current_name;src]"
+	}
+	if state == "idle" then
+		if not description then
+			description = "prázdný list na ovoce"
+		end
+		timer:stop()
+	elseif state == "running" then
+		if not description then
+			description = "lis pracuje..."
+		end
+		if plan then
+			meta:set_string("container", plan.vessel)
+			meta:set_string("fruitnumber", plan.fruits_to_take)
+			timer:start(plan.fruits_to_take)
+		end
+	elseif state == "error" then
+		if not description then
+			description = "lis má nedostatek ovoce"
+		end
+		timer:stop()
+	else
+		minetest.log("error", "Invalid juice_press state "..state.."!")
+		return false
+	end
+
+	local inv = meta:get_inventory()
+	local src = inv:get_stack("src", 1)
+	local dst = inv:get_stack("dst", 1)
+	if src:is_empty() or dst:is_empty() then
+		formspec_parts[4] = ""
+		formspec_parts[6] = ""
+	else
+		local juice_info = drinks.get_juice(src:get_name())
+		local fill_to_result = juice_info and drinks.fill_to(juice_info.drink_id, dst:get_name())
+		if fill_to_result then
+			formspec_parts[4] = "zvolená kombinace vyžaduje:"
+			formspec_parts[6] = math.ceil(fill_to_result.units_required / juice_info.units_produced).." ks/nádobu"
+		elseif juice_info and dst:get_name() == "default:papyrus" then
+			formspec_parts[4] = "spustí"
+			formspec_parts[6] = "automatické lisování"
+		else
+			formspec_parts[4] = "zvolená kombinace:"
+			formspec_parts[6] = "není možná"
+		end
+	end
+	formspec_parts[2] = description
+	meta:set_string("infotext", description)
+	meta:set_string("formspec", table.concat(formspec_parts))
+	return true
+end
+
+local function juice_press_on_receive_fields(pos, formname, fields, sender)
+	if not fields.press then
+		return
+	end
+	local meta = minetest.get_meta(pos)
+	local inv = meta:get_inventory()
+	local instack = inv:get_stack("src", 1)
+	local outstack = inv:get_stack("dst", 1)
+
+	-- check, if we can get any drink from "instack":
+	local juice_info = drinks.get_juice(instack:get_name())
+	if not juice_info then
+		set_juice_press_state(pos, "error", "neumím lisovat tento vstup")
+		return
+	end
+	-- check, if we can fill the drink to the vessel:
+	local vessel = outstack:get_name()
+	if vessel ~= "default:papyrus" then
+		local expected_result = drinks.fill_to(juice_info.drink_id, vessel)
+		if not expected_result then
+			set_juice_press_state(pos, "error", "vylisovanou šťávu nelze plnit do zvolené nádoby")
+		elseif instack:get_count() * juice_info.units_produced >= expected_result.units_required then
+			meta:set_string("drink", juice_info.drink_id)
+			set_juice_press_state(pos, "running", nil, { fruits_to_take = math.ceil(expected_result.units_required / juice_info.units_produced), vessel = vessel})
+		else
+			set_juice_press_state(pos, "error", "lis má nedostatek ovoce")
+		end
+	else
+		local barrel_state = get_barrel_state_under(pos)
+		if not barrel_state then
+			set_juice_press_state(pos, "error", "silo či sud nenalezen")
+		elseif barrel_state.drink_id ~= nil and barrel_state.drink_id ~= juice_info.drink_id then
+			set_juice_press_state(pos, "error", "míchání nápojů není dovoleno!")
+		elseif barrel_state.units_stored + juice_info.units_produced > barrel_state.capacity then
+			set_juice_press_state(pos, "error", "silo či sud je plný")
+		else
+			set_juice_press_state(pos, "running", nil, { fruits_to_take = 1, vessel = "tube" })
+		end
+	end
+end
+
+local function juice_press_on_timer(pos)
+	local meta = minetest.get_meta(pos)
+	local inv = meta:get_inventory()
+	local timer = minetest.get_node_timer(pos)
+	local container = meta:get_string("container")
+	local instack = inv:get_stack("src", 1)
+	local outstack = inv:get_stack("dst", 1)
+	local drink_id = meta:get_string("drink")
+	local fruitnumber = tonumber(meta:get_string("fruitnumber"))
+	local fruit_info = drinks.get_juice(instack:get_name())
+	if not fruit_info then
+		set_juice_press_error(pos)
+		return
+	end
+	local processed_stack = instack:take_item(fruitnumber)
+	local units_produced = processed_stack:get_count() * fruit_info.units_produced
+
+	if container == "tube" then
+		local barrel_state = get_barrel_state_under(pos)
+		if barrel_state.units_available >= units_produced then
+			local add_result = drinks.try_change_barrel_state(barrel_state.position, units_produced, fruit_info.drink_id)
+			if not add_result.success then
+				set_juice_press_state(pos, "error", "Silo či sud je plný "..drink_to_desc2(fruit_info.drink_id)..".")
+				return
+			end
+			inv:set_stack("src", 1, instack)
+			if add_result.new_fullness >= add_result.capacity then
+				set_juice_press_state(pos, "error", "Silo či sud je plný "..drink_to_desc2(fruit_info.drink_id)..".")
+				return
+			end
+			if instack:get_count() >= 1 then
+				timer:start(1)
+			else
+				set_juice_press_state(pos, "error")
+			end
+		else
+			set_juice_press_state(pos, "error")
+		end
+	else
+		set_juice_press_state(pos, "idle"," Vyjměte hotovou šťávu.")
+		inv:set_stack("src", 1, instack)
+		local fill_to_result = drinks.fill_to(fruit_info.drink_id, container)
+		if fill_to_result then
+			inv:set_stack("dst", 1, fill_to_result.full_vessel_item)
+		end
+	end
+end
 
 minetest.register_node('drinks:juice_press', {
    description = 'lis na ovocnou šťávu',
@@ -98,295 +470,33 @@ minetest.register_node('drinks:juice_press', {
       inv:set_size('main', 8*4)
       inv:set_size('src', 1)
       inv:set_size('dst', 1)
-      meta:set_string('infotext', 'prázdný lis na ovoce')
-      meta:set_string('formspec', press_idle_formspec)
+      set_juice_press_state(pos, "idle")
    end,
-   on_receive_fields = function(pos, formname, fields, sender)
-      if fields ['press'] then
-         local meta = minetest.get_meta(pos)
-         local inv = meta:get_inventory()
-         local timer = minetest.get_node_timer(pos)
-         local instack = inv:get_stack("src", 1)
-         local fruitstack = instack:get_name()
-         -- local mod, fruit = fruitstack:match("([^:]+):([^:]+)")
-         if drinks.juiceable[fruitstack] then
-			meta:set_string('fruit', drinks.juiceable[fruitstack])
-            local outstack = inv:get_stack("dst", 1)
-            local vessel = outstack:get_name()
-            if vessel == 'vessels:drinking_glass' then
-               if instack:get_count() >= 4 then
-                  meta:set_string('container', 'jcu_')
-                  meta:set_string('fruitnumber', 4)
-                  meta:set_string('infotext', 'lis pracuje...')
-                  meta:set_string('formspec', press_running_formspec)
-                  timer:start(4)
-               else
-                  meta:set_string('infotext', 'lis má nedostatek ovoce')
-                  meta:set_string('formspec', press_error_formspec)
-               end
-            elseif vessel == 'vessels:glass_bottle' then
-               if instack:get_count() >= 8 then
-                  meta:set_string('container', 'jbo_')
-                  meta:set_string('fruitnumber', 8)
-                  meta:set_string('infotext', 'lis pracuje...')
-                  meta:set_string('formspec', press_running_formspec)
-                  timer:start(8)
-               else
-                  meta:set_string('infotext', 'lis má nedostatek ovoce')
-                  meta:set_string('formspec', press_error_formspec)
-               end
-            elseif vessel == 'vessels:steel_bottle' then
-               if instack:get_count() >= 8 then
-                  meta:set_string('container', 'jsb_')
-                  meta:set_string('fruitnumber', 8)
-                  meta:set_string('infotext', 'lis pracuje...')
-                  meta:set_string('formspec', press_running_formspec)
-                  timer:start(8)
-               else
-                  meta:set_string('infotext', 'lis má nedostatek ovoce')
-                  meta:set_string('formspec', press_error_formspec)
-               end
-            elseif vessel == 'bucket:bucket_empty' then
-               if instack:get_count() >= 16 then
-                  meta:set_string('container', 'jbu_')
-                  meta:set_string('fruitnumber', 16)
-                  meta:set_string('infotext', 'lis pracuje...')
-                  meta:set_string('formspec', press_running_formspec)
-                  timer:start(16)
-               else
-                  meta:set_string('infotext', 'lis má nedostatek ovoce')
-                  meta:set_string('formspec', press_error_formspec)
-               end
-            elseif vessel == 'default:papyrus' then
-               if instack:get_count() >= 2 then
-                  local under_node = {x=pos.x, y=pos.y-1, z=pos.z}
-                  local under_node_name = minetest.get_node_or_nil(under_node)
-                  local under_node_2 = {x=pos.x, y=pos.y-2, z=pos.z}
-                  local under_node_name_2 = minetest.get_node_or_nil(under_node_2)
-                  if under_node_name.name == 'drinks:liquid_barrel' then
-                     local meta_u = minetest.get_meta(under_node)
-                     local stored_fruit = meta_u:get_string('fruit')
-                     if fruit == stored_fruit or stored_fruit == 'empty' then
-                        meta:set_string('container', 'tube')
-                        meta:set_string('fruitnumber', 2)
-                        meta:set_string('infotext', 'lis pracuje...')
-                        meta_u:set_string('fruit', fruit)
-                        timer:start(4)
-                     else
-                        meta:set_string('infotext', "Míchání nápojů není dovoleno!")
-                     end
-                  elseif under_node_name_2.name == 'drinks:liquid_silo' then
-                     local meta_u = minetest.get_meta(under_node_2)
-                     local stored_fruit = meta_u:get_string('fruit')
-                     if fruit == stored_fruit or stored_fruit == 'empty' then
-                        meta:set_string('container', 'tube')
-                        meta:set_string('fruitnumber', 2)
-                        meta:set_string('infotext', 'lis pracuje...')
-                        meta_u:set_string('fruit', fruit)
-                        timer:start(4)
-                     else
-                        meta:set_string('infotext', "Míchání nápojů není dovoleno!")
-                     end
-                  else
-                     meta:set_string('infotext', 'lis má nedostatek ovoce')
-                     meta:set_string('formspec', press_error_formspec)
-                  end
-               end
-            end
-         end
-      end
-   end,
-   on_timer = function(pos)
-      local meta = minetest.get_meta(pos)
-      local inv = meta:get_inventory()
-      local container = meta:get_string('container')
-      local instack = inv:get_stack("src", 1)
-      local outstack = inv:get_stack("dst", 1)
-      local fruit = meta:get_string('fruit')
-	  local fruit_desc = (drinks.drink_table[fruit] or {})[2] or fruit
-      local fruitnumber = tonumber(meta:get_string('fruitnumber'))
-      if container == 'tube' then
-         local timer = minetest.get_node_timer(pos)
-         local under_node = {x=pos.x, y=pos.y-1, z=pos.z}
-         local under_node_name = minetest.get_node_or_nil(under_node)
-         local under_node_2 = {x=pos.x, y=pos.y-2, z=pos.z}
-         local under_node_name_2 = minetest.get_node_or_nil(under_node_2)
-         if under_node_name.name == 'drinks:liquid_barrel' then
-            local meta_u = minetest.get_meta(under_node)
-            local fullness = tonumber(meta_u:get_string('fullness'))
-            instack:take_item(tonumber(fruitnumber))
-            inv:set_stack('src', 1, instack)
-            if fullness + 2 > 128 then
-               timer:stop()
-               meta:set_string('infotext', 'Barel je plný '..fruit_desc..'.')
-               return
-            else
-               local fullness = fullness + 2
-               meta_u:set_string('fullness', fullness)
-               meta_u:set_string('infotext', "z "..(math.floor((fullness/128)*100))..' % plný '..fruit_desc..'.')
-               meta_u:set_string('formspec', drinks.liquid_storage_formspec(fruit, fullness, 128))
-               if instack:get_count() >= 2 then
-                  timer:start(4)
-               else
-                  meta:set_string('infotext', 'lis má nedostatek ovoce')
-               end
-            end
-         elseif under_node_name_2.name == 'drinks:liquid_silo' then
-            local meta_u = minetest.get_meta(under_node_2)
-            local fullness = tonumber(meta_u:get_string('fullness'))
-            instack:take_item(tonumber(fruitnumber))
-            inv:set_stack('src', 1, instack)
-            if fullness + 2 > 256 then
-               timer:stop()
-               meta:set_string('infotext', 'Silo je plné '..fruit_desc..'.')
-               return
-            else
-               local fullness = fullness + 2
-               meta_u:set_string('fullness', fullness)
-               meta_u:set_string('infotext', "z "..(math.floor((fullness/256)*100))..' % plné '..fruit_desc..'.')
-               meta_u:set_string('formspec', drinks.liquid_storage_formspec(fruit, fullness, 256))
-               if instack:get_count() >= 2 then
-                  timer:start(4)
-               else
-                  meta:set_string('infotext', 'lis má nedostatek ovoce')
-               end
-            end
-         end
-      else
-      meta:set_string('infotext', 'Vyjměte hotovou šťávu.')
-      meta:set_string('formspec', press_idle_formspec)
-      instack:take_item(tonumber(fruitnumber))
-      inv:set_stack('src', 1, instack)
-      inv:set_stack('dst', 1 ,'drinks:'..container..fruit)
-      end
-   end,
+   on_receive_fields = juice_press_on_receive_fields,
+   on_timer = juice_press_on_timer,
    on_metadata_inventory_take = function(pos, listname, index, stack, player)
-      local timer = minetest.get_node_timer(pos)
-      local meta = minetest.get_meta(pos)
-      local inv = meta:get_inventory()
-      timer:stop()
-      meta:set_string('infotext', 'Připraven na další lisování.')
-      meta:set_string('formspec', press_idle_formspec)
+      set_juice_press_state(pos, "error", "připraven na další lisování")
    end,
    on_metadata_inventory_put = function(pos, listname, index, stack, player)
       local meta = minetest.get_meta(pos)
-      local inv = meta:get_inventory()
-      meta:set_string('infotext', 'Připraven na lisování.')
+      -- local inv = meta:get_inventory()
+      set_juice_press_state(pos, "error", "připraven na lisování")
    end,
    can_dig = function(pos)
       local meta = minetest.get_meta(pos);
       local inv = meta:get_inventory()
-      if inv:is_empty("src") and
-         inv:is_empty("dst") then
-         return true
-      else
-         return false
-      end
+      return inv:is_empty("src") and inv:is_empty("dst")
    end,
    allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-      if listname == 'dst' then
-		 if not minetest.get_meta(pos):get_inventory():is_empty("dst") then
+		if listname ~= "dst" then
+			return stack:get_count()
+		elseif minetest.get_meta(pos):get_inventory():is_empty("dst") and (stack:get_name() == "default:papyrus" or drinks.registered_vessels[stack:get_name()]) then
+			return 1
+		else
 			return 0
-         elseif stack:get_name() == ('bucket:bucket_empty') then
-            return 1
-         elseif stack:get_name() == ('vessels:drinking_glass') then
-            return 1
-         elseif stack:get_name() == ('vessels:glass_bottle') then
-            return 1
-         elseif stack:get_name() == ('vessels:steel_bottle') then
-            return 1
-         elseif stack:get_name() == ('default:papyrus') then
-            return 1
-         else
-            return 0
-         end
-      else
-         return 100
-      end
+		end
    end,
 })
-
-function drinks.drinks_liquid_sub(liq_vol, ves_typ, ves_vol, pos, able_to_fill, leftover_count, outputstack)
-   local meta = minetest.get_meta(pos)
-   local fullness = tonumber(meta:get_string('fullness'))
-   local fruit = meta:get_string('fruit')
-   local fruit_name = meta:get_string('fruit_name')
-   local fruit_desc = (drinks.drink_table[fruit] or {})[2] or fruit
-   local inv = meta:get_inventory()
-   local fullness = fullness - (liq_vol*able_to_fill)
-   meta:set_string('fullness', fullness)
-   meta:set_string('infotext', "z "..(math.floor((fullness/ves_vol)*100))..' % plné '..fruit_desc..'.')
-   if ves_vol == 128 then
-      meta:set_string('formspec', drinks.liquid_storage_formspec(fruit_name, fullness, 128))
-   elseif ves_vol == 256 then
-      meta:set_string('formspec', drinks.liquid_storage_formspec(fruit_name, fullness, 256))
-   end
-   if ves_typ == 'jcu' or ves_typ == 'jbo' or ves_typ == 'jsb' or ves_typ == 'jbu' then
-      inv:set_stack('dst', 1, 'drinks:'..ves_typ..'_'..fruit..' '..able_to_fill)
-      inv:set_stack('src', 1, outputstack..' '..leftover_count)
-   --[[ elseif ves_typ == 'thirsty:bronze_canteen' then
-      inv:set_stack('dst', 1, {name="thirsty:bronze_canteen", count=1, wear=60, metadata=""})
-   elseif ves_typ == 'thirsty:steel_canteen' then
-      inv:set_stack('dst', 1, {name="thirsty:steel_canteen", count=1, wear=40, metadata=""}) ]]
-   end
-end
-
-function drinks.drinks_liquid_avail_sub(liq_vol, ves_typ, ves_vol, outputstack, pos, count)
-   local meta = minetest.get_meta(pos)
-   local fullness = tonumber(meta:get_string('fullness'))
-   if fullness - (liq_vol*count) < 0 then
-      local able_to_fill = math.floor(fullness/liq_vol)
-      local leftover_count = count - able_to_fill
-      drinks.drinks_liquid_sub(liq_vol, ves_typ, ves_vol, pos, able_to_fill, leftover_count, outputstack)
-   elseif fullness - (liq_vol*count) >= 0 then
-      drinks.drinks_liquid_sub(liq_vol, ves_typ, ves_vol, pos, count, 0, outputstack)
-   end
-end
-
-function drinks.drinks_liquid_add(liq_vol, ves_typ, ves_vol, pos, inputcount, leftover_count, inputstack)
-   local meta = minetest.get_meta(pos)
-   local fullness = tonumber(meta:get_string('fullness'))
-   local fruit = meta:get_string('fruit')
-   local fruit_name = meta:get_string('fruit_name')
-   local fruit_desc = (drinks.drink_table[fruit] or {})[2] or fruit
-   local inv = meta:get_inventory()
-   local fullness = fullness + (liq_vol*inputcount)
-   meta:set_string('fullness', fullness)
-   inv:set_stack('src', 1, ves_typ..' '..inputcount)
-   inv:set_stack('dst', 1, inputstack..' '..leftover_count)
-   if ves_vol == 256 then
-	  meta:set_string('infotext', "z "..(math.floor((fullness/ves_vol)*100))..' % plné '..fruit_desc.."")
-      meta:set_string('formspec', drinks.liquid_storage_formspec(fruit_name, fullness, 256))
-   elseif ves_vol == 128 then
-	  meta:set_string('infotext', "z "..(math.floor((fullness/ves_vol)*100))..' % plný '..fruit_desc.."")
-      meta:set_string('formspec', drinks.liquid_storage_formspec(fruit_name, fullness, 128))
-   end
-end
-
-function drinks.drinks_liquid_avail_add(liq_vol, ves_typ, ves_vol, pos, inputstack, inputcount)
-   local meta = minetest.get_meta(pos)
-   local fullness = tonumber(meta:get_string('fullness'))
-   if fullness + (liq_vol*inputcount) > ves_vol then
-      local avail_ves_vol = ves_vol - fullness
-      local can_empty = math.floor(avail_ves_vol/liq_vol)
-      local leftover_count = inputcount - can_empty
-      drinks.drinks_liquid_add(liq_vol, ves_typ, ves_vol, pos, can_empty, leftover_count, inputstack)
-   elseif fullness + (liq_vol*inputcount) <= ves_vol then
-      drinks.drinks_liquid_add(liq_vol, ves_typ, ves_vol, pos, inputcount, 0, inputstack)
-   end
-end
-
-function drinks.drinks_barrel(pos, inputstack, inputcount)
-   local meta = minetest.get_meta(pos)
-   local vessel = string.sub(inputstack, 8, 10)
-   drinks.drinks_liquid_avail_add(drinks.shortname[vessel].size, drinks.shortname[vessel].name, 128, pos, inputstack, inputcount)
-end
-
-function drinks.drinks_silo(pos, inputstack, inputcount)
-   local meta = minetest.get_meta(pos)
-   local vessel = string.sub(inputstack, 8, 10)
-   drinks.drinks_liquid_avail_add(drinks.shortname[vessel].size, drinks.shortname[vessel].name, 256, pos, inputstack, inputcount)
-end
 
 minetest.register_node('drinks:liquid_barrel', {
    description = 'sud na nápoje',
@@ -411,97 +521,24 @@ minetest.register_node('drinks:liquid_barrel', {
       inv:set_size('main', 8*4)
       inv:set_size('src', 1)
       inv:set_size('dst', 1)
-      meta:set_string('fullness', 0)
-      meta:set_string('fruit', 'empty')
-      meta:set_string('infotext', 'prázdný sud')
-      meta:set_string('formspec', 'size[8,8]'..
-      'label[0,0;Plňte jedním druhem nápoje.]'..
-      'label[0,.4;Míchání nápojů není dovoleno!]'..
-      'label[4.5,1.2;Nápoj k přidání ->]'..
-      'label[.75,1.75;Sud je prázdný]'..
-      'label[4.5,2.25;Nádoba k naplnění ->]'..
-      'label[2,3.2;(Toto zcela vyprázdní sud)]'..
-      'button[0,3;2,1;purge;Vylít vše]'..
-      'list[current_name;src;6.5,1;1,1;]'..
-      'list[current_name;dst;6.5,2;1,1;]'..
-      'list[current_player;main;0,4;8,5;]')
+      meta:set_int("fullness", 0)
+      meta:set_string("drink", "empty")
+      update_barrel_formspec(pos)
    end,
-   on_metadata_inventory_put = function(pos, listname, index, stack, player)
-      local meta = minetest.get_meta(pos)
-      local inv = meta:get_inventory()
-      local instack = inv:get_stack('src', 1)
-      local outstack = inv:get_stack('dst', 1)
-      local outputstack = outstack:get_name()
-      local inputstack = drinks.translate_alias(instack:get_name())
-      local outputcount = outstack:get_count()
-      local inputcount = instack:get_count()
-      local fruit = string.sub(inputstack, 12, -1)
-      local fruit_in = meta:get_string('fruit')
-      if fruit_in == 'empty' then
-         meta:set_string('fruit', fruit)
-         local fruit_name = minetest.registered_items[instack:get_name()]
-         meta:set_string('fruit_name', string.lower(fruit_name.juice_type))
-         local vessel = string.sub(inputstack, 8, 10)
-         drinks.drinks_barrel(pos, inputstack, inputcount)
-      end
-      if fruit == fruit_in then
-         local vessel = string.sub(inputstack, 8, 10)
-         drinks.drinks_barrel(pos, inputstack, inputcount)
-      end
-      if drinks.longname[outputstack] then
-         drinks.drinks_liquid_avail_sub(drinks.longname[outputstack].size, drinks.longname[outputstack].name, 128, outputstack, pos, outputcount)
-      end
-   end,
-   on_receive_fields = function(pos, formname, fields, sender)
-      if fields['purge'] then
-         local meta = minetest.get_meta(pos)
-         local fullness = 0
-         local fruit_name = 'nic'
-         meta:set_string('fullness', 0)
-         meta:set_string('fruit', 'empty')
-         meta:set_string('infotext', 'prázdný sud')
-         meta:set_string('formspec', drinks.liquid_storage_formspec(fruit_name, fullness, 128))
-      end
-   end,
+   on_metadata_inventory_put = barrel_on_metadata_inventory_put,
+   on_receive_fields = barrel_on_receive_fields,
    can_dig = function(pos)
       local meta = minetest.get_meta(pos);
       local inv = meta:get_inventory()
       if inv:is_empty("src") and
          inv:is_empty("dst") and
-         tonumber(meta:get_string('fullness')) == 0 then
+         meta:get_int("fullness") == 0 then
          return true
       else
          return false
       end
    end,
-   allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-      local meta = minetest.get_meta(pos)
-      if listname == 'src' then --adding liquid
-         local inputstack = drinks.translate_alias(stack:get_name())
-         local inputcount = stack:get_count()
-         local valid = string.sub(inputstack, 1, 8)
-         if valid == 'drinks:j' then
-            return inputcount
-         else
-            return 0
-         end
-      elseif listname == 'dst' then --removing liquid
-         --make sure there is a liquid to remove
-         local juice = meta:get_string('fruit')
-         if juice ~= 'empty' then
-            local inputstack = drinks.translate_alias(stack:get_name())
-            local inputcount = stack:get_count()
-            local valid = string.sub(inputstack, 1, 7)
-            if valid == 'vessels' or valid == 'bucket:' then
-               return inputcount
-            else
-               return 0
-            end
-         else
-            return 0
-         end
-      end
-   end,
+   allow_metadata_inventory_put = barrel_allow_metadata_inventory_put,
 })
 
 minetest.register_node('drinks:liquid_silo', {
@@ -526,95 +563,22 @@ minetest.register_node('drinks:liquid_silo', {
       inv:set_size('main', 8*4)
       inv:set_size('src', 1)
       inv:set_size('dst', 1)
-      meta:set_string('fullness', 0)
-      meta:set_string('fruit', 'empty')
-      meta:set_string('infotext', 'prázdné silo na nápoje')
-      meta:set_string('formspec', 'size[8,8]'..
-      'label[0,0;Plňte jedním druhem nápoje.]'..
-      'label[0,.4;Míchání nápojů není dovoleno!]'..
-      'label[4.5,1.2;Nápoj k přidání ->]'..
-      'label[.75,1.75;Sud je prázdný]'..
-      'label[4.5,2.25;Nádoba k naplnění ->]'..
-      'label[2,3.2;(Toto zcela vyprázdní sud)]'..
-      'button[0,3;2,1;purge;Vylít vše]'..
-      'list[current_name;src;6.5,1;1,1;]'..
-      'list[current_name;dst;6.5,2;1,1;]'..
-      'list[current_player;main;0,4;8,5;]')
+      meta:set_int("fullness", 0)
+      meta:set_string("drink", "empty")
+      update_barrel_formspec(pos)
    end,
-   on_metadata_inventory_put = function(pos, listname, index, stack, player)
-      local meta = minetest.get_meta(pos)
-      local inv = meta:get_inventory()
-      local instack = inv:get_stack("src", 1)
-      local outstack = inv:get_stack('dst', 1)
-      local outputstack = outstack:get_name()
-      local inputstack = drinks.translate_alias(instack:get_name())
-      local outputcount = outstack:get_count()
-      local inputcount = instack:get_count()
-      local fruit = string.sub(inputstack, 12, -1)
-      local fruit_in = meta:get_string('fruit')
-      if fruit_in == 'empty' then
-         meta:set_string('fruit', fruit)
-         local fruit_name = minetest.registered_items[instack:get_name()]
-         meta:set_string('fruit_name', string.lower(fruit_name.juice_type))
-         local vessel = string.sub(inputstack, 8, 10)
-         drinks.drinks_silo(pos, inputstack, inputcount)
-      end
-      if fruit == fruit_in then
-         local vessel = string.sub(inputstack, 8, 10)
-         drinks.drinks_silo(pos, inputstack, inputcount)
-      end
-      if drinks.longname[outputstack] then
-         drinks.drinks_liquid_avail_sub(drinks.longname[outputstack].size, drinks.longname[outputstack].name, 256, outputstack, pos, outputcount)
-      end
-   end,
-   on_receive_fields = function(pos, formname, fields, sender)
-      if fields['purge'] then
-         local meta = minetest.get_meta(pos)
-         local fullness = 0
-         local fruit_name = 'nic'
-         meta:set_string('fullness', 0)
-         meta:set_string('fruit', 'empty')
-         meta:set_string('infotext', 'prázdné silo na nápoje')
-         meta:set_string('formspec', drinks.liquid_storage_formspec(fruit_name, fullness, 256))
-      end
-   end,
+   on_metadata_inventory_put = barrel_on_metadata_inventory_put,
+   on_receive_fields = barrel_on_receive_fields,
    can_dig = function(pos)
       local meta = minetest.get_meta(pos);
       local inv = meta:get_inventory()
       if inv:is_empty("src") and
          inv:is_empty("dst") and
-         tonumber(meta:get_string('fullness')) == 0 then
+         meta:get_int('fullness') == 0 then
          return true
       else
          return false
       end
    end,
-   allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-      local meta = minetest.get_meta(pos)
-      if listname == 'src' then --adding liquid
-         local inputstack = drinks.translate_alias(stack:get_name())
-         local inputcount = stack:get_count()
-         local valid = string.sub(inputstack, 1, 8)
-         if valid == 'drinks:j' then
-            return inputcount
-         else
-            return 0
-         end
-      elseif listname == 'dst' then --removing liquid
-         --make sure there is liquid to take_item
-         local juice = meta:get_string('fruit')
-         if juice ~= 'empty' then
-            local inputstack = drinks.translate_alias(stack:get_name())
-            local inputcount = stack:get_count()
-            local valid = string.sub(inputstack, 1, 7)
-            if valid == 'vessels' or valid == 'bucket:' then
-               return inputcount
-            else
-               return 0
-            end
-         else
-            return 0
-         end
-      end
-   end,
+   allow_metadata_inventory_put = barrel_allow_metadata_inventory_put,
 })

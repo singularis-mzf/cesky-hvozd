@@ -1,194 +1,38 @@
--- mod support (moreblocks/technic_worldgen)
-local slab_str = "stairs:slab_wood"
-
---Craft Recipes
-minetest.register_craft({
-      output = 'drinks:juice_press',
-      recipe = {
-         {'default:stick', 'default:steel_ingot', 'default:stick'},
-         {'default:stick', 'bucket:bucket_empty', 'default:stick'},
-         {slab_str, slab_str, 'vessels:drinking_glass'},
-         }
-})
-
-minetest.register_craft({
-      output = 'drinks:liquid_barrel',
-      recipe = {
-         {'group:wood', 'group:wood', 'group:wood'},
-         {'group:wood', 'group:wood', 'group:wood'},
-         {slab_str, '', slab_str},
-         }
-})
-
 drinks = {
-	drink_table = {},
-	juiceable = {},
-	item_aliases = {}, -- mod:itemname -> drinks:...
-	shortname = {
-		jcu = {size = 2, name = 'vessels:drinking_glass'},
-		jbo = {size = 4, name = 'vessels:glass_bottle'},
-		jsb = {size = 4, name = 'vessels:steel_bottle'},
-		jbu = {size = 16, name = 'bucket:bucket_empty'},
-	},
-	longname = {
-		['vessels:drinking_glass'] = {size = 2, name = 'jcu'},
-		['vessels:glass_bottle'] = {size = 4, name = 'jbo'},
-		['vessels:steel_bottle'] = {size = 4, name = 'jsb'},
-		['bucket:bucket_empty'] = {size = 16, name = 'jbu'},
-		--[[ ['thirsty:steel_canteen'] = {size = 20, name = 'thirsty:steel_canteen'},
-		['thirsty:bronze_canteen'] = {size = 30, name = 'thirsty:bronze_canteen'}, ]]
-	},
+	registered_drinks = {},
+	registered_fruits = {},
+	registered_vessels = {},
 }
 
-local drink_defs = {
-	apple = {
-		fruitname = "default:apple",
-		drink_desc1 = "jablečná šťáva",
-		drink_desc2 = "jablečné šťávy",
-		drink_desc4 = "jablečnou šťávu",
-		color = "#ecff56",
-	},
-	cactus = {
-		fruitname = "default:cactus",
-		drink_desc1 = "kaktusová šťáva",
-        drink_desc2 = "kaktusové šťávy",
-		drink_desc4 = "kaktusovou šťávu",
-        color = "#96F97B",
-		glass_item = "farming:cactus_juice",
-	},
-	blueberries = {
-        fruitname = "default:blueberries",
-		fruitname2 = "farming:blueberries",
-        drink_desc1 = "borůvková šťáva",
-        drink_desc2 = "borůvkové šťávy",
-		drink_desc4 = "borůvkovou šťávu",
-        color = "#521dcb",
-	},
-	banana = {
-        fruitname = "ethereal:banana",
-        drink_desc1 = "banánová šťáva",
-        drink_desc2 = "banánové šťávy",
-		drink_desc4 = "banánovou šťávu",
-        color = "#eced9f",
-	},
-	melon = {
-        fruitname = "farming:melon_slice",
-        drink_desc1 = "melounová šťáva",
-        drink_desc2 = "melounové šťávy",
-		drink_desc4 = "melounovou šťávu",
-        color = "#ef4646",
-	},
-	orange = {
-        fruitname = "ethereal:orange",
-        drink_desc1 = "pomerančová šťáva",
-        drink_desc2 = "pomerančové šťávy",
-		drink_desc4 = "pomerančovou šťávu",
-        color = "#ffc417",
-	},
-	rhubarb = {
-        fruitname = "farming:rhubarb",
-        drink_desc1 = "rebarborová šťáva",
-        drink_desc2 = "rebarborové šťávy",
-		drink_desc4 = "rebarborovou šťávu",
-        color = "#fb8461",
-	},
-	tomato = {
-        fruitname = "farming:tomato",
-        drink_desc1 = "rajčatová šťáva",
-        drink_desc2 = "rajčatové šťávy",
-		drink_desc4 = "rajčatovou šťávu",
-        color = "#d03a0e",
-	},
-	strawberry = {
-        fruitname = "farming:strawberry",
-        drink_desc1 = "jahodová šťáva",
-        drink_desc2 = "jahodové šťávy",
-		drink_desc4 = "jahodovou šťávu",
-        color = "#ff3636",
-	},
-	raspberries = {
-        fruitname = "farming:raspberries",
-        drink_desc1 = "malinová šťáva",
-        drink_desc2 = "malinové šťávy",
-		drink_desc4 = "malinovou šťávu",
-        color = "#C70039",
-	},
-	pumpkin = {
-        fruitname = "farming:pumpkin_slice",
-        drink_desc1 = "dýňová šťáva",
-        drink_desc2 = "dýňové šťávy",
-		drink_desc4 = "dýňovou šťávu",
-        color = "#ffc04c",
-	},
-	carrot = {
-        fruitname = "farming:carrot",
-        drink_desc1 = "mrkvový džus",
-        drink_desc2 = "mrkvového džusu",
-		drink_desc4 = "mrkvový džus",
-        color = "#ed9121",
-		glass_item = "farming:carrot_juice",
-	},
-	cucumber = {
-        fruitname = "farming:cucumber",
-        drink_desc1 = "okurková šťáva",
-        drink_desc2 = "okurkové šťávy",
-		drink_desc4 = "okurkovou šťávu",
-        color = "#73af59",
-	},
-	grapes = {
-        fruitname = "farming:grapes",
-        drink_desc1 = "hroznová šťáva",
-        drink_desc2 = "hroznové šťávy",
-		drink_desc4 = "hroznovou šťávu",
-        color = "#b20056",
-	},
-	pineapple = {
-        fruitname = "farming:pineapple_ring",
-        drink_desc1 = "ananasová šťáva",
-        drink_desc2 = "ananasové šťávy",
-		drink_desc4 = "ananasovou šťávu",
-        color = "#dcd611",
-		glass_item = "farming:pineapple_juice",
-	},
-	plum = {
-        fruitname = "plumtree:plum",
-        drink_desc1 = "švestková šťáva",
-        drink_desc2 = "švestkové šťávy",
-		drink_desc4 = "švestkovou šťávu",
-        color = "#8e4585",
-	},
-	coconut = {
-        fruitname = "moretrees:coconut",
-        drink_desc1 = "kokosové mléko",
-        drink_desc2 = "kokosového mléka",
-		drink_desc4 = "kokosové mléko",
-        color = "#ffffff",
-		glass_item = "moretrees:coconut_milk",
-	},
-}
+local registered_drinks = drinks.registered_drinks
+local registered_fruits = drinks.registered_fruits
+local registered_vessels = drinks.registered_vessels
 
--- Honestly not needed for default, but used as an example to add support to other mods.
--- Basically to use this all you need to do is add the name of the fruit to make juiceable (see line 14 for example)
--- Add the new fruit to a table like I've done in line 16.
--- The table should follow this scheme: internal name, Displayed name, colorize code.
--- Check out the drinks.lua file for more info how how the colorize code is used.
-   --[[
-   table.insert(drinks.drink_table, {'blackberry', 'Blackberry', '#581845'})
-   table.insert(drinks.drink_table, {'blueberry', 'Blueberry', '#521dcb'})
-   table.insert(drinks.drink_table, {'gooseberry', 'Gooseberry', '#9cf57c'})
-   table.insert(drinks.drink_table, {'raspberry', 'Raspberry', '#C70039'})
-   table.insert(drinks.drink_table, {'strawberry', 'Strawberry', '#ff3636'})
-   ]]
-   -- table.insert(drinks.drink_table, {'lemon', 'Lemon', '#feffaa'})
-   -- table.insert(drinks.drink_table, {'peach', 'Peach', '#f2bc1e'})
-   -- table.insert(drinks.drink_table, {'pear', 'Pear', '#ecff56'})
-   -- table.insert(drinks.drink_table, {'peach', 'Peach', '#f2bc1e'})
-   -- table.insert(drinks.drink_table, {'orange', 'Orange', '#ffc417'})
+-- full_vessel_item => { drink_id, units_produced, empty_vessel_item }
+local spill_from_results = {}
+
+local glass = "vessels:drinking_glass"
+local glass_bottle = "vessels:glass_bottle"
+local steel_bottle = "vessels:steel_bottle"
+local bucket = "bucket:bucket_empty"
+
+local bucket_selection_box = {
+	type = "fixed",
+	fixed = {-0.25, -0.5, -0.25, 0.25, 0.4, 0.25}
+}
+local bucket_groups = {
+	vessel = 1, dig_immediate = 3, attached_node = 1, drink = 1
+}
+local eat_func_cache = {
+	[glass] = {},
+	[glass_bottle] = {},
+	[steel_bottle] = {},
+}
 
 -- replace craftitem to node definition
 -- use existing node as template (e.g. 'vessel:glass_bottle')
 function drinks.register_item(name, template, def)
-   local template_def = minetest.registered_nodes[template]
+	local template_def = minetest.registered_nodes[template]
    if template_def then
    local drinks_def = table.copy(template_def)
 
@@ -213,44 +57,193 @@ function drinks.register_item(name, template, def)
    end
 end
 
-local glass = "vessels:drinking_glass"
-local glass_bottle = "vessels:glass_bottle"
-local steel_bottle = "vessels:steel_bottle"
+function drinks.add_vessel(empty_vessel_item, def)
+	def.empty_vessel_item = empty_vessel_item
+	-- required fields:
+	--		 capacity, abbr3
+	-- optional fields:
+	--		get_template, default_only_for_true
 
-local bucket_selection_box = {
-	type = "fixed",
-	fixed = {-0.25, -0.5, -0.25, 0.25, 0.4, 0.25}
-}
-local bucket_groups = {
-	vessel = 1, dig_immediate = 3, attached_node = 1, drink = 1
-}
+	if not def.capacity then
+		error("Missing capacity for vessel: "..empty_vessel_item)
+	end
+	if not def.abbr3 then
+		error("Missing abbr3 for vessel: "..empty_vessel_item)
+	end
 
-local eat_func_cache = {
-	[glass] = {},
-	[glass_bottle] = {},
-	[steel_bottle] = {},
-}
+	for _, _ in pairs(registered_drinks) do
+		error("All vessels must be registered before any drinks!")
+	end
 
-for drink_id, drink_def in pairs(drink_defs) do
-	if drink_def.fruitname and minetest.registered_items[drink_def.fruitname] then
-		local health = drink_def.health or 1
-		local def, eat_func, image
+	if not minetest.registered_items[empty_vessel_item] then
+		error("Vessel item "..empty_vessel_item.." not registered by Minetest!")
+	end
+	if registered_vessels[empty_vessel_item] then
+		error("Vessel item "..empty_vessel_item.." already registered as a bottle!")
+	end
+	registered_vessels[empty_vessel_item] = def
 
-		drinks.juiceable[drink_def.fruitname] = drink_id
-		if drink_def.fruitname2 then
-			drinks.juiceable[drink_def.fruitname2] = drink_id
+	-- TODO: Update full vessels definitions to allow drinks to be registered before vessels.
+
+	return true
+end
+
+function drinks.add_drink(drink_id, drink_desc1, color, def)
+	if registered_drinks[drink_id] then
+		error("Drink "..drink_id.." already registered!")
+	end
+	registered_drinks[drink_id] = def
+	def.color = color
+	def.drink_desc = drink_desc1
+
+	-- Register vessels by templates
+	for empty_vessel_item, vessel_def in pairs(registered_vessels) do
+		local full_vessel_item = def[empty_vessel_item]
+		if full_vessel_item == true or full_vessel_item == nil then
+			if vessel_def.get_template and (full_vessel_item == true or not vessel_def.default_only_for_true) then
+				local template = vessel_def.get_template(drink_id, def.drink_desc2 or def.drink_desc, color, math.ceil((def.health_per_unit or 0.5) * vessel_def.capacity))
+				if template then
+					full_vessel_item = "drinks:"..vessel_def.abbr3.."_"..drink_id
+					if template.drawtype then
+						-- node definition (like a bucket)
+						minetest.register_node(full_vessel_item, template)
+					else
+						-- plantlike node definition
+						drinks.register_item(full_vessel_item, empty_vessel_item, template)
+					end
+					def[empty_vessel_item] = full_vessel_item
+					spill_from_results[full_vessel_item] = { drink_id = drink_id, units_produced = vessel_def.capacity, empty_vessel_item = empty_vessel_item }
+				end
+			end
+		elseif full_vessel_item ~= false then
+			if minetest.registered_items[full_vessel_item] then
+				-- pre-existing item
+				minetest.override_item(full_vessel_item, {juice_type = drink_id})
+				spill_from_results[full_vessel_item] = { drink_id = drink_id, units_produced = vessel_def.capacity, empty_vessel_item = empty_vessel_item }
+			else
+				-- non-existent item
+				def[empty_vessel_item] = false
+			end
 		end
-		drinks.drink_table[drink_id] = {
-			[1] = drink_def.drink_desc1,
-			[2] = drink_def.drink_desc2,
-			[3] = drink_def.drink_desc2, -- not used?
-			[4] = drink_def.drink_desc4,
-		}
+	end
 
-		-- Bucket (always defined)
-		image = "bucket.png^(drinks_bucket_contents.png^[colorize:"..drink_def.color..":200)"
-		def = {
-			description = "kbelík "..drink_def.drink_desc2,
+	return true
+end
+
+function drinks.add_fruit(drink_id, fruit_item, units_produced)
+	if registered_fruits[fruit_item] then
+		error("Fruit item "..fruit_item.." already registered!")
+	end
+	if not registered_drinks[drink_id] then
+		error("Drink "..drink_id.." not registered!")
+	end
+	registered_fruits[fruit_item] = {
+		drink_id = drink_id,
+		units_produced = units_produced,
+	}
+	return true
+end
+
+function drinks.fill_to(drink_id, empty_vessel_item)
+	-- RETURNS: { full_vessel_item, units_required }
+	-- or nil when not supported
+	local vessel_def, drink_def, full_vessel_item, result
+	vessel_def = registered_vessels[empty_vessel_item]
+	if vessel_def then
+		drink_def = registered_drinks[drink_id]
+		if drink_def then
+			full_vessel_item = drink_def[empty_vessel_item]
+			if full_vessel_item then
+				result = { full_vessel_item = full_vessel_item, units_required = vessel_def.capacity }
+			end
+		end
+	end
+	-- print("DEBUG: fill_to("..drink_id..", "..empty_vessel_item..") => "..dump2(result))
+	return result
+end
+
+function drinks.spill_from(full_vessel_item)
+	-- RETURNS: { drink_id, units_produced, empty_vessel_item } or nil when not supported
+	local result = spill_from_results[full_vessel_item]
+	-- print("DEBUG: spill_from("..full_vessel_item..") = "..dump2(result))
+	return result
+end
+
+function drinks.get_juice(fruit_item)
+	-- RETURNS: { drink_id, units_produced } or nil when not supported
+	return registered_fruits[fruit_item]
+end
+
+-- Vessels
+local function get_glass_template(drink_id, drink_desc2, color, health)
+	local eat_func = eat_func_cache[glass][health]
+	if not eat_func then
+		eat_func = minetest.item_eat(health, glass)
+		eat_func_cache[glass][health] = eat_func
+	end
+	return {
+		description = "sklenice "..drink_desc2,
+		juice_type = drink_id,
+		inventory_image = "drinks_glass_contents.png^[colorize:"..color..":200^drinks_drinking_glass.png",
+		on_use = eat_func,
+	}
+end
+
+local function get_glass_bottle_template(drink_id, drink_desc2, color, health)
+	local eat_func = eat_func_cache[glass_bottle][health]
+	if not eat_func then
+		eat_func = minetest.item_eat(health, glass_bottle)
+		eat_func_cache[glass_bottle][health] = eat_func
+	end
+	return {
+		description = "láhev "..drink_desc2,
+		juice_type = drink_id,
+		inventory_image = "drinks_bottle_contents.png^[colorize:"..color..":200^drinks_glass_bottle.png",
+		on_use = eat_func,
+	}
+end
+
+local function get_steel_bottle_template(drink_id, drink_desc2, color, health)
+	local eat_func = eat_func_cache[steel_bottle][health]
+	if not eat_func then
+		eat_func = minetest.item_eat(health, steel_bottle)
+		eat_func_cache[steel_bottle][health] = eat_func
+	end
+	return {
+		description = "kovová láhev "..drink_desc2,
+		juice_type = drink_id,
+		groups = {drink = 1},
+		inventory_image = "vessels_steel_bottle.png",
+		on_use = eat_func,
+	}
+end
+
+drinks.add_vessel(glass, {
+	capacity = 2,
+	abbr3 = "jcu",
+	get_template = get_glass_template,
+})
+
+drinks.add_vessel(glass_bottle, {
+	capacity = 4,
+	abbr3 = "jbo",
+	get_template = get_glass_bottle_template,
+})
+
+drinks.add_vessel(steel_bottle, {
+	capacity = 4,
+	abbr3 = "jsb",
+	get_template = get_steel_bottle_template,
+	default_only_for_true = true,
+})
+
+drinks.add_vessel(bucket, {
+	capacity = 16,
+	abbr3 = "jbu",
+	get_template = function(drink_id, drink_desc2, color, health)
+		local image = "bucket.png^(drinks_bucket_contents.png^[colorize:"..color..":200)"
+		return {
+			description = "kbelík "..drink_desc2,
 			drawtype = "plantlike",
 			tiles = {image},
 			inventory_image = image,
@@ -263,84 +256,146 @@ for drink_id, drink_def in pairs(drink_defs) do
 			groups = bucket_groups,
 			sounds = default.node_sound_defaults(),
 		}
-		minetest.register_node("drinks:jbu_"..drink_id, def)
+	end,
+})
 
-		if drink_def.glass_item and minetest.registered_items[drink_def.glass_item] then
-			minetest.register_alias("drinks:jcu_"..drink_id, drink_def.glass_item)
-			minetest.override_item(drink_def.glass_item, {juice_type = drink_id})
-			drinks.item_aliases[drink_def.glass_item] = "drinks:jcu_"..drink_id
-		else
-			eat_func = eat_func_cache[glass][health]
-			if not eat_func then
-				eat_func = minetest.item_eat(health, glass)
-				eat_func_cache[glass][health] = eat_func
-			end
-			def = {
-				description = "sklenice "..drink_def.drink_desc2,
-				juice_type = drink_id,
-				inventory_image = "drinks_glass_contents.png^[colorize:"..drink_def.color..":200^drinks_drinking_glass.png",
-				on_use = eat_func,
-			}
-			drinks.register_item("drinks:jcu_"..drink_id, glass, def)
-		end
+-- Drinks
+drinks.add_drink("apple", "jablečná šťáva", "#ecff56", {
+	drink_desc2 = "jablečné šťávy",
+	drink_desc4 = "jablečnou šťávu",
+})
+drinks.add_fruit("apple", "default:apple", 1)
 
-		if drink_def.bottle_item and minetest.registered_items[drink_def.bottle_item] then
-			minetest.register_alias("drinks:jbo_"..drink_id, drink_def.bottle_item)
-			minetest.override_item(drink_def.bottle_item, {juice_type = drink_id})
-			drinks.item_aliases[drink_def.bottle_item] = "drinks:jbo_"..drink_id
-		else
-			eat_func = eat_func_cache[glass_bottle][2 * health]
-			if not eat_func then
-				eat_func = minetest.item_eat(2 * health, glass_bottle)
-				eat_func_cache[glass_bottle][2 * health] = eat_func
-			end
-			def = {
-				description = "láhev "..drink_def.drink_desc2,
-				juice_type = drink_id, -- [ ] ?? !!!
-				inventory_image = "drinks_bottle_contents.png^[colorize:"..drink_def.color..":200^drinks_glass_bottle.png",
-				on_use = eat_func,
-			}
-			drinks.register_item("drinks:jbo_"..drink_id, glass_bottle, def)
-		end
+drinks.add_drink("banana", "banánová šťáva", "#eced9f", {
+	drink_desc2 = "banánové šťávy",
+	drink_desc4 = "banánovou šťávu",
+})
+drinks.add_fruit("banana", "ethereal:banana", 2)
 
-		if drink_def.steel_bottle_item and minetest.registered_items[drink_def.steel_bottle_item] then
-			minetest.register_alias("drinks:jsb_"..drink_id, drink_def.steel_bottle_item)
-			minetest.override_item(drink_def.steel_bottle_item, {juice_type = drink_id})
-			drinks.item_aliases[drink_def.steel_bottle_item] = "drinks:jsb_"..drink_id
-		else
-			eat_func = eat_func_cache[steel_bottle][2 * health]
-			if not eat_func then
-				eat_func = minetest.item_eat(2 * health, steel_bottle)
-				eat_func_cache[steel_bottle][2 * health] = eat_func
-			end
-			def = {
-				description = "kovová láhev "..drink_def.drink_desc2,
-				juice_type = drink_id, -- [ ] ?? !!!
-				groups = {drink = 1},
-				inventory_image = "vessels_steel_bottle.png",
-				on_use = eat_func,
-			}
-			drinks.register_item("drinks:jsb_"..drink_id, steel_bottle, def)
-		end
-	end
-end
---[[
-for i in ipairs (drinks.drink_table) do
-   local desc = drinks.drink_table[i][1]
-   local craft = drinks.drink_table[i][2]
-   local color = drinks.drink_table[i][3]
-   local health = drinks.drink_table[i][4]
-   ]]
+drinks.add_drink("blueberries", "borůvková šťáva", "#521dcb", {
+	drink_desc2 = "borůvkové šťávy",
+	drink_desc4 = "borůvkovou šťávu",
+})
+drinks.add_fruit("blueberries", "default:blueberries", 1)
+drinks.add_fruit("blueberries", "farming:blueberries", 1)
 
-function drinks.translate_alias(name)
-	return name and (drinks.item_aliases[name] or name)
-end
+drinks.add_drink("cactus", "kaktusová šťáva", "#96F97B", {
+	drink_desc2 = "kaktusové šťávy",
+	drink_desc4 = "kaktusovou šťávu",
+	[glass_bottle] = "farming:cactus_juice",
+})
+drinks.add_fruit("cactus", "default:cactus", 2)
 
-if minetest.get_modpath('thirsty') then
-   error("Not implemented with thristy mod!")
-   -- dofile(minetest.get_modpath('drinks')..'/drinks.lua')
--- else
-   -- dofile(minetest.get_modpath('drinks')..'/drinks2.lua')
-end
+drinks.add_drink("carrot", "mrkvový džus", "#ed9121", {
+	drink_desc2 = "mrkvového džusu",
+	drink_desc4 = "mrkvový džus",
+	[glass] = "farming:carrot_juice",
+})
+drinks.add_fruit("carrot", "farming:carrot")
+
+drinks.add_drink("cucumber", "okurková šťáva", "#73af59", {
+	drink_desc2 = "okurkové šťávy",
+	drink_desc4 = "okurkovou šťávu",
+})
+drinks.add_fruit("cucumber", "farming:cucumber", 2)
+
+drinks.add_drink("melon", "melounová šťáva", "#ef4646", {
+	drink_desc2 = "melounové šťávy",
+	drink_desc4 = "melounovou šťávu",
+})
+drinks.add_fruit("melon", "farming:melon_slice", 4)
+
+drinks.add_drink("orange", "pomerančová šťáva", "#ffc417", {
+	drink_desc2 = "pomerančové šťávy",
+	drink_desc4 = "pomerančovou šťávu",
+})
+drinks.add_fruit("orange", "ethereal:orange", 2)
+
+drinks.add_drink("pumpkin", "dýňová šťáva", "#ffc04c", {
+	drink_desc2 = "dýňové šťávy",
+	drink_desc4 = "dýňovou šťávu",
+})
+drinks.add_fruit("pumpkin", "farming:pumpkin_slice", 2)
+
+drinks.add_drink("raspberries", "malinová šťáva", "#C70039", {
+	drink_desc2 = "malinové šťávy",
+	drink_desc4 = "malinovou šťávu",
+})
+drinks.add_fruit("raspberries", "farming:raspberries", 1)
+
+drinks.add_drink("strawberry", "jahodová šťáva", "#ff3636", {
+	drink_desc2 = "jahodové šťávy",
+	drink_desc4 = "jahodovou šťávu",
+})
+drinks.add_fruit("strawberry", "farming:strawberry", 1)
+
+drinks.add_drink("tomato", "rajčatová šťáva", "#d03a0e", {
+	drink_desc2 = "rajčatové šťávy",
+	drink_desc4 = "rajčatovou šťávu",
+})
+drinks.add_fruit("tomato", "farming:tomato", 2)
+
+drinks.add_drink("grapes", "hroznová šťáva", "#b20056", {
+	drink_desc2 = "hroznové šťávy",
+	drink_desc4 = "hroznovou šťávu",
+})
+drinks.add_fruit("grapes", "farming:grapes", 2)
+
+drinks.add_drink("pineapple", "ananasová šťáva", "#dcd611", {
+	drink_desc2 = "ananasové šťávy",
+	drink_desc4 = "ananasovou šťávu",
+	[glass] = "farming:pineapple_juice",
+})
+drinks.add_fruit("pineapple", "farming:pineapple_ring", 1)
+
+drinks.add_drink("plum", "švestková šťáva", "#8e4585", {
+	drink_desc2 = "švestkové šťávy",
+	drink_desc4 = "švestkovou šťávu",
+})
+drinks.add_fruit("plum", "plumtree:plum", 1)
+
+drinks.add_drink("coconut", "kokosové mléko", "#ffffff", {
+	drink_desc2 = "kokosového mléka",
+	drink_desc4 = "kokosové mléko",
+	[glass] = "moretrees:coconut_milk",
+})
+drinks.add_fruit("coconut", "moretrees:coconut")
+
+	--[[ rhubarb = {
+        fruitname = "farming:rhubarb",
+        drink_desc1 = "rebarborová šťáva",
+        drink_desc2 = "rebarborové šťávy",
+		drink_desc4 = "rebarborovou šťávu",
+        color = "#fb8461",
+	}, ]]
+
+drinks.add_drink("water", "voda", "#2b639e", {
+	drink_desc2 = "vody",
+	drink_desc4 = "vodu",
+	[glass] = "farming:glass_water",
+	[bucket] = "bucket:bucket_water",
+})
+
+-- mod support (moreblocks/technic_worldgen)
+local slab_str = "stairs:slab_wood"
+
+--Craft Recipes
+minetest.register_craft({
+      output = 'drinks:juice_press',
+      recipe = {
+         {'default:stick', 'default:steel_ingot', 'default:stick'},
+         {'default:stick', 'bucket:bucket_empty', 'default:stick'},
+         {slab_str, slab_str, 'vessels:drinking_glass'},
+         }
+})
+
+minetest.register_craft({
+      output = 'drinks:liquid_barrel',
+      recipe = {
+         {'group:wood', 'group:wood', 'group:wood'},
+         {'group:wood', 'group:wood', 'group:wood'},
+         {slab_str, '', slab_str},
+         }
+})
+
 dofile(minetest.get_modpath('drinks')..'/drink_machines.lua')
-dofile(minetest.get_modpath('drinks')..'/formspecs.lua')
