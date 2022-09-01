@@ -310,7 +310,7 @@ local function set_juice_press_state(pos, state, description, plan)
 	}
 	if state == "idle" then
 		if not description then
-			description = "prázdný list na ovoce"
+			description = "prázdný lis na ovoce"
 		end
 		timer:stop()
 	elseif state == "running" then
