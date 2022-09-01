@@ -75,6 +75,13 @@ return function (node_info, fields, player)
 	if owner_name ~= fields.owner then
 		-- new owner -> remove station from old network then add to new owner
 		-- but only if there is space on the network
+		if  not minetest.check_player_privs(player_name, { travelnet_attach=true })
+		and not travelnet.allow_attach(player_name, owner_name, station_network)
+	then
+		return false, S("You do not have the travelnet_attach priv which is required to attach your box to " ..
+			"the network of someone else. Aborting.")
+	end
+
 		-- get the new network
 		network = travelnet.get_or_create_network(fields.owner, fields.station_network)
 		-- does a station with the new name already exist?

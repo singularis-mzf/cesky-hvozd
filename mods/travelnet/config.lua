@@ -100,6 +100,13 @@ end
 -- you can use this code to i.e. charge the player money for the transfer or to limit
 -- usage of stations to players in the same fraction on PvP servers
 -- params: player_name, owner_name, network_name, station_name_start, station_name_target
-travelnet.allow_travel = function()
-	return minetest.settings:get_bool("travelnet.allow_travel", true)
+travelnet.allow_travel = function(player_name, owner_name, station_network, station_name, target)
+	local result = minetest.settings:get_bool("travelnet.allow_travel", true)
+	if result then
+		minetest.log("action", "travelnet.allow_travel() called by "..player_name.." for travelnet box owned by "..owner_name.." at network "..station_network..", box name is "..station_name.." and the target is "..target.."["..(station_network:sub(1, 1) == "@" and "true" or "false")..","..(player_name ~= owner_name and "true" or "false")..","..(not minetest.check_player_privs(player_name, "protection_bypass") and "true" or "false").."]")
+		if station_network:sub(1, 1) == "@" and player_name ~= owner_name and not minetest.check_player_privs(player_name, "protection_bypass") then
+			result = false
+		end
+	end
+	return result
 end
