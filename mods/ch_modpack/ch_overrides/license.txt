@@ -153,3 +153,15 @@ letters_8_overlay.png
 letters_9_overlay.png
 	Author: Singularis
 	License: GFDLv1.3
+
+xpanes_bar.png
+xpanes_bar_top.png
+xpanes_door_steel_bar.png
+xpanes_item_steel_bar.png
+xpanes_pane_half.png
+xpanes_space.png
+xpanes_trapdoor_steel_bar.png
+xpanes_trapdoor_steel_bar_side.png
+	Author: Lukas Reichlin
+	Source: Polygonia_64px texture pack
+	License: CC BY-SA 4.0

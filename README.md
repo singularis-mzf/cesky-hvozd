@@ -875,6 +875,11 @@ resp. *ostatní\_zdroje*.
 * Zdroj: [https://forum.minetest.net/viewtopic.php?t=11817](https://forum.minetest.net/viewtopic.php?t=11817), soubor mesh\_beds.zip
 * Původní licence: WTFPL (u modelů to není řečeno, ale lze předpokládat, že jsou považovány za kód)
 
+## Polygonia (Polygonia\_64px)
+
+* Zdroj: [https://github.com/Lokrates/Polygonia\_64px](https://github.com/Lokrates/Polygonia\_64px), revize f28901e5e990aee6f78fca80dce03129b90d4d6a
+* Původní licence: CC BY-SA 4.0
+
 ## Scythes & Sickles (sickles)
 
 * Zdroj: [https://github.com/t-affeldt/sickles](https://github.com/t-affeldt/sickles), revize 64f88263e223c0eb22a0721cda0e9680c65f5267
