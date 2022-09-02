@@ -373,6 +373,12 @@ xpanes_trapdoor_steel_bar_side.png
 
 default_coniferous_litter.png
 default_coniferous_litter_side.png
+travelnet_travelnet_back.png
+travelnet_travelnet_back_color.png
+travelnet_travelnet_front.png
+travelnet_travelnet_front_color.png
+travelnet_travelnet_side.png
+travelnet_travelnet_side_color.png
 	Author: Lukas Reichlin
 	Modified by: Singularis
 	Source: Polygonia_64px texture pack
