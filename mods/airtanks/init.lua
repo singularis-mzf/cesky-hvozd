@@ -35,12 +35,12 @@ setting("int", "copper_2_uses", config.copper_uses * 2, "Number of uses for a pa
 setting("int", "bronze_2_uses", config.bronze_uses * 2, "Number of uses for a pair of bronze air tanks")
 
 -- Triple tanks
-setting("bool", "enable_triple", true, "Enable triple tanks")
+setting("bool", "enable_triple", false, "Enable triple tanks")
 setting("int", "steel_3_uses", config.steel_uses * 3, "Number of uses for three steel air tanks")
 setting("int", "copper_3_uses", config.copper_uses * 3, "Number of uses for threee copper air tanks")
 setting("int", "bronze_3_uses", config.bronze_uses * 3, "Number of uses for three bronze air tanks")
 
-setting("bool", "wear_in_creative", true, "Air tanks wear out in creative mode")
+setting("bool", "wear_in_creative", false, "Air tanks wear out in creative mode")
 
 setting("bool", "compressor_needs_fuel", true, "Compressor needs fuel")
 
@@ -72,7 +72,7 @@ local function use_airtank(itemstack, user)
 	user:set_breath(breath)
 	minetest.sound_play("airtanks_hiss", {pos = user:get_pos(), gain = 0.5})
 
-	if (not minetest.settings:get_bool("creative_mode")) or config.wear_in_creative then
+	if (not minetest.is_creative_enabled(user:get_player_name())) or config.wear_in_creative then
 		local wdef = itemstack:get_definition()
 		itemstack:add_wear(65535/(wdef._airtanks_uses-1))
 		if itemstack:get_count() == 0 then
@@ -80,8 +80,7 @@ local function use_airtank(itemstack, user)
 				minetest.sound_play(wdef.sound.breaks,
 					{pos = user:get_pos(), gain = 0.5})
 			end
-			local inv = user:get_inventory()
-			itemstack = inv:add_item("main", wdef._airtanks_empty)
+			itemstack = ItemStack(wdef._airtanks_empty)
 		end
 	end
 	return itemstack
@@ -98,7 +97,6 @@ local function register_air_tank(name, desc, color, uses, material)
 		_airtanks_full = "airtanks:"..name.."_tank",
 		inventory_image = "airtanks_airtank.png^[colorize:"..color.."^[mask:airtanks_airtank.png^airtanks_empty.png",
 		wield_image = "airtanks_airtank.png^[colorize:"..color.."^[mask:airtanks_airtank.png^airtanks_empty.png",
-		stack_max = 99,
 	})
 
 	minetest.register_tool("airtanks:"..name.."_tank", {
@@ -107,18 +105,14 @@ local function register_air_tank(name, desc, color, uses, material)
 		_doc_items_usagehelp = S("If you're underwater and you're running out of breath, wield this item and use it to replenish 5 bubbles on your breath bar. When fully charged this tank has @1 uses before it becomes empty.", uses),
 		_airtanks_uses = uses,
 		_airtanks_empty = "airtanks:empty_"..name.."_tank",
-		groups = {not_repaired_by_anvil = 1, airtank = 2},
+		groups = {not_repaired_by_anvil = 1, airtank = 2, not_in_creative_inventory = 1},
 		inventory_image = "airtanks_airtank.png^[colorize:"..color.."^[mask:airtanks_airtank.png",
 		wield_image = "airtanks_airtank.png^[colorize:"..color.."^[mask:airtanks_airtank.png",
 		stack_max = 1,
 	
-		on_place = function(itemstack, user, pointed_thing)
-			return use_airtank(itemstack, user)
-		end,
+		on_place = use_airtank,
 
-		on_use = function(itemstack, user, pointed_thing)
-			return use_airtank(itemstack, user)
-		end,
+		on_use = use_airtank,
 	})
 	
 	minetest.register_craft({
@@ -135,7 +129,7 @@ end
 
 local function register_air_tank_2(name, desc, color, uses)
 	minetest.register_craftitem("airtanks:empty_"..name.."_tank_2", {
-		description = S("Empty @1", desc),
+		description = S("Empty2 @1", desc),
 		groups = {airtank = 1},
 		_doc_items_longdesc = S("A pair of compressed air tanks, currently empty."),
 		_doc_items_usagehelp = S("This tank can be recharged with compressed air by using it on a compressor block. When fully charged these tanks have @1 uses before it becomes empty.", uses),
@@ -143,7 +137,6 @@ local function register_air_tank_2(name, desc, color, uses)
 		_airtanks_full = "airtanks:"..name.."_tank_2",
 		inventory_image = "airtanks_airtank_two.png^[colorize:"..color.."^[mask:airtanks_airtank_two.png^airtanks_empty.png",
 		wield_image = "airtanks_airtank_two.png^[colorize:"..color.."^[mask:airtanks_airtank_two.png^airtanks_empty.png",
-		stack_max = 99,
 	})
 
 	minetest.register_tool("airtanks:"..name.."_tank_2", {
@@ -152,20 +145,14 @@ local function register_air_tank_2(name, desc, color, uses)
 		_doc_items_usagehelp = S("If you're underwater and you're running out of breath, wield this item and use it to replenish 5 bubbles on your breath bar. When fully charged these tanks have @1 uses before it becomes empty.", uses),
 		_airtanks_uses = uses,
 		_airtanks_empty = "airtanks:empty_"..name.."_tank_2",
-		groups = {not_repaired_by_anvil = 1, airtank = 2},
+		groups = {not_repaired_by_anvil = 1, airtank = 2, not_in_creative_inventory = 1},
 		inventory_image = "airtanks_airtank_two.png^[colorize:"..color.."^[mask:airtanks_airtank_two.png",
 		wield_image = "airtanks_airtank_two.png^[colorize:"..color.."^[mask:airtanks_airtank_two.png",
 		stack_max = 1,
-	
-		on_place = function(itemstack, user, pointed_thing)
-			return use_airtank(itemstack, user)
-		end,
-
-		on_use = function(itemstack, user, pointed_thing)
-			return use_airtank(itemstack, user)
-		end,
+		on_place = use_airtank,
+		on_use = use_airtank,
 	})
-	
+
 	-- Allow empty tanks
 	minetest.register_craft({
 		recipe = {
@@ -174,20 +161,19 @@ local function register_air_tank_2(name, desc, color, uses)
 		},
 		output = "airtanks:empty_"..name.."_tank_2",
 	})
-	-- Allow full tanks too
+	--[[ Allow full tanks too
 	minetest.register_craft({
 		recipe = {
 			-- Use 2 singles to make a double
 			{"airtanks:"..name.."_tank", "airtanks:"..name.."_tank"},
 		},
 		output = "airtanks:"..name.."_tank_2",
-	})
-	
+	}) ]]
 end
 
 local function register_air_tank_3(name, desc, color, uses)
 	minetest.register_craftitem("airtanks:empty_"..name.."_tank_3", {
-		description = S("Empty @1", desc),
+		description = S("Empty2 @1", desc),
 		groups = {airtank = 1},
 		_doc_items_longdesc = S("A set of three compressed air tanks, currently empty."),
 		_doc_items_usagehelp = S("These tanks can be recharged with compressed air by using it on a compressor block. When fully charged these tanks have @1 uses before it becomes empty.", uses),
@@ -195,7 +181,6 @@ local function register_air_tank_3(name, desc, color, uses)
 		_airtanks_full = "airtanks:"..name.."_tank_3",
 		inventory_image = "airtanks_airtank_three.png^[colorize:"..color.."^[mask:airtanks_airtank_three.png^airtanks_empty.png",
 		wield_image = "airtanks_airtank_three.png^[colorize:"..color.."^[mask:airtanks_airtank_three.png^airtanks_empty.png",
-		stack_max = 99,
 	})
 
 	minetest.register_tool("airtanks:"..name.."_tank_3", {
@@ -204,18 +189,12 @@ local function register_air_tank_3(name, desc, color, uses)
 		_doc_items_usagehelp = S("If you're underwater and you're running out of breath, wield this item and use it to replenish 5 bubbles on your breath bar. When fully charged these tanks have @1 uses before it becomes empty.", uses),
 		_airtanks_uses = uses,
 		_airtanks_empty = "airtanks:empty_"..name.."_tank_3",
-		groups = {not_repaired_by_anvil = 1, airtank = 2},
+		groups = {not_repaired_by_anvil = 1, airtank = 2, not_in_creative_inventory = 1},
 		inventory_image = "airtanks_airtank_three.png^[colorize:"..color.."^[mask:airtanks_airtank_three.png",
 		wield_image = "airtanks_airtank_three.png^[colorize:"..color.."^[mask:airtanks_airtank_three.png",
 		stack_max = 1,
-	
-		on_place = function(itemstack, user, pointed_thing)
-			return use_airtank(itemstack, user)
-		end,
-
-		on_use = function(itemstack, user, pointed_thing)
-			return use_airtank(itemstack, user)
-		end,
+		on_place = use_airtank,
+		on_use = use_airtank,
 	})
 
 	-- Allow empty tanks
@@ -282,7 +261,7 @@ if config.compressor_needs_fuel then
 			"label[1,1.5;" .. S("Fuel") .. "]" ..
 			"list[context;fuel;1,2;1,1;]" ..
 			"label[4.5,0;" .. S("Tanks") .. "]" ..
-			"label[2,2;" .. S("Pressure:\n@1", remaining_time) .. "]" ..
+			"label[2,2;" .. S("Pressure:").."\n"..remaining_time .. "]" ..
 			"list[context;tanks;3,0.5;4,4;]" ..
 			"list[current_player;main;0,4.85;8,1;]" ..
 			"list[current_player;main;0,6.08;8,3;8]" ..
@@ -481,7 +460,7 @@ minetest.register_node("airtanks:compressor", {
 		"airtanks_compressor_bottom.png^[transformR90",
 		"airtanks_compressor.png"
 	},
-	use_texture_alpha = "clip",
+	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -493,9 +472,9 @@ minetest.register_node("airtanks:compressor", {
 			{-0.125, 0.125, -0.25, 0.125, 0.4375, 0.25},
 		}
 	},
-	
+
 	on_construct = compressor_construct,
-	
+
 	can_dig = function(pos,player)
 		local meta = minetest.get_meta(pos);
 		local inv = meta:get_inventory()
@@ -553,7 +532,6 @@ minetest.register_craftitem("airtanks:breathing_tube", {
 	_doc_items_usagehelp = tube_help,
 	inventory_image = "airtanks_breathing_tube.png",
 	wield_image = "airtanks_breathing_tube.png",
-	stack_max = 99,
 })
 
 minetest.register_craft({
@@ -581,7 +559,7 @@ local function use_any_airtank(player)
 	local hotbar = player:hud_get_hotbar_itemcount()
 	for i=1, hotbar do
 		local itemstack = inv:get_stack("main", i)
-		if minetest.get_item_group(itemstack:get_name(), "airtank") > 0 then
+		if minetest.get_item_group(itemstack:get_name(), "airtank") > 1 then
 			itemstack = use_airtank(itemstack, player)
 			inv:set_stack("main", i, itemstack)
 			return true
