@@ -174,11 +174,18 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: LGPLv2.1
 * [ContentDB](https://content.minetest.net/packages/sirrobzeroone/3d\_armor\_flyswim/)
 
-## Advtrains Construction Train
+## Advtrains Construction Train (advtrains\_construction\_train)
 
 * Zdroj: [https://git.bananach.space/advtrains\_construction\_train.git/](https://git.bananach.space/advtrains\_construction\_train.git/), revize 2b27b8d8f1a629ff10f295cb8432225a3a9a943b
 * Původní licence: AGPLv3
 * Licence úprav: AGPLv3
+
+## Airtanks (airtanks)
+
+* Zdroj: [https://github.com/minetest-mods/airtanks](https://github.com/minetest-mods/airtanks), revize b686694979f0dc007f22038a24a1fc416ec39b9b
+* Původní licence: kód a textury MIT, zvuky různé (CC0, CC BY 3.0)
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/FaceDeer/airtanks/)
 
 ## Ambience Lite (minetest-mod-ambience)
 
