@@ -7,21 +7,21 @@ technic = rawget(_G, "technic") or {}
 technic.chests = {}
 
 technic.chests.colors = {
-	{"black", S("Black")},
-	{"blue", S("Blue")},
-	{"brown", S("Brown")},
-	{"cyan", S("Cyan")},
-	{"dark_green", S("Dark Green")},
-	{"dark_grey", S("Dark Grey")},
-	{"green", S("Green")},
-	{"grey", S("Grey")},
-	{"magenta", S("Magenta")},
-	{"orange", S("Orange")},
-	{"pink", S("Pink")},
-	{"red", S("Red")},
-	{"violet", S("Violet")},
-	{"white", S("White")},
-	{"yellow", S("Yellow")},
+	{"black", S("Black"), "#000000"},
+	{"blue", S("Blue"), "#2020ff"},
+	{"brown", S("Brown"), "#794d20"},
+	{"cyan", S("Cyan"), "#3cffff"},
+	{"dark_green", S("Dark Green"), "#206620"},
+	{"dark_grey", S("Dark Grey"), "#666666"},
+	{"green", S("Green"), "#20ff20"},
+	{"grey", S("Grey"), "#acacac"},
+	{"magenta", S("Magenta"), "#ff20ff"},
+	{"orange", S("Orange"), "#ff9020"},
+	{"pink", S("Pink"), "#ffbaff"},
+	{"red", S("Red"), "#ff2020"},
+	{"violet", S("Violet"), "#ff2020"},
+	{"white", S("White"), "#ffffff"},
+	{"yellow", S("Yellow"), "#ffff00"},
 }
 
 function technic.chests.change_allowed(pos, player, owned, protected)

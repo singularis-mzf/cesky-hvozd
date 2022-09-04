@@ -130,13 +130,15 @@ function technic.chests.get_formspec(data)
 		"formspec_version[5]"..
 		"size["..formspec_sz(width)..","..formspec_sz(height).."]"..
 		"style_type[list;spacing=0.2,0.2]"..
+		"listcolors[#7b7b7b;#909090;#000000;#6e823c;#ffffff]"..
 		"list[context;main;"..formspec_pos(chest_inv_left)..","..formspec_pos(1)..";"..data.width..","..data.height..";]"..
-		"list[current_player;main;"..formspec_pos(player_inv_left)..","..formspec_pos(player_inv_top)..";8,4;]"..
+		"list[current_player;main;"..formspec_pos(player_inv_left)..","..formspec_pos(player_inv_top - 0.2)..";8,4;]"..
+		"background[0,0;"..formspec_sz(width)..","..formspec_sz(height)..";technic_chest_form_bg.png]"..
 		"listring[context;main]"..
 		"listring[current_player;main]"
 		-- default.get_hotbar_bg(formspec_pos(player_inv_left + 1), formspec_pos(player_inv_top))
 	if data.quickmove then
-		formspec.base = formspec.base..get_quickmove_fs(padding - 0.25, data.height + 1.2)
+		formspec.base = formspec.base..get_quickmove_fs(padding - 0.25, data.height + 1.0)
 	end
 	formspec.padding = padding
 	formspec.width = width
@@ -197,15 +199,15 @@ function technic.chests.update_formspec(pos, data, edit_infotext)
 	end
 	if has_pipeworks and node_has_pipeworks then
 		local offset = data.quickmove and (data.formspec.padding * 2 + 3) or data.formspec.padding
-		formspec = formspec..get_pipeworks_fs(offset, data.height + 1, meta)
+		formspec = formspec..get_pipeworks_fs(offset, data.height + 0.8, meta)
 	end
-	if data.color or data.digilines then
+	if --[[data.color or]] data.digilines then
 		local offset = data.quickmove and (data.formspec.padding * 3 + 11) or (data.formspec.padding * 2 + 8)
-		if data.color then
+		--[[ if data.color then
 			formspec = formspec..get_color_fs(offset, data.height + 1.2, meta)
-		else
+		else ]]
 			formspec = formspec..get_digilines_fs(offset, data.height + 1.2, meta)
-		end
+		-- end
 	end
 	meta:set_string("formspec", formspec)
 end

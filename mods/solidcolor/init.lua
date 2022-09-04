@@ -11,7 +11,7 @@ local tile_groups = {
 	},
 	clay = {
 		description = "barvitelná omítka",
-		tiles = {"default_clay.png"},
+		tiles = {"solidcolor_clay.png"},
 		material_groups = {dig_immediate = 2},
 		input_material = "default:clay",
 	},

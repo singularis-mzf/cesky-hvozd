@@ -243,6 +243,7 @@ function technic.chests.register_chest(nodename, data)
 		}
 	end
 	minetest.register_node(colon..nodename, def)
+	--[[
 	if data.color then
 		for i = 1, 15 do
 			local colordef = {}
@@ -254,4 +255,5 @@ function technic.chests.register_chest(nodename, data)
 			minetest.register_node(colon..nodename.."_"..technic.chests.colors[i][1], colordef)
 		end
 	end
+	]]
 end

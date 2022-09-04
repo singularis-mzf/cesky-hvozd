@@ -19,7 +19,7 @@ A tank containing compressed air.=
 #node name, compresses air to fill pressurized gas tanks
 Air Compressor=kompresor vzduchu
 #item name, a snorkel mouthpiece for breathing underwater
-Breathing Tube=
+Breathing Tube=dýchací hadička
 #compressed air tank made of bronze
 Bronze Air Tank=bronzová potápěčská láhev
 #compressed air tank made of copper

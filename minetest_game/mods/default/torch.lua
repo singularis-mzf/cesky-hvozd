@@ -42,6 +42,7 @@ minetest.register_node("default:torch", {
 		type = "wallmounted",
 		wall_bottom = {-1/8, -1/2, -1/8, 1/8, 2/16, 1/8},
 	},
+	damage_per_second = 1,
 	sounds = default.node_sound_wood_defaults(),
 	on_place = function(itemstack, placer, pointed_thing)
 		local under = pointed_thing.under
