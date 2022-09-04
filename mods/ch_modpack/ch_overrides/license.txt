@@ -383,3 +383,13 @@ travelnet_travelnet_side_color.png
 	Modified by: Singularis
 	Source: Polygonia_64px texture pack
 	License: CC BY-SA 4.0
+
+default_desert_stone.png
+default_desert_stone_block.png
+default_desert_stone_brick.png
+default_stone.png
+default_stone_block.png
+default_stone_brick.png
+	Author: Singularis
+	Used source: https://commons.wikimedia.org/wiki/File:Light_brown_stone_texture.jpg (public domain)
+	License: CC BY 4.0
