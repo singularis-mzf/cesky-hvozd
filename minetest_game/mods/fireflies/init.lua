@@ -182,6 +182,14 @@ minetest.register_craft( {
 	}
 })
 
+minetest.register_craft( {
+	output = "fireflies:firefly",
+	recipe = {
+		{"fireflies:firefly_bottle"},
+	},
+	replacements = {{"fireflies:firefly_bottle", "vessels:glass_bottle"}},
+})
+
 
 -- register fireflies as decorations
 

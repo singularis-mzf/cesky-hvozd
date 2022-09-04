@@ -1,9 +1,11 @@
 print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
+local modpath = minetest.get_modpath("ch_overrides")
+
 -- homedecor_kitchen
 if minetest.get_modpath("homedecor_kitchen") then
 
-	local function override_homedecor_oven(hd_base_name, data)
+	local function override_homedecor_oven(hd_base_name, data, recipe)
 		if minetest.get_modpath("technic") then
 			local hd_oven_def = minetest.registered_nodes[hd_base_name]
 			local hd_oven_active_def = minetest.registered_nodes[hd_base_name.."_active"]
@@ -26,10 +28,17 @@ if minetest.get_modpath("homedecor_kitchen") then
 			technic.register_base_machine(data2)
 		end
 
+		minetest.clear_craft({output = hd_base_name})
+		minetest.clear_craft({output = hd_base_name.."_locked"})
+
 		minetest.unregister_item(hd_base_name)
 		minetest.unregister_item(hd_base_name.."_active")
 		minetest.unregister_item(hd_base_name.."_locked")
 		minetest.unregister_item(hd_base_name.."_active_locked")
+
+		if recipe then
+			minetest.register_craft({output = "ch_overrides:lv_"..data.machine_name, recipe = recipe})
+		end
 		return true
 	end
 
@@ -40,18 +49,34 @@ if minetest.get_modpath("homedecor_kitchen") then
 		demand = {300},
 		speed = 2,
 	}
+	local recipe
 
 	def.machine_name = "microwave_oven"
 	def.machine_desc = "NN Mikrovlnná trouba"
-	override_homedecor_oven("homedecor:microwave_oven", def)
+	recipe = {
+		{ "default:steel_ingot", "default:steel_ingot" , "default:steel_ingot", },
+		{ "default:steel_ingot", "default:glass", "basic_materials:ic", },
+		{ "default:steel_ingot", "basic_materials:energy_crystal_simple", "" },
+	}
+	override_homedecor_oven("homedecor:microwave_oven", def, recipe)
 
 	def.machine_name = "oven_white"
 	def.machine_desc = "NN sporák (bílý)"
-	override_homedecor_oven("homedecor:oven", def)
+	recipe = {
+		{"ch_overrides:lv_oven_steel", "", ""},
+		{"dye:white", "", ""},
+		{"dye:white", "", ""},
+	}
+	override_homedecor_oven("homedecor:oven", def, recipe)
 
 	def.machine_name = "oven_steel"
 	def.machine_desc = "NN sporák (nerezový)"
-	override_homedecor_oven("homedecor:oven_steel", def)
+	recipe = {
+		{ "basic_materials:heating_element", "default:steel_ingot" , "basic_materials:heating_element", },
+		{ "default:steel_ingot", "default:glass", "default:steel_ingot", },
+		{ "default:steel_ingot", "basic_materials:heating_element", "default:steel_ingot", }
+	}
+	override_homedecor_oven("homedecor:oven_steel", def, recipe)
 end -- homedecor_kitchen
 
 -- moreblocks + technic
@@ -63,5 +88,9 @@ if minetest.get_modpath("moreblocks") and minetest.get_modpath("technic") then
 		sounds = default.node_sound_wood_defaults(),
 	})
 end
+
+dofile(modpath.."/extra_recipes.lua")
+dofile(modpath.."/falling_nodes.lua")
+dofile(modpath.."/ores.lua")
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

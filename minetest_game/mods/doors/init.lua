@@ -374,6 +374,9 @@ function doors.register(name, def)
 	if mesh_prefix == "door" then -- centering support
 		craftitem_def.description = craftitem_def.description .. " (" .. S("centered") ..")"
 		minetest.register_craftitem(":" .. name .. "_cd", craftitem_def)
+
+		minetest.register_craft({output = name, recipe = {{name.."_cd"}}})
+		minetest.register_craft({output = name.."_cd", recipe = {{name}}})
 	end
 
 	def.inventory_image = nil

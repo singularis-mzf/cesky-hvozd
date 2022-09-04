@@ -46,6 +46,15 @@ minetest.register_craft({ -- molehills --> dirt
 	}
 })
 
+minetest.register_craft({ -- molehills --> dirt
+	output = "molehills:molehill 16",
+	recipe = {
+		{"","", ""},
+		{"","default:dirt", ""},
+		{"default:dirt","default:dirt", "default:dirt"},
+	}
+})
+
 -----------------------------------------------------------------------------------------------
 -- GeNeRaTiNG
 -----------------------------------------------------------------------------------------------

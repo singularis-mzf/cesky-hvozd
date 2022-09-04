@@ -287,6 +287,9 @@ function bucket.register_full_bucket(name, empty_bucket, liquid_source, def)
 		on_use = on_use,
 		on_place = def.on_place or bucket_on_place,
 	}
+	if def.stack_max then
+		ndef.stack_max = def.stack_max
+	end
 	minetest.register_craftitem(long_name, ndef)
 	bucket.full_buckets[name] = {
 		force_renew = def.force_renew,
@@ -295,6 +298,16 @@ function bucket.register_full_bucket(name, empty_bucket, liquid_source, def)
 	}
 	if liquid_source then
 		empty_bucket_info["full_bucket_"..liquid_source] = name
+
+		minetest.register_craft({
+			output = liquid_source,
+			recipe = {{long_name}},
+			replacements = {{long_name, empty_bucket}},
+		})
+		minetest.register_craft({
+			output = long_name,
+			recipe = {{liquid_source, ""}, {empty_bucket, ""}},
+		})
 
 		-- legacy:
 		if not bucket.liquids[liquid_source] then

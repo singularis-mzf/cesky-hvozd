@@ -65,3 +65,12 @@ minetest.register_tool(":worldedit:wand", {
 		return itemstack -- nothing consumed, nothing changed
 	end,
 })
+
+minetest.register_craft({
+	output = "worldedit:wand",
+	recipe = {
+		{"technic:red_energy_crystal", "", ""},
+		{"", "default:stick", ""},
+		{"", "", "default:stick"},
+	},
+})

@@ -7,26 +7,31 @@ local tile_groups = {
 		description = "barvitelný materiál homogenní",
 		tiles = {"solidcolor_white.png"},
 		material_groups = {dig_immediate = 2},
+		input_material = "bakedclay:white",
 	},
 	clay = {
 		description = "barvitelná omítka",
 		tiles = {"default_clay.png"},
 		material_groups = {dig_immediate = 2},
+		input_material = "default:clay",
 	},
 	cobble = {
 		description = "barvitelný dlažební kámen",
 		tiles = {"default_cobble.png"},
 		material_groups = {cracky = 3, stone = 2},
+		input_material = "default:cobble",
 	},
 	stoneblock = {
 		description = "barvitelný kamenný blok",
 		tiles = {"solidcolor_stone_block.png"},
 		material_groups = {cracky = 2, stone = 1},
+		input_material = "default:stone_block",
 	},
 	stonebrick = {
 		description = "barvitelné kamenné cihly",
 		tiles = {"default_stone_brick.png^[brighten"},
 		material_groups = {cracky = 2, stone = 1},
+		input_material = "default:stone_brick",
 	},
 }
 
@@ -159,6 +164,19 @@ for tile_id, tile_def in pairs(tile_groups) do
 		minetest.register_node(node_id, node_def)
 		node_count = node_count + 1
 	end
+
+	if tile_def.input_material then
+		minetest.register_craft({
+			output = "solidcolor:"..tile_id.."_block",
+			recipe = {
+				{tile_def.input_material, "unifieddyes:airbrush", ""},
+				{"", "", ""},
+				{"", "", ""},
+			},
+			replacements = {{"unifieddyes:airbrush", "unifieddyes:airbrush"}},
+		})
+	end
+
 	local slabs_group = "group:solidcolor_"..tile_id.."_slabs"
 	local r100, r010, r001 = {slabs_group, "", ""}, {"", slabs_group, ""}, {"", "", slabs_group}
 	minetest.register_craft({

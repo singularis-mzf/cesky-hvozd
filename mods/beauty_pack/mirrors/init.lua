@@ -29,8 +29,8 @@ minetest.register_node("mirrors:mirror", {
 })
 
 minetest.register_craft({
-	output = "mirror:mirror",
-	type = "shaped",
+	output = "mirrors:mirror",
+	-- type = "shaped",
 		recipe = {
 		{"default:stick", "default:stick", "default:stick"},
 		{"default:stick", "xpanes:pane_flat", "default:stick"},

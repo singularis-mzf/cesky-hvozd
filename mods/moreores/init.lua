@@ -73,6 +73,13 @@ local function get_recipe(material, item)
 			{"group:wood", "group:wood", "group:wood"},
 		}
 	end
+	if item == "hoe" then
+		return {
+			{material, material, ""},
+			{"", "group:stick", ""},
+			{"", "group:stick", ""},
+		}
+	end
 end
 
 local function add_ore(modname, description, mineral_name, oredef)
@@ -221,19 +228,13 @@ local function add_ore(modname, description, mineral_name, oredef)
 			farming.register_hoe(fulltool_name, tdef)
 		end
 
-		-- Hoe registration is handled above.
-		-- There are no crafting recipes for hoes, as they have been
-		-- deprecated from Minetest Game:
-		-- https://github.com/minetest/minetest_game/commit/9c459e77a
-		if tool_name ~= "hoe" then
-			minetest.register_tool(fulltool_name, tdef)
+		minetest.register_tool(fulltool_name, tdef)
 
-			if oredef.makes.ingot then
-				minetest.register_craft({
-					output = fulltool_name,
-					recipe = get_recipe(ingot, tool_name)
-				})
-			end
+		if oredef.makes.ingot then
+			minetest.register_craft({
+				output = fulltool_name,
+				recipe = get_recipe(ingot, tool_name)
+			})
 		end
 
 		-- Toolranks support

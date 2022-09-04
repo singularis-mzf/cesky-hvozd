@@ -11,6 +11,8 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 basic_materials = {}
 basic_materials.mod = { author = "Vanessa Dannenberg" }
 
+minetest.register_alias_force("mesecons_materials:silicon", "basic_materials:silicon")
+
 dofile(modpath .. "/nodes.lua")
 dofile(modpath .. "/craftitems.lua")
 dofile(modpath .. "/crafts.lua")

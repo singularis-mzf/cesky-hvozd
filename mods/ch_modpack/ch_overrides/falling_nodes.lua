@@ -1,8 +1,3 @@
-
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
-
-local modname = minetest.get_current_modname()
-
 -- FALLING NODES
 local falling_nodes = {
 	"building_blocks:fakegrass",
@@ -40,6 +35,4 @@ for _, name in ipairs(falling_nodes) do
 		counter = counter + 1
 	end
 end
-print("["..modname.."] "..counter.." falling nodes added")
-
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+print("["..minetest.get_current_modname().."] "..counter.." falling nodes added")

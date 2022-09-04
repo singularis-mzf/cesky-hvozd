@@ -172,4 +172,13 @@ advtrains.register_wagon("construction_train", {
 	end,
 }, S("Construction train"), "advtrains_subway_wagon_inv.png")
 
+minetest.register_craft({
+	output = "advtrains:construction_train",
+	recipe = {
+		{"default:steelblock", "default:steelblock", "default:steelblock"},
+		{"default:steelblock", "", "default:steelblock"},
+		{"", "default:gravel", ""},
+	},
+})
+
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

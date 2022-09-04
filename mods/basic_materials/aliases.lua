@@ -17,7 +17,6 @@ minetest.register_alias("homedecor:motor",                  "basic_materials:mot
 minetest.register_alias("technic:motor",                    "basic_materials:motor")
 minetest.register_alias("homedecor:heating_element",        "basic_materials:heating_element")
 minetest.register_alias("homedecor:power_crystal",          "basic_materials:energy_crystal_simple")
-minetest.register_alias_force("mesecons_materials:silicon", "basic_materials:silicon")
 
 
 minetest.register_alias("homedecor:copper_wire",           "basic_materials:copper_wire")

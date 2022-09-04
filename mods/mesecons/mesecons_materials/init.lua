@@ -27,12 +27,14 @@ minetest.register_craft({
 })
 
 -- Silicon
+-- minetest.register_alias("mesecons_materials:silicon", "basic_materials:silicon")
+--[[
 minetest.register_craftitem("mesecons_materials:silicon", {
 	image = "mesecons_silicon.png",
 	on_place_on_ground = minetest.craftitem_place_item,
 	description="křemík (mesespoje)",
 })
-
+]]
 minetest.register_craft({
 	output = "mesecons_materials:silicon 4",
 	recipe = {
@@ -40,4 +42,5 @@ minetest.register_craft({
 		{"group:sand", "mesecons_gamecompat:steel_ingot"},
 	}
 })
+
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
