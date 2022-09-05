@@ -270,6 +270,12 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/bonemeal/)
 
+## Books (books)
+
+* Zdroj: [https://github.com/everamzah/books](https://github.com/everamzah/books), revize fa9c5507f5b04f4949d831e0819b5519c2f20208
+* Původní licence: LGPLv2.1+
+* Licence úprav: LGPLv2.1+
+
 ## Bridger (bridger)
 
 * Zdroj: [https://github.com/v-rob/bridger](https://github.com/v-rob/bridger), revize f6c5c396055a5cf8cfb0334b0f1053bd4fc65822

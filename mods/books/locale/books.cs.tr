@@ -1,0 +1,15 @@
+# textdomain: books
+
+
+### init.lua ###
+
+@1@n@nby @2=@1@n@nautor/ka: @2
+Admin Pencil=tužka Administrace
+Allow player to edit books with the Admin Pencil=umožnit postavě upravovat knihy tužkou Administrace
+Book Closed=zavřená kniha
+Book Open=otevřená kniha
+Contents:=Text knihy :
+Owner:=vlastník/ice :
+Page @1 of @2=str. @1 z @2
+Save=Uložit
+Title:=Název knihy :
