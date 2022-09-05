@@ -44,6 +44,8 @@ dofile(modpath .. "/hotbar.lua")
 dofile(modpath .. "/vgroups.lua")
 dofile(modpath .. "/pryc.lua") -- : data, lib, chat, privs
 dofile(modpath .. "/teleportace.lua") -- : data, lib, chat, privs, timers
+-- dofile(modpath .. "/creative_inventory.lua") -- : lib
+
 
 -- KOHOUT: při přechodu mezi dnem a nocí přehraje zvuk
 -- TODO: přehrávat, jen když je postava na povrchu (tzn. ne v hlubokém podzemí)
