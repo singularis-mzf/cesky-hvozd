@@ -723,7 +723,7 @@ resp. *ostatní\_zdroje*.
 * Zdroj: [https://github.com/fluxionary/minetest-smartshop](https://github.com/fluxionary/minetest-smartshop), revize a16d56427c0795ae6ec02db7030d78deff219df7
 * Původní licence: AGPLv3 pro kód, CC BY-SA 3.0 pro textury
 * Licence úprav: AGPLv3 pro kód, CC BY-SA 3.0 pro ostatní
-* [ContentDB](https://content.minetest.net/packages/AiTechEye/smartshop/)
+* [ContentDB](https://content.minetest.net/packages/rheo/smartshop/)
 
 ## Solid Color (solidcolor)
 
@@ -825,9 +825,9 @@ resp. *ostatní\_zdroje*.
 
 ## Wielded Light (wielded\_light)
 
-* Zdroj: [https://github.com/minetest-mods/wielded\_light](https://github.com/minetest-mods/wielded\_light), revize 1646439ac4924f534af05d639af900d1d44506cd
+* Zdroj: [https://github.com/minetest-mods/wielded\_light](https://github.com/minetest-mods/wielded\_light), revize b5236562af9772dff8522fe2bda5b5f738e81b88
 * Původní licence: GPL-3
-* Licence úprav: (mod je zatím bez úprav)
+* Licence úprav: GPL-3
 * [ContentDB](https://content.minetest.net/packages/bell07/wielded\_light/)
 
 ## Windmill (windmill)
