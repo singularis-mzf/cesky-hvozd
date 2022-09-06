@@ -424,9 +424,17 @@ function ui.apply_filter(player, filter, search_dir)
 			return llocaldesc and string.find(llocaldesc, lfilter)
 		end
 	end
-	ui.filtered_items_list[player_name]={}
-	local category = ui.current_category[player_name] or 'all'
-	if category == 'all' then
+	local filtered_items_list = {}
+
+	for _, name in ipairs(ch_core.creative_inventory.items_by_order) do
+		local def = minetest.registered_items[name]
+		if ffilter(name, def) then
+			table.insert(filtered_items_list, name)
+		end
+	end
+	ui.filtered_items_list[player_name] = filtered_items_list
+	--[[ local category = ui.current_category[player_name] or 'all'
+	--if category == 'all' then
 		for name, def in pairs(minetest.registered_items) do
 			if valid_def(def)
 			and ffilter(name, def) then
@@ -452,6 +460,7 @@ function ui.apply_filter(player, filter, search_dir)
 		end
 	end
 	table.sort(ui.filtered_items_list[player_name])
+	]]
 	ui.filtered_items_list_size[player_name] = #ui.filtered_items_list[player_name]
 	ui.current_index[player_name] = 1
 	ui.activefilter[player_name] = filter

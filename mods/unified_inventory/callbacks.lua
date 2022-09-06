@@ -15,8 +15,11 @@ minetest.register_on_joinplayer(function(player)
 	local player_name = player:get_player_name()
 	unified_inventory.players[player_name] = {}
 	unified_inventory.current_index[player_name] = 1 -- Item (~page) index
-	unified_inventory.filtered_items_list[player_name] =
-		unified_inventory.items_list
+
+	-- fill the list from ch_core instead of the default list:
+	ch_core.update_creative_inventory()
+	unified_inventory.filtered_items_list[player_name] = ch_core.creative_inventory.items_by_order -- unified_inventory.items_list
+
 	unified_inventory.activefilter[player_name] = ""
 	unified_inventory.active_search_direction[player_name] = "nochange"
 	unified_inventory.current_searchbox[player_name] = ""

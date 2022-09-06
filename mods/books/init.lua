@@ -171,6 +171,7 @@ minetest.register_node(":default:book_open", {
 		"books_book_open_front.png",	-- Back
 		"books_book_open_front.png"	-- Front
 	},
+	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -200,6 +201,7 @@ minetest.register_node(":default:book_closed", {
 		"books_book_closed_front.png^[transformFX",	-- Back
 		"books_book_closed_front.png"	-- Front
 	},
+	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",

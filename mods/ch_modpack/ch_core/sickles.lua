@@ -3,7 +3,7 @@ local sickle_sounds = {breaks = "default_tool_breaks"}
 local sickle_groups = {sickle = 1}
 
 minetest.register_tool("ch_core:sickle_wood", {
-	description = "Dřevěný srp",
+	description = "dřevěný srp",
 	inventory_image = "ch_core_sickle_wood.png",
 	tool_capabilities = {
 		full_punch_interval = 1.4,
@@ -16,7 +16,7 @@ minetest.register_tool("ch_core:sickle_wood", {
 	groups = sickle_groups,
 })
 minetest.register_tool("ch_core:sickle_stone", {
-	description = "Kamenný srp",
+	description = "kamenný srp",
 	inventory_image = "ch_core_sickle_stone.png",
 	tool_capabilities = {
 		full_punch_interval = 1.3,
@@ -29,7 +29,7 @@ minetest.register_tool("ch_core:sickle_stone", {
 	groups = sickle_groups,
 })
 minetest.register_tool("ch_core:sickle_steel", {
-	description = "Železný srp",
+	description = "železný srp",
 	inventory_image = "ch_core_sickle_steel.png",
 	tool_capabilities = {
 		full_punch_interval = 1.2,
@@ -42,7 +42,7 @@ minetest.register_tool("ch_core:sickle_steel", {
 	groups = sickle_groups,
 })
 minetest.register_tool("ch_core:sickle_mese", {
-	description = "Meseový srp",
+	description = "meseový srp",
 	inventory_image = "ch_core_sickle_mese.png",
 	tool_capabilities = {
 		full_punch_interval = 1.0,

@@ -4,6 +4,10 @@ local fixed_partitions = {
 	{ name = "empty_buckets", in_creative_inventory = true },
 }
 
+local fixed_items_to_partition = {
+	["bucket:bucket_empty"] = "empty_buckets",
+}
+
 ch_core.creative_inventory = {
 	items_by_order = {},
 	-- partitions_by_order = {},
@@ -14,21 +18,42 @@ ch_core.creative_inventory = {
 			items_by_order = {},
 		},
 	},
-	candidates = {}, -- item_name => partition
+	candidates = fixed_items_to_partition, -- item_name => partition
 	not_initialized = true,
 }
 ch_core.creative_inventory.partitions_by_order = { ch_core.creative_inventory.partitions_by_name.others }
+fixed_items_to_partition = nil
 
-local function sort_items(items)
+local function sort_items(items, group_by_mod)
 	-- items is expected to be a sequence of item names, e. g. {"default:cobble", "default:stick", ...}
 	-- the original list is not changed; the new list is returned
 	local key_to_item = {}
 	local keys = {}
+	local counter_nil = 0
+	local counter_diff = 0
+	local counter_same = 0
 	for _, item in ipairs(items) do
 		local def = minetest.registered_items[item]
-		local desc = def and def.description
-		-- print("description = <<"..desc..">>, translated to <<"..(minetest.get_translated_string("cs", desc) or "nil")..">>")
-		local tdesc = string.lower(ch_core.odstranit_diakritiku(minetest.get_translated_string("cs", desc) or ""))
+		local desc = (def and def.description) or ""
+		local tdesc = minetest.get_translated_string("cs", desc)
+		if tdesc == nil then
+			counter_nil = counter_nil + 1
+			tdesc = ""
+		else
+			if tdesc == desc then
+				counter_same = counter_same + 1
+				minetest.log("info", "a description \""..desc.."\" not changed in the translation") -- DEBUG
+			else
+				counter_diff = counter_diff + 1
+			end
+			tdesc = string.lower(ch_core.odstranit_diakritiku(tdesc))
+		end
+		if group_by_mod then
+			local index = item:find(":")
+			if index then
+				tdesc = item:sub(1, index)..tdesc
+			end
+		end
 		while key_to_item[tdesc] ~= nil do
 			tdesc = tdesc .. "_"
 		end
@@ -43,35 +68,26 @@ local function sort_items(items)
 			minetest.log("error", "Internal error of sort_items() at index "..i.."!")
 		end
 	end
+	minetest.log("info", "sort_items() stats: "..counter_diff.." differents, "..counter_same.." same, "..counter_nil.." nil, "..(counter_diff + counter_same + counter_nil).." total, count = "..count..".")
 	return keys
 end
 
---[[
-local function get_sorted_sequence(items)
-	-- items are expected to be a map: sorting key => item name
-	-- items will be unchanged
-	-- returns a sequence of values (item names) ordered by keys
-	local result = {}
-	for key, _ in pairs(items) do
-		table.insert(result, key)
-	end
-	table.sort(result)
-	local count = #result
-	for i = 1, count do
-		result[i] = items[result[i] ]
-	
-
-	end
-	return result
-end ]]
-
 function ch_core.set_ci_partition(item, partition)
 	ch_core.creative_inventory.candidates[item] = partition
+	minetest.log("verbose", "item "..item.." set to partition "..partition)
 	return true
 end
 
--- should be called when the first player logs in
-function ch_core.update_creative_inventory()
+local creative_inventory_initialized = false
+
+-- should be called when any player logs in
+function ch_core.update_creative_inventory(force_update)
+	if creative_inventory_initialized and not force_update then
+		minetest.log("verbose", "will not update_creative_inventory(): "..(creative_inventory_initialized and "true" or "false").." "..(force_update and "true" or "false"))
+		return false
+	end
+	minetest.log("verbose", "will update_creative_inventory()")
+
 	local old_ci = ch_core.creative_inventory
 	local item_to_partition = {} -- item => partition
 	local timestamps = {minetest.get_us_time()}
@@ -101,6 +117,8 @@ function ch_core.update_creative_inventory()
 	for item_name, partition_name in pairs(old_ci.candidates) do
 		if partition_name ~= "others" and minetest.registered_items[item_name] then
 			item_to_partition[item_name] = partition_name
+		else
+			minetest.log("info", "Candidate item "..item_name.." for partition "..partition_name.." ignored, because not registered.")
 		end
 	end
 	table.insert(timestamps, minetest.get_us_time())
@@ -118,6 +136,7 @@ function ch_core.update_creative_inventory()
 			table.insert(partitions_by_order, partition)
 		end
 		table.insert(partition.items_by_order, item)
+		print("item "..item.." > partition "..partition_name)
 	end
 	table.insert(timestamps, minetest.get_us_time())
 
@@ -139,8 +158,10 @@ function ch_core.update_creative_inventory()
 	-- 5. seřaď předměty v každém oddílu v pořadí a spoj je do kompletního pole items_by_order
 	local items_by_order = {}
 	for _, partition in ipairs(partitions_by_order) do
-		partition.items_by_order = sort_items(partition.items_by_order)
-		table.insert_all(items_by_order, partition.items_by_order)
+		if partition.in_creative_inventory ~= false then
+			partition.items_by_order = sort_items(partition.items_by_order, partition.name == "others")
+			table.insert_all(items_by_order, partition.items_by_order)
+		end
 	end
 
 	local new_ci = {
@@ -155,6 +176,7 @@ function ch_core.update_creative_inventory()
 	-- commit
 	ch_core.creative_inventory = new_ci
 	minetest.log("action", "ch_core creative_inventory updated: "..#items_by_order.." items in "..#partitions_by_order.." partitions")
+	creative_inventory_initialized = true
 	return new_ci
 end
 
