@@ -28,9 +28,7 @@ dofile(modpath.."/spinning_machine.lua")
 dofile(modpath.."/loom.lua")
 dofile(modpath.."/dirty_water.lua")
 dofile(modpath.."/dye_machine.lua")
-if minetest.get_modpath("skinsdb") then
-  dofile(modpath.."/mannequin.lua")
-end
+dofile(modpath.."/mannequin.lua")
 dofile(modpath.."/sewing_table.lua")
 dofile(modpath.."/crafting.lua")
 

@@ -228,7 +228,8 @@ minetest.register_node("clothing:mannequin_stand", {
 minetest.register_entity("clothing:mannequin_entity", {
   physical = true,
   visual = "mesh",
-  mesh = "skinsdb_3d_armor_character_5.b3d",
+  --mesh = "skinsdb_3d_armor_character_5.b3d",
+  mesh = "clothing_mannequin.obj",
   visual_size = {x=1, y=1},
   collisionbox = {0,0,0,0,0,0},
   textures = {"clothing_mannequin.png", "clothing_transparent.png", "clothing_transparent.png", "clothing_transparent.png"},

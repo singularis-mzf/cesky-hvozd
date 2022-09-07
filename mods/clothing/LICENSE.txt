@@ -21,6 +21,8 @@ SFENCE - CC BY-SA 3.0:
   clothing_inv_*_second_color.png
   clothing_character_male.png -> based on Sachou205 character by Sachour205 (http://minetest.fensta.bplaced.net/#author=Sachou205) and shorts from ts_skins mod by Thomas S. (https://github.com/Thomas--S/ts_skins)
 
+  clothing_mannequin.obj -> based on player model from 3d_armor_flyswim (CC-BY-SA 3.0, by sirrobzeroone)
+
 Other Textures: Stuart Jones - CC-BY-SA 3.0
 
 SFENCE - CC BY-SA 4.0:

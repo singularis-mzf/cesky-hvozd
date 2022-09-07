@@ -330,7 +330,7 @@ resp. *ostatní\_zdroje*.
 
 ## Clothing 2 (clothing)
 
-* Zdroj: [https://github.com/sfence/clothing](https://github.com/sfence/clothing), revize dabac3f5ece2766a570c39b0885c776879d81903
+* Zdroj: [https://github.com/sfence/clothing](https://github.com/sfence/clothing), revize 3e27fdbf737f02eb20f66d0a9a009e415e50e584
 * Původní licence: LGPLv2.1 pro kód, převážně CC-BY-SA-3.0 pro média (také CC-BY-SA-4.0 a CC0)
 * Licence úprav: LGPLv2.1 pro kód, CC-BY-SA-3.0 pro média
 * [ContentDB](https://content.minetest.net/packages/SFENCE/clothing/)
