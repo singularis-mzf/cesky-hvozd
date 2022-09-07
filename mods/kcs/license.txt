@@ -4,15 +4,8 @@ Mod by: Singularis
 Textures:
 
 kcs_1h.png: https://commons.wikimedia.org/wiki/File:1_haler_CSK_(1962-1986).png (CC-BY-SA 4.0; author: Arvedui89, adapted by Singularis)
-kcs_5h.png: https://commons.wikimedia.org/wiki/File:5_haleru_CSK_(1962-1976).png (CC-BY-SA 4.0; author: Arvedui89, adapted by Singularis)
-kcs_10h.png: https://commons.wikimedia.org/wiki/File:10_haleru_CSK_(1991-1992).png (CC-BY-SA 4.0; author: Arvedui89, adapted by Singularis)
-kcs_50h.png: https://commons.wikimedia.org/wiki/File:50_haleru_CSK_(1991-1992).png (CC-BY-SA 4.0; author: Arvedui89, adapted by Singularis)
 kcs_1kcs.png: https://commons.wikimedia.org/wiki/File:1_koruna_CSK_(1991-1992).png (CC-BY-SA 4.0; author: Arvedui89, adapted by Singularis)
-kcs_5kcs.png: https://commons.wikimedia.org/wiki/File:5_korun_CSK_(1991-1992).png (CC-BY-SA 4.0; author: Arvedui89, adapted by Singularis)
 kcs_1zcs.png: https://commons.wikimedia.org/wiki/File:1_haler_CSK_(1962-1986).png (CC-BY-SA 4.0; author: Arvedui89, adapted by Singularis)
-kcs_10kcs.png: minegeld_10.png from mod Currency (CC-by-SA 4.0, unmodified)
-kcs_50kcs.png: minegeld_50.png from mod Currency (CC-by-SA 4.0, unmodified)
-kcs_100kcs.png minegeld_100.png from mod Currency (CC-by-SA 4.0, unmodified)
 
 ---
 

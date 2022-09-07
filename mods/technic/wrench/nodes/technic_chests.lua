@@ -74,6 +74,7 @@ end
 
 -- Register extra nodes with color marking for gold chest
 
+--[[
 local chest_mark_colors = {
 	'_black',
 	'_blue',
@@ -110,3 +111,4 @@ for i = 1, 15 do
 		owned = true,
 	})
 end
+]]

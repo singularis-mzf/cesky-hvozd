@@ -12,16 +12,9 @@ smartshop.currency = {}
 local currency = smartshop.currency
 
 local known_currency = {
-	["kcs:mince_h01"] = 1,
-	["kcs:mince_h05"] = 5,
-	["kcs:mince_h10"] = 10,
-	["kcs:mince_h50"] = 50,
-	["kcs:mince_kcs01"] = 100,
-	["kcs:mince_kcs05"] = 500,
-	["kcs:bankovka_kcs0010"] = 1000,
-	["kcs:mince_kcs45"] = 4500,
-	["kcs:bankovka_kcs0050"] = 5000,
-	["kcs:bankovka_kcs0100"] = 10000,
+	["kcs:hcs"] = 1,
+	["kcs:kcs"] = 100,
+	["kcs:zcs"] = 10000,
 
     -- for testing code
     ["smartshop:currency_1"]=1,
