@@ -42,6 +42,7 @@ dofile(modpath .. "/sickles.lua")
 dofile(modpath .. "/timers.lua") -- : data, chat, hud
 dofile(modpath .. "/hotbar.lua")
 dofile(modpath .. "/vgroups.lua")
+dofile(modpath .. "/wielded_light.lua") -- : data, lib, nodes
 dofile(modpath .. "/pryc.lua") -- : data, lib, chat, privs
 dofile(modpath .. "/teleportace.lua") -- : data, lib, chat, privs, timers
 dofile(modpath .. "/creative_inventory.lua") -- : lib
@@ -64,11 +65,14 @@ local head_bone_angle = vector.new(0, 0, 0)
 local emoting = (minetest.get_modpath("emote") and emote.emoting) or {}
 local globstep_dtime_accumulated = 0.0
 local ch_timer_hudbars = ch_core.count_of_ch_timer_hudbars
+local get_us_time = minetest.get_us_time
+local has_wielded_light = minetest.get_modpath("wielded_light")
 
 local function globalstep(dtime)
 	globstep_dtime_accumulated = globstep_dtime_accumulated + dtime
 	ch_core.cas = globstep_dtime_accumulated
 	local ch_core_cas = ch_core.cas
+	local us_time = get_us_time()
 
 	-- DEN: 5:30 .. 19:00
 	local tod = get_timeofday()
@@ -199,6 +203,31 @@ local function globalstep(dtime)
 			if horka_zprava and ch_core_cas >= horka_zprava.timeout then
 				online_charinfo.horka_zprava = nil
 				player:set_nametag_attributes(ch_core.compute_player_nametag(online_charinfo, offline_charinfo))
+			end
+
+			-- NASTAVIT OSVĚTLENÍ [data, nodes, wielded_light]
+			local light_slots = has_wielded_light and online_charinfo.wielded_lights
+			if light_slots then
+				local new_light_level = 0
+				for _, light_level in pairs(light_slots) do
+					if light_level > new_light_level then
+						new_light_level = light_level
+					end
+				end
+				if new_light_level ~= online_charinfo.light_level then
+					minetest.log("info", "Light level of player "..player_name.." changed: "..online_charinfo.light_level.." to "..new_light_level)
+					if new_light_level > 0 then
+						wielded_light.track_user_entity(player, "ch_core", string.format("ch_core:light_%02d", new_light_level))
+					else
+						wielded_light.track_user_entity(player, "ch_core", "default:cobble")
+					end
+					online_charinfo.light_level = new_light_level
+					online_charinfo.light_level_timestamp = us_time
+				elseif new_light_level > 0 and us_time - online_charinfo.light_level_timestamp > 5000000 then
+					-- refresh non-zero light level each 5 seconds
+					wielded_light.track_user_entity(player, "ch_core", string.format("ch_core:light_%02d", new_light_level))
+					online_charinfo.light_level_timestamp = us_time
+				end
 			end
 		end
 	end

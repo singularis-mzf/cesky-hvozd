@@ -8,7 +8,7 @@
 @1 Block=blok @1
 @1 Pickaxe=@1 krumpáč
 @1 Shovel=@1 lopata
-@1 Axe=@1 sekyra
+@1 Axe=@1 sekera
 @1 Sword=@1 meč
 @1 Hoe=@1 motyka
 
@@ -26,7 +26,7 @@ Copper Ingot=ingot mědi
 Copper Block=blok mědi
 Copper Pickaxe=měděný krumpáč
 Copper Shovel=měděná lopata
-Copper Axe=měděná sekyra
+Copper Axe=měděná sekera
 Copper Sword=měděný meč
 Copper Hoe=měděná motyka
 
@@ -36,7 +36,7 @@ Tin Ingot=ingot cínu
 Tin Block=blok cínu
 Tin Pickaxe=cínový krumpáč
 Tin Shovel=cínová lopata
-Tin Axe=cínová sekyra
+Tin Axe=cínová sekera
 Tin Sword=cínový meč
 Tin Hoe=cínová motyka
 
@@ -48,7 +48,7 @@ Silver Ingot=ingot stříbra
 Silver Block=blok stříbra
 Silver Pickaxe=stříbrný krumpáč
 Silver Shovel=stříbrná lopata
-Silver Axe=stříbrná sekyra
+Silver Axe=stříbrná sekera
 Silver Sword=stříbrný meč
 Silver Hoe=stříbrná motyka
 
@@ -58,7 +58,7 @@ Gold Ingot=ingot zlata
 Gold Block=blok zlata
 Gold Pickaxe=zlatý krumpáč
 Gold Shovel=zlatá lopata
-Gold Axe=zlatá sekyra
+Gold Axe=zlatá sekera
 Gold Sword=zlatý meč
 Gold Hoe=zlatá motyka
 
@@ -68,6 +68,6 @@ Mithril Ingot=ingot mitrilu
 Mithril Block=blok mitrilu
 Mithril Pickaxe=mitrilový krumpáč
 Mithril Shovel=mitrilová lopata
-Mithril Axe=mitrilová sekyra
+Mithril Axe=mitrilová sekera
 Mithril Sword=mitrilový meč
 Mithril Hoe=mitrilová motyka

@@ -45,27 +45,21 @@ local function check_for_flashlight(player)
 	local flashlights = ch_core.predmety_na_liste(player, true)["technic:flashlight"]
 
 	if flashlights then
-		if minetest.is_creative_enabled(player:get_player_name()) then
-			return true
-		end
+		local is_creative = minetest.is_creative_enabled(player:get_player_name())
 		local inv = player:get_inventory()
 		local hotbar = inv:get_list("main")
-		local i = 1
-		local flashlight_index = flashlights[i]
-
-		while flashlight_index do
+		for i, flashlight_index in ipairs(flashlights) do
 			local item = hotbar[flashlight_index]
 			local meta = minetest.deserialize(item:get_metadata())
 			local charge = meta and meta.charge
 			if charge and charge >= 2 then
-				meta.charge = charge - 2
-				technic.set_RE_wear(item, meta.charge, flashlight_max_charge)
-				item:set_metadata(minetest.serialize(meta))
-				inv:set_stack("main", flashlight_index, item)
+				if not is_creative then
+					meta.charge = charge - 2
+					technic.set_RE_wear(item, meta.charge, flashlight_max_charge)
+					item:set_metadata(minetest.serialize(meta))
+					inv:set_stack("main", flashlight_index, item)
+				end
 				return true
-			else
-				i = i + 1
-				flashlight_index = flashlights[i]
 			end
 		end
 	end
@@ -74,17 +68,29 @@ local function check_for_flashlight(player)
 end
 
 if has_wielded_light then
-	wielded_light.register_item_light("technic:light", minetest.LIGHT_MAX, false)
+	-- wielded_light.register_item_light("technic:light", minetest.LIGHT_MAX, false)
 
-	local function wl_player_lightstep(player)
+	--[[ local function wl_player_lightstep(player)
 		if check_for_flashlight(player) then
 			wielded_light.track_user_entity(player, "flashlight", "technic:light")
 		else
 			wielded_light.track_user_entity(player, "flashlight", "default:cobble")
 		end
-	end
+	end ]]
 
-	wielded_light.register_player_lightstep(wl_player_lightstep)
+	-- wielded_light.register_player_lightstep(wl_player_lightstep)
+	minetest.register_globalstep(function(dtime)
+		for i, player in pairs(minetest.get_connected_players()) do
+			local player_name = player:get_player_name()
+			local flashlight_weared = check_for_flashlight(player)
+			if flashlight_weared then
+				ch_core.set_player_light(player_name, "flashlight", minetest.LIGHT_MAX)
+			else
+				ch_core.set_player_light(player_name, "flashlight", 0)
+			end
+		end
+	end)
+
 else
 	local player_positions = {}
 	local was_wielding = {}

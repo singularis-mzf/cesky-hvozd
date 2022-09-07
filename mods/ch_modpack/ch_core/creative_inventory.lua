@@ -147,9 +147,11 @@ function ch_core.update_creative_inventory(force_update)
 		in_creative_inventory = true,
 		items_by_order = other_items,
 	}
+	local get_item_group = minetest.get_item_group
 	table.insert(partitions_by_order, partitions_by_name.others)
 	for item_name, item_def in pairs(minetest.registered_items) do
-		if not item_to_partition[item_name] and item_def.description and item_def.description ~= "" and (not item_def.groups or not item_def.groups.not_in_creative_inventory) then
+		local old_count = #other_items
+		if not item_to_partition[item_name] and get_item_group(item_name, "not_in_creative_inventory") == 0 and (item_def.description or "") ~= "" then
 			table.insert(other_items, item_name)
 		end
 	end

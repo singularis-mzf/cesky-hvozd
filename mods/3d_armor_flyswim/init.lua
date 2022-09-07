@@ -156,7 +156,7 @@ minetest.register_globalstep(function()
         -- this speed chunk load issues become more noticable --		
 		if vel.y < fall_tv  and controls.sneak ~= true then			
 			local tv_offset_y = -1*((-1*(vel.y+1)) + vel.y)               --(-1*(vel.y+1)) - catch those holding shift and over acceleratering when falling so dynamic end point so we dont bounce back up		
-				player:add_player_velocity({x=0, y=tv_offset_y, z=0})	
+				player:add_velocity({x=0, y=tv_offset_y, z=0})	
 		end
 		
 		-- Check for Swinging/attacking and set string

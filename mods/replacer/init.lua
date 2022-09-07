@@ -298,6 +298,7 @@ replacer.replace = function( itemstack, user, pointed_thing, mode )
     end
 
 
+--[[
 minetest.register_craft({
         output = 'replacer:replacer',
         recipe = {
@@ -305,6 +306,16 @@ minetest.register_craft({
                 { '',              'default:stick', '' },
                 { '',              '',              'default:chest' },
         }
+})
+]]
+
+minetest.register_craft({
+	output = "replacer:replacer",
+	recipe = {
+		{"default:mese", "", "moreores:mithril_ingot"},
+		{"", "technic:mining_drill", ""},
+		{"moreores:mithril_ingot", "", "default:mese"},
+	},
 })
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

@@ -66,6 +66,8 @@ function ch_core.get_joining_online_charinfo(player_name)
 		-- the first call => create a new online_charinfo
 		result = {
 			join_timestamp = ch_core.cas,
+			light_level = 0,
+			light_level_timestamp = minetest.get_us_time(),
 			player_name = player_name,
 		}
 		ch_core.online_charinfo[player_name] = result
