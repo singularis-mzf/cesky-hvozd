@@ -46,6 +46,7 @@ end
 local mods = {
 	"default",
 	"digtron",
+	"smartshop",
 	"technic_chests",
 }
 
