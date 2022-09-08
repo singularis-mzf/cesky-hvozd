@@ -638,7 +638,7 @@ end
 
 function shop_class:update_info()
     local owner = self:get_owner()
-    local lines = {S("(obchodní terminál, vlastník/ice: @1)", owner)}
+    local lines = {S("(obchodní terminál, vlastník/ice: @1)", ch_core.prihlasovaci_na_zobrazovaci(owner))}
 
     local info_lines = {}
     for i = 1, 10 do

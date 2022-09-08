@@ -72,7 +72,7 @@ function api.try_purchase(player, shop, i)
 	end
 
 	local reason = api.get_purchase_fail_reason(player, shop, i)
-	smartshop.chat_send_player(player, ("Cannot exchange: %s"):format(reason))
+	smartshop.chat_send_player(player, ("Nemohu směnit: %s"):format(reason))
 
 	if reason == "Shop is sold out" then
 		api.on_shop_empty(player, shop, i)
