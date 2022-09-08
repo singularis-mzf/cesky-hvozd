@@ -12,7 +12,7 @@ smartshop.currency = {}
 local currency = smartshop.currency
 
 local known_currency = {
-	["kcs:hcs"] = 1,
+	["kcs:h"] = 1,
 	["kcs:kcs"] = 100,
 	["kcs:zcs"] = 10000,
 
