@@ -5,7 +5,8 @@ local S, NS = dofile(MP.."/intllib.lua")
 --Build up the formspec, somewhat complicated due to multiple mod options
 local pipeworks_path = minetest.get_modpath("pipeworks")
 local doc_path = minetest.get_modpath("doc")
-local formspec_width = 1.5
+local formspec_width = 2
+local ejectnow_timeout = 0.25 -- minimum is 0.1
 
 local ejector_formspec_string = 
 	default.gui_bg ..
@@ -19,16 +20,20 @@ if doc_path then
 	formspec_width = formspec_width + 1.5
 end
 
-local ejector_formspec_string = "size[".. formspec_width .. ",1]" .. ejector_formspec_string
+local ejector_formspec_string = "size[".. formspec_width .. ",1.75]" .. ejector_formspec_string
 
 local ejector_formspec = function(pos, meta)
-	local return_string = ejector_formspec_string
+	local result = {ejector_formspec_string}
+	table.insert(result, "checkbox[0,0.0;autoeject;"..S("Automatic")..";"..meta:get_string("autoeject").."]")
+	table.insert(result, "tooltip[autoeject;" .. S("When checked, will eject items automatically with every Digtron cycle.\nItem ejectors can always be operated manually by punching them.") .. "]")
 	if pipeworks_path then
-		return_string = return_string .. "checkbox[0,0.5;nonpipe;"..S("Eject into world")..";"..meta:get_string("nonpipe").."]" ..
-			"tooltip[nonpipe;" .. S("When checked, will eject items even if there's no pipe to accept it") .. "]"
+		table.insert(result, "checkbox[0,0.5;nonpipe;"..S("Eject into world")..";"..meta:get_string("nonpipe").."]")
+		table.insert(result, "tooltip[nonpipe;" .. S("When checked, will eject items even if there's no pipe to accept it") .. "]")
 	end
-	return return_string .. "checkbox[0,0;autoeject;"..S("Automatic")..";"..meta:get_string("autoeject").."]" ..
-		"tooltip[autoeject;" .. S("When checked, will eject items automatically with every Digtron cycle.\nItem ejectors can always be operated manually by punching them.") .. "]"
+	table.insert(result, "checkbox[0,1.0;ejectnow;"..S("Eject now")..";"..meta:get_string("ejectnow").."]")
+	table.insert(result, "tooltip[ejectnow;"..S("When checked, starts automatic ejection using a timer.").."]")
+
+	return table.concat(result)
 end
 
 local function eject_items(pos, node, player, eject_even_without_pipeworks, layout)
@@ -129,21 +134,22 @@ minetest.register_node("digtron:inventory_ejector", {
 			{-0.1875, -0.1875, 0.3125, 0.1875, 0.1875, 0.5}, -- NodeBox3
 		}
 	},
-	
+
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("autoeject", "true")
+		meta:set_string("ejectnow", "false")
 		meta:set_string("formspec", ejector_formspec(pos, meta))
 	end,
-	
+
 	tube = (function() if pipeworks_path then return {
 		connect_sides = {back = 1}
 	} end end)(),
-	
+
 	on_punch = function(pos, node, player)
 		eject_items(pos, node, player, true)
 	end,
-	
+
 	execute_eject = function(pos, node, player, layout)
 		local meta = minetest.get_meta(pos)
 		eject_items(pos, node, player, meta:get_string("nonpipe") == "true", layout)
@@ -151,24 +157,55 @@ minetest.register_node("digtron:inventory_ejector", {
 	
 	on_receive_fields = function(pos, formname, fields, sender)
 		local meta = minetest.get_meta(pos)
-		
+
 		if fields.help and minetest.get_modpath("doc") then --check for mod in case someone disabled it after this digger was built
 			local node_name = minetest.get_node(pos).name
 			minetest.after(0.5, doc.show_entry, sender:get_player_name(), "nodes", node_name, true)
 		end
-		
+
 		if fields.nonpipe then
 			meta:set_string("nonpipe", fields.nonpipe)
 		end
-		
+
 		if fields.autoeject then
 			meta:set_string("autoeject", fields.autoeject)
 		end
-		
+
+		if fields.ejectnow then
+			local timer = minetest.get_node_timer(pos)
+			if fields.ejectnow == "true" then
+				meta:set_string("ejectnow", "true")
+				meta:set_string("ejectnow_player", sender:get_player_name())
+				timer:set(ejectnow_timeout, ejectnow_timeout - 0.1)
+			else
+				timer:stop()
+				meta:set_string("ejectnow", "false")
+				meta:set_string("ejectnow_player", "")
+			end
+		end
+
 		meta:set_string("formspec", ejector_formspec(pos, meta))
-		
+
 	end,
-	
+
+	on_timer = function(pos, elapsed)
+		local fail = false
+		local meta = minetest.get_meta(pos)
+		local node = minetest.get_node(pos)
+		local timer = minetest.get_node_timer(pos)
+		local player = minetest.get_player_by_name(meta:get_string("ejectnow_player"))
+		fail = not meta or node.name ~= "digtron:inventory_ejector" or not player or meta:get_string("ejectnow") ~= "true" or not minetest.check_player_privs(player, "interact")
+		fail = fail or not eject_items(pos, node, player, meta:get_string("nonpipe") == "true")
+		if fail then
+			timer:stop()
+			meta:set_string("ejectnow", "false")
+			meta:set_string("ejectnow_player", "")
+			meta:set_string("formspec", ejector_formspec(pos, meta))
+		else
+			timer:start(ejectnow_timeout)
+		end
+	end,
+
 	after_place_node = (function() if pipeworks_path then return pipeworks.after_place end end)(),
 	after_dig_node = (function() if pipeworks_path then return pipeworks.after_dig end end)()
 })
