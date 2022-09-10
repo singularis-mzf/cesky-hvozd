@@ -564,6 +564,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: GPLv3
 * [ContentDB](https://content.minetest.net/packages/Linuxdirk/redef/)
 
+## Mobkit (mobkit)
+
+* Zdroj: [https://github.com/TheTermos/mobkit](https://github.com/TheTermos/mobkit), revize ddea141b081e087900a6acc5a2a90e8d4e564295
+* Původní licence: MIT
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/Termos/mobkit/)
+
 ## Mobs Animal (mobs\_animal)
 
 * Zdroj: [https://notabug.org/TenPlus1/mobs\_animal](https://notabug.org/TenPlus1/mobs\_animal), revize cca7169b9e88c4795ce69dd4282ebea9f921c6b1
