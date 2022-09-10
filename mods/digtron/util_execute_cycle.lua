@@ -122,7 +122,7 @@ digtron.execute_dig_cycle = function(pos, clicker)
 
 	local layout = DigtronLayout.create(pos, clicker)
 
-	local status_text, return_code = neighbour_test(layout, status_text, dir)
+	local status_text, return_code = neighbour_test(layout, status_text, (not digtron_creative_mode) and dir)
 	if return_code ~= 0 then
 		return pos, status_text, return_code
 	end
@@ -431,6 +431,7 @@ end
 -- Simplified version of the above method that only moves, and doesn't execute diggers or builders.
 digtron.execute_move_cycle = function(pos, clicker)
 	local meta = minetest.get_meta(pos)
+	-- local digtron_creative_mode = minetest.check_player_privs(clicker, "creative") and meta:get_string("creative_mode") == "true" -- not used here
 	local layout = DigtronLayout.create(pos, clicker)
 
 	local status_text = ""
@@ -495,7 +496,7 @@ digtron.execute_downward_dig_cycle = function(pos, clicker)
 
 	local layout = DigtronLayout.create(pos, clicker)
 
-	local status_text, return_code = neighbour_test(layout, status_text, dir)
+	local status_text, return_code = neighbour_test(layout, status_text, (not digtron_creative_mode) and dir)
 	if return_code ~= 0 then
 		return pos, status_text, return_code
 	end
@@ -597,7 +598,9 @@ digtron.execute_downward_dig_cycle = function(pos, clicker)
 	pos = vector.add(pos, dir)
 	meta = minetest.get_meta(pos)
 	if move_player then
-		clicker:move_to(vector.add(clicker:get_pos(), dir), true)
+		clicker:add_velocity(vector.multiply(clicker:get_velocity(), -1.0))
+		clicker:set_pos(vector.add(clicker:get_pos(), dir))
+		-- clicker:move_to(vector.add(clicker:get_pos(), dir), true)
 	end
 	
 	-- store or drop the products of the digger heads

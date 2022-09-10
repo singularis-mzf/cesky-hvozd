@@ -930,10 +930,6 @@ resp. *ostatní\_zdroje*.
 
 * Licence: kód LGPLv2.1, média: různé svobodné (viz license.txt)
 
-## ch\_falling\_farming
-
-* Licence: kód LGPLv2.1, média: CC-BY-SA-3.0
-
 ## ch\_overrides
 
 * Licence: kód LGPLv2.1
