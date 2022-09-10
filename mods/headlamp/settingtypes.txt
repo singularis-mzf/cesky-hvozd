@@ -1,0 +1,5 @@
+# If enabled, all turned-on headlamps in players' inventories will drain their battery, otherwise only the wielded and worn headlamps will be drained.
+headlamp_drain_inventory (Drain battery in inventory) bool false
+
+# The battery lifetime of headlamps, in minutes.
+headlamp_battery_life (Battery lifetime) int 180

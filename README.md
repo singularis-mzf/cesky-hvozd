@@ -469,6 +469,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: GPLv3 pro kód, CC-BY-SA-4.0 pro ostatní
 * [ContentDB](https://content.minetest.net/packages/Piezo\_/hangglider/)
 
+## Headlamp (headlamp)
+
+* Zdroj: [https://github.com/OgelGames/headlamp](https://github.com/OgelGames/headlamp), revize 3bda65f4ef099b96d323ef9b815280f7a65ec132
+* Původní licence: MIT pro kód, CC-BY-SA-4.0 pro média
+* Licence úprav: MIT pro kód, CC-BY-SA-4.0 pro média
+* [ContentDB](https://content.minetest.net/packages/OgelGames/headlamp/)
+
 ## Hiking Redo (hiking)
 
 * Zdroj: [https://gitlab.com/h2mm/hiking](https://gitlab.com/h2mm/hiking), revize e2fad69f04e7533a4dd25b3946d9ddee77433ab9
