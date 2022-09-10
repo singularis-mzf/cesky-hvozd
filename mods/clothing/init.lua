@@ -173,4 +173,12 @@ minetest.register_on_joinplayer(function(player)
 		clothing:set_player_clothing(minetest.get_player_by_name(name))
 	end, name)
 end)
+
+-- custom API method
+-- self: clothing; player: player ObjectRef; inv: clothing inventory (detached)
+function clothing.update_player_skin_from_inv(self, player, inv)
+	save_clothing_metadata(player, inv)
+	clothing:set_player_clothing(player)
+end
+
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

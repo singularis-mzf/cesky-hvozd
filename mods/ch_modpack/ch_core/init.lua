@@ -67,6 +67,18 @@ local globstep_dtime_accumulated = 0.0
 local ch_timer_hudbars = ch_core.count_of_ch_timer_hudbars
 local get_us_time = minetest.get_us_time
 local has_wielded_light = minetest.get_modpath("wielded_light")
+local custom_globalsteps = {}
+
+function ch_core.register_player_globalstep(func, index)
+	if not index then
+		index = #custom_globalsteps + 1
+	end
+	if not func then
+		error("Invalid call to ch_core.register_player_globalstep()!")
+	end
+	custom_globalsteps[index] = func
+	return index
+end
 
 local function globalstep(dtime)
 	globstep_dtime_accumulated = globstep_dtime_accumulated + dtime
@@ -205,7 +217,16 @@ local function globalstep(dtime)
 				player:set_nametag_attributes(ch_core.compute_player_nametag(online_charinfo, offline_charinfo))
 			end
 
+			-- SPUSTIT registrované obslužné funkce
+			local i = 1
+			while custom_globalsteps[i] do
+				custom_globalsteps[i](player, player_name, online_charinfo, offline_charinfo, us_time)
+				i = i + 1
+			end
+
 			-- NASTAVIT OSVĚTLENÍ [data, nodes, wielded_light]
+			-- - provést po proběhnutí registrovaných obslužných funkcí,
+			--   protože ty mohly osvětlení změnit
 			local light_slots = has_wielded_light and online_charinfo.wielded_lights
 			if light_slots then
 				local new_light_level = 0

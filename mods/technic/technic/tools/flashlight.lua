@@ -2,6 +2,7 @@
 -- http://minetest.net/forum/viewtopic.php?id=2621
 
 local flashlight_max_charge = 30000
+local flashlight_consumption = 100
 local S = technic.getter
 local has_wielded_light = minetest.get_modpath("wielded_light")
 
@@ -41,7 +42,7 @@ minetest.register_craft({
 	}
 })
 
-local function check_for_flashlight(player)
+local function check_for_flashlight(player, skip_charge)
 	local flashlights = ch_core.predmety_na_liste(player, true)["technic:flashlight"]
 
 	if flashlights then
@@ -52,9 +53,9 @@ local function check_for_flashlight(player)
 			local item = hotbar[flashlight_index]
 			local meta = minetest.deserialize(item:get_metadata())
 			local charge = meta and meta.charge
-			if charge and charge >= 2 then
-				if not is_creative then
-					meta.charge = charge - 2
+			if charge and charge >= flashlight_consumption then
+				if not skip_charge and not is_creative then
+					meta.charge = charge - flashlight_consumption
 					technic.set_RE_wear(item, meta.charge, flashlight_max_charge)
 					item:set_metadata(minetest.serialize(meta))
 					inv:set_stack("main", flashlight_index, item)
@@ -79,10 +80,17 @@ if has_wielded_light then
 	end ]]
 
 	-- wielded_light.register_player_lightstep(wl_player_lightstep)
+	local charge_counter = 0
 	minetest.register_globalstep(function(dtime)
+		charge_counter = charge_counter + dtime
+		local skip_charge = charge_counter < 5
+		if not skip_charge then
+			charge_counter = charge_counter - 5
+		end
+
 		for i, player in pairs(minetest.get_connected_players()) do
 			local player_name = player:get_player_name()
-			local flashlight_weared = check_for_flashlight(player)
+			local flashlight_weared = check_for_flashlight(player, skip_charge)
 			if flashlight_weared then
 				ch_core.set_player_light(player_name, "flashlight", minetest.LIGHT_MAX)
 			else
