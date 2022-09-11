@@ -908,6 +908,12 @@ resp. *ostatní\_zdroje*.
 * Zdroj: [https://forum.minetest.net/viewtopic.php?t=11817](https://forum.minetest.net/viewtopic.php?t=11817), soubor mesh\_beds.zip
 * Původní licence: WTFPL (u modelů to není řečeno, ale lze předpokládat, že jsou považovány za kód)
 
+## Wilhelmines People (people)
+
+* Zdroj: [https://github.com/Skandarella/people](https://github.com/Skandarella/people), revize 80147ebe6efd85a88fb8af33476e96dd83ea87c5
+* Původní licence: MIT (zvuky zvířat pod „Creative Commons“ — CC-BY-SA-NC-??)
+* [ContentDB](https://content.minetest.net/packages/Liil/people/)
+
 ## Polygonia (Polygonia\_64px)
 
 * Zdroj: [https://github.com/Lokrates/Polygonia\_64px](https://github.com/Lokrates/Polygonia\_64px), revize f28901e5e990aee6f78fca80dce03129b90d4d6a
