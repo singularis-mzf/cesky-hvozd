@@ -13,43 +13,28 @@ mail.receive_mail_message = "You have a new message from @1! Subject: @2\nTo vie
 mail sending function, can be invoked with one object argument (new api) or
 all 4 parameters (old compat version)
 see: "Mail format" api.md
-
-TODO: refactor this garbage code!
 --]]
 function mail.send(src, dst, subject, body)
 	-- figure out format
 	local m
 	if dst == nil and subject == nil and body == nil then
 		-- new format (one object param)
-		m = src
+		m = {from = src.from or src.src, to = src.to or src.dst, subject = src.subject or "", body = src.body or ""}
+		if src.cc then
+			m.cc = src.cc
+		end
+		if src.bcc then
+			m.bcc = src.bcc
+		end
 	else
 		-- old format
-		m = {}
-		m.from = src
-		m.to = dst
-		m.subject = subject
-		m.body = body
+		m = {from = src, to = dst, subject = subject or "", body = body or ""}
 	end
 
-	if m.dst and not m.to then
-		-- populate "to" field
-		m.to = m.dst
-	end
-
-	if m.src and not m.from then
-		-- populate "from" field
-		m.from = m.src
-	end
-
-	-- sane default values
-	m.subject = m.subject or ""
-	m.body = m.body or ""
-
-	local cc
-	local bcc
 	local extra
 	-- log mail send action
 	if m.cc or m.bcc then
+		local cc, bcc
 		if m.cc then
 			cc = "CC: " .. m.cc
 			if m.bcc then
@@ -69,7 +54,6 @@ function mail.send(src, dst, subject, body)
 	end
 	minetest.log("action", "[mail] '" .. m.from .. "' sends mail to '" .. m.to .. "'" ..
 		extra .. "' with subject '" .. m.subject .. "' and body: '" .. m.body .. "'")
-
 
 	-- normalize to, cc and bcc while compiling a list of all recipients
 	local recipients = {}
@@ -94,6 +78,9 @@ function mail.send(src, dst, subject, body)
 		msg.cc  = m.cc
 	end
 
+	-- add self as a recipient
+	recipients[m.from] = m.from
+
 	-- send the mail to all recipients
 	for _, recipient in pairs(recipients) do
 		local messages = mail.getMessages(recipient)
@@ -101,16 +88,21 @@ function mail.send(src, dst, subject, body)
 		mail.setMessages(recipient, messages)
 	end
 
+	-- remove self from notifications
+	recipients[m.from] = nil
+
 	-- notify recipients that happen to be online
+	local subject = m.subject
+	if subject == "" then
+		subject = "(Žádný předmět)"
+	else
+		subject = ch_core.utf8_truncate_right(subject, 27)
+	end
+
 	for _, player in ipairs(minetest.get_connected_players()) do
-		local name = player:get_player_name()
-		if recipients[string.lower(name)] ~= nil then
-			if m.subject == "" then m.subject = "(No subject)" end
-			if string.len(m.subject) > 30 then
-				m.subject = string.sub(m.subject,1,27) .. "..."
-			end
-			minetest.chat_send_player(name,
-					S(mail.receive_mail_message, m.from, m.subject))
+		local player_name = player:get_player_name()
+		if recipients[player_name] ~= nil then
+			minetest.chat_send_player(player_name, S(mail.receive_mail_message, m.from, subject))
 		end
 	end
 

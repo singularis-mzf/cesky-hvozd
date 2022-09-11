@@ -69,30 +69,30 @@ function mail.show_about(name)
 	minetest.show_formspec(name, "mail:about", formspec)
 end
 
-function mail.show_inbox(name)
+function mail.show_inbox(player_name)
 	local formspec = { mail.inbox_formspec }
-	local messages = mail.getMessages(name)
+	local messages = mail.getMessages(player_name)
 
-	message_drafts[name] = nil
+	message_drafts[player_name] = nil
 
 	if messages[1] then
 		for _, message in ipairs(messages) do
-			mail.ensure_new_format(message, name)
+			mail.ensure_new_format(message, player_name)
 			if message.unread then
-				if not mail.player_in_list(name, message.to) then
+				if not mail.player_in_list(player_name, message.to) then
 					formspec[#formspec + 1] = ",#FFD788"
 				else
 					formspec[#formspec + 1] = ",#FFD700"
 				end
 			else
-				if not mail.player_in_list(name, message.to) then
+				if not mail.player_in_list(player_name, message.to) then
 					formspec[#formspec + 1] = ",#CCCCDD"
 				else
 					formspec[#formspec + 1] = ","
 				end
 			end
 			formspec[#formspec + 1] = ","
-			formspec[#formspec + 1] = minetest.formspec_escape(message.sender)
+			formspec[#formspec + 1] = minetest.formspec_escape(ch_core.prihlasovaci_na_zobrazovaci(message.sender))
 			formspec[#formspec + 1] = ","
 			if message.subject ~= "" then
 				if string.len(message.subject) > 30 then
@@ -106,23 +106,23 @@ function mail.show_inbox(name)
 				formspec[#formspec + 1] = "(Bez předmětu)"
 			end
 		end
-		if selected_idxs.messages[name] then
+		if selected_idxs.messages[player_name] then
 			formspec[#formspec + 1] = ";"
-			formspec[#formspec + 1] = tostring(selected_idxs.messages[name] + 1)
+			formspec[#formspec + 1] = tostring(selected_idxs.messages[player_name] + 1)
 		end
 		formspec[#formspec + 1] = "]"
 	else
 		formspec[#formspec + 1] = "]label[2.25,4.5;Žádné zprávy]"
 	end
-	minetest.show_formspec(name, "mail:inbox", table.concat(formspec, ""))
+	minetest.show_formspec(player_name, "mail:inbox", table.concat(formspec, ""))
 end
 
-function mail.show_contacts(name)
-	local formspec = mail.contacts_formspec .. mail.compile_contact_list(name, selected_idxs.contacts[name])
-	minetest.show_formspec(name, "mail:contacts", formspec)
+function mail.show_contacts(player_name)
+	local formspec = mail.contacts_formspec .. mail.compile_contact_list(player_name, selected_idxs.contacts[player_name])
+	minetest.show_formspec(player_name, "mail:contacts", formspec)
 end
 
-function mail.show_edit_contact(name, contact_name, note, illegal_name_hint)
+function mail.show_edit_contact(player_name, contact_name, note, illegal_name_hint)
 	local formspec =
 			"size[6,7]\n"..
 			"button[4,6.25;2,0.5;back;"..S("Back").."]\n"..
@@ -134,44 +134,54 @@ function mail.show_edit_contact(name, contact_name, note, illegal_name_hint)
 				"label[4,1;"..S("That name").."]\n"..
 				"label[4,1.5;"..S("is already in").."]\n"..
 				"label[4,2;"..S("your contacts.").."]"
+	elseif illegal_name_hint == "not_exists" then
+		formspec = formspec ..
+				"label[4,1;"..S("Player of").."]\n"..
+				"label[4,1.5;"..S("that name").."]\n"..
+				"label[4,2;"..S("not exists.").."]"
 	elseif illegal_name_hint == "empty" then
 		formspec = formspec .. "label[4,1;"..S("The contact").."]\nlabel[4,1.5;"..S("name cannot").."]\nlabel[4,2;"..S("be empty.").."]"
 	end
 	formspec = formspec .. theme
 	formspec = string.format(formspec,
-		minetest.formspec_escape(contact_name or ""),
+		minetest.formspec_escape(ch_core.prihlasovaci_na_zobrazovaci(contact_name or "")),
 		minetest.formspec_escape(note or ""))
-	minetest.show_formspec(name, "mail:editcontact", formspec)
+	minetest.show_formspec(player_name, "mail:editcontact", formspec)
 end
 
-function mail.show_select_contact(name, to, cc)
+function mail.show_select_contact(player_name, to, cc)
 	local formspec = mail.select_contact_formspec
-	local contacts = mail.compile_contact_list(name, selected_idxs.contacts[name])
+	local contacts = mail.compile_contact_list(player_name, selected_idxs.contacts[player_name])
 
 	-- compile lists
 	if to then
-		to = mail.compile_contact_list(name, selected_idxs.to[name], to)
+		to = mail.compile_contact_list(player_name, selected_idxs.to[player_name], to)
 	else
 		to = ""
 	end
 	if cc then
-		cc = mail.compile_contact_list(name, selected_idxs.cc[name], cc)
+		cc = mail.compile_contact_list(player_name, selected_idxs.cc[player_name], cc)
 	else
 		cc = ""
 	end
 	--[[if bcc then
-		bcc = table.concat(mail.compile_contact_list(name, selected_idxs.bcc[name], bcc)
+		bcc = table.concat(mail.compile_contact_list(player_name, selected_idxs.bcc[player_name], bcc)
 	else
 		bcc = ""
 	end]]--
 	formspec = string.format(formspec, contacts, to, cc)--, bcc()
-	minetest.show_formspec(name, "mail:selectcontact", formspec)
+	minetest.show_formspec(player_name, "mail:selectcontact", formspec)
 end
 
-function mail.compile_contact_list(name, selected, playernames)
+--[[
+	string player_name -- the player for which the list is compiled for
+	selected -- the login name of the selected contact
+	playernames -- ?
+]]
+function mail.compile_contact_list(player_name, selected, playernames)
 	-- TODO: refactor this - not just compiles *a* list, but *the* list for the contacts screen (too inflexible)
 	local formspec = {}
-	local contacts = mail.getContacts(name)
+	local contacts = mail.getContacts(player_name)
 
 	if playernames == nil then
 		local length = 0
@@ -179,7 +189,7 @@ function mail.compile_contact_list(name, selected, playernames)
 			if i == 1 then length = l end
 			formspec[#formspec + 1] = ","
 			formspec[#formspec + 1] = ","
-			formspec[#formspec + 1] = minetest.formspec_escape(contact.name)
+			formspec[#formspec + 1] = minetest.formspec_escape(ch_core.prihlasovaci_na_zobrazovaci(contact.name))
 			formspec[#formspec + 1] = ","
 			local note = contact.note
 			-- display an ellipsis if the note spans multiple lines
@@ -189,7 +199,7 @@ function mail.compile_contact_list(name, selected, playernames)
 			end
 			formspec[#formspec + 1] = minetest.formspec_escape(note)
 			if type(selected) == "string" then
-				if string.lower(selected) == k then
+				if selected == k then
 					selected = i
 				end
 			end
@@ -205,17 +215,17 @@ function mail.compile_contact_list(name, selected, playernames)
 		end
 	else
 		if type(playernames) == "string" then
-			playernames = mail.parse_player_list(playernames)
+			playernames = mail.player_list_to_login_names(playernames) -- ignore not found here
 		end
 		for i,c in ipairs(playernames) do
 			formspec[#formspec + 1] = ","
 			formspec[#formspec + 1] = ","
-			formspec[#formspec + 1] = minetest.formspec_escape(c)
+			formspec[#formspec + 1] = minetest.formspec_escape(ch_core.prihlasovaci_na_zobrazovaci(c))
 			formspec[#formspec + 1] = ","
-			if contacts[string.lower(c)] == nil then
+			if contacts[c] == nil then
 				formspec[#formspec + 1] = ""
 			else
-				local note = contacts[string.lower(c)].note
+				local note = contacts[c].note
 				-- display an ellipsis if the note spans multiple lines
 				local idx = string.find(note, '\n')
 				if idx ~= nil then
@@ -225,7 +235,7 @@ function mail.compile_contact_list(name, selected, playernames)
 			end
 			if not selected then
 				if type(selected) == "string" then
-					if string.lower(selected) == string.lower(c) then
+					if selected == c then
 						selected = i
 					end
 				end
@@ -238,6 +248,12 @@ function mail.compile_contact_list(name, selected, playernames)
 		formspec[#formspec + 1] = "]"
 	end
 	return table.concat(formspec, "")
+end
+
+local function stored_player_list_to_view(player_list)
+	-- print("DEBUG: stored player list is <"..(player_list or "nil")..">")
+	local x = mail.player_list_to_login_names(player_list or "", {pass_not_found = true})
+	return mail.login_names_to_player_list(x)
 end
 
 function mail.show_message(name, msgnumber)
@@ -256,9 +272,9 @@ function mail.show_message(name, msgnumber)
 			"button[4,8.5;2,1;forward;"..S("Forward").."]\n"..
 			"button[6,8.5;2,1;delete;"..S("Delete").."]\n" .. theme
 
-	local from = minetest.formspec_escape(message.sender) or ""
-	local to = minetest.formspec_escape(message.to) or ""
-	local cc = minetest.formspec_escape(message.cc) or ""
+	local from = minetest.formspec_escape(ch_core.prihlasovaci_na_zobrazovaci(message.sender or "")) or ""
+	local to = minetest.formspec_escape(stored_player_list_to_view(message.to)) or ""
+	local cc = minetest.formspec_escape(stored_player_list_to_view(message.cc)) or ""
 	local subject = minetest.formspec_escape(message.subject) or ""
 	local body = minetest.formspec_escape(message.body) or ""
 	formspec = string.format(formspec, from, to, cc, subject, body)
@@ -271,6 +287,14 @@ function mail.show_message(name, msgnumber)
 	minetest.show_formspec(name,"mail:message",formspec)
 end
 
+--[[
+	string name -- login name of the player for which the dialog is to be shown
+	string defaultto -- content of the "To:" field (view names are expected)
+	string defaultsubj -- content of the Subject field (view names are expected)
+	string defaultbody -- content of the Body field
+	string defaultcc -- content of the CC field (view names are expected)
+	string defaultbcc -- content of the BCC field (view names are expected)
+]]
 function mail.show_compose(name, defaultto, defaultsubj, defaultbody, defaultcc, defaultbcc)
 	local formspec =
 			"size[8,9]\n"..
@@ -292,11 +316,11 @@ function mail.show_compose(name, defaultto, defaultsubj, defaultbody, defaultcc,
 	defaultbcc = defaultbcc or ""
 
 	formspec = string.format(formspec,
-		minetest.formspec_escape(defaultto),
-		minetest.formspec_escape(defaultcc),
-		minetest.formspec_escape(defaultbcc),
-		minetest.formspec_escape(defaultsubj),
-		minetest.formspec_escape(defaultbody))
+		minetest.formspec_escape(defaultto or ""),
+		minetest.formspec_escape(defaultcc or ""),
+		minetest.formspec_escape(defaultbcc or ""),
+		minetest.formspec_escape(defaultsubj or ""),
+		minetest.formspec_escape(defaultbody or ""))
 
 	minetest.show_formspec(name, "mail:compose", formspec)
 end
@@ -304,38 +328,21 @@ end
 function mail.reply(name, message)
 	mail.ensure_new_format(message)
 	local replyfooter = "Sem napište svoji odpověď.\n\n--Následuje původní zpráva--\n" ..message.body
-	mail.show_compose(name, message.sender, "Re: "..message.subject, replyfooter)
+	mail.show_compose(name, ch_core.prihlasovaci_na_zobrazovaci(message.sender), "Re: "..message.subject, replyfooter)
 end
 
 function mail.replyall(name, message)
 	mail.ensure_new_format(message)
 	local replyfooter = "Sem napište svoji odpověď.\n\n--Následuje původní zpráva--\n" ..message.body
 
+	-- print("DEBUG: message.sender = <"..message.sender..">, message.to = <"..message.to..">")
 	-- new recipients are the sender plus the original recipients, minus ourselves
-	local recipients = message.to or ""
-	if message.sender ~= nil then
-		recipients = message.sender .. ", " .. recipients
-	end
-	recipients = mail.parse_player_list(recipients)
-	for k,v in pairs(recipients) do
-		if v == name then
-			table.remove(recipients, k)
-			break
-		end
-	end
-	recipients = mail.concat_player_list(recipients)
+	local to = mail.login_names_to_player_list(mail.player_list_to_login_names(message.sender..","..message.to, {skip_set = {[name] = true}}))
 
 	-- new CC is old CC minus ourselves
-	local cc = mail.parse_player_list(message.cc)
-	for k,v in pairs(cc) do
-		if v == name then
-			table.remove(cc, k)
-			break
-		end
-	end
-	cc = mail.concat_player_list(cc)
+	local cc = mail.login_names_to_player_list(mail.player_list_to_login_names(message.cc, {skip_set = {[name] = true}}))
 
-	mail.show_compose(name, recipients, "Re: "..message.subject, replyfooter, cc)
+	mail.show_compose(name, to, "Re: "..message.subject, replyfooter, cc)
 end
 
 function mail.forward(name, message)
@@ -452,20 +459,38 @@ function mail.handle_receivefields(player, formname, fields)
 	elseif formname == "mail:compose" then
 		local name = player:get_player_name()
 		if fields.send then
+			local not_found_players = {}
+			local options = {not_found_list = not_found_players}
+			local to_recipients = mail.player_list_to_login_names(fields.to, options)
+			local cc_recipients = mail.player_list_to_login_names(fields.cc, options)
+			local bcc_recipients = mail.player_list_to_login_names(fields.bcc, options)
+			local recipients = {}
+			table.insert_all(recipients, to_recipients)
+			table.insert_all(recipients, cc_recipients)
+			table.insert_all(recipients, bcc_recipients)
+
+			if #not_found_players > 0 then
+				for _, nfp in ipairs(not_found_players) do
+					ch_core.systemovy_kanal(name, "CHYBA: adresát/ka "..nfp.." neexistuje!")
+				end
+				return true
+			elseif #recipients == 0 then
+				ch_core.systemovy_kanal(name, "CHYBA: chybí adresáti/ky zprávy!")
+				return true
+			end
 			mail.send({
 				from = name,
-				to = fields.to,
-				cc = fields.cc,
-				bcc = fields.bcc,
+				to = mail.login_names_to_player_list(to_recipients),
+				cc = mail.login_names_to_player_list(cc_recipients),
+				bcc = mail.login_names_to_player_list(bcc_recipients),
 				subject = fields.subject,
 				body = fields.body,
 			})
 			local contacts = mail.getContacts(name)
-			local recipients = mail.parse_player_list(fields.to)
 			local changed = false
 			for _,v in pairs(recipients) do
-				if contacts[string.lower(v)] == nil then
-					contacts[string.lower(v)] = {
+				if contacts[v] == nil then
+					contacts[v] = {
 						name = v,
 						note = "",
 					}
@@ -526,10 +551,10 @@ function mail.handle_receivefields(player, formname, fields)
 				if selected_idxs.contacts[name] then
 					for k, contact, i in mail.pairsByKeys(contacts) do
 						if k == selected_idxs.contacts[name] or i == selected_idxs.contacts[name] then
-							local list = mail.parse_player_list(draft[v])
+							local list = mail.player_list_to_login_names(draft[v])
 							list[#list+1] = contact.name
 							selected_idxs[v][name] = #list
-							draft[v] = mail.concat_player_list(list)
+							draft[v] = mail.login_names_to_player_list(list)
 							break
 						end
 					end
@@ -541,12 +566,12 @@ function mail.handle_receivefields(player, formname, fields)
 			if fields[v.."remove"] then
 				update = true
 				if selected_idxs[v][name] then
-					local list = mail.parse_player_list(draft[v])
+					local list = mail.player_list_to_login_names(draft[v])
 					table.remove(list, selected_idxs[v][name])
 					if #list < selected_idxs[v][name] then
 						selected_idxs[v][name] = #list
 					end
-					draft[v] = mail.concat_player_list(list)
+					draft[v] = mail.login_names_to_player_list(list)
 				end
 			end
 		end
@@ -626,31 +651,38 @@ function mail.handle_receivefields(player, formname, fields)
 	elseif formname == "mail:editcontact" then
 		local name = player:get_player_name()
 		local contacts = mail.getContacts(name)
+		local fields_name = fields.name -- login name
+		if fields_name then
+			fields_name = ch_core.jmeno_na_prihlasovaci(fields_name)
+		end
 
 		if fields.save then
-			if selected_idxs.contacts[name] and selected_idxs.contacts[name] ~= "#NEW#" then
+			if not minetest.player_exists(fields_name) then
+				mail.show_edit_contact(name, fields.name or "", fields.note, "not_exists")
+				return true
+			elseif selected_idxs.contacts[name] and selected_idxs.contacts[name] ~= "#NEW#" then
 				local contact = contacts[selected_idxs.contacts[name]]
-				if selected_idxs.contacts[name] ~= string.lower(fields.name) then
+				if selected_idxs.contacts[name] ~= fields_name then
 					-- name changed!
-					if #fields.name == 0 then
+					if #fields_name == 0 then
 						mail.show_edit_contact(name, contact.name, fields.note, "empty")
 						return true
-					elseif contacts[string.lower(fields.name)] ~= nil then
+					elseif contacts[fields_name] ~= nil then
 						mail.show_edit_contact(name, contact.name, fields.note, "collision")
 						return true
 					else
-						contacts[string.lower(fields.name)] = contact
+						contacts[fields_name] = contact
 						contacts[selected_idxs.contacts[name]] = nil
 					end
 				end
-				contact.name = fields.name
+				contact.name = fields_name
 				contact.note = fields.note
 			else
 				local contact = {
-					name = fields.name,
+					name = fields_name,
 					note = fields.note,
 				}
-				contacts[string.lower(contact.name)] = contact
+				contacts[contact.name] = contact
 			end
 			mail.setContacts(name, contacts)
 			mail.show_contacts(name)

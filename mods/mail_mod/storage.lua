@@ -22,11 +22,12 @@ mail.getMessages = function(playername)
 end
 
 mail.setMessages = function(playername, messages)
-	if mail.write_json_file(mail.getMailFile(playername), messages) then
+	local filename = mail.getMailFile(playername)
+	if mail.write_json_file(filename, messages) then
 		mail.hud_update(playername, messages)
 		return true
 	else
-		minetest.log("error","[mail] Save failed - messages may be lost! ("..playername..")")
+		minetest.log("error","[mail] Save to "..filename.." failed - messages may be lost! ("..playername..")")
 		return false
 	end
 end

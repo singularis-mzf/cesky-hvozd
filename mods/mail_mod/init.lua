@@ -3,17 +3,17 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 mail = {
 
 	-- mark webmail fork for other mods
-	fork = "webmail",
+	fork = "ceskyhvozd",
 
 	-- api version
-	apiversion = 1.1,
+	apiversion = 1.2,
 
 	-- mail directory
 	maildir = minetest.get_worldpath().."/mails",
 	contactsdir = minetest.get_worldpath().."/mails/contacts",
 
 	-- allow item/node attachments
-	allow_attachments = minetest.settings:get("mail.allow_attachments") == "true",
+	allow_attachments = true, -- minetest.settings:get("mail.allow_attachments") == "true",
 
 	webmail = {
 		-- disallow banned players in the webmail interface

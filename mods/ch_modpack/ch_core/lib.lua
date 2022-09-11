@@ -281,6 +281,19 @@ function ch_core.utf8_seek(s, i, seek)
 end
 
 --[[
+	Je-li řetězec s delší než max_chars znaků, vrátí jeho prvních max_chars znaků
+	+ "...", jinak vrátí původní řetězec.
+]]
+function ch_core.utf8_truncate_right(s, max_chars)
+	local i = ch_core.utf8_seek(s, 1, max_chars)
+	if i then
+		return s:sub(1, i - 1) .. "..."
+	else
+		return s
+	end
+end
+
+--[[
 Rozdělí řetězec na pole neprázdných podřetězců o stanovené maximální délce
 v UTF-8 znacích; v každé části vynechává mezery na začátku a na konci části;
 přednostně dělí v místech mezer. Pro prázdný řetězec
