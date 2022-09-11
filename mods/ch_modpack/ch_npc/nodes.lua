@@ -1,0 +1,49 @@
+-- NODE DEFINITION
+local function after_place_node(pos, placer, itemstack)
+	local meta = minetest.get_meta(pos)
+	meta:set_string("infotext", "pozice pro nehráčskou postavu")
+end
+
+local function on_punch(pos, node, clicker, itemstack)
+	return update_npc(pos, node)
+end
+
+local function on_rightclick(pos, node, clicker, itemstack)
+	if minetest.check_player_privs(clicker, "spawn_npc") then
+		local player_name = clicker:get_player_name()
+		local meta = minetest.get_meta(pos)
+		local formspec = ch_npc.internal.get_node_formspec(meta)
+		ch_npc.internal.show_formspec(pos, player_name, "ch_npc:node_formspec", formspec)
+	end
+end
+
+local def = {
+	description = "nehráčská postava",
+	drawtype = "nodebox",
+	node_box = {type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, 1/16 - 0.5, 0.5}},
+	tiles = {"ch_core_white_pixel.png^[opacity:0"},
+	use_texture_alpha = "clip",
+	inventory_image = "default_invisible_node_overlay.png",
+	wield_image = "default_invisible_node_overlay.png",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {cracky = 1, ch_npc_spawner = 1},
+	walkable = false,
+	pointable = true,
+	light_source = 1,
+
+	after_place_node = after_place_node,
+	on_punch = on_punch,
+	on_rightclick = on_rightclick,
+}
+
+minetest.register_node("ch_npc:npc", table.copy(def))
+
+def.description = "nehráčská postava (skrytá)"
+def.tiles = {"ch_core_white_pixel.png^[opacity:16"}
+def.use_texture_alpha = "blend"
+def.light_source = 5
+def.groups = table.copy(def.groups)
+def.groups.ch_npc_spawner = 2
+
+minetest.register_node("ch_npc:npc_hidden", def)

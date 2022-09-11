@@ -892,6 +892,12 @@ resp. *ostatní\_zdroje*.
 * Původní licence: kód MIT, textury různé, ale neoznačené také MIT
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/ethereal/)
 
+## Folks (folks)
+
+* Zdroj: [https://gitlab.com/SonoMichele/folks](https://gitlab.com/SonoMichele/folks), revize 4975480eec558307ab94a979b3cc1e5f4b6d0e23
+* Původní licence: GPLv3
+* [ContentDB](https://content.minetest.net/packages/SonoMichele/folks/)
+
 ## hdx-64-master texture pack by VanessaE (hdx-64)
 
 * Zdroj: [https://gitlab.com/VanessaE/hdx-64/tree/master](https://gitlab.com/VanessaE/hdx-64/tree/master), revize f6d2c003006b296ec974be264a4539ce051614c6

@@ -1,0 +1,9 @@
+# textdomain:ch_npc
+Model=Model
+Textures=Textury
+NPC name=Jméno postavy
+NPC program=Program postavy
+NPC text=Text pro postavu
+Show NPC=Zobrazit postavu
+Hide NPC=Skrýt postavu
+Close=Zavřít
