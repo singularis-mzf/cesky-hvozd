@@ -260,9 +260,11 @@ drinks.add_vessel(bucket, {
 })
 
 -- Drinks
-drinks.add_drink("apple", "jablečná šťáva", "#ecff56", {
-	drink_desc2 = "jablečné šťávy",
-	drink_desc4 = "jablečnou šťávu",
+drinks.add_drink("apple", "jablečný mošt", "#ecff56", {
+	drink_desc2 = "jablečného moštu",
+	drink_desc4 = "jablečný mošt",
+	[glass] = "wine:glass_apple_juice",
+	[glass_bottle] = "wine:bottle_apple_juice",
 })
 drinks.add_fruit("apple", "default:apple", 1)
 
@@ -375,6 +377,105 @@ drinks.add_drink("water", "voda", "#2b639e", {
 	[glass] = "farming:glass_water",
 	[bucket] = "bucket:bucket_water",
 })
+
+-- wine
+if minetest.get_modpath("wine") then
+	drinks.add_drink("wine", "víno", "#e00d7a", {
+		drink_desc2 = "vína",
+		drink_desc4 = "víno",
+		[glass] = "wine:glass_wine",
+		[glass_bottle] = "wine:bottle_wine",
+		[bucket] = false,
+	})
+
+	drinks.add_drink("beer", "pivo", "#f1c200", {
+		drink_desc2 = "piva",
+		drink_desc4 = "pivo",
+		[glass] = "wine:glass_beer",
+		[glass_bottle] = "wine:bottle_beer",
+		[bucket] = false,
+	})
+
+	drinks.add_drink("lemonade", "limonáda", "#aa6d5d", { -- ? divná barva
+		drink_desc2 = "limonády",
+		drink_desc4 = "limonádu",
+		[glass] = "wine:glass_lemonade",
+		[glass_bottle] = "wine:bottle_lemonade",
+		[bucket] = false,
+	})
+
+	drinks.add_drink("tequila", "tekila", "#fdffc7", {
+		drink_desc2 = "tekily",
+		drink_desc4 = "tekilu",
+		[glass] = "wine:glass_tequila",
+		[glass_bottle] = "wine:bottle_tequila",
+		[bucket] = false,
+	})
+
+	drinks.add_drink("sake", "saké", "#e9ffff", { -- barva?
+		-- drink_desc2 = "saké",
+		-- drink_desc4 = "",
+		[glass] = false, -- má misku, ne sklenici
+		[glass_bottle] = "wine:bottle_sake",
+		[bucket] = false,
+	})
+
+	drinks.add_drink("bourbon", "burbon", "#e47603", {
+		drink_desc2 = "burbonu",
+		drink_desc4 = "burbon",
+		[glass] = "wine:glass_bourbon",
+		[glass_bottle] = false,
+		[bucket] = false,
+	})
+
+	drinks.add_drink("vodka", "vodka", "#d9e3f1", {
+		drink_desc2 = "vodky",
+		drink_desc4 = "vodku",
+		[glass] = "wine:glass_vodka",
+		[glass_bottle] = "wine:bottle_vodka",
+		[bucket] = true,
+	})
+
+	drinks.add_drink("mead", "medovina", "#eb9912", {
+		drink_desc2 = "medoviny",
+		drink_desc4 = "medovinu",
+		[glass] = "wine:glass_mead",
+		[glass_bottle] = "wine:bottle_mead",
+		[bucket] = true,
+	})
+
+	drinks.add_drink("mint_julep", "mentolový likér", "#4d945d", {
+		drink_desc2 = "mentolového likéru",
+		drink_desc4 = "mentolový likér",
+		[glass] = "wine:glass_mint",
+		[glass_bottle] = "wine:bottle_mint",
+		[bucket] = false,
+	})
+
+	drinks.add_drink("brandy", "brandy", "#ff6c21", {
+		-- drink_desc2 = "brandy",
+		-- drink_desc4 = "",
+		[glass] = "wine:glass_brandy",
+		[glass_bottle] = "wine:bottle_brandy",
+		[bucket] = false,
+	})
+
+	drinks.add_drink("coffee_liquor", "kávový likér", "#743c10", {
+		drink_desc2 = "kávového likéru",
+		drink_desc4 = "kávový likér",
+		[glass] = "wine:glass_coffee_liquor",
+		[glass_bottle] = "wine:bottle_coffee_liquor",
+		[bucket] = false,
+	})
+
+	drinks.add_drink("champagne", "šampaňské", "#ffbf00", { -- barva?
+		drink_desc2 = "šampaňského",
+		drink_desc4 = "šampaňské",
+		[glass] = "wine:glass_champagne",
+		[glass_bottle] = "wine:bottle_champagne",
+		[bucket] = false,
+	})
+end
 
 -- mod support (moreblocks/technic_worldgen)
 local slab_str = "stairs:slab_wood"
