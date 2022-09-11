@@ -285,12 +285,19 @@ resp. *ostatní\_zdroje*.
 
 ## Bucket Wooden (bucket\_wooden)
 
-* Zdroj: [https://gitlab.com/h2mm/wooden_bucket](https://gitlab.com/h2mm/wooden\_bucket), revize 50b0d4e6332286a76fe88f642d8e6dc79fbed99a
+* Zdroj: [https://gitlab.com/h2mm/wooden\_bucket](https://gitlab.com/h2mm/wooden\_bucket), revize 50b0d4e6332286a76fe88f642d8e6dc79fbed99a
 * Původní licence: LGPL-2.1 pro kód, CC-BY-SA-3.0 pro textury
 * Licence úprav: LGPL-2.1
 * [ContentDB](https://content.minetest.net/packages/Hume2/bucket\_wooden/)
 
-## Builtin Overrides
+## Builtin Item (builtin\_item)
+
+* Zdroj: [https://notabug.org/TenPlus1/builtin\_item](https://notabug.org/TenPlus1/builtin\_item), revize 2bdcdb930ec27134b32ac4b55ebca5f814c28b52
+* Původní licence: LGPL-2.1+
+* Licence úprav: LGPL-2.1+
+* [ContentDB](https://content.minetest.net/packages/TenPlus1/builtin\_item/)
+
+## Builtin Overrides (minetest-builtin\_overrides)
 
 * Zdroj: [https://github.com/fluxionary/minetest-builtin\_overrides](https://github.com/fluxionary/minetest-builtin\_overrides), revize aa99c681e6adb964bb5ff7dbb2767f11b8e8e4b7
 * Původní licence: AGPLv3
