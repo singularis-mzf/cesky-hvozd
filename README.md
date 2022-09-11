@@ -290,6 +290,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: LGPL-2.1
 * [ContentDB](https://content.minetest.net/packages/Hume2/bucket\_wooden/)
 
+## Builtin Overrides
+
+* Zdroj: [https://github.com/fluxionary/minetest-builtin\_overrides](https://github.com/fluxionary/minetest-builtin\_overrides), revize aa99c681e6adb964bb5ff7dbb2767f11b8e8e4b7
+* Původní licence: AGPLv3
+* Licence úprav: AGPLv3
+* [ContentDB](https://content.minetest.net/packages/rheo/builtin\_overrides/)
+
 ## Bushy Leaves (bushy\_leaves)
 
 * Zdroj: [https://git.minetest.land/erlehmann/bushy\_leaves](https://git.minetest.land/erlehmann/bushy\_leaves), revize 9be33ef9c37836414fac7a9dd78125efed77b581
@@ -447,6 +454,13 @@ resp. *ostatní\_zdroje*.
 * Původní licence: GNU Affero GPLv3
 * Licence úprav: GNU Affero GPLv3
 * [ContentDB](https://content.minetest.net/packages/x2048/shadows/)
+
+## futil (minetest-futil)
+
+* Zdroj: [https://github.com/fluxionary/minetest-futil](https://github.com/fluxionary/minetest-futil), revize fed3091f0884e8c84472f5a26cb3998db69c6cce
+* Původní licence: GNU Affero GPLv3
+* Licence úprav: GNU Affero GPLv3
+* [ContentDB](https://content.minetest.net/packages/rheo/futil/)
 
 ## Giftbox2 (minetest\_giftbox2)
 

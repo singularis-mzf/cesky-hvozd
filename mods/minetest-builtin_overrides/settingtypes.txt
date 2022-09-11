@@ -1,0 +1,2 @@
+# if true, will highlight non-default and admin privs w/ colors
+builtin_overrides.color_privs (color privs) bool true
