@@ -268,7 +268,9 @@ end
 print("[ch_core] Restored "..counter.." data pairs from the mod storage.")
 
 local function on_joinplayer(player, last_login)
-	ch_core.get_joining_online_charinfo(player:get_player_name())
+	local player_name = player:get_player_name()
+	ch_core.get_joining_online_charinfo(player_name)
+	ch_core.get_offline_charinfo(player_name) -- create offline_charinfo, if not exists
 	return true
 end
 

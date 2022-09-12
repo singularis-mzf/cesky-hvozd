@@ -3,7 +3,7 @@ return the field normalized (comma separated, single space)
 and add individual player names to "recipients" as keys
 --]]
 function mail.normalize_players_and_add_recipients(field, recipients)
-	local list = mail.player_list_to_login_names(field)
+	local list = mail.player_list_to_login_names(field, {adjust_letter_case = true})
 	for _, login_name in ipairs(list) do
 		recipients[login_name] = login_name
 	end
@@ -38,6 +38,7 @@ end
 
 --[[
 	options:
+		bool adjust_letter_case -- tries to find existing names in case-insensitive manner
 		bool pass_not_found -- if true, not found names will be inserted both to not_found_list and to the result
 		table not_found_list -- if defined, player_list names for players that does not exist will be added to the end of this table
 		table skip_set -- if defined, the player names that satisfy the condition skip_set[player_name] will be skipped
@@ -60,7 +61,12 @@ function mail.player_list_to_login_names(player_list, options)
 	for _, part in ipairs(parts) do
 		local name_in_the_list = part:trim()
 		if name_in_the_list ~= "" then
-			local login_name = ch_core.jmeno_na_prihlasovaci(name_in_the_list)
+			local login_name
+			if options.adjust_letter_case then
+				login_name = ch_core.jmeno_na_existujici_prihlasovaci(name_in_the_list)[1]
+			end
+			login_name = login_name or ch_core.jmeno_na_prihlasovaci(name_in_the_list)
+
 			if not skip_set[login_name] then
 				skip_set[login_name] = 1
 				if minetest.player_exists(login_name) then

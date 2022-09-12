@@ -460,7 +460,7 @@ function mail.handle_receivefields(player, formname, fields)
 		local name = player:get_player_name()
 		if fields.send then
 			local not_found_players = {}
-			local options = {not_found_list = not_found_players}
+			local options = {adjust_letter_case = true, not_found_list = not_found_players}
 			local to_recipients = mail.player_list_to_login_names(fields.to, options)
 			local cc_recipients = mail.player_list_to_login_names(fields.cc, options)
 			local bcc_recipients = mail.player_list_to_login_names(fields.bcc, options)
@@ -653,7 +653,12 @@ function mail.handle_receivefields(player, formname, fields)
 		local contacts = mail.getContacts(name)
 		local fields_name = fields.name -- login name
 		if fields_name then
-			fields_name = ch_core.jmeno_na_prihlasovaci(fields_name)
+			local login_names = ch_core.jmeno_na_existujici_prihlasovaci(fields.name)
+			if #login_names == 1 then
+				fields_name = login_names[1]
+			else
+				fields_name = ch_core.jmeno_na_prihlasovaci(fields.name) -- not exists
+			end
 		end
 
 		if fields.save then

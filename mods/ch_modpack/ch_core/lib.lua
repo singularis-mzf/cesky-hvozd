@@ -103,6 +103,21 @@ function ch_core.jmeno_na_prihlasovaci(jmeno)
 end
 
 --[[
+	Vrátí seznam existujících přihlašovacích jmén odpovídajících uvedenému
+	jménu až na velikost písmen a diakritiku. Seznam může být i prázdný.
+]]
+function ch_core.jmeno_na_existujici_prihlasovaci(jmeno)
+	local result = {}
+	jmeno = string.lower(ch_core.odstranit_diakritiku(jmeno))
+	for k, _ in pairs(ch_core.offline_charinfo) do
+		if string.lower(k) == jmeno then
+			table.insert(result, k)
+		end
+	end
+	return result
+end
+
+--[[
 Převede všechna písmena v řetězci na malá, funguje i na písmena s diakritikou.
 ]]
 function ch_core.na_mala_pismena(s)
