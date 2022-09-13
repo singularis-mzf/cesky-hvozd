@@ -260,10 +260,13 @@ local function formspec_add_item_browser(player, formspec, ui_peruser)
 					name, button_name
 				)
 				local tooltip = item.description
-				if item.mod_origin then
+				--[[ if item.mod_origin then
 					-- "mod_origin" may not be specified for items that were
 					-- registered in a callback (during or before ServerEnv init)
 					tooltip = tooltip .. " [" .. item.mod_origin .. "]"
+				end ]]
+				if item._ch_help then
+					tooltip = tooltip.."\n"..minetest.get_color_escape_sequence("#f6ff00")..item._ch_help
 				end
 				formspec[n + 1] = ("tooltip[%s;%s]"):format(
 					button_name, minetest.formspec_escape(tooltip)
