@@ -216,6 +216,8 @@ local function register_powerbank(data)
 
 	local tool_def = {
 		description = S("Powerbank Mk@1", data.mark),
+		_ch_help = "Přenosná zásobárna energie pro elektrické nástroje.\nElektrický nástroj — před použitím nutno nabít.\nUmístěte někam (jako blok), klikněte na nabíječku pravým tlačítkem a do volných zásuvek připojte elektrické nástroje k dobití.\nLevý klik vezme prázdnou nabíječku do inventáře.\nV případě použití na veřejných místech si ji nezapomeňte zase odnést.",
+		_ch_help_group = "pwbanks",
 		inventory_image = minetest.inventorycube(
 			"powerbanks_base.png",
 			"powerbanks_base.png^powerbanks_overlay_mk"..data.mark..".png",

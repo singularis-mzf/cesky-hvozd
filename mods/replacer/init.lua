@@ -142,6 +142,7 @@ technic.register_power_tool("replacer:replacer", max_charge)
 minetest.register_tool( "replacer:replacer",
 {
     description = "elektrický nahrazovač",
+    _ch_help = "Vyvrtá blok a současně ho na místě nahradí jiným, dříve zapamatovaným.\nLevý klik vyvrtá blok a nahradí zapamatovaným, pravý klik umístí zapamatovaný blok,\nShift + pravý klik si zapamatuje blok, Aux1 + levý klik vyvolá ovládací panel nahrazovače.\nElektrický nástroj — před použitím nutno nabít.",
     groups = {}, 
     inventory_image = "replacer_replacer.png",
     wield_image = "",

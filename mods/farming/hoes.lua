@@ -31,6 +31,8 @@ farming.register_hoe = function(name, def)
 	-- Register the tool
 	minetest.register_tool(name, {
 		description = def.description,
+		_ch_help = "Levý klik na většinu druhů hlíny změní hlínu v ornici, na kterou půjde záset semena.",
+		_ch_help_group = "hoe",
 		inventory_image = def.inventory_image,
 		on_use = function(itemstack, user, pointed_thing)
 			return farming.hoe_on_use(itemstack, user, pointed_thing, def.max_uses)
@@ -363,6 +365,7 @@ end
 
 minetest.register_tool("farming:scythe_mithril", {
 	description = S("Mithril Scythe (Use to harvest and replant crops)"),
+	_ch_help = "Jedinečný nástroj; levý klik na zralou plodinu ji sklidí a současně znovu zaseje.\nSklizená plodina včetně případných semen skončí na zemi,\nproto budete pravděpodobně potřebovat nasávací rouru nebo vysavač.\nNezralé plodiny tato kosa nijak nepoškodí.",
 	inventory_image = "farming_scythe_mithril.png",
 	sound = {breaks = "default_tool_breaks"},
 

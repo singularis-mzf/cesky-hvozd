@@ -18,7 +18,8 @@ end
 -- useful for digging hay and straw
 -- can be placed as a node
 minetest.register_tool("cottages:pitchfork", {
-	description = S("pitchfork (dig dirt with grass to get hay, place with right-click)"),
+	description = S("pitchfork"),
+	_ch_help = "Levým tlačítkem těžte hlínu s trávou, abyste z ní získal/a trochu sena,\npravým klikem vidle zabodnete.",
 	groups = {},
 	inventory_image = "cottages_pitchfork.png",
 	wield_image = "cottages_pitchfork.png^[transformFYR180",

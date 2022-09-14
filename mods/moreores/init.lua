@@ -228,13 +228,15 @@ local function add_ore(modname, description, mineral_name, oredef)
 			farming.register_hoe(fulltool_name, tdef)
 		end
 
-		minetest.register_tool(fulltool_name, tdef)
+		if not minetest.registered_tools[fulltool_name:gsub("^:", "")] then
+			minetest.register_tool(fulltool_name, tdef)
 
-		if oredef.makes.ingot then
-			minetest.register_craft({
-				output = fulltool_name,
-				recipe = get_recipe(ingot, tool_name)
-			})
+			if oredef.makes.ingot then
+				minetest.register_craft({
+					output = fulltool_name,
+					recipe = get_recipe(ingot, tool_name)
+				})
+			end
 		end
 
 		-- Toolranks support

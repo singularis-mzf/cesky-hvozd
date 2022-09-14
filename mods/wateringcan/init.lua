@@ -21,6 +21,8 @@ end
 
 minetest.register_tool("wateringcan:wateringcan_water", {
 	description = S("Watering can with water"),
+	_ch_help = "Slouží k zalévání ornice, před použitím nutno naplnit vodou.\nPrázdnou konev naplníte levým klikem na vodu; pravým klikem ji položíte.\nNeprázdnou konví levým klikem zalijete ornici, pravý klik nemá funkci.",
+	_ch_help_group = "wcan",
 	inventory_image = "wateringcan_wateringcan_water.png",
 	wield_image = "wateringcan_wateringcan_wield.png",
 	liquids_pointable = true,
@@ -62,6 +64,8 @@ minetest.register_node("wateringcan:wateringcan_empty", {
 	drawtype = "plantlike",
 	tiles = {"wateringcan_wateringcan_empty.png"},
 	description = S("Empty watering can"),
+	_ch_help = "Slouží k zalévání ornice, před použitím nutno naplnit vodou.\nPrázdnou konev naplníte levým klikem na vodu; pravým klikem ji položíte.\nNeprázdnou konví levým klikem zalijete ornici, pravý klik nemá funkci.",
+	_ch_help_group = "wcan",
 	inventory_image = "wateringcan_wateringcan_empty.png",
 	wield_image = "wateringcan_wateringcan_wield.png",
 	liquids_pointable = true,

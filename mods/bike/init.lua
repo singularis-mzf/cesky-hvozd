@@ -827,6 +827,7 @@ end)
 -- Make the actual thingy
 minetest.register_tool("bike:painter", {
 	description = S("Bike Painter"),
+	_ch_help = "Slouží k barvení jízdních kol a tramvají.\nZvláštní nástroj — neopotřebovává se a nevyžaduje barvivo.\nLevý klik na kolo nebo tramvaj barví nastavenou barvou,\npravý klik vyvolá okno na nastavení barvy.\nBarvy s nastavením alfa = 0 mají zvláštní význam, který znají jen zasvěcení.",
 	inventory_image = "bike_painter.png",
 	wield_scale = {x = 2, y = 2, z = 1},
 	on_place = show_painter_form,

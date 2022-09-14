@@ -27,6 +27,7 @@ minetest.register_alias("technic:light_off", "air")
 technic.register_power_tool("technic:flashlight", flashlight_max_charge)
 minetest.register_tool("technic:flashlight", {
 	description = S("Flashlight"),
+	_ch_help = "Svítí kolem vás, když ji máte na výběrové liště.\nElektrický nástroj — před použitím nutno nabít.",
 	inventory_image = "technic_flashlight.png",
 	stack_max = 1,
 	wear_represents = "technic_RE_charge",

@@ -3,6 +3,7 @@ local S = minetest.get_translator(minetest.get_current_modname())
 
 minetest.register_tool("wrench:wrench", {
 	description = S("Wrench"),
+	_ch_help = "Klíč na zvedání vybraných předmětů s inventářem, především truhel a obchodních terminálů.\nPoužijte levým tlačítkem.",
 	inventory_image = "technic_wrench.png",
 	on_use = function(itemstack, player, pointed_thing)
 		if not player or not pointed_thing then

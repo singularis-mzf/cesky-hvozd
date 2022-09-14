@@ -325,6 +325,9 @@ end
 function ch_core.should_show_help(player, online_charinfo, item_name)
 	local def = minetest.registered_items[item_name]
 	if def and def._ch_help then
+		if def._ch_help_group then
+			item_name = def._ch_help_group
+		end
 		local navody = online_charinfo.navody
 		if not navody then
 			navody = {[item_name] = 1}

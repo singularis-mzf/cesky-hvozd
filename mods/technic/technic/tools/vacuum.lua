@@ -8,6 +8,8 @@ local vacuum3_charge_per_object = 100
 local vacuum1_range             = 8
 local vacuum2_range             = 16
 local vacuum3_range             = 25
+local ch_help = "Levý klik vysaje do inventáře všechny předměty volně se povalující po zemi v dané oblasti.\nElektrický nástroj — před použitím nutno nabít."
+local ch_help_group = "vacuum"
 
 local S = technic.getter
 
@@ -56,6 +58,8 @@ end
 
 minetest.register_tool("technic:vacuum_mk1", {
 	description = S("Vacuum Cleaner Mk1"),
+	_ch_help = ch_help,
+	_ch_help_group = ch_help_group,
 	inventory_image = "technic_vacuum_mk1.png",
 	stack_max = 1,
 	wear_represents = "technic_RE_charge",
@@ -66,6 +70,8 @@ minetest.register_tool("technic:vacuum_mk1", {
 })
 minetest.register_tool("technic:vacuum_mk2", {
 	description = S("Vacuum Cleaner Mk2"),
+	_ch_help = ch_help,
+	_ch_help_group = ch_help_group,
 	inventory_image = "technic_vacuum_mk2.png",
 	stack_max = 1,
 	wear_represents = "technic_RE_charge",
@@ -76,6 +82,8 @@ minetest.register_tool("technic:vacuum_mk2", {
 })
 minetest.register_tool("technic:vacuum_mk3", {
 	description = S("Vacuum Cleaner Mk3"),
+	_ch_help = ch_help,
+	_ch_help_group = ch_help_group,
 	inventory_image = "technic_vacuum_mk3.png",
 	stack_max = 1,
 	wear_represents = "technic_RE_charge",

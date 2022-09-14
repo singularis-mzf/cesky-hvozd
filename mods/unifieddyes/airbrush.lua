@@ -471,6 +471,7 @@ end)
 
 minetest.register_tool("unifieddyes:airbrush", {
 	description = S("Dye Airbrush"),
+	_ch_help = "Slouží k barvení bloků.\nZvláštní nástroj — neopotřebovává se, ale vyžaduje barviva (nemáte-li právo usnadnění hry).\nLevý klik na blok ho nabarví zvolenou barvou, pravý klik na blok vyvolá okno s výběrem barvy k barvení.\nAux1 + pravý klik na již nabarvený blok nastaví barvu podle něj.\nK barvení jízdních kol a tramvají slouží jiná barvicí pistole.",
 	inventory_image = "unifieddyes_airbrush.png",
 	use_texture_alpha = true,
 	tool_capabilities = {

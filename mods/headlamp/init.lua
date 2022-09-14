@@ -83,6 +83,8 @@ ch_core.register_player_globalstep(globalstep)
 --------------------------------------------------
 local def = {
 	description = "čelovka (vypnutá)",
+	_ch_help = "Je-li zapnutá a máte-li ji nasazenou (jako módní doplněk), svítí kolem vás. Má stejnou výdrž jako baterka.\nElektrický nástroj — před použitím nutno nabít.",
+	_ch_help_group = "headlamp",
 	inventory_image = "headlamp_inv_headlamp_off.png",
 	uv_image = "headlamp_headlamp_off.png",
 	on_use = function(stack)
@@ -108,6 +110,7 @@ end
 def.on_load = clear_headlamp_cache
 def.on_equip = clear_headlamp_cache
 def.on_unequip = clear_headlamp_cache
+def.groups = {clothing = 1, not_in_creative_inventory = 1}
 
 minetest.register_tool("headlamp:headlamp_on", def)
 technic.register_power_tool("headlamp:headlamp_on", battery_life)

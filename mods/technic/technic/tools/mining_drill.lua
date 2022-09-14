@@ -332,10 +332,15 @@ local function mining_drill_mk3_handler(itemstack, user, pointed_thing)
 	return itemstack
 end
 
+local ch_help = "Slouží k rychlé těžbě bloků.\nLevý klik na jakýkoliv těžitelný blok ho okamžitě vyvrtá.\nElektrický nástroj — před použitím nutno nabít."
+local ch_help_group = "mdrill1"
+
 technic.register_power_tool("technic:mining_drill", max_charge[1])
 
 minetest.register_tool("technic:mining_drill", {
 	description = S("Mining Drill Mk@1", 1),
+	_ch_help = ch_help,
+	_ch_help_group = ch_help_group,
 	inventory_image = "technic_mining_drill.png",
 	stack_max = 1,
 	wear_represents = "technic_RE_charge",
@@ -362,15 +367,28 @@ minetest.register_tool("technic:mining_drill", {
 	end,
 })
 
+local function on_place_mk2(itemstack, user, pointed_thing)
+	return mining_drill_mk2_setmode(user, itemstack)
+end
+
+local function on_use_mk2(itemstack, user, pointed_thing)
+	mining_drill_mk2_handler(itemstack, user, pointed_thing)
+	return itemstack
+end
+
+ch_help = "Slouží k rychlé těžbě bloků, podle nastaveného režimu těží jeden nebo tři bloky.\nLevý klik na těžitelný blok ho okamžitě vyvrtá; pravý klik přepne režim.\nElektrický nástroj — před použitím nutno nabít."
+ch_help_group = "mdrill2"
+
 minetest.register_tool("technic:mining_drill_mk2", {
 	description = S("Mining Drill Mk@1", 2),
+	_ch_help = ch_help,
+	_ch_help_group = ch_help_group,
 	inventory_image = "technic_mining_drill_mk2.png",
 	wear_represents = "technic_RE_charge",
 	on_refill = technic.refill_RE_charge,
-	on_use = function(itemstack, user, pointed_thing)
-		mining_drill_mk2_handler(itemstack, user, pointed_thing)
-		return itemstack
-	end,
+	on_use = on_use_mk2,
+	on_secondary_use = on_use_mk2,
+	on_place_mk2 = on_place_mk2,
 })
 
 technic.register_power_tool("technic:mining_drill_mk2", max_charge[2])
@@ -379,27 +397,41 @@ for i = 1, 4 do
 	technic.register_power_tool("technic:mining_drill_mk2_"..i, max_charge[2])
 	minetest.register_tool("technic:mining_drill_mk2_"..i, {
 		description = S("Mining Drill Mk@1 Mode @2", 2, i),
+		_ch_help = ch_help,
+		_ch_help_group = ch_help_group,
 		inventory_image = "technic_mining_drill_mk2.png^technic_tool_mode"..i..".png",
 		wield_image = "technic_mining_drill_mk2.png",
 		wear_represents = "technic_RE_charge",
 		on_refill = technic.refill_RE_charge,
 		groups = {not_in_creative_inventory=1},
-		on_use = function(itemstack, user, pointed_thing)
-			mining_drill_mk2_handler(itemstack, user, pointed_thing)
-			return itemstack
-		end,
+		on_use = on_use_mk2,
+		on_secondary_use = on_use_mk2,
+		on_place = on_place_mk2,
 	})
 end
 
+local function on_place_mk3(itemstack, user, pointed_thing)
+	return mining_drill_mk3_setmode(user, itemstack)
+end
+
+local function on_use_mk3(itemstack, user, pointed_thing)
+	mining_drill_mk3_handler(itemstack,user,pointed_thing)
+	return itemstack
+end
+
+ch_help = "Slouží k rychlé těžbě bloků, podle nastaveného režimu těží jeden, tři nebo devět bloků.\nLevý klik na těžitelný blok ho okamžitě vyvrtá; pravý klik přepne režim.\nElektrický nástroj — před použitím nutno nabít."
+ch_help_group = "mdrill3"
+
 minetest.register_tool("technic:mining_drill_mk3", {
 	description = S("Mining Drill Mk@1", 3),
+	_ch_help = ch_help,
+	_ch_help_group = ch_help_group,
 	inventory_image = "technic_mining_drill_mk3.png",
 	wear_represents = "technic_RE_charge",
 	on_refill = technic.refill_RE_charge,
-	on_use = function(itemstack, user, pointed_thing)
-	mining_drill_mk3_handler(itemstack,user,pointed_thing)
-	return itemstack
-	end,
+	on_use = on_use_mk3,
+	on_secondary_use = on_use_mk3,
+	on_place = on_place_mk3,
 })
 
 technic.register_power_tool("technic:mining_drill_mk3", max_charge[3])
@@ -408,14 +440,15 @@ for i=1,5,1 do
 	technic.register_power_tool("technic:mining_drill_mk3_"..i, max_charge[3])
 	minetest.register_tool("technic:mining_drill_mk3_"..i, {
 		description = S("Mining Drill Mk@1 Mode @2", 3, i),
+		_ch_help = ch_help,
+		_ch_help_group = ch_help_group,
 		inventory_image = "technic_mining_drill_mk3.png^technic_tool_mode"..i..".png",
 		wield_image = "technic_mining_drill_mk3.png",
 		wear_represents = "technic_RE_charge",
 		on_refill = technic.refill_RE_charge,
 		groups = {not_in_creative_inventory=1},
-		on_use = function(itemstack, user, pointed_thing)
-		mining_drill_mk3_handler(itemstack,user,pointed_thing)
-		return itemstack
-		end,
+		on_use = on_use_mk3,
+		on_secondary_use = on_use_mk3,
+		on_place = on_place_mk3,
 	})
 end

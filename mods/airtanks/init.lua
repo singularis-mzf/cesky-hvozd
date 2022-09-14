@@ -86,11 +86,18 @@ local function use_airtank(itemstack, user)
 	return itemstack
 end
 
+local airtank_ch_help = "Umožňuje nádech z tlakové láhve při potápění (pod vodou).\nPřed použitím nutno naplnit vzduchem použitím vzduchového kompresoru.\nLevým klikem se pod vodou nadechnete z tlakové láhve."
+local airtank_empty_ch_help = airtank_ch_help
+local airtank_ch_help_group = "airtank"
+local airtank_empty_ch_help_group = airtank_ch_help_group
+
 -- This will only work for single use tanks... we need to add separate functions for the others
 local function register_air_tank(name, desc, color, uses, material)
 	minetest.register_craftitem("airtanks:empty_"..name.."_tank", {
 		description = S("Empty @1", desc),
 		groups = {airtank = 1},
+		_ch_help = airtank_empty_ch_help,
+		_ch_help_group = airtank_empty_ch_help_group,
 		_doc_items_longdesc = S("A compressed air tank, currently empty."),
 		_doc_items_usagehelp = S("This tank can be recharged with compressed air by using it on a compressor block. When fully charged this tank has @1 uses before it becomes empty.", uses),
 		_airtanks_uses = uses,
@@ -103,6 +110,8 @@ local function register_air_tank(name, desc, color, uses, material)
 		description = desc,
 		_doc_items_longdesc = S("A tank containing compressed air."),
 		_doc_items_usagehelp = S("If you're underwater and you're running out of breath, wield this item and use it to replenish 5 bubbles on your breath bar. When fully charged this tank has @1 uses before it becomes empty.", uses),
+		_ch_help = airtank_ch_help,
+		_ch_help_group = airtank_ch_help_group,
 		_airtanks_uses = uses,
 		_airtanks_empty = "airtanks:empty_"..name.."_tank",
 		groups = {not_repaired_by_anvil = 1, airtank = 2, not_in_creative_inventory = 1},
@@ -133,6 +142,8 @@ local function register_air_tank_2(name, desc, color, uses)
 		groups = {airtank = 1},
 		_doc_items_longdesc = S("A pair of compressed air tanks, currently empty."),
 		_doc_items_usagehelp = S("This tank can be recharged with compressed air by using it on a compressor block. When fully charged these tanks have @1 uses before it becomes empty.", uses),
+		_ch_help = airtank_empty_ch_help,
+		_ch_help_group = airtank_empty_ch_help_group,
 		_airtanks_uses = uses,
 		_airtanks_full = "airtanks:"..name.."_tank_2",
 		inventory_image = "airtanks_airtank_two.png^[colorize:"..color.."^[mask:airtanks_airtank_two.png^airtanks_empty.png",
@@ -143,6 +154,8 @@ local function register_air_tank_2(name, desc, color, uses)
 		description = desc,
 		_doc_items_longdesc = S("A pair of tanks containing compressed air."),
 		_doc_items_usagehelp = S("If you're underwater and you're running out of breath, wield this item and use it to replenish 5 bubbles on your breath bar. When fully charged these tanks have @1 uses before it becomes empty.", uses),
+		_ch_help = airtank_ch_help,
+		_ch_help_group = airtank_ch_help_group,
 		_airtanks_uses = uses,
 		_airtanks_empty = "airtanks:empty_"..name.."_tank_2",
 		groups = {not_repaired_by_anvil = 1, airtank = 2, not_in_creative_inventory = 1},
@@ -177,6 +190,8 @@ local function register_air_tank_3(name, desc, color, uses)
 		groups = {airtank = 1},
 		_doc_items_longdesc = S("A set of three compressed air tanks, currently empty."),
 		_doc_items_usagehelp = S("These tanks can be recharged with compressed air by using it on a compressor block. When fully charged these tanks have @1 uses before it becomes empty.", uses),
+		_ch_help = airtank_empty_ch_help,
+		_ch_help_group = airtank_empty_ch_help_group,
 		_airtanks_uses = uses,
 		_airtanks_full = "airtanks:"..name.."_tank_3",
 		inventory_image = "airtanks_airtank_three.png^[colorize:"..color.."^[mask:airtanks_airtank_three.png^airtanks_empty.png",
@@ -187,6 +202,8 @@ local function register_air_tank_3(name, desc, color, uses)
 		description = desc,
 		_doc_items_longdesc = S("A set of three tanks containing compressed air."),
 		_doc_items_usagehelp = S("If you're underwater and you're running out of breath, wield this item and use it to replenish 5 bubbles on your breath bar. When fully charged these tanks have @1 uses before it becomes empty.", uses),
+		_ch_help = airtank_ch_help,
+		_ch_help_group = airtank_ch_help_group,
 		_airtanks_uses = uses,
 		_airtanks_empty = "airtanks:empty_"..name.."_tank_3",
 		groups = {not_repaired_by_anvil = 1, airtank = 2, not_in_creative_inventory = 1},

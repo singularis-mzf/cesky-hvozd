@@ -321,6 +321,8 @@ end)
 
 minetest.register_tool("hangglider:hangglider", {
 	description = S("Glider"),
+	_ch_help = "Použijte levým tlačítkem, když jste ve vzduchu a padáte.\nVysune se kluzák a zpomalí váš pád. Po dopadu za zem sám zmizí.",
+	_ch_help_group = "glider",
 	inventory_image = "glider_item.png",
 	stack_max=1,
 	on_use = function(itemstack, player, pointed_thing)

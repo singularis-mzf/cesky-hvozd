@@ -656,36 +656,51 @@ end
 
 local known_wrenches = {}
 
+local ch_help_rotating = "Rotační klíč slouží k otáčení bloků.\nLevý klik otočí blok nastaveným způsobem; pravý klik přepne režim otáčení.\nPřes výrobní mřížku můžete klíč změnit na dvě další varianty."
+local ch_help_rotating_group = "wrench_rot"
 
 local function register_wrench_rotating(wrench_mod_name, material, material_descr, uses, mode, next_mode)
 	local sep = "_"
 	local notcrea = 1
-	local descr_extra = "; "
+	-- local descr_extra = "; "
 	if mode == "" then
 		sep = ""
 		notcrea = 0
-		descr_extra = ""
+		-- descr_extra = ""
 	end
 	known_wrenches[wrench_mod_name .. ":wrench_" .. material .. sep .. mode] = true
+	
+	local function on_use(itemstack, player, pointed_thing)
+		if mode == "" then
+			minetest.chat_send_player(player:get_player_name(), S("ALERT: Wrench is not configured yet. Right-click to set / cycle modes"))
+			return
+		end
+		wrench_handler(itemstack, player, pointed_thing, mode, material, uses)
+		return itemstack
+	end
+	local function on_place(itemstack, player, pointed_thing)
+		itemstack:set_name(wrench_mod_name .. ":wrench_" .. material .. "_" .. next_mode)
+		return itemstack
+	end
+
 	minetest.register_tool(wrench_mod_name .. ":wrench_" .. material .. sep .. mode, {
-		description = S(material_descr .. " wrench").."\n(" .. S(mode) .. descr_extra .. S("left-click rotates, right-click cycles mode")..")",
+		description = S("Rotating ".. material_descr .. " wrench").." (" .. S(mode) --[[.. descr_extra .. S("left-click rotates, right-click cycles mode")]] ..")",
+		_ch_help = ch_help_rotating,
+		_ch_help_group = ch_help_rotating_group,
 		wield_image = "wrench_" .. material .. ".png",
 		inventory_image = "wrench_" .. material .. sep .. mode ..".png",
 		groups = { wrench = 1, ["wrench_"..material.."_rot"] = 1, not_in_creative_inventory = notcrea },
-		on_use = function(itemstack, player, pointed_thing)
-			if mode == "" then
-				minetest.chat_send_player(player:get_player_name(), S("ALERT: Wrench is not configured yet. Right-click to set / cycle modes"))
-				return
-			end
-			wrench_handler(itemstack, player, pointed_thing, mode, material, uses)
-			return itemstack
-		end,
-		on_place = function(itemstack, player, pointed_thing)
-			itemstack:set_name(wrench_mod_name .. ":wrench_" .. material .. "_" .. next_mode)
-			return itemstack
-		end,
+		on_use = on_use,
+		on_secondary_use = on_place,
+		on_place = on_place,
 	})
 end
+
+local ch_help_relative = "Relativní klíč slouží k otáčení bloků tak, aby z vašeho pohledu byly otočeny tak, jak si klíč zapamatoval.\nLevý klik otočí blok; pravý klik na blok si zapamatuje jeho otočení.\nPřes výrobní mřížku můžete klíč změnit na dvě další varianty."
+local ch_help_relative_group = "wrench_rel"
+
+local ch_help_absolute = "Absolutní klíč slouží k otáčení bloků do zapamatovaného světového otočení.\nLevý klik otočí blok; pravý klik na blok si zapamatuje jeho otočení.\nPřes výrobní mřížku můžete klíč změnit na dvě další varianty."
+local ch_help_absolute_group = "wrench_abs"
 
 local function register_wrench_positioning(wrench_mod_name, material, material_descr, uses, mode)
 	local notcrea = 1
@@ -709,25 +724,31 @@ local function register_wrench_positioning(wrench_mod_name, material, material_d
 	end
 
 	known_wrenches[wrench_mod_name .. ":wrench_" .. material .. "_" .. mode] = true
+
+	local function on_use(itemstack, player, pointed_thing)
+		wrench_handler(itemstack, player, pointed_thing, mode, material, uses)
+		return itemstack
+	end
+	local function on_place(itemstack, player, pointed_thing)
+		local new_mode
+		if string.sub(mode,1,1) == "r" then
+			new_mode = get_node_relative_orientation_mode(player, pointed_thing)
+		else
+			new_mode = get_node_absolute_orientation_mode(pointed_thing)
+		end
+		itemstack:set_name(wrench_mod_name .. ":wrench_" .. material .. "_" .. new_mode)
+		return itemstack
+	end
+
 	minetest.register_tool(wrench_mod_name .. ":wrench_" .. material .. "_" .. mode, {
-		description = S(material_descr .. " wrench").."\n(" .. S(mode) .. "; "..S("left-click positions, right-click sets mode")..")",
+		description = S((mode:sub(1, 1) == "r" and "Relative " or "Absolute ").. material_descr .. " wrench").." (" .. S(mode) --[[ .. "; "..S("left-click positions, right-click sets mode")]] ..")",
+		_ch_help = mode:sub(1, 1) == "r" and ch_help_relative or ch_help_absolute,
+		_ch_help_group = mode:sub(1, 1) == "r" and ch_help_relative_group or ch_help_absolute_group,
 		wield_image = "wrench_" .. material .. ".png",
 		inventory_image = wrench_image .. "^" .. orientation_image,
 		groups = { wrench = 1, ["wrench_"..material.."_"..string.sub(mode,1,1).."pos"] = 1, not_in_creative_inventory = notcrea },
-		on_use = function(itemstack, player, pointed_thing)
-			wrench_handler(itemstack, player, pointed_thing, mode, material, uses)
-			return itemstack
-		end,
-		on_place = function(itemstack, player, pointed_thing)
-			local new_mode
-			if string.sub(mode,1,1) == "r" then
-			    new_mode = get_node_relative_orientation_mode(player, pointed_thing)
-			else
-			    new_mode = get_node_absolute_orientation_mode(pointed_thing)
-			end
-			itemstack:set_name(wrench_mod_name .. ":wrench_" .. material .. "_" .. new_mode)
-			return itemstack
-		end,
+		on_use = on_use,
+		on_place = on_place,
 	})
 end
 

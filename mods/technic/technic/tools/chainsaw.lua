@@ -246,8 +246,13 @@ local function chainsaw_onuse(max_charge, itemstack, user, pointed_thing)
 	return itemstack
 end
 
+local ch_help = "Slouží k rychlému kácení stromů.\nLevý klik na blok kmene nebo listí skácí celou výše položenou část stromu, někdy i okolních stromů.\nElektrický nástroj — před použitím nutno nabít."
+local ch_help_group = "chainsaw"
+
 minetest.register_tool("technic:chainsaw_mk1", {
 	description = S("Chainsaw Mk1"),
+	_ch_help = ch_help,
+	_ch_help_group = ch_help_group,
 	inventory_image = "technic_chainsaw_mk1.png",
 	stack_max = 1,
 	wear_represents = "technic_RE_charge",
@@ -259,6 +264,8 @@ minetest.register_tool("technic:chainsaw_mk1", {
 
 minetest.register_tool("technic:chainsaw_mk2", {
 	description = S("Chainsaw Mk2"),
+	_ch_help = ch_help,
+	_ch_help_group = ch_help_group,
 	inventory_image = "technic_chainsaw_mk2.png",
 	stack_max = 1,
 	wear_represents = "technic_RE_charge",
@@ -270,6 +277,8 @@ minetest.register_tool("technic:chainsaw_mk2", {
 
 minetest.register_tool("technic:chainsaw_mk3", {
 	description = S("Chainsaw Mk3"),
+	_ch_help = ch_help,
+	_ch_help_group = ch_help_group,
 	inventory_image = "technic_chainsaw_mk3.png",
 	stack_max = 1,
 	wear_represents = "technic_RE_charge",

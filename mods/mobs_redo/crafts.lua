@@ -4,6 +4,7 @@ local S = mobs.intllib
 -- name tag
 minetest.register_craftitem("mobs:nametag", {
 	description = S("Name Tag"),
+	_ch_help = "Slouží k pojmenování zvířat.\nPravým klikem na zvíře otevřete dialogové okno k jeho pojmenování.",
 	inventory_image = "mobs_nametag.png",
 	groups = {flammable = 2, nametag = 1}
 })
@@ -47,7 +48,8 @@ minetest.register_craft({
 
 -- lasso
 minetest.register_tool("mobs:lasso", {
-	description = S("Lasso (right-click animal to put in inventory)"),
+	description = S("Lasso"),
+	_ch_help = "Pravý klik se pokusí zvíře umístit do vašeho inventáře. Nechytá motýly a světlušky.",
 	inventory_image = "mobs_magic_lasso.png",
 	groups = {flammable = 2}
 })
@@ -67,7 +69,8 @@ minetest.register_alias("mobs:magic_lasso", "mobs:lasso")
 
 -- net
 minetest.register_tool("mobs:net", {
-	description = S("Net (right-click animal to put in inventory)"),
+	description = S("Net"),
+	_ch_help = "Pravý klik se pokusí zvíře umístit do vašeho inventáře. Nechytá motýly a světlušky.",
 	inventory_image = "mobs_net.png",
 	groups = {flammable = 2}
 })
@@ -86,6 +89,7 @@ end
 -- shears (right click to shear animal)
 minetest.register_tool("mobs:shears", {
 	description = S("Steel Shears (right-click to shear)"),
+	_ch_help = "Pravý klik na ovci z ní ostříhá vlnu. Pozor, levý klik ovci zraní!",
 	inventory_image = "mobs_shears.png",
 	groups = {flammable = 2}
 })
@@ -251,7 +255,7 @@ minetest.register_tool(":mobs:mob_reset_stick", {
 	description = S("Mob Reset Stick"),
 	inventory_image = "default_stick.png^[colorize:#ff000050",
 	stack_max = 1,
-	groups = {not_in_creative_inventory = 1},
+	-- groups = {not_in_creative_inventory = 1},
 
 	on_use = function(itemstack, user, pointed_thing)
 

@@ -414,6 +414,7 @@ end)
 -- fishing rod
 minetest.register_tool("farming:fishing_rod", {
 	description = S("Fishing Rod (USE to cast and again when the time is right)"),
+	_ch_help = "Slouží k lovení ryb z vody.\nLevý klik na vodu pro nahození a znovu v ten správný čas.",
 	groups = {tool = 1},
 	inventory_image = "ethereal_fishing_rod.png",
 	wield_image = "ethereal_fishing_rod.png^[transformFX",
