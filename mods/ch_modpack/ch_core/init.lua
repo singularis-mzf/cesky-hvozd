@@ -108,8 +108,12 @@ local function globalstep(dtime)
 		local offline_charinfo = ch_core.get_offline_charinfo(player_name)
 		local disrupt_teleport_flag = false
 		local disrupt_pryc_flag = false
+		local player_wielded_item_name = player:get_wielded_item():get_name() or ""
 
 		if online_charinfo then
+			local previous_wield_item_name = online_charinfo.wielded_item_name or ""
+			online_charinfo.wielded_item_name = player_wielded_item_name
+
 			-- ÚHEL HLAVY:
 			local emote = emoting[player]
 			if not emote or emote ~= "lehni" then
@@ -222,6 +226,17 @@ local function globalstep(dtime)
 			while custom_globalsteps[i] do
 				custom_globalsteps[i](player, player_name, online_charinfo, offline_charinfo, us_time)
 				i = i + 1
+			end
+
+			-- pokud se změnil držený předmět, možná bude potřeba zobrazit jeho nápovědu
+			if player_wielded_item_name ~= previous_wield_item_name then
+				local help_def = ch_core.should_show_help(player, online_charinfo, player_wielded_item_name)
+				if help_def then
+					local zluta = minetest.get_color_escape_sequence("#ffff00")
+					local zelena = minetest.get_color_escape_sequence("#00ff00")
+					local s = zluta.."Nápověda k předmětu „"..zelena..(help_def.description or ""):gsub("\n", "\n  "..zelena)..zluta.."“:\n  "..zluta..(help_def._ch_help or ""):gsub("\n", "\n  "..zluta)
+					ch_core.systemovy_kanal(player_name, s)
+				end
 			end
 
 			-- NASTAVIT OSVĚTLENÍ [data, nodes, wielded_light]

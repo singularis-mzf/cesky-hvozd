@@ -73,6 +73,18 @@ function ch_core.get_joining_online_charinfo(player_name)
 		ch_core.online_charinfo[player_name] = result
 		old_online_charinfo[player_name] = nil
 		print("JOIN PLAYER(" .. player_name ..") at "..result.join_timestamp);
+
+		result.navody = {}
+		local player = minetest.get_player_by_name(player_name)
+		if player then
+			local meta = player:get_meta()
+			local s = meta:get_string("navody")
+			if s and s ~= "" then
+				result.navody = minetest.deserialize(s, true) or result.navody
+			end
+		else
+			minetest.log("error", "Player object not available for "..player_name.." in get_joining_online_charinfo()!")
+		end
 	end
 	return result
 end
@@ -304,9 +316,57 @@ local function on_shutdown()
 	end
 end
 
+--[[
+	Otestuje, zda podle online_charinfo má dané postavě být zobrazený
+	v četu návod k položce daného názvu. Pokud ano, nastaví příznak, aby se
+	to znovu již nestalo, a vráŧí definici daného předmětu,
+	z níž lze z položek description a _ch_help sestavit text k zobrazení.
+]]
+function ch_core.should_show_help(player, online_charinfo, item_name)
+	local def = minetest.registered_items[item_name]
+	if def and def._ch_help then
+		local navody = online_charinfo.navody
+		if not navody then
+			navody = {[item_name] = 1}
+			online_charinfo.navody = navody
+			player:get_meta():set_string("navody", minetest.serialize(navody))
+			return def.description ~= nil and def
+		end
+		if not navody[item_name] then
+			navody[item_name] = 1
+			player:get_meta():set_string("navody", minetest.serialize(navody))
+			return def.description ~= nil and def
+		end
+	end
+	return nil
+end
+
 minetest.register_on_joinplayer(on_joinplayer)
 minetest.register_on_leaveplayer(on_leaveplayer)
 minetest.register_on_shutdown(on_shutdown)
+
+local def = {
+	description = "Smaže údaje o tom, ke kterým předmětům již byly postavě zobrazeny nápovědy, takže budou znovu zobrazovány nápovědy ke všem předmětům.",
+	func = function(player_name, param)
+		local online_charinfo = ch_core.online_charinfo[player_name]
+		local player = minetest.get_player_by_name(player_name)
+		if online_charinfo then
+			online_charinfo.navody = {}
+			if player then
+				player:get_meta():set_string("navody", minetest.serialize(online_charinfo.navody))
+			else
+				minetest.log("error", "Příkaz /návodyznovu nenašel objekt postavy "..player_name.."!")
+				return false, "Vnitřní chyba serveru"
+			end
+			return true, "Údaje smazány."
+		else
+			minetest.log("error", "Příkaz /návodyznovu nenašel online_charinfo postavy "..player_name.."!")
+			return false, "Vnitřní chyba serveru"
+		end
+	end,
+}
+minetest.register_chatcommand("návodyznovu", def)
+minetest.register_chatcommand("navodyznovu", def)
 
 --[[
 storage:set_string("postavy/Administrace/titul", "správa serveru")
