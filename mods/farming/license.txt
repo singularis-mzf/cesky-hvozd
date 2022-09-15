@@ -181,6 +181,8 @@ Created by Felfa (CC0)
   farming_spanish_potatoes.png
   farming_vanilla_flan.png
   farming_sunflower*.png
+  ethereal_lemon.png
+  ethereal_lemon_fruit.png
 
 Created by gorlock (CC0)
   farming_salt_crystal.png

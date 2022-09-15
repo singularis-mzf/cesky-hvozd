@@ -37,9 +37,9 @@ minetest.register_craft({
 minetest.register_craft({
 	output = "wine:glass_lemonade",
 	recipe = {
-		{"ethereal:orange"},
-		{"farming:juicer"},
-		{"vessels:drinking_glass"},
+		{"ethereal:orange", "ethereal:orange", "farming:lemon"},
+		{"", "farming:juicer", "farming:sugar"},
+		{"", "vessels:drinking_glass", ""},
 	},
 	replacements = {
 		{"group:food_juicer", "farming:juicer"}
@@ -144,12 +144,13 @@ end
 if minetest.registered_items["ethereal:orange"] then
 	wine:add_item({ {"ethereal:orange", "wine:glass_cointreau"} })
 end
-if minetest.registered_items["ethereal:lemon"] then
+if minetest.registered_items["farming:lemon"] then
 	-- margarita recipe
 	minetest.register_craft({
 		output = "wine:glass_margarita 2",
+		type = "shapeless",
 		recipe = {
-			{"wine:glass_cointreau", "wine:glass_tequila", "ethereal:lemon"}
+			"wine:glass_cointreau", "wine:glass_tequila", "farming:lemon"
 		}
 	})
 end

@@ -259,8 +259,6 @@ default_obsidian_brick.png
 default_paper.png
 default_permafrost.png
 default_pine_needles.png
-default_rainforest_litter.png
-default_rainforest_litter_side.png
 default_steel_ingot.png
 default_tin_ingot.png
 doors_door_steel.png
@@ -372,6 +370,8 @@ xpanes_trapdoor_steel_bar_side.png
 
 default_coniferous_litter.png
 default_coniferous_litter_side.png
+default_rainforest_litter.png
+default_rainforest_litter_side.png
 travelnet_travelnet_back.png
 travelnet_travelnet_back_color.png
 travelnet_travelnet_front.png
