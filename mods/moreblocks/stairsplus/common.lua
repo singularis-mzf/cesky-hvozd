@@ -118,6 +118,41 @@ stairsplus.rotate_node_aux = function(itemstack, placer, pointed_thing)
 	return minetest.item_place(itemstack, placer, pointed_thing, p2)
 end
 
+local alternate_to_group_value = {
+	[""] = 8,
+	["_1"] = 1,
+	["_2"] = 2,
+	["_4"] = 4,
+	["_12"] = 12,
+	["_14"] = 14,
+	["_15"] = 15,
+	["_quarter"] = 4,
+	["_three_quarter"] = 12,
+	["_two_sides"] = 9,
+	["_three_sides"] = 10,
+	["_three_sides_u"] = 11,
+	["_half"] = 8,
+	["_half_raised"] = 12,
+	["_inner"] = 1,
+	["_inner_half"] = 2,
+	["_inner_half_raised"] = 3,
+	["_inner_cut"] = 7,
+	["_inner_cut_half"] = 4,
+	["_inner_cut_half_raised"] = 5,
+	["_outer"] = 15,
+	["_outer_half"] = 9,
+	["_outer_half_raised"] = 10,
+	["_outer_cut"] = 11,
+	["_outer_cut_half"] = 12,
+	["_outer_cut_half_raised"] = 13,
+	["_cut"] = 14,
+	["_right_half"] = 9,
+	["_alt"] = 9,
+	["_alt_1"] = 10,
+	["_alt_2"] = 11,
+	["_alt_4"] = 12,
+}
+
 stairsplus.register_single = function(category, alternate, info, modname, subname, recipeitem, fields)
 
 	local src_def = minetest.registered_nodes[recipeitem] or {}
@@ -154,6 +189,7 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 
 	def.on_place = stairsplus.rotate_node_aux
 	def.groups = stairsplus:prepare_groups(fields.groups)
+	def.groups[category] = alternate_to_group_value[alternate] or 1
 
 	if category == "slab" then
 		if type(info) ~= "table" then
