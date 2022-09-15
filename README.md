@@ -349,6 +349,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: LGPLv2.1 pro kód, CC-BY-SA-3.0 pro média
 * [ContentDB](https://content.minetest.net/packages/SFENCE/clothing/)
 
+## Comboblock (comboblock)
+
+* Zdroj: [https://github.com/sirrobzeroone/comboblock](https://github.com/sirrobzeroone/comboblock), revize e93007648159ebbe8178fa85f28bde1ce4326126
+* Původní licence: Unlicense
+* Licence úprav: Unlicense
+* [ContentDB](https://content.minetest.net/packages/sirrobzeroone/comboblock/)
+
 ## Cottages (cottages)
 
 * Zdroj: [https://github.com/Sokomine/cottages](https://github.com/Sokomine/cottages), revize 2b10e6f6791198edb9ad0fd3b2e12ce3a00a1142
