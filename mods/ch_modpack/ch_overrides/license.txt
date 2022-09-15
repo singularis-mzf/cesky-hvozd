@@ -17,6 +17,45 @@ https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 Licenses of media (models and textures)
 ----------------------------
 
+default_dirt.png
+default_grass.png
+default_grass_side.png
+	Copyright (C) 2010-2018:
+		celeron55, Perttu Ahola <celeron55@gmail.com>
+		Cisoun
+		G4JC
+		VanessaE
+		RealBadAngel
+		Calinou
+		MirceaKitsune
+		Jordach
+		PilzAdam
+		jojoa1997
+		InfinityProject
+		Splizard
+		Zeg9
+		paramat
+		BlockMen
+		sofar
+		Neuromancer
+		Gambit
+		asl97
+		KevDoy
+		Mito551
+		GreenXenith
+		kaeza
+		kilbith
+		tobyplowy
+		CloudyProton
+		TumeniNodes
+		Mossmanikin
+		random-geek
+		Extex101
+		An0n3m0us
+	Source: Minetest Game
+	Modified by: Singularis
+	License: CC BY-SA 3.0
+
 default_river_water.png
 default_river_water_flowing_animated.png
 default_river_water_source_animated.png
