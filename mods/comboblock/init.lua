@@ -7,16 +7,26 @@
 --            \/             \/    \/              \/                 \/     \/    --
 --                                                                                 --
 --                  Orginally written/created by Pithydon/Pithy                    --
---					           Version 5.5.0.1                                     --
+--					           Version 5.5.0.1_CH                                  --
 --                first 3 numbers version of minetest created for,                 --
 --                   last digit mod version for MT version                         --
+--                       This is a fork for Český hvozd                            --
 -------------------------------------------------------------------------------------
+
+-- list of allowed combo blocks
+local allowed_combos = {
+	"moreblocks:slab_cobble+moreblocks:slab_cactus_brick",
+}
+allowed_combos = table.key_value_swap(allowed_combos)
+
+local ch_help = "Kombinované bloky získáte položením desky (8/16) jednoho typu\nna desku (8/16) druhého typu. Jen některé kombinace jsou dovoleny.\nZáleží na pořadí; při položení v opačném pořadí získáte jiný blok. Výsledný blok lze otáčet."
+local ch_help_group = "comboblock"
 
 ----------------------------
 --        Settings        --
 ----------------------------
 local S = minetest.get_translator(minetest.get_current_modname())
-local cs = tonumber(minetest.settings:get("comboblock_scale")) or 16
+local cs = 64
 local node_count = 0
 local existing_node_count = 0
 local to_many_nodes = false
@@ -24,33 +34,21 @@ comboblock = {}
 
 local m_name = minetest.get_current_modname()
 local m_path = minetest.get_modpath(m_name)
-	dofile(m_path.. "/i_comboblock_letter.lua" )	
+--	dofile(m_path.. "/i_comboblock_letter.lua" )	
 ----------------------------
 --       Functions        --
 ----------------------------
-	------------------------------
-	-- Group retrieval function --
-	------------------------------
-	--by blert2112 minetest forum
-	local function registered_nodes_by_group(groupname)
-		local result = {}
-			for name, def in pairs(minetest.registered_nodes) do
-				node_count = node_count + 1
-				if def.groups[groupname] then
-					result[#result+1] = name
-				end
-			end
-		return result
-	end
-
 	----------------------------
 	-- Add Lowpart and Resize --
 	----------------------------
 	-- Add "^[lowpart:50:" and resize to all image names
 	-- against source node for V2 (bottoms)
-	function add_lowpart(tiles)
+	local function add_lowpart(tiles)
 
-		local name_split = string.split(tiles.name,"^")
+		if type(tiles) == "table" then
+			tiles = tiles.name
+		end
+		local name_split = string.split(tiles,"^")
 		local new_name = ""
 		local i = 1
 			while i <= #name_split do
@@ -72,6 +70,35 @@ local m_path = minetest.get_modpath(m_name)
 		return new_name                                             -- Output Single image eg ^[lowpart:50:default_cobble.png
 	end                                                             -- Output Two or more image eg  ^[lowpart:50:default_cobble.png^[lowpart:50:cracked_cobble.png
 
+	local preprocess_description_str = " ("..minetest.translate("moreblocks", "Slab")..", 8/16)"
+	local function preprocess_description(desc)
+		local i = desc:find(preprocess_description_str, 1, true)
+		if i then
+			desc = desc:sub(1, i - 1)..desc:sub(i + preprocess_description_str:len(), -1)
+		end
+		return "„"..desc.."“"
+	end
+
+	local function preprocess_tiles(tiles)
+		if type(tiles) == "string" then
+			return {{name = tiles, backface_culling = true}}
+		end
+		local result = {}
+		for i, t in ipairs(tiles) do
+			if type(t) == "string" then
+				result[i] = {name = t, backface_culling = true}
+			elseif type(t) == "table" then
+				result[i] = table.copy(t)
+				result[i].backface_culling = true
+			else
+				-- unsupported case
+				minetest.log("warning", "Unexpected tile type "..type(t).." detected!")
+				result[i] = {name = "default_cobble.png", backface_culling = true}
+			end
+		end
+		return result
+	end
+
 	-------------------------
 	-- Get Comboblock Name --
 	-------------------------
@@ -80,6 +107,16 @@ local m_path = minetest.get_modpath(m_name)
 		if not pla_tar.err then
 			local first_node_name = pla_tar[1]
 			local second_node_name = node_c_name
+
+			if first_node_name == second_node_name then
+				local craft_result = minetest.get_craft_result({method = "normal", width = 2, items = {first_node_name, first_node_name}})
+				local item = craft_result.item:get_name()
+				if not item then
+					minetest.log("error", "ComboBlock craft failed for "..first_node_name.."!")
+					return first_node_name
+				end
+				return item
+			end
 
 			if pla_tar[1] == "clicked" then
 				first_node_name = node_c_name
@@ -277,7 +314,15 @@ local mblocks = minetest.get_modpath("moreblocks")                  -- used to e
 	end
 
 -- creates an index of any node name in the group "slab"
-local slab_index = registered_nodes_by_group("slab")
+local slab_index = {}
+local get_item_group = minetest.get_item_group
+
+for name, _ in pairs(minetest.registered_nodes) do
+	if get_item_group(name, "slab") == 8 then
+		table.insert(slab_index, name)
+		node_count = #slab_index
+	end
+end
 
 -- Calculate max permutations, this over estimates as we
 -- don't mix glass and non-glass - in-built error margin
@@ -293,15 +338,10 @@ for _,v1 in pairs(slab_index) do
 	else
 		local v1_def = minetest.registered_nodes[v1]                 -- Makes a copy of the relevant node settings
 		local v1_groups = table.copy(v1_def.groups)                  -- Takes the above and places the groups into its own seperate copy
-		local v1_tiles                                               -- v1 tiles table
-			  v1_groups.not_in_creative_inventory = 1                -- Don't want comboblocks cluttering inventory
-			  v1_groups.slab = nil                                   -- They aren't slabs so remove slab group
-
-		if type(v1_def.tiles) ~= "table" then                        -- Check tiles are stored as table some old mods just have tiles = "texture.png"
-			v1_tiles = {v1_def.tiles}                                -- construct table as {"texture.png"}
-		else
-			v1_tiles = table.copy(v1_def.tiles)                      -- copy of the node texture images
-		end
+		local v1_tiles = preprocess_tiles(v1_def.tiles)              -- v1 tiles table
+		v1_groups.not_in_creative_inventory = nil
+		v1_groups.slab = nil
+		v1_groups.comboblock = 1
 
 		for i = 2, 6, 1 do 											 -- Checks for image names for each side, If not image name
 			if not v1_tiles[i] then									 -- then copy previous image name in: 1 = Top, 2 = Bottom, 3-6 = Sides
@@ -324,13 +364,7 @@ for _,v1 in pairs(slab_index) do
 			else
 
 				local v2_def = minetest.registered_nodes[v2]       -- this creates a second copy of all slabs and is identical to v1
-				local v2_tiles
-
-				if type(v2_def.tiles) ~= "table" then                        -- Check tiles are stored as table some old mods just have tiles = "texture.png"
-					v2_tiles = {v2_def.tiles}                                -- construct table as {"texture.png"}
-				else
-					v2_tiles = table.copy(v2_def.tiles)                      -- copy of the node texture images
-				end
+				local v2_tiles = preprocess_tiles(v2_def.tiles)
 
 				for i = 2, 6, 1 do 											 -- Checks for image names for each side, If not image name
 					if not v2_tiles[i] and i <= 2 then						 -- then copy previous image name in: 1 = Top, 2 = Bottom, 3-6 = Sides
@@ -339,7 +373,11 @@ for _,v1 in pairs(slab_index) do
 					elseif i >= 3 then
 
 						if not v2_tiles[i] then
-							v2_tiles[i] = table.copy(v2_tiles[i-1])        	 -- must be table copy as we don't want a pointer
+							if type(v2_tiles[i-1]) == "table" then
+								v2_tiles[i] = table.copy(v2_tiles[i-1])        	 -- must be table copy as we don't want a pointer
+							else
+								v2_tiles[i] = { name = v2_tiles[i-1] }
+							end
 							v2_tiles[i].name = add_lowpart(v2_tiles[i])    	 -- only need to do this once as 4,5,6 are basically copy of 3
 						else
 							v2_tiles[i].name = add_lowpart(v2_tiles[i])	   	  -- If node has images specified for each slot have to add  string to the front of those
@@ -361,9 +399,15 @@ for _,v1 in pairs(slab_index) do
 				local v2_is_glass = string.find(string.lower(tostring(v2)), "glass")                          -- so using name string match but this pretty unreliable.
 																											  -- returns value nil if not otherwise returns integar see lua string.find
 
-				if v1_is_glass and v2_is_glass then                                                           -- glass_glass nodes so drawtype = glasslike
+				local allowed_combo_index = allowed_combos[v1.."+"..v2] or allowed_combos[v2.."+"..v1]
+				local allowed_combo_index_suffix = allowed_combos[v1.."+"..v2] and "A" or "B"
+				if not allowed_combo_index then
+					-- not allowed
+				elseif v1_is_glass and v2_is_glass then                                                           -- glass_glass nodes so drawtype = glasslike
 						minetest.register_node("comboblock:"..v1:split(":")[2].."_onc_"..v2:split(":")[2], {  -- registering the new combo node
-							description = v1_def.description.." on "..v2_def.description,
+							description = preprocess_description(v1_def.description).." na "..preprocess_description(v2_def.description).." ["..allowed_combo_index..allowed_combo_index_suffix.."]",
+							_ch_help = ch_help,
+							_ch_help_group = ch_help_group,
 							tiles = {v1_tiles[1].name.."^[resize:"..cs.."x"..cs,
 									 v2_tiles[2].name.."^[resize:"..cs.."x"..cs,
 									 v1_tiles[3].name.."^[resize:"..cs.."x"..cs..v2_tiles[3].name,                      -- Stairs registers it's tiles slightly differently now
@@ -386,7 +430,9 @@ for _,v1 in pairs(slab_index) do
 				elseif not v1_is_glass and not v2_is_glass then -- normal nodes
 
 						minetest.register_node("comboblock:"..v1:split(":")[2].."_onc_"..v2:split(":")[2], {
-							description = v1_def.description.." on "..v2_def.description,
+							description = preprocess_description(v1_def.description).." na "..preprocess_description(v2_def.description).." ["..allowed_combo_index..allowed_combo_index_suffix.."]",
+							_ch_help = ch_help,
+							_ch_help_group = ch_help_group,
 							tiles = {v1_tiles[1].name.."^[resize:"..cs.."x"..cs,
 									 v2_tiles[2].name.."^[resize:"..cs.."x"..cs,
 									 v1_tiles[3].name.."^[resize:"..cs.."x"..cs..v2_tiles[3].name,						-- Stairs registers it's tiles slightly differently now
@@ -422,9 +468,16 @@ for _,v1 in pairs(slab_index) do
 						local placer_pos = placer:get_pos()
 						local err_mix = S("Hmmmm... that wont work I can't mix glass slabs and none glass slabs")-- error txt for mixing glass/not glass
 						local err_un = S("Hmmmm... The slab wont fit there, somethings in the way")              -- error txt for unknown/unexpected
-						local pla_is_glass = string.find(string.lower(tostring(itemstack:get_name())), "glass")  -- itemstack item glass slab (trying to place item) - cant use drawtype as slabs are all type = nodebox
-						local node_c = minetest.get_node({x=pos.x, y=pos.y, z=pos.z})                            -- node clicked
+						local err_nex = S("Hmmm... This combination does not exist")
+						local pla = tostring(itemstack:get_name())
+						local pla_is_glass = string.find(string.lower(pla), "glass")  -- itemstack item glass slab (trying to place item) - cant use drawtype as slabs are all type = nodebox
+						local node_c = minetest.get_node(pos)                            -- node clicked
 						local node_c_is_glass = string.find(string.lower(tostring(node_c.name)), "glass")        -- is node clicked glass
+						local allowed_combo_index = allowed_combos[node_c.name.."+"..pla] or allowed_combos[pla.."+"..node_c.name]
+
+						if not allowed_combo_index and node_c.name == pla then
+							allowed_combo_index = 0
+						end
 
 				-- Setup Truth table
 				local pgn = "F"  -- Place is_Glass Node
@@ -476,10 +529,15 @@ for _,v1 in pairs(slab_index) do
 				local is_prot = minetest.is_protected(pos,placer:get_player_name())
 				
 				if pot_short_axis == 0 and not is_prot then																	-- Clicked inside existing node with slab
-					local outcome = comboblock_truthtable_rel_axis_horiz[pgn..cgn]
-					local combo_name = cb_get_name(outcome,placer,node_c.name)
+					local outcome
+					if allowed_combo_index then
+						outcome = comboblock_truthtable_rel_axis_horiz[pgn..cgn]
+					else
+						outcome = {err = err_nex}
+					end
 
 					if outcome.err == nil then 																-- Cant mix glass and normal slabs
+						local combo_name = cb_get_name(outcome,placer,node_c.name)
 						minetest.swap_node(pos,{name=combo_name, param2=node_c.param2})
 						itemstack:take_item(1)
 					end
@@ -518,10 +576,15 @@ for _,v1 in pairs(slab_index) do
 					if node_ax_is_glass then cgn = "T" end
 
 					-- same process as our 1st if now but sub in node_along_axis details
-					local outcome = comboblock_truthtable_rel_axis_horiz[pgn..cgn]
-					local combo_name = cb_get_name(outcome,placer,node_along_axis.name)
+					local outcome
+					if allowed_combo_index then
+						outcome = comboblock_truthtable_rel_axis_horiz[pgn..cgn]
+					else
+						outcome = {err = err_nex}
+					end
 
 					if outcome.err == nil then 																-- Cant mix glass and normal slabs
+						local combo_name = cb_get_name(outcome,placer,node_along_axis.name)
 						minetest.swap_node(node_ax_pos,{name=combo_name, param2=node_along_axis.param2})
 						itemstack:take_item(1)
 					end
