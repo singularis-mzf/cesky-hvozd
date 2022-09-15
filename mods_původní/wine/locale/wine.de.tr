@@ -2,7 +2,7 @@
 # textdomain: wine
 # author: Xanthin
 # author: TheDarkTiger
-# last update: 2020/October/27
+# last update: 2022/August/20
 
 Glass of Wine=Glas Wein
 Bottle of Wine=Flasche Wein
@@ -26,9 +26,25 @@ Glass of Honey-Mead=Honigwein
 Bottle of Honey-Mead=Flasche Honigwein
 Glass of Mint Julep=Minze Julep
 Bottle of Mint Julep=Flasch Minze Julep
+Glass of Sparkling Agave Juice=Minze prickelnder Agavensaft
+Bottle of Sparkling Agave Juice=Flasch Minze prickelnder Agavensaft
+Glass of Sparkling Apple Juice=Minze prickelnder Apfelsaft
+Bottle of Sparkling Apple Juice=Flasch Minze prickelnder Apfelsaft
+Glass of Sparkling Carrot Juice=Minze prickelnder Karottensaft
+Bottle of Sparkling Carrot Juice=Flasch Minze prickelnder Karottensaft
+Glass of Sparkling Blackberry Juice=Minze sprudelnder Brombeersaft
+Bottle of Sparkling Blackberry Juice=Flasch Minze sprudelnder Brombeersaft
+Glass of Kefir=Minze Kefir
+Bottle of Kefir=Flasch Minze Kefir
 Blue Agave=Agave
 Agave Syrup=Agavendicksaft
 Fermenting Barrel=Gärfass
-Fermenting Barrel (FULL)=Gärfass (VOLL)
-Fermenting Barrel (@1% Done)=Gärfass (@1% erledigt)
+Brewing: @1=(Brauen: @1)
+Water @1% Full=Wasser @1%
+Water Added=Wasser Hinzugefügt
+(@1% Done)=(@1 erledigt)
+(Water Level Low)=(Wasserstand Niedrig)
+(No Valid Recipe)=(kein gültiges Rezept)
+(Output Full)=(Ausgabe voll)
+Empty Drinking Glass=Leeres Trinkglas
 [MOD] Wine loaded=[MOD] Wine geladen

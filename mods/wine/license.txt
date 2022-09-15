@@ -41,3 +41,21 @@ Textures by Felfa (CC0)
   wine_coffee*.png
   wine_brandy*.png
   wine_sake_bottle.png
+
+Textures by Sirrobzeroone (CC-by-3.0)
+  wine_barrel_fs_bg.png
+  wine_barrel_icon.png
+  wine_barrel_icon_bg.png
+  wine_kefir_glass.png
+  wine_kefir_bottle.png
+  wine_drinking_glass.png
+  wine_barrel_water.png
+  wine_sparkling_agave_juice_glass.png
+  wine_sparkling_agave_juice_bottle.png
+  wine_sparkling_apple_juice_glass.png
+  wine_sparkling_apple_juice_bottle.png
+  wine_sparkling_blackberry_juice_glass.png
+  wine_sparkling_blackberry_juice_bottle.png
+  wine_sparkling_carrot_juice_glass.png
+  wine_sparkling_carrot_juice_bottle.png
+  screenshot.png

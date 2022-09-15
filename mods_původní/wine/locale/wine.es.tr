@@ -3,7 +3,7 @@
 # author: Unknown
 # author: TenPlus1
 # author: TheDarkTiger
-# last update: 2020/October/27
+# last update: 2022/August/20
 
 Glass of Wine=Copa de vino
 Bottle of Wine=Botella de vino
@@ -27,9 +27,25 @@ Glass of Honey-Mead=Bebida de Miel
 Bottle of Honey-Mead=Botella de Bebida de Miel
 Glass of Mint Julep=Julepe de menta
 Bottle of Mint Julep=Botella de Julepe de menta
+Glass of Sparkling Agave Juice=Vaso de jugo de agave espumoso
+Bottle of Sparkling Agave Juice=Botella de jugo de agave espumoso
+Glass of Sparkling Apple Juice=Vaso de jugo de manzana espumoso
+Bottle of Sparkling Apple Juice=Botella de jugo de manzana espumoso
+Glass of Sparkling Carrot Juice=Vaso de jugo de zanahoria espumoso
+Bottle of Sparkling Carrot Juice=Botella de jugo de zanahoria espumoso
+Glass of Sparkling Blackberry Juice=Vaso de jugo de mora espumoso
+Bottle of Sparkling Blackberry Juice=Botella de jugo de mora espumoso
+Glass of Kefir=vaso de kéfir
+Bottle of Kefir=Botella de kéfir
 Blue Agave=Agave Tequilana
 Agave Syrup=jarabe de agave
 Fermenting Barrel=Barril de fermentación
-Fermenting Barrel (FULL)=Barril de fermentación (Lleno)
-Fermenting Barrel (@1% Done)=Barril de fermentación (@1% completado)
+Brewing: @1= Fabricación de cerveza: @1
+Water @1% Full=Agua @1% Llena
+Water Added=Agua añadida
+(@1% Done)=(@1% completado)
+(Water Level Low)=(Nivel de agua bajo)
+(No Valid Recipe)=(Sin receta válida)
+(Output Full)=(Salida completa)
+Empty Drinking Glass=Vaso para beber vacío
 [MOD] Wine loaded=[MOD] Wine cargado

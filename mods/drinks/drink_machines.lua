@@ -206,23 +206,23 @@ end
 local function barrel_allow_metadata_inventory_put(pos, listname, index, stack, player)
 	local barrel_state = drinks.get_barrel_state(pos)
 	if not barrel_state then
-		minetest.log("debug", "not barrel_state at "..minetest.pos_to_string(pos))
+		minetest.log("info", "not barrel_state at "..minetest.pos_to_string(pos))
 		return 0
 	end
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	if not inv:is_empty(listname) then
-		minetest.log("debug", "list "..listname.." is not empty!")
+		minetest.log("info", "list "..listname.." is not empty!")
 		return 0
 	end
 	if listname == "src" then
 		local spill_from_result = drinks.spill_from(stack:get_name()) -- { drink_id, units_produced, empty_vessel_item }
 		if not spill_from_result then
-			minetest.log("debug", "no spill result for "..stack:get_name().."!")
+			minetest.log("info", "no spill result for "..stack:get_name().."!")
 			return 0
 		end
 		if barrel_state.units_stored > 0 and barrel_state.drink_id ~= spill_from_result.drink_id then
-			minetest.log("debug", "wrong drink_id "..spill_from_result.drink_id.." for barrel with "..barrel_state.units_stored.." units of "..barrel_state.drink_id.."!")
+			minetest.log("info", "wrong drink_id "..spill_from_result.drink_id.." for barrel with "..barrel_state.units_stored.." units of "..barrel_state.drink_id.."!")
 			return 0 -- wrong drink_id
 		end
 		local result = math.min(stack:get_count(), math.floor((barrel_state.capacity - barrel_state.units_stored) / spill_from_result.units_produced))
@@ -230,12 +230,12 @@ local function barrel_allow_metadata_inventory_put(pos, listname, index, stack, 
 		return result
 	elseif listname == "dst" then
 		if barrel_state.units_stored == 0 then
-			minetest.log("debug", "barrel is empty!")
+			minetest.log("info", "barrel is empty!")
 			return 0
 		end
 		local fill_to_result = drinks.fill_to(barrel_state.drink_id, stack:get_name())
 		if not fill_to_result then
-			minetest.log("debug", "not fill_to_result!")
+			minetest.log("info", "not fill_to_result!")
 			return 0
 		end
 		local result = math.min(stack:get_count(), math.floor(barrel_state.units_stored / fill_to_result.units_required))

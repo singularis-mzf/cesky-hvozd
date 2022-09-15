@@ -388,9 +388,9 @@ if minetest.get_modpath("wine") then
 		[bucket] = false,
 	})
 
-	drinks.add_drink("beer", "pivo", "#f1c200", {
-		drink_desc2 = "piva",
-		drink_desc4 = "pivo",
+	drinks.add_drink("beer", "tmavé pivo", "#f1c200", {
+		drink_desc2 = "tmavého piva",
+		drink_desc4 = "tmavé pivo",
 		[glass] = "wine:glass_beer",
 		[glass_bottle] = "wine:bottle_beer",
 		[bucket] = false,
@@ -473,6 +473,66 @@ if minetest.get_modpath("wine") then
 		drink_desc4 = "šampaňské",
 		[glass] = "wine:glass_champagne",
 		[glass_bottle] = "wine:bottle_champagne",
+		[bucket] = false,
+	})
+
+		drinks.add_drink("wheat_beer", "světlé pivo", "#f1c200", {
+		drink_desc2 = "světlého piva",
+		drink_desc4 = "světlé pivo",
+		[glass] = "wine:glass_wheat_beer",
+		[glass_bottle] = "wine:bottle_wheat_beer",
+		[bucket] = false,
+	})
+
+	drinks.add_drink("cointreau", "cointreau", "#ff6c21", {
+		[glass] = "wine:glass_cointreau",
+		[glass_bottle] = "wine:bottle_cointreau",
+		[bucket] = false,
+	})
+
+	drinks.add_drink("kefir", "kefír", "#f5e6c8", {
+		drink_desc2 = "kefíru",
+		[glass] = "wine:glass_kefir",
+		[glass_bottle] = "wine:bottle_kefir",
+	})
+
+	drinks.add_drink("margarita", "margarita", "#e0d07a", {
+		drink_desc2 = "margarity",
+		drink_desc4 = "margaritu",
+		[glass] = "wine:glass_margarita",
+		[glass_bottle] = "wine:bottle_margarita",
+		[bucket] = false,
+	})
+
+	drinks.add_drink("sparkling_agave_juice", "perlivá agávová šťáva", "#97c8d4", {
+		drink_desc2 = "perlivé agávové šťávy",
+		drink_desc4 = "perlivou agávovou šťávu",
+		[glass] = "wine:glass_sparkling_agave_juice",
+		[glass_bottle] = "wine:sparkling_agave_juice",
+		[bucket] = false,
+	})
+
+	drinks.add_drink("sparkling_apple_juice", "perlivá jablečná šťáva", "#e1b787", {
+		drink_desc2 = "perlivé jablečné šťávy",
+		drink_desc4 = "perlivou jablečnou šťávu",
+		[glass] = "wine:glass_sparkling_apple_juice",
+		[glass_bottle] = "wine:sparkling_apple_juice",
+		[bucket] = false,
+	})
+
+	drinks.add_drink("sparkling_carrot_juice", "perlivá mrkvová šťáva", "#e1b787", {
+		drink_desc2 = "perlivé mrkvové šťávy",
+		drink_desc4 = "perlivou mrkvovou šťávu",
+		[glass] = "wine:glass_sparkling_carrot_juice",
+		[glass_bottle] = "wine:sparkling_carrot_juice",
+		[bucket] = false,
+	})
+
+	drinks.add_drink("sparkling_blackberry_juice", "perlivá ostružinová šťáva", "#45012b", {
+		drink_desc2 = "perlivé ostružinové šťávy",
+		drink_desc4 = "perlivou ostružinovou šťávu",
+		[glass] = "wine:glass_sparkling_blackberry_juice",
+		[glass_bottle] = "wine:sparkling_blackberry_juice",
 		[bucket] = false,
 	})
 end

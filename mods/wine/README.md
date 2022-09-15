@@ -28,8 +28,11 @@ re-arranged code, tweaked lucky blocks, updated translations
 - 1.7 - Added more uses for blue agave (fuel, paper, food, agave syrup)
 - 1.8 - Added glass and bottles for Champagne, Brandy and Coffee Liquor (thanks Felfa)
 - 1.9 - Added wine:add_drink() function to create drink glasses and bottles
+- 1.95 - Tweaked code to accept 2 item recipes, fixed mineclone2 rum recipe and ui recipes
+- 1.98 - New formspec textures and Kefir drink by Sirrobzeroone
+- 1.99 - Barrel now has 4 slots for recipe items (and drinking glasses) and a water slot to fill up barrel with water buckets ready for fermenting, fix mineclone2 compatibility, added translations, added cointreau and margarita (thx Ethace10 for idea)
 
-Lucky Blocks: 18
+Lucky Blocks: 24
 
 
 Wine Mod API
@@ -40,8 +43,12 @@ wine:add_item(item_table)
 e.g.
 
 wine:add_item({
+		-- simple recipe automatically add drinking glasses
 	{"farming:barley", "wine:glass_beer"},
-	{"default:apple", "wine:glass_cider"},
+		-- 2x apples make 1x glass cider
+	{"default:apple 2", "wine:glass_cider"},
+		-- specific recipe has to include drinking glass if needed
+	{{"default:apple", "farming:sugar", "vessels:drinking_glass"}, "wine:glass_sparkling_apple},
 })
 
 
@@ -51,6 +58,7 @@ e.g.
 
 wine:add_drink("beer", "Beer", true, 2, 8, 1)
 wine:add_drink("cider", "Cider", true, 2, 6, 1)
+wine:add_drink("kefir", "Kefir", true, 4, 4, 0) -- non alcoholic
 
 
 Note:

@@ -881,7 +881,7 @@ resp. *ostatní\_zdroje*.
 
 ## Wine (wine)
 
-* Zdroj: [https://notabug.org/tenplus1/wine](https://notabug.org/tenplus1/wine), revize b5f94f49dab6212d46b032cea8ada47abf1ee62e
+* Zdroj: [https://notabug.org/tenplus1/wine](https://notabug.org/tenplus1/wine), revize 83e1557a342180deddd966f1b70dbe3eda05df0e
 * Původní licence: MIT (kód), textury převážně CC-BY-3.0
 * Licence úprav: MIT (kód)
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/wine/)
