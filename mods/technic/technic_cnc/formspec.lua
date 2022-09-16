@@ -7,9 +7,9 @@ local grid_size = 1 + padding
 
 local fs_prefix = "formspec_version[4]size[%d,%d]style_type[list;size=1,1;spacing=0.2,0.2]label[0.5,0.5;%s]"
 
-local fs_slimhalf = "label[0.5,3.6;"..S("Slim Elements half / normal height:").."]"..
-	"image_button[0.5,4;1,0.49;technic_cnc_full%s.png;full; ]"..
-	"image_button[0.5,4.51;1,0.49;technic_cnc_half%s.png;half; ]"
+local fs_slimhalf = "label[0.5,4.8;"..S("Slim Elements half / normal height:").."]"..
+	"image_button[0.5,5.2;1,0.49;technic_cnc_full%s.png;full; ]"..
+	"image_button[0.5,5.71;1,0.49;technic_cnc_half%s.png;half; ]"
 
 -- TODO: These should be defined in programs.lua and provide API to register more
 local slimhalf_buttons = {
@@ -28,7 +28,7 @@ local function image_button_grid(x_start, y_start, width, height, items, selecte
 	local row = 0
 	local column = 0
 	local max_row = math.floor(height / grid_size + 0.1)
-	local max_column = math.floor(math.min(#items, math.floor(width / grid_size) * max_row) / max_row + 0.1)
+	local max_column = math.ceil(math.min(#items, math.floor(width / grid_size) * max_row) / max_row + 0.1)
 	for _,name in ipairs(items) do
 		local x = x_start + column * grid_size
 		local y = y_start + row * grid_size
@@ -60,18 +60,18 @@ end
 
 local function get_formspec(nodename, def, meta)
 	local width = grid_size * 11 + margin * 2
-	local height = 13
+	local height = 14.2
 	local fs = fs_prefix:format(width, height, S("Choose Milling Program:"))
 	local p = meta:get("program")
 
 	-- Programming buttons
 	local x = margin
 	local y = 1
-	local buttons1, leftover1 = image_button_grid(x, y, width - margin * 2, grid_size * 2, def.programs, p)
+	local buttons1, leftover1 = image_button_grid(x, y, width - margin * 2, grid_size * 3, def.programs, p)
 
 	-- Slim / half / normal
 	x = margin + grid_size
-	y = 4
+	y = 5.2
 	local buttons2, leftover2 = image_button_grid(x, y, width - grid_size - margin * 2, grid_size, slimhalf_buttons, p)
 	local half = meta:get("size") == "2"
 	fs = fs .. buttons1 .. fs_slimhalf:format(half and "" or "_active", half and "_active" or "") .. buttons2
@@ -95,7 +95,7 @@ local function get_formspec(nodename, def, meta)
 
 	-- Input / output inventories
 	x = grid_size * def.input_size + grid_size + margin
-	y = 6
+	y = 7.2
 	fs = fs .. list("src", margin, y, def.input_size, 1, S("In:")) .. list("dst", x, y, def.output_size, 1, S("Out:"))
 
 	x = grid_size * 8 + margin

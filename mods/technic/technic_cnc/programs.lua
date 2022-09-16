@@ -240,7 +240,7 @@ technic_cnc.programs = {
 			}
 		}
 	},
-	
+
 	{ suffix  = "technic_cnc_cylinder_half_corner",
 		model = "technic_cylinder_half_corner.obj",
 		desc  = S("Half Cylinder Corner"),
@@ -248,6 +248,72 @@ technic_cnc.programs = {
 			type = "fixed",
 			fixed = {
 				{ -0.5,  -0.5, -0.5, 0.5,  0, 0.5 },
+			}
+		}
+	},
+
+	{ suffix  = "technic_cnc_circle",
+		model = "mymeshnodes_circle.obj",
+		desc  = S("Circle"),
+		cbox  = {
+			type = "fixed",
+			fixed = {
+				{-0.5, -0.5, -0.5,  0.5, -7/16, 0.5},
+			}
+		}
+	},
+
+	{ suffix  = "technic_cnc_oct",
+		model = "mymeshnodes_oct.obj",
+		desc  = S("Octagon"),
+		--[[ cbox  = {
+			type = "fixed",
+			fixed = {
+				{-0.5, -0.5, -0.5,  0.5, -0.25, 0.5},
+			}
+		} ]]
+	},
+
+	{ suffix  = "technic_cnc_peek",
+		model = "mymeshnodes_peek.obj",
+		desc  = S("Peek"),
+		cbox  = {
+			type = "fixed",
+			fixed = {
+				-- box from My Mesh Nodes mod, used under DWYWPL license
+				{-0.5, -0.5, -0.4375, 0.5, -0.4375, 0.4375},
+				{-0.5, -0.5, -0.375, 0.5, -0.375, 0.375},
+				{-0.5, -0.5, -0.3125, 0.5, -0.3125, 0.3125},
+				{-0.5, -0.5, -0.25, 0.5, -0.25, 0.25},
+				{-0.5, -0.5, -0.1875, 0.5, -0.1875, 0.1875},
+				{-0.5, -0.5, -0.125, 0.5, -0.125, 0.125},
+				{-0.5, -0.5, -0.0625, 0.5, -0.0625, 0.0625},
+			}
+		}
+	},
+
+	{ suffix  = "technic_cnc_valley",
+		model = "mymeshnodes_valley.obj",
+		desc  = S("Valley"),
+		cbox  = {
+			type = "fixed",
+			fixed = {
+				-- box from My Mesh Nodes mod, used under DWYWPL license
+				{-0.5, -0.5, -0.5, 0.5, 0, 0.5},
+				{-0.5, -0.5, -0.5, -0.4375, 0.4375, 0.5},
+				{-0.5, -0.5, -0.5, -0.375, 0.375, 0.5},
+				{-0.5, -0.5, -0.5, -0.3125, 0.3125, 0.5},
+				{-0.5, -0.5, -0.5, -0.25, 0.25, 0.5},
+				{-0.5, -0.5, -0.5, -0.1875, 0.1875, 0.5},
+				{-0.5, -0.5, -0.5, -0.125, 0.125, 0.5},
+				{-0.5, -0.5, -0.5, -0.0625, 0.0625, 0.5},
+				{0.4375, -0.5, -0.5, 0.5, 0.4375, 0.5},
+				{0.375, -0.5, -0.5, 0.5, 0.375, 0.5},
+				{0.3125, -0.5, -0.5, 0.5, 0.3125, 0.5},
+				{0.25, -0.5, -0.5, 0.5, 0.25, 0.5},
+				{0.1875, -0.5, -0.5, 0.5, 0.1875, 0.5},
+				{0.125, -0.5, -0.5, 0.5, 0.125, 0.5},
+				{0.0625, -0.5, -0.5, 0.5, 0.0625, 0.5},
 			}
 		}
 	},
@@ -273,6 +339,7 @@ technic_cnc.onesize_products = {
 	arch216                  = 1,
 	arch216_flange           = 1,
 	block_fluted             = 1,
+	circle                   = 8,
 	cylinder                 = 2,
 	cylinder_horizontal      = 2,
 	cylinder_half            = 2,
@@ -281,14 +348,17 @@ technic_cnc.onesize_products = {
 	diagonal_truss           = 2,
 	diagonal_truss_cross     = 1,
 	oblate_spheroid          = 1,
+	oct                      = 1,
 	onecurvededge            = 1,
 	opposedcurvededge        = 1,
+	peek                     = 2,
 	pyramid                  = 2,
 	sphere                   = 1,
 	sphere_half              = 2,
 	spike                    = 1,
 	stick                    = 8,
 	twocurvededge            = 1,
+	valley                   = 1,
 }
 
 technic_cnc.twosize_products = {
@@ -303,3 +373,4 @@ technic_cnc.twosize_products = {
 technic_cnc.products = {}
 for key, size in pairs(technic_cnc.onesize_products) do technic_cnc.products[key] = size end
 for key, size in pairs(technic_cnc.twosize_products) do technic_cnc.products[key] = size end
+

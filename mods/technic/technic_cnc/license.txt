@@ -1,0 +1,83 @@
+License for code: LGPLv2+ (source: Technic Plus)
+
+License for media:
+
+mymeshnodes_circle.obj
+mymeshnodes_oct.obj
+mymeshnodes_peek.obj
+mymeshnodes_rounded_corner.obj
+mymeshnodes_valley.obj
+	Authors: VanessaE, Max, ExeterDad
+	Source: https://github.com/DonBatman/mymeshnodes
+	License: DWYWPL (probably, please examine source also)
+
+technic_cnc_circle.png
+technic_cnc_oct.png
+technic_cnc_peek.png
+technic_cnc_rounded_corner.png
+technic_cnc_valley.png
+	Authors: VanessaE, Max, ExeterDad
+	Source: https://github.com/DonBatman/mymeshnodes
+	Modified by: Singularis
+	License: DWYWPL (probably, please examine source also)
+
+technic_cnc_cylinder_horizontal.obj
+technic_cnc_cylinder.obj
+technic_cnc_innercorner.obj
+technic_cnc_innercorner_upsdown.obj
+technic_cnc_oblate_spheroid.obj
+technic_cnc_one_curved_edge.obj
+technic_cnc_outercorner.obj
+technic_cnc_outercorner_upsdown.obj
+technic_cnc_pyramid.obj
+technic_cnc_pyramid_spike.obj
+technic_cnc_slope_horizontal.obj
+technic_cnc_slope.obj
+technic_cnc_slope_upsdown.obj
+technic_cnc_sphere.obj
+technic_cnc_two_curved_edge.obj
+technic_cnc_cylinder_horizontal.png
+technic_cnc_cylinder.png
+technic_cnc_innercorner.png
+technic_cnc_innercorner_upsdown.png
+technic_cnc_oblate_spheroid.png
+technic_cnc_one_curved_edge.png
+technic_cnc_outercorner.png
+technic_cnc_outercorner_upsdown.png
+technic_cnc_pyramid.png
+technic_cnc_pyramid_spike.png
+technic_cnc_slope_horizontal.png
+technic_cnc_slope.png
+technic_cnc_slope_upsdown.png
+technic_cnc_sphere.png
+technic_cnc_two_curved_edge.png
+	Copyright (C) 2012-2022  RealBadAngel and contributors
+	Source: https://github.com/minetest-mods/technic
+	License: LGPLv2.1+
+
+technic_arch_216_flange.obj
+technic_arch_216.obj
+technic_block_fluted.obj
+technic_cylinder_half_corner.obj
+technic_cylinder_half.obj
+technic_diagonal_truss_cross.obj
+technic_diagonal_truss.obj
+technic_opposed_curved_edge.obj
+technic_sphere_half.obj
+technic_45_slope_216.obj
+technic_arch_216_flange.png
+technic_arch_216.png
+technic_block_fluted.png
+technic_cylinder_half_corner.png
+technic_cylinder_half.png
+technic_diagonal_truss_cross.png
+technic_diagonal_truss.png
+technic_opposed_curved_edge.png
+technic_sphere_half.png
+technic_45_slope_216.png
+	Source: https://github.com/mt-mods/technic (Technic Plus)
+	License: LGPLv2+
+
+All other textures:
+	Source: https://github.com/mt-mods/technic (Technic Plus)
+	License: LGPLv2+

@@ -936,6 +936,11 @@ resp. *ostatní\_zdroje*.
 * Zdroj: [https://forum.minetest.net/viewtopic.php?t=11817](https://forum.minetest.net/viewtopic.php?t=11817), soubor mesh\_beds.zip
 * Původní licence: WTFPL (u modelů to není řečeno, ale lze předpokládat, že jsou považovány za kód)
 
+## My Mesh Nodes (mymeshnodes)
+
+* Zdroj: [https://github.com/DonBatman/mymeshnodes](https://github.com/DonBatman/mymeshnodes), revize 284f0e69e401945bfb4eed4bef4bbb2d70e12570
+* Původní licence: DWYWPL (u modelů uvedeni autoři/ky, ale vzhledem k použité formulaci mi nepřipadne jisté, že se uvedená licence vztahuje i na tyto modely)
+
 ## Wilhelmines People (people)
 
 * Zdroj: [https://github.com/Skandarella/people](https://github.com/Skandarella/people), revize 80147ebe6efd85a88fb8af33476e96dd83ea87c5
