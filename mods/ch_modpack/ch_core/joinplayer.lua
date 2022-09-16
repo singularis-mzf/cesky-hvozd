@@ -10,11 +10,22 @@ local function on_newplayer(player)
 	return
 end
 
+local function after_joinplayer(player_name)
+	local player = minetest.get_player_by_name(player_name)
+	if player then
+		local controls = player:get_player_control()
+		if not controls.aux1 then
+			player:set_properties({stepheight = 0.3})
+		end
+	end
+end
+
 local function on_joinplayer(player, last_login)
 	local player_name = player:get_player_name()
 	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
 	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
 	player:set_nametag_attributes(ch_core.compute_player_nametag(online_charinfo, offline_charinfo))
+	minetest.after(2, after_joinplayer, player_name)
 	return true
 end
 

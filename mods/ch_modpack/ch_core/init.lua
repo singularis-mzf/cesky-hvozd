@@ -69,6 +69,9 @@ local get_us_time = minetest.get_us_time
 local has_wielded_light = minetest.get_modpath("wielded_light")
 local custom_globalsteps = {}
 
+local stepheight_low = {stepheight = 0.3}
+local stepheight_high = {stepheight = 1.1}
+
 function ch_core.register_player_globalstep(func, index)
 	if not index then
 		index = #custom_globalsteps + 1
@@ -149,9 +152,11 @@ local function globalstep(dtime)
 				elseif new_controls.aux1 and not old_controls.aux1 then
 					print(player_name.." pressed aux1")
 					ch_core.show_player_list(player, online_charinfo)
+					player:set_properties(stepheight_high)
 				elseif not new_controls.aux1 and old_controls.aux1 then
 					print(player_name.." leaved aux1")
 					ch_core.hide_player_list(player, online_charinfo)
+					player:set_properties(stepheight_low)
 				end
 
 				disrupt_pryc_flag = true

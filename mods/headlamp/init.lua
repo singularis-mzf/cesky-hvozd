@@ -83,7 +83,7 @@ ch_core.register_player_globalstep(globalstep)
 --------------------------------------------------
 local def = {
 	description = "čelovka (vypnutá)",
-	_ch_help = "Je-li zapnutá a máte-li ji nasazenou (jako módní doplněk), svítí kolem vás. Má stejnou výdrž jako baterka.\nElektrický nástroj — před použitím nutno nabít.",
+	_ch_help = "Je-li zapnutá a máte-li ji nasazenou (jako módní doplněk), svítí kolem vás. Má stejnou výdrž jako baterka.\nČelovku zapnete levým kliknutím.\nElektrický nástroj — před použitím nutno nabít.",
 	_ch_help_group = "headlamp",
 	inventory_image = "headlamp_inv_headlamp_off.png",
 	uv_image = "headlamp_headlamp_off.png",
