@@ -421,6 +421,11 @@ for _,v1 in pairs(slab_index) do
 							drawtype = "glasslike",
 							sounds = v1_def.sounds,
 							groups = v1_groups,
+							drop = {
+								items = {
+									{items = {tostring(v1), tostring(v2)}},
+								},
+							},
 							comboblock_v1 = tostring(v1),
 							comboblock_v2 = tostring(v2)})
 
@@ -454,6 +459,11 @@ for _,v1 in pairs(slab_index) do
 							drawtype = "normal",
 							sounds = v1_def.sounds,
 							groups = v1_groups,
+							drop = {
+								items = {
+									{items = {tostring(v1), tostring(v2)}},
+								},
+							},
 							comboblock_v1 = tostring(v1),
 							comboblock_v2 = tostring(v2)})
 						minetest.register_craft({output = tostring(v1), recipe = {{combo_name}}, replacements = {{combo_name, tostring(v2)}}})
