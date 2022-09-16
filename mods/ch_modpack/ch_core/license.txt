@@ -16,53 +16,7 @@ https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 
 Licenses of media (textures)
 ----------------------------
-ch_core_cz_flag.png
-ch_core_cz_flag_inv.png
-	License: public domain by the Czech law
-	Source: https://cs.wikipedia.org/wiki/Soubor:Flag_of_the_Czech_Republic.svg
-
-ch_core_sk_flag.png
-ch_core_sk_flag_inv.png
-	License: public domain by the Slovak law
-	Source: https://cs.wikipedia.org/wiki/Soubor:Flag_of_Slovakia.svg
-
-ch_core_sickle_steel.png
-	License: CC BY-SA 3.0
-	Author: Cap
-	Source: https://github.com/t-affeldt/sickles
-	Unmodified
-
-ch_core_sickle_stone.png
-ch_core_sickle_wood.png
-ch_core_sickle_mese.png
-	License: CC BY-SA 3.0
-	Author: Cap
-	Source: https://github.com/t-affeldt/sickles
-	Modified by Singularis
-
-ch_core_creative_inv.png
-	License: CC BY-SA 3.0
+ch_core_pryc.png
+ch_core_white_pixel.png
 	Author: Singularis
-
-moon.png
-moon_tonemap.png
-sun.png
-wool_black.png
-wool_blue.png
-wool_brown.png
-wool_colored_light_blue.png
-wool_cyan.png
-wool_dark_green.png
-wool_dark_grey.png
-wool_green.png
-wool_grey.png
-wool_magenta.png
-wool_orange.png
-wool_pink.png
-wool_red.png
-wool_violet.png
-wool_white.png
-wool_yellow.png
-	License: Unlicense
-	Author: Sharpik
-	Source: https://github.com/Sharpik/Minetest-SharpNet-Photo-Realism-Texturespack
+	License: CC-BY-SA 4.0

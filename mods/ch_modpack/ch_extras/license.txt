@@ -1,0 +1,50 @@
+License of source code
+----------------------
+
+GNU Lesser General Public License, version 2.1
+Copyright (C) 2022 Singularis <singularis@volny.cz>
+
+This program is free software; you can redistribute it and/or modify it under the terms
+of the GNU Lesser General Public License as published by the Free Software Foundation;
+either version 2.1 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details:
+https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+
+
+Licenses of media (models and textures)
+----------------------------
+ch_extras_creative_inv.png
+	License: CC BY-SA 3.0
+	Author: Singularis
+
+ch_extras_cz_flag.png
+ch_extras_cz_flag_inv.png
+	License: public domain by the Czech law
+	Source: https://cs.wikipedia.org/wiki/Soubor:Flag_of_the_Czech_Republic.svg
+
+ch_extras_sk_flag.png
+ch_extras_sk_flag_inv.png
+	License: public domain by the Slovak law
+	Source: https://cs.wikipedia.org/wiki/Soubor:Flag_of_Slovakia.svg
+
+ch_extras_sickle_steel.png
+	License: CC BY-SA 3.0
+	Author: Cap
+	Source: https://github.com/t-affeldt/sickles
+	Unmodified
+
+ch_extras_sickle_stone.png
+ch_extras_sickle_wood.png
+ch_extras_sickle_mese.png
+	License: CC BY-SA 3.0
+	Author: Cap
+	Source: https://github.com/t-affeldt/sickles
+	Modified by Singularis
+
+translocator.png
+	Author: Zemtzov7
+	Source: https://github.com/zmv7/minetest-mod-translocator
+	License: CC-BY-SA-4.0

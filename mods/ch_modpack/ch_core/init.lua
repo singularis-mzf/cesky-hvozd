@@ -38,7 +38,6 @@ dofile(modpath .. "/joinplayer.lua") -- : data, lib, nametag
 dofile(modpath .. "/nodes.lua")
 dofile(modpath .. "/padlock.lua") -- : data, lib
 dofile(modpath .. "/vezeni.lua") -- : privs, data, lib, chat, hud
-dofile(modpath .. "/sickles.lua")
 dofile(modpath .. "/timers.lua") -- : data, chat, hud
 dofile(modpath .. "/hotbar.lua")
 dofile(modpath .. "/vgroups.lua")

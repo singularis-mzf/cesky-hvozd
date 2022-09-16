@@ -970,6 +970,12 @@ resp. *ostatní\_zdroje*.
 * Původní licence (není-li uvedeno jinak v README.md): concrete, extranodes, technic, technic\_worldgen: WTFPL; technic\_cnc, technic\_chests, wrench: LGPLv2+
 * [ContentDB](https://content.minetest.net/packages/mt-mods/technic\_plus/)
 
+## Translocator (minetest-mod-translocator)
+
+* Zdroj: [https://content.minetest.net/packages/Zemtzov7/translocator/](https://content.minetest.net/packages/Zemtzov7/translocator/), revize caad5f4f4ea939ce095dae7f14b515cb69d44651
+* Původní licence: GPLv3 pro kód, CC-BY-SA-4.0 pro model a textury
+* [ContentDB](https://content.minetest.net/packages/Zemtzov7/translocator/)
+
 ## Tool Tweaks (tool\_tweaks)
 
 * Zdroj: [https://github.com/wsor4035/tool\_tweaks](https://github.com/wsor4035/tool\_tweaks), revize 72e180102e84879bee9f00e5f0b47fb1691b0723
