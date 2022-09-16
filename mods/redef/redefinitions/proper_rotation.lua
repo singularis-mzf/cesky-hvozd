@@ -3,6 +3,9 @@ local pointed_thing_to_face_pos = minetest.pointed_thing_to_face_pos
 local dir_to_facedir = minetest.dir_to_facedir
 local is_creative_enabled = minetest.is_creative_enabled
 local item_place_node = minetest.item_place_node
+local get_item_group = minetest.get_item_group
+
+local has_comboblock = minetest.get_modpath("comboblock")
 
 local stairs = {}
 local slabs = {}
@@ -113,7 +116,7 @@ for name,definition in pairs(minetest.registered_nodes) do
     local slope = string.match(name, ':slope_') ~= nil
 
     if stair and mod_origin then table.insert(stairs, name) end
-    if slab and mod_origin then table.insert(slabs, name) end
+    if slab and mod_origin and (not has_comboblock or get_item_group(name, "slab") ~= 8) then table.insert(slabs, name) end
     if slope and mod_origin then table.insert(slopes, name) end
 end
 

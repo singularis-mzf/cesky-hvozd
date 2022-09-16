@@ -404,7 +404,8 @@ for _,v1 in pairs(slab_index) do
 				if not allowed_combo_index then
 					-- not allowed
 				elseif v1_is_glass and v2_is_glass then                                                           -- glass_glass nodes so drawtype = glasslike
-						minetest.register_node("comboblock:"..v1:split(":")[2].."_onc_"..v2:split(":")[2], {  -- registering the new combo node
+						local combo_name = "comboblock:"..v1:split(":")[2].."_onc_"..v2:split(":")[2]
+						minetest.register_node(combo_name, {  -- registering the new combo node
 							description = preprocess_description(v1_def.description).." na "..preprocess_description(v2_def.description).." ["..allowed_combo_index..allowed_combo_index_suffix.."]",
 							_ch_help = ch_help,
 							_ch_help_group = ch_help_group,
@@ -420,16 +421,25 @@ for _,v1 in pairs(slab_index) do
 							drawtype = "glasslike",
 							sounds = v1_def.sounds,
 							groups = v1_groups,
-							drop = "",
 							comboblock_v1 = tostring(v1),
-							comboblock_v2 = tostring(v2),
-							after_dig_node = function(pos, oldnode, oldmetadata, digger)
-												cb_after_dig_node(pos, oldnode, oldmetadata, digger)
-											end })
+							comboblock_v2 = tostring(v2)})
+
+						minetest.register_craft({
+							output = tostring(v1),
+							recipe = {{combo_name}},
+							replacements = {{combo_name, tostring(v2)}},
+						})
+						minetest.register_craft({
+							output = combo_name,
+							recipe = {
+								{tostring(v1), ""},
+								{tostring(v2), ""},
+							},
+						})
 
 				elseif not v1_is_glass and not v2_is_glass then -- normal nodes
-
-						minetest.register_node("comboblock:"..v1:split(":")[2].."_onc_"..v2:split(":")[2], {
+						local combo_name = "comboblock:"..v1:split(":")[2].."_onc_"..v2:split(":")[2]
+						minetest.register_node(combo_name, {
 							description = preprocess_description(v1_def.description).." na "..preprocess_description(v2_def.description).." ["..allowed_combo_index..allowed_combo_index_suffix.."]",
 							_ch_help = ch_help,
 							_ch_help_group = ch_help_group,
@@ -444,12 +454,10 @@ for _,v1 in pairs(slab_index) do
 							drawtype = "normal",
 							sounds = v1_def.sounds,
 							groups = v1_groups,
-							drop = "",
 							comboblock_v1 = tostring(v1),
-							comboblock_v2 = tostring(v2),
-							after_dig_node = function(pos, oldnode, oldmetadata, digger)
-												cb_after_dig_node(pos, oldnode, oldmetadata, digger)
-											end })
+							comboblock_v2 = tostring(v2)})
+						minetest.register_craft({output = tostring(v1), recipe = {{combo_name}}, replacements = {{combo_name, tostring(v2)}}})
+						minetest.register_craft({output = combo_name, recipe = {{tostring(v1), ""}, {tostring(v2), ""}}})
 				else
 					-- Can't have a nodetype as half "glasslike" and half "normal" :(
 				end

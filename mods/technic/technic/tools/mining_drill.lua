@@ -387,7 +387,7 @@ minetest.register_tool("technic:mining_drill_mk2", {
 	wear_represents = "technic_RE_charge",
 	on_refill = technic.refill_RE_charge,
 	on_use = on_use_mk2,
-	on_secondary_use = on_use_mk2,
+	on_secondary_use = on_place_mk2,
 	on_place_mk2 = on_place_mk2,
 })
 
@@ -405,7 +405,7 @@ for i = 1, 4 do
 		on_refill = technic.refill_RE_charge,
 		groups = {not_in_creative_inventory=1},
 		on_use = on_use_mk2,
-		on_secondary_use = on_use_mk2,
+		on_secondary_use = on_place_mk2,
 		on_place = on_place_mk2,
 	})
 end
@@ -430,7 +430,7 @@ minetest.register_tool("technic:mining_drill_mk3", {
 	wear_represents = "technic_RE_charge",
 	on_refill = technic.refill_RE_charge,
 	on_use = on_use_mk3,
-	on_secondary_use = on_use_mk3,
+	on_secondary_use = on_place_mk3,
 	on_place = on_place_mk3,
 })
 
@@ -448,7 +448,7 @@ for i=1,5,1 do
 		on_refill = technic.refill_RE_charge,
 		groups = {not_in_creative_inventory=1},
 		on_use = on_use_mk3,
-		on_secondary_use = on_use_mk3,
+		on_secondary_use = on_place_mk3,
 		on_place = on_place_mk3,
 	})
 end
