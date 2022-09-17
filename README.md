@@ -356,6 +356,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: Unlicense
 * [ContentDB](https://content.minetest.net/packages/sirrobzeroone/comboblock/)
 
+## Compactor
+
+* Zdroj: [https://gitlab.com/alerikaisattera/compactor](https://gitlab.com/alerikaisattera/compactor), revize d1482d303108f64409bab62832945279a1790b7b
+* Původní licence: GPLv3 pro kód, CC-BY-SA-3.0 pro textury
+* Licence úprav: GPLv3 pro kód, CC-BY-SA-3.0 pro média
+* [ContentDB](https://content.minetest.net/packages/alerikaisattera/compactor/)
+
 ## Cottages (cottages)
 
 * Zdroj: [https://github.com/Sokomine/cottages](https://github.com/Sokomine/cottages), revize 2b10e6f6791198edb9ad0fd3b2e12ce3a00a1142
