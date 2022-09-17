@@ -17,6 +17,7 @@ https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 Licenses of media (models and textures)
 ----------------------------
 ch_extras_creative_inv.png
+ch_extras_skakadlo.png
 	License: CC BY-SA 3.0
 	Author: Singularis
 

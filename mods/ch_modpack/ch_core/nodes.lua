@@ -36,11 +36,14 @@ for i = 0, minetest.LIGHT_MAX do
 		name = name.."0"
 	end
 	name = name..i
-	def.description = "administrátorské světlo "..i
+	def.description = string.format("administrátorské světlo %02d", i)
 	if i > 0 then
 		def.groups = {ch_core_light = i}
 		def.light_source = i
 	end
+	local image = "ch_core_white_pixel.png^[resize:16x16^[multiply:#eeeeaa^[colorize:#000000:"..math.floor((minetest.LIGHT_MAX - i) / minetest.LIGHT_MAX * 255).."^default_invisible_node_overlay.png"
+	def.inventory_image = image
+	def.wield_image = image
 	minetest.register_node("ch_core:"..name, table.copy(def))
 	if i > 0 and minetest.get_modpath("wielded_light") then
 		wielded_light.register_item_light("ch_core:"..name, i, false)

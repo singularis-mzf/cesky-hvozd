@@ -98,7 +98,95 @@ minetest.register_craft({
 })
 minetest.register_alias("ch_core:sickle_mese", "ch_extras:sickle_mese")
 
--- Teleportér
+-- skákadlo
+local function skakadlo(itemstack, player, new_speed, wear_to_add)
+	if not player or not player:is_player() then
+		return
+	end
+	local player_name = player:get_player_name()
+	local pos = player:get_pos()
+	local node_at_player = minetest.get_node(pos)
+	local node_under_player = minetest.get_node(vector.new(pos.x, pos.y - 0.05, pos.z))
+	local current_velocity = player:get_velocity()
+	local reason
+
+	if current_velocity.y ~= 0 then
+		reason = "Current velocity = "..minetest.pos_to_string(current_velocity)
+	end
+
+	if reason == nil and node_at_player.name ~= "air" then
+		local node_def = minetest.registered_nodes[node_at_player.name]
+		if not node_def then
+			reason = "Unknown node "..node_at_player.name
+		elseif node_def.climbable then
+			reason = "At climbable node "..node_at_player.name
+		elseif (node_def.move_resistance or 0) > 0 then
+			reason = "Node "..node_at_player.name.." has move_resistance "..(node_def.move_resistance or 0)
+		elseif node_def.liquid_move_physics or (node_def.liquidtype or "none") ~= "none" then
+			reason = "Player is in liquid "..node_at_player.name
+		end
+	end
+
+	if reason == nil then
+		local node_def = minetest.registered_nodes[node_under_player.name]
+		if not node_def then
+			reason = "Unknown node "..node_under_player.name
+		elseif node_def.walkable == false then
+			reason = "On non-walkable node "..node_under_player.name
+		elseif node_def.climbable then
+			reason = "On climbable node "..node_under_player.name
+		elseif (node_def.move_resistance or 0) > 0 then
+			reason = "Node "..node_under_player.name.." has move_resistance "..(node_def.move_resistance or 0)
+		elseif node_def.liquid_move_physics or (node_def.liquidtype or "none") ~= "none"  then
+			reason = "Player is on liquid "..node_under_player.name
+		end
+	end
+
+	if reason ~= nil then
+		minetest.log("action", player_name.." failed to jump using a jump tool at "..minetest.pos_to_string(pos).." due to the reason: "..reason)
+	else
+		player:add_velocity(vector.new(0, new_speed, 0))
+		minetest.log("action", player_name.." jumped using a jump tool at "..minetest.pos_to_string(pos)..", nodes: "..node_at_player.name..", "..node_under_player.name)
+		minetest.sound_play("toaster", {pos = pos, max_hear_distance = 5, gain = 0.2}, true)
+
+		if not minetest.is_creative_enabled(player_name) then
+			local new_wear = math.ceil(itemstack:get_wear() + wear_to_add)
+			if new_wear > 65535 then
+				itemstack:clear()
+			else
+				itemstack:set_wear(new_wear)
+			end
+			return itemstack
+		end
+	end
+end
+
+def = {
+	description = "skákadlo",
+	_ch_help = "Nástroj sloužící ke skoku do velké výšky. Umožňuje vyskočit např. z jámy či na strom.\nLevým klikem vyskočíte cca o 6,5 metru, pravým o cca 3 metry.\nNefunguje pod vodou nebo pokud nestojíte na pevné zemi.",
+	_ch_help_group = "skakadlo",
+	inventory_image = "ch_extras_skakadlo.png",
+	stack_max = 1,
+	on_use = function(itemstack, player, pointed_thing) return skakadlo(itemstack, player, 18, 300) end,
+	-- on_secondary_use = function(itemstack, player, pointed_thing) return skakadlo(itemstack, player, 12, 120) end,
+	on_place = function(itemstack, player, pointed_thing) return skakadlo(itemstack, player, 12, 120) end,
+}
+def.on_secondary_use = def.on_place
+
+minetest.register_tool("ch_extras:jumptool", def)
+for _, stick in ipairs({"default:stick", "basic_materials:steel_bar"}) do
+	minetest.register_craft({
+		output = "ch_extras:jumptool",
+		recipe = {
+			{stick, stick, stick},
+			{"", "technic:rubber", ""},
+			{"", "default:steel_ingot", ""},
+		},
+	})
+end
+
+
+-- teleportér
 local function is_walkable_node(node_name)
 	if node_name == "air" or node_name == "ignore" then
 		return false
@@ -138,7 +226,12 @@ local function teleporter_on_use(itemstack, player, pointed_thing)
 	else
 		pos = vector.new(pos.x, pos.y + 0.5, pos.z)
 	end
+	local old_pos = player:get_pos()
 	player:set_pos(pos)
+	if vector.distance(pos, old_pos) > 0 then
+		minetest.sound_play("mobs_spell", {pos = old_pos, max_hear_distance = 5, gain = 0.2}, true)
+	end
+	minetest.after(0.1, function() minetest.sound_play("mobs_spell", {pos = pos, max_hear_distance = 5, gain = 0.2}, true) end)
 
 	if not minetest.is_creative_enabled(player_name) then
 		local new_wear = tonumber(itemstack:get_wear()) + 1000
@@ -150,6 +243,8 @@ local function teleporter_on_use(itemstack, player, pointed_thing)
 		return itemstack
 	end
 end
+
+	-- player:add_velocity(vector.new(0, 6.5, 0))
 
 def = {
 	description = "teleportér",
