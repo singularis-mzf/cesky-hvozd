@@ -1,4 +1,4 @@
-ch_core.open_submod("hud", {data = true, lib = true})
+ch_core.open_submod("hud", {chat = true, data = true, lib = true})
 
 -- PLAYER LIST
 local base_y_offset = 90
@@ -148,5 +148,72 @@ function ch_core.free_hudbar(player, hudbar_id)
 	minetest.log("error", "Invalid hudbar_id to free: "..hudbar_id)
 	return false
 end
+
+-- DATE AND TIME HUD
+local datetime_hud_defaults = {
+	hud_elem_type = "text",
+	position = { x = 1, y = 1 },
+	offset = { x = -5, y = -5 },
+	text = "",
+	alignment = { x = -1, y = -1 },
+	scale = { x = 100, y = 100 },
+	number = 0x999999,
+	style = 2,
+	z_index = 50,
+}
+
+local datetime_huds = {
+}
+
+local function on_joinplayer(player, last_login)
+	local player_name = player:get_player_name()
+	datetime_huds[player_name] = player:hud_add(datetime_hud_defaults)
+end
+
+local function on_leaveplayer(player, timed_out)
+	local player_name = player:get_player_name()
+	datetime_huds[player_name] = nil
+end
+
+local weekdays = {"neděle", "pondělí", "úterý", "středa", "čtvrtek", "pátek", "sobota"}
+local monthnames = {"ledna", "února", "března", "dubna", "května", "června", "července", "srpna", "září", "října", "listopadu", "prosince"}
+local acc_time = 0
+
+local function on_step(dtime)
+	acc_time = acc_time + dtime
+	if acc_time > 0.5 then
+		local time = os.time()
+		local t = os.date("*t", time)
+		local time_text = string.format("%s\n%d. %s %s\n%02d:%02d %s", weekdays[t.wday], t.day, monthnames[t.month], t.year, t.hour, t.min, t.isdst and "+02:00" or "+01:00")
+		for player_name, hud_id in pairs(datetime_huds) do
+			local player = minetest.get_player_by_name(player_name)
+			if player then
+				player:hud_change(hud_id, "text", time_text)
+			end
+		end
+	end
+end
+
+local function clear_datetime_hud(player_name, param)
+	local hud_id = datetime_huds[player_name]
+	local player = minetest.get_player_by_name(player_name)
+	if hud_id and player then
+		player:hud_remove(hud_id)
+		datetime_huds[player_name] = nil
+	else
+		ch_core.systemovy_kanal(player_name, "CHYBA: okno s datem a časem nenalezeno, možná už je skyto.")
+	end
+end
+
+local cc_def = {
+	description = "Do odhlášení skryje z obrazovky datum a čas.",
+	func = clear_datetime_hud,
+}
+
+minetest.register_on_joinplayer(on_joinplayer)
+minetest.register_on_leaveplayer(on_leaveplayer)
+minetest.register_globalstep(on_step)
+minetest.register_chatcommand("skrýtčas", cc_def)
+minetest.register_chatcommand("skrytcas", cc_def)
 
 ch_core.close_submod("hud")

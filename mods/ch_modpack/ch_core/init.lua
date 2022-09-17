@@ -33,7 +33,7 @@ dofile(modpath .. "/lib.lua") -- : data
 dofile(modpath .. "/nametag.lua") -- : data, lib
 dofile(modpath .. "/chat.lua") -- : data, lib, privs, nametag
 dofile(modpath .. "/dennoc.lua") -- : privs, chat
-dofile(modpath .. "/hud.lua") -- : data, lib
+dofile(modpath .. "/hud.lua") -- : data, lib, chat
 dofile(modpath .. "/joinplayer.lua") -- : data, lib, nametag
 dofile(modpath .. "/nodes.lua")
 dofile(modpath .. "/padlock.lua") -- : data, lib
