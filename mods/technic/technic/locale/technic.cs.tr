@@ -97,6 +97,7 @@ Channel=Kanál
 @1 Cable=@1 kabel
 @1 Cable Plate=@1 kabel (skrz panel)
 @1 Centrifuge=@1 centrifuga
+@1 Compactor=@1 průmyslový lis
 @1 Compressor=@1 kompresor
 @1 Extractor=@1 extraktor
 @1 Forcefield Emitter=@1 emitor silového pole
@@ -229,6 +230,6 @@ Accuracy:=Přesnost:
 ## Craft descriptions
 Alloy cooking=slévání
 Grinding=drcení
-Compressing=lisování
+Compressing=komprese
 Extracting=extrahování
 Separating=dělení
