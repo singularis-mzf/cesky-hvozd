@@ -28,7 +28,8 @@ circular_saw.cost_in_microblocks = {
 	7, 1, 1, 2, 4, 6, 7, 8,
 	1, 2, 2, 3, 1, 1, 2, 4,
 	4, 2, 6, 7, 3, 7, 7, 4,
-	8, 3, 2, 6, 2, 1, 3, 4
+	8, 3, 2, 6, 2, 1, 3, 4,
+	6, 1, 1, 1
 }
 
 circular_saw.names = {
@@ -85,6 +86,11 @@ circular_saw.names = {
 	{"slope", "_outer_cut_half"},
 	{"slope", "_outer_cut_half_raised"},
 	{"slope", "_cut"},
+
+	{"stair", "_triple"},
+	{"slope", "_slab"},
+	{"slope", "_slab_half"},
+	{"slope", "_slab_half_raised"},
 }
 
 function circular_saw:get_cost(inv, stackname)
@@ -120,6 +126,31 @@ function circular_saw:get_output_inv(modname, material, amount, max)
 	return list
 end
 
+local function update_infotext(meta, item_description)
+	local owner, owner_viewname, infotext
+	owner = meta:get_string("owner") or ""
+	if owner == "" then
+		owner = nil
+	else
+		if minetest.get_modpath("ch_core") then
+			owner_viewname = ch_core.prihlasovaci_na_zobrazovaci(owner)
+		else
+			owner_viewname = owner
+		end
+	end
+	if owner ~= nil then
+		if item_description ~= nil then
+			infotext = S("Circular Saw that was placed by @1 is working on @2", owner_viewname, item_description)
+		else
+			infotext = S("Circular Saw that was placed by @1 is empty", owner_viewname)
+		end
+	elseif item_description ~= nil then
+		infotext = S("Circular Saw is working on @1", item_description)
+	else
+		infotext = S("Circular Saw is empty")
+	end
+	meta:set_string("infotext", infotext)
+end
 
 -- Reset empty circular_saw after last full block has been taken out
 -- (or the circular_saw has been placed the first time)
@@ -127,20 +158,13 @@ end
 function circular_saw:reset(pos)
 	local meta = minetest.get_meta(pos)
 	local inv  = meta:get_inventory()
-	local owned_by = meta:get_string("owner")
-
-	if owned_by and owned_by ~= "" then
-		owned_by = (" ("..S("owned by @1", meta:get_string("owner"))..")")
-	else
-		owned_by = ""
-	end
 
 	inv:set_list("input",  {})
 	inv:set_list("micro",  {})
 	inv:set_list("output", {})
 
 	meta:set_int("anz", 0)
-	meta:set_string("infotext", S("Circular Saw is empty") .. owned_by)
+	update_infotext(meta)
 end
 
 
@@ -174,13 +198,6 @@ function circular_saw:update_inventory(pos, amount)
 	local name_parts = circular_saw.known_nodes[node_name] or ""
 	local modname  = name_parts[1] or ""
 	local material = name_parts[2] or ""
-	local owned_by = meta:get_string("owner")
-
-	if owned_by and owned_by ~= "" then
-		owned_by = (" ("..S("owned by @1", meta:get_string("owner"))..")")
-	else
-		owned_by = ""
-	end
 
 	inv:set_list("input", { -- Display as many full blocks as possible:
 		node_name.. " " .. math.floor(amount / 8)
@@ -204,11 +221,7 @@ function circular_saw:update_inventory(pos, amount)
 	-- Store how many microblocks are available:
 	meta:set_int("anz", amount)
 
-	meta:set_string("infotext",
-		S("Circular Saw is working on @1",
-			node_def and node_def.description or material
-		) .. owned_by
-	)
+	update_infotext(meta, node_def and node_def.description or material)
 end
 
 
@@ -377,7 +390,7 @@ function circular_saw.on_construct(pos)
 	end
 	meta:set_string(
 		--FIXME Not work with @n in this part bug in minetest/minetest#7450.
-		"formspec", "size[11,10]"..fancy_inv..
+		"formspec", "size[11,11]"..fancy_inv..
 		"label[0,0;" ..S("Input material").. "]" ..
 		"list[current_name;input;1.7,0;1,1;]" ..
 		"label[0,1;" ..F(S("Left-over")).. "]" ..
@@ -386,8 +399,8 @@ function circular_saw.on_construct(pos)
 		"list[current_name;recycle;1.7,2;1,1;]" ..
 		"field[0.3,3.5;1,1;max_offered;" ..F(S("Max")).. ":;${max_offered}]" ..
 		"button[1,3.2;1.7,1;Set;" ..F(S("Set")).. "]" ..
-		"list[current_name;output;2.8,0;8,6;]" ..
-		"list[current_player;main;1.5,6.25;8,4;]" ..
+		"list[current_name;output;2.8,0;8,7;]" ..
+		"list[current_player;main;1.5,7.25;8,4;]" ..
 		"listring[current_name;output]" ..
 		"listring[current_player;main]" ..
 		"listring[current_name;input]" ..
@@ -400,13 +413,13 @@ function circular_saw.on_construct(pos)
 
 	meta:set_int("anz", 0) -- No microblocks inside yet.
 	meta:set_string("max_offered", 10) -- How many items of this kind are offered by default?
-	meta:set_string("infotext", S("Circular Saw is empty"))
+	-- meta:set_string("infotext", S("Circular Saw is empty"))
 
 	local inv = meta:get_inventory()
 	inv:set_size("input", 1)    -- Input slot for full blocks of material x.
 	inv:set_size("micro", 1)    -- Storage for 1-7 surplus microblocks.
 	inv:set_size("recycle", 1)  -- Surplus partial blocks can be placed here.
-	inv:set_size("output", 6*8) -- 6x8 versions of stair-parts of material x.
+	inv:set_size("output", 7*8) -- 7x8 versions of stair-parts of material x.
 
 	circular_saw:reset(pos)
 end

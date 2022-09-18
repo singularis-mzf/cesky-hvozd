@@ -15,6 +15,8 @@ Set=Nastavit
 owned by @1=kterou postavil/a: @1
 Circular Saw is empty=Kotoučová pila je prázdná
 Circular Saw is working on @1=Kotoučová pila obsahuje: @1
+Circular Saw that was placed by @1 is working on @2=Kotoučová pila postavená postavou „@1“ obsahuje: @2
+Circular Saw that was placed by @1 is empty=Kotoučová pila postavená postavou „@1“ je prázdná
 
 # init.lua
 
@@ -95,18 +97,23 @@ Slab=deska
 Slope=svah
 Panel=panel
 Stairs=schody
+triple=třetinové
 two sides=dvě strany
 three sides=tři strany
 three sides u=tři strany do U
 normal=normální
 inner=vnitřní
 outer=vnější
-half=polovina (spodní)
+half=spodní polovina
 alt 1=samostatné 1
 alt 2=samostatné 2
 alt 4=samostatné 4
 alt=samostatné 8
-half raised=polovina horní
+half raised=horní polovina
+slab=deska
+slab half=deska, spodní polovina
+slab half raised=deska, horní polovina
+
 inner half=vnitřní poloviční spodní
 inner half raised=vnitřní poloviční horní
 inner cut=vnitřní řez

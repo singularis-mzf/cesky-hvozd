@@ -36,6 +36,36 @@ local box_slope_half_raised = {
 	}
 }
 
+local box_slope_slab = {
+	type = "fixed",
+	fixed = {
+		{0.437500,  -0.5,  -0.5, 0.5, -0.25, 0.5},
+		{0.437500, -0.25, -0.25, 0.5,     0, 0.5},
+		{0.437500,     0,     0, 0.5,  0.25, 0.5},
+		{0.437500,  0.25,  0.25, 0.5,   0.5, 0.5}
+	}
+}
+
+local box_slope_slab_half = {
+	type = "fixed",
+	fixed = {
+		{0.437500, -0.5,   -0.5,  0.5, -0.375, 0.5},
+		{0.437500, -0.375, -0.25, 0.5, -0.25,  0.5},
+		{0.437500, -0.25,  0,    0.5, -0.125, 0.5},
+		{0.437500, -0.125, 0.25, 0.5,  0,     0.5},
+	}
+}
+
+local box_slope_slab_half_raised = {
+	type = "fixed",
+	fixed = {
+		{0.437500, -0.5,   -0.5,  0.5, 0.125, 0.5},
+		{0.437500, 0.125, -0.25, 0.5, 0.25,  0.5},
+		{0.437500, 0.25,  0,    0.5, 0.375, 0.5},
+		{0.437500, 0.375, 0.25, 0.5,  0.5,     0.5},
+	}
+}
+
 --==============================================================
 
 local box_slope_inner = {
@@ -315,6 +345,26 @@ stairsplus.defs = {
 			collision_box = box_slope_outer,
 			selection_box = box_slope_outer,
 		},
+
+		--==============================================================
+
+		["_slab"] = {
+			mesh = "moreblocks_slope_slab.obj",
+			collision_box = box_slope_slab,
+			selection_box = box_slope_slab,
+		},
+
+		["_slab_half"] = {
+			mesh = "moreblocks_slope_slab_half.obj",
+			collision_box = box_slope_slab_half,
+			selection_box = box_slope_slab_half,
+		},
+
+		["_slab_half_raised"] = {
+			mesh = "moreblocks_slope_slab_half_raised.obj",
+			collision_box = box_slope_slab_half_raised,
+			selection_box = box_slope_slab_half_raised,
+		},
 	},
 	["stair"] = {
 		[""] = {
@@ -396,6 +446,16 @@ stairsplus.defs = {
 				fixed = {
 					{-0.5, -0.25, -0.5, 0.5, 0, 0},
 					{-0.5, 0.25, 0, 0.5, 0.5, 0.5},
+				},
+			},
+		},
+		["_triple"] = {
+			node_box = {
+				type = "fixed",
+				fixed = {
+					{-0.5, -0.5, -0.5, 							0.5, -0.166666666667, 0.5},
+					{-0.5, -0.166666666667, -0.166666666667,	0.5, 0.166666666667, 0.5},
+					{-0.5, 0.166666666667, 0.166666666667,		0.5, 0.5, 0.5},
 				},
 			},
 		},
