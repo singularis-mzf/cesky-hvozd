@@ -6,7 +6,7 @@ local def
 ---------------------------------------------------------------
 local box = {
 	type = "fixed",
-	fixed = {-1/16, -8/16, -1/16, 1/16, -7/16, 1/16}
+	fixed = {{-1/16, -8/16, -1/16, 1/16, -7/16, 1/16}}
 }
 def = {
 	description = "0",
@@ -41,9 +41,10 @@ for i = 0, minetest.LIGHT_MAX do
 		def.groups = {ch_core_light = i}
 		def.light_source = i
 	end
-	local image = "ch_core_white_pixel.png^[resize:16x16^[multiply:#eeeeaa^[colorize:#000000:"..math.floor((minetest.LIGHT_MAX - i) / minetest.LIGHT_MAX * 255).."^default_invisible_node_overlay.png"
+	local image = "ch_core_white_pixel.png^[resize:16x16^[multiply:#eeeeaa^[colorize:#000000:"..math.floor((minetest.LIGHT_MAX - i) / minetest.LIGHT_MAX * 255).."^default_invisible_node_overlay.png^ch_core_"..math.min(i, 15)..".png"
 	def.inventory_image = image
 	def.wield_image = image
+
 	minetest.register_node("ch_core:"..name, table.copy(def))
 	if i > 0 and minetest.get_modpath("wielded_light") then
 		wielded_light.register_item_light("ch_core:"..name, i, false)

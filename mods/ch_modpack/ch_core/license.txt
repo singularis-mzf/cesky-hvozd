@@ -16,6 +16,22 @@ https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 
 Licenses of media (textures)
 ----------------------------
+ch_core_0.png
+ch_core_1.png
+ch_core_2.png
+ch_core_3.png
+ch_core_4.png
+ch_core_5.png
+ch_core_6.png
+ch_core_7.png
+ch_core_8.png
+ch_core_9.png
+ch_core_10.png
+ch_core_11.png
+ch_core_12.png
+ch_core_13.png
+ch_core_14.png
+ch_core_15.png
 ch_core_pryc.png
 ch_core_white_pixel.png
 	Author: Singularis

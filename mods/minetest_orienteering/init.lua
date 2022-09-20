@@ -66,6 +66,8 @@ end
 local use = S("Put this tool in your hotbar to see the data it provides.")
 local use_time = S("Put this tool in your hotbar to make use of its functionality. Punch to toggle between 24-hour and 12-hour display for the time feature.")
 
+orienteering.update_bc_player_huds = dofile(minetest.get_modpath("orienteering").."/compass.lua")
+
 -- Displays height (Y)
 minetest.register_tool("orienteering:altimeter", {
 	description = S("Altimeter"),
@@ -432,6 +434,8 @@ function orienteering.update_hud_displays(player)
 	for l=line, o_lines do
 		player:hud_change(orienteering.playerhuds[name]["o_line"..l], "text", "")
 	end
+
+	orienteering.update_bc_player_huds(player)
 end
 
 if mod_map then

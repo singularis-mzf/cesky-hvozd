@@ -10,6 +10,8 @@ Map=mapa
 Radar Mapper=ruční radar
 GPS device=zařízení GPS
 Binoculars=dalekohled
+Builder Compass (unset)=stavitelský kompas (nenastavený)
+Builder Compass @1=stavitelský kompas @1
 
 Yaw: @1° (@2), pitch: @3°=Směr: @1° (@2), sklon: @3°
 Yaw: @1° (@2)=Směr: @1° (@2)
