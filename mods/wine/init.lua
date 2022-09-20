@@ -107,8 +107,11 @@ function wine:add_drink(name, desc, has_bottle, num_hunger, num_thirst, alcoholi
 					thirsty.drink(user, num_thirst)
 				end
 
-				return minetest.do_item_eat(num_hunger, "vessels:drinking_glass",
-						itemstack, user, pointed_thing)
+				local vessel = "vessels:drinking_glass"
+				if string.find(itemstack:get_name(), "beer") then
+					vessel = "vessels:large_drinking_glass"
+				end
+				return minetest.do_item_eat(num_hunger, vessel, itemstack, user, pointed_thing)
 			end
 		end
 	})
@@ -133,6 +136,7 @@ function wine:add_drink(name, desc, has_bottle, num_hunger, num_thirst, alcoholi
 			sounds = snd_d,
 		})
 
+		if not minetest.get_modpath("drinks") then
 		local glass = "wine:glass_" .. name
 
 		minetest.register_craft({
@@ -148,6 +152,7 @@ function wine:add_drink(name, desc, has_bottle, num_hunger, num_thirst, alcoholi
 			output = glass .. " 9",
 			recipe = {{"wine:bottle_" .. name}}
 		})
+		end
 	end
 end
 
@@ -627,6 +632,22 @@ if not minetest.registered_items["vessels:drinking_glass"] then
 	})
 end
 
+minetest.register_node(":vessels:large_drinking_glass", {
+	description = S("Large Drinking Glass"),
+	drawtype = "plantlike",
+	tiles = {"wine_empty_glass.png"},
+	inventory_image = "wine_empty_glass.png",
+	wield_image = "wine_empty_glass.png",
+	paramtype = "light",
+	is_ground_content = false,
+	walkable = false,
+	selection_box = {
+		type = "fixed",
+		fixed = {-0.25, -0.5, -0.25, 0.25, 0.3, 0.25}
+	},
+	groups = {vessel = 1, dig_immediate = 3, attached_node = 1},
+	sounds = snd_g,
+})
 
 -- sort ferment table to fix recipe overlap (large to small)
 minetest.after(0.2, function()

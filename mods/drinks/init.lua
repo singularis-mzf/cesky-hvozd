@@ -11,10 +11,12 @@ local registered_vessels = drinks.registered_vessels
 -- full_vessel_item => { drink_id, units_produced, empty_vessel_item }
 local spill_from_results = {}
 
-local glass = "vessels:drinking_glass"
-local glass_bottle = "vessels:glass_bottle"
-local steel_bottle = "vessels:steel_bottle"
-local bucket = "bucket:bucket_empty"
+local glass = "vessels:drinking_glass" -- 0,2 l
+local large_glass = "vessels:large_drinking_glass" -- 0,5 l
+local glass_bottle = "vessels:glass_bottle" -- 1 l
+local steel_bottle = "vessels:steel_bottle" -- 1 l
+local bucket = "bucket:bucket_empty" -- 8 l
+local wooden_bucket = "bucket_wooden:bucket_empty" -- 8 l
 
 local bucket_selection_box = {
 	type = "fixed",
@@ -25,6 +27,7 @@ local bucket_groups = {
 }
 local eat_func_cache = {
 	[glass] = {},
+	[large_glass] = {},
 	[glass_bottle] = {},
 	[steel_bottle] = {},
 }
@@ -189,6 +192,20 @@ local function get_glass_template(drink_id, drink_desc2, color, health)
 	}
 end
 
+local function get_large_glass_template(drink_id, drink_desc2, color, health)
+	local eat_func = eat_func_cache[large_glass][health]
+	if not eat_func then
+		eat_func = minetest.item_eat(health, large_glass)
+		eat_func_cache[large_glass][health] = eat_func
+	end
+	return {
+		description = "půllitr "..drink_desc2,
+		juice_type = drink_id,
+		inventory_image = "drinks_glass_contents.png^[colorize:"..color..":200^drinks_drinking_glass.png",
+		on_use = eat_func,
+	}
+end
+
 local function get_glass_bottle_template(drink_id, drink_desc2, color, health)
 	local eat_func = eat_func_cache[glass_bottle][health]
 	if not eat_func then
@@ -219,26 +236,33 @@ local function get_steel_bottle_template(drink_id, drink_desc2, color, health)
 end
 
 drinks.add_vessel(glass, {
-	capacity = 2,
+	capacity = 2, -- 0,2 l
 	abbr3 = "jcu",
 	get_template = get_glass_template,
 })
 
+drinks.add_vessel(large_glass, {
+	capacity = 5, -- 0,5 l
+	abbr3 = "jlu",
+	get_template = get_large_glass_template,
+	default_only_for_true = true,
+})
+
 drinks.add_vessel(glass_bottle, {
-	capacity = 4,
+	capacity = 10, -- 1 l
 	abbr3 = "jbo",
 	get_template = get_glass_bottle_template,
 })
 
 drinks.add_vessel(steel_bottle, {
-	capacity = 4,
+	capacity = 10, -- 1 l
 	abbr3 = "jsb",
 	get_template = get_steel_bottle_template,
 	default_only_for_true = true,
 })
 
 drinks.add_vessel(bucket, {
-	capacity = 16,
+	capacity = 80, -- 8 l
 	abbr3 = "jbu",
 	get_template = function(drink_id, drink_desc2, color, health)
 		local image = "bucket.png^(drinks_bucket_contents.png^[colorize:"..color..":200)"
@@ -258,6 +282,31 @@ drinks.add_vessel(bucket, {
 		}
 	end,
 })
+
+if minetest.get_modpath("bucket_wooden") then
+	drinks.add_vessel(wooden_bucket, {
+		capacity = 80, -- 8 l
+		abbr3 = "jwu",
+		get_template = function(drink_id, drink_desc2, color, health)
+			local image = "bucket_wooden.png^(drinks_bucket_contents.png^[colorize:"..color..":200)"
+			return {
+				description = "vědro "..drink_desc2,
+				drawtype = "plantlike",
+				tiles = {image},
+				inventory_image = image,
+				wield_image = image,
+				paramtype = "light",
+				juice_type = drink_id,
+				is_ground_content = false,
+				walkable = false,
+				selection_box = bucket_selection_box,
+				groups = bucket_groups,
+				sounds = default.node_sound_defaults(),
+			}
+		end,
+		default_only_for_true = true,
+	})
+end
 
 -- Drinks
 drinks.add_drink("apple", "jablečný mošt", "#ecff56", {
@@ -284,7 +333,7 @@ drinks.add_fruit("blueberries", "farming:blueberries", 1)
 drinks.add_drink("cactus", "kaktusová šťáva", "#96F97B", {
 	drink_desc2 = "kaktusové šťávy",
 	drink_desc4 = "kaktusovou šťávu",
-	[glass_bottle] = "farming:cactus_juice",
+	[glass] = "farming:cactus_juice",
 })
 drinks.add_fruit("cactus", "default:cactus", 2)
 
@@ -391,7 +440,7 @@ if minetest.get_modpath("wine") then
 	drinks.add_drink("beer", "tmavé pivo", "#f1c200", {
 		drink_desc2 = "tmavého piva",
 		drink_desc4 = "tmavé pivo",
-		[glass] = "wine:glass_beer",
+		[large_glass] = "wine:glass_beer",
 		[glass_bottle] = "wine:bottle_beer",
 		[bucket] = false,
 	})
@@ -479,7 +528,7 @@ if minetest.get_modpath("wine") then
 		drinks.add_drink("wheat_beer", "světlé pivo", "#f1c200", {
 		drink_desc2 = "světlého piva",
 		drink_desc4 = "světlé pivo",
-		[glass] = "wine:glass_wheat_beer",
+		[large_glass] = "wine:glass_wheat_beer",
 		[glass_bottle] = "wine:bottle_wheat_beer",
 		[bucket] = false,
 	})
@@ -535,6 +584,120 @@ if minetest.get_modpath("wine") then
 		[glass_bottle] = "wine:sparkling_blackberry_juice",
 		[bucket] = false,
 	})
+end
+
+-- Generate recipes for drinks and bottles
+
+local vessels_0_2 = {glass}
+local vessels_0_5 = {large_glass}
+local vessels_1_0 = {glass_bottle, steel_bottle}
+local vessels_8_0 = {bucket}
+
+if minetest.get_modpath("bucket_wooden") then
+	table.insert(vessels_8_0, wooden_bucket)
+end
+
+for drink_id, drink_def in pairs(drinks.registered_drinks) do
+
+	-- 0,2 l <=> 1 l
+	for _, vessel_0_2 in ipairs(vessels_0_2) do
+		for _, vessel_1_0 in ipairs(vessels_1_0) do
+			local fill_to_0_2 = drinks.fill_to(drink_id, vessel_0_2)
+			local fill_to_1_0 = drinks.fill_to(drink_id, vessel_1_0)
+			if fill_to_0_2 and fill_to_1_0 then
+				local full_vessel_0_2 = fill_to_0_2.full_vessel_item
+				local full_vessel_1_0 = fill_to_1_0.full_vessel_item
+				minetest.register_craft({
+					output = full_vessel_1_0,
+					recipe = {
+						{vessel_1_0, "", ""},
+						{full_vessel_0_2, full_vessel_0_2, full_vessel_0_2},
+						{full_vessel_0_2, full_vessel_0_2, ""},
+					},
+					replacements = {
+						{full_vessel_0_2, vessel_0_2.." 5"},
+					}
+				})
+				minetest.register_craft({
+					output = full_vessel_0_2.." 5",
+					recipe = {
+						{full_vessel_1_0, "", ""},
+						{vessel_0_2, vessel_0_2, vessel_0_2},
+						{vessel_0_2, vessel_0_2, ""},
+					},
+					replacements = {
+						{full_vessel_1_0, vessel_1_0},
+					}
+				})
+			end
+		end
+	end
+
+	-- 0,5 l <=> 1 l
+	for _, vessel_0_5 in ipairs(vessels_0_5) do
+		for _, vessel_1_0 in ipairs(vessels_1_0) do
+			local fill_to_0_5 = drinks.fill_to(drink_id, vessel_0_5)
+			local fill_to_1_0 = drinks.fill_to(drink_id, vessel_1_0)
+			if fill_to_0_5 and fill_to_1_0 then
+				local full_vessel_0_5 = fill_to_0_5.full_vessel_item
+				local full_vessel_1_0 = fill_to_1_0.full_vessel_item
+				minetest.register_craft({
+					output = full_vessel_1_0,
+					recipe = {
+						{vessel_1_0, ""},
+						{full_vessel_0_5, full_vessel_0_5},
+					},
+					replacements = {
+						{full_vessel_0_5, vessel_0_5.." 2"},
+					}
+				})
+				minetest.register_craft({
+					output = full_vessel_0_5.." 2",
+					recipe = {
+						{full_vessel_1_0, ""},
+						{vessel_0_5, vessel_0_5},
+					},
+					replacements = {
+						{full_vessel_1_0, vessel_1_0},
+					}
+				})
+			end
+		end
+	end
+
+	-- 1 l <=> 8 l
+	for _, vessel_1_0 in ipairs(vessels_1_0) do
+		for _, vessel_8_0 in ipairs(vessels_8_0) do
+			local fill_to_1_0 = drinks.fill_to(drink_id, vessel_1_0)
+			local fill_to_8_0 = drinks.fill_to(drink_id, vessel_8_0)
+			if fill_to_1_0 and fill_to_8_0 then
+				local full_vessel_1_0 = fill_to_1_0.full_vessel_item
+				local full_vessel_8_0 = fill_to_8_0.full_vessel_item
+				minetest.register_craft({
+					output = full_vessel_8_0,
+					recipe = {
+						{vessel_8_0, full_vessel_1_0, full_vessel_1_0},
+						{full_vessel_1_0, full_vessel_1_0, full_vessel_1_0},
+						{full_vessel_1_0, full_vessel_1_0, full_vessel_1_0},
+					},
+					replacements = {
+						{full_vessel_1_0, vessel_1_0.." 8"},
+					}
+				})
+				minetest.register_craft({
+					output = full_vessel_1_0.." 8",
+					recipe = {
+						{full_vessel_8_0, vessel_1_0, vessel_1_0},
+						{vessel_1_0, vessel_1_0, vessel_1_0},
+						{vessel_1_0, vessel_1_0, vessel_1_0},
+					},
+					replacements = {
+						{full_vessel_8_0, vessel_8_0},
+					}
+				})
+			end
+		end
+	end
 end
 
 -- mod support (moreblocks/technic_worldgen)

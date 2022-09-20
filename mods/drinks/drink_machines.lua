@@ -36,8 +36,8 @@ local function drink_to_desc2(drink_id)
 	end
 end
 
-local barrel_capacity = 128
-local silo_capacity = 256
+local barrel_capacity = 500 -- 50 l
+local silo_capacity = 1000 -- 100 l
 
 local update_barrel_formspec
 
@@ -197,7 +197,7 @@ update_barrel_formspec = function(pos)
 		end
 		formspec_parts[2] = "ukládám "..desc4
 	end
-	formspec_parts[4] = "obsazeno: "..state.units_stored.." z "..state.capacity.." dávek"
+	formspec_parts[4] = "obsazeno: "..state.units_stored.." z "..state.capacity.." decilitrů"
 	local meta = minetest.get_meta(pos)
 	meta:set_string("formspec", table.concat(formspec_parts))
 	meta:set_string("infotext", infotext)

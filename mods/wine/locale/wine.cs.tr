@@ -5,7 +5,7 @@
 
 Glass of Wine=sklenice vína
 Bottle of Wine=láhev vína
-Glass of Beer=sklenice tmavého piva
+Glass of Beer=půllitr tmavého piva
 Bottle of Beer=láhev tmavého piva
 Glass of Brandy=sklenice brandy
 Bottle of Brandy=láhev brandy
@@ -15,7 +15,7 @@ Bottle of Coffee Liquor=láhev kávového likéru
 # Bottle of Rum=
 Glass of Tequila=sklenice tekily
 Bottle of Tequila=láhev tekily
-Glass of Wheat Beer=sklenice světlého piva
+Glass of Wheat Beer=půllitr světlého piva
 Bottle of Wheat Beer=láhev světlého piva
 Glass of Sake=miska saké
 Bottle of Sake=láhev saké
@@ -60,3 +60,5 @@ Water Added=voda přidána
 (Output Full)=(výstup přeplněn)
 Empty Drinking Glass=prázdná sklenice
 # [MOD] Wine loaded=
+
+Large Drinking Glass=prázdný půllitr

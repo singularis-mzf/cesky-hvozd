@@ -102,7 +102,7 @@ end
 -- farming
 if minetest.get_modpath("farming") then
 
-	wine:add_item({ {"farming:wheat", "wine:glass_wheat_beer"} })
+	wine:add_item({ {{"farming:wheat", "vessels:large_drinking_glass"}, "wine:glass_wheat_beer"} })
 
 	if farming.mod and (farming.mod == "redo" or farming.mod == "undo") then
 
@@ -117,7 +117,7 @@ if minetest.get_modpath("farming") then
 
 		wine:add_item({
 			{"farming:grapes", "wine:glass_wine"},
-			{"farming:barley", "wine:glass_beer"},
+			{{"farming:barley", "vessels:large_drinking_glass"}, "wine:glass_beer"},
 			{"farming:rice", "wine:glass_sake"},
 			{"farming:corn", "wine:glass_bourbon"},
 			{"farming:baked_potato", "wine:glass_vodka"},

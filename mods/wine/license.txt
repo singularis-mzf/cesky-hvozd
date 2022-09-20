@@ -24,6 +24,7 @@ Textures by TenPlus1 unless listed below (CC-By-3.0)
 
 TenPlus1, modified by Singularis (CC-By-3.0)
   wine_beer_glass.png
+  wine_empty_glass.png
   wine_wheat_beer_glass.png
 
 Textures by Darkstalker (cc-by-3.0 license)
