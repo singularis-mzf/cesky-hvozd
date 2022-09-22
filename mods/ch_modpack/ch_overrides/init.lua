@@ -112,5 +112,6 @@ end
 dofile(modpath.."/extra_recipes.lua")
 dofile(modpath.."/falling_nodes.lua")
 dofile(modpath.."/ores.lua")
+dofile(modpath.."/sitting.lua")
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
