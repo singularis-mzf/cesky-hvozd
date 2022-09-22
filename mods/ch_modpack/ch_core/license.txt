@@ -36,3 +36,12 @@ ch_core_pryc.png
 ch_core_white_pixel.png
 	Author: Singularis
 	License: CC-BY-SA 4.0
+
+ch_core_kcs_1h.png
+ch_core_kcs_1zcs.png
+	Author: Singularis
+	Used source: https://commons.wikimedia.org/wiki/File:1_haler_CSK_(1962-1986).png (CC-BY-SA 4.0; author: Arvedui89)
+
+ch_core_kcs_1kcs.png
+	Author: Singularis
+	Used source: https://commons.wikimedia.org/wiki/File:1_koruna_CSK_(1991-1992).png (CC-BY-SA 4.0; author: Arvedui89)

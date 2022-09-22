@@ -899,7 +899,7 @@ resp. *ostatní\_zdroje*.
 * Zdroj: [https://github.com/GreenXenith/mesecons\_wireless](https://github.com/GreenXenith/mesecons\_wireless), revize 8ca249c10bcef8f2a9304fe6ef0e68a7d2910bd8
 * Původní licence: MIT
 * Licence úprav: MIT
-* [ContentDB](https://content.minetest.net/packages/GreenXenith/mesecons_wireless/)
+* [ContentDB](https://content.minetest.net/packages/GreenXenith/mesecons\_wireless/)
 
 # Ostatní použité zdroje
 
@@ -1005,8 +1005,3 @@ resp. *ostatní\_zdroje*.
 ## ch\_overrides
 
 * Licence: kód LGPLv2.1
-
-## Koruna československá (kcs)
-
-* Kód: vlastní práce; textury: vlastní práce založená na fotografiích (CC-BY-SA-4.0)
-* Licence: kód MIT, textury CC-BY-SA-4.0
