@@ -755,8 +755,8 @@ local digiline = {
 	receptor = {},
 	effector = {
 		action = function(pos, _, channel, msg)
-			msg = clean_and_weigh_digiline_message(msg)
-			run(pos, {type = "digiline", channel = channel, msg = msg})
+			--[[ msg = clean_and_weigh_digiline_message(msg)
+			run(pos, {type = "digiline", channel = channel, msg = msg}) ]]
 		end
 	}
 }
@@ -830,20 +830,20 @@ for d = 0, 1 do
 	local mesecons = {
 		effector = {
 			rules = input_rules[cid],
-			action_change = function (pos, _, rule_name, new_state)
+			--[[ action_change = function (pos, _, rule_name, new_state)
 				if update_real_port_states(pos, rule_name, new_state) then
 					run(pos, {type=new_state, pin=rule_name})
 				end
-			end,
+			end, ]]
 		},
 		receptor = {
 			state = mesecon.state.on,
 			rules = output_rules[cid]
 		},
-		luacontroller = {
+		--[[ luacontroller = {
 			get_program = get_program,
 			set_program = set_program,
-		},
+		}, ]]
 	}
 
 	minetest.register_node(node_name, {
@@ -865,8 +865,8 @@ for d = 0, 1 do
 		sunlight_propagates = true,
 		selection_box = selection_box,
 		node_box = node_box,
-		on_construct = reset_meta,
-		on_receive_fields = on_receive_fields,
+		-- on_construct = reset_meta,
+		-- on_receive_fields = on_receive_fields,
 		sounds = mesecon.node_sound.stone,
 		mesecons = mesecons,
 		digiline = digiline,
@@ -883,7 +883,7 @@ for d = 0, 1 do
 			mesecon.receptor_off(pos, output_rules)
 		end,
 		is_luacontroller = true,
-		on_timer = node_timer,
+		-- on_timer = node_timer,
 		on_blast = mesecon.on_blastnode,
 	})
 end
@@ -914,18 +914,18 @@ minetest.register_node(BASENAME .. "_burnt", {
 	sunlight_propagates = true,
 	selection_box = selection_box,
 	node_box = node_box,
-	on_construct = reset_meta,
-	on_receive_fields = on_receive_fields,
+	-- on_construct = reset_meta,
+	-- on_receive_fields = on_receive_fields,
 	sounds = mesecon.node_sound.stone,
 	virtual_portstates = {a = false, b = false, c = false, d = false},
-	mesecons = {
+	--[[ mesecons = {
 		effector = {
 			rules = mesecon.rules.flat,
 			action_change = function(pos, _, rule_name, new_state)
 				update_real_port_states(pos, rule_name, new_state)
 			end,
 		},
-	},
+	}, ]]
 	on_blast = mesecon.on_blastnode,
 })
 

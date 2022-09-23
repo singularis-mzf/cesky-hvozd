@@ -45,9 +45,9 @@ local mesecons = {effector =
 {
 	rules = input_rules,
 	action_change = function (pos, node, rulename, newstate)
-		if yc.update_real_portstates(pos, node, rulename, newstate) then
+		--[[ if yc.update_real_portstates(pos, node, rulename, newstate) then
 			yc.update(pos)
-		end
+		end ]]
 	end
 }}
 if nodename ~= "mesecons_microcontroller:microcontroller0000" then
@@ -90,7 +90,7 @@ minetest.register_node(nodename, {
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("code", "")
-		meta:set_string("formspec", "size[9,2.5]"..
+		--[[ meta:set_string("formspec", "size[9,2.5]"..
 			"field[0.256,-0.2;9,2;code;Code:;]"..
 			"button[0  ,0.2;1.5,3;band;AND]"..
 			"button[1.5,0.2;1.5,3;bxor;XOR]"..
@@ -99,12 +99,12 @@ minetest.register_node(nodename, {
 			"button[6  ,0.2;1.5,3;btflop;T-Flop]"..
 			"button[7.5,0.2;1.5,3;brsflop;RS-Flop]"..
 			"button_exit[3.5,1;2,3;program;Program]")
-		meta:set_string("infotext", "Unprogrammed Microcontroller")
+		meta:set_string("infotext", "Unprogrammed Microcontroller") ]]
 		local r = ""
 		for i=1, EEPROM_SIZE+1 do r=r.."0" end --Generate a string with EEPROM_SIZE*"0"
 		meta:set_string("eeprom", r)
 	end,
-	on_receive_fields = function(pos, _, fields, sender)
+	--[[ on_receive_fields = function(pos, _, fields, sender)
 		local player_name = sender:get_player_name()
 		if minetest.is_protected(pos, player_name) and
 				not minetest.check_player_privs(player_name, {protection_bypass=true}) then
@@ -140,7 +140,7 @@ minetest.register_node(nodename, {
 		meta:set_string("infotext", "Programmed Microcontroller")
 		yc.reset (pos)
 		yc.update(pos)
-	end,
+	end, ]]
 	sounds = mesecon.node_sound.stone,
 	mesecons = mesecons,
 	after_dig_node = function (pos, node)

@@ -5,7 +5,7 @@ plg.rules = {}
 plg.open_formspecs = {}
 
 local lcore = dofile(minetest.get_modpath(minetest.get_current_modname()) .. "/logic.lua")
-dofile(minetest.get_modpath(minetest.get_current_modname()) .. "/tool.lua")(plg)
+-- dofile(minetest.get_modpath(minetest.get_current_modname()) .. "/tool.lua")(plg)
 
 plg.register_nodes = function(template)
 	-- each loop is for one of the 4 IO ports
@@ -89,6 +89,7 @@ plg.register_nodes({
 			{ -3/16, -6/16, -3/16, 3/16, -5/16, 3/16 }, -- IC
 		}
 	},
+	--[[
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		local is = { {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {} }
@@ -109,7 +110,7 @@ plg.register_nodes({
 		plg.open_formspecs[name] = pos
 		local is = lcore.deserialize(meta:get_string("instr"))
 		minetest.show_formspec(name, "mesecons:fpga", plg.to_formspec_string(is, nil))
-	end,
+	end, ]]
 	sounds = mesecon.node_sound.stone,
 	mesecons = {
 		effector = {
