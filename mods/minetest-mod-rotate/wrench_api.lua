@@ -395,10 +395,14 @@ local function player_node_state(player, pointed_thing)
 	local node_pos2 = pointed_thing.above
 	local dpos = {x = node_pos2.x-node_pos.x, y = node_pos2.y-node_pos.y, z = node_pos2.z-node_pos.z}
 	result.pointed_side = dpos_to_pointing_map[string.format("%d,%d,%d", dpos.x, dpos.y, dpos.z)]
+	if not result.pointed_side then
+		result.pointed_side = dpos_to_pointing_map[string.format("%d,0,%d", dpos.x, dpos.z)]
+	end
 
 	if not result.faced_side or not result.facing_direction or not result.pointed_side then
-		error(string.format("[%s]: player_node_state: internal error: facing_direction = %s, faced_side=%s, pointed_side=%s",
-			mod_name_upper,result.facing_direction, result.faced_side, result.pointed_side))
+		minetest.log("warning", string.format("[%s]: player_node_state: internal error: facing_direction = %s, faced_side=%s, pointed_side=%s, dpos=(%s,%s,%s)",
+			mod_name_upper,result.facing_direction, result.faced_side, result.pointed_side, dpos.x, dpos.y, dpos.z))
+		return nil
 	end
 	return result
 end
@@ -465,6 +469,9 @@ end
 -- Perform the actual rotation lookup (rotation mode). Pretty straightforward...
 local function lookup_node_rotation(pointed_thing, old_orientation, player, rotation)
 	local state = player_node_state(player, pointed_thing)
+	if not state then
+		return nil
+	end
 	local clockwise_side = clockwise_rotation_side(state, rotation)
 	return mt_clockwise_rotation_map[clockwise_side][old_orientation]
 end
@@ -543,6 +550,9 @@ local function get_node_relative_orientation_mode(player, pointed_thing)
 	else
 		local param2 = node.param2
 		local state = player_node_state(player, pointed_thing)
+		if not state then
+			return
+		end
 		local relative = mt_to_relative_orientation(state, param2)
 		local axis = mt_axis_code(relative)
 		local rot = mt_rot_code(relative)
@@ -587,6 +597,9 @@ local function wrench_handler(itemstack, player, pointed_thing, mode, material, 
 		    node.param2 = orientation
 		elseif string.sub(mode, 1, 1) == "r" then
 		    local state = player_node_state(player, pointed_thing)
+			if not state then
+				return
+			end
 		    node.param2 = relative_to_mt_orientation(state, orientation)
 		else
 		    minetest.log("error", "Internal error: wrench has unrecognised mode ("..mode..")")
