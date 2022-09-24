@@ -391,19 +391,16 @@ local function player_node_state(player, pointed_thing)
 	local vquadrant = math.floor((pitch + (PI/4)) / (PI/2))
 	result.faced_side = quadrant_to_facing_map[string.format("%d,%d",hquadrant,vquadrant)]
 
-	-- Compute pointed side of the node
-	local node_pos2 = pointed_thing.above
-	local dpos = {x = node_pos2.x-node_pos.x, y = node_pos2.y-node_pos.y, z = node_pos2.z-node_pos.z}
-	result.pointed_side = dpos_to_pointing_map[string.format("%d,%d,%d", dpos.x, dpos.y, dpos.z)]
-	if not result.pointed_side then
-		result.pointed_side = dpos_to_pointing_map[string.format("%d,0,%d", dpos.x, dpos.z)]
+	-- Compute the nearest side of the node
+	local dpos = vector.subtract(player_pos, node_pos)
+	if math.abs(dpos.x) >= math.max(math.abs(dpos.y), math.abs(dpos.z)) then
+		result.pointed_side = dpos_to_pointing_map[string.format("%d,0,0", math.sign(dpos.x))]
+	elseif math.abs(dpos.z) >= math.max(math.abs(dpos.x), math.abs(dpos.y)) then
+		result.pointed_side = dpos_to_pointing_map[string.format("0,0,%d", math.sign(dpos.z))]
+	else
+		result.pointed_side = dpos_to_pointing_map[string.format("0,%d,0", math.sign(dpos.y))]
 	end
 
-	if not result.faced_side or not result.facing_direction or not result.pointed_side then
-		minetest.log("warning", string.format("[%s]: player_node_state: internal error: facing_direction = %s, faced_side=%s, pointed_side=%s, dpos=(%s,%s,%s)",
-			mod_name_upper,result.facing_direction, result.faced_side, result.pointed_side, dpos.x, dpos.y, dpos.z))
-		return nil
-	end
 	return result
 end
 
