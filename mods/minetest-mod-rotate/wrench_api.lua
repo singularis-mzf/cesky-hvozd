@@ -392,7 +392,8 @@ local function player_node_state(player, pointed_thing)
 	result.faced_side = quadrant_to_facing_map[string.format("%d,%d",hquadrant,vquadrant)]
 
 	-- Compute the nearest side of the node
-	local dpos = vector.subtract(player_pos, node_pos)
+	local eye_offset = player:get_eye_offset()
+	local dpos = vector.subtract(vector.add(player_pos, eye_offset), node_pos)
 	if math.abs(dpos.x) >= math.max(math.abs(dpos.y), math.abs(dpos.z)) then
 		result.pointed_side = dpos_to_pointing_map[string.format("%d,0,0", math.sign(dpos.x))]
 	elseif math.abs(dpos.z) >= math.max(math.abs(dpos.x), math.abs(dpos.y)) then
