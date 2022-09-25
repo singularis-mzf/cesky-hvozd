@@ -5,7 +5,7 @@ local function after_place_node(pos, placer, itemstack)
 end
 
 local function on_punch(pos, node, clicker, itemstack)
-	return update_npc(pos, node)
+	return ch_npc.update_npc(pos, node)
 end
 
 local function on_rightclick(pos, node, clicker, itemstack)
@@ -18,7 +18,7 @@ local function on_rightclick(pos, node, clicker, itemstack)
 end
 
 local def = {
-	description = "nehráčská postava",
+	description = "nehráčská postava (zobrazená)",
 	drawtype = "nodebox",
 	node_box = {type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, 1/16 - 0.5, 0.5}},
 	tiles = {"ch_core_white_pixel.png^[opacity:0"},
@@ -27,7 +27,7 @@ local def = {
 	wield_image = "default_invisible_node_overlay.png",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 1, ch_npc_spawner = 1},
+	groups = {ch_npc_spawner = 1, not_in_creative_inventory = 1},
 	walkable = false,
 	pointable = true,
 	light_source = 1,
@@ -39,11 +39,10 @@ local def = {
 
 minetest.register_node("ch_npc:npc", table.copy(def))
 
-def.description = "nehráčská postava (skrytá)"
+def.description = "nehráčská postava"
 def.tiles = {"ch_core_white_pixel.png^[opacity:16"}
 def.use_texture_alpha = "blend"
 def.light_source = 5
-def.groups = table.copy(def.groups)
-def.groups.ch_npc_spawner = 2
+def.groups = {ch_npc_spawner = 2}
 
 minetest.register_node("ch_npc:npc_hidden", def)

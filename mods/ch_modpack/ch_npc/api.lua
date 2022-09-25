@@ -6,16 +6,19 @@ local function clsc(a, b)
 	end
 end
 
+--[[
 local default_model = ch_npc.internal.default_model
 local default_textures = ch_npc.internal.default_textures
+]]
 
 function ch_npc.update_npc(pos, node, meta)
 	local update_meta = meta
 	if not meta then
 		meta = minetest.get_meta(pos)
 	end
+	local npc = ch_npc.registered_npcs[meta:get_string("model")] or ch_npc.registered_npcs["default"]
 
-	local entity_pos = vector.new(pos.x, pos.y - 0.5, pos.z)
+	local entity_pos = vector.add(pos, npc.offset) -- 			vector.new(pos.x, pos.y - 0.5, pos.z)
 	local should_be_spawned = meta:get_string("enabled") == "true"
 	local found_objects = {}
 
@@ -38,15 +41,14 @@ function ch_npc.update_npc(pos, node, meta)
 			minetest.log("action", "NPC at "..minetest.pos_to_string(obj_pos).." despawned.")
 		end
 	elseif (#found_objects == 0 and should_be_spawned) or (#found_objects > 0 and update_meta) then
-		local model = clsc(meta:get_string("model"), default_model)
-		local textures = string.split(clsc(meta:get_string("texture"), default_textures), ";", false, -1, false)
 		local npc_name = meta:get_string("npc_name")
 		local npc_text = meta:get_string("npc_text")
 		local npc_program = clsc(meta:get_string("npc_program"), "default")
 
 		local props_to_set = {
-			mesh = model,
-			textures = textures,
+			mesh = npc.mesh,
+			textures = npc.textures,
+			collisionbox = npc.collisionbox,
 			infotext = npc_name,
 			_npc_text = npc_text,
 		}

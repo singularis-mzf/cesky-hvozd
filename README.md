@@ -620,13 +620,6 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/mob\_horse/)
 
-## Mobs NPC (mobs\_npc)
-
-* Zdroj: [https://notabug.org/TenPlus1/mobs\_npc](https://notabug.org/TenPlus1/mobs\_npc), revize 5ca55f49ce74d97dbf6c099e87ac22377d0ffd98
-* Původní licence: MIT
-* Licence úprav: MIT
-* [ContentDB](https://content.minetest.net/packages/TenPlus1/mobs\_npc/)
-
 ## Mobs Redo (mobs\_redo)
 
 * Zdroj: [https://notabug.org/TenPlus1/mobs\_redo](https://notabug.org/TenPlus1/mobs\_redo), revize ca34cc2274082bd4a3cf4843f7f5ff939d659e1e
@@ -942,6 +935,12 @@ resp. *ostatní\_zdroje*.
 
 * Zdroj: [https://forum.minetest.net/viewtopic.php?t=11817](https://forum.minetest.net/viewtopic.php?t=11817), soubor mesh\_beds.zip
 * Původní licence: WTFPL (u modelů to není řečeno, ale lze předpokládat, že jsou považovány za kód)
+
+## Mobs NPC (mobs\_npc)
+
+* Zdroj: [https://notabug.org/TenPlus1/mobs\_npc](https://notabug.org/TenPlus1/mobs\_npc), revize 5ca55f49ce74d97dbf6c099e87ac22377d0ffd98
+* Původní licence: MIT
+* [ContentDB](https://content.minetest.net/packages/TenPlus1/mobs\_npc/)
 
 ## My Mesh Nodes (mymeshnodes)
 

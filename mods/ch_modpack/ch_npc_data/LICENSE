@@ -24,3 +24,56 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 License of media as follows:
+
+Doctor.b3d
+texturenordoctor.png
+Villager.b3d
+	Author: Liil/Wilhelmine/Skandarella
+	License: MIT (Textures, Models and Animation by Liil/Wilhelmine/Skandarella under (MIT) License (c) 2021)
+	Source: mod „people“
+
+mobs_character.b3d
+mobs_igor6.png
+mobs_igor8.png
+mobs_npc.png
+mobs_trader2.png
+mobs_trader3.png
+	Author: TenPlus1
+	License: MIT
+	Source: mod „mobs_npc“
+
+mobs_npc2.png
+	Author: nuttmeg20
+	License: MIT
+	Source: mod „mobs_npc“
+
+mobs_npc3.png
+	Author: swagman181818
+	License: MIT
+	Source: mod „mobs_npc“
+
+mobs_npc4.png
+	Author: Sapphire16
+	License: MIT
+	Source: mod „mobs_npc“
+
+mobs_npc_baby.png
+	Author: AmirDerAssassine
+	License: MIT
+	Source: mod „mobs_npc“
+
+mobs_trader.png
+	Author: Frerin
+	License: MIT
+	Source: mod „mobs_npc“
+
+texturearavillager.png
+textureewevillager.png
+texturemedvillager.png
+texturenorvillager.png
+texturepapvillager.png
+texturevillager.png
+	Author: Liil/Wilhelmine/Skandarella
+	Modified by: Singularis
+	License: MIT (Textures, Models and Animation by Liil/Wilhelmine/Skandarella under (MIT) License (c) 2021)
+	Source: mod „people“

@@ -17,15 +17,19 @@ local function entity_logic(self)
 end
 
 local function entity_on_rightclick(self, player)
-	local pos = self.object:get_pos()
-	pos = vector.new(pos.x, pos.y + 0.5, pos.z)
-	local node = minetest.get_node(pos)
-	if minetest.get_item_group(node.name, "ch_npc_spawner") == 0 then
-		minetest.log("warning", "on_rightclick expected NPC spawner at "..minetest.pos_to_string(pos).." but the node is "..node.name)
+	local pos, positions, meta, formspec
+	pos = self.object:get_pos()
+	positions = minetest.find_nodes_in_area(vector.new(pos.x, pos.y + 0.5, pos.z), vector.new(pos.x, pos.y - 4, pos.z), {"group:ch_npc_spawner"})
+	if #positions > 1 and positions[2].y < positions[1].y then
+		pos = positions[2]
+	elseif #positions > 0 then
+		pos = positions[1]
+	else
+		minetest.log("warning", "on_rightclick expected NPC spawner under "..minetest.pos_to_string(pos))
 		return
 	end
-	local meta = minetest.get_meta(pos)
-	local formspec = ch_npc.internal.get_entity_formspec(meta)
+	meta = minetest.get_meta(pos)
+	formspec = ch_npc.internal.get_entity_formspec(meta)
 	ch_npc.internal.show_formspec(pos, player:get_player_name(), "ch_npc:entity_formspec", formspec)
 end
 
@@ -35,6 +39,7 @@ local function entity_on_punch(self, puncher, time_from_last_punch, tool_capabil
 end
 
 -- entity parameters based on parameters from „Folks“ mod by Michele Viotto
+local model = ch_npc.registered_npcs["default"]
 local def = {
 	initial_properties = {
 		hp_max = 9999,
@@ -43,8 +48,8 @@ local def = {
 		collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.7, 0.3},
 		visual = "mesh",
 		visual_size = {x = 1, y = 1},
-		mesh = ch_npc.internal.default_model,
-		textures = string.split(ch_npc.internal.default_textures, ";", false, -1, false),
+		mesh = model.mesh,
+		textures = model.textures,
 		-- nametag = "",
 		-- nametag_color = "#ffffff",
 	},

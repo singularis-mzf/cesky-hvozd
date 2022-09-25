@@ -7,8 +7,8 @@ local player_name_to_node_pos = {}
 -- API OBJECT
 ch_npc = {
 	internal = {
-		default_model = "npc.b3d",
-		default_textures = "folks_default.png",
+		--[[ default_model = "npc.b3d",
+		default_textures = "folks_default.png", ]]
 		show_formspec = function(node_pos, player_name, formname, formspec)
 			player_name_to_node_pos[player_name] = node_pos
 			return minetest.show_formspec(player_name, formname, formspec)
@@ -17,6 +17,19 @@ ch_npc = {
 }
 
 local modpath = minetest.get_modpath(minetest.get_current_modname())
+
+if minetest.get_modpath("ch_npc_data") then
+	ch_npc.registered_npcs = ch_npc_data.registered_npcs
+else
+	ch_npc.registered_npcs = {}
+end
+
+ch_npc.registered_npcs.default = {
+	mesh = "npc.b3d",
+	textures = {"folks_default.png"},
+	offset = vector.new(0, -0.5, 0),
+	collisionbox = nil,
+}
 
 dofile(modpath.."/privs.lua")
 dofile(modpath.."/entities.lua")
