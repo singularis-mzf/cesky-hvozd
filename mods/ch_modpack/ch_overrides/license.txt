@@ -385,9 +385,6 @@ tnt_tnt_stick.png
 tnt_top.png
 tnt_top_burning.png
 tnt_top_burning_animated.png
-unknown_item.png
-unknown_node.png
-unknown_object.png
 vessels_drinking_glass.png
 vessels_drinking_glass_inv.png
 vessels_glass_bottle.png
@@ -417,6 +414,9 @@ travelnet_travelnet_front.png
 travelnet_travelnet_front_color.png
 travelnet_travelnet_side.png
 travelnet_travelnet_side_color.png
+unknown_item.png
+unknown_node.png
+unknown_object.png
 	Author: Lukas Reichlin
 	Modified by: Singularis
 	Source: Polygonia_64px texture pack
