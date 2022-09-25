@@ -80,6 +80,7 @@ end
 local function get_player_skin(player)
 	local name = player:get_player_name()
 	local armor_tex = ""
+	return "bike_replacement.png" --[[
 	if minetest.global_exists("armor") then
 		-- Filter out helmet (for bike helmet) and boots/shield (to not mess up UV mapping)
 		local function filter(str, find)
@@ -106,7 +107,10 @@ local function get_player_skin(player)
 		skin = armor:get_player_skin(name)
 	end
 	return skin..armor_tex
+	]]
 end
+
+
 
 -- Bike metal texture handling
 local function is_hex(color)
@@ -162,6 +166,15 @@ minetest.register_node("bike:hand", {
 	node_placement_prediction = "",
 })
 
+-- Infotext
+local function get_infotext(owner)
+	if owner and owner ~= "" then
+		return "vlastník/ice: ".. ch_core.prihlasovaci_na_zobrazovaci(owner)
+	else
+		return "bez vlastníka/ice"
+	end
+end
+
 --[[ Bike ]]--
 
 -- Default textures (overidden when mounted or colored)
@@ -195,6 +208,7 @@ local bike = {
 	visual = "mesh",
 	mesh = "bike.b3d",
 	textures = default_tex("#FFFFFF", 150),
+	use_texture_alpha = true,
 	stepheight = setting_stepheight,
 	driver = nil,
 	color = "#FFFFFF",
@@ -317,7 +331,10 @@ function bike.on_activate(self, staticdata, dtime_s)
 			self.owner = data.owner
 		end
 	end
-	self.object:set_properties({textures=default_tex(self.color, self.alpha)})
+	self.object:set_properties({
+		infotext = get_infotext(self.owner),
+		textures = default_tex(self.color, self.alpha),
+	})
 	self.last_v = self.v
 end
 
@@ -382,9 +399,10 @@ function bike.on_punch(self, puncher)
 		if not inv:contains_item("main", "bike:bike") then
 			local stack = ItemStack({name="bike:bike", count=1, wear=0})
 			local meta = stack:get_meta()
-			-- Set the stack to the bike color
+			-- Set the stack to the bike color and owner
 			meta:set_string("color", self.color)
 			meta:set_string("alpha", self.alpha)
+			meta:set_string("owner", self.owner)
 			local leftover = inv:add_item("main", stack)
 			-- If no room in inventory add the bike to the world
 			if not leftover:is_empty() then
@@ -694,8 +712,11 @@ minetest.register_craftitem("bike:bike", {
 			color = meta:get_string("color"),
 			alpha = tonumber(meta:get_string("alpha")),
 			-- Store owner
-			owner = placer:get_player_name(),
+			owner = meta:get_string("owner"),
 		}
+		if sdata.owner == "" then
+			sdata.owner = placer:get_player_name()
+		end
 
 		-- If it's a new bike, give it default colors
 		if sdata.alpha == nil then
@@ -711,6 +732,7 @@ minetest.register_craftitem("bike:bike", {
 		if bike then
 			if placer then
 				bike:set_yaw(placer:get_look_horizontal())
+				bike:set_properties({infotext = get_infotext(sdata.owner)})
 			end
 			local player_name = placer and placer:get_player_name() or ""
 			if not (creative and creative.is_enabled_for and
