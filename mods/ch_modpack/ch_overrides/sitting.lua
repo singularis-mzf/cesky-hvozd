@@ -88,9 +88,24 @@ for _, itemname in ipairs({"homedecor:office_chair_basic", "homedecor:office_cha
 	if minetest.registered_nodes[itemname] then
 		minetest.override_item(itemname, {
 			on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-				sednout(vector.new(0, 0.1, 0), pos, node, clicker)
+				sednout(vector.new(0, 0.15, 0), pos, node, clicker)
 			end,
 		})
 	end
 end
 
+for _, itemname in ipairs({"lrfurn:longsofa", "lrfurn:sofa"}) do
+	if minetest.registered_nodes[itemname] then
+		minetest.override_item(itemname, {
+			on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+				node.param2 = node.param2 % 4
+				if node.param2 == 2 then
+					node.param2 = 1
+				elseif node.param2 == 1 then
+					node.param2 = 2
+				end
+				sednout(vector.new(0, 0.15, 0), pos, node, clicker)
+			end,
+		})
+	end
+end

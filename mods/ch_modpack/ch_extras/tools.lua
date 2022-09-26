@@ -163,7 +163,7 @@ end
 
 def = {
 	description = "skákadlo",
-	_ch_help = "Nástroj sloužící ke skoku do velké výšky. Umožňuje vyskočit např. z jámy či na strom.\nLevým klikem vyskočíte cca o 6,5 metru, pravým o cca 3 metry.\nNefunguje pod vodou nebo pokud nestojíte na pevné zemi.",
+	_ch_help = "Nástroj sloužící ke skoku do velké výšky. Umožňuje vyskočit např. z jámy či na strom.\nLevým klikem vyskočíte cca o 6,5 metru, pravým o cca 3 metry.\nNefunguje pod vodou nebo pokud nestojíte na pevné zemi. Nejde opravit na kovadlině, ale v elektrické opravně ano.",
 	_ch_help_group = "skakadlo",
 	inventory_image = "ch_extras_skakadlo.png",
 	stack_max = 1,
@@ -184,7 +184,9 @@ for _, stick in ipairs({"default:stick", "basic_materials:steel_bar"}) do
 		},
 	})
 end
-
+if minetest.get_modpath("anvil") then
+	anvil.make_unrepairable("ch_extras:jumptool")
+end
 
 -- teleportér
 local function is_walkable_node(node_name)

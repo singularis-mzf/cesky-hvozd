@@ -245,7 +245,7 @@ minetest.register_on_joinplayer(function(player)
 end)
 
 -- register bag tools
-local ch_help = "Batohy se umísťují do příslušných míst v okně inventáře, kde slouží k rozšíření hlavního inventáře.\nMůžete si do nich odkládat věci, které se vám nevejdou do hlavního inventáře,\nale přesto je chcete mít stále po ruce. Batohty existují ve třech velikostech."
+local ch_help = "Batohy slouží k rozšíření hlavního inventáře. Když je vložíte na příslušné místo v okně inventáře,\nmůžete si pak do nich odkládat věci, které by se vám jinak do inventáře nevešly,\nale přesto je chcete mít stále po ruce. Batohy existují ve třech velikostech."
 local ch_help_group = "bag"
 minetest.register_tool("unified_inventory:bag_small", {
 	description = S("Small Bag"),
