@@ -29,9 +29,10 @@ emote.dofile("entity")
 
 local model = player_api.registered_models["character.b3d"]
 
+--[[
 for anim_name, anim_def in pairs(emote.extra_animations) do
 	model.animations[anim_name] = anim_def
-end
+end ]]
 
 emote.register_emote("vstaň", {
 	alias = "vstan",
@@ -67,6 +68,38 @@ emote.register_emote("ukaž", {
 })
 
 emote.dofile("beds")
+
+local first_extra_animation
+
+for k, _ in pairs(emote.extra_animations) do
+	first_extra_animation = k
+	break
+end
+
+local function update_extra_animations(player_name)
+	local x = minetest.get_player_by_name(player_name)
+	if not x then return end
+	x = x:get_properties()
+	if not x then return end
+	x = x.mesh
+	if not x then return end
+	x = player_api.registered_models[x]
+	if not x then return end
+	x = x.animations
+	if not x then return end
+	if not x[first_extra_animation] then
+		minetest.log("action", "will update extra animations for player "..player_name)
+		for anim_name, anim_def in pairs(emote.extra_animations) do
+			x[anim_name] = table.copy(anim_def)
+		end
+	end
+end
+
+if first_extra_animation then
+	minetest.register_on_joinplayer(function(player, last_login)
+		minetest.after(0.5, update_extra_animations, player:get_player_name())
+	end)
+end
 
 --[[
 model.animations.freeze = {x = 205, y = 205, override_local = true}

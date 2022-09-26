@@ -40,10 +40,12 @@ function emote.start(player, emote_name)
 	local emote_def = emote.emotes[emote_name]
 
 	if not emote_def then
+		minetest.log("warning", "emote definition for emote named '"..emote_name.."' not found!")
 		return false
 	end
 
 	local player_name = player:get_player_name()
+	minetest.log("action", "will set emote '"..emote_name.."' (animation '"..(emote_def.anim_name or "nil").."') for player "..player_name)
 	player_api.set_animation(player, emote_def.anim_name, emote_def.speed)
 	if emote_name == stand_name then
 		emote.emoting[player] = nil
@@ -65,6 +67,7 @@ function emote.start(player, emote_name)
 end
 
 function emote.stop(player)
+	minetest.log("action", "will stop emote of player "..player:get_player_name())
 	emote.start(player, stand_name)
 end
 
