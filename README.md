@@ -634,6 +634,13 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: MIT
 * Odstraněni žraloci (protože se mi nelíbí) a želvy (ty se mi líbí, ale model a textura mají neznámou licenci)
 
+## Modding Library (modlib)
+
+* Zdroj: [https://github.com/appgurueu/modlib](https://github.com/appgurueu/modlib), revize 597666f3e3e36327dd459aebaeb3122b6258127a
+* Původní licence: MIT
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/LMD/modlib/)
+
 ## More Blocks (moreblocks)
 
 * Zdroj: [https://github.com/minetest-mods/moreblocks](https://github.com/minetest-mods/moreblocks), revize dce587cf3397dca7e242455cd017cba50ee28a5b
@@ -851,19 +858,19 @@ resp. *ostatní\_zdroje*.
 * Licence úprav: LGPLv2+
 * [ContentDB](https://content.minetest.net/packages/RealBadAngel/unified\_inventory/)
 
+## Visible Wielditem
+
+* Zdroj: [https://github.com/appgurueu/visible\_wielditem](https://github.com/appgurueu/visible\_wielditem), revize d8ce7ba84eef50fc3994fa516a3c03c8ad58da4b
+* Původní licence: MIT (kromě snímku obrazovky)
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/LMD/visible\_wielditem/)
+
 ## Watering Can (wateringcan)
 
 * Zdroj: [https://github.com/sfence/wateringcan](https://github.com/sfence/wateringcan), revize a360698809d992decd1117262fd15c8900faa873
 * Původní licence: MIT
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/SFENCE/wateringcan/)
-
-## Wield 3D (wield3d)
-
-* Zdroj: [https://github.com/stujones11/wield3d](https://github.com/stujones11/wield3d), revize 668ea2682a89d6f6a6a6fdc2326b1db6d69257ac
-* Původní licence: MIT
-* Licence úprav: MIT
-* [ContentDB](https://content.minetest.net/packages/stu/wield3d/)
 
 ## Wielded Light (wielded\_light)
 
