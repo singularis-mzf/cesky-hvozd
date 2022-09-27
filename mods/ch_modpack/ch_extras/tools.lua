@@ -263,9 +263,9 @@ minetest.register_tool("ch_extras:teleporter", def)
 minetest.register_craft({
 	output = "ch_extras:teleporter",
 	recipe = {
-		{"worldedit:wand", "technic:red_energy_crystal", "worldedit:wand"},
+		{"worldedit:wand", "technic:blue_energy_crystal", "worldedit:wand"},
 		{"default:mese", "moreores:mithril_block", "default:mese"},
-		{"travelnet:travelnet", "technic:stainless_steel_block", "travelnet:travelnet"},
+		{"travelnet:travelnet", "technic:blue_energy_crystal", "travelnet:travelnet"},
 	},
 })
 
