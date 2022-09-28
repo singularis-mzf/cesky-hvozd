@@ -1,7 +1,7 @@
-# Módy pro Český hvozd
+# Zdrojové kódy Českého hvozdu
 
-Toto je repozitář módů a úprav pro chystaný český server hry Minetest
-„Český hvozd“. Všechny módy jsou lokalizovány do češtiny a přizpůsobeny provozu
+Toto je kompletní repozitář módů a úprav pro server „Český hvozd“.
+Všechny módy jsou lokalizovány do češtiny a přizpůsobeny provozu
 na serveru Minetest 5.5; některé úpravy jsou ale specifické či
 destruktivní, takže pokud chcete upravený mód použít samostatně,
 budete muset projít změny v jeho kódu a vybrat jen ty, které potřebujete.
@@ -33,6 +33,12 @@ Některé licence vyžadují uvést, zda bylo dílo upraveno.
 To poznáte srovnáním obsahu módu v adresáři *mods* (resp. *minetest\_game*)
 s neupravenou podobou v adresáři *mods\_původní*, *minetest\_game\_původní*,
 resp. *ostatní\_zdroje*.
+
+Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“ z tohoto repozitáře potřeba také:
+
+* kopie herního světa (adresář „Hvozd“)
+* minetest.conf
+* Minetest Server 5.5.0 (verze se může v budoucnu změnit)
 
 # Balíky modů (modpacks)
 
@@ -1001,13 +1007,3 @@ resp. *ostatní\_zdroje*.
 * Zdroj: [https://github.com/AntumMT/mod-wardrobe\_outfits](https://github.com/AntumMT/mod-wardrobe\_outfits), revize 7a874cf83d7109ea4cd81f1b15506f7bdb331d71
 * Původní licence: kód MIT, textury postav všechny CC-BY-SA-3.0
 * [ContentDB](https://content.minetest.net/packages/AntumDeluge/wardrobe\_outfits/)
-
-# Zcela nové módy
-
-## ch\_core
-
-* Licence: kód LGPLv2.1, média: různé svobodné (viz license.txt)
-
-## ch\_overrides
-
-* Licence: kód LGPLv2.1
