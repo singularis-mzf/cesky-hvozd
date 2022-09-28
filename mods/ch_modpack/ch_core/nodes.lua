@@ -69,9 +69,5 @@ minetest.register_craftitem("ch_core:kcs_zcs", {
 	inventory_image = "ch_core_kcs_1zcs.png",
 	stack_max = 10000,
 })
-minetest.register_alias("kcs:h", "ch_core:kcs_h")
-minetest.register_alias("kcs:kcs", "ch_core:kcs_kcs")
-minetest.register_alias("kcs:zcs", "ch_core:kcs_zcs")
-
 
 ch_core.close_submod("nodes")
