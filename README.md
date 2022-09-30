@@ -780,6 +780,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: AGPLv3 pro kód, CC BY-SA 3.0 pro ostatní
 * [ContentDB](https://content.minetest.net/packages/rheo/smartshop/)
 
+## Snow Song (snowsong)
+
+* Zdroj: [https://github.com/tacotexmex/snowsong](https://github.com/tacotexmex/snowsong), revize 62a8bfffb8c562f3d3b613c8a02a38c076ee9f97
+* Původní licence: LGPLv2.1 pro kód, CC BY-SA 4.0 pro zvuky
+* Licence úprav: LGPLv2.1 pro kód, CC BY-SA 4.0 pro zvuky
+* [ContentDB](https://content.minetest.net/packages/texmex/snowsong/)
+
 ## Solid Color (solidcolor)
 
 * Zdroj: [https://cheapiesystems.com/git/solidcolor/](https://cheapiesystems.com/git/solidcolor/), revize 0450d8f82bb7c70c164a802730b99c2829791ebd
