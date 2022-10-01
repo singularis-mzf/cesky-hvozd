@@ -38,7 +38,10 @@ minetest.register_tool("wateringcan:wateringcan_water", {
 			if node ~= nil then
 				local watered = wetten_node(pos, node.name)
 				local newtool
-				if watered then
+				if not watered and minetest.get_item_group(node.name, "watering") > 0 then
+					newtool = { name = "wateringcan:wateringcan_water" }
+					minetest.sound_play({name = "wateringcan_fill", gain = 0.25, max_hear_distance = 10}, { pos = user:get_pos() }, true)
+				else
 					minetest.sound_play({name = "wateringcan_pour", gain = 0.25, max_hear_distance = 10}, { pos = user:get_pos() }, true)
 					local wear = itemstack:get_wear()
 					wear = wear + 2849	 -- 24 uses
@@ -47,11 +50,6 @@ minetest.register_tool("wateringcan:wateringcan_water", {
 					else
 						newtool = { name = "wateringcan:wateringcan_water", wear = wear }
 					end
-				elseif minetest.get_item_group(node.name, "watering") > 0 then
-					newtool = { name = "wateringcan:wateringcan_water" }
-					minetest.sound_play({name = "wateringcan_fill", gain = 0.25, max_hear_distance = 10}, { pos = user:get_pos() }, true)
-				else
-					return nil
 				end
 				return newtool
 			end
