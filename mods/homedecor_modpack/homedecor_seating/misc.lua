@@ -5,7 +5,7 @@ local S = minetest.get_translator("homedecor_seating")
 
 local dc_cbox = {
 	type = "fixed",
-	fixed = { -0.5, -0.5, -0.5, 0.5, 0, 1 }
+	fixed = { -0.5, -0.5, -0.5, 0.5, -0.2, 1 }
 }
 
 homedecor.register("deckchair", {
@@ -35,6 +35,7 @@ homedecor.register("deckchair_striped_blue", {
 	on_rotate = minetest.get_modpath("screwdriver") and screwdriver.disallow or nil,
 })
 
+--[[
 homedecor.register("simple_bench", {
 	tiles = { "homedecor_generic_wood_old.png" },
 	description = S("Simple Bench"),
@@ -49,6 +50,7 @@ homedecor.register("simple_bench", {
 	},
 	sounds = default.node_sound_wood_defaults(),
 })
+]]
 
 local bl1_sbox = {
 	type = "fixed",
@@ -74,7 +76,7 @@ homedecor.register("bench_large_1", {
 	groups = { snappy = 3, dig_tree=2 },
 	expand = { right="placeholder" },
 	sounds = default.node_sound_wood_defaults(),
-	selection_box = bl1_sbox,
+	selection_box = bl1_cbox,
 	node_box = bl1_cbox,
 	on_rotate = minetest.get_modpath("screwdriver") and screwdriver.disallow or nil,
 })
@@ -90,7 +92,7 @@ local bl2_sbox = {
 local bl2_cbox = {
 	type = "fixed",
 	fixed = {
-		{-0.5, -0.5, -0.25, 1.5, 0, 0.5 },
+		{-0.5, -0.5, -0.25, 1.5, -0.1, 0.5 },
 		{-0.5, -0.5, 0.45, 1.5, 0.5, 0.5 },
 	}
 }
@@ -101,7 +103,7 @@ homedecor.register("bench_large_2", {
 	tiles = { "homedecor_generic_wood_old.png" },
 	inventory_image = "homedecor_bench_large_2_inv.png",
 	groups = {snappy=3, dig_tree=2},
-	selection_box = bl2_sbox,
+	selection_box = bl2_cbox,
 	node_box = bl2_cbox,
 	expand = { right="placeholder" },
 	sounds = default.node_sound_wood_defaults(),
@@ -113,7 +115,10 @@ minetest.register_alias("homedecor:bench_large_2_right", "air")
 
 local kc_cbox = {
 	type = "fixed",
-	fixed = { -0.3125, -0.3125, -0.5, 0.3125, 0.3125, 0.5 },
+	fixed = {
+             {-0.3125, -0.3125, -0.5, 0.3125, 0.3125, 0},
+             {0.2, -0.3125, 0, 0.3125, 0.3125, 0.5},
+	},
 }
 
 homedecor.register("kitchen_chair_wood", {
@@ -228,6 +233,7 @@ minetest.register_craft( {
         },
 })
 
+--[[
 minetest.register_craft( {
         output = "homedecor:simple_bench",
         recipe = {
@@ -243,7 +249,7 @@ minetest.register_craft( {
 			{ "moreblocks:slab_wood", "", "moreblocks:slab_wood" }
         },
 })
-
+]]
 
 minetest.register_craft({
 	output = "homedecor:deckchair",

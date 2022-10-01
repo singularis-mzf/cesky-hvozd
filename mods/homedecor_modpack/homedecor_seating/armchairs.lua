@@ -2,8 +2,8 @@ local S = minetest.get_translator("homedecor_seating")
 local armchair_cbox = {
 	type = "fixed",
 	fixed = {
-		{-0.5, -0.5, -0.5, 0.5, 0, 0.5 },
-		{-0.5, -0.5, 0.4, 0.5, 0.5, 0.5 }
+		{-0.5, -0.5, -0.5, 0.5, 0.5, 0 },
+		{0.4, -0.5, 0, 0.5, 0.5, 0.5 }
 	}
 }
 
@@ -22,6 +22,8 @@ minetest.register_node(":lrfurn:armchair", {
 	groups = {snappy=3, ud_param2_colorable = 1, dig_tree=2},
 	sounds = default.node_sound_wood_defaults(),
 	node_box = armchair_cbox,
+	selection_box = armchair_cbox,
+	collision_box = armchair_cbox,
 	after_place_node = function(pos, placer, itemstack, pointed_thing)
 		unifieddyes.fix_rotation_nsew(pos, placer, itemstack, pointed_thing)
 	end,
@@ -46,6 +48,8 @@ homedecor.register("armchair", {
 	groups = {snappy=3, ud_param2_colorable = 1, dig_tree=2},
 	sounds = default.node_sound_wood_defaults(),
 	node_box = armchair_cbox,
+	selection_box = armchair_cbox,
+	collision_box = armchair_cbox,
 	after_place_node = function(pos, placer, itemstack, pointed_thing)
 		unifieddyes.fix_rotation_nsew(pos, placer, itemstack, pointed_thing)
 	end,

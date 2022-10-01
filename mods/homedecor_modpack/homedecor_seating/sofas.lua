@@ -2,7 +2,8 @@ local S = minetest.get_translator("homedecor_seating")
 
 local sofa_cbox = {
 	type = "wallmounted",
-	wall_side = {-0.5, -0.5, -0.5, 0.5, 0.5, 1.5}
+
+	wall_side = { -0.5, -0.5, -0.5, 0.5, -0.05, 1.5},
 }
 
 minetest.register_node(":lrfurn:sofa", {

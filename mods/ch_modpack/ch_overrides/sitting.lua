@@ -4,15 +4,17 @@ if not minetest.get_modpath("ts_furniture") then
 	return
 end
 
-local function sednout(sedadlo_offset, zidle_pos, zidle_node, player)
+-- config {x, y, z, x_max, rotation}
+
+local function sednout(zidle_pos, zidle_node, player, config)
 	if not player or not player:is_player() or not zidle_pos or not zidle_node or not default.player_get_animation then
 		return false
 	end
 	local player_name = player:get_player_name()
-	local anim = default.player_get_animation(player) or ""
+	local current_anim = default.player_get_animation(player) or ""
 	local zero_vector = vector.zero()
 
-	if anim == "sit" or anim == "sedni" then
+	if current_anim == "sit" or current_anim == "sedni" then
 		-- postava již sedí => zvednout se
 		default.player_attached[player_name] = false
 		emote.stop(player)
@@ -20,22 +22,50 @@ local function sednout(sedadlo_offset, zidle_pos, zidle_node, player)
 		return nil
 	end
 
-	local look_yaw = {
-		[0] = math.pi,
-		[1] = math.pi / 2,
-		[2] = 0,
-		[3] = -math.pi / 2,
-	}
-	local node_facedir = zidle_node.param2 % 4
-	if node_facedir == 1 then
-		sedadlo_offset = vector.new(sedadlo_offset.z, sedadlo_offset.y, -sedadlo_offset.x)
-	elseif node_facedir == 2 then
-		sedadlo_offset = vector.new(-sedadlo_offset.x, sedadlo_offset.y, -sedadlo_offset.z)
-	elseif node_facedir == 3 then
-		sedadlo_offset = vector.new(-sedadlo_offset.z, sedadlo_offset.y, sedadlo_offset.x)
+	local zidle_def = minetest.registered_nodes[zidle_node.name]
+	if not zidle_def then
+		return false -- unknown node
 	end
 
-	local sit_pos = vector.new(zidle_pos.x + sedadlo_offset.x, zidle_pos.y + sedadlo_offset.y, zidle_pos.z + sedadlo_offset.z)
+	local paramtype2 = zidle_def.paramtype2 or "normal"
+	local zidle_dir, rotation
+	if paramtype2 == "facedir" then
+		zidle_dir = minetest.facedir_to_dir(zidle_node.param2)
+		rotation = vector.dir_to_rotation(zidle_dir)
+		rotation.y = rotation.y + math.pi
+	elseif paramtype2 == "colorfacedir" then
+		zidle_dir = minetest.facedir_to_dir(zidle_node.param2 - minetest.strip_param2_color(zidle_node.param2, paramtype2))
+		rotation = vector.dir_to_rotation(zidle_dir)
+		rotation.y = rotation.y + math.pi
+	elseif paramtype2 == "wallmounted" then
+		zidle_dir = minetest.wallmounted_to_dir(zidle_node.param2)
+		rotation = vector.dir_to_rotation(zidle_dir)
+		rotation.y = rotation.y + math.pi / 2
+	elseif paramtype2 == "colorwallmounted" then
+		zidle_dir = minetest.wallmounted_to_dir(zidle_node.param2 - minetest.strip_param2_color(zidle_node.param2, paramtype2))
+		rotation = vector.dir_to_rotation(zidle_dir)
+		rotation.y = rotation.y + math.pi / 2
+	else
+		zidle_dir = vector.new(0, 0, 1)
+	end
+	if config.rotation then
+		rotation.y = rotation.y + config.rotation
+	end
+	local sedadlo_offset = vector.new(config.x or 0, config.y or 0, config.z or 0)
+	sedadlo_offset = vector.rotate(sedadlo_offset, rotation)
+	if config.x and config.x_max then
+		local sedadlo_offset_max = vector.new(config.x_max, config.y or 0, config.z or 0)
+		sedadlo_offset_max = vector.rotate(sedadlo_offset_max, rotation)
+		local line_start = vector.add(zidle_pos, sedadlo_offset)
+		local line_end = vector.add(zidle_pos, sedadlo_offset_max)
+		-- find the nearest point
+		local line_dir = vector.subtract(line_end, line_start)
+		local line_length = vector.length(line_dir)
+		line_dir = vector.normalize(line_dir)
+		local l = math.max(0, math.min(line_length, vector.dot(vector.subtract(player:get_pos(), line_start), line_dir)))
+		sedadlo_offset = vector.add(sedadlo_offset, vector.multiply(line_dir, l))
+	end
+	local sit_pos = vector.add(zidle_pos, sedadlo_offset)
 
 	-- verify position and velocity
 	if vector.distance(player:get_pos(), sit_pos) > 2.0 then
@@ -48,64 +78,32 @@ local function sednout(sedadlo_offset, zidle_pos, zidle_node, player)
 		return false
 	end
 	ts_furniture.sit(sit_pos, zidle_node, player)
-	player:set_look_horizontal(look_yaw[node_facedir])
-	player:set_look_vertical(0)
-	--[[ if minetest.get_modpath("emote") then
-		minetest.after(0.5, function(p) emote.start(p, "sedni") end, player)
-	end ]]
-	--[[
-	player:set_pos(sit_pos)
-	player:add_velocity(vector.multiply(velocity, -1))
-	player:set_look_horizontal(look_yaw[node_facedir])
-	player:set_look_vertical(0)
-	player:set_eye_offset(vector.new(0, -7, 2), vector.zero())
-	default.player_attached[player_name] = true
-	minetest.after(0.5, function(p) emote.start(p, "sedni") end, player)
-	]]
+	player:set_look_horizontal(rotation.y)
+	player:set_look_vertical(config.look_vertical or 0)
 	return true
 end
 
-if minetest.registered_nodes["cottages:bench"] then
-	minetest.override_item("cottages:bench", {
-		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-			sednout(vector.new(0, 0, 0.3), pos, node, clicker)
-		end,
-	})
-end
+local sitting_nodes = {
+	{ name = "cottages:bench", x = 0, y = 0, z = -0.3 },
+	{ name = "homedecor:deckchair", x = 0, y = -0.2, z = -0.4, look_vertical = -math.pi / 8 },
+	{ name = "homedecor:deckchair_striped_blue", x = 0, y = -0.2, z = -0.4, look_vertical = -math.pi / 8 },
+	{ name = "homedecor:kitchen_chair_wood" },
+	{ name = "homedecor:kitchen_chair_padded" },
+	{ name = "homedecor:bench_large_1", x = -1, x_max = 0, y = 0, z = 0 },
+	{ name = "homedecor:bench_large_2", x = -1, x_max = 0, y = -0.1, z = 0 },
+	{ name = "homedecor:armchair" },
+	{ name = "lrfurn:armchair" },
+	{ name = "homedecor:office_chair_basic", x = 0, y = 0.15, z = 0 },
+	{ name = "homedecor:office_chair_upscale", x = 0, y = 0.15, z = 0 },
+	{ name = "lrfurn:sofa", x = -1, y = -0.05, z = 0, x_max = 0, rotation = math.pi / 2 },
+	{ name = "lrfurn:longsofa", x = -1.7, y = -0.05, z = 0, x_max = 0, rotation = math.pi / 2 },
+}
 
-for _, itemname in ipairs({"homedecor:kitchen_chair_wood", "homedecor:kitchen_chair_padded",
-"homedecor:bench_large_1", "homedecor:bench_large_2", "homedecor:armchair", "lrfurn:armchair"}) do
-	if minetest.registered_nodes[itemname] then
-		minetest.override_item(itemname, {
+for _, node_config in ipairs(sitting_nodes) do
+	if minetest.registered_nodes[node_config.name] then
+		minetest.override_item(node_config.name, {
 			on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-				sednout(vector.zero(), pos, node, clicker)
-			end,
-		})
-	end
-end
-
-for _, itemname in ipairs({"homedecor:office_chair_basic", "homedecor:office_chair_upscale"}) do
-	if minetest.registered_nodes[itemname] then
-		minetest.override_item(itemname, {
-			on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-				sednout(vector.new(0, 0.15, 0), pos, node, clicker)
-			end,
-		})
-	end
-end
-
-for _, itemname in ipairs({"lrfurn:longsofa", "lrfurn:sofa"}) do
-	if minetest.registered_nodes[itemname] then
-		minetest.override_item(itemname, {
-			on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-				node.param2 = node.param2 % 4
-				if node.param2 == 2 then
-					node.param2 = 1
-				elseif node.param2 == 1 then
-					node.param2 = 2
-				end
-				sednout(vector.new(0, 0.15, 0), pos, node, clicker)
-			end,
-		})
+				sednout(pos, node, clicker, node_config)
+			end})
 	end
 end

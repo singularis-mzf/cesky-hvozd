@@ -2,7 +2,7 @@ local S = minetest.get_translator("homedecor_seating")
 
 local longsofa_cbox = {
 	type = "wallmounted",
-	wall_side   = {-0.5, -0.5, -0.5, 0.5, 0.5, 2.5},
+	wall_side   = {-0.5, -0.5, -0.5, 0.5, -0.05, 1.8 --[[2.5]]}, -- engine limit
 }
 
 minetest.register_node(":lrfurn:longsofa", {
@@ -21,6 +21,7 @@ minetest.register_node(":lrfurn:longsofa", {
 	groups = {snappy=3, ud_param2_colorable = 1, dig_tree=2},
 	sounds = default.node_sound_wood_defaults(),
 	selection_box = longsofa_cbox,
+	collision_box = longsofa_cbox,
 	node_box = longsofa_cbox,
 	on_rotate = minetest.get_modpath("screwdriver") and screwdriver.disallow or nil,
 	after_place_node = function(pos, placer, itemstack, pointed_thing)
