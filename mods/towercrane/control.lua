@@ -327,6 +327,16 @@ minetest.register_on_dieplayer(function(player, reason)
 	end
 end)
 
+ch_core.register_before_send_to_prison(function(player)
+	if is_operator(player) then
+		local pos = get_my_crane_pos(player)
+		if pos then
+			reset_operator_privs(player)
+			stop_crane(pos, player)
+		end
+	end
+end)
+
 minetest.register_lbm({
 	label = "[towercrane] break down",
 	name = "towercrane:break_down",

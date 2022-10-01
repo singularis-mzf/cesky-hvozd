@@ -4,6 +4,7 @@ local trest_min = -100
 local trest_max = 1000000
 
 local vezeni_data = ch_core.vezeni_data
+local send_to_prison_callbacks = {}
 
 local prohledavane_inventare = {
 	"main",
@@ -152,14 +153,23 @@ end
 
 -- přesune online postavu do vězení
 local function do_vezeni(player_name, online_charinfo)
+	-- callbacks
+	local player = minetest.get_player_by_name(player_name)
+	if not player then
+		minetest.log("warning", "do_vezeni(): Player '"..player_name.."' not found!")
+		return false
+	end
+	for _, f in ipairs(send_to_prison_callbacks) do
+		f(player)
+	end
+
 	-- announcement
 	local offline_charinfo = ch_core.offline_charinfo[player_name] or {}
 	ch_core.set_temporary_titul(player_name, "ve vězení", true)
 	ch_core.systemovy_kanal(player_name, "Jste ve výkonu trestu odnětí svobody. Těžte vězeňský kámen železným nebo lepším krumpáčem pro odpykání si trestu. Současná výše trestu: "..(offline_charinfo.trest or 0))
 
 	-- teleport
-	local player = minetest.get_player_by_name(player_name)
-	if player and not ch_core.je_ve_vezeni(player:get_pos()) then
+	if not ch_core.je_ve_vezeni(player:get_pos()) then
 		player:set_pos(vezeni_data.stred)
 	end
 
@@ -266,6 +276,16 @@ function ch_core.trest(volajici, jmeno, vyse_trestu)
 		ch_core.systemovy_kanal(volajici, message)
 	end
 	return result
+end
+
+-- func(player)
+function ch_core.register_before_send_to_prison(func)
+	if func then
+		table.insert(send_to_prison_callbacks, func)
+		return true
+	else
+		return false
+	end
 end
 
 -- /trest
