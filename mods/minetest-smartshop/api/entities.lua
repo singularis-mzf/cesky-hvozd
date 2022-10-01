@@ -229,22 +229,26 @@ function api.update_entities(shop)
 
 	-- luacheck: push ignore 542
 	if empty_count == 4 then
+		minetest.log("info", "Smartshop at "..minetest.pos_to_string(shop.pos).." will use empty method")
 		-- just remove any entities
 		-- luacheck: pop
 
 	elseif empty_count == 3 and sprite_count == 1 then
+		minetest.log("info", "Smartshop at "..minetest.pos_to_string(shop.pos).." will use add_single_upright_sprite method")
 		obj = smartshop.entities.add_single_upright_sprite(shop, last_sprite_index)
 		if obj then
 			api.record_entity(shop.pos, obj)
 		end
 
 	elseif (sprite_count + empty_count) == 4 then
+		minetest.log("info", "Smartshop at "..minetest.pos_to_string(shop.pos).." will use add_quad_upright_sprite method")
 		obj = smartshop.entities.add_quad_upright_sprite(shop)
 		if obj then
 			api.record_entity(shop.pos, obj)
 		end
 
 	else
+		minetest.log("info", "Smartshop at "..minetest.pos_to_string(shop.pos).." will use add_single_sprite+add_single_wielditem method")
 		for index, image_type in pairs(entity_types) do
 			if image_type == "sprite" then
 				obj = smartshop.entities.add_single_sprite(shop, index)

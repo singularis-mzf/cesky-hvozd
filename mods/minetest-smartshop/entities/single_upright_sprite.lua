@@ -55,8 +55,7 @@ function smartshop.entities.add_single_upright_sprite(shop, index)
 	local texture = api.get_image(item)
 	smartshop.log("info", "single texture = %s", texture)
 
-	local rotation = vector.dir_to_rotation(minetest.facedir_to_dir(param2))
-	obj:set_rotation(rotation)
+	obj:set_rotation(smartshop.util.facedir_to_rotation(param2))
 	obj:set_properties({textures = {texture}})
 
 	local entity = obj:get_luaentity()

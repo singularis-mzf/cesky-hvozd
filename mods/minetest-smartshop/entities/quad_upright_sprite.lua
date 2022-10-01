@@ -33,6 +33,7 @@ minetest.register_entity("smartshop:quad_upright_sprite", {
 	static_save = false,
 })
 
+
 function smartshop.entities.add_quad_upright_sprite(shop)
 	local shop_pos = shop.pos
 	local param2 = get_node(shop_pos).param2
@@ -59,7 +60,7 @@ function smartshop.entities.add_quad_upright_sprite(shop)
 	local texture = api.get_quad_image(items)
 	smartshop.log("info", "quad texture = %s", texture)
 
-	obj:set_yaw(math.pi * (2 - (param2 / 2)))
+	obj:set_rotation(smartshop.util.facedir_to_rotation(param2))
 	obj:set_properties({textures = {texture}})
 
 	local entity = obj:get_luaentity()

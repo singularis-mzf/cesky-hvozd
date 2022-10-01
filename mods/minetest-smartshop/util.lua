@@ -434,3 +434,17 @@ function util.get_short_description(itemstack)
 	local single_line = table.concat(unparse(single_line_parsed), "")
 	return single_line
 end
+
+local upvectors = {
+	[0] = vector.new(0, 1, 0),
+	[1] = vector.new(0, 0, 1),
+	[2] = vector.new(0, 0, -1),
+	[3] = vector.new(1, 0, 0),
+	[4] = vector.new(-1, 0, 0),
+	[5] = vector.new(0, -1, 0),
+}
+
+function util.facedir_to_rotation(param2)
+	param2 = param2 % 24
+	return vector.dir_to_rotation(minetest.facedir_to_dir(param2), upvectors[math.floor(param2 / 4)])
+end

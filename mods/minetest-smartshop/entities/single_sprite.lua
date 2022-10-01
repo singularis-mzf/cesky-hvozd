@@ -63,7 +63,7 @@ function smartshop.entities.add_single_sprite(shop, index)
 		return
 	end
 
-	obj:set_yaw(math.pi * (2 - (param2 / 2)))
+	obj:set_rotation(smartshop.util.facedir_to_rotation(param2))
 	obj:set_properties({textures = {api.get_image(item_name)}})
 
 	local entity = obj:get_luaentity()
