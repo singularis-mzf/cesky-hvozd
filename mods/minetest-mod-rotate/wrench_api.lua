@@ -558,6 +558,82 @@ local function get_node_relative_orientation_mode(player, pointed_thing)
 	end
 end
 
+local facedir_to_wallmounted = {
+	[0] = 4, [1] = 2, [2] = 5, [3] = 3,
+	[4] = 1, [5] = 2, [6] = 0, [7] = 3,
+	[8] = 0, [9] = 2, [10] = 1, [11] = 3,
+	[12] = 4, [13] = 1, [14] = 5, [15] = 0,
+	[16] = 4, [17] = 0, [18] = 5, [19] = 1,
+	[20] = 4, [21] = 3, [22] = 5, [23] = 2,
+}
+local wallmounted_to_facedir = {
+	[0] = 6, [1] = 4, [2] = 1, [3] = 3, [4] = 0, [5] = 2,
+}
+
+local function facedir_to_param2(paramtype2, facedir, extra_data)
+	-- returns new facedir, or nil if no valid result exists
+	if not facedir or facedir > 24 then
+		minetest.log("warning", "Invalid facedir value: "..(facedir or "nil"))
+		if not facedir then
+			return nil
+		end
+		facedir = facedir % 24
+	end
+
+	local result
+	if paramtype2 == "facedir" then
+		result = facedir
+	elseif paramtype2 == "colorfacedir" then
+		result = facedir + extra_data
+	elseif paramtype2 == "wallmounted" then
+		result = facedir_to_wallmounted[facedir] -- minetest.dir_to_wallmounted(minetest.facedir_to_dir(facedir)) -- ?
+	elseif paramtype2 == "colorwallmounted" then
+		result = facedir_to_wallmounted[facedir] + extra_data
+	--[[ elseif paramtype2 == "4dir" then
+		result = facedir_to_4dir[facedir]
+	elseif paramtype2 == "color4dir" then
+		result = facedir_to_4dir[facedir] + extra_data ]]
+	end
+
+	return result
+end
+
+local function param2_to_facedir(paramtype2, param2)
+	-- returns new_param2, extra_data or nil, nil if the paramtype2 is not supported
+	-- print("DEBUG: paramtype2 == "..(paramtype2 or "nil"))
+	-- print("DEBUG: param2 == "..(param2 or "nil"))
+	local result, extra_data, back
+
+	local color = minetest.strip_param2_color(param2, paramtype2)
+	if paramtype2 == "facedir" then
+		result = param2
+		extra_data = 0
+	elseif paramtype2 == "colorfacedir" then
+		result = param2 - color
+		extra_data = color
+	elseif paramtype2 == "wallmounted" then
+		result = wallmounted_to_facedir[param2]
+		extra_data = 0
+	elseif paramtype2 == "colorwallmounted" then
+		result = wallmounted_to_facedir[param2 - color]
+		extra_data = color
+	--[[elseif paramtype2 == "4dir" then
+		result = param2 % 4
+		extra_data = 0
+	elseif paramtype2 == "color4dir" then
+		result = param2 - color
+		extra_data = color ]]
+	end
+	if not result then
+		extra_data = nil
+	--[[ else
+		back = facedir_to_param2(paramtype2, result, extra_data)
+		print("DEBUG: ["..(paramtype2 or "nil").."] ("..param2..") => ("..result..", "..extra_data..") => ("..(back or "nil")..")")
+		]]
+	end
+	return result, extra_data
+end
+
 -- Main rotation function
 local function wrench_handler(itemstack, player, pointed_thing, mode, material, max_uses)
 
@@ -578,49 +654,86 @@ local function wrench_handler(itemstack, player, pointed_thing, mode, material, 
 
 	local node = minetest.get_node(pos)
 	local ndef = minetest.registered_nodes[node.name]
-	if not ndef or ndef.paramtype2 ~= "facedir" or
-			(ndef.drawtype == "nodebox" and
-			ndef.node_box.type ~= "fixed") or
-			node.param2 == nil then
+	if not ndef or not ndef.paramtype2 or node.param2 == nil then
+		return
+	end
+	local old_param2 = node.param2
+	local old_facedir, extra_data = param2_to_facedir(ndef.paramtype2, old_param2)
+	if not old_facedir or not extra_data then
+		minetest.log("warning", "param2_to_facedir() returned nil")
 		return
 	end
 
-	-- Set param2
-	local old_param2 = node.param2
+	local new_facedir
 	if string.match(mode, "[0-9]") then
 		local axis = tonumber(string.sub(mode, 2, 2))
 		local rot = tonumber(string.sub(mode, 3, 3))
 		local orientation = mt_or11n_code(axis, rot)
 		if string.sub(mode, 1, 1) == "a" then
-		    node.param2 = orientation
+			new_facedir = orientation
 		elseif string.sub(mode, 1, 1) == "r" then
-		    local state = player_node_state(player, pointed_thing)
+			local state = player_node_state(player, pointed_thing)
 			if not state then
 				return
 			end
-		    node.param2 = relative_to_mt_orientation(state, orientation)
+			new_facedir = relative_to_mt_orientation(state, orientation)
 		else
-		    minetest.log("error", "Internal error: wrench has unrecognised mode ("..mode..")")
-		    node.param2 = 0
+			minetest.log("error", "Internal error: wrench has unrecognised mode ("..mode..")")
+			new_facedir = 0
 		end
 	else
-		node.param2 = lookup_node_rotation(pointed_thing, old_param2, player, mode)
+		new_facedir = lookup_node_rotation(pointed_thing, old_facedir, player, mode)
 	end
 
-	if module.debug >= 1 then
-		minetest.chat_send_player(player:get_player_name(),
-				string.format("Node wrenched: axis %d, rot %d (%d) ->  axis: %d, rot: %d (%d)",
-					mt_axis_code(old_param2),
-					mt_rot_code(old_param2),
-					old_param2,
-					mt_axis_code(node.param2),
-					mt_rot_code(node.param2),
-					node.param2))
+	local new_param2 = facedir_to_param2(ndef.paramtype2, new_facedir, extra_data)
+
+	if not new_param2 then
+		minetest.log("warning", "Conversion failed: "..new_facedir.." cannot be converted to "..ndef.paramtype2)
+		return
 	end
 
-	minetest.swap_node(pos, node)
+	-- Call on_rotate
+	local on_rotate_result
+	if ndef.on_rotate then
+		-- function on_rotate(pos, node, user, mode, new_param2)
+		on_rotate_result = ndef.on_rotate(vector.copy(pos), table.copy(node), player, screwdriver.ROTATE_FACE, new_param2)
+	end
+	node.param2 = new_param2
 
-	if not creative_mode(player) and not repeated_rotation(player, node, pos) then
+	if on_rotate_result == true then
+		-- node has been rotated by on_rotate method
+		if module.debug >= 1 then
+			minetest.chat_send_player(player:get_player_name(),
+				string.format("Node wrenched by on_rotate method: axis %d, rot %d (%d)",
+					mt_axis_code(old_facedir),
+					mt_rot_code(old_facedir),
+					old_facedir))
+		end
+	elseif on_rotate_result == false then
+		-- rotation failed
+			minetest.chat_send_player(player:get_player_name(),
+				string.format("Node wrenching failed by on_rotate method: axis %d, rot %d (%d)",
+					mt_axis_code(old_facedir),
+					mt_rot_code(old_facedir),
+					old_facedir))
+	else
+		-- OK, rotate the node
+		if module.debug >= 1 then
+			minetest.chat_send_player(player:get_player_name(),
+					string.format("Node wrenched: axis %d, rot %d (%d) ->  axis: %d, rot: %d (%d)",
+						mt_axis_code(old_facedir),
+						mt_rot_code(old_facedir),
+						old_facedir,
+						mt_axis_code(new_facedir),
+						mt_rot_code(new_facedir),
+						new_facedir))
+		end
+
+		minetest.swap_node(pos, node)
+		minetest.check_for_falling(pos)
+	end
+
+	if not creative_mode(player) --[[ and not repeated_rotation(player, node, pos) ]] then
 		-- 'ceil' ensures that the minimum wear is *always* 1
 		-- (and makes the tools wear a tiny bit faster)
 		itemstack:add_wear(math.ceil(65535 / max_uses))

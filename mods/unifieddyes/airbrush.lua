@@ -453,15 +453,18 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				return
 			end
 		else
-			local s1 = string.sub(minetest.serialize(fields), 11)
-			local s3 = string.sub(s1,1, string.find(s1, '"')-1)
+			local s3 = ""
+			for k, _ in pairs(fields) do
+				s3 = k
+				break
+			end
 
 			local inv = player:get_inventory()
 			local creative = minetest.is_creative_enabled(player_name)
 			local dye = "dye:"..s3
 
-			if (showall or unifieddyes.palette_has_color[nodepalette.."_"..s3]) and
-				(creative or inv:contains_item("main", dye)) then
+			if (showall or unifieddyes.palette_has_color[nodepalette.."_"..s3]) --[[and
+				(creative or inv:contains_item("main", dye) )]] then
 				unifieddyes.player_selected_dye[player_name] = dye
 				unifieddyes.show_airbrush_form(player)
 			end
