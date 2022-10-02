@@ -336,6 +336,10 @@ local buildable_nodes = {
 	["default:pine_bush_needles"] = true,
 	["default:pine_bush_stem"] = true,
 	["default:snow"] = true,
+	["cavestuff:desert_pebble_1"] = true,
+	["cavestuff:desert_pebble_2"] = true,
+	["cavestuff:pebble_1"] = true,
+	["cavestuff:pebble_2"] = true,
 }
 
 local function air_kind(node_name)
