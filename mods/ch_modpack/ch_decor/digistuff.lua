@@ -1,4 +1,4 @@
-minetest.register_node("digistuff_camera:camera", {
+minetest.register_node(":digistuff:camera", {
 	tiles = {
 		"digistuff_camera_top.png",
 		"digistuff_camera_bottom.png",
@@ -30,7 +30,7 @@ minetest.register_node("digistuff_camera:camera", {
 })
 
 minetest.register_craft({
-	output = "digistuff_camera:camera",
+	output = "digistuff:camera",
 	recipe = {
 		{"basic_materials:plastic_sheet","basic_materials:plastic_sheet","basic_materials:plastic_sheet"},
 		{"default:glass","basic_materials:ic","mesecons_luacontroller:luacontroller0000"},

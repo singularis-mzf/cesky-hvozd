@@ -31,5 +31,5 @@ function minetest.get_server_status(player_name, login)
 		return status
 	end
 
-	return ("# Verze serveru: %s hra: %s čas od startu: %s max. lag: %s klienti: %s%s"):format(a, b, c, d, sort_names(names, ", "), suffix)
+	return ("# Verze serveru: %s hra: %s čas od startu: %s max. zásek: %s klienti: %s%s"):format(a, b, c, d, sort_names(names, ", "), suffix)
 end

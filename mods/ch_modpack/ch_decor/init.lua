@@ -3,6 +3,7 @@ local modpath = minetest.get_modpath(minetest.get_current_modname())
 
 local mods = {
 	"bbq",
+	"digistuff",
 }
 
 for _, mod in ipairs(mods) do

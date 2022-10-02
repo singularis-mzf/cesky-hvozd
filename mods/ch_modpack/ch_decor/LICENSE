@@ -12,6 +12,12 @@ bbq.lua
 	Modified and adapted by: Singularis
 	License: LGPL-2.1+
 
+digistuff.lua
+	Author: cheapie (from cheapiesystems.com)
+	Source: Digistuff Mod
+	Modified and adapted by: Singularis
+	License: LGPLv3+ (may contain some code from mesecons and digilines)
+
 Media files licenses:
 ================================================
 bbq_chimney_smoke.png
@@ -19,6 +25,17 @@ bbq_chimney_smoke_animation.png
 	Author: (C) Grizzly Adam
 	Source: Your Dad's BBQ Mod
 	License: CC-BY-SA-3.0
+
+digistuff_camera_back.png
+digistuff_camera_bottom.png
+digistuff_camera_front.png
+digistuff_camera_left.png
+digistuff_camera_pole.png
+digistuff_camera_right.png
+digistuff_camera_top.png
+	Author: cheapie (from cheapiesystems.com)
+	Source: Digistuff Mod
+	License: CC BY-SA 3.0 Generic (according to the mod contains modified versions of textures from mesecons and digilines)
 
 MIT license text for init.lua, LICENSE and mod.conf files:
 ================================================
