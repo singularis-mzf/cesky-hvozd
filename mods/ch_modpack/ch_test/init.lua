@@ -340,6 +340,7 @@ local buildable_nodes = {
 	["cavestuff:desert_pebble_2"] = true,
 	["cavestuff:pebble_1"] = true,
 	["cavestuff:pebble_2"] = true,
+	["molehills:molehill"] = true,
 }
 
 local function air_kind(node_name)
