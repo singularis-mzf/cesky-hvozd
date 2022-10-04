@@ -371,4 +371,17 @@ lucky_block:add_blocks({
 
 end
 
+ch_core.register_can_teleport("mob_horse:horse", function(player, online_charinfo, priority)
+	local entity = player:get_attach()
+	if entity then
+		local luaentity = entity:get_luaentity()
+		if luaentity.name == "mob_horse:horse" then
+			if priority < 1 then
+				return false
+			end
+			mobs.detach(player, nil)
+		end
+	end
+end)
+
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

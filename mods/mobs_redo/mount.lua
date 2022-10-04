@@ -214,21 +214,23 @@ function mobs.attach(entity, player)
 end
 
 
-function mobs.detach(player)
+function mobs.detach(player, offset)
 
 	force_detach(player)
 
-	minetest.after(0.1, function()
+	if offset then
+		minetest.after(0.1, function()
 
-		if player and player:is_player() then
+			if player and player:is_player() then
 
-			local pos = find_free_pos(player:get_pos())
+				local pos = find_free_pos(player:get_pos())
 
-			pos.y = pos.y + 0.5
+				pos.y = pos.y + 0.5
 
-			player:set_pos(pos)
-		end
-	end)
+				player:set_pos(pos)
+			end
+		end)
+	end
 end
 
 

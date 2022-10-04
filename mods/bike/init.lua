@@ -254,6 +254,17 @@ local function dismount_player(bike, exit)
 	end
 end
 
+ch_core.register_can_teleport("bike", function(player, online_charinfo, priority)
+	if priority >= 4 then
+		for _, e in pairs(minetest.luaentities) do
+			if (e.__is_bike__ and e.driver == player) then
+				dismount_player(e, true)
+				return true
+			end
+		end
+	end
+end)
+
 -- Mounting
 function bike.on_rightclick(self, clicker)
 	if not clicker or not clicker:is_player() or clicker:get_attach() ~= nil then
