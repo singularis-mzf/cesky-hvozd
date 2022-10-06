@@ -328,12 +328,7 @@ local function teleporter_on_use(itemstack, player, pointed_thing)
 	-- play the sound and add wear
 	minetest.sound_play("mobs_spell", {pos = old_pos, max_hear_distance = 5, gain = 0.2}, true)
 	if not minetest.is_creative_enabled(player_name) then
-		local new_wear = tonumber(itemstack:get_wear()) + 1000
-		if new_wear > 65535 then
-			itemstack:clear()
-		else
-			itemstack:set_wear(new_wear)
-		end
+		itemstack:set_count(itemstack:get_count() - 1)
 	end
 
 	local entity_root = player
@@ -419,13 +414,13 @@ def = {
 	_ch_help = "Nástroj sloužící k okamžitému přesunu na malou vzdálenost.\nLevý klik na blok vás přenese přibližně na daný blok. Přenos může selhat v těsných prostorách nebo když se rychle pohybujete.\nTento nástroj je určen především pro kouzelnické postavy.",
 	_ch_help_group = "teleporter",
 	inventory_image = "translocator.png",
-	stack_max = 1,
+	-- stack_max = 1,
 	range = 128,
 	liquids_pointable = true,
 	on_use = teleporter_on_use,
 }
 
-minetest.register_tool("ch_extras:teleporter", def)
+minetest.register_craftitem("ch_extras:teleporter", def)
 minetest.register_craft({
 	output = "ch_extras:teleporter",
 	recipe = {
