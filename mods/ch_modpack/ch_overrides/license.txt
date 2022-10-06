@@ -297,7 +297,6 @@ default_obsidian_block.png
 default_obsidian_brick.png
 default_paper.png
 default_permafrost.png
-default_pine_needles.png
 default_steel_ingot.png
 default_tin_ingot.png
 doors_door_steel.png
@@ -403,6 +402,45 @@ xpanes_trapdoor_steel_bar_side.png
 	Author: Lukas Reichlin
 	Source: Polygonia_64px texture pack
 	License: CC BY-SA 4.0
+
+default_pine_needles.png
+	Author: Singularis
+	License: CC BY-SA 4.0
+	Used sources:
+	- "Minetest Game (texture default_pine_needles.png from mod default)" (license CC BY-SA 3.0)
+		Copyright (C) 2010-2018:
+			celeron55, Perttu Ahola <celeron55@gmail.com>
+			Cisoun
+			G4JC
+			VanessaE
+			RealBadAngel
+			Calinou
+			MirceaKitsune
+			Jordach
+			PilzAdam
+			jojoa1997
+			InfinityProject
+			Splizard
+			Zeg9
+			paramat
+			BlockMen
+			sofar
+			Neuromancer
+			Gambit
+			asl97
+			KevDoy
+			Mito551
+			GreenXenith
+			kaeza
+			kilbith
+			tobyplowy
+			CloudyProton
+			TumeniNodes
+			Mossmanikin
+			random-geek
+			Extex101
+			An0n3m0us
+	- "Polygonia_64px texture pack" by Lukas Reichlin (license CC BY-SA 4.0)
 
 default_coniferous_litter.png
 default_coniferous_litter_side.png
