@@ -923,6 +923,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/GreenXenith/mesecons\_wireless/)
 
+## XBan 2 (xban2)
+
+* Zdroj: [https://github.com/minetest-mods/xban2](https://github.com/minetest-mods/xban2), revize d2cda4f73a3a5372b70ffa63e2a16bf39d734e40
+* Původní licence: BSD-2-Clause (podle bower.json)
+* Licence úprav: BSD-2-Clause
+* [ContentDB](https://content.minetest.net/packages/kaeza/xban2/)
+
 # Ostatní použité zdroje
 
 ## Your Dad's BBQ Mod (BBQ)
