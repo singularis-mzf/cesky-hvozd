@@ -773,6 +773,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: EUPL-1.2+ (kód)
 * [ContentDB](https://content.minetest.net/packages/Hamlet/round\_trunks/)
 
+## Sausages (sausages)
+
+* Zdroj: [https://github.com/C-C-Minetest-Server/sausages](https://github.com/C-C-Minetest-Server/sausages), revize c7157db243bddf8ec180e0190179c2153cc86de1
+* Původní licence: MIT (kód), CC BY-SA-4.0 (textury)
+* Licence úprav: MIT (kód), CC BY-SA-4.0 (textury)
+* [ContentDB](https://content.minetest.net/packages/Emojiminetest/sausages/)
+
 ## Signs Lib (signs\_lib)
 
 * Zdroj: [https://github.com/mt-mods/signs\_lib](https://github.com/mt-mods/signs\_lib), revize 60d67afab3d78ece7e9b4a61b50c60903e8c72a9
