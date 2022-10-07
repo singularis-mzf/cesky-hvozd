@@ -2,6 +2,8 @@
 
 local S = minetest.get_translator("home_workshop_misc")
 
+home_workshop_misc = {}
+
 minetest.register_node("home_workshop_misc:tool_cabinet", {
 	description = S("Metal tool cabinet and work table"),
 	drawtype="mesh",
@@ -42,7 +44,7 @@ minetest.register_node("home_workshop_misc:beer_tap", {
 		type = "fixed",
 		fixed = { -0.25, -0.5, -0.4375, 0.25, 0.235, 0 }
 	},
-	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+	--[[ on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		local inv = clicker:get_inventory()
 
 		local wieldname = itemstack:get_name()
@@ -58,7 +60,7 @@ minetest.register_node("home_workshop_misc:beer_tap", {
 						S("No room in your inventory to add a beer mug!"))
 			end
 		end
-	end
+	end ]]
 })
 
 local beer_cbox = {
@@ -66,7 +68,7 @@ local beer_cbox = {
 	fixed = { -5/32, -8/16, -9/32 , 7/32, -2/16, 1/32 }
 }
 
-minetest.register_node("home_workshop_misc:beer_mug", {
+home_workshop_misc.beer_mug_def = {
 	description = S("Beer mug"),
 	drawtype = "mesh",
 	mesh = "home_workshop_misc_beer_mug.obj",
@@ -78,13 +80,29 @@ minetest.register_node("home_workshop_misc:beer_mug", {
 	walkable = false,
 	sounds = default and default.node_sound_glass_defaults() or nil,
 	selection_box = beer_cbox,
-	on_use = function(itemstack, user, pointed_thing)
+	--[[ on_use = function(itemstack, user, pointed_thing)
 		if not minetest.is_creative_enabled(user:get_player_name()) then
 			minetest.do_item_eat(2, "vessels:drinking_glass 1", itemstack, user, pointed_thing)
 			return itemstack
 		end
+	end ]]
+}
+
+-- minetest.register_node("home_workshop_misc:beer_mug", home_workshop_misc.beer_mug_def)
+
+if minetest.get_modpath("wine") then
+	for _, item in ipairs({"wine:glass_beer", "wine:glass_wheat_beer"}) do
+		local override = table.copy(home_workshop_misc.beer_mug_def)
+		override.description = nil
+		override.visual_scale = 1
+		override.wield_image = "home_workshop_misc_beer_mug_inv.png"
+		minetest.override_item(item, override)
 	end
-})
+else
+	for _, item in ipairs("wine:glass_beer", "wine:glass_wheat_beer") do
+		minetest.register_node(":"..item, home_workshop_misc.beer_mug_def)
+	end
+end
 
 if minetest.get_modpath("homedecor_common") then
 	minetest.register_alias("home_workshop_misc:drawer_small", "homedecor:drawer_small")
@@ -104,7 +122,7 @@ minetest.register_alias("homedecor:tool_cabinet",        "home_workshop_misc:too
 minetest.register_alias("homedecor:tool_cabinet_bottom", "home_workshop_misc:tool_cabinet")
 minetest.register_alias("homedecor:tool_cabinet_top",    "air")
 
-minetest.register_alias("homedecor:soda_machine",        "home_workshop_misc:soda_machine")
+-- minetest.register_alias("homedecor:soda_machine",        "home_workshop_misc:soda_machine")
 minetest.register_alias("homedecor:beer_tap",            "home_workshop_misc:beer_tap")
 minetest.register_alias("homedecor:beer_mug",            "home_workshop_misc:beer_mug")
-minetest.register_alias("homedecor:coin",                "currency:minegeld_cent_25")
+-- minetest.register_alias("homedecor:coin",                "currency:minegeld_cent_25")

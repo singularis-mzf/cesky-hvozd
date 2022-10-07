@@ -22,6 +22,7 @@ computers.register = function (name, def)
 			TEXPFX.."bk.png",
 			TEXPFX.."ft.png"
 		},
+		use_texture_alpha = "opaque",
 		node_box = cdef.node_box,
 		selection_box = cdef.node_box,
 		on_rightclick = function (pos, node, clicker, itemstack)
@@ -46,6 +47,7 @@ computers.register = function (name, def)
 			(TEXPFX.."bk"..(cdef.tiles_off.back   and "_off" or "")..".png"),
 			(TEXPFX.."ft"..(cdef.tiles_off.front  and "_off" or "")..".png")
 		},
+		use_texture_alpha = "opaque",
 		node_box = cdef.node_box_off or cdef.node_box,
 		selection_box = cdef.node_box_off or cdef.node_box,
 		on_rightclick = function (pos, node, clicker, itemstack)

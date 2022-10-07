@@ -47,6 +47,30 @@ computers.register("computers:wee", {
 	})
 })
 
+for _, item in ipairs({"computers:wee", "computers:wee_off"}) do
+	local ndef = minetest.registered_nodes[item]
+	local tiles = table.copy(ndef.tiles)
+	for i, tile in ipairs(tiles) do
+		tiles[i] = "[combine:64x64:0,0=("..tile.."):0,32=("..tile.."):32,0=("..tile.."):32,32=("..tile..")"
+	end
+	local fixed = table.copy(ndef.node_box.fixed)
+	for i, box in ipairs(fixed) do
+		for j = 1, 6 do
+			box[j] = 0.5 * (box[j] - 0.5)
+		end
+		--[[
+		box[1] = 0.5 * box[1]
+		box[2] = 0.5 * (box[2] - 0.5)
+		box[3] = 0.5 * box[3]
+		box[4] = 0.5 * box[4]
+		box[5] = 0.5 * (box[5] - 0.5)
+		box[6] = 0.5 * box[6]
+		]]
+	end
+	local node_box = {type = "fixed", fixed = fixed}
+	minetest.override_item(item, {tiles = tiles, node_box = node_box, selection_box = node_box})
+end
+
 -- XBox lookalike
 computers.register("computers:hueg_box", {
 	description = S("HUEG Box"),

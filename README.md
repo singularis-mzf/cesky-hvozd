@@ -104,8 +104,8 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 ## Home Workshop Modpack (home\_workshop\_modpack)
 
 * Zdroj: [https://github.com/mt-mods/home\_workshop\_modpack](https://github.com/mt-mods/home\_workshop\_modpack), revize 40b911e18426a78ba9c4d07363a31b6cfebaec86
-* Původní licence: LGPL 3 pro kód, CC-BY-SA-4.0 pro média
-* Licence úprav: LGPL 3 pro kód, CC-BY-SA-4.0 pro média
+* Původní licence: LGPL 3 pro kód, CC-BY-SA-4.0 pro média (není-li uvedeno jinak)
+* Licence úprav: v módu „computers“ kód i média MIT, v ostatních módech balíku LGPL 3 pro kód a CC-BY-SA-4.0 pro média
 
 ## Mesecons (mesecons)
 

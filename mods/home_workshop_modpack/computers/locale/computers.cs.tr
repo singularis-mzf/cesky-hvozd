@@ -1,0 +1,31 @@
+# textdomain: computers
+
+
+### computers.lua ###
+
+Admiral128=mikropočítač 128
+Admiral64=mikropočítač 64
+Computer Tower=stolní počítač
+HUEG Box=neidentifikovatelný počítačový objekt
+Monitor and keyboard=monitor a klávesnice
+Nientiendo Wee=minipočítač
+Not enough vertical space to place a server!=Недостаточно вертикального пространства для размещения сервера!
+Pony SlayStation=herní konzole 1
+Pony SlayStation 2=herní konzole 2
+Pony Vanio=přenosný počítač
+Rack Server=server
+SX Specter=mikropočítač 32
+SheFriendSOO=počítačový terminál pro výzkumné ústavy
+Snapple Piepad=ovládací panel
+WIFI Router=síťový směrovač
+Printer-Scanner Combo=multifunkční tiskárna se skenerem
+
+### tetris.lua ###
+
+L=L
+New Game=Nová hra
+Next...=Další...
+No room for place the Arcade!=Nedostatek místa pro umístění hracího automatu!
+R=P
+Score: =Skóre: 
+Tetris Arcade=herní automat
