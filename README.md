@@ -946,6 +946,27 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: GPLv3
 * [ContentDB](https://content.minetest.net/packages/SonoMichele/folks/)
 
+## Graceful 32x (graceful)
+
+* Zdroj: [https://forum.minetest.net/viewtopic.php?f=4&p=415834](https://forum.minetest.net/viewtopic.php?f=4&p=415834)
+* Autor/ka: rudzik8
+* Původní licence: CC BY-SA 3.0 pro textury podle Minetest Game (podle prohlášení jsou všechny textury založeny na texturách z Minetest Game a jiných jmenovaných módů)
+
+Prohlášení autora/ky na [fóru](https://forum.minetest.net/viewtopic.php?f=4&p=415834):
+
+``Hello.``
+
+``Some time ago (9 months or so?) I've started doing a 32x texturepack, based on default textures of MTG and mods. Yes, just like Faithful did with MC ones. Did it because all of the previous projects on doing this were abandoned and not really usable on daily. And I've named it "Graceful 32x", just to keep that -ful ending in name and don't repeat namings of abandoned minetest-faithful-alike-texturepack attempts.``
+``Drew these textures back then using Windows 7, on Paint.NET. Now using Linux Mint 21 Cinnamon and, well, not having any possibility to open these .PDNs (except using Wine, but it only can run 3.x, and I did it on 4.x) and continue work normally.``
+
+``This texturepack is looking for a maintainer, as you can see from the title. Preferably with Paint.NET installed ofc``
+``At the moment it contains parts of default untouched textures (not everything done). I'm just too lazy to delete all of these (and also having everything in one folder is quite good: just open untouched one and go with it!) or trying to license them properly, so saying out loud: "ALL OF THESE TEXTURES ARE BASED ON EXISTING ONES AND ARE DERIVATIVE WORK MADE FROM DEFAULT ONES". I guess some of them already outdated, so update these and don't forget to license each one properly. CC-BY-SA still applies to this pack, because that's what SA does, so you'll need to attribute me and original authors as well in fork.``
+
+``Hope one day Graceful 32x will become as great for Minetest, as Faithful 32x became for Minecraft.``
+
+``Thank you, future maintainer. Will answer any questions I can about this pack``
+``~ rudzik8``
+
 ## hdx-64-master texture pack by VanessaE (hdx-64)
 
 * Zdroj: [https://gitlab.com/VanessaE/hdx-64/tree/master](https://gitlab.com/VanessaE/hdx-64/tree/master), revize f6d2c003006b296ec974be264a4539ce051614c6

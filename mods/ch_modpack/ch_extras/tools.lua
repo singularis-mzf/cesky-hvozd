@@ -411,16 +411,17 @@ end
 
 def = {
 	description = "teleportér",
-	_ch_help = "Nástroj sloužící k okamžitému přesunu na malou vzdálenost.\nLevý klik na blok vás přenese přibližně na daný blok. Přenos může selhat v těsných prostorách nebo když se rychle pohybujete.\nTento nástroj je určen především pro kouzelnické postavy.",
-	_ch_help_group = "teleporter",
+	_ch_help = "Nástroj sloužící k okamžitému přesunu na malou vzdálenost.\nLevý klik na blok vás přenese přibližně na daný blok. Přenos může selhat v těsných prostorách nebo když se rychle pohybujete.\nTento nástroj je určen především pro kouzelnické postavy.\nTeleportér je jednorázový, ledaže máte právo usnadnění hry.",
+	_ch_help_group = "teleporter2",
 	inventory_image = "translocator.png",
-	-- stack_max = 1,
 	range = 128,
 	liquids_pointable = true,
 	on_use = teleporter_on_use,
 }
 
-minetest.register_craftitem("ch_extras:teleporter", def)
+minetest.register_craftitem("ch_extras:teleporter", table.copy(def))
+def.description = "teleportér (neprodejný v OSA)"
+minetest.register_craftitem("ch_extras:teleporter_unsellable", def)
 minetest.register_craft({
 	output = "ch_extras:teleporter",
 	recipe = {

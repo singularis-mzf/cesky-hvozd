@@ -230,7 +230,6 @@ default_blueberry_bush_leaves.png
 default_blueberry_overlay.png
 default_book.png
 default_book_written.png
-default_bookshelf.png
 default_bookshelf_slot.png
 default_brick.png
 default_bronze_ingot.png
@@ -498,3 +497,52 @@ wool_yellow.png
 	License: Unlicense
 	Author: Sharpik
 	Source: https://github.com/Sharpik/Minetest-SharpNet-Photo-Realism-Texturespack
+
+crack_anylength.png
+default_acacia_wood.png
+default_aspen_wood.png
+default_bookshelf.png
+default_glass.png
+default_glass_alt.png
+default_glass_detail.png
+default_junglewood.png
+default_mese_block.png
+default_pine_wood.png
+default_wood.png
+gui_hotbar.png
+gui_hotbar_selected.png
+	Copyright (C) 2010-2022:
+		celeron55, Perttu Ahola <celeron55@gmail.com>
+		Cisoun
+		G4JC
+		VanessaE
+		RealBadAngel
+		Calinou
+		MirceaKitsune
+		Jordach
+		PilzAdam
+		jojoa1997
+		InfinityProject
+		Splizard
+		Zeg9
+		paramat
+		BlockMen
+		sofar
+		Neuromancer
+		Gambit
+		asl97
+		KevDoy
+		Mito551
+		GreenXenith
+		kaeza
+		kilbith
+		tobyplowy
+		CloudyProton
+		TumeniNodes
+		Mossmanikin
+		random-geek
+		Extex101
+		An0n3m0us
+		rudzik8
+	Source: Graceful 32x (texture pack)
+	License: CC BY-SA 3.0
