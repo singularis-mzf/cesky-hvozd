@@ -1,6 +1,10 @@
+License of code (most files):
+----------------------------
+
 The MIT License (MIT)
 
 Copyright (c) 2016 TenPlus1
+Copyright (c) 2022 Singularis
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,6 +24,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
+License of code (asparagus.lua, eggplant.lua, spinach.lua):
+----------------------------
+Copyright (C) 2021-2022: Atlante - AFL-1.1
+License for code: AFL-1.1
+
+Attribution — You must give appropriate credit, provide a link to the license, and
+indicate if changes were made. You may do so in any reasonable manner, but not in any way
+that suggests the licensor endorses you or your use.
+
+ShareAlike — If you remix, transform, or build upon the material, you must distribute
+your contributions under the same license as the original.
+
+Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
 
 License of media (textures):
 ----------------------------
@@ -191,12 +209,6 @@ Created by sirrobzeroone (CC0)
   farming_gyoza.png
   farming_pineapple_ring.png
 
-Created by TechM8 (https://www.deviantart.com/techm8)
-  farming_popcorn.png
-
-Created by RZR0 (CC-BY-NC-SA)
-  farming_blueberry_pie.png
-
 Created by A. C. M. (LGPLv3, from Cucina Vegana mod)
   cucina_vegana_banana.png
   cucina_vegana_banana_seed.png
@@ -218,3 +230,21 @@ Created by A. C. M. (LGPLv3, from Cucina Vegana mod)
   cucina_vegana_flax_4.png
   cucina_vegana_flax_5.png
   cucina_vegana_flax_6.png
+
+Created by Atlante (AFL-1.1)
+  farming_asparagus.png
+  farming_asparagus_1.png
+  farming_asparagus_2.png
+  farming_asparagus_3.png
+  farming_asparagus_4.png
+  farming_asparagus_5.png
+  farming_eggplant.png
+  farming_eggplant_1.png
+  farming_eggplant_2.png
+  farming_eggplant_3.png
+  farming_eggplant_4.png
+  farming_spinach.png
+  farming_spinach_1.png
+  farming_spinach_2.png
+  farming_spinach_3.png
+  farming_spinach_4.png

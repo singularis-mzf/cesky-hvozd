@@ -471,7 +471,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 ## Farming Redo (farming)
 
-* Zdroj: [https://notabug.org/tenplus1/farming](https://notabug.org/tenplus1/farming), revize 0b06c7cd450c5ec9a76b3c22a9c57f06e4f8a7c2
+* Zdroj: [https://notabug.org/tenplus1/farming](https://notabug.org/tenplus1/farming), revize 0b06c7cd450c5ec9a76b3c22a9c57f06e4f8a7c2; některé soubory z revize 3992a40123e1fd0803c96dd235bdf477b619aa5d (viz ostatní_zdroje/farming\_202210)
 * Původní licence: MIT a další (včetně CC-BY-ND-SA)
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/farming/)

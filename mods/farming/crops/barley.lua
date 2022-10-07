@@ -102,6 +102,7 @@ def.drop = {
 		{items = {"farming:seed_barley"}, rarity = 3}
 	}
 }
+def.selection_box = farming.select_final
 minetest.register_node("farming:barley_7", table.copy(def))
 
 -- add to registered_plants

@@ -15,6 +15,10 @@ farming = {
 		type = "fixed",
 		fixed = {-0.5, -0.5, -0.5, 0.5, -5/16, 0.5}
 	},
+	select_final = {
+		type = "fixed",
+		fixed = {-0.5, -0.5, -0.5, 0.5, -2.5/16, 0.5}
+	},
 	registered_plants = {},
 	min_light = 12,
 	max_light = 15
@@ -413,6 +417,7 @@ function farming.refill_plant(player, plantname, index)
 	if not player then return end
 
 	local inv = player:get_inventory()
+	if not inv then return end
 	local old_stack = inv:get_stack("main", index)
 
 	if old_stack:get_name() ~= "" then
@@ -574,13 +579,17 @@ farming.register_plant = function(name, def)
 			}
 		}
 
+		local sel = farming.select
 		local g = {
 			snappy = 3, flammable = 2, plant = 1, growing = 1,
 			attached_node = 1, not_in_creative_inventory = 1,
 		}
 
 		-- Last step doesn't need growing=1 so Abm never has to check these
+		-- Last step doesn't need growing=1 so Abm never has to check these
+		-- also increase selection box for visual indication plant has matured
 		if i == def.steps then
+			sel = farming.select_final
 			g.growing = nil
 		end
 
@@ -603,7 +612,7 @@ farming.register_plant = function(name, def)
 			buildable_to = true,
 			sunlight_propagates = true,
 			drop = drop,
-			selection_box = farming.select,
+			selection_box = sel,
 			groups = g,
 			sounds = default.node_sound_leaves_defaults(),
 			minlight = def.minlight,
@@ -627,6 +636,9 @@ end
 
 
 -- default settings
+farming.asparagus = 0.002
+farming.eggplant = 0.002
+farming.spinach = 0.002
 farming.carrot = 0.001
 farming.potato = 0.001
 farming.tomato = 0.001
@@ -740,6 +752,9 @@ ddoo("sunflower.lua", farming.sunflower)
 ddoo("strawberry.lua", farming.strawberry)
 ddoo("flax.lua", farming.flax)
 ddoo("banana.lua", farming.banana)
+ddoo("asparagus.lua", farming.asparagus)
+ddoo("eggplant.lua", farming.eggplant)
+ddoo("spinach.lua", farming.eggplant)
 
 dofile(farming.path .. "/food.lua")
 dofile(farming.path .. "/mapgen.lua")

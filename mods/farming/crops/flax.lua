@@ -90,6 +90,7 @@ def.drop = {
 		{items = {"farming:seed_flax 4"}, rarity = 3},
 	}
 }
+def.selection_box = farming.select_final
 def.groups.growing = nil
 minetest.register_node("farming:flax_6", table.copy(def))
 

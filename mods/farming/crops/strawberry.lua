@@ -83,6 +83,7 @@ def.drop = {
 	}
 }
 def.groups.growing = nil
+def.selection_box = farming.select_final
 minetest.register_node("farming:strawberry_8", table.copy(def))
 
 -- add to registered_plants

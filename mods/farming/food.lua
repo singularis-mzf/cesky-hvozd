@@ -337,6 +337,7 @@ minetest.register_craft({
 	replacements = {
 		{"farming:baking_tray", "farming:baking_tray"},
 		{"mobs:bucket_milk", "bucket:bucket_empty"},
+		{"mobs:wooden_bucket_milk", "wooden_bucket:bucket_wood_empty"},
 		{"farming:soy_milk", "vessels:drining_glass"}
 	}
 })
@@ -585,7 +586,8 @@ minetest.register_craft({
 	},
 	replacements = {
 		{"cucina_vegana:soy_milk", "vessels:drinking_glass"},
-		{"group:food_milk", "bucket:bucket_empty"},
+		{"mobs:bucket_milk", "bucket:bucket_empty"},
+		{"mobs:wooden_bucket_milk", "wooden_bucket:bucket_wood_empty"},
 		{"farming:vanilla_extract", "vessels:glass_bottle"}
 	}
 })

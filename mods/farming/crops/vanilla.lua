@@ -102,6 +102,7 @@ minetest.register_node("farming:vanilla_7", table.copy(def))
 
 -- stage 8 (final)
 def.tiles = {"farming_vanilla_8.png"}
+def.selection_box = farming.select_final
 def.groups.growing = nil
 def.drop = {
 	items = {

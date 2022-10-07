@@ -75,6 +75,7 @@ minetest.register_node("farming:onion_4", table.copy(def))
 def.tiles = {"crops_onion_plant_5.png"}
 def.move_resistance = 1
 def.groups.growing = nil
+def.selection_box = farming.select_final
 def.drop = {
 	max_items = 5, items = {
 		{items = {"farming:onion"}, rarity = 1},

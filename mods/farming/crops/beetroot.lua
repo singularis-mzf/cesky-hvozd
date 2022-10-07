@@ -77,6 +77,7 @@ def.drop = {
 		{items = {"farming:beetroot"}, rarity = 4}
 	}
 }
+def.selection_box = farming.select_final
 minetest.register_node("farming:beetroot_5", table.copy(def))
 
 -- add to registered_plants
