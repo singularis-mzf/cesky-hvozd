@@ -94,12 +94,18 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: uvedeny u jednotlivých souborů stejným způsobem jako v původním módu
 * [ContentDB](https://content.minetest.net/packages/doxygen\_spammer/doxy\_mini\_tram/)
 
-## Homedecor (homedecor)
+## Home Decor (homedecor)
 
 * Zdroj: [https://content.minetest.net/packages/VanessaE/homedecor\_modpack/](https://content.minetest.net/packages/VanessaE/homedecor\_modpack/), revize 5ffdc26673169e05492141709fbb18e8fb6e5937
 * Původní licence: LGPL 3 pro kód, CC-BY-SA-4.0 pro ostatní
 * Licence úprav: LGPL 3 pro kód, CC-BY-SA-4.0 pro ostatní
 * [ContentDB](https://content.minetest.net/packages/VanessaE/homedecor\_modpack/)
+
+## Home Workshop Modpack (home\_workshop\_modpack)
+
+* Zdroj: [https://github.com/mt-mods/home\_workshop\_modpack](https://github.com/mt-mods/home\_workshop\_modpack), revize 40b911e18426a78ba9c4d07363a31b6cfebaec86
+* Původní licence: LGPL 3 pro kód, CC-BY-SA-4.0 pro média
+* Licence úprav: LGPL 3 pro kód, CC-BY-SA-4.0 pro média
 
 ## Mesecons (mesecons)
 
