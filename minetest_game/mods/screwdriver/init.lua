@@ -145,7 +145,7 @@ screwdriver.handler = function(itemstack, user, pointed_thing, mode, uses)
 	end
 
 	if not minetest.is_creative_enabled(player_name) then
-		itemstack:add_wear(65535 / ((uses or 200) - 1))
+		itemstack:add_wear_by_uses(uses or 200)
 	end
 
 	return itemstack
@@ -165,7 +165,7 @@ minetest.register_tool("screwdriver:screwdriver", {
 			local node = minetest.get_node(pointed_thing.under)
 			local name = node.name
 			local node_def = minetest.registered_nodes[name]
-			if node_def and node_def.on_rightclick and (screwdriver.rightclick_override_list[name] or doors.registered_doors[name]) then
+			if node_def and node_def.on_rightclick and screwdriver.rightclick_override_list[name] then
 				return node_def.on_rightclick(pointed_thing.under, node, user, itemstack, pointed_thing)
 			end
 		end

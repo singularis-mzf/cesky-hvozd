@@ -68,3 +68,13 @@ minetest.register_craft({
 		{"default:dry_dirt", "", ""},
 		{"", "", ""},
 }})
+
+if minetest.get_modpath("fireflies") and minetest.get_modpath("vessels") then
+	minetest.register_craft( {
+		output = "fireflies:firefly",
+		recipe = {
+			{"fireflies:firefly_bottle"},
+		},
+		replacements = {{"fireflies:firefly_bottle", "vessels:glass_bottle"}},
+	})
+end

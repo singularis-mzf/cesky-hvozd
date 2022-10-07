@@ -108,7 +108,7 @@ minetest.register_tool("fireflies:bug_net", {
 			end
 		end
 		if not minetest.is_creative_enabled(player_name) then
-			itemstack:add_wear(256)
+			itemstack:add_wear_by_uses(256)
 			return itemstack
 		end
 	end
@@ -180,14 +180,6 @@ minetest.register_craft( {
 		{"fireflies:firefly"},
 		{"vessels:glass_bottle"}
 	}
-})
-
-minetest.register_craft( {
-	output = "fireflies:firefly",
-	recipe = {
-		{"fireflies:firefly_bottle"},
-	},
-	replacements = {{"fireflies:firefly_bottle", "vessels:glass_bottle"}},
 })
 
 

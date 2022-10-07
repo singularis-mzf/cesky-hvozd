@@ -38,7 +38,16 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 * kopie herního světa (adresář „Hvozd“)
 * minetest.conf
-* Minetest Server 5.5.0 (verze se může v budoucnu změnit)
+* Minetest Server 5.6.1 (verze se může v budoucnu změnit)
+
+# Hra
+
+## Minetest Game
+
+* Zdroj: [https://github.com/minetest/minetest\_game](https://github.com/minetest/minetest\_game), revize 08057e8e0f01b443515ff81423215e4367f84872
+* Původní licence: LGPLv2.1 pro kód, různé pro média
+* Licence úprav: LGPLv2.1 (není-li uvedeno jinak)
+* [ContentDB](https://content.minetest.net/packages/Minetest/minetest\_game/)
 
 # Balíky modů (modpacks)
 

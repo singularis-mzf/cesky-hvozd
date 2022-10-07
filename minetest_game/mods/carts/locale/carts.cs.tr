@@ -1,6 +1,0 @@
-# textdomain: carts
-Cart=vozík
-(Sneak+Click to pick up)=(Pro vzetí do inventáře Shift + klik)
-Rail=důlní kolej
-Powered Rail=důlní kolej s pohonem
-Brake Rail=důlní kolej s brzdou
