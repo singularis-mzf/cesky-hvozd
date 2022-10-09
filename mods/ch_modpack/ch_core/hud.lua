@@ -18,9 +18,9 @@ function ch_core.show_player_list(player, online_charinfo)
 	if online_charinfo.player_list_huds then
 		return false
 	end
-	local huds, hud_defs, new_hud
 
-	hud_defs = {}
+	-- gether the list of players
+	local items = {}
 	for c_player_name, c_online_charinfo in pairs(ch_core.online_charinfo) do
 		local c_offline_charinfo = ch_core.offline_charinfo[c_player_name]
 		local titul = c_offline_charinfo and c_offline_charinfo.titul
@@ -34,15 +34,27 @@ function ch_core.show_player_list(player, online_charinfo)
 			end
 		end
 
-		new_hud = table.copy(text_hud_defaults)
-		new_hud.offset = { x = 5, y = base_y_offset + 3 + #hud_defs * y_scale }
-		new_hud.text = ch_core.prihlasovaci_na_zobrazovaci(c_player_name)
+		local zobrazovaci_jmeno = ch_core.prihlasovaci_na_zobrazovaci(c_player_name)
+		local text = zobrazovaci_jmeno
 		if titul then
-			new_hud.text = new_hud.text.." ["..titul.."]"
+			text = text.." ["..titul.."]"
 		end
 		for dtitul, _ in pairs(dtituly) do
-			new_hud.text = new_hud.text.." ["..dtitul.."]"
+			text = text.." ["..dtitul.."]"
 		end
+		table.insert(items, { name = zobrazovaci_jmeno, text = text })
+	end
+
+	-- sort the list
+	table.sort(items, function(a, b) return ch_core.utf8_mensi_nez(a.name, b.name, true) end)
+
+	local huds, new_hud
+	local hud_defs = {}
+
+	for _, item in ipairs(items) do
+		new_hud = table.copy(text_hud_defaults)
+		new_hud.offset = { x = 5, y = base_y_offset + 3 + #hud_defs * y_scale }
+		new_hud.text = item.text
 		table.insert(hud_defs, new_hud)
 	end
 	new_hud = {
@@ -183,8 +195,16 @@ local function on_step(dtime)
 	acc_time = acc_time + dtime
 	if acc_time > 0.5 then
 		local time = os.time()
+		local offset
+		if os.date("*t", time).isdst then
+			offset = "+02:00"
+			-- time = time + 7200
+		else
+			offset = "+01:00"
+			-- time = time + 3600
+		end
 		local t = os.date("*t", time)
-		local time_text = string.format("%s\n%d. %s %s\n%02d:%02d %s", weekdays[t.wday], t.day, monthnames[t.month], t.year, t.hour, t.min, t.isdst and "+02:00" or "+01:00")
+		local time_text = string.format("%s\n%d. %s %s\n%02d:%02d %s", weekdays[t.wday], t.day, monthnames[t.month], t.year, t.hour, t.min, offset)
 		for player_name, hud_id in pairs(datetime_huds) do
 			local player = minetest.get_player_by_name(player_name)
 			if player then

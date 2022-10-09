@@ -27,11 +27,9 @@ fixed_items_to_partition = nil
 local function sort_items(items, group_by_mod)
 	-- items is expected to be a sequence of item names, e. g. {"default:cobble", "default:stick", ...}
 	-- the original list is not changed; the new list is returned
-	local key_to_item = {}
-	local keys = {}
-	local counter_nil = 0
-	local counter_diff = 0
-	local counter_same = 0
+	local counter_nil, counter_same, counter_diff = 0, 0, 0
+	local item_to_key = {}
+
 	for _, item in ipairs(items) do
 		local def = minetest.registered_items[item]
 		local desc = (def and def.description) or ""
@@ -46,7 +44,6 @@ local function sort_items(items, group_by_mod)
 			else
 				counter_diff = counter_diff + 1
 			end
-			tdesc = string.lower(ch_core.odstranit_diakritiku(tdesc))
 		end
 		if group_by_mod then
 			local index = item:find(":")
@@ -54,22 +51,13 @@ local function sort_items(items, group_by_mod)
 				tdesc = item:sub(1, index)..tdesc
 			end
 		end
-		while key_to_item[tdesc] ~= nil do
-			tdesc = tdesc .. "_"
-		end
-		key_to_item[tdesc] = item
-		table.insert(keys, tdesc)
+		item_to_key[item] = ch_core.utf8_radici_klic(tdesc, false)
 	end
-	table.sort(keys)
-	local count = #keys
-	for i = 1, count do
-		keys[i] = key_to_item[keys[i]]
-		if not keys[i] then
-			minetest.log("error", "Internal error of sort_items() at index "..i.."!")
-		end
-	end
-	minetest.log("info", "sort_items() stats: "..counter_diff.." differents, "..counter_same.." same, "..counter_nil.." nil, "..(counter_diff + counter_same + counter_nil).." total, count = "..count..".")
-	return keys
+
+	local result = table.copy(items)
+	table.sort(result, function(a, b) return item_to_key[a] < item_to_key[b] end)
+	minetest.log("info", "sort_items() stats: "..counter_diff.." differents, "..counter_same.." same, "..counter_nil.." nil, "..(counter_diff + counter_same + counter_nil).." total, count = "..#result..".")
+	return result
 end
 
 function ch_core.set_ci_partition(item, partition)
