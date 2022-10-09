@@ -109,6 +109,7 @@ if minetest.get_modpath("screwdriver") then
 	minetest.override_item("screwdriver:screwdriver", {_ch_help = "Slouží k otáčení bloků.\nKliknutí levým tlačítkem otočí blok okolo osy, kliknutí pravým změní osu otáčení."})
 end
 
+dofile(modpath.."/colored_chairs.lua")
 dofile(modpath.."/extra_recipes.lua")
 dofile(modpath.."/falling_nodes.lua")
 dofile(modpath.."/ores.lua")

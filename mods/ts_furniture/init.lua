@@ -214,6 +214,9 @@ function ts_furniture.register_furniture(recipe, description, tiles)
 			def.on_punch = ts_furniture.up
 		end
 
+		local current_groups = table.copy(groups)
+		current_groups["ts_" ..furniture] = 1
+
 		minetest.register_node(":" .. node_name, {
 			description = S(description .. " " .. def.description),
 			drawtype = "nodebox",
@@ -221,7 +224,7 @@ function ts_furniture.register_furniture(recipe, description, tiles)
 			paramtype2 = "facedir",
 			sunlight_propagates = true,
 			tiles = { tiles },
-			groups = groups,
+			groups = current_groups,
 			node_box = {
 				type = "fixed",
 				fixed = def.nodebox
@@ -268,4 +271,5 @@ if minetest.get_modpath("ethereal") then
 	ts_furniture.register_furniture("ethereal:willow_wood", "Willow")
 	ts_furniture.register_furniture("ethereal:yellow_wood", "Healing Tree")
 end
+
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
