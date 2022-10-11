@@ -115,4 +115,12 @@ dofile(modpath.."/falling_nodes.lua")
 dofile(modpath.."/ores.lua")
 dofile(modpath.."/sitting.lua")
 
+-- log giveme
+
+local giveme_func = minetest.registered_chatcommands["giveme"]
+minetest.override_chatcommand("giveme", {func = function(player_name, param)
+	minetest.log("action", player_name.." gives themself: "..param)
+	return giveme_func(player_name, param)
+end})
+
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

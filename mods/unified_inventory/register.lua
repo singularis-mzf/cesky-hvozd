@@ -505,6 +505,8 @@ local function craftguide_giveme(player, formname, fields)
 
 	local player_inv = player:get_inventory()
 
+	minetest.log("action", player_name.." gived themself "..output.." "..amount.." using craft guide")
+
 	player_inv:add_item("main", {name = output, count = amount})
 end
 

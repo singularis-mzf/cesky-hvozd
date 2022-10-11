@@ -48,10 +48,37 @@ ch_core.online_charinfo = {}
 ch_core.offline_charinfo = {}
 local old_online_charinfo = {}
 
+local function is_invalid_player_name(player_name)
+	if type(player_name) == "number" then
+		player_name = tostring(player_name)
+	elseif type(player_name) ~= "string" then
+		return "Invalid player_name type "..type(player_name).."!"
+	end
+	if #player_name == 0 then
+		return "Empty player_name!"
+	end
+	if #player_name > 19 then
+		return "Player name "..player_name.." too long!"
+	end
+	if string.find(player_name, "[^_%w-]") then
+		return "Player name '"..player_name.."' contains an invalid character!"
+	end
+	return false
+end
+
+local function verify_valid_player_name(player_name)
+	local message = is_invalid_player_name(player_name)
+	if message then
+		error(message)
+	else
+		return tostring(player_name)
+	end
+end
+
 function ch_core.get_offline_charinfo(player_name)
 	local result = ch_core.offline_charinfo[player_name]
 	if not result then
-		minetest.log("action", "Will create offline_charinfo for player '"..player_name.."'")
+		minetest.log("action", "Will create offline_charinfo for player '"..verify_valid_player_name(player_name).."'")
 		result = table.copy(initial_offline_charinfo)
 		ch_core.offline_charinfo[player_name] = result
 	end
@@ -64,17 +91,28 @@ function ch_core.get_joining_online_charinfo(player_name)
 	local result = ch_core.online_charinfo[player_name]
 	if not result then
 		-- the first call => create a new online_charinfo
+		local player_info = minetest.get_player_information(player_name)
+		local now = minetest.get_us_time()
 		result = {
-			join_timestamp = ch_core.cas,
+			-- nejvyšší verze formspec podporovaná klientem; 0, pokud údaj není k dispozici
+			formspec_version = player_info.formspec_version or 0,
+			-- časová známka vytvoření online_charinfo (vstupu postavy do hry)
+			join_timestamp = now,
+			-- jazykový kód (obvykle "cs")
+			lang_code = player_info.lang_code or "",
+			-- úroveň osvětlení postavy
 			light_level = 0,
-			light_level_timestamp = minetest.get_us_time(),
+			-- časová známka pro úroveň osvětlení postavy
+			light_level_timestamp = now,
+			-- tabulka již zobrazených nápověd (bude deserializována níže)
+			navody = {},
+			-- přihlašovací jméno
 			player_name = player_name,
 		}
 		ch_core.online_charinfo[player_name] = result
 		old_online_charinfo[player_name] = nil
-		print("JOIN PLAYER(" .. player_name ..") at "..result.join_timestamp);
+		minetest.log("action", "JOIN PLAYER(" .. player_name ..") at "..now.." with lang_code \""..result.lang_code.."\" and formspec_version = "..result.formspec_version)
 
-		result.navody = {}
 		local player = minetest.get_player_by_name(player_name)
 		if player then
 			local meta = player:get_meta()
@@ -258,10 +296,11 @@ end
 ]]
 
 -- restore offline data from the storage
-local counter = 0
-for full_key, value in pairs((storage:to_table() or {}).fields or {}) do
+local counter, delete_counter = 0, 0
+local storage_table = (storage:to_table() or {}).fields or {}
+for full_key, value in pairs(storage_table) do
 	local player_name, key = full_key:match("^([^/]*)/(.+)$")
-	if player_name and player_name ~= "" then
+	if player_name and not is_invalid_player_name(player_name) then
 		local offline_charinfo = ch_core.get_offline_charinfo(player_name)
 		local data_type = offline_charinfo_data_types[key]
 		if data_type == "int" then
@@ -275,9 +314,10 @@ for full_key, value in pairs((storage:to_table() or {}).fields or {}) do
 	else
 		storage:set_string(full_key, "")
 		minetest.log("warning", "Invalid key '"..full_key.."' (value "..value..") removed from mod storage!")
+		delete_counter = delete_counter + 1
 	end
 end
-print("[ch_core] Restored "..counter.." data pairs from the mod storage.")
+print("[ch_core] Restored "..counter.." data pairs from the mod storage. "..delete_counter.." was deleted.")
 
 local function on_joinplayer(player, last_login)
 	local player_name = player:get_player_name()
@@ -292,7 +332,7 @@ local function on_leaveplayer(player, timedout)
 
 	if online_info.join_timestamp then
 		local offline_info = ch_core.get_offline_charinfo(player_name)
-		local current_playtime = ch_core.cas - online_info.join_timestamp
+		local current_playtime = 1.0e-6 * (minetest.get_us_time() - online_info.join_timestamp)
 		local total_playtime = (offline_info.past_playtime or 0) + current_playtime
 
 		offline_info.past_playtime = total_playtime

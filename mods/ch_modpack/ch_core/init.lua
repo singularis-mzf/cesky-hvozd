@@ -169,8 +169,8 @@ local function globalstep(dtime)
 				local vezeni_data = ch_core.vezeni_data
 				if not ch_core.pos_in_area(player_pos, vezeni_data.min, vezeni_data.max) then
 					player:set_pos(vezeni_data.stred)
-				elseif (online_charinfo.pristi_kontrola_krumpace or 0.0) < globstep_dtime_accumulated then
-					online_charinfo.pristi_kontrola_krumpace = (online_charinfo.pristi_kontrola_krumpace or 0.0) + 900.0
+				elseif us_time >= (online_charinfo.pristi_kontrola_krumpace or 0) then
+					online_charinfo.pristi_kontrola_krumpace = us_time + 900000000
 					ch_core.vezeni_kontrola_krumpace(player)
 				end
 			end

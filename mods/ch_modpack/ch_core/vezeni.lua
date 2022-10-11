@@ -97,7 +97,7 @@ local def = {
 	drop = "default:stone",
 	sounds = default.node_sound_stone_defaults(),
 
-	after_placenode = function(pos, placer)
+	after_place_node = function(pos, placer, itemstack)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("infotext", "Vězeňský kámen. Těžte tento kámen železným nebo lepším krumpáčem pro odpykání si trestu.")
 	end,
@@ -195,6 +195,14 @@ local function do_vezeni(player_name, online_charinfo)
 			door:close(nil)
 		end)
 	end
+
+	-- Check for a pickaxe
+	minetest.after(5, function(pname)
+		local player = minetest.get_player_by_name(pname)
+		if player then
+			ch_core.vezeni_kontrola_krumpace(player)
+		end
+	end, player_name)
 end
 
 local function propustit_z_vezeni(player_name, online_charinfo)

@@ -33,7 +33,7 @@ unified_inventory = {
 	buttons = {},
 	initialized_callbacks = {},
 	craft_registered_callbacks = {},
-	last_giveme_item_per_player = {},
+	last_giveme_per_player = {},
 
 	-- Homepos stuff
 	home_pos = {},

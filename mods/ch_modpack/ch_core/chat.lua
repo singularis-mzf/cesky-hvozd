@@ -476,7 +476,7 @@ local function info_o(player_name, param)
 	local online_charinfo = ch_core.online_charinfo[param]
 	local current_playtime = 0
 	if online_charinfo then
-		current_playtime = ch_core.cas - online_charinfo.join_timestamp
+		current_playtime = 1.0e-6 * (minetest.get_us_time() - online_charinfo.join_timestamp)
 	end
 	local past_playtime = offline_charinfo.past_playtime or 0
 	minetest.chat_send_player(player_name, "* Odehraná doba [s]: "..current_playtime.." nyní+"..past_playtime.." dříve")
@@ -490,5 +490,13 @@ minetest.register_chatcommand("info_o", {
 	privs = { server = true },
 	func = info_o,
 })
+
+-- log all chatcommands except /msg
+
+minetest.register_on_chatcommand(function(name, command, params)
+	if command ~= "msg" then
+		minetest.log("action", name.."$ /"..command.." "..params)
+	end
+end)
 
 ch_core.close_submod("chat")

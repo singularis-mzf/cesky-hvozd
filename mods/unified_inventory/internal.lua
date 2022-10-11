@@ -418,13 +418,13 @@ function ui.apply_filter(player, filter, search_dir)
 		local lang = player_info and player_info.lang_code or ""
 
 		ffilter = function(name, def)
-			if string.find(lower(name), lfilter)
-			or string.find(lower(def.description), lfilter) then
+			if string.find(lower(name), lfilter, 1, true)
+			or string.find(lower(def.description), lfilter, 1, true) then
 				return true
 			end
 			local llocaldesc = minetest.get_translated_string
 				and lower(minetest.get_translated_string(lang, def.description))
-			return llocaldesc and string.find(llocaldesc, lfilter)
+			return llocaldesc and string.find(llocaldesc, lfilter, 1, true)
 		end
 	end
 	local filtered_items_list = {}
