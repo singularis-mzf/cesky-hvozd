@@ -166,12 +166,16 @@ minetest.register_chatcommand("nastavit_titul", {
 	description = "Nastaví nebo zruší postavě titul nad jménem",
 	privs = { server = true },
 	func = function(player_name, param)
+		local login, new_titul
 		local i = string.find(param, " ")
 		if i then
-			return ch_core.set_titul(param:sub(1, i - 1), param:sub(i + 1))
+			login = ch_core.jmeno_na_prihlasovaci(param:sub(1, i - 1))
+			new_titul = param:sub(i + 1)
 		else
-			return ch_core.set_titul(param, "")
+			login = ch_core.jmeno_na_prihlasovaci(param)
+			new_titul = ""
 		end
+		return ch_core.set_titul(login, new_titul)
 	end,
 })
 
