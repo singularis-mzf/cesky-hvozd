@@ -660,7 +660,7 @@ local function wrench_handler(itemstack, player, pointed_thing, mode, material, 
 	local old_param2 = node.param2
 	local old_facedir, extra_data = param2_to_facedir(ndef.paramtype2, old_param2)
 	if not old_facedir or not extra_data then
-		minetest.log("warning", "param2_to_facedir() returned nil")
+		minetest.log("warning", "param2_to_facedir() returned nil (ndef.paramtype2 == "..(ndef.paramtype2 or "nil")..", old_param2 == "..(old_param2 or "nil")..")")
 		return
 	end
 

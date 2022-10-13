@@ -14,7 +14,7 @@ local errors = {
 local function get_stored_metadata(itemstack)
 	local meta = itemstack:get_meta()
 	local data = meta:get("data") or meta:get("")
-	data = minetest.deserialize(data)
+	data = data and minetest.deserialize(data)
 	if not data or not data.version or not data.name then
 		return
 	end
@@ -100,6 +100,7 @@ function wrench.restore_node(pos, player, stack)
 	end
 	local data = get_stored_metadata(stack)
 	if not data then
+		minetest.log("warning", "restore_node: No wrench metadata found in the stack: "..stack:to_string())
 		return
 	end
 	local def = wrench.registered_nodes[data.name]

@@ -187,28 +187,22 @@ local function on_leaveplayer(player, timed_out)
 	datetime_huds[player_name] = nil
 end
 
-local weekdays = {"neděle", "pondělí", "úterý", "středa", "čtvrtek", "pátek", "sobota"}
-local monthnames = {"ledna", "února", "března", "dubna", "května", "června", "července", "srpna", "září", "října", "listopadu", "prosince"}
 local acc_time = 0
 
 local function on_step(dtime)
 	acc_time = acc_time + dtime
 	if acc_time > 0.5 then
-		local time = os.time()
-		local offset
-		if os.date("*t", time).isdst then
-			offset = "+02:00"
-			-- time = time + 7200
-		else
-			offset = "+01:00"
-			-- time = time + 3600
-		end
-		local t = os.date("*t", time)
-		local time_text = string.format("%s\n%d. %s %s\n%02d:%02d %s", weekdays[t.wday], t.day, monthnames[t.month], t.year, t.hour, t.min, offset)
+		local cas = ch_core.aktualni_cas()
+		local time_text = string.format("%s\n%d. %s %s\n%02d:%02d %s", cas.den_v_tydnu_nazev, cas.den, cas.nazev_mesice_2, cas.rok, cas.hodina, cas.minuta, cas.posun_text)
+		local time_text_2 = string.format("%s\n%d. %s %s\n%02d:%02d:%02d %s\ndtime = %.3f", cas.den_v_tydnu_nazev, cas.den, cas.nazev_mesice_2, cas.rok, cas.hodina, cas.minuta, cas.sekunda, cas.posun_text, dtime)
 		for player_name, hud_id in pairs(datetime_huds) do
 			local player = minetest.get_player_by_name(player_name)
 			if player then
-				player:hud_change(hud_id, "text", time_text)
+				if player_name == "Administrace" or player_name == "singleplayer" then
+					player:hud_change(hud_id, "text", time_text_2)
+				else
+					player:hud_change(hud_id, "text", time_text)
+				end
 			end
 		end
 	end

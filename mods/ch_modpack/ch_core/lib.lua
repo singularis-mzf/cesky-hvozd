@@ -235,6 +235,50 @@ local utf8_sort_data_3 = {
   ["\x43"] = "\x4a", -- <C>
 }
 
+local dst_dates_03 = {
+	[2022] = 26,
+	[2023] = 26,
+	[2024] = 31,
+	[2025] = 30,
+	[2026] = 29,
+	[2027] = 28,
+	[2028] = 26,
+}
+local dst_dates_10 = {
+	[2022] = 30,
+	[2023] = 29,
+	[2024] = 27,
+	[2025] = 26,
+	[2026] = 25,
+	[2027] = 31,
+	[2028] = 29,
+}
+
+local nazvy_mesicu = {
+	{"leden", "ledna"},
+	{"únor", "února"},
+	{"březen", "března"},
+	{"duben", "dubna"},
+	{"květen", "května"},
+	{"červen", "června"},
+	{"červenec", "července"},
+	{"srpen", "srpna"},
+	{"září", "září"},
+	{"říjen", "října"},
+	{"listopad", "listopadu"},
+	{"prosinec", "prosince"},
+}
+
+local dny_v_tydnu = {
+	"pondělí",
+	"úterý",
+	"středa",
+	"čtvrtek",
+	"pátek",
+	"sobota",
+	"neděle",
+}
+
 -- KEŠ
 -- ===========================================================================
 local utf8_sort_cache = {
@@ -606,6 +650,62 @@ function ch_core.utf8_mensi_nez(a, b, store_to_cache)
 	a = ch_core.utf8_radici_klic(a, store_to_cache)
 	b = ch_core.utf8_radici_klic(b, store_to_cache)
 	return a < b
+end
+
+function ch_core.aktualni_cas()
+	local tm = os.time()
+	local t = os.date("!*t", tm)
+	local dst
+
+	if t.month == 3 then
+		local dst_date = dst_dates_03[t.year]
+		if dst_date ~= nil then
+			dst = t.day > dst_date or (t.day == dst_date and t.hour == 0)
+		end
+	elseif t.month == 10 then
+		local dst_date = dst_dates_10[t.year]
+		if dst_date ~= nil then
+			dst = t.day < dst_date or (t.day == dst_date and t.hour == 0)
+		end
+	else
+		dst = 3 < t.month and t.month < 10
+	end
+	local time_offset_hours
+	if dst then
+		time_offset_hours = 2
+	else
+		time_offset_hours = 1
+	end
+	tm = tm + 3600 * time_offset_hours
+	local lt = os.date("!*t", tm)
+
+	local den_v_tydnu_cislo = lt.wday - 1
+	if den_v_tydnu_cislo == 0 then
+		den_v_tydnu_cislo = 7
+	end
+
+	return {
+		rok = lt.year,
+		mesic = lt.month,
+		nazev_mesice_1 = nazvy_mesicu[lt.month][1],
+		nazev_mesice_2 = nazvy_mesicu[lt.month][2],
+		den = lt.day,
+		hodina = lt.hour,
+		minuta = lt.min,
+		sekunda = lt.sec,
+		je_letni_cas = dst,
+		den_v_tydnu_cislo = den_v_tydnu_cislo,
+		den_v_tydnu_nazev = dny_v_tydnu[den_v_tydnu_cislo],
+		den_v_roce = lt.yday,
+		utc_rok = t.year,
+		utc_mesic = t.month,
+		utc_den = t.day,
+		utc_hodina = t.hour,
+		utc_minuta = t.min,
+		utc_sekunda = t.sec,
+		posun_cislo = time_offset_hours,
+		posun_text = "+0"..time_offset_hours..":00",
+	}
 end
 
 -- KÓD INICIALIZACE

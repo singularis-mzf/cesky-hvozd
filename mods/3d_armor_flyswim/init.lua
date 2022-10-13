@@ -202,7 +202,7 @@ minetest.register_globalstep(function()
 		   not controls.sneak and 
 		   not node_fsable(pos,2,"a") then
 		   
-			local animiation = "duck_std"
+			local animation = "duck_std"
 			
 			-- when player moving
 			if controls_wasd then                              

@@ -28,6 +28,7 @@ function ch_core.close_submod(submod)
 end
 
 dofile(modpath .. "/privs.lua")
+dofile(modpath .. "/localize_chatcommands.lua") -- : privs
 dofile(modpath .. "/data.lua")
 dofile(modpath .. "/lib.lua") -- : data
 dofile(modpath .. "/nametag.lua") -- : data, lib

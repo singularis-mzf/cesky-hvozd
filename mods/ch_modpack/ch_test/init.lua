@@ -543,18 +543,13 @@ function ch_core.generate_path_sn_at(pos)
 end
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+-- CHEATING WATCHER
+local function on_cheat(player, cheat)
+	local player_name = (player and player:get_player_name()) or "nil"
+	local player_pos = (player and minetest.pos_to_string(player:get_pos())) or "nil"
+	minetest.log("warning", "Player "..player_name.." cheating detected at position "..player_pos..": "..dump2(cheat))
+end
+minetest.register_on_cheat(on_cheat)
 
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
