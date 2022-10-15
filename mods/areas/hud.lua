@@ -25,7 +25,7 @@ minetest.register_globalstep(function(dtime)
 			if not area then
 				error("Internal error: area ID "..id.." is invalid!")
 			end
-			if player_is_admin or ch_core.objem_oblasti(area.min, area.max) < 125000000000000 then
+			if player_is_admin or ch_core.objem_oblasti(area.pos1, area.pos2) < 125000000000000 then
 				local str_parts = {
 					area.name, -- 1
 					" [", -- 2
