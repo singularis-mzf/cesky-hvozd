@@ -47,6 +47,21 @@ function areas:load()
 			tostring(err))
 	end
 	file:close()
+
+	for area_id, area in pairs(self.areas) do
+		if not area.type then
+			area.type = 1
+			area.group = ""
+			area.zindex = 0
+			area.weak = nil
+			if area.open then
+				area.type = 2
+				area.open = nil
+			end
+			minetest.log("warning", "Area named '"..(area.name or "nil").."' converted to a new data structure")
+		end
+	end
+
 	self:populateStore()
 end
 
@@ -94,14 +109,20 @@ end
 
 --- Add a area.
 -- @return The new area's ID.
-function areas:add(owner, name, pos1, pos2, parent)
+function areas:add(owner, name, pos1, pos2, parent, type_number, group, zindex)
+	if not pos1 or not pos2 then
+		error("Positions not set to add an area!")
+	end
 	local id = findFirstUnusedIndex(self.areas)
 	self.areas[id] = {
-		name = name,
+		type = type_number or 1,
+		name = name or "",
+		owner = owner or "Administrace",
+		group = group or "",
 		pos1 = pos1,
 		pos2 = pos2,
-		owner = owner,
-		parent = parent
+		parent = parent,
+		zindex = zindex or 0,
 	}
 
 	for i=1, #areas.registered_on_adds do
@@ -309,6 +330,14 @@ function areas:isAreaOwner(id, name)
 		else
 			return false
 		end
+	end
+	return false
+end
+
+-- Checks if an area exists
+function areas:isArea(id)
+	if self.areas[id] then
+		return true
 	end
 	return false
 end

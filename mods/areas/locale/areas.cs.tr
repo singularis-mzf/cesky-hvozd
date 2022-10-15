@@ -13,6 +13,8 @@
 @1 has given you control over the area "@2" (ID @3).=@1 vám dal/a kontrolu nad źónou „@2“ (ID @3)
 @1 spanning up to @2x@3x@4.=@1 se rozkládá v oblasti @2x@3x@4.
 A regular expression is required.=Je vyžadován regulární výraz.
+Adding failed!=Přidávání selhalo.
+Area added. ID: @1=Zóna přidána. ID: @1
 Area @1 does not exist or is not owned by you.=Zóna @1 neexistuje
 Area closed for faction members.=Zóna je pro členstvo frakce uzavřena.
 Area closed.=Zóna je uzavřena.
@@ -25,31 +27,38 @@ Area protected. ID: @1=Zóna je zastřežena. ID: @1
 Area renamed.=Zóna přejmenována.
 Area successfully moved.=Zóna úspěšně přemístěna.
 Change the owner of an area using its ID=Změnit vlastníka/ici zóny prostřednictvím jejího ID
+Changes the owner of an existing area=Změní vlastníka/ici existující zóny
+Changes the name of an existing area=Změní jméno existující zóny.
+Changes the z-index of an existing area=Změní z-index existující zóny.
 Faction doesn't exists=Frakce neexistuje
 Find areas using a Lua regular expression=Najít zóny pomocí regulárního výrazu jazyka Lua
 Get information about area configuration and usage.=Získat informace o nastavení a použití zóny.
 
 Give a player access to a sub-area beetween two positions that have already been protected, Use set_owner if you don't want the parent to be set.=Dát hráči/ce přístup k podzóně již zastřežené zóny. Použijte set_owner, nechcete-li nastavit nadzónu.
 
+Invalid area type!=Chybný typ zóny!
 Invalid regular expression.=Chybný regulární výraz.
+Invalid z-index!=Neplatný z-index!
 Limit: @1 areas=Limit: @1 zón
 Limit: no area count limit=Limit: bez limitu
 List your areas, or all areas if you are an admin.=Vypsat vaše zóny (admin: všechny zóny)
 Move (or resize) an area to the current positions.=Přesunout zónu na aktuální pozice nebo změnit její velikost.
+Name changed.=Jméno změněno.
 No matches found.=Nenalezeno.
 No visible areas.=Žádné viditelné zóny.
 Owner changed.=Vlastnictví změněno.
 Players with the "@1" privilege can protect up to @2 areas=Hráči/ky s právem „@1“ mohou zastřežit až @2 zón.
 
+Protect an area=Zastřeží zónu
 Protect an area between two positions and give a player access to it without setting the parent of the area to any existing area=Zastřeží zónu mezi dvěma pozicemi a dá hráči/ce přístup do ní bez nastavení nadzóny.
 
-Protect your own area=Zastřežit vaši vlastní zónu
+Protect your own area=Zastřeží vybranou zónu
 Recursively remove areas using an ID=Rekurzívně odstranit zóny použitím ID
 Remove an area using an ID=Odstranit zónu podle jejího ID
 Removed area @1=Zóna @1 odstraněna
 Removed area @1 and it's sub areas.=Zóna @1 a její podzóny odstraněny.
 Removes all ownerless areas=Odstraní všechny nevlastněné zóny.
-Rename an area that you own=Přejmenuje vaši zónu.
+Rename an area=Přejmenuje zónu
 Self protection is disabled.=Samozastřežování je vypnuto.
 Self protection is enabled.=Samozastřežování je zapnuto.
 That area doesn't exist.=Zóna neexistuje.
@@ -71,6 +80,7 @@ You have extended area protection limits ("areas_high_limit" privilege).=Máte z
 
 You have the necessary privilege ("@1").=Máte potřebné právo („@1“).
 You need to select an area first.=Nejprve musíte označit zónu.
+Z-index changed.=Z-index nastaven.
 
 ### chatcommands.lua ###
 ### pos.lua ###
@@ -89,6 +99,13 @@ Areas:=Zóny:
 Can administer areas.=Může spravovat zóny.
 Can protect areas.=Může zastřežovat zóny.
 Can protect more, bigger areas.=Může zastřežovat víc a větších zón.
+
+normal=normální
+open=otevřená
+private=soukromá
+locked=uzamčená
+protected=chráněná
+shared=sdílená
 
 ### interact.lua ###
 

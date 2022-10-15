@@ -13,44 +13,41 @@ minetest.register_globalstep(function(dtime)
 
 	for _, player in pairs(minetest.get_connected_players()) do
 		local name = player:get_player_name()
+		local player_is_admin = minetest.check_player_privs(name, "areas")
 		local pos = vector.round(player:get_pos())
 		pos = vector.apply(pos, function(p)
 			return math.max(math.min(p, 2147483), -2147483)
 		end)
 		local areaStrings = {}
 
-		for id, area in pairs(areas:getAreasAtPos(pos)) do
-			local faction_info
-			if area.faction_open and areas.factions_available then
-				-- Gather and clean up disbanded factions
-				local changed = false
-				for i, fac_name in ipairs(area.faction_open) do
-					if not factions.get_owner(fac_name) then
-						table.remove(area.faction_open, i)
-						changed = true
-					end
-				end
-				if #area.faction_open == 0 then
-					-- Prevent DB clutter, remove value
-					area.faction_open = nil
-				else
-					faction_info = table.concat(area.faction_open, ", ")
-				end
-
-				if changed then
-					areas:save()
-				end
+		for _, id in ipairs(areas:getAreaIdsAtPosByPriority(pos)) do
+			local area = areas.areas[id]
+			if not area then
+				error("Internal error: area ID "..id.." is invalid!")
 			end
-
-			local str
-			if area.weak then
-				str = ("%s [%u]"):format(area.name, id)
-			else
-				str = ("%s [%u] (%s%s%s)"):format(area.name, id, area.owner,
-					area.open and S(":open") or "",
-					faction_info and ": "..faction_info or "")
+			if area.type ~= 1 or player_is_admin then
+				local str_parts = {
+					area.name, -- 1
+					" [", -- 2
+					id, -- 3
+					"", -- 4
+					"",-- 5
+					", ", -- 6
+					S(areas.area_types_number_to_name[area.type] or "unknown"), -- 7
+					"", -- 8
+					"", -- 9
+					"]", -- 10
+				}
+				if area.owner and area.owner ~= "Administrace" then
+					str_parts[4] = ", "
+					str_parts[5] = area.owner
+				end
+				if player_is_admin then
+					str_parts[8] = ", "
+					str_parts[9] = "z"..area.zindex
+				end
+				table.insert(areaStrings, table.concat(str_parts))
 			end
-			table.insert(areaStrings, str)
 		end
 
 		for i, area in pairs(areas:getExternalHudEntries(pos)) do

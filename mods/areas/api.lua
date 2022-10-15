@@ -1,4 +1,6 @@
-local hudHandlers = {}
+local hudHandlers = {
+	ch_core.areas_hud_handler
+}
 
 areas.registered_on_adds = {}
 areas.registered_on_removes = {}
@@ -29,6 +31,43 @@ function areas:getExternalHudEntries(pos)
 	return areas
 end
 
+-- Compares the priority of areas and returns number > 0 if a has greater
+-- priority, 0 if a has the same priority and < 1 if a has lesser priority than b.
+-- Accepts are objects or nil as parameters. (nil is considered to have
+-- a lesser priority than areas.)
+-- Parameters a_id and b_id are optional.
+local function areas_priority_cmp(a, b, a_id, b_id)
+	-- 0. nil => lower priority
+	if not a then
+		if not b then
+			return 0
+		else
+			return -1
+		end
+	end
+	if not b then
+		return 1
+	end
+
+	-- 1. greater z-index => higher priority
+	if a.zindex < b.zindex then return -1 end
+	if a.zindex > b.zindex then return 1 end
+
+	-- 2. smaller area => higher priority
+	local a_pos1, a_pos2, b_pos1, b_pos2 = a.pos1, a.pos2, b.pos1, b.pos2
+	local a_size = (math.abs(a_pos1.x - a_pos2.x) + 1) * (math.abs(a_pos1.y - a_pos2.y) + 1) * (math.abs(a_pos1.z - a_pos2.z) + 1)
+	local b_size = (math.abs(b_pos1.x - b_pos2.x) + 1) * (math.abs(b_pos1.y - b_pos2.y) + 1) * (math.abs(b_pos1.z - b_pos2.z) + 1)
+	if a_size > b_size then return -1 end
+	if a_size < b_size then return 1 end
+
+	-- 3. smaller ID => higher priority
+	if a_id and b_id then
+		if a_id > b_id then return -1 end
+		if a_id < b_id then return 1 end
+	end
+	return 0
+end
+
 --- Returns a list of areas that include the provided position.
 function areas:getAreasAtPos(pos)
 	local res = {}
@@ -52,6 +91,42 @@ function areas:getAreasAtPos(pos)
 		end
 	end
 	return res
+end
+
+-- Returns a list of ids of areas that include the provided position,
+-- ordered from the highest priority to the lowest.
+function areas:getAreaIdsAtPosByPriority(pos)
+	local source = self:getAreasAtPos(pos)
+	local res = {}
+
+	for area_id, _ in pairs(source) do
+		table.insert(res, area_id)
+	end
+	if #res > 1 then
+		table.sort(res, function(a, b)
+			if not source[a] or not source[b] then
+				error("Internal error: invalid id found in areas:getAreaIdsAtPosByPriority!")
+			end
+			return areas_priority_cmp(source[a], source[b], a, b) > 0
+		end)
+	end
+	return res
+end
+
+-- Returns id and definition of the area with the highest priority,
+-- on nil, if the position is unprotected.
+function areas:getMainAreaAtPos(pos)
+	local main_area_id, main_area
+	local count = 0
+	for area_id, area in pairs(self:getAreasAtPos(pos)) do
+		count = count + 1
+		if areas_priority_cmp(main_area, area, main_area_id, area_id) < 0 then
+			main_area_id = area_id
+			main_area = area
+		end
+	end
+	minetest.log("warning", "getMainAreaAtPos("..minetest.pos_to_string(pos).."): count = "..count)
+	return main_area_id, main_area
 end
 
 --- Returns areas that intersect with the passed area.
@@ -82,67 +157,67 @@ function areas:getAreasIntersectingArea(pos1, pos2)
 	return res
 end
 
--- Checks if the area is unprotected or owned by you
-function areas:canInteract(pos, name)
-	if minetest.check_player_privs(name, self.adminPrivs) then
+-- Checks if the node at the position is accessible by player named 'name'
+function areas:canInteract(pos, name, reason, quiet)
+	if minetest.check_player_privs(name, "protection_bypass") then
 		return true
 	end
-	local strongProtected, weakProtected, weakOpen
 
-	for _, area in pairs(self:getAreasAtPos(pos)) do
-		local areaOpen = area.owner == name or area.open
-		if not areaOpen and areas.factions_available and area.faction_open then
-			if (factions.version or 0) < 2 then
-				local faction_name = factions.get_player_faction(name)
-				if faction_name then
-					for _, fname in ipairs(area.faction_open or {}) do
-						if faction_name == fname then
-							areaOpen = true
-							break
-						end
-					end
-				end
-			else
-				for _, fname in ipairs(area.faction_open or {}) do
-					if factions.player_is_in_faction(fname, name) then
-						areaOpen = true
-						break
-					end
-				end
-			end
-		end
-
-		if area.weak then
-			if areaOpen then
-				weakOpen = true
-			else
-				weakProtected = true
-			end
-		else
-			if areaOpen then
-				return true -- strong open => return true immediatelly
-			else
-				strongProtected = true
-			end
-		end
-	end
-
-	return not strongProtected and (weakOpen or not weakProtected)
-	--[[
-	if strongProtected then
-		return false
-	end
-	-- no strong areas
-	if weakOpen then
-		return true
-	end
-	if weakProtected then
-		return false
-	end
-	-- no areas
-	return true
-	]]
+	local main_area_id, main_area = self:getMainAreaAtPos(pos)
+	-- minetest.log("warning", "DEBUG: canInteract(): main area: "..(main_area_id or "nil"))
+	return not main_area_id or self:canInteractInAreaById(name, main_area_id, reason, quiet)
 end
+
+-- pos: only informative and optional, has no effect on the result
+function areas:canInteractInAreaById(name, area_id, reason, quiet, pos)
+	if minetest.check_player_privs(name, "protection_bypass") then
+		return true
+	end
+	local main_area = self.areas[area_id]
+	if not main_area then
+		return true -- unprotected (area not found)
+	end
+	if main_area.type == 1 then
+		-- 1 normal -- ch_registered_player priv or ownership is required to build
+		return main_area.owner == name or minetest.check_player_privs(name, "ch_registered_player")
+
+	elseif main_area.type == 2 then
+		-- 2 open -- no priv is required to build
+		return true
+
+	elseif main_area.type == 3 then
+		-- 3 private -- ch_registered_player priv or ownership is required to build
+					-- but the owner should be noticed when someone else builds or enters there
+					-- also the interacting player should be warned
+		if main_area.owner == name then
+			return true
+		elseif minetest.check_player_privs(name, "ch_registered_player") then
+			-- TODO: announce if not quiet
+			return true
+		else
+			return false
+		end
+
+	elseif main_area.type == 4 then
+		-- 4 locked -- ch_trustful_player priv or ownership is required to build
+		return main_area.owner == name or minetest.check_player_privs(name, "ch_trustful_player")
+
+	elseif main_area.type == 5 then
+		-- 5 guarded -- only owner could build there
+		return main_area.owner == name
+
+	elseif main_area.type == 6 then
+		-- 6 shared -- not implemented yet
+		return true
+
+	else
+		if not quiet then
+			minetest.log("warning", "areas:canInteractInAreaById found unknown type of area: "..(main_area.type or "nil"))
+		end
+		return true -- area of an unknown type
+	end
+end
+
 
 -- Returns a table (list) of all players that own an area
 function areas:getNodeOwners(pos)
@@ -158,47 +233,49 @@ end
 -- owned by the player, but with multiple protection zones, none of which
 -- cover the entire checked area.
 -- @param name (optional) Player name. If not specified checks for any intersecting areas.
--- @param allow_open Whether open areas should be counted as if they didn't exist.
+-- @param allow_open Whether open areas should be counted as if they didn't exist. [ignored in this implementation]
 -- @return Boolean indicating whether the player can interact in that area.
--- @return Un-owned intersecting area ID, if found.
-function areas:canInteractInArea(pos1, pos2, name, allow_open)
-	if name and minetest.check_player_privs(name, self.adminPrivs) then
+-- @return Inaccessible intersecting area ID, if found.
+function areas:canInteractInArea(pos1, pos2, name, allow_open, reason, quiet)
+	minetest.log("warning", "DEBUG: canInteractInArea() called")
+	if name and minetest.check_player_privs(name, "protection_bypass") then
 		return true
 	end
 	self:sortPos(pos1, pos2)
 
-	-- Intersecting non-owned area ID, if found.
-	local blocking_area = nil
-
 	local areas = self:getAreasIntersectingArea(pos1, pos2)
-	for id, area in pairs(areas) do
-		-- First check for a fully enclosing owned area.
-		-- A little optimization: isAreaOwner isn't necessary
-		-- here since we're iterating over all relevant areas.
-		if area.owner == name and
-				self:isSubarea(pos1, pos2, id) then
-			return true
-		end
+	local areas_by_priority = {}
 
-		-- Then check for intersecting non-owned (blocking) areas.
-		-- We don't bother with this check if we've already found a
-		-- blocking area, as the check is somewhat expensive.
-		-- The area blocks if the area is closed or open areas aren't
-		-- acceptable to the caller, and the area isn't owned.
-		-- Note: We can't return directly here, because there might be
-		-- an exclosing owned area that we haven't gotten to yet.
-		if not blocking_area and
-				(not allow_open or not area.open) and
-				(not name or not self:isAreaOwner(id, name)) then
-			blocking_area = id
+	local blocking_area = nil
+	local result = true
+
+	for id, _ in pairs(areas) do
+		table.insert(areas_by_priority, id)
+	end
+	table.sort(areas_by_priority, function(a, b) return areas_priority_cmp(areas[a], areas[b]) > 0 end)
+
+	for i, area_id in ipairs(areas_by_priority) do
+		local area = areas[area_id]
+		local area_pos1, area_pos2 = area.pos1, area.pos2
+		self:sortPos(area_pos1, area_pos2)
+		local is_subarea = false
+		for j = i + 1, #areas_by_priority, 1 do
+			if areas:isSubarea(area_pos1, area_pos2, areas_by_priority[j]) then
+				is_subarea = true
+				break
+			end
+		end
+		if not is_subarea then
+			local can_interact = self:canInteractInAreaById(name, area_id, reason, quiet)
+			if not can_interact then
+				blocking_area = area_id
+				result = false
+				break
+			end
 		end
 	end
 
-	if blocking_area then
-		return false, blocking_area
-	end
+	--[[ minetest.log("action", "DEBUG: canInteractInArea("..minetest.pos_to_string(pos1)..", "..minetest.pos_to_string(pos2)..", "..name..", reason = "..(reason or "nil")..", quiet = "..(quiet and "true" or "false")..") => "..(result and "true" or "false")..", "..(blocking_area or "nil")) ]]
 
-	-- There are no intersecting areas or they are only partially
-	-- intersecting areas and they are all owned by the player.
-	return true
+	return result, blocking_area
 end

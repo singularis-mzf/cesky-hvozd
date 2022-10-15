@@ -411,12 +411,4 @@ local def = {
 minetest.register_chatcommand("návodyznovu", def)
 minetest.register_chatcommand("navodyznovu", def)
 
---[[
-storage:set_string("postavy/Administrace/titul", "správa serveru")
-storage:set_string("postavy/Administrace/jmeno", "Administrace")
-storage:set_string("postavy/Administrace/barevne_jmeno", nametag_color_red .. "Admin" .. nametag_color_blue .. "istrace" .. color_reset)
-storage:set_string("postavy/Stepanka/jmeno", "Štěpánka")
-storage:set_string("postavy/Zaneta_Novakova/jmeno", "Žaneta Nováková")
-]]
-
 ch_core.close_submod("data")

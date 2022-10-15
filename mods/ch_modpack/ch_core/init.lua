@@ -31,6 +31,7 @@ dofile(modpath .. "/privs.lua")
 dofile(modpath .. "/localize_chatcommands.lua") -- : privs
 dofile(modpath .. "/data.lua")
 dofile(modpath .. "/lib.lua") -- : data
+dofile(modpath .. "/areas.lua") -- : lib
 dofile(modpath .. "/nametag.lua") -- : data, lib
 dofile(modpath .. "/chat.lua") -- : data, lib, privs, nametag
 dofile(modpath .. "/dennoc.lua") -- : privs, chat
