@@ -1,7 +1,0 @@
-# textdomain:morelights
-
-dark=
-light=
-Light Bulb=
-Metal Pole (@1)=
-Metal Chain (@1)=

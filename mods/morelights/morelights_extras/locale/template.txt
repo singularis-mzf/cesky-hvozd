@@ -1,7 +1,0 @@
-# textdomain:morelights_extras
-
-Futuristic Light Block=
-Grass Light=
-Stone Block Light=
-Sandstone Block Light=
-Stair Light (place on stairs)=
