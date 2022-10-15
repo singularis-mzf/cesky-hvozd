@@ -54,9 +54,8 @@ local function areas_priority_cmp(a, b, a_id, b_id)
 	if a.zindex > b.zindex then return 1 end
 
 	-- 2. smaller area => higher priority
-	local a_pos1, a_pos2, b_pos1, b_pos2 = a.pos1, a.pos2, b.pos1, b.pos2
-	local a_size = (math.abs(a_pos1.x - a_pos2.x) + 1) * (math.abs(a_pos1.y - a_pos2.y) + 1) * (math.abs(a_pos1.z - a_pos2.z) + 1)
-	local b_size = (math.abs(b_pos1.x - b_pos2.x) + 1) * (math.abs(b_pos1.y - b_pos2.y) + 1) * (math.abs(b_pos1.z - b_pos2.z) + 1)
+	local a_size = ch_core.objem_oblasti(a.pos1, a.pos2)
+	local b_size = ch_core.objem_oblasti(b.pos1, b.pos2)
 	if a_size > b_size then return -1 end
 	if a_size < b_size then return 1 end
 
@@ -125,7 +124,6 @@ function areas:getMainAreaAtPos(pos)
 			main_area = area
 		end
 	end
-	minetest.log("warning", "getMainAreaAtPos("..minetest.pos_to_string(pos).."): count = "..count)
 	return main_area_id, main_area
 end
 

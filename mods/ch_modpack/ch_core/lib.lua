@@ -336,6 +336,14 @@ function ch_core.na_mala_pismena(s)
 end
 
 --[[
+Vrátí počet bloků uvnitř oblasti vymezené dvěma krajními body (na pořadí nezáleží).
+Výsledkem je vždy kladné celé číslo.
+]]
+function ch_core.objem_oblasti(pos1, pos2)
+	return math.ceil(math.abs(pos1.x - pos2.x) + 1) * math.ceil(math.abs(pos1.y - pos2.y) + 1) * math.ceil(math.abs(pos1.z - pos2.z) + 1)
+end
+
+--[[
 Všechna písmena s diakritikou převede na odpovídající písmena bez diakritiky.
 Ostatní znaky ponechá.
 ]]

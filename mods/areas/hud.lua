@@ -25,27 +25,25 @@ minetest.register_globalstep(function(dtime)
 			if not area then
 				error("Internal error: area ID "..id.." is invalid!")
 			end
-			if area.type ~= 1 or player_is_admin then
+			if player_is_admin or ch_core.objem_oblasti(area.min, area.max) < 125000000000000 then
 				local str_parts = {
 					area.name, -- 1
 					" [", -- 2
 					id, -- 3
-					"", -- 4
-					"",-- 5
-					", ", -- 6
-					S(areas.area_types_number_to_name[area.type] or "unknown"), -- 7
-					"", -- 8
-					"", -- 9
-					"]", -- 10
 				}
 				if area.owner and area.owner ~= "Administrace" then
-					str_parts[4] = ", "
-					str_parts[5] = area.owner
+					table.insert(str_parts, ", ")
+					table.insert(str_parts, area.owner)
+				end
+				if player_is_admin or #areaStrings == 0 then
+					table.insert(str_parts, ", ")
+					table.insert(str_parts, S(areas.area_types_number_to_name[area.type] or "unknown"))
 				end
 				if player_is_admin then
-					str_parts[8] = ", "
-					str_parts[9] = "z"..area.zindex
+					table.insert(str_parts, ", z")
+					table.insert(str_parts, area.zindex)
 				end
+				table.insert(str_parts, "]")
 				table.insert(areaStrings, table.concat(str_parts))
 			end
 		end
