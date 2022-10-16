@@ -466,20 +466,31 @@ end
 
 -- /info_o
 local function info_o(player_name, param)
-	param = ch_core.jmeno_na_prihlasovaci(param)
-	local offline_charinfo = ch_core.offline_charinfo[param]
+	local admin_name = player_name
+	player_name = ch_core.jmeno_na_prihlasovaci(param)
+	local view_name = ch_core.prihlasovaci_na_zobrazovaci(player_name)
+	local offline_charinfo = ch_core.offline_charinfo[player_name]
 	if not offline_charinfo then
-		minetest.chat_send_player(player_name, "*** Nejsou uloženy žádné informace o "..param..".")
+		minetest.chat_send_player(admin_name, "*** Nejsou uloženy žádné informace o "..view_name..".")
 		return true
 	end
-	minetest.chat_send_player(player_name, "*** Informace o "..param..":")
 	local online_charinfo = ch_core.online_charinfo[param]
-	local current_playtime = 0
-	if online_charinfo then
-		current_playtime = 1.0e-6 * (minetest.get_us_time() - online_charinfo.join_timestamp)
-	end
+	local result = {"*** Informace o "..view_name..":"}
 	local past_playtime = offline_charinfo.past_playtime or 0
-	minetest.chat_send_player(player_name, "* Odehraná doba [s]: "..current_playtime.." nyní+"..past_playtime.." dříve")
+	local past_ap_playtime = offline_charinfo.past_ap_playtime or 0
+	if online_charinfo then
+		local current_playtime = 1.0e-6 * (minetest.get_us_time() - online_charinfo.join_timestamp)
+		table.insert(result, "\n* Odehraná doba [s]: "..current_playtime.." nyní + "..past_playtime.." dříve")
+	else
+		table.insert(result, "\n* Odehraná doba [s]: "..past_playtime)
+	end
+	table.insert(result, "\n* Aktivní odehraná doba: "..past_ap_playtime.." s = "..(past_ap_playtime / 3600).." hod.")
+	table.insert(result, "\n* Úroveň "..offline_charinfo.ap_level..", "..offline_charinfo.ap_xp.." bodů")
+	if ch_core.ap_get_level then
+		local level_def = ch_core.ap_get_level(offline_charinfo.ap_level)
+		table.insert(result, " z "..level_def.count..", "..(level_def.base + offline_charinfo.ap_xp).." celkem")
+	end
+	minetest.chat_send_player(admin_name, table.concat(result))
 	return true
 end
 

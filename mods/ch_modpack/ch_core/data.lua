@@ -27,7 +27,11 @@ ch_core.registered_spawn = ch_core.unregistered_spawn
 -- ===========================================================================
 -- key => "int|float", unknown keys are deserialized as strings
 local offline_charinfo_data_types = {
-	past_playtime = "float",
+	ap_level = "int", -- > 0
+	ap_xp = "int", -- >= 0
+	ap_version = "int", -- >= 0
+	past_ap_playtime = "float", -- in seconds
+	past_playtime = "float", -- in seconds
 	trest = "int",
 }
 
@@ -41,6 +45,8 @@ for k, t in pairs(offline_charinfo_data_types) do
 	end
 	initial_offline_charinfo[k] = v
 end
+initial_offline_charinfo.ap_level = 1 -- must be > 0
+initial_offline_charinfo.ap_version = ch_core.verze_ap
 
 local storage = ch_core.storage
 
@@ -237,64 +243,6 @@ function ch_core.set_temporary_titul(player_name, titul, titul_enabled)
 	end
 end
 
---[[
-function ch_core.update_player_nametag(player_name)
-	local online_charinfo = ch_core.online_charinfo[player_name] -- may be null
-	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
-	local player = minetest.get_player_by_name(player_name)
-
-	if not player or not offline_charinfo then
-		minetest.log("warning", "update_player_nametag() called, but player or offline_charinfo are missing for player '"..player_name.."'!")
-		return false
-	end
-
-	local nametag = {
-		bgcolor = nametag_color_bgcolor_table,
-	}
-
-	local titul, barevne_jmeno, local_color_reset, staly_titul
-
-	if string.sub(player_name, -2) == "PP" then
-		-- pomocná postava
-		local_color_reset = nametag_color_grey
-		nametag.color = nametag_color_unregistered
-		staly_titul = "pomocná postava"
-	elseif minetest.check_player_privs(player, "ch_registered_player") then
-		local_color_reset = color_reset
-		nametag.color = nametag_color_normal_table
-		staly_titul = offline_charinfo.titul
-		if staly_titul and staly_titul == "" then
-			staly_titul = nil
-		end
-	else
-		-- neregistrovaná postava
-		local_color_reset = nametag_color_grey
-		nametag.color = nametag_color_unregistered_table
-		staly_titul = "nová postava"
-	end
-
-	local docasne_tituly = (online_charinfo and online_charinfo.docasne_tituly) or {}
-	for dtitul, _ in pairs(docasne_tituly) do
-		titul = (titul or "").."*"..dtitul.."*\n"
-	end
-	if titul then
-		-- dočasný titul
-		titul = nametag_color_green..titul..local_color_reset
-	elseif staly_titul then
-		-- trvalý titul
-		titul = "*"..staly_titul.."*\n"
-	else
-		titul = ""
-	end
-
-	barevne_jmeno = offline_charinfo.barevne_jmeno or offline_charinfo.jmeno or player_name
-	nametag.text = titul..barevne_jmeno
-
-	player:set_nametag_attributes(nametag)
-	return true
-end
-]]
-
 -- restore offline data from the storage
 local counter, delete_counter = 0, 0
 local storage_table = (storage:to_table() or {}).fields or {}
@@ -319,10 +267,24 @@ for full_key, value in pairs(storage_table) do
 end
 print("[ch_core] Restored "..counter.." data pairs from the mod storage. "..delete_counter.." was deleted.")
 
+-- Check and update keys
+for player_name, offline_charinfo in pairs(ch_core.offline_charinfo) do
+	for key, data_type in pairs(offline_charinfo_data_types) do
+		if offline_charinfo[key] == nil then
+			offline_charinfo[key] = initial_offline_charinfo[key]
+			minetest.log("warning", "Missing offline_charinfo key "..player_name.."/"..key.." vivified")
+		end
+	end
+end
+
 local function on_joinplayer(player, last_login)
 	local player_name = player:get_player_name()
 	ch_core.get_joining_online_charinfo(player_name)
-	ch_core.get_offline_charinfo(player_name) -- create offline_charinfo, if not exists
+	local offline_charinfo = ch_core.get_offline_charinfo(player_name) -- create offline_charinfo, if not exists
+	if offline_charinfo.past_playtime < 0 then
+		minetest.log("warning", "Invalid past_playtime for "..player_name.." corrected to zero!")
+		offline_charinfo.past_playtime = 0 -- correction of invalid data
+	end
 	return true
 end
 

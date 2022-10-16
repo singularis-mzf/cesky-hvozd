@@ -5,7 +5,9 @@ ch_core = {
 	storage = minetest.get_mod_storage(),
 	submods_loaded = {}, -- submod => true
 
+	ap_interval = 15, -- interval pro podmód „ap“
 	cas = 0,
+	verze_ap = 1, -- aktuální verze podmódu „ap“
 	vezeni_data = {
 		min = vector.new(-1000, -1000, -1000),
 		max = vector.new(1000, 1000, 1000),
@@ -36,6 +38,7 @@ dofile(modpath .. "/nametag.lua") -- : data, lib
 dofile(modpath .. "/chat.lua") -- : data, lib, privs, nametag
 dofile(modpath .. "/dennoc.lua") -- : privs, chat
 dofile(modpath .. "/hud.lua") -- : data, lib, chat
+dofile(modpath .. "/ap.lua") -- : data, chat, hud, lib
 dofile(modpath .. "/joinplayer.lua") -- : data, lib, nametag
 dofile(modpath .. "/nodes.lua")
 dofile(modpath .. "/padlock.lua") -- : data, lib
@@ -69,9 +72,20 @@ local ch_timer_hudbars = ch_core.count_of_ch_timer_hudbars
 local get_us_time = minetest.get_us_time
 local has_wielded_light = minetest.get_modpath("wielded_light")
 local custom_globalsteps = {}
+local last_ap_timestamp = 0
 
 local stepheight_low = {stepheight = 0.3}
 local stepheight_high = {stepheight = 1.1}
+
+local function vector_eq(a, b) return a.x == b.x and a.y == b.y and a.z == b.z end
+local function get_root(o)
+	local r = o:get_attach()
+	while r do
+		o = r
+		r = o:get_attach()
+	end
+	return o
+end
 
 function ch_core.register_player_globalstep(func, index)
 	if not index then
@@ -103,6 +117,11 @@ local function globalstep(dtime)
 	end
 	last_timeofday = tod
 
+	local process_ap = us_time - last_ap_timestamp >= ch_core.ap_interval * 1000000
+	if process_ap then
+		last_ap_timestamp = us_time
+	end
+
 	-- PRO KAŽDÉHO HRÁČE/KU:
 	local connected_players = minetest.get_connected_players()
 	for _, player in pairs(connected_players) do
@@ -113,6 +132,7 @@ local function globalstep(dtime)
 		local disrupt_teleport_flag = false
 		local disrupt_pryc_flag = false
 		local player_wielded_item_name = player:get_wielded_item():get_name() or ""
+		local player_root = get_root(player)
 
 		if online_charinfo then
 			local previous_wield_item_name = online_charinfo.wielded_item_name or ""
@@ -243,6 +263,56 @@ local function globalstep(dtime)
 					local s = zluta.."Nápověda k předmětu „"..zelena..(help_def.description or ""):gsub("\n", "\n  "..zelena)..zluta.."“:\n  "..zluta..(help_def._ch_help or ""):gsub("\n", "\n  "..zluta)
 					ch_core.systemovy_kanal(player_name, s)
 				end
+			end
+
+			-- SLEDOVÁNÍ AKTIVITY
+			local ap = online_charinfo.ap
+			if ap then
+				if player_pos.x ~= ap.pos.x then
+					ap.pos_x_gen = ap.pos_x_gen + 1
+				end
+				if player_pos.y ~= ap.pos.y then
+					ap.pos_y_gen = ap.pos_y_gen + 1
+				end
+				if player_pos.z ~= ap.pos.z then
+					ap.pos_z_gen = ap.pos_z_gen + 1
+				end
+				ap.pos = player_pos
+
+				local player_velocity = player_root:get_velocity()
+				if player_velocity.x ~= ap.velocity.x then
+					ap.velocity_x_gen = ap.velocity_x_gen + 1
+				end
+				if player_velocity.y ~= ap.velocity.y then
+					ap.velocity_y_gen = ap.velocity_y_gen + 1
+				end
+				if player_velocity.z ~= ap.velocity.z then
+					ap.velocity_z_gen = ap.velocity_z_gen + 1
+				end
+				ap.velocity = player_velocity
+
+				local player_control_bits = player:get_player_control_bits()
+				if player_control_bits ~= ap.control then
+					ap.control = player_control_bits
+					ap.control_gen = ap.control_gen + 1
+				end
+
+				local look_horizontal = player:get_look_horizontal()
+				if look_horizontal ~= ap.look_h then
+					ap.look_h = look_horizontal
+					ap.look_h_gen = ap.look_h_gen + 1
+				end
+				local look_vertical = player:get_look_vertical()
+				if look_vertical ~= ap.look_v then
+					ap.look_v = look_vertical
+					ap.look_v_gen = ap.look_v_gen + 1
+				end
+
+				if process_ap then
+					ch_core.ap_update(player, online_charinfo, offline_charinfo)
+				end
+			elseif process_ap then
+				ch_core.ap_init(player, online_charinfo, offline_charinfo)
 			end
 
 			-- NASTAVIT OSVĚTLENÍ [data, nodes, wielded_light]

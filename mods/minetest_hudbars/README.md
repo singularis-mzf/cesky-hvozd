@@ -59,6 +59,7 @@ and/or modify it under the terms of the MIT License.
 * `hudbars_bar_posion.png`—Singularis (MIT License)
 * `hudbars_bar_timer.png`—Singularis (MIT License)
 * `hudbars_bar_prison.png`—Singularis (MIT License)
+* `hudbars_bar_xp.png`—Singularis (MIT License)
 * `hudbars_bar_background.png`—Wuzzy (MIT License)
 
 ### License references
