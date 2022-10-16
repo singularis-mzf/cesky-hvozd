@@ -9,7 +9,7 @@ local ap_max = 26
 local min, max = math.min, math.max
 
 local levels = {
-	{base = 0, count = 10, next = 10},
+	{base = 0, count = 500, next = 500},
 }
 
 local function add_level(level, count)
