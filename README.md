@@ -566,6 +566,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: MIT
 * Licence úprav: MIT
 
+## Jonez (jonez)
+
+* Zdroj: [https://github.com/runsy/jonez](https://github.com/runsy/jonez), revize 7dd92e6667e247bea01bb3bf81338b0500e76435
+* Původní licence: GPLv3 pro kód, CC BY-SA 4.0 pro textury a zvuky
+* Licence úprav: GPLv3 pro vše, navíc CC BY-SA 4.0 pro vše kromě kódu
+* [ContentDB](https://content.minetest.net/packages/zorman2000/itemshelf/)
+
 ## Jumping (jumping)
 
 * Zdroj: [https://github.com/minetest-mods/jumping](https://github.com/minetest-mods/jumping), revize b5205e4e7d651306d31e2ea100ad75abb1856401
