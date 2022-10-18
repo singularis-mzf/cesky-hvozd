@@ -571,7 +571,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Zdroj: [https://github.com/runsy/jonez](https://github.com/runsy/jonez), revize 7dd92e6667e247bea01bb3bf81338b0500e76435
 * Původní licence: GPLv3 pro kód, CC BY-SA 4.0 pro textury a zvuky
 * Licence úprav: GPLv3 pro vše, navíc CC BY-SA 4.0 pro vše kromě kódu
-* [ContentDB](https://content.minetest.net/packages/zorman2000/itemshelf/)
+* [ContentDB](https://content.minetest.net/packages/runs/jonez/)
 
 ## Jumping (jumping)
 

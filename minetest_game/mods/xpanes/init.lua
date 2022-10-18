@@ -111,7 +111,7 @@ function xpanes.register_pane(name, def)
 			def.textures[3],
 			def.textures[3],
 			def.textures[1],
-			def.textures[1]
+			def.textures[1],
 		},
 		groups = flatgroups,
 		drop = "xpanes:" .. name .. "_flat",

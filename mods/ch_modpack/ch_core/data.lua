@@ -99,6 +99,7 @@ function ch_core.get_joining_online_charinfo(player_name)
 		-- the first call => create a new online_charinfo
 		local player_info = minetest.get_player_information(player_name)
 		local now = minetest.get_us_time()
+		local player = minetest.get_player_by_name(player_name)
 		result = {
 			-- nejvyšší verze formspec podporovaná klientem; 0, pokud údaj není k dispozici
 			formspec_version = player_info.formspec_version or 0,
@@ -119,7 +120,7 @@ function ch_core.get_joining_online_charinfo(player_name)
 		old_online_charinfo[player_name] = nil
 		minetest.log("action", "JOIN PLAYER(" .. player_name ..") at "..now.." with lang_code \""..result.lang_code.."\" and formspec_version = "..result.formspec_version)
 
-		local player = minetest.get_player_by_name(player_name)
+		-- local player = minetest.get_player_by_name(player_name)
 		if player then
 			local meta = player:get_meta()
 			local s = meta:get_string("navody")

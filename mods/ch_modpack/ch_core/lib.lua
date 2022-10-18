@@ -292,6 +292,49 @@ local utf8_sort_cache = {
 -- ===========================================================================
 
 --[[
+Přidá nástroji opotřebení, pokud „player“ nemá právo usnadnění hry nebo není nil.
+]]
+function ch_core.add_wear(player, itemstack, wear_to_add)
+	local player_name = player and player.get_player_name and player:get_player_name()
+	if not player_name or not minetest.is_creative_enabled(player_name) then
+		local new_wear = itemstack:get_wear() + wear_to_add
+		if new_wear > 65535 then
+			itemstack:clear()
+		elseif new_wear >= 0 then
+			itemstack:set_wear(new_wear)
+		else
+			itemstack:set_wear(0)
+		end
+	end
+	return itemstack
+end
+
+--[[
+Najde hráčskou postavu nejbližší k dané pozici. Parametr player_name_to_ignore
+je volitelný; je-li vyplněn, má obsahovat přihlašovací jméno postavy
+k ignorování.
+
+Vrací „player“ a „player:get_pos()“; v případě neúspěchu vrací nil.
+]]
+local get_connected_players = minetest.get_connected_players
+function ch_core.get_nearest_player(pos, player_name_to_ignore)
+	local result_player, result_pos, result_distance_2 = 1e+20
+	for player_name, player in pairs(get_connected_players()) do
+		if player_name ~= player_name_to_ignore then
+			local player_pos = player:get_pos()
+			local x, y, z = player_pos.x - pos.x, player_pos.y - pos.y, player_pos.z - pos.z
+			local distance_2 = x * x + y * y + z * z
+			if distance_2 < result_distance_2 then
+				result_distance_2 = distance_2
+				result_player = player
+				result_pos = player_pos
+			end
+		end
+	end
+	return result_player, result_pos
+end
+
+--[[
 Převede zobrazovací nebo přihlašovací jméno na přihlašovací jméno,
 bez ohledu na to, zda takové jméno existuje.
 ]]

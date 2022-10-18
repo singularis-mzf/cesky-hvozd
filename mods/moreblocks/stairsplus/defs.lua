@@ -226,7 +226,17 @@ stairsplus.defs = {
 				type = "fixed",
 				fixed = {-0.5, -0.5, 0, 0.5, 0.4375, 0.5},
 			},
-		}
+		},
+		["_special"] = {
+			node_box = {
+				type = "fixed",
+				fixed = {-17/32, -16/32, -17/32, -15/32, 16/32, -15/32},
+			},
+			selection_box = {
+				type = "fixed",
+				fixed = {-17/32, -16/32, -17/32, -9/32, 16/32, -9/32},
+			},
+		},
 	},
 	["slab"] = {
 		[""] = 8,
