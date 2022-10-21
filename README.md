@@ -565,6 +565,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Zdroj: [https://forum.minetest.net/viewtopic.php?t=28135](https://forum.minetest.net/viewtopic.php?t=28135), jitprofiler.zip (SHA-256: 405ae916661cad32fff911a8e54e3c1d59b889b4ff909b0f9d11b7ab95ee35d5)
 * Původní licence: MIT
 * Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/jwmhjwmh/jitprofiler/)
 
 ## Jonez (jonez)
 

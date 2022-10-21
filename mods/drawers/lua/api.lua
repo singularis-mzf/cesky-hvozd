@@ -148,7 +148,7 @@ function drawers.drawer_on_dig(pos, node, player)
 end
 
 function drawers.drawer_allow_metadata_inventory_put(pos, listname, index, stack, player)
-	if core.is_protected(pos,player:get_player_name()) then
+	if not minetest.check_player_privs(player, "ch_registered_player") or core.is_protected(pos,player:get_player_name()) then
 	   core.record_protection_violation(pos,player:get_player_name())
 	   return 0
 	end

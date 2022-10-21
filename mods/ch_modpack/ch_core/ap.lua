@@ -182,7 +182,7 @@ end
 
 function ch_core.ap_init(player, online_charinfo, offline_charinfo)
 	local vector_zero = vector.zero()
-	local default_coef = 2
+	local default_coef = 0
 	local player_name = online_charinfo.player_name
 
 	if offline_charinfo.ap_level == nil or offline_charinfo.ap_version ~= ch_core.verze_ap then
