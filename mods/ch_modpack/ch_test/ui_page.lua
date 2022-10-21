@@ -57,6 +57,7 @@ end
 
 ui.register_page("test_form", {get_formspec = get_test_form_formspec})
 
+--[[
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if formname ~= "" then
 		return
@@ -82,3 +83,4 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		end
 	end
 end)
+]]

@@ -19,9 +19,11 @@
 	image files for items must follow the scheme "internal_name_of_the_product.png"
 ]]
 
+local S = minetest.get_translator("canned_food")
+
 if minetest.get_modpath("unified_inventory") and unified_inventory.register_craft_type then
-		unified_inventory.register_craft_type("pickling", {
-				description = "Dark room, wooden shelf",
+		unified_inventory.register_craft_type(S("nakládání"), {
+				description = "Temné místo, dřevěná police",
 				icon = "canned_food_pickling_icon.png",
 				width = 1,
 				height = 1,
@@ -31,7 +33,7 @@ end
 
 local canned_food_definitions = {
 	apple_jam = {
-		proper_name = "Apple jam",
+		proper_name = S("jablečná marmeláda"),
 		found_in = "default",
 		obj_name = "default:apple",
 		orig_nutritional_value = 2,
@@ -39,7 +41,7 @@ local canned_food_definitions = {
 		sugar = false -- must not use sugar to be available in vanilla
 	},
 	wild_blueberry_jam = {
-		proper_name = "Wild blueberry jam",
+		proper_name = S("marmeláda z divokých borůvek"),
 		found_in = "default",
 		obj_name = "default:blueberries",
 		orig_nutritional_value = 2,
@@ -47,7 +49,7 @@ local canned_food_definitions = {
 		sugar = false -- must not use sugar to be available in vanilla
 	},
 	dandelion_jam = {
-		proper_name = "Dandelion jam",
+		proper_name = S("pampelišková marmeláda"),
 		found_in = "flowers",
 		obj_name = "flowers:dandelion_yellow",
 		orig_nutritional_value = 1,
@@ -55,7 +57,7 @@ local canned_food_definitions = {
 		sugar = false -- must not use sugar to be available in vanilla
 	},
 	rose_jam = {
-		proper_name = "Rose petal jam",
+		proper_name = S("růžová marmeláda"),
 		found_in = "flowers",
 		obj_name = "flowers:rose",
 		orig_nutritional_value = 1,
@@ -63,38 +65,39 @@ local canned_food_definitions = {
 		sugar = false -- must not use sugar to be available in vanilla
 	},
 	canned_mushrooms = {
-		proper_name = "Canned mushrooms",
+		proper_name = S("zavařené žampiony"),
 		found_in = "flowers",
 		obj_name = "flowers:mushroom_brown",
 		orig_nutritional_value = 1,
 		amount = 5,
 		sugar = false,
-		transforms = "Salted mushrooms"
+		transforms = "uleželé zavařené žampiony"
 	},
 	orange_jam = {
-		proper_name = "Orange jam",
-		found_in = "ethereal",
+		proper_name = S("pomerančový džem"),
+		found_in = "farming",
 		obj_name = "ethereal:orange",
 		orig_nutritional_value = 2,
 		amount = 3,
 		sugar = true
 	},
 	banana_jam = {
-		proper_name = "Banana jam",
-		found_in = "ethereal",
+		proper_name = S("banánový džem"),
+		found_in = "farming",
 		obj_name = "ethereal:banana",
 		orig_nutritional_value = 1,
 		amount = 5,
 		sugar = true
 	},
 	strawberry_jam = {
-		proper_name = "Strawberry jam",
+		proper_name = S("jahodová marmeláda"),
 		found_in = "ethereal",
 		obj_name = "ethereal:strawberry",
 		orig_nutritional_value = 1,
 		amount = 5,
 		sugar = true
 	},
+	--[[
 	canned_wild_onion = {
 		proper_name = "Canned wild onions",
 		found_in = "ethereal",
@@ -103,9 +106,9 @@ local canned_food_definitions = {
 		amount = 4,
 		sugar = false,
 		transforms = "Pickled wild onions"
-	},
+	}, ]]
 	blueberry_jam = {
-		proper_name = "Blueberry jam",
+		proper_name = S("borůvková marmeláda"),
 		found_in = "farming",
 		obj_name = "farming:blueberries",
 		orig_nutritional_value = 1,
@@ -113,7 +116,7 @@ local canned_food_definitions = {
 		sugar = true
 	},
 	blackberry_jam = {
-		proper_name = "Blackberry jam",
+		proper_name = S("ostružinová marmeláda"),
 		found_in = "farming",
 		obj_name = "farming:blackberry",
 		orig_nutritional_value = 1,
@@ -121,7 +124,7 @@ local canned_food_definitions = {
 		sugar = true
 	},
 	raspberry_jam = {
-		proper_name = "Raspberry jam",
+		proper_name = S("malinová marmeláda"),
 		found_in = "farming",
 		obj_name = "farming:raspberries",
 		orig_nutritional_value = 1,
@@ -129,7 +132,7 @@ local canned_food_definitions = {
 		sugar = true
 	},
 	grape_jam = {
-		proper_name = "Grape jam",
+		proper_name = S("grepová marmeláda"),
 		found_in = "farming",
 		obj_name = "farming:grapes",
 		orig_nutritional_value = 2,
@@ -137,7 +140,7 @@ local canned_food_definitions = {
 		sugar = true
 	},
 	rhubarb_jam = {
-		proper_name = "Rhubarb jam",
+		proper_name = S("rebarborová marmeláda"),
 		found_in = "farming",
 		obj_name = "farming:rhubarb",
 		orig_nutritional_value = 1,
@@ -145,7 +148,7 @@ local canned_food_definitions = {
 		sugar = true
 	},
 	melon_jam = {
-		proper_name = "Melon jam",
+		proper_name = S("melounová marmeláda"),
 		found_in = "farming",
 		obj_name = "farming:melon_slice",
 		orig_nutritional_value = 2,
@@ -153,45 +156,45 @@ local canned_food_definitions = {
 		sugar = true
 	},
 	canned_carrot = {
-		proper_name = "Canned carrots",
+		proper_name = S("nakládané mrkve"),
 		found_in = "farming",
 		obj_name = "farming:carrot",
 		orig_nutritional_value = 4,
 		amount = 3,
 		sugar = false,
-		transforms = "Pickled carrot sticks"
+		transforms = "uleželé nakládané mrkve"
 	},
 	canned_potato = {
-		proper_name = "Canned potatoes",
+		proper_name = S("nakládané brambory"),
 		found_in = "farming",
 		obj_name = "farming:potato",
 		orig_nutritional_value = 1,
 		amount = 5,
 		sugar = false,
 		-- a rare thing, apparently
-		transforms = "Mexican pickled potatoes"
+		transforms = S("uleželé nakládané brambory")
 	},
 	canned_cucumber = {
-		proper_name = "Canned cucumbers",
+		proper_name = S("nakládané okurky"),
 		found_in = "farming",
 		obj_name = "farming:cucumber",
 		orig_nutritional_value = 4,
 		amount = 3,
 		sugar = false,
 		-- one just cannot simply make the pickles
-		transforms = "Pickles"
+		transforms = S("uleželé nakládané okurky")
 	},
 	canned_tomato = {
-		proper_name = "Canned tomatoes",
+		proper_name = S("zavařená rajčata"),
 		found_in = "farming",
 		obj_name = "farming:tomato",
 		orig_nutritional_value = 4,
 		amount = 3,
 		sugar = false,
-		transforms = "Marinated tomatoes"
+		transforms = S("uleželá zavařená rajčata")
 	},
 	canned_corn = {
-		proper_name = "Canned corn",
+		proper_name = S("nakládané kukuřičné klasy"),
 		found_in = "farming",
 		obj_name = "farming:corn",
 		orig_nutritional_value = 3,
@@ -199,7 +202,7 @@ local canned_food_definitions = {
 		sugar = false
 	},
 	canned_beans = {
-		proper_name = "Canned beans",
+		proper_name = S("nakládané fazole"),
 		found_in = "farming",
 		obj_name = "farming:beans",
 		orig_nutritional_value = 1,
@@ -207,22 +210,23 @@ local canned_food_definitions = {
 		sugar = false
 	},
 	canned_chili_pepper = {
-		proper_name = "Canned chili pepper",
+		proper_name = S("nakládané čili papričky"),
 		found_in = "farming",
 		obj_name = "farming:chili_pepper",
 		orig_nutritional_value = 1,
 		amount = 6,
 		sugar = false,
-		transforms = "Pickled chili pepper"
+		transforms = S("uleželé nakládané čili papričky")
 	},
 	canned_coconut = {
-		proper_name = "Canned coconut",
-		found_in = "ethereal",
-		obj_name = "ethereal:coconut_slice",
+		proper_name = S("nakládaný kokos"),
+		found_in = "moretrees",
+		obj_name = "moretrees:coconut",
 		orig_nutritional_value = 1,
-		amount = 5,
+		amount = 1,
 		sugar = false
 	},
+	--[[
 	pine_nuts_jar = {
 		proper_name = "A Jar of pine nuts",
 		found_in = "ethereal",
@@ -230,9 +234,9 @@ local canned_food_definitions = {
 		orig_nutritional_value = 1,
 		amount = 8,
 		sugar = false
-	},
+	}, ]]
 	canned_pumpkin = {
-		proper_name = "Canned pumpkin puree",
+		proper_name = S("dýňová marmeláda"),
 		found_in = "farming",
 		obj_name = "farming:pumpkin_slice",
 		orig_nutritional_value = 2,
@@ -240,7 +244,7 @@ local canned_food_definitions = {
 		sugar = false
 	},
 	honey_jar = {
-		proper_name = "A jar of honey",
+		proper_name = S("sklenice medu"),
 		found_in = "mobs_animal",
 		obj_name = "mobs:honey",
 		orig_nutritional_value = 4,
@@ -248,7 +252,7 @@ local canned_food_definitions = {
 		sugar = false
 	},
 	canned_pineapple = {
-		proper_name = "Canned pineapple rings",
+		proper_name = S("zavařené ananasové kroužky"),
 		found_in = "farming",
 		obj_name = "farming:pineapple_ring",
 		orig_nutritional_value = 1,
@@ -256,25 +260,25 @@ local canned_food_definitions = {
 		sugar = false
 	},
 	canned_onion = {
-		proper_name = "Canned onions",
+		proper_name = S("nakládaná cibule"),
 		found_in = "farming",
 		obj_name = "farming:onion",
 		orig_nutritional_value = 1,
 		amount = 4,
 		sugar = false,
-		transforms = "Pickled onions"
+		transforms = S("uleželá nakládaná cibule")
 	},
 	canned_garlic_cloves = {
-		proper_name = "Canned garlic cloves",
+		proper_name = S("nakládaný česnek"),
 		found_in = "farming",
 		obj_name = "farming:garlic_clove",
 		orig_nutritional_value = 0.5,
 		amount = 8,
 		sugar = false,
-		transforms = "Pickled garlic cloves"
+		transforms = S("uleželý nakládaný česnek")
 	},
 	canned_peas = {
-		proper_name = "Canned peas",
+		proper_name = S("zavařený hrášek"),
 		found_in = "farming",
 		obj_name = "farming:peas",
 		orig_nutritional_value = 1,
@@ -282,13 +286,13 @@ local canned_food_definitions = {
 		sugar = false,
 	},
 	canned_beetroot = {
-		proper_name = "Canned beetroot",
+		proper_name = S("zavařená červená řepa"),
 		found_in = "farming",
 		obj_name = "farming:beetroot",
 		orig_nutritional_value = 1,
 		amount = 5,
 		sugar = false,
-		transforms = "Pickled beetroot"
+		transforms = S("uleželá zavařená červená řepa")
 	},
 }
 
@@ -315,9 +319,9 @@ for product, def in pairs(canned_food_definitions) do
 					type = "fixed",
 					fixed = {-0.25, -0.5, -0.25, 0.25, 0.3, 0.25}
 				},
-				groups = { canned_food = 1, 
-			                 vessel = 1, 
-			                 dig_immediate = 3, 
+				groups = { canned_food = 1,
+			                 vessel = 1,
+			                 dig_immediate = 3,
 			                 attached_node = 1 },
 				-- canned food prolongs shelf life IRL, but in minetest food never
 				-- goes bad. Here, we increase the nutritional value instead.
@@ -357,12 +361,12 @@ for product, def in pairs(canned_food_definitions) do
 							return false
 						end
 					end
-			
+
 				minetest.register_node("canned_food:" .. product, nodetable)
-				
+
 				-- add node to the list for LBM
 				table.insert(lbm_list, "canned_food:" .. product)
-				
+
 				-- a better version
 				minetest.register_node("canned_food:" .. product .."_plus", {
 					description = def.transforms,
@@ -381,7 +385,7 @@ for product, def in pairs(canned_food_definitions) do
 						vessel = 1, 
 						dig_immediate = 3, 
 						attached_node = 1,
-						not_in_creative_inventory = 1 },
+						canned_food_plus = 1 },
 					-- the reward for putting the food in a cellar is even greater 
 					-- than for merely canning it.
 					on_use = minetest.item_eat(
@@ -390,7 +394,7 @@ for product, def in pairs(canned_food_definitions) do
 					-- the empty bottle stays, of course
 					sounds = default.node_sound_glass_defaults(),
 				})
-				
+
 				-- register the recipe with unified inventory
 				if minetest.get_modpath("unified_inventory") and unified_inventory.register_craft then
 					unified_inventory.register_craft({
@@ -401,7 +405,7 @@ for product, def in pairs(canned_food_definitions) do
 				end
 				
 			end
-			
+
 			-- a family of shapeless recipes, with sugar for jams
 			-- except for apple: there should be at least 1 jam guaranteed
 			-- to be available in vanilla game (and mushrooms are the guaranteed

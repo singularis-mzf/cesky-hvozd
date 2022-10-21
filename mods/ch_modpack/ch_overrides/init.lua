@@ -118,7 +118,7 @@ dofile(modpath.."/sitting.lua")
 
 -- log giveme
 
-local giveme_func = minetest.registered_chatcommands["giveme"]
+local giveme_func = minetest.registered_chatcommands["giveme"].func
 minetest.override_chatcommand("giveme", {func = function(player_name, param)
 	minetest.log("action", player_name.." gives themself: "..param)
 	return giveme_func(player_name, param)
