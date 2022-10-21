@@ -70,7 +70,7 @@ mesecon.lightstone_add("yellow", "mesecons_gamecompat:dye_yellow", "jeija_lights
 mesecon.lightstone_add("orange", "mesecons_gamecompat:dye_orange", "jeija_lightstone_orange_off.png", "jeija_lightstone_orange_on.png", "oranžový signální blok")
 mesecon.lightstone_add("white", "mesecons_gamecompat:dye_white", "jeija_lightstone_white_off.png", "jeija_lightstone_white_on.png", "bílý signální blok")
 mesecon.lightstone_add("pink", "mesecons_gamecompat:dye_pink", "jeija_lightstone_pink_off.png", "jeija_lightstone_pink_on.png", "růžový signální blok")
-mesecon.lightstone_add("magenta", "mesecons_gamecompat:dye_magenta", "jeija_lightstone_magenta_off.png", "jeija_lightstone_magenta_on.png", "magentový signální blok")
+mesecon.lightstone_add("magenta", "mesecons_gamecompat:dye_magenta", "jeija_lightstone_magenta_off.png", "jeija_lightstone_magenta_on.png", "purpurový signální blok")
 mesecon.lightstone_add("cyan", "mesecons_gamecompat:dye_cyan", "jeija_lightstone_cyan_off.png", "jeija_lightstone_cyan_on.png", "tyrkysový signální blok")
 mesecon.lightstone_add("violet", "mesecons_gamecompat:dye_violet", "jeija_lightstone_violet_off.png", "jeija_lightstone_violet_on.png", "fialový signální blok")
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

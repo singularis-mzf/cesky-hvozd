@@ -12,6 +12,12 @@ bbq.lua
 	Modified and adapted by: Singularis
 	License: LGPL-2.1+
 
+cutepie.lua
+	Author: DonBatman
+	Source: Cutepie Mod (https://github.com/DonBatman/cutepie)
+	Modified and adapted by: Singularis
+	License: DWYWPL
+
 digistuff.lua
 	Author: cheapie (from cheapiesystems.com)
 	Source: Digistuff Mod
@@ -25,6 +31,16 @@ bbq_chimney_smoke_animation.png
 	Author: (C) Grizzly Adam
 	Source: Your Dad's BBQ Mod
 	License: CC-BY-SA-3.0
+
+cute_block.png
+cute_block_frown.png
+cute_block_tb.png
+cute_block2.png
+cute_block2_frown.png
+cute_block2_tb.png
+	Author: DonBatman
+	Source: Cutepie Mod (https://github.com/DonBatman/cutepie)
+	License: DWYWPL
 
 digistuff_camera_back.png
 digistuff_camera_bottom.png

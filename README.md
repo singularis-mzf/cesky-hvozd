@@ -971,6 +971,11 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: LGPLv3
 * [ContentDB](https://content.minetest.net/packages/Clyde/cucina\_vegana/)
 
+## Cutepie (cutepie)
+
+* Zdroj: [https://github.com/DonBatman/cutepie](https://github.com/DonBatman/cutepie), revize 55d77d983d7f47eea9a2d61c94229af8e00ab30f
+* Původní licence: DWYWPL
+
 ## Digistuff (digistuff)
 
 * Zdroj: [https://cheapiesystems.com/git/digistuff](https://cheapiesystems.com/git/digistuff), revize 32641893e75f11903489a38a201bd661c8f99b50
