@@ -12,6 +12,12 @@ bbq.lua
 	Modified and adapted by: Singularis
 	License: LGPL-2.1+
 
+cucina_vegana.lua
+	Author: acmgit
+	Source: Mod Cucina Vegana
+	Modified and adapted by: Singularis
+	License: LGPLv3
+
 cutepie.lua
 	Author: DonBatman
 	Source: Cutepie Mod (https://github.com/DonBatman/cutepie)
@@ -31,6 +37,13 @@ bbq_chimney_smoke_animation.png
 	Author: (C) Grizzly Adam
 	Source: Your Dad's BBQ Mod
 	License: CC-BY-SA-3.0
+
+cucina_vegana_mushroom_light.png
+cucina_vegana_mushroom_light_detail.png
+	Author: acmgit
+	Source: Mod Cucina Vegana
+	Modified and adapted by: Singularis
+	License: LGPLv3
 
 cute_block.png
 cute_block_frown.png

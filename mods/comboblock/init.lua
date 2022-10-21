@@ -354,14 +354,14 @@ for _,v1 in pairs(slab_index) do
 
 		for _,v2 in pairs(slab_index) do							  -- every slab has to be done with every other slab including itself
 
-			if node_count > 32668 then                                -- Prevent registering more than the max 32768 - limit set 100 less than max
+			--[[ if node_count > 32668 then                                -- Prevent registering more than the max 32768 - limit set 100 less than max
 				minetest.debug("WARNING:Comboblock - Max nodes"..
 				" registered: "..(max_perm+existing_node_count)-node_count..
 				" slab combos not registered")
 				to_many_nodes = true                                  -- Outer loop break trigger
 				break
 
-			else
+			else ]]
 
 				local v2_def = minetest.registered_nodes[v2]       -- this creates a second copy of all slabs and is identical to v1
 				local v2_tiles = preprocess_tiles(v2_def.tiles)
@@ -473,7 +473,7 @@ for _,v1 in pairs(slab_index) do
 				end
 
 				node_count = node_count+1
-			end
+			-- end
 		end-- v2_tiles for end
 
 

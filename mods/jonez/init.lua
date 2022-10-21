@@ -584,7 +584,7 @@ minetest.register_node("jonez:wrought_lattice_top", {
 		"jonez_wrought_lattice_top.png",
 		"jonez_wrought_lattice_top.png"
 	},
-	use_texture_alpha = true,
+	use_texture_alpha = "clip",
 })
 
 minetest.register_craft({
