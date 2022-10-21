@@ -332,6 +332,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: AGPLv3+
 * [ContentDB](https://content.minetest.net/packages/erlehmann/bushy\_leaves/)
 
+## Canned Food (canned\_food)
+
+* Zdroj: [https://github.com/mazes-80/canned\_food](https://github.com/mazes-80/canned\_food), revize 443549a3300b942e8324e1e168a17e18c4f6fb78
+* Původní licence: AGPLv3
+* Licence úprav: AGPLv3
+
 ## Charcoal (charcoal)
 
 * Zdroj: [https://content.minetest.net/packages/X17/charcoal/](https://content.minetest.net/packages/X17/charcoal/), verze 0.2
