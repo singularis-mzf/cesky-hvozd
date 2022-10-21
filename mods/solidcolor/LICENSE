@@ -35,7 +35,9 @@ Textures:
 		random-geek
 		Extex101
 		An0n3m0us
-* solidcolor_stoneblock.png - CC BY-SA 3.0 (přebarvená textura „default_stoneblock.png“ z Minetest Game)
+* solidcolor_noise.png - CC BY-SA 3.0
+	Copyright (C) 2022 Singularis
+* solidcolor_stone_block.png - CC BY-SA 3.0 (přebarvená textura „default_stone_block.png“ z Minetest Game)
 	Copyright (C) 2010-2018:
 		celeron55, Perttu Ahola <celeron55@gmail.com>
 		Cisoun

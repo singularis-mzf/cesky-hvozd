@@ -33,6 +33,12 @@ local tile_groups = {
 		material_groups = {cracky = 2, stone = 1},
 		input_material = "default:stone_brick",
 	},
+	noise = {
+		description = "barvitelný texturovaný blok",
+		tiles = {"solidcolor_noise.png"},
+		material_groups = {cracky = 2},
+		input_material = "default:dirt",
+	},
 }
 
 local shape_groups = {
