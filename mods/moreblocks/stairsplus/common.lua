@@ -213,10 +213,11 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 		end
 	end
 
-	-- if fields.drop and not (type(fields.drop) == "table") then
+	--[[ if fields.drop and not (type(fields.drop) == "table") then
 	if fields.drop then
 		def.drop = modname.. ":" .. category .. "_" .. fields.drop .. alternate
-	end
+	end ]]
+	def.drop = nil
 
 	minetest.register_node(":" ..modname.. ":" .. category .. "_" .. subname .. alternate, def)
 	stairsplus.register_recipes(category, alternate, modname, subname, recipeitem)

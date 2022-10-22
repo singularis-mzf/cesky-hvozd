@@ -118,6 +118,13 @@ function stairsplus:register_bank_slopes(recipeitem)
 					{recipeitem, ""},
 				},
 			})
+			minetest.register_craft({
+				output = modname..":slope_"..subname..alternate,
+				recipe = {{modname..":bank_slope_"..subname..alternate}},
+				replacements = {
+					{modname..":bank_slope_"..subname..alternate, recipeitem},
+				},
+			})
 		else
 			minetest.log("warning", "Expected slope node "..original_slope.." is not defined!")
 		end
