@@ -95,9 +95,8 @@ minetest.register_node("farming:beanpole", {
 	walkable = false,
 	buildable_to = true,
 	sunlight_propagates = true,
-	drop = "farming:beanpole",
 	selection_box = farming.select,
-	groups = {snappy = 3, flammable = 2, attached_node = 1},
+	groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2, attached_node = 1},
 	sounds = default.node_sound_leaves_defaults(),
 
 	on_place = function(itemstack, placer, pointed_thing)
@@ -213,12 +212,16 @@ def.tiles = {"farming_beanpole_5.png"}
 def.groups.growing = nil
 def.drop = {
 	items = {
-		{items = {"farming:beanpole"}, rarity = 1},
+		-- {items = {"farming:beanpole"}, rarity = 1},
 		{items = {"farming:beans 3"}, rarity = 1},
 		{items = {"farming:beans 2"}, rarity = 2},
 		{items = {"farming:beans 2"}, rarity = 3}
 	}
 }
+def.node_dig_prediction = "farming:beanpole"
+def.after_dig_node = function(pos, oldnode, oldmetadata, digger)
+	minetest.set_node(pos, {name = "farming:beanpole"})
+end
 def.selection_box = farming.select_final
 minetest.register_node("farming:beanpole_5", table.copy(def))
 

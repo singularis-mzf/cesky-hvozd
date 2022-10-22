@@ -92,8 +92,8 @@ minetest.register_node("farming:trellis", {
 	sunlight_propagates = true,
 	drop = "farming:trellis",
 	selection_box = farming.select,
-	groups = {snappy = 3, flammable = 2, attached_node = 1},
-	sounds = default.node_sound_leaves_defaults(),
+	groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2, attached_node = 1},
+	sounds = default.node_sound_wood_defaults(),
 
 	on_place = function(itemstack, placer, pointed_thing)
 
@@ -221,12 +221,17 @@ def.groups.growing = nil
 def.selection_box = farming.select_final
 def.drop = {
 	items = {
-		{items = {"farming:trellis"}, rarity = 1},
+		-- {items = {"farming:trellis"}, rarity = 1},
 		{items = {"farming:grapes 3"}, rarity = 1},
 		{items = {"farming:grapes 1"}, rarity = 2},
 		{items = {"farming:grapes 1"}, rarity = 3}
 	}
 }
+def.node_dig_prediction = "farming:trellis"
+def.after_dig_node = function(pos, oldnode, oldmetadata, digger)
+	minetest.set_node(pos, {name = "farming:trellis"})
+end
+
 minetest.register_node("farming:grapes_8", table.copy(def))
 
 -- add to registered_plants
