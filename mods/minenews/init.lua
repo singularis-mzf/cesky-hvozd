@@ -84,7 +84,8 @@ end
 -- Show news formspec on player join, unless player has bypass priv
 local function on_joinplayer(player)
 	local name = player:get_player_name()
-	if player:get_hp() <= 0 then
+	local online_charinfo = ch_core.get_joining_online_charinfo(name)
+	if player:get_hp() <= 0 or not ch_core.supported_lang_codes[online_charinfo.lang_code or ""] then
 		return
 	elseif minetest.check_player_privs(name, {["news_bypass"] = true}) then
 		return

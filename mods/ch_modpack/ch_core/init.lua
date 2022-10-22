@@ -7,6 +7,7 @@ ch_core = {
 
 	ap_interval = 15, -- interval pro podmód „ap“
 	cas = 0,
+	supported_lang_codes = {cs = true, sk = true},
 	verze_ap = 1, -- aktuální verze podmódu „ap“
 	vezeni_data = {
 		min = vector.new(-1000, -1000, -1000),
@@ -33,6 +34,7 @@ dofile(modpath .. "/privs.lua")
 dofile(modpath .. "/localize_chatcommands.lua") -- : privs
 dofile(modpath .. "/data.lua")
 dofile(modpath .. "/lib.lua") -- : data
+dofile(modpath .. "/formspecs.lua") -- : data, lib
 dofile(modpath .. "/areas.lua") -- : lib
 dofile(modpath .. "/nametag.lua") -- : data, lib
 dofile(modpath .. "/chat.lua") -- : data, lib, privs, nametag
