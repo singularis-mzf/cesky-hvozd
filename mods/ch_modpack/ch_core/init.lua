@@ -142,7 +142,7 @@ local function globalstep(dtime)
 			local emote = emoting[player]
 			if not emote or emote ~= "lehni" then
 				local puvodni_uhel_hlavy = online_charinfo.uhel_hlavy or 0
-				local novy_uhel_hlavy = player:get_look_vertical()
+				local novy_uhel_hlavy = player:get_look_vertical() - 0.01745329251994329577 * (online_charinfo.head_offset or 0)
 				local rozdil = novy_uhel_hlavy - puvodni_uhel_hlavy
 				if rozdil > 0.001 or rozdil < -0.001 then
 					if rozdil > 0.3 then

@@ -133,6 +133,7 @@ minetest.register_globalstep(function()
 		local ani_spd       = 30		
 		local offset        = 0
 		local tdebug        = false
+		local online_charinfo = ch_core.online_charinfo[player:get_player_name()] or {}
 		
 		-- reset player collisionbox, eye height, speed override 
 		player:set_properties({collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.7, 0.3}})
@@ -349,5 +350,7 @@ minetest.register_globalstep(function()
 					offset = 90
 					if tdebug then minetest.debug("fall") end
 		end
-	end	
+
+		online_charinfo.head_offset = offset
+	end
 end)
