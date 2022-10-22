@@ -16,15 +16,15 @@ function ch_npc.update_npc(pos, node, meta)
 	if not meta then
 		meta = minetest.get_meta(pos)
 	end
-	local npc = ch_npc.registered_npcs[meta:get_string("model")] or ch_npc.registered_npcs["default"]
-
-	local entity_pos = vector.add(pos, npc.offset) -- 			vector.new(pos.x, pos.y - 0.5, pos.z)
 	local should_be_spawned = meta:get_string("enabled") == "true"
-	local found_objects = {}
+	local old_model = meta:get_string("shown_model")
+	local old_npc = ch_npc.registered_npcs[old_model]
+	local old_entity_pos = vector.add(pos, (old_npc or ch_npc.registered_npcs["default"]).offset)
 
 	-- search for existing objects
-	local objects_inside_radius = minetest.get_objects_inside_radius(entity_pos, 0.45)
-	if objects_inside_radius then
+	local found_objects = {}
+	if old_npc ~= "" then
+		local objects_inside_radius = minetest.get_objects_inside_radius(old_entity_pos, 0.45)
 		for _, obj in ipairs(objects_inside_radius) do
 			local entity = obj and obj:get_luaentity()
 			if entity and entity.name == "ch_npc:npc" then
@@ -33,41 +33,57 @@ function ch_npc.update_npc(pos, node, meta)
 		end
 	end
 
-	if #found_objects > 0 and not should_be_spawned then
+	if (not should_be_spawned and #found_objects > 0) or (should_be_spawned and #found_objects > 1)  then
 		-- remove existing objects
 		for _, obj in ipairs(found_objects) do
 			local obj_pos = obj:get_pos()
 			obj:remove()
 			minetest.log("action", "NPC at "..minetest.pos_to_string(obj_pos).." despawned.")
 		end
-	elseif (#found_objects == 0 and should_be_spawned) or (#found_objects > 0 and update_meta) then
+		found_objects = {}
+		meta:set_string("shown_model", "")
+	end
+
+	if should_be_spawned then
+		local new_model = meta:get_string("model")
+		local new_npc = ch_npc.registered_npcs[new_model]
+		if not new_npc then
+			new_model = "default"
+			new_npc = ch_npc.registered_npcs["default"]
+		end
+		local new_entity_pos = new_npc and vector.add(pos, new_npc.offset)
 		local npc_name = meta:get_string("npc_name")
 		local npc_text = meta:get_string("npc_text")
 		local npc_program = clsc(meta:get_string("npc_program"), "default")
 
 		local props_to_set = {
-			mesh = npc.mesh,
-			textures = npc.textures,
-			collisionbox = npc.collisionbox,
+			mesh = new_npc.mesh,
+			textures = new_npc.textures,
+			collisionbox = new_npc.collisionbox,
 			infotext = npc_name,
-			_npc_text = npc_text,
 		}
 
 		if #found_objects == 0 then
 			-- spawn a new NPC
-			local entity = minetest.add_entity(entity_pos, "ch_npc:npc")
-			local dir = minetest.facedir_to_dir((node.param2 + 2) % 4)
-			local rot = vector.dir_to_rotation(dir)
-			entity:set_rotation(rot)
-			entity:set_properties(props_to_set)
-			minetest.log("action", "Spawned a new NPC at "..minetest.pos_to_string(entity_pos)..".")
-		else
-			-- update metadata of existing NPCs
-			for _, obj in ipairs(found_objects) do
-				local obj_pos = obj:get_pos()
-				obj:set_properties(props_to_set)
-				minetest.log("action", "NPC at "..minetest.pos_to_string(obj_pos).." updated.")
-			end
+			local obj = minetest.add_entity(new_entity_pos, "ch_npc:npc")
+			local entity = obj:get_luaentity()
+			if not entity.memory then entity.memory = {} end -- workaround because of mobkit crash
+			local rotation = vector.dir_to_rotation(minetest.facedir_to_dir((node.param2 + 2) % 4))
+			obj:set_rotation(rotation)
+			obj:set_properties(props_to_set)
+			mobkit.remember(entity, "node_pos", vector.new(pos.x, pos.y, pos.z))
+			meta:set_string("shown_model", new_model)
+			minetest.log("action", "Spawned a new NPC at "..minetest.pos_to_string(new_entity_pos)..".")
+		elseif update_meta then
+			-- update metadata of an existing NPC
+			local obj = found_objects[1]
+			local entity = obj:get_luaentity()
+			local old_pos = obj:get_pos()
+			obj:set_properties(props_to_set)
+			obj:set_pos(new_entity_pos)
+			mobkit.remember(entity, "node_pos", vector.new(pos.x, pos.y, pos.z))
+			meta:set_string("shown_model", new_model)
+			minetest.log("action", "NPC at "..minetest.pos_to_string(old_pos).." => "..minetest.pos_to_string(new_entity_pos).." updated.")
 		end
 	end
 

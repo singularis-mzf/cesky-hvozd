@@ -17,19 +17,18 @@ local function entity_logic(self)
 end
 
 local function entity_on_rightclick(self, player)
-	local pos, positions, meta, formspec
-	pos = self.object:get_pos()
-	positions = minetest.find_nodes_in_area(vector.new(pos.x, pos.y + 0.5, pos.z), vector.new(pos.x, pos.y - 4, pos.z), {"group:ch_npc_spawner"})
-	if #positions > 1 and positions[2].y < positions[1].y then
-		pos = positions[2]
-	elseif #positions > 0 then
-		pos = positions[1]
-	else
-		minetest.log("warning", "on_rightclick expected NPC spawner under "..minetest.pos_to_string(pos))
+	local pos = mobkit.recall(self, "node_pos")
+	if not pos then
+		error("NPC node position not found!")
+	end
+	minetest.load_area(pos)
+	local node = minetest.get_node(pos)
+	if minetest.get_item_group(node.name, "group:ch_npc_spawner") == 0 then
+		minetest.log("warning", "on_rightclick expected NPC spawner under "..minetest.pos_to_string(pos).." where is the node "..node.name)
 		return
 	end
-	meta = minetest.get_meta(pos)
-	formspec = ch_npc.internal.get_entity_formspec(meta)
+	local meta = minetest.get_meta(pos)
+	local formspec = ch_npc.internal.get_entity_formspec(meta)
 	ch_npc.internal.show_formspec(pos, player:get_player_name(), "ch_npc:entity_formspec", formspec)
 end
 
