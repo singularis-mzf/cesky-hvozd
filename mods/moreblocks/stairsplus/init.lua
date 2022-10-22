@@ -70,6 +70,14 @@ local slabs_and_slopes_subset = {
 }
 
 function stairsplus:register_all(modname, subname, recipeitem, fields)
+	if type(fields.tiles) == "table" then
+		for i, tile in ipairs(table.copy(fields.tiles)) do
+			if type(tile) ~= "table" then
+				fields.tiles[i] = {name = tile, backface_culling = true}
+			end
+		end
+	end
+
 	self:register_stair(modname, subname, recipeitem, fields)
 	self:register_slab(modname, subname, recipeitem, fields)
 	self:register_slope(modname, subname, recipeitem, fields)
@@ -195,4 +203,5 @@ dofile(modpath .. "/slopes.lua")
 dofile(modpath .. "/panels.lua")
 dofile(modpath .. "/microblocks.lua")
 dofile(modpath .. "/custom.lua")
+dofile(modpath .. "/bank_slopes.lua")
 dofile(modpath .. "/registrations.lua")

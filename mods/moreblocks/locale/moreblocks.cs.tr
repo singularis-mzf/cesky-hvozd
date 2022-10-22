@@ -85,6 +85,11 @@ Rightwards Wooden Tile=dřevěná mozaika (zastaralá)
 Sorry, @1 owns that spot.=Promiňte, toto místo patří: @1.
 someone=někomu
 
+# stairsplus/bank_slopes.lua
+
+Bank Slope: @1=pobřežní svah: @1
+Unknown=neznámý
+
 # stairsplus/common.lua
 
 @1 Microblock=@1 (mikroblok)

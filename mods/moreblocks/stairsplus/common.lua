@@ -158,7 +158,6 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 	local src_def = minetest.registered_nodes[recipeitem] or {}
 	local desc_base = fields.description
 	local readable_alternate = alternate:gsub("_", " "):gsub("^%s*(.-)%s*$", "%1");
-	-- TO DELETE: -- .." ("..S(descriptions[category])..", "..subname..")"
 	local def = {}
 
 	if readable_alternate == "" then
