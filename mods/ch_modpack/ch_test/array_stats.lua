@@ -54,6 +54,12 @@ local function on_mods_loaded()
 	print(array_stats("registered_decorations", minetest.registered_decorations))
 
 	--[[
+	local world_path = minetest.get_worldpath()
+	local f = io.open(world_path.."/export_nodes.txt", "w")
+	f:write(dump2(minetest.registered_nodes))
+	f:close() ]]
+
+	--[[
 	print("Starting recipe export...")
 	local world_path = minetest.get_worldpath()
 	local f = io.open(world_path.."/recipes-export.txt", "w")

@@ -15,7 +15,8 @@
 
 -- list of allowed combo blocks
 local allowed_combos = {
-	"moreblocks:slab_cobble+moreblocks:slab_cactus_brick",
+	"bakedclay:natural+darkage:ors_brick",
+	"moreblocks:slab_cactus_brick+moreblocks:slab_cobble",
 }
 allowed_combos = table.key_value_swap(allowed_combos)
 

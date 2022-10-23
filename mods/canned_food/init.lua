@@ -398,7 +398,7 @@ for product, def in pairs(canned_food_definitions) do
 				-- register the recipe with unified inventory
 				if minetest.get_modpath("unified_inventory") and unified_inventory.register_craft then
 					unified_inventory.register_craft({
-						type = "pickling",
+						type = S("nakládání"),
 						output = "canned_food:" .. product .."_plus",
 						items = {"canned_food:" .. product},
 					})

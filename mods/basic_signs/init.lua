@@ -158,7 +158,7 @@ for i, color in ipairs(sign_colors) do
 end
 
 signs_lib.register_sign("basic_signs:vevystavbe", {
-	description = "Cedule: Ve výstavbě",
+	description = "cedule: ve výstavbě",
 	paramtype2 = "facedir",
 	selection_box = cbox,
 	mesh = "signs_lib_standard_facedir_sign_wall.obj",
@@ -205,6 +205,7 @@ minetest.register_craft({
 	recipe = {"basic_signs:sign_wall_steel_white_red", "dye:black"},
 })
 
+--[[
 signs_lib.register_sign("basic_signs:test", {
 	description = "Testovací cedule (nepoužívejte na stavbách, je jen pro účely vývoje serveru!)",
 	paramtype2 = "facedir",
@@ -235,5 +236,6 @@ signs_lib.register_sign("basic_signs:test", {
 	horiz_scaling = 0.25,
 	vert_scaling = 0.25,
 })
+]]
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
