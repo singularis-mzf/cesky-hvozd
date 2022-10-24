@@ -249,6 +249,19 @@ local function globalstep(dtime)
 				player:set_nametag_attributes(ch_core.compute_player_nametag(online_charinfo, offline_charinfo))
 			end
 
+			-- nesmrtelnost (stačilo by spouštět občas)
+			if minetest.is_creative_enabled(player_name) then
+				if not online_charinfo.is_creative then
+					online_charinfo.is_creative = true
+					ch_core.set_immortal(player, online_charinfo.is_creative)
+				end
+			else
+				if online_charinfo.is_creative then
+					online_charinfo.is_creative = false
+					ch_core.set_immortal(player, online_charinfo.is_creative)
+				end
+			end
+
 			-- SPUSTIT registrované obslužné funkce
 			local i = 1
 			while custom_globalsteps[i] do

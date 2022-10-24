@@ -131,6 +131,13 @@ function ch_core.get_joining_online_charinfo(player_name)
 			if s and s ~= "" then
 				result.navody = minetest.deserialize(s, true) or result.navody
 			end
+
+			if minetest.is_creative_enabled(player_name) then
+				result.is_creative = true
+				if ch_core.set_immortal then
+					ch_core.set_immortal(player, true)
+				end
+			end
 		else
 			minetest.log("error", "Player object not available for "..player_name.." in get_joining_online_charinfo()!")
 		end

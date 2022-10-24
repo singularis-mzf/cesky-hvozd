@@ -473,6 +473,22 @@ function ch_core.prihlasovaci_na_zobrazovaci(prihlasovaci, s_barvami)
 end
 
 --[[
+Nastaví dané postavě status „immortal“. Používá se pro postavy s právem
+usnadnění hry.
+]]
+function ch_core.set_immortal(player, true_or_false)
+	if true_or_false then
+		local properties = player:get_properties()
+		player:set_armor_groups({immortal = 1})
+		player:set_hp(properties.hp_max)
+		player:set_breath(properties.breath_max)
+	else
+		player:set_armor_groups({immortal = 0})
+	end
+	return true
+end
+
+--[[
 Vrátí počet UTF-8 znaků řetězce.
 ]]
 function ch_core.utf8_length(s)
