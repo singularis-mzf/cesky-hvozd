@@ -30,24 +30,28 @@ local offline_charinfo_data_types = {
 	ap_level = "int", -- > 0
 	ap_xp = "int", -- >= 0
 	ap_version = "int", -- >= 0
+	doslech = "int", -- >= 0
 	past_ap_playtime = "float", -- in seconds
 	past_playtime = "float", -- in seconds
 	trest = "int",
 }
 
-local initial_offline_charinfo = {}
+local initial_offline_charinfo = {
+	ap_level = 1, -- must be > 0
+	ap_version = ch_core.verze_ap,
+	doslech = 50,
+}
 for k, t in pairs(offline_charinfo_data_types) do
-	local v = ""
-	if t == "int" then
-		v = 0
-	elseif t == "float" then
-		v = 0.0
+	if initial_offline_charinfo[k] == nil then
+		local v = ""
+		if t == "int" then
+			v = 0
+		elseif t == "float" then
+			v = 0.0
+		end
+		initial_offline_charinfo[k] = v
 	end
-	initial_offline_charinfo[k] = v
 end
-initial_offline_charinfo.ap_level = 1 -- must be > 0
-initial_offline_charinfo.ap_version = ch_core.verze_ap
-
 local storage = ch_core.storage
 
 ch_core.online_charinfo = {}
@@ -276,16 +280,17 @@ for player_name, offline_charinfo in pairs(ch_core.offline_charinfo) do
 			minetest.log("warning", "Missing offline_charinfo key "..player_name.."/"..key.." vivified")
 		end
 	end
-end
-
-local function on_joinplayer(player, last_login)
-	local player_name = player:get_player_name()
-	ch_core.get_joining_online_charinfo(player_name)
-	local offline_charinfo = ch_core.get_offline_charinfo(player_name) -- create offline_charinfo, if not exists
 	if offline_charinfo.past_playtime < 0 then
 		minetest.log("warning", "Invalid past_playtime for "..player_name.." corrected to zero!")
 		offline_charinfo.past_playtime = 0 -- correction of invalid data
 	end
+end
+
+local function on_joinplayer(player, last_login)
+	local player_name = player:get_player_name()
+	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
+	local offline_charinfo = ch_core.get_offline_charinfo(player_name) -- create offline_charinfo, if not exists
+	online_charinfo.doslech = offline_charinfo.doslech
 	return true
 end
 

@@ -2,7 +2,9 @@ ch_core.open_submod("chat", {privs = true, data = true, lib = true, nametag = tr
 
 minetest.register_on_joinplayer(function(player, last_login)
 	local online_charinfo = ch_core.get_joining_online_charinfo(player:get_player_name())
-	online_charinfo.doslech = 65535
+	if online_charinfo.doslech == nil then
+		online_charinfo.doslech = 65535
+	end
 	online_charinfo.chat_ignore_list = {} -- player => true
 end)
 
@@ -123,6 +125,7 @@ function ch_core.chat(rezim, odkoho, zprava, pozice)
 	end
 
 	-- Zaslat postavě „odkoho“
+	casti_zpravy[4] = ": "
 	casti_zpravy[5] = barva_zpravy_zblizka
 	casti_zpravy[9] = " ["
 	casti_zpravy[10] = pocitadlo
@@ -131,7 +134,7 @@ function ch_core.chat(rezim, odkoho, zprava, pozice)
 
 	-- Zobrazit nad postavou:
 	local zobrazeno_nad_postavou = "false"
-	if (rezim == "mistni" or rezim == "celoserverovy" or rezim == "rp")
+	if (rezim == "mistni" or rezim == "celoserverovy")
 		and min_vzdal_adresat and min_vzdal_adresat <= vzdalenost_zblizka
 		and (not min_vzdal_ignorujici or min_vzdal_ignorujici > vzdalenost_pro_ignorovani)
 	then
@@ -412,11 +415,29 @@ minetest.override_chatcommand("msg", {func = function(player_name, text)
 end})
 
 minetest.register_chatcommand("doslech", {
-	params = "[<metrů>]",
-	description = "Nastaví omezený doslech v chatu. Hodnota musí být celé číslo v rozsahu 0 až 65535. Bez parametru nastaví 65535.",
+	params = "[<metrů>]|uložit",
+	description = "Nastaví omezený doslech v chatu. Hodnota musí být celé číslo v rozsahu 0 až 65535. Bez parametru nastaví vypíše stávající hodnoty, s parametrem „uložit“ uloží aktuální doslech jako výchozí.",
 	privs = { shout = true },
 	func = function(player_name, param)
-		return ch_core.set_doslech(player_name, param)
+		local online_charinfo = ch_core.online_charinfo[player_name]
+		if not online_charinfo then
+			return false, "Vnitřní chyba!"
+		end
+		local aktualni_doslech = online_charinfo.doslech
+		local offline_charinfo = ch_core.offline_charinfo[player_name]
+		local vychozi_doslech = offline_charinfo and offline_charinfo.doslech
+		if param == "" then
+			ch_core.systemovy_kanal(player_name, "Aktuální doslech: "..aktualni_doslech.." m, výchozí doslech (po přihlášení): "..(vychozi_doslech and (vychozi_doslech.." m") or "neznámý"))
+			return true
+		elseif param == "uložit" or param == "ulozit" then
+			offline_charinfo = ch_core.get_offline_charinfo(player_name)
+			offline_charinfo.doslech = online_charinfo.doslech
+			ch_core.save_offline_charinfo(player_name, {"doslech"})
+			ch_core.systemovy_kanal(player_name, "Doslech: "..aktualni_doslech.." m nastaven jako výchozí po přihlášení do hry.")
+			return true
+		else
+			return ch_core.set_doslech(player_name, param)
+		end
 	end,
 })
 minetest.register_chatcommand("ignorovat", {
@@ -481,7 +502,7 @@ local function info_o(player_name, param)
 		minetest.chat_send_player(admin_name, "*** Nejsou uloženy žádné informace o "..view_name..".")
 		return true
 	end
-	local online_charinfo = ch_core.online_charinfo[param]
+	local online_charinfo = ch_core.online_charinfo[player_name] -- may be nil!
 	local result = {"*** Informace o "..view_name..":"}
 	local past_playtime = offline_charinfo.past_playtime or 0
 	local past_ap_playtime = offline_charinfo.past_ap_playtime or 0
@@ -497,6 +518,8 @@ local function info_o(player_name, param)
 		local level_def = ch_core.ap_get_level(offline_charinfo.ap_level)
 		table.insert(result, " z "..level_def.count..", "..(level_def.base + offline_charinfo.ap_xp).." celkem")
 	end
+	table.insert(result, "\n* Doslech: aktuální "..(online_charinfo and online_charinfo.doslech and online_charinfo.doslech.." m" or "neznámý")..", výchozí "..(offline_charinfo.doslech and offline_charinfo.doslech.." m" or "neznámý"))
+
 	minetest.chat_send_player(admin_name, table.concat(result))
 	return true
 end
