@@ -34,7 +34,7 @@ local leaves_nodes = {
 	["cherrytree:blossom_leaves"] = "plantlike",
 	["chestnuttree:leaves"] = "cheap",
 	["clementinetree:leaves"] = "cheap",
-	["darkage:dry_leaves"] = "cheap",
+	["darkage:dry_leaves"] = "cheap_nostick", -- special (no sticks!)
 	["ebony:leaves"] = "cheap",
 	["hollytree:leaves"] = "cheap",
 	["jacaranda:blossom_leaves"] = "cheap",
@@ -68,15 +68,15 @@ local leaves_nodes = {
 	["moretrees:jungletree_leaves_yellow"] = "cheap",
 
 	-- Ethereal
-	["ethereal:bananaleaves"] = "plantlike",
+	["ethereal:bananaleaves"] = "plantlike_nostick",
 
 	-- default
-	["default:acacia_bush_leaves"] = "plantlike",
-	["default:acacia_leaves"] = "plantlike",
+	["default:acacia_bush_leaves"] = "plantlike_nostick",
+	["default:acacia_leaves"] = "plantlike_nostick",
 	["default:aspen_leaves"] = "cheap",
-	["default:blueberry_bush_leaves"] = "bushy",
-	["default:blueberry_bush_leaves_with_berries"] = "bushy",
-	["default:bush_leaves"] = "bushy",
+	["default:blueberry_bush_leaves"] = "bushy_nostick",
+	["default:blueberry_bush_leaves_with_berries"] = "bushy_nostick",
+	["default:bush_leaves"] = "bushy_nostick",
 	["default:leaves"] = "cheap",
 
 	["default:jungleleaves"] = "cheap",
@@ -105,6 +105,7 @@ local p = table.copy(programs.none)
 p.drawtype = "plantlike"
 p.visual_scale = 1.4
 programs.plantlike = p
+programs.plantlike_nostick = p
 
 -- "cheap" => use drawtype = "mesh" and a cheap bushy model
 p = table.copy(programs.none)
@@ -112,11 +113,19 @@ p.drawtype = "mesh"
 p.mesh = "bushy_leaves_cheap_model.obj"
 p.use_texture_alpha = "clip"
 programs.cheap = p
+programs.cheap_nostick = p
 
 -- "bushy" => use drawtype = "mesh" and a full bushy model
 p = table.copy(p)
 p.mesh = "bushy_leaves_full_model.obj"
 programs.bushy = p
+programs.bushy_nostick = p
+
+local nostick_programs = {
+	["bushy_nostick"] = true,
+	["cheap_nostick"] = true,
+	["plantlike_nostick"] = true,
+}
 
 for name, program_name in pairs(leaves_nodes) do
 	local def = minetest.registered_nodes[name]
@@ -124,6 +133,18 @@ for name, program_name in pairs(leaves_nodes) do
 	if def then
 		if not program then
 			error("Invalid program: "..program_name)
+		end
+		if not nostick_programs[program_name] then
+			program = table.copy(program)
+			if type(def.drop) ~= "table" then
+				error("Unexpected type of drop for "..name.."!")
+			end
+			local new_drop_items = {
+				{items = {"default:stick"}, rarity = 16}
+			}
+			program.drop = def.drop
+			table.insert_all(new_drop_items, program.drop.items)
+			program.drop.items = new_drop_items
 		end
 		minetest.override_item(name, program)
 	end

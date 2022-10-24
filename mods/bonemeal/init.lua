@@ -134,7 +134,6 @@ end
 
 -- tree type check
 local function grow_tree(pos, object)
-
 	if type(object) == "table" and object.axiom then
 		-- grow L-system tree
 		minetest.remove_node(pos)
@@ -147,6 +146,8 @@ local function grow_tree(pos, object)
 	elseif type(object) == "function" then
 		-- function
 		object(pos)
+	else
+		minetest.log("warning", "Bonemeal does not know how to grow a tree at "..minetest.pos_to_string(pos)..", type = "..type(object))
 	end
 end
 
@@ -487,6 +488,8 @@ function bonemeal:on_use(pos, strength, node)
 	if check_crops(pos, node.name, strength) then
 		return true
 	end
+
+	minetest.log("info", "Bonemeal failed.")
 end
 
 
@@ -681,5 +684,12 @@ minetest.override_item("default:dirt", {drop = dirt_drop})
 dofile(path .. "/mods.lua")
 dofile(path .. "/lucky_block.lua")
 
+minetest.register_on_mods_loaded(function()
+	for _, sapling_def in ipairs(saplings) do
+		if sapling_def[2] == nil then
+			minetest.log("warning", "[bonemeal] Bonemeal has registered "..sapling_def[1].." as a sapling, but does not know how to grow this sapling!")
+		end
+	end
+end)
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
