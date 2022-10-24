@@ -110,6 +110,7 @@ if minetest.get_modpath("screwdriver") then
 end
 
 dofile(modpath.."/chests.lua")
+dofile(modpath.."/drops.lua")
 dofile(modpath.."/colored_chairs.lua")
 dofile(modpath.."/extra_recipes.lua")
 dofile(modpath.."/falling_nodes.lua")
