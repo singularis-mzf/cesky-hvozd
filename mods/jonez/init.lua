@@ -655,6 +655,7 @@ minetest.register_craft({
 minetest.register_node("jonez:censer", colorable_256({
 	description = S("kadidelnice"),
     tiles = {"jonez_censer_top.png", "jonez_censer_top.png", "jonez_censer_front.png"},
+	use_texture_alpha = "opaque",
     drawtype = "nodebox",
     paramtype = "light",
     node_box = {

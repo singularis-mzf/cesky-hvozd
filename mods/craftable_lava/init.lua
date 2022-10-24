@@ -56,4 +56,30 @@ minetest.register_ore({
 		persist = 0.6
 	}
 })
+
+local abm_def = {
+	label = "Lava turning stone to hot stone",
+	nodenames = {"default:stone", "default:stone_with_coal", "default:cobble", "default:mossycobble"},
+	neighbors = {"default:lava_source", "default:lava_flowing"},
+	interval = 8,
+	chance = 16,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		node.name = "craftable_lava:hot_stone"
+		minetest.swap_node(pos, node)
+	end,
+}
+minetest.register_abm(abm_def)
+abm_def = {
+	label = "Water turning hot stone to stone",
+	nodenames = {"craftable_lava:hot_stone"},
+	neighbors = {"default:water_source", "default:water_flowing", "default:river_water_source", "default:river_water_flowing"},
+	interval = 4,
+	chance = 8,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		node.name = "default:stone"
+		minetest.swap_node(pos, node)
+	end,
+}
+minetest.register_abm(abm_def)
+
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

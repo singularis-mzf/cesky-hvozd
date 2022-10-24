@@ -26,6 +26,10 @@ local known_currency = {
     ["smartshop:currency_100"]=100,
 }
 
+local function log(message)
+	minetest.log("action", "[currency_exchange] "..message)
+end
+
 function currency.register_currency(name, value)
     if minetest.registered_items[name] then
         currency.available_currency[name] = value
@@ -96,10 +100,12 @@ local function get_change_stacks(value)
 				local change_stack = ItemStack(name)
 				change_stack:set_count(remainder)
 				table.insert(change_stack)
+				log("get_change_stacks(): returned "..num_full_stacks.." full stacks (stack_max = "..stack_max..") and "..remainder.." of "..name)
 			else
 				local change_stack = ItemStack(name)
 				change_stack:set_count(count_required)
 				table.insert(change_stacks, change_stack)
+				log("get_change_stacks(): returned a stack of "..count_required.." "..name)
 			end
 
 			return change_stacks
@@ -128,23 +134,46 @@ local function get_currency_counts(inv, kind)
 end
 
 local function remove_small_bills(inv, kind, currency_counts, owed_value, removed_items)
-	-- remove small bills
+	local safety_counter = 5
 	local name_to_break  -- name of bill to break, if value is left over
-	for _, currency_count in ipairs(currency_counts) do
-		local name, count = unpack(currency_count)
-		local value = currency.available_currency[name]
-		local count_to_remove = math.min(count, math.floor(owed_value / value))
-		if count_to_remove == 0 then
-			name_to_break = name
-			break
-		end
 
-		local stack_to_remove = ItemStack(name)
-		stack_to_remove:set_count(count_to_remove)
-		table.insert(removed_items, inv:remove_item(stack_to_remove, kind))
-		owed_value = owed_value - (count_to_remove * value)
+	local original_currency_counts = currency_counts
+	currency_counts = table.copy(original_currency_counts)
+	for i, cc in ipairs(original_currency_counts) do
+		currency_counts[i] = table.copy(cc)
 	end
 
+	while safety_counter > 0 and name_to_break == nil and owed_value > 0 do
+		safety_counter = safety_counter - 1
+
+		-- remove small bills
+		for i, currency_count in ipairs(currency_counts) do
+			local name, count = unpack(currency_count)
+			if count > 0 then
+				local value = currency.available_currency[name]
+				local count_to_remove = math.min(count, math.floor(owed_value / value))
+				log("remove_small_bills(): should remove "..count_to_remove.." of "..name.." ( owed_value "..owed_value.." / value "..value..") and count = "..count)
+				if count_to_remove == 0 then
+				-- if count_to_remove * value < owed_value and count * value >= owed_value then
+					name_to_break = name
+					break
+				end
+
+				while count_to_remove > 0 do
+					local stack_to_remove = ItemStack(name)
+					local stack_to_remove_count = math.min(count_to_remove, 60000)
+					stack_to_remove:set_count(stack_to_remove_count)
+					table.insert(removed_items, inv:remove_item(stack_to_remove, kind))
+					owed_value = owed_value - (stack_to_remove_count * value)
+					log("remove_small_bills(): removed "..stack_to_remove_count.." of "..name.." and decreased owed_value to "..owed_value)
+					count_to_remove = count_to_remove - stack_to_remove_count
+					currency_counts[i][2] = currency_counts[i][2] - stack_to_remove_count
+				end
+			end
+		end
+	end
+
+	log("remove_small_bills(): will break "..(name_to_break or "nil").." to obtain resulting owed_value "..owed_value.." (currency_counts = "..dump2(currency_counts)..")")
 	return name_to_break, owed_value
 end
 
@@ -153,9 +182,11 @@ local function try_to_change(inv, kind, name_to_break, owed_value, removed_items
 
 	table.insert(removed_items, inv:remove_item(stack_to_break, kind))
 	local value = currency.available_currency[name_to_break]
+	log("try_to_change(): broken "..name_to_break.." to get value of "..value)
 
 	local change_stacks = get_change_stacks(value - owed_value)
 	if not change_stacks then
+		log("try_to_change(): no possible change_stacks found!")
 		return true
 	end
 
@@ -166,6 +197,7 @@ local function try_to_change(inv, kind, name_to_break, owed_value, removed_items
 
 		if not remainder:is_empty() then
 			-- failed to fit full change stack, we've got to undo inventory changes now
+			log("failed to fit full change stack, we've got to undo inventory changes now")
 			local partial_change_stack = ItemStack(change_stack:get_name())
 			partial_change_stack:set_count(change_stack:get_count() - remainder:get_count())
 			inv:remove_item(partial_change_stack, kind)
@@ -177,6 +209,7 @@ local function try_to_change(inv, kind, name_to_break, owed_value, removed_items
 
 	if num_stacks_processed ~= #change_stacks then
 		-- changing failed, remove any change that was already added
+		log("changing failed, remove any change that was already added")
 		for i = 1, num_stacks_processed do
 			inv:remove_item(change_stacks[i], kind)
 		end
@@ -184,6 +217,7 @@ local function try_to_change(inv, kind, name_to_break, owed_value, removed_items
 		return true
 	end
 
+	log("try_to_change() succeeded")
 	return false
 end
 
@@ -196,31 +230,54 @@ function currency.remove_item(inv, stack, kind)
 	local owed_value = sum_stack(stack)
 	local removed_items = {}
 
+	log("Starting currency exchange for owed_value "..owed_value)
 	-- remove any relevant denominations
 	do
 		local removed = inv:remove_item(stack, kind)
 		local removed_value = sum_stack(removed)
 		owed_value = owed_value - removed_value
+		log("Removed "..removed:get_count().." of "..removed:get_name().." with value "..removed_value.." and decreased owed_value to "..owed_value)
 		if not removed:is_empty() then
 			table.insert(removed_items, removed)
 		end
 	end
 
-	-- see what's in the player's inventory
-	local currency_counts = get_currency_counts(inv, kind)
-
+	local i = 0
 	local name_to_break
-	name_to_break, owed_value = remove_small_bills(inv, kind, currency_counts, owed_value, removed_items)
-
 	local change_failed = false
-	if owed_value > 0 then
-		-- break the next largest bill
-		if not name_to_break then
-			change_failed = true
-		else
-			change_failed = try_to_change(inv, kind, name_to_break, owed_value, removed_items)
+	while owed_value > 0 and i < 5 do
+		i = i + 1
+		-- see what's in the player's inventory
+		local currency_counts = get_currency_counts(inv, kind)
+		log("Currency counts in the inventory: "..dump2(currency_counts))
+
+		name_to_break, owed_value = remove_small_bills(inv, kind, currency_counts, owed_value, removed_items)
+
+		if owed_value > 0 then
+			-- break the next largest bill
+			if not name_to_break then
+				change_failed = true
+			else
+				change_failed = try_to_change(inv, kind, name_to_break, owed_value, removed_items)
+			end
 		end
+		-- if not change_failed then
+			break -- change decreased owed_value to 0
+		-- end
 	end
+
+	--[[
+	if owed_value > 0 and not name_to_break then
+		name_to_break, owed_value = remove_small_bills(inv, kind, currency_counts, owed_value, removed_items)
+		if owed_value > 0 then
+			-- break the next largest bill
+			if not name_to_break then
+				change_failed = true
+			else
+				change_failed = try_to_change(inv, kind, name_to_break, owed_value, removed_items)
+			end
+		end
+	end ]]
 
 	-- if we failed, put stuff back
 	if change_failed then
@@ -230,6 +287,7 @@ function currency.remove_item(inv, stack, kind)
 		return ItemStack()
 	end
 
+	log("remove_item() succeeded")
 	return ItemStack(stack)
 end
 
