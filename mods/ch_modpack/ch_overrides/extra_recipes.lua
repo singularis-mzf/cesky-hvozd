@@ -78,3 +78,12 @@ if minetest.get_modpath("fireflies") and minetest.get_modpath("vessels") then
 		replacements = {{"fireflies:firefly_bottle", "vessels:glass_bottle"}},
 	})
 end
+
+if minetest.get_modpath("jonez") and minetest.get_modpath("technic_worldgen") and minetest.get_modpath("darkage") then
+	minetest.register_craft({
+		output = "jonez:marble",
+		type = "shapeless",
+		recipe = {"darkage:marble", "technic:marble"},
+		replacements = {{"darkage:marble", "technic:stone_dust"}},
+	})
+end

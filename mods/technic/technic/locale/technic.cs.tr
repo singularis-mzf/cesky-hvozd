@@ -167,28 +167,28 @@ ERROR: Only players with server privilege may enable Administrative World Anchor
 ## Grinder Recipes
 # $1: Name
 @1 Dust=@1 prach
-Akalin=Akalinový
-Alatro=Alatrový
-Arol=Arolový
-Brass=Mosazný
-Bronze=Bronzový
-Carbon Steel=Uhelnoocelový
-Cast Iron=Litoželezný
-Chernobylite=Černobylitový
-Chromium=Chromový
-Coal=Uhelný
-Copper=Měděný
-Gold=Zlatý
-Mithril=Mitrilový
-Lead=Olověný
-Silver=Stříbrný
-Stainless Steel=Nerezový
-Stone=Kamenný
-Sulfur=Sirný
-Talinite=Talinitový
-Tin=Cínový
-Wrought Iron=Železný
-Zinc=Zinkový
+Akalin=akalinový
+Alatro=alatrový
+Arol=arolový
+Brass=mosazný
+Bronze=bronzový
+Carbon Steel=uhelnoocelový
+Cast Iron=litoželezný
+Chernobylite=černobylitový
+Chromium=chromový
+Coal=uhelný
+Copper=měděný
+Gold=zlatý
+Mithril=mitrilový
+Lead=olověný
+Silver=stříbrný
+Stainless Steel=nerezový
+Stone=kamenný
+Sulfur=sirný
+Talinite=talinitový
+Tin=cínový
+Wrought Iron=železný
+Zinc=zinkový
 @1%-Fissile Uranium=@1% uranový
 
 ## Tools

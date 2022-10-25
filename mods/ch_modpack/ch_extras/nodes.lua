@@ -1,4 +1,31 @@
-local def
+local def, nbox
+
+local function degrotate_after_place_node(pos, placer, itemstack, pointed_thing)
+	local node = minetest.get_node(pos)
+	local ndef = minetest.registered_nodes[node.name]
+	if ndef and ndef.paramtype2 == "degrotate" then
+		node.param2 = math.random(0, 239)
+		minetest.swap_node(pos, node)
+	end
+end
+
+local function degrotate_on_rotate(pos, node, user, mode, new_param2)
+	if mode == screwdriver.ROTATE_FACE then
+		if node.param2 == 239 then
+			node.param2 = 0
+		else
+			node.param2 = node.param2 + 1
+		end
+	else
+		if node.param2 == 0 then
+			node.param2 = 239
+		else
+			node.param2 = node.param2 - 1
+		end
+	end
+	minetest.swap_node(pos, node)
+	return true
+end
 
 -- ch_extras:czech_flag
 ---------------------------------------------------------------
@@ -153,6 +180,84 @@ minetest.register_craft({
 		{"", "default:steel_ingot", "dye:black"},
 		{"", "default:steel_ingot", ""},
 	}
+})
+
+-- ch_extras:cracks
+---------------------------------------------------------------
+nbox = {
+	type = "fixed",
+	fixed = {-0.4, -0.5, -0.4, 0.4, -7/16, 0.4},
+}
+def = {
+	description = "praskliny (jen vodorovně)",
+	drawtype = "mesh",
+	mesh = "ch_extras_cracks.obj",
+	selection_box = nbox,
+	--[[
+	-- top, bottom, right, left, back, front
+	tiles = {"ch_extras_praskliny.png",
+             "ch_extras_praskliny.png",
+             "ch_core_empty.png",
+             "ch_core_empty.png",
+             "ch_core_empty.png",
+             "ch_core_empty.png",
+             }, ]]
+	tiles = {"ch_extras_praskliny.png^[opacity:192"},
+	use_texture_alpha = "blend",
+	inventory_image = "ch_core_white_pixel.png^[invert:rgb^ch_extras_praskliny.png",
+	wield_image = "ch_extras_praskliny.png",
+	paramtype = "light",
+	paramtype2 = "degrotate",
+	sunlight_propagates = true,
+	groups = {choppy = 2, dig_immediate = 2},
+	walkable = false,
+	after_place_node = degrotate_after_place_node,
+	on_rotate = degrotate_on_rotate,
+}
+
+minetest.register_node("ch_extras:cracks", def)
+minetest.register_craft({
+	output = "ch_extras:cracks 16",
+	recipe = {
+		{"", "default:cobble"},
+		{"default:cobble", ""},
+	},
+})
+
+-- ch_extras:spina
+---------------------------------------------------------------
+
+nbox = {
+	type = "fixed",
+	fixed = {-0.1, -0.5, -0.1, 0.1, -7/16, 0.1},
+}
+def = {
+	description = "špína (jen vodorovně)",
+	drawtype = "mesh",
+	mesh = "ch_extras_cracks.obj",
+	selection_box = nbox,
+	tiles = {"ch_extras_spina.png"},
+	use_texture_alpha = "blend",
+	inventory_image = "ch_core_white_pixel.png^[multiply:#cccccc^ch_extras_spina.png^ch_extras_spina.png",
+	wield_image = "ch_extras_spina.png",
+	paramtype = "light",
+	paramtype2 = "degrotate",
+	sunlight_propagates = true,
+	groups = {choppy = 2, dig_immediate = 2},
+	walkable = false,
+	after_place_node = degrotate_after_place_node,
+	on_rotate = degrotate_on_rotate,
+}
+
+minetest.register_node("ch_extras:spina", def)
+minetest.register_craft({
+	output = "ch_extras:spina 16",
+	recipe = {{"darkage:silt_lump"}},
+})
+
+minetest.register_craft({
+	output = "ch_extras:spina 64",
+	recipe = {{"default:dirt", ""}, {"default:sand", ""}},
 })
 
 -- ch_extras:railway_gravel
