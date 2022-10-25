@@ -4,6 +4,7 @@
 minetest.register_alias("tool_workshop", "technic:tool_workshop")
 
 local S = technic.getter
+local min_wear_limit = 6553
 
 local tube_entry = ""
 
@@ -56,7 +57,7 @@ local run = function(pos, node)
 		if itemdef and
 				(not itemdef.wear_represents or
 				itemdef.wear_represents == "mechanical_wear") and
-				srcstack:get_wear() ~= 0 then
+				srcstack:get_wear() > min_wear_limit then
 			repairable = true
 		end
 	end
@@ -75,7 +76,7 @@ local run = function(pos, node)
 		meta:set_string("infotext", S("@1 Unpowered", machine_name))
 	elseif eu_input >= workshop_demand[EU_upgrade+1] then
 		meta:set_string("infotext", S("@1 Active", machine_name))
-		srcstack:add_wear(-1000)
+		srcstack:add_wear(math.max(-1000, min_wear_limit - srcstack:get_wear()))
 		inv:set_stack("src", 1, srcstack)
 	end
 	meta:set_int("MV_EU_demand", workshop_demand[EU_upgrade+1])

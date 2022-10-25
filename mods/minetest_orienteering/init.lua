@@ -28,6 +28,22 @@ elseif set == "right" then
 	orienteering.settings.hud_alignment.x = -1
 end
 
+local minimap_modes = {
+	{type = "off", label = "minimapa je skryta"},
+	{type = "surface", label = "povrch 512 (1/4)", size = 512},
+	{type = "surface", label = "povrch 256 (2/4)", size = 256},
+	{type = "surface", label = "povrch 128 (3/4)", size = 128},
+	{type = "surface", label = "povrch 64 (4/4)", size = 64},
+	{type = "radar", label = "radar 256 (1/4)", size = 256},
+	{type = "radar", label = "radar 128 (2/4)", size = 128},
+	{type = "radar", label = "radar 64 (3/4)", size = 64},
+	{type = "radar", label = "radar 32 (4/4)", size = 32},
+}
+
+local function open_minimap(itemstack, user, pointed_thing)
+	user:set_minimap_modes(minimap_modes, 1)
+end
+
 local o_lines = 4 -- Number of lines in HUD
 
 local yaw_abbrs = {
@@ -132,7 +148,7 @@ minetest.register_tool("orienteering:quadcorder", {
 	wield_scale = { x=1, y=1, z=3.5 },
 	inventory_image = "orienteering_quadcorder.png",
 	groups = { disable_repair = 1 },
-	on_use = orienteering.toggle_time_mode,
+	on_use = open_minimap,
 })
 
 -- Displays game time
@@ -175,6 +191,7 @@ if not mod_map then
 		wield_scale = { x=1.5, y=1.5, z=0.15 },
 		inventory_image = "orienteering_map.png",
 		groups = { disable_repair = 1 },
+		on_use = open_minimap,
 	})
 end
 
@@ -294,12 +311,26 @@ if minetest.get_modpath("default") ~= nil then
 end
 
 function orienteering.update_automapper(player)
-	if orienteering.tool_active(player, "orienteering:automapper") or orienteering.tool_active(player, "orienteering:quadcorder") or minetest.is_creative_enabled(player:get_player_name()) then
-		player:hud_set_flags({minimap = true, minimap_radar = true})
-	elseif ((not mod_map) and orienteering.tool_active(player, "orienteering:map")) or ((mod_map) and orienteering.tool_active(player, "map:mapping_kit")) then
-		player:hud_set_flags({minimap = true, minimap_radar = false})
-	else
-		player:hud_set_flags({minimap = false, minimap_radar = false})
+	local player_name = player:get_player_name() or ""
+	local online_charinfo = ch_core.online_charinfo[player_name]
+	if not online_charinfo then
+		minetest.log("warning", "orienteering.update_automapper(): online_charinfo for player "..player_name.." not found!")
+		return
+	end
+	if online_charinfo.enable_minimap == nil then
+		online_charinfo.enable_minimap = false
+		online_charinfo.enable_radar = false
+	end
+	local enable_radar = orienteering.tool_active(player, "orienteering:automapper") or orienteering.tool_active(player, "orienteering:quadcorder") or minetest.is_creative_enabled(player_name)
+	local enable_minimap = enable_radar or ((not mod_map) and orienteering.tool_active(player, "orienteering:map")) or ((mod_map) and orienteering.tool_active(player, "map:mapping_kit"))
+
+	if enable_minimap ~= online_charinfo.enable_minimap or enable_radar ~= online_charinfo.enable_radar then
+		online_charinfo.enable_minimap = enable_minimap
+		online_charinfo.enable_radar = enable_radar
+		player:hud_set_flags({minimap = enable_minimap, minimap_radar = enable_radar})
+		if enable_minimap or enable_radar then
+			player:set_minimap_modes(minimap_modes, 0)
+		end
 	end
 end
 

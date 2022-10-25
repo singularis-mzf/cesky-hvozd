@@ -10,8 +10,15 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 anvil = {
 	setting = {
 		item_displacement = 2/16,
+		min_wear_min = 3275, -- anvil cannot reduce wear below the limit that is random between these values
+		min_wear_max = 6553,
 	}
 }
+
+local function get_min_wear_limit()
+	local s = anvil.setting
+	return math.random(s.min_wear_min, s.min_wear_max)
+end
 
 minetest.register_alias("castle:anvil", "anvil:anvil")
 
@@ -364,10 +371,10 @@ minetest.register_node("anvil:anvil", {
 		end)
 
 		-- tell the player when the job is done
-		if(   input:get_wear() == 0 ) then
-			-- but only once
+		if(   input:get_wear() <= get_min_wear_limit() ) then
+			--[[ but only once
 			if 0 < meta:get_int("informed") then return end
-			meta:set_int("informed", 1)
+			meta:set_int("informed", 1) ]]
 			local tool_desc
 			local meta_description = input:get_meta():get_string("description")
 			if "" ~= meta_description then
@@ -377,7 +384,7 @@ minetest.register_node("anvil:anvil", {
 			else
 				tool_desc = tool_name
 			end
-			minetest.chat_send_player( puncher:get_player_name(), S('Your @1 has been repaired successfully.', tool_desc))
+			minetest.chat_send_player( puncher:get_player_name(), S('Your @1 has been repaired successfully, remains damage @2 %.', tool_desc, string.format("%.3f", input:get_wear() / 655.35)))
 			return
 		else
 			pos.y = pos.y + anvil.setting.item_displacement
@@ -402,7 +409,10 @@ minetest.register_node("anvil:anvil", {
 		end
 
 		-- do the actual repair
-		input:add_wear( -5000 ) -- equals to what technic toolshop does in 5 seconds
+		local old_wear = input:get_wear()
+		local wear_to_add = math.min(0, math.max(-5000, get_min_wear_limit() - old_wear))
+		--input:add_wear( -5000 ) -- equals to what technic toolshop does in 5 seconds
+		input:add_wear(wear_to_add)
 		inv:set_stack("input", 1, input)
 
 		-- damage the hammer slightly
