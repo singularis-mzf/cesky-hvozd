@@ -15,7 +15,7 @@
 
 -- list of allowed combo blocks
 local allowed_combos = {
-	"bakedclay:natural+darkage:ors_brick",
+	"bakedclay:slab_baked_clay_natural+darkage:slab_ors_brick",
 	"moreblocks:slab_cactus_brick+moreblocks:slab_cobble",
 }
 allowed_combos = table.key_value_swap(allowed_combos)
@@ -400,8 +400,16 @@ for _,v1 in pairs(slab_index) do
 				local v2_is_glass = string.find(string.lower(tostring(v2)), "glass")                          -- so using name string match but this pretty unreliable.
 																											  -- returns value nil if not otherwise returns integar see lua string.find
 
-				local allowed_combo_index = allowed_combos[v1.."+"..v2] or allowed_combos[v2.."+"..v1]
-				local allowed_combo_index_suffix = allowed_combos[v1.."+"..v2] and "A" or "B"
+				local allowed_combo_index, allowed_combo_index_suffix
+				allowed_combo_index = allowed_combos[v1.."+"..v2]
+				if allowed_combo_index then
+					allowed_combo_index_suffix = "A"
+				else
+					allowed_combo_index = allowed_combos[v2.."+"..v1]
+					if allowed_combo_index then
+						allowed_combo_index_suffix = "B"
+					end
+				end
 				if not allowed_combo_index then
 					-- not allowed
 				elseif v1_is_glass and v2_is_glass then                                                           -- glass_glass nodes so drawtype = glasslike

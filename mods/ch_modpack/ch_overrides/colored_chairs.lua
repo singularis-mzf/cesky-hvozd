@@ -1,4 +1,4 @@
-if minetest.get_modpath("bakedclay") and minetest.get_modpath("default") then
+if minetest.get_modpath("default") and minetest.get_modpath("ts_furniture") then
 
 	local bakedclay_colors = {
 		black = "000000",
