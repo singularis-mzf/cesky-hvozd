@@ -219,3 +219,5 @@ function ch_core.generate_path_sn_at(pos)
 	set_node(vector.offset(pos, -5, 1, 0), {name = "advtrains:dtrack_st", param2 = 2})
 	return true
 end
+
+
