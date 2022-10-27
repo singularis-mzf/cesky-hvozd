@@ -87,3 +87,32 @@ if minetest.get_modpath("jonez") and minetest.get_modpath("technic_worldgen") an
 		replacements = {{"darkage:marble", "technic:stone_dust"}},
 	})
 end
+
+if minetest.get_modpath("cottages") then
+	minetest.register_craft({
+		output = "cottages:red 4",
+		recipe = {
+			{"", "homedecor:roof_tile_terracotta", ""},
+			{"homedecor:roof_tile_terracotta", "default:pine_wood", "homedecor:roof_tile_terracotta"},
+			{"", "", ""},
+		},
+	})
+
+	minetest.register_craft({
+		output = "cottages:brown 4",
+		recipe = {
+			{"", "homedecor:roof_tile_terracotta", ""},
+			{"homedecor:roof_tile_terracotta", "default:junglewood", "homedecor:roof_tile_terracotta"},
+			{"", "", ""},
+		},
+	})
+
+	minetest.register_craft({
+		output = "cottages:black 4",
+		recipe = {
+			{"", "building_blocks:Tar", ""},
+			{"building_blocks:Tar", "", "building_blocks:Tar"},
+			{"", "", ""},
+		},
+	})
+end

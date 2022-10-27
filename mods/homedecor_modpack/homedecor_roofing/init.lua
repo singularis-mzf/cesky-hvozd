@@ -29,6 +29,7 @@ minetest.register_node(":homedecor:skylight_frosted", {
 	selection_box = homedecor.nodebox.slab_y(0.1),
 })
 
+--[[
 for s, s_loc in pairs({ ["asphalt"] = S("asphalt"), ["terracotta"] = S("terracotta"), ["wood"] = S("wood") }) do
 	minetest.register_node(":homedecor:shingles_"..s, {
 		description = S("Shingles (" .. s .. ")"),
@@ -119,6 +120,7 @@ homedecor_roofing.register_inner_corner = function(modname, subname, groups, slo
 		sounds = default.node_sound_wood_defaults(),
 	})
 end
+]]
 
 homedecor_roofing.register_slope = function(modname, subname, recipeitem, groups, slope_image, description)
 	local tiles = slope_image
@@ -215,6 +217,7 @@ minetest.register_craft( {
 	}
 })
 
+--[[
 minetest.register_craft( {
 	output = "homedecor:roof_tile_terracotta 8",
 	recipe = {
@@ -301,6 +304,7 @@ homedecor_roofing.register_slope("homedecor", "terracotta",
 	{ "homedecor_shingles_terracotta.png" },
 	S("Terracotta Shingles")
 )
+]]
 
 homedecor_roofing.register_slope("homedecor", "glass",
 	"homedecor:shingles_glass",

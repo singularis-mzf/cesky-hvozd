@@ -5,25 +5,25 @@ local S = cottages.S
 
 local cottage_materials = {
 	reet = {
-            description = "Špinavá sláma",
+            description = S("špinavá sláma"),
             tiles = {"cottages_reet.png"},
             sounds = cottages.sounds.stone,
             groups = {hay = 3, snappy=3,choppy=3,oddly_breakable_by_hand=3,flammable=3},
 	},
 	black = {
-			description = "Asfaltová střešní krytina",
+			description = S("asfaltová střešní krytina"),
 			tiles = {"cottages_homedecor_shingles_asphalt.png"},
 			sounds = cottages.sounds.stone,
 			groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2},
 	},
 	red = {
-			description = "Světlé křidlice (střešní krytina)",
+			description = S("světlé křidlice (střešní krytina)"),
 			tiles = {"cottages_homedecor_shingles_terracotta.png"},
 			sounds = cottages.sounds.stone,
 			groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2},
 	},
 	brown = {
-			description = "Tmavé křidlice (střešní krytina)",
+			description = S("tmavé křidlice (střešní krytina)"),
 			tiles = {"cottages_homedecor_shingles_wood.png"},
 			sounds = cottages.sounds.wood,
 			groups = {snappy=2,choppy=2,oddly_breakable_by_hand=2},

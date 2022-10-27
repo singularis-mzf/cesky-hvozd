@@ -67,13 +67,15 @@ building_blocks_stairs("building_blocks:fakegrass", {
 		footstep = {name = "default_grass_footstep", gain = 0.25},
 	}),
 })
-building_blocks_stairs("building_blocks:hardwood", {
+-- building_blocks_stairs("building_blocks:hardwood", {
+minetest.register_node("building_blocks:hardwood", {
 	tiles = {"building_blocks_hardwood.png"},
 	is_ground_content = true,
 	description = S("Hardwood"),
 	groups = {choppy=1,flammable=1, dig_tree=1},
 	sounds = default.node_sound_wood_defaults(),
 })
+--[[
 building_blocks_stairs("building_blocks:Roofing", {
 	tiles = {"building_blocks_Roofing.png"},
 	is_ground_content = true,
@@ -81,6 +83,7 @@ building_blocks_stairs("building_blocks:Roofing", {
 	groups = {snappy=3, dig_generic=4},
 	sounds = default.node_sound_stone_defaults(),
 })
+]]
 building_blocks_stairs("building_blocks:Tar", {
 	description = S("Tar"),
 	tiles = {"building_blocks_tar.png"},
