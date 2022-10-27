@@ -93,6 +93,7 @@ local function on_joinplayer(player, last_login)
 	end
 
 	player:set_nametag_attributes(ch_core.compute_player_nametag(online_charinfo, offline_charinfo))
+	player:hud_set_flags({minimap = false, minimap_radar = false})
 	minetest.after(2, after_joinplayer, player_name)
 	return true
 end

@@ -103,12 +103,17 @@ function ch_core.chat(rezim, odkoho, zprava, pozice)
 						casti_zpravy[4] = "(ign.): "
 					elseif vzdalenost_odkoho_komu > odkoho_doslech then
 						casti_zpravy[4] = "(m.d.): "
+					elseif rezim == "sepot" then
+						casti_zpravy[4] = "(šepot): "
 					else
 						casti_zpravy[4] = ": "
 					end
 					casti_zpravy[10] = vzdalenost_odkoho_komu
 					minetest.chat_send_player(komu, table.concat(casti_zpravy))
 					pocitadlo = pocitadlo + 1
+					if rezim == "sepot" then
+						minetest.sound_play("chat3_bell", {to_player = komu, gain = 1.0}, true)
+					end
 
 					if not min_vzdal_adresat or vzdalenost_odkoho_komu < min_vzdal_adresat then
 						min_vzdal_adresat = vzdalenost_odkoho_komu
@@ -187,6 +192,7 @@ function ch_core.soukroma_zprava(odkoho, komu, zprava)
 		minetest.chat_send_player(komu, color_soukromy .. ch_core.prihlasovaci_na_zobrazovaci(odkoho)..": "..zprava .. color_reset)
 		odkoho_info.posl_soukr_adresat = komu
 		minetest.log("action", "CHAT:soukroma_zprava:"..odkoho..">"..komu..": "..minetest.sha1(zprava:gsub("%s", "")))
+		minetest.sound_play("chat3_bell", {to_player = komu, gain = 1.0}, true)
 		return true
 	end
 	ch_core.systemovy_kanal(odkoho, komu .. " není ve hře!")
@@ -229,7 +235,7 @@ local function on_chat_message(jmeno, zprava)
 	elseif c == "_" then
 		-- šepot
 		-- zprava = zprava:sub(zprava:sub(2,2) == " " and 3 or 2, #zprava)
-		return ch_core.chat("sepot", jmeno, zprava, info_pos)
+		return ch_core.chat("sepot", jmeno, zprava:sub(2, -1), info_pos)
 	elseif c == "\"" then
 		-- soukromá zpráva
 		local i = string.find(zprava, " ")

@@ -42,6 +42,8 @@ local minimap_modes = {
 
 local function open_minimap(itemstack, user, pointed_thing)
 	user:set_minimap_modes(minimap_modes, 1)
+	ch_core.systemovy_kanal(user:get_player_name(),
+	                        S("Now you can view a minimap using the appropriate key (the default for computers is V). A minimap will be accessible as long as you would have a Map or Quadcorder on the hotbar."))
 end
 
 local o_lines = 4 -- Number of lines in HUD
@@ -321,8 +323,12 @@ function orienteering.update_automapper(player)
 		online_charinfo.enable_minimap = false
 		online_charinfo.enable_radar = false
 	end
-	local enable_radar = orienteering.tool_active(player, "orienteering:automapper") or orienteering.tool_active(player, "orienteering:quadcorder") or minetest.is_creative_enabled(player_name)
-	local enable_minimap = enable_radar or ((not mod_map) and orienteering.tool_active(player, "orienteering:map")) or ((mod_map) and orienteering.tool_active(player, "map:mapping_kit"))
+	local enable_radar = (
+		orienteering.tool_active(player, "orienteering:automapper") or orienteering.tool_active(player, "orienteering:quadcorder") or minetest.is_creative_enabled(player_name)
+		) and true or false
+	local enable_minimap = (
+		enable_radar or ((not mod_map) and orienteering.tool_active(player, "orienteering:map")) or ((mod_map) and orienteering.tool_active(player, "map:mapping_kit"))
+		) and true or false
 
 	if enable_minimap ~= online_charinfo.enable_minimap or enable_radar ~= online_charinfo.enable_radar then
 		online_charinfo.enable_minimap = enable_minimap

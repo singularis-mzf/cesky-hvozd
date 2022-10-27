@@ -14,8 +14,8 @@ See the GNU Lesser General Public License for more details:
 https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 
 
-Licenses of media (textures)
-----------------------------
+Licenses of media (sounds, textures)
+------------------------------------
 ch_core_0.png
 ch_core_1.png
 ch_core_2.png
@@ -41,8 +41,16 @@ ch_core_white_pixel.png
 ch_core_kcs_1h.png
 ch_core_kcs_1zcs.png
 	Author: Singularis
+	License: CC-BY-SA 4.0
 	Used source: https://commons.wikimedia.org/wiki/File:1_haler_CSK_(1962-1986).png (CC-BY-SA 4.0; author: Arvedui89)
 
 ch_core_kcs_1kcs.png
 	Author: Singularis
+	License: CC-BY-SA 4.0
 	Used source: https://commons.wikimedia.org/wiki/File:1_koruna_CSK_(1991-1992).png (CC-BY-SA 4.0; author: Arvedui89)
+
+chat3_bell.ogg
+	Author: Brandon75689
+	License: CC-BY-SA 3.0
+	Source: https://github.com/octacian/chat3 (unmodified)
+	Original source: https://opengameart.org/content/point-bell
