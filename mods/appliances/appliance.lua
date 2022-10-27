@@ -805,8 +805,9 @@ function appliance:cb_after_dig_node(pos, oldnode, oldmetadata, digger)
     minetest.item_drop(stack, digger, pos)
   end
 end
-      
+
 function appliance:cb_on_punch(pos, node, puncher, pointed_thing)
+  self.last_punch = puncher and {player_name = puncher:get_player_name(), timestamp = minetest.get_us_time()}
   self:call_on_punch(pos, node, puncher, pointed_thing)
   self:activate(pos, minetest.get_meta(pos))
 end
@@ -954,6 +955,17 @@ function appliance:after_timer_step(timer_step)
   local use_input, use_usage = self:recipe_aviable_input(timer_step.inv)
   if ((use_input~=nil) or (not self.have_input)) or ((use_usage~=nil) or (not self.have_usage)) then
     self:running(timer_step.pos, timer_step.meta);
+
+	-- CH_CORE AP
+	local last_punch = self.last_punch
+	if last_punch and minetest.get_us_time() - last_punch.timestamp < 5000000 then
+		local online_charinfo = last_punch.player_name and ch_core.online_charinfo[last_punch.player_name]
+		local ap = online_charinfo and online_charinfo.ap
+		if ap then
+			ap.craft_gen = ap.craft_gen + 1
+		end
+	end
+
     return true
   else
     if (timer_step.production_time) then

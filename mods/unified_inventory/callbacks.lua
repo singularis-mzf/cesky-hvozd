@@ -249,6 +249,13 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		if items ~= "" then
 			minetest.log("action", "Player "..player_name.." trashed in the craft grid: "..items:sub(3, -1))
 			minetest.sound_play("trash_all", {to_player=player_name, gain = 1.0})
+			local online_charinfo = ch_core.online_charinfo[player_name]
+			local ap = online_charinfo and online_charinfo.ap
+			if ap then
+				ap.craft_gen = ap.craft_gen + 1
+			else
+				minetest.log("warning", "AP of player "..player_name.." not found (online_charinfo: "..(online_charinfo and "true" or "false")..")")
+			end
 		end
 	end
 

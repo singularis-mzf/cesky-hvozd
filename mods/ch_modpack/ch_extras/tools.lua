@@ -465,7 +465,7 @@ def = {
 minetest.register_craftitem("ch_extras:staff_of_creativity", def)
 
 -- vícenástroj
-ch_help = "Vícenástroj v sobě kombinuje schopnosti lopaty, sekery, krumpáče a srpu.\nDokáže těžit efektivně jakýkoliv druh materiálu.\nJeho životnost však není vyšší než životnost jednotlivého samostatného nástroje."
+ch_help = "Vícenástroj v sobě kombinuje schopnosti lopaty, sekery, krumpáče a srpu.\nDokáže snadno těžit stejné druhy materiálu jako kterýkoliv z těchto nástrojů.\nJeho životnost však není vyšší než životnost jednotlivého samostatného nástroje."
 ch_help_group = "ch_multitool"
 
 def = {

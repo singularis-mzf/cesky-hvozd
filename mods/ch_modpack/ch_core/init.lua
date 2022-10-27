@@ -55,7 +55,6 @@ dofile(modpath .. "/creative_inventory.lua") -- : lib
 
 
 -- KOHOUT: při přechodu mezi dnem a nocí přehraje zvuk
--- TODO: přehrávat, jen když je postava na povrchu (tzn. ne v hlubokém podzemí)
 
 local last_timeofday = 0 -- pravděpodobně se pokusí něco přehrát v prvním globalstepu,
 -- ale to nevadí, protöže v tu chvíli stejně nemůže být ještě nikdo online.
@@ -321,6 +320,13 @@ local function globalstep(dtime)
 				if look_vertical ~= ap.look_v then
 					ap.look_v = look_vertical
 					ap.look_v_gen = ap.look_v_gen + 1
+				end
+
+				for _, rezim in ipairs({"mistni", "celoserverovy", "sepot", "soukromy"}) do
+					local last = ch_core["last_"..rezim]
+					if last.char == player_name then
+						ap["chat_"..rezim.."_gen"] = last.char_gen
+					end
 				end
 
 				if process_ap then

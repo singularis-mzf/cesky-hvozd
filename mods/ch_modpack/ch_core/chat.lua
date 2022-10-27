@@ -25,6 +25,13 @@ local color_reset = minetest.get_color_escape_sequence("#ffffff")
 local vzdalenost_zblizka = 10 -- počet metrů, na které se ještě považuje hovor za hovor zblízka; nemá vliv na šepot
 local vzdalenost_pro_ignorovani = 150 -- poloměr koule, ve které se nesmí nacházet ignorující postava, aby se zobrazila zpráva nad postavou
 
+-- HISTORIE
+-- ===========================================================================
+ch_core.last_mistni = {char = "", char_gen = 0, count = 0, zprava = ""}
+ch_core.last_celoserverovy = {char = "", char_gen = 0, count = 0, zprava = ""}
+ch_core.last_sepot = {char = "", char_gen = 0, count = 0, zprava = ""}
+ch_core.last_soukromy = {char = "", char_gen = 0, count = 0, zprava = ""}
+
 function ch_core.systemovy_kanal(komu, zprava)
 	if zprava == "" then
 		return true -- je-li zprava "", ignorovat
@@ -162,6 +169,21 @@ function ch_core.chat(rezim, odkoho, zprava, pozice)
 	end
 	minetest.log("action", "CHAT:"..rezim..":"..odkoho..">"..pocitadlo.." characters(ex.:"..(posl_adresat or "nil")..", mv_adr="..(min_vzdal_adresat or "nil")..", znadpost="..zobrazeno_nad_postavou.."): "..zprava)
 
+	-- Zaznamenat aktivitu:
+	if (rezim == "mistni" or rezim == "celoserverovy" or rezim == "sepot") then
+		local last = ch_core["last_"..rezim]
+		if zprava ~= last.zprava and pocitadlo > 0 then
+			last.zprava = zprava
+			if last.char ~= odkoho then
+				last.char = odkoho
+				last.char_gen = last.char_gen + 1
+				last.count = 1
+			else
+				last.count = last.count + 1
+			end
+		end
+	end
+
 	return true
 end
 
@@ -191,8 +213,23 @@ function ch_core.soukroma_zprava(odkoho, komu, zprava)
 		minetest.chat_send_player(odkoho, color_soukromy .. "-> ".. ch_core.prihlasovaci_na_zobrazovaci(komu)..": "..zprava .. color_reset)
 		minetest.chat_send_player(komu, color_soukromy .. ch_core.prihlasovaci_na_zobrazovaci(odkoho)..": "..zprava .. color_reset)
 		odkoho_info.posl_soukr_adresat = komu
-		minetest.log("action", "CHAT:soukroma_zprava:"..odkoho..">"..komu..": "..minetest.sha1(zprava:gsub("%s", "")))
+		zprava = minetest.sha1(zprava:gsub("%s", ""))
+		minetest.log("action", "CHAT:soukroma_zprava:"..odkoho..">"..komu..": "..zprava)
 		minetest.sound_play("chat3_bell", {to_player = komu, gain = 1.0}, true)
+
+		-- Zaznamenat aktivitu:
+		local last = ch_core.last_soukromy
+		if zprava ~= last.zprava then
+			last.zprava = zprava
+			if last.char ~= odkoho then
+				last.char = odkoho
+				last.char_gen = last.char_gen + 1
+				last.count = 1
+			else
+				last.count = last.count + 1
+			end
+		end
+
 		return true
 	end
 	ch_core.systemovy_kanal(odkoho, komu .. " není ve hře!")

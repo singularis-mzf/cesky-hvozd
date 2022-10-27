@@ -211,8 +211,15 @@ function ch_core.ap_init(player, online_charinfo, offline_charinfo)
 		velocity_z_gen = 0,
 		control = player:get_player_control_bits(),
 		control_gen = 0,
+		chat_mistni_gen = 0,
+		chat_celoserverovy_gen = 0,
+		chat_sepot_gen = 0,
+		chat_soukromy_gen = 0,
+		craft_gen = 0,
 
 		-- koeficienty
+		craft_coef = default_coef,
+		chat_coef = default_coef,
 		dig_coef = default_coef,
 		place_coef = default_coef,
 		walk_coef  = default_coef,
@@ -234,16 +241,26 @@ function ch_core.ap_update(player, online_charinfo, offline_charinfo)
 	online_charinfo.ap = ap_new
 
 	-- aktivity
+	local act_chat = ap.chat_mistni_gen > ap1.chat_mistni_gen or ap.chat_celoserverovy_gen > ap1.chat_celoserverovy_gen or ap.chat_sepot_gen > ap1.chat_sepot_gen or ap.chat_soukromy_gen > ap1.chat_soukromy_gen
+	local act_craft = ap.craft_gen > ap1.craft_gen
 	local act_dig = ap.dig_gen > ap1.dig_gen and (not ap.dig_pos or not ap1.dig_pos or not ap2.dig_pos or vector.angle(vector.subtract(ap2.dig_pos, ap1.dig_pos), vector.subtract(ap1.dig_pos, ap.dig_pos)) ~= 0)
 	local act_place = ap.place_gen - ap1.place_gen > 1
 	local act_walk = (ap.look_h_gen - ap1.look_h_gen) + (ap.look_v_gen - ap1.look_v_gen) > 2 and ap.velocity_x_gen - ap1.velocity_x_gen > 8 and ap.velocity_z_gen - ap1.velocity_z_gen > 8 and ap.control_gen > ap1.control_gen
 
-	local act_any = act_dig or act_place or act_walk
+	local act_any = act_chat or act_craft or act_dig or act_place or act_walk
 	local debug_coef_changes = {}
 
-	for coef_key, active in pairs({dig_coef = act_dig, place_coef = act_place, walk_coef = act_walk}) do
+	for coef_key, active in pairs({chat_coef = act_chat, craft_coef = act_craft, dig_coef = act_dig, place_coef = act_place, walk_coef = act_walk}) do
+		local adjustment
+		if not active then
+			adjustment = -ap_decrease
+		elseif coef_key ~= "chat_coef" then
+			adjustment = ap_increase
+		else
+			adjustment = 2 * ap_increase -- čet => dvojnásobný vzrůst
+		end
 		local old_coef = ap_new[coef_key]
-		local new_coef = adjust_coef(ap_new, coef_key, active and ap_increase or -ap_decrease)
+		local new_coef = adjust_coef(ap_new, coef_key, adjustment)
 		result = result + new_coef
 		if new_coef ~= old_coef then
 			table.insert(debug_coef_changes, coef_key..":"..old_coef.."=>"..new_coef..";")
@@ -329,10 +346,22 @@ local function on_placenode(pos, newnode, placer, oldnode, itemstack, pointed_th
 			end
 		end
 	else
-		minetest.log("warning", "DEBUG: on_placenode called with none or invalid placer")
+		minetest.log("warning", "on_placenode called with none or invalid placer")
 	end
 end
 
+local function on_craft(itemstack, player, old_craft_grid, craft_inv)
+	local player_name = player and player:is_player() and player:get_player_name()
+	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
+	if online_charinfo and craft_inv:get_location().type == "player" then
+		local ap = online_charinfo.ap
+		if ap then
+			ap.craft_gen = ap.craft_gen + 1
+		end
+	end
+end
+
+minetest.register_on_craft(on_craft)
 minetest.register_on_dignode(on_dignode)
 minetest.register_on_placenode(on_placenode)
 
