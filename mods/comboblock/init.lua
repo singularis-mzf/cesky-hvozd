@@ -415,7 +415,7 @@ for _,v1 in pairs(slab_index) do
 				elseif v1_is_glass and v2_is_glass then                                                           -- glass_glass nodes so drawtype = glasslike
 						local combo_name = "comboblock:"..v1:split(":")[2].."_onc_"..v2:split(":")[2]
 						minetest.register_node(combo_name, {  -- registering the new combo node
-							description = preprocess_description(v1_def.description).." na "..preprocess_description(v2_def.description).." ["..allowed_combo_index..allowed_combo_index_suffix.."]",
+							description = string.format("%02d%s %s", allowed_combo_index, allowed_combo_index_suffix, preprocess_description(v1_def.description).." na "..preprocess_description(v2_def.description)),
 							_ch_help = ch_help,
 							_ch_help_group = ch_help_group,
 							tiles = {v1_tiles[1].name.."^[resize:"..cs.."x"..cs,

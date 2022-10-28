@@ -464,12 +464,12 @@ def = {
 }
 minetest.register_craftitem("ch_extras:staff_of_creativity", def)
 
--- vícenástroj
-ch_help = "Vícenástroj v sobě kombinuje schopnosti lopaty, sekery, krumpáče a srpu.\nDokáže snadno těžit stejné druhy materiálu jako kterýkoliv z těchto nástrojů.\nJeho životnost však není vyšší než životnost jednotlivého samostatného nástroje."
+-- trojnástroj
+ch_help = "Trojnástroj v sobě kombinuje schopnosti lopaty, sekery a krumpáče (a také srpu).\nDokáže snadno těžit stejné druhy materiálu jako kterýkoliv z těchto nástrojů,\njeho životnost však není vyšší než životnost jednotlivého samostatného nástroje."
 ch_help_group = "ch_multitool"
 
 def = {
-	description = "dřevěný vícenástroj",
+	description = "dřevěný trojnástroj",
 	inventory_image = "default_tool_woodpick.png^default_tool_woodshovel.png^default_tool_woodaxe.png",
 	tool_capabilities = {
 		full_punch_interval = 1.2,
@@ -498,7 +498,7 @@ minetest.register_craft({
 })
 
 def = {
-	description = "kamenný vícenástroj",
+	description = "kamenný trojnástroj",
 	inventory_image = "default_tool_stonepick.png^default_tool_stoneshovel.png^default_tool_stoneaxe.png",
 	tool_capabilities = {
 		full_punch_interval = 1.3,
@@ -528,7 +528,7 @@ minetest.register_craft({
 
 
 def = {
-	description = "bronzový vícenástroj",
+	description = "bronzový trojnástroj",
 	inventory_image = "default_tool_bronzepick.png^default_tool_bronzeshovel.png^default_tool_bronzeaxe.png",
 	tool_capabilities = {
 		full_punch_interval = 1.0,
@@ -557,7 +557,7 @@ minetest.register_craft({
 })
 
 def = {
-	description = "železný vícenástroj",
+	description = "železný trojnástroj",
 	inventory_image = "default_tool_steelpick.png^default_tool_steelshovel.png^default_tool_steelaxe.png",
 	tool_capabilities = {
 		full_punch_interval = 1.0,
@@ -586,7 +586,7 @@ minetest.register_craft({
 })
 
 def = {
-	description = "meseový vícenástroj",
+	description = "meseový trojnástroj",
 	inventory_image = "default_tool_mesepick.png^default_tool_meseshovel.png^default_tool_meseaxe.png",
 	tool_capabilities = {
 		full_punch_interval = 0.9,
@@ -615,7 +615,7 @@ minetest.register_craft({
 })
 
 def = {
-	description = "diamantový vícenástroj",
+	description = "diamantový trojnástroj",
 	inventory_image = "default_tool_diamondpick.png^default_tool_diamondshovel.png^default_tool_diamondaxe.png",
 	tool_capabilities = {
 		full_punch_interval = 0.9,
@@ -646,7 +646,7 @@ minetest.register_craft({
 if minetest.get_modpath("moreores") then
 
 def = {
-	description = "stříbrný vícenástroj",
+	description = "stříbrný trojnástroj",
 	inventory_image = "moreores_tool_silverpick.png^moreores_tool_silvershovel.png^moreores_tool_silveraxe.png",
 	tool_capabilities = {
 		full_punch_interval = 0.9,
@@ -675,7 +675,7 @@ minetest.register_craft({
 })
 
 def = {
-	description = "mitrilový vícenástroj",
+	description = "mitrilový trojnástroj",
 	inventory_image = "moreores_tool_mithrilpick.png^moreores_tool_mithrilshovel.png^moreores_tool_mithrilaxe.png",
 	tool_capabilities = {
 		full_punch_interval = 0.5,

@@ -152,7 +152,7 @@ if ENABLE_LARGE_BIRDS then
 			cesky_hvozd_allowed = info[4],
 		})
 
-		mobs:register_egg(mobname, "Velký "..info[2], info[5], 1)
+		mobs:register_egg(mobname, "velký "..info[2], info[5], 1)
 	end
 end
 
@@ -180,6 +180,6 @@ if ENABLE_SMALL_BIRDS then
 			cesky_hvozd_allowed = info[4],
 		})
 
-		mobs:register_egg(mobname, "Malý "..info[2], info[5], 1)
+		mobs:register_egg(mobname, "malý "..info[2], info[5], 1)
 	end
 end

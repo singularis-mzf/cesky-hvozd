@@ -55,7 +55,7 @@ stepheight = 3,
 fly_in = {"air"},
 	floats = 0,
 	follow = {
-		"animalworld:rabbit_raw", "mobs:meat_raw", "animalworld:chicken_raw", "water_life:meat_raw" 
+		"mobs:rabbit_raw", "mobs:meat_raw", "animalworld:chicken_raw", "water_life:meat_raw" 
 	},
 	
 view_range = 6,

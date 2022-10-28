@@ -141,11 +141,13 @@ for _, row in ipairs(pkarcs_doors3.door) do
 	local name = row[1]
 	local desc = row[2]
 	local mat_groups = row[3]
+	local mat_groups_nici = table.copy(row[3])
 	local mat_sound = row[4]
 	local door_sound = row[5]
 	local door_tiles = row[6]
 	local craft_material = row[7]
 
+	mat_groups_nici.not_in_creative_inventory = 1
 
 	local Ldoor_def = {
 		description = "zaoblené dveře levé (výška 3 m) " .. desc,
@@ -203,7 +205,7 @@ for _, row in ipairs(pkarcs_doors3.door) do
 		legacy_facedir_simple = true,
 		sunlight_propogates = true,
 		is_ground_content = false,
-		groups = mat_groups,
+		groups = mat_groups_nici,
 		drop = "pkarcs_doors3:" ..name.. "_Ldoor",
 		sounds = mat_sound,
 		selection_box = {
@@ -293,7 +295,7 @@ for _, row in ipairs(pkarcs_doors3.door) do
 		legacy_facedir_simple = true,
 		sunlight_propogates = true,
 		is_ground_content = false,
-		groups = mat_groups,
+		groups = mat_groups_nici,
 		drop = "pkarcs_doors3:" ..name.. "_Rdoor",
 		sounds = mat_sound,
 		selection_box = {

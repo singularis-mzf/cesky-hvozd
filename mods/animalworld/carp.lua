@@ -51,7 +51,7 @@ stepheight = 0.0,
 	fly_in = {"default:water_source", "default:river_water_source", "default:water_flowing", "default:river_water_flowing"},
 	floats = 0,
 	follow = {
-		"ethereal:worm", "seaweed", "fishing:bait_worm",
+		"farming:worm", "seaweed", "fishing:bait_worm",
 		"default:grass", "farming:cucumber", "farming:cabbage", "animalworld:ant", "animalworld:termite", "animalworld:fishfood"
 	},
 	view_range = 10,
@@ -86,7 +86,7 @@ minetest.register_craftitem(":animalworld:rawfish", {
 	description = S("Raw Fish"),
 	inventory_image = "animalworld_rawfish.png",
 	on_use = minetest.item_eat(3),
-	groups = {food_meat_raw = 1, flammable = 2},
+	groups = {food_meat_raw = 1, food_fish_raw = 1, flammable = 2},
 })
 
 -- cooked fish
@@ -94,7 +94,7 @@ minetest.register_craftitem(":animalworld:cookedfish", {
 	description = S("Cooked Fish"),
 	inventory_image = "animalworld_cookedfish.png",
 	on_use = minetest.item_eat(5),
-	groups = {food_meat = 1, flammable = 2},
+	groups = {food_meat = 1, food_fish = 1, flammable = 2},
 })
 
 minetest.register_craft({

@@ -53,7 +53,7 @@ stepheight = 3,
 fly_in = {"air"},
 	floats = 0,
 	follow = {
-		"animalworld:rawfish", "ethereal:worm", "ethereal:fish_raw", "fishing:fish_raw", "xocean:fish_edible"
+		"animalworld:rawfish", "farming:worm", "ethereal:fish_raw", "fishing:fish_raw", "xocean:fish_edible"
 	},
 	
 view_range = 4,

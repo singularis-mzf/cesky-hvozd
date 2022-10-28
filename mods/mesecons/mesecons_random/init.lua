@@ -50,6 +50,7 @@ minetest.register_node("mesecons_random:ghoststone_active", {
 	walkable = false,
 	diggable = false,
 	is_ground_content = false,
+	groups = {not_in_creative_inventory = 1},
 	sunlight_propagates = true,
 	paramtype = "light",
 	drop = "mesecons_random:ghoststone",

@@ -49,8 +49,9 @@ stepheight = 2,
 	},
 
 	follow = {
-		"ethereal:banana_single", "farming:corn_cob", "farming:cabbage",
-		"default:apple", "farming:cabbage", "farming:carrot", "farming:cucumber", "farming:grapes", "farming:pineapple", "ethereal:orange", "ethereal:coconut", "ethereal:coconut_slice"
+		"ethereal:banana", "ethereal:banana_single", "farming:corn_cob", "farming:cabbage",
+		"default:apple", "farming:cabbage", "farming:carrot", "farming:cucumber", "farming:grapes", "farming:pineapple", "ethereal:orange", "ethereal:coconut", "ethereal:coconut_slice",
+		"moretrees:coconut", "moretrees:coconut_3"
 	},
 	view_range = 6,
 	replace_rate = 10,
