@@ -23,7 +23,7 @@ local function entity_on_rightclick(self, player)
 	end
 	minetest.load_area(pos)
 	local node = minetest.get_node(pos)
-	if minetest.get_item_group(node.name, "group:ch_npc_spawner") == 0 then
+	if minetest.get_item_group(node.name, "ch_npc_spawner") == 0 then
 		minetest.log("warning", "on_rightclick expected NPC spawner under "..minetest.pos_to_string(pos).." where is the node "..node.name)
 		return
 	end

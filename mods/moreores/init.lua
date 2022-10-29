@@ -200,9 +200,13 @@ local function add_ore(modname, description, mineral_name, oredef)
 				damage_groups = tooldef.damage_groups,
 				full_punch_interval = oredef.full_punch_interval,
 			},
-			groups = {tool_name = 1},
+			groups = {[tool_name] = 1},
 			sound = {breaks = "default_tool_breaks"},
 		}
+		if tool_name == "pick" then
+			tdef.groups.pick = nil
+			tdef.groups.pickaxe = 1
+		end
 
 		if tool_name == "sword" then
 			tdef.description = S(description .. " Sword")

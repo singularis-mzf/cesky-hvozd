@@ -22,6 +22,8 @@ builtin_overrides = {
 	dofile = function(...)
 		return dofile(table.concat({modpath, ...}, DIR_DELIM) .. ".lua")
 	end,
+
+	login_to_viewname = function(login_name) return login_name end,
 }
 
 builtin_overrides.dofile("settings")

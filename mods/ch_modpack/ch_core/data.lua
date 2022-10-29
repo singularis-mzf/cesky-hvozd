@@ -33,6 +33,9 @@ local offline_charinfo_data_types = {
 	doslech = "int", -- >= 0
 	past_ap_playtime = "float", -- in seconds
 	past_playtime = "float", -- in seconds
+	pending_registration_privs = "string",
+	pending_registration_type = "string",
+
 	trest = "int",
 }
 
@@ -288,7 +291,7 @@ for player_name, offline_charinfo in pairs(ch_core.offline_charinfo) do
 		end
 	end
 	if offline_charinfo.past_playtime < 0 then
-		minetest.log("warning", "Invalid past_playtime for "..player_name.." corrected to zero!")
+		minetest.log("warning", "Invalid past_playtime for "..player_name.." ("..offline_charinfo.past_playtime..") corrected to zero!")
 		offline_charinfo.past_playtime = 0 -- correction of invalid data
 	end
 end
@@ -301,18 +304,24 @@ local function on_joinplayer(player, last_login)
 	return true
 end
 
+local function save_playtime(online_charinfo, offline_charinfo)
+	local now = minetest.get_us_time()
+	local past_playtime = offline_charinfo.past_playtime or 0
+	local current_playtime = math.max(0, 1.0e-6 * (now - online_charinfo.join_timestamp))
+	local total_playtime = past_playtime + current_playtime
+
+	offline_charinfo.past_playtime = total_playtime
+	ch_core.save_offline_charinfo(online_charinfo.player_name, "past_playtime")
+	online_charinfo.join_timestamp = nil
+	return past_playtime, current_playtime, total_playtime
+end
+
 local function on_leaveplayer(player, timedout)
 	local player_name = player:get_player_name()
 	local online_info = ch_core.get_leaving_online_charinfo(player_name)
 
 	if online_info.join_timestamp then
-		local offline_info = ch_core.get_offline_charinfo(player_name)
-		local current_playtime = 1.0e-6 * (minetest.get_us_time() - online_info.join_timestamp)
-		local total_playtime = (offline_info.past_playtime or 0) + current_playtime
-
-		offline_info.past_playtime = total_playtime
-		ch_core.save_offline_charinfo(player_name, "past_playtime")
-		online_info.join_timestamp = nil
+		local past_playtime, current_playtime, total_playtime = save_playtime(online_info, ch_core.get_offline_charinfo(player_name))
 		print("PLAYER(" .. player_name .."): played seconds: " .. current_playtime .. " / " .. total_playtime);
 	end
 end
@@ -320,13 +329,8 @@ end
 local function on_shutdown()
 	for player_name, online_info in pairs(table.copy(ch_core.online_charinfo)) do
 		if online_info.join_timestamp then
-			local offline_info = ch_core.get_offline_charinfo(player_name)
-			local current_playtime = ch_core.cas - online_info.join_timestamp
-			local total_playtime = (offline_info.past_playtime or 0) + current_playtime
-
-			offline_info.past_playtime = total_playtime
-			ch_core.save_offline_charinfo(player_name, "past_playtime")
-			online_info.join_timestamp = nil
+			local past_playtime, current_playtime, total_playtime = save_playtime(online_info, ch_core.get_offline_charinfo(player_name))
+			print("PLAYER(" .. player_name .."): played seconds: " .. current_playtime .. " / " .. total_playtime);
 		end
 	end
 end

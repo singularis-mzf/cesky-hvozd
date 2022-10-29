@@ -1,4 +1,4 @@
-ch_core.open_submod("localize_chatcommands")
+ch_core.open_submod("localize_chatcommands", {data = true, lib = true, privs = true})
 
 local defs = {
 	admin = {
@@ -66,5 +66,22 @@ for command, def in pairs(defs) do
 		minetest.log("warning", "Chat command /"..command.." not exists to be localized!")
 	end
 end
+
+if minetest.get_modpath("builtin_overrides") then
+	builtin_overrides.login_to_viewname = ch_core.prihlasovaci_na_zobrazovaci
+end
+
+local def = {
+	params = "[jméno postavy]",
+	description = "Vypíše vaše práva nebo práva jiné postavy.",
+	func = function(player_name, param)
+		local privs_def = minetest.registered_chatcommands.privs
+		-- print("DEBUG: "..dump2(minetest.registered_chatcommands.privs))
+		return privs_def.func(player_name, ch_core.jmeno_na_prihlasovaci(param))
+	end,
+}
+
+minetest.register_chatcommand("prava", def)
+minetest.register_chatcommand("práva", def)
 
 ch_core.close_submod("localize_chatcommands")

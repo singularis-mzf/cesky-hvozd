@@ -470,7 +470,7 @@ ch_help_group = "ch_multitool"
 
 def = {
 	description = "dřevěný trojnástroj",
-	inventory_image = "default_tool_woodpick.png^default_tool_woodshovel.png^default_tool_woodaxe.png",
+	inventory_image = "default_tool_woodaxe.png^default_tool_woodpick.png^default_tool_woodshovel.png",
 	tool_capabilities = {
 		full_punch_interval = 1.2,
 		max_drop_level = 0,
@@ -499,7 +499,7 @@ minetest.register_craft({
 
 def = {
 	description = "kamenný trojnástroj",
-	inventory_image = "default_tool_stonepick.png^default_tool_stoneshovel.png^default_tool_stoneaxe.png",
+	inventory_image = "default_tool_stoneaxe.png^default_tool_stonepick.png^default_tool_stoneshovel.png",
 	tool_capabilities = {
 		full_punch_interval = 1.3,
 		max_drop_level = 0,
@@ -529,7 +529,7 @@ minetest.register_craft({
 
 def = {
 	description = "bronzový trojnástroj",
-	inventory_image = "default_tool_bronzepick.png^default_tool_bronzeshovel.png^default_tool_bronzeaxe.png",
+	inventory_image = "default_tool_bronzeaxe.png^default_tool_bronzepick.png^default_tool_bronzeshovel.png",
 	tool_capabilities = {
 		full_punch_interval = 1.0,
 		max_drop_level = 1,
@@ -558,7 +558,7 @@ minetest.register_craft({
 
 def = {
 	description = "železný trojnástroj",
-	inventory_image = "default_tool_steelpick.png^default_tool_steelshovel.png^default_tool_steelaxe.png",
+	inventory_image = "default_tool_steelaxe.png^default_tool_steelpick.png^default_tool_steelshovel.png",
 	tool_capabilities = {
 		full_punch_interval = 1.0,
 		max_drop_level = 1,
@@ -587,7 +587,7 @@ minetest.register_craft({
 
 def = {
 	description = "meseový trojnástroj",
-	inventory_image = "default_tool_mesepick.png^default_tool_meseshovel.png^default_tool_meseaxe.png",
+	inventory_image = "default_tool_meseaxe.png^default_tool_mesepick.png^default_tool_meseshovel.png",
 	tool_capabilities = {
 		full_punch_interval = 0.9,
 		max_drop_level = 3,
@@ -616,7 +616,7 @@ minetest.register_craft({
 
 def = {
 	description = "diamantový trojnástroj",
-	inventory_image = "default_tool_diamondpick.png^default_tool_diamondshovel.png^default_tool_diamondaxe.png",
+	inventory_image = "default_tool_diamondaxe.png^default_tool_diamondpick.png^default_tool_diamondshovel.png",
 	tool_capabilities = {
 		full_punch_interval = 0.9,
 		max_drop_level = 3,
@@ -647,7 +647,7 @@ if minetest.get_modpath("moreores") then
 
 def = {
 	description = "stříbrný trojnástroj",
-	inventory_image = "moreores_tool_silverpick.png^moreores_tool_silvershovel.png^moreores_tool_silveraxe.png",
+	inventory_image = "moreores_tool_silveraxe.png^moreores_tool_silverpick.png^moreores_tool_silvershovel.png",
 	tool_capabilities = {
 		full_punch_interval = 0.9,
 		max_drop_level = 3,
@@ -676,7 +676,7 @@ minetest.register_craft({
 
 def = {
 	description = "mitrilový trojnástroj",
-	inventory_image = "moreores_tool_mithrilpick.png^moreores_tool_mithrilshovel.png^moreores_tool_mithrilaxe.png",
+	inventory_image = "moreores_tool_mithrilaxe.png^moreores_tool_mithrilpick.png^moreores_tool_mithrilshovel.png",
 	tool_capabilities = {
 		full_punch_interval = 0.5,
 		max_drop_level = 3,

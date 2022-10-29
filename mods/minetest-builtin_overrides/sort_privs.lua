@@ -40,7 +40,7 @@ local function sort_privs(priv_string, delim)
 end
 
 local old_privs_func = minetest.registered_chatcommands["privs"].func
-local S = minetest.get_translator("__builtin")
+local S = minetest.get_translator("builtin_overrides")
 
 minetest.override_chatcommand("privs", {
 	func = function(name, param)
@@ -58,6 +58,6 @@ minetest.override_chatcommand("privs", {
 			return rv, msg
 		end
 
-		return rv, S("Privileges of @1: @2", playername, sort_privs(privs, ", "))
+		return rv, S("Práva postavy @1: @2", builtin_overrides.login_to_viewname(playername), sort_privs(privs, ", "))
 	end,
 })

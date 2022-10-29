@@ -44,7 +44,7 @@ for s, s_loc in pairs({ ["asphalt"] = S("asphalt"), ["terracotta"] = S("terracot
 		selection_box = homedecor.nodebox.slab_y(0.1),
 	})
 end
-
+]]
 local slope_cbox = {
 	type = "fixed",
 	fixed = {
@@ -54,7 +54,7 @@ local slope_cbox = {
 		{-0.5,  0.25,  0.25, 0.5,   0.5, 0.5}
 	}
 }
-
+--[[
 local ocorner_cbox = {
 	type = "fixed",
 	fixed = {
