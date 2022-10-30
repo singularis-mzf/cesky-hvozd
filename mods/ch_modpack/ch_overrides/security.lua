@@ -65,7 +65,6 @@ local function on_placenode(pos, newnode, placer, oldnode, itemstack, pointed_th
 		minetest.log("warning", "on_placenode: placer at "..minetest.pos_to_string(pos).." is not a player!")
 		return
 	end
-	minetest.log("warning", "on_placenode called at "..minetest.pos_to_string(pos))
 
 	local player_name = placer:get_player_name()
 

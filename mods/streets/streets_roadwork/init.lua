@@ -20,6 +20,7 @@ minetest.register_node("streets:roadwork_traffic_barrier", {
 		streets.concrete_texture .. "^streets_roadwork_traffic_barrier.png",
 		streets.concrete_texture .. "^streets_roadwork_traffic_barrier.png"
 	},
+	use_texture_alpha = "clip",
 	sunlight_propagates = true,
 	groups = { cracky = 1, level = 2, wall = 1 },
 	node_box = {
@@ -70,6 +71,7 @@ minetest.register_node("streets:roadwork_traffic_barrier_straight", {
 		streets.concrete_texture .. "^streets_roadwork_traffic_barrier.png",
 		streets.concrete_texture .. "^streets_roadwork_traffic_barrier.png"
 	},
+	use_texture_alpha = "clip",
 	sunlight_propagates = true,
 	groups = { cracky = 1, level = 2, wall = 1 },
 	node_box = {
@@ -103,6 +105,7 @@ minetest.register_node("streets:roadwork_traffic_barrier_top", {
 		streets.concrete_texture .. "^streets_roadwork_traffic_barrier.png",
 		streets.concrete_texture .. "^streets_roadwork_traffic_barrier.png"
 	},
+	use_texture_alpha = "clip",
 	sunlight_propagates = true,
 	groups = { cracky = 1, level = 2, wall = 1 },
 	node_box = {
@@ -148,6 +151,7 @@ minetest.register_node("streets:roadwork_traffic_barrier_top_straight", {
 		streets.concrete_texture .. "^streets_roadwork_traffic_barrier.png",
 		streets.concrete_texture .. "^streets_roadwork_traffic_barrier.png"
 	},
+	use_texture_alpha = "clip",
 	sunlight_propagates = true,
 	groups = { cracky = 1, level = 2, wall = 1 },
 	node_box = {
@@ -175,6 +179,7 @@ minetest.register_node("streets:roadwork_barrier_tape", {
 	paramtype = "light",
 	drawtype = "nodebox",
 	tiles = { "streets_roadwork_barrier_tape.png" },
+	use_texture_alpha = "opaque",
 	sunlight_propagates = true,
 	groups = { choppy = 1, dig_immediate = 3, level = 1, wall = 1 },
 	node_box = {
@@ -210,6 +215,7 @@ minetest.register_node("streets:roadwork_traffic_fence", {
 	paramtype = "light",
 	drawtype = "nodebox",
 	tiles = { "streets_roadwork_traffic_fence_top.png", "streets_roadwork_traffic_fence_top.png", "streets_roadwork_traffic_fence.png" },
+	use_texture_alpha = "clip",
 	inventory_image = "streets_roadwork_traffic_fence.png",
 	wield_image = "streets_roadwork_traffic_fence.png",
 	sunlight_propagates = true,
@@ -262,6 +268,7 @@ minetest.register_node("streets:roadwork_pylon", {
 	paramtype = "light",
 	drawtype = "nodebox",
 	tiles = { "streets_roadwork_pylon_top.png", "streets_roadwork_pylon_top.png", "streets_roadwork_pylon.png" },
+	use_texture_alpha = "clip",
 	sunlight_propagates = true,
 	groups = { cracky = 1 },
 	node_box = {
@@ -292,6 +299,7 @@ minetest.register_node("streets:roadwork_blinking_light_off", {
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
 	tiles = { "streets_roadwork_blinking_light_top.png", "streets_roadwork_blinking_light_top.png", "streets_roadwork_blinking_light_off.png" },
+	use_texture_alpha = "clip",
 	sunlight_propagates = true,
 	groups = { cracky = 1 },
 	node_box = {
@@ -315,6 +323,7 @@ minetest.register_node("streets:roadwork_blinking_light_on", {
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
 	tiles = { "streets_roadwork_blinking_light_top.png", "streets_roadwork_blinking_light_top.png", "streets_roadwork_blinking_light_on.png" },
+	use_texture_alpha = "clip",
 	sunlight_propagates = true,
 	groups = { cracky = 1, not_in_creative_inventory = 1 },
 	node_box = {
@@ -367,6 +376,7 @@ minetest.register_node("streets:roadwork_delineator_top", {
 		"streets_roadwork_delineator_top_front_back.png^[transformFX",
 		"streets_roadwork_delineator_top_front_back.png"
 	},
+	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -396,6 +406,7 @@ minetest.register_node("streets:roadwork_delineator_bottom", {
 		"streets_roadwork_delineator_bottom_front_back.png^[transformFX",
 		"streets_roadwork_delineator_bottom_front_back.png"
 	},
+	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -420,16 +431,16 @@ minetest.register_node("streets:roadwork_delineator_bottom", {
 		}
 	},
 	after_place_node = function(pos)
-		local node = minetest.env:get_node(pos)
+		local node = minetest.get_node(pos)
 		node.name = "streets:roadwork_delineator_bottom"
-		minetest.env:add_node(pos, node)
+		minetest.set_node(pos, node)
 		pos.y = pos.y + 1
 		node.name = "streets:roadwork_delineator_top"
-		minetest.env:add_node(pos, node)
+		minetest.set_node(pos, node)
 	end,
 	after_dig_node = function(pos)
 		pos.y = pos.y + 1
-		minetest.env:remove_node(pos)
+		minetest.remove_node(pos)
 	end,
 })
 
@@ -455,6 +466,7 @@ minetest.register_node("streets:roadwork_delineator_light_off_top", {
 		"streets_roadwork_delineator_light_off_top_front_back.png^[transformFX",
 		"streets_roadwork_delineator_light_off_top_front_back.png"
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -488,6 +500,7 @@ minetest.register_node("streets:roadwork_delineator_light_on_top", {
 		"streets_roadwork_delineator_light_on_top_front_back.png^[transformFX",
 		"streets_roadwork_delineator_light_on_top_front_back.png"
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -525,6 +538,7 @@ minetest.register_node("streets:roadwork_delineator_light_bottom", {
 		"streets_roadwork_delineator_bottom_front_back.png^[transformFX",
 		"streets_roadwork_delineator_bottom_front_back.png"
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",

@@ -42,6 +42,7 @@ minetest.register_node("streets:lane_use_off", {
 		"streets_tl_bg.png",
 		"streets_laneuse_off.png"
 	},
+	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -106,6 +107,7 @@ for _, v in pairs({ "green", "yellow", "red" }) do
 			"streets_tl_bg.png",
 			"streets_laneuse_" .. v .. ".png"
 		},
+		use_texture_alpha = "opaque",
 		drawtype = "nodebox",
 		paramtype = "light",
 		paramtype2 = "facedir",

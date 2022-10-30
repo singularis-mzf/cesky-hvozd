@@ -163,6 +163,7 @@ local sclip_def = {
 	drawtype = "mesh",
 	mesh = "technic_steel_strut_with_insulator_clip.obj",
 	tiles = sclip_tex,
+	use_texture_alpha = "opaque",
 	paramtype = "light",
 	paramtype2 = "wallmounted",
 	is_ground_content = false,

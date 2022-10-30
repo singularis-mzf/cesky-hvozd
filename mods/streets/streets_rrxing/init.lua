@@ -90,6 +90,7 @@ minetest.register_node("streets:rrxing_top", {
 		"streets_rrxing_top_back.png",
 		"streets_rrxing_top.png"
 	},
+	use_texture_alpha = "clip",
 	on_destruct = stop_bell,
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -120,6 +121,7 @@ minetest.register_node("streets:rrxing_middle_right_on", {
 		"streets_rrxing_middle_right_back.png",
 		{ name = "streets_rrxing_middle_right_on.png", animation = { type = "vertical_frames", aspect_w = 64, aspect_h = 64, length = 1.2 } }
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -149,6 +151,7 @@ minetest.register_node("streets:rrxing_middle_right_off", {
 		"streets_rrxing_middle_right_back.png",
 		"streets_rrxing_middle_right_off.png"
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -177,6 +180,7 @@ minetest.register_node("streets:rrxing_middle_left_on", {
 		"streets_rrxing_middle_left_back.png",
 		{ name = "streets_rrxing_middle_left_on.png", animation = { type = "vertical_frames", aspect_w = 64, aspect_h = 64, length = 1.2 } }
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -206,6 +210,7 @@ minetest.register_node("streets:rrxing_middle_left_off", {
 		"streets_rrxing_middle_left_back.png",
 		"streets_rrxing_middle_left_off.png"
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -234,6 +239,7 @@ minetest.register_node("streets:rrxing_middle_center_on", {
 		"streets_rrxing_middle_center_back.png",
 		{ name = "streets_rrxing_middle_center_on.png", animation = { type = "vertical_frames", aspect_w = 64, aspect_h = 64, length = 1.2 } }
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -269,6 +275,7 @@ minetest.register_node("streets:rrxing_middle_center_off", {
 		"streets_rrxing_middle_center_back.png",
 		"streets_rrxing_middle_center_off.png"
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -302,6 +309,7 @@ minetest.register_node("streets:rrxing_middle", {
 		"streets_rrxing_middle_back.png",
 		"streets_rrxing_middle.png"
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -332,6 +340,7 @@ minetest.register_node("streets:rrxing_bottom", {
 		"streets_rrxing_bottom.png",
 		"streets_rrxing_bottom.png"
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -614,6 +623,7 @@ minetest.register_node("streets:rrgate_mech_down", {
 		"streets_rrgate_mech_down_left.png",
 		"streets_rrgate_mech_down_front.png"
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -693,6 +703,7 @@ minetest.register_node("streets:rrgate_mech_up", {
 		"streets_rrgate_mech_up_left.png",
 		"streets_rrgate_mech_up_front.png"
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -766,6 +777,7 @@ minetest.register_node("streets:rrgate_mech_bottom", {
 		"streets_rrxing_bottom.png",
 		"streets_rrxing_bottom.png"
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -830,6 +842,7 @@ minetest.register_node("streets:rrgate_lightfirst", {
 		"streets_rrgate_side.png",
 		"streets_rrgate_side.png"
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -862,6 +875,7 @@ minetest.register_node("streets:rrgate_darkfirst", {
 		"streets_rrgate_side.png",
 		"streets_rrgate_side.png"
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -894,6 +908,7 @@ minetest.register_node("streets:rrgate_end", {
 		"streets_rrgate_side.png",
 		"streets_rrgate_side.png"
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -926,6 +941,7 @@ minetest.register_node("streets:rrgate_up", {
 		"streets_rrgate_top.png",
 		"streets_rrgate_side.png"
 	},
+	use_texture_alpha = "clip",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",

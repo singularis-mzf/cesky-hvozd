@@ -9,6 +9,7 @@ local S = minetest.get_translator("streets")
 minetest.register_node(":streets:delineator", {
 	description = S("Z 11b Směrový sloupek bílý pravý, Z 11a Směrový sloupek bílý levý"),
 	tiles = { "streets_delineator_top.png", "streets_delineator_top.png", "streets_delineator_left.png", "streets_delineator_right.png", "streets_delineator_back.png", "streets_delineator_front.png" },
+	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -43,6 +44,7 @@ minetest.register_node("streets:fence_chainlink", {
 	paramtype = "light",
 	drawtype = "nodebox",
 	tiles = { "streets_fence_chainlink.png" },
+	use_texture_alpha = "clip",
 	sunlight_propagates = true,
 	groups = { snappy = 1, wall = 1 },
 	node_box = {
@@ -100,6 +102,7 @@ minetest.register_node("streets:fence_chainlink_door_open", {
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
 	tiles = { "streets_fence_chainlink_door.png" },
+	use_texture_alpha = "clip",
 	sunlight_propagates = true,
 	groups = { snappy = 1, wall = 1, not_in_creative_inventory = 1 },
 	node_box = {
@@ -124,6 +127,7 @@ minetest.register_node("streets:fence_chainlink_door_closed", {
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
 	tiles = { "streets_fence_chainlink_door.png" },
+	use_texture_alpha = "clip",
 	sunlight_propagates = true,
 	groups = { snappy = 1, wall = 1 },
 	node_box = {
@@ -165,6 +169,7 @@ minetest.register_node("streets:guardrail", {
 	paramtype = "light",
 	drawtype = "nodebox",
 	tiles = { "streets_guardrail.png" },
+	use_texture_alpha = "opaque",
 	sunlight_propagates = true,
 	groups = { cracky = 1, wall = 1 },
 	node_box = {

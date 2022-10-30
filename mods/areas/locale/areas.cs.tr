@@ -107,6 +107,7 @@ private=soukromá
 locked=uzamčená
 protected=chráněná
 shared=sdílená
+reserved=rezervovaná
 
 ### interact.lua ###
 

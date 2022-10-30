@@ -229,6 +229,7 @@ minetest.register_abm({
 minetest.register_node(":streets:light_vertical_off", {
 	description = S("veřejné osvětlení svislé"),
 	tiles = { "streets_pole.png", "streets_pole.png", "streets_light_vertical_off.png", "streets_light_vertical_off.png", "streets_light_vertical_off.png", "streets_light_vertical_off.png" },
+	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -250,6 +251,7 @@ minetest.register_node(":streets:light_vertical_off", {
 
 minetest.register_node(":streets:light_vertical_on", {
 	tiles = { "streets_pole.png", "streets_pole.png", "streets_light_vertical_on.png", "streets_light_vertical_on.png", "streets_light_vertical_on.png", "streets_light_vertical_on.png" },
+	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -274,6 +276,7 @@ minetest.register_node(":streets:light_vertical_on", {
 minetest.register_node(":streets:light_horizontal_off", {
 	description = S("veřejné osvětlení vodorovné"),
 	tiles = { "streets_pole.png", "streets_light_horizontal_off_bottom.png", "streets_light_horizontal_off_side.png", "streets_light_horizontal_off_side.png", "streets_light_horizontal_off_side.png", "streets_light_horizontal_off_side.png" },
+	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -295,6 +298,7 @@ minetest.register_node(":streets:light_horizontal_off", {
 
 minetest.register_node(":streets:light_horizontal_on", {
 	tiles = { "streets_pole.png", "streets_light_horizontal_on_bottom.png", "streets_light_horizontal_on_side.png", "streets_light_horizontal_on_side.png", "streets_light_horizontal_on_side.png", "streets_light_horizontal_on_side.png" },
+	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -319,6 +323,7 @@ minetest.register_node(":streets:light_horizontal_on", {
 minetest.register_node(":streets:light_hanging_off", {
 	description = S("veřejné osvětlení visící"),
 	tiles = { "streets_pole.png", "streets_light_horizontal_off_bottom.png", "streets_light_hanging_off_side.png", "streets_light_hanging_off_side.png", "streets_light_hanging_off_side.png", "streets_light_hanging_off_side.png" },
+	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
@@ -340,6 +345,7 @@ minetest.register_node(":streets:light_hanging_off", {
 
 minetest.register_node(":streets:light_hanging_on", {
 	tiles = { "streets_pole.png", "streets_light_horizontal_on_bottom.png", "streets_light_hanging_on_side.png", "streets_light_hanging_on_side.png", "streets_light_hanging_on_side.png", "streets_light_hanging_on_side.png" },
+	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",

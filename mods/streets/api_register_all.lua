@@ -255,7 +255,9 @@ local register_marking_nodes = function(surface_friendlyname, surface_name, surf
 					minetest.set_node(lower_pos, lower_node)
 					minetest.remove_node(pos)
 				end -- ]]
-				itemstack:add_wear(65535 / 75)
+				if not minetest.is_creative_enabled(player_name) then
+					itemstack:add_wear(65535 / 75)
+				end
 				return itemstack
 			end,
 		})
