@@ -12,6 +12,7 @@ local area_types = {
 	{number = 4, name = "locked", jmeno = "uzamčená"}, -- ch_trustful_player priv is required to build if you're not the owner
 	{number = 5, name = "protected", jmeno = "chráněná"}, -- only owner is allowed to build there
 	{number = 6, name = "shared", jmeno = "sdílená"}, -- not implemented yet
+	{number = 7, name = "reserved", jmeno = "rezervovaná"}, -- ch_registered_player priv is required to build, but the owner should be noticed when someone else builds or enters there
 }
 
 areas = {

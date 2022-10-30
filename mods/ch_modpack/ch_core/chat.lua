@@ -445,17 +445,21 @@ end
 
 minetest.register_on_chat_message(on_chat_message)
 
-minetest.override_chatcommand("me", {func = function(player_name, message)
-	return on_chat_message(player_name, "="..message)
-end})
+minetest.override_chatcommand("me", {
+	params = "<text>",
+	description = "Pošle zprávu do základní kanálu četu. Funguje stejně jako přístupový znak „=“.",
+	func = function(player_name, message)
+		return on_chat_message(player_name, "="..message)
+	end,
+})
 
-minetest.override_chatcommand("msg", {func = function(player_name, text)
-	local player = minetest.get_player_by_name(player_name)
-	if not string.find(text, " ") or not player then
-		return false
-	end
+minetest.override_chatcommand("msg", {
+	params = "<Jméno_Postavy> <text>",
+	description = "Zašle soukromou zprávu v četu. Funguje stejně jako přístupový znak „\"“, ale vyžaduje zadání jména postavy.",
+	func = function(player_name, text)
 	return on_chat_message(player_name, "\"" .. text)
-end})
+	end,
+})
 
 minetest.register_chatcommand("doslech", {
 	params = "[<metrů>]|uložit",

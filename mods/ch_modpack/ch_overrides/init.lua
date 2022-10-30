@@ -115,6 +115,7 @@ dofile(modpath.."/colored_chairs.lua")
 dofile(modpath.."/extra_recipes.lua")
 dofile(modpath.."/falling_nodes.lua")
 dofile(modpath.."/ores.lua")
+dofile(modpath.."/security.lua")
 dofile(modpath.."/sitting.lua")
 
 -- log giveme

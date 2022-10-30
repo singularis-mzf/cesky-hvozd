@@ -90,10 +90,14 @@ minetest.register_tool("fire:flint_and_steel", {
 	sound = {breaks = "default_tool_breaks"},
 
 	on_use = function(itemstack, user, pointed_thing)
+		local player_name = user:get_player_name()
+		if not minetest.check_player_privs(user, "ch_registered_user") then
+			minetest.chat_send_player(player_name, S("Děláte to správně, ale nové postavy nesmějí používat @1.", S("Flint and Steel")))
+			return
+		end
 		local sound_pos = pointed_thing.above or user:get_pos()
 		minetest.sound_play("fire_flint_and_steel",
 			{pos = sound_pos, gain = 0.2, max_hear_distance = 8}, true)
-		local player_name = user:get_player_name()
 		if pointed_thing.type == "node" then
 			local node_under = minetest.get_node(pointed_thing.under).name
 			local nodedef = minetest.registered_nodes[node_under]

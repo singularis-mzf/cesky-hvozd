@@ -180,6 +180,10 @@ local function bucket_on_place(itemstack, user, pointed_thing)
 		if not node or check_protection(lpos, user and user:get_player_name() or "", "place "..node) then
 			return
 		end
+		if user and not minetest.check_player_privs(user, "ch_registered_user") then
+			minetest.chat_send_player(user:get_player_name(), "Děláte to správně, ale nové postavy nesmějí pomocí kbelíků umísťovat zdroje kapalin!")
+			return
+		end
 		minetest.set_node(lpos, {name = node, param2 = 2})
 		return ItemStack(bucket_def.empty_bucket)
 	else

@@ -177,7 +177,7 @@ function areas:canInteractInAreaById(name, area_id, reason, quiet, pos)
 	end
 	if main_area.type == 1 then
 		-- 1 normal -- ch_registered_player priv or ownership is required to build
-		return main_area.owner == name or minetest.check_player_privs(name, "ch_registered_player")
+		return minetest.check_player_privs(name, "ch_registered_player") or main_area.owner == name
 
 	elseif main_area.type == 2 then
 		-- 2 open -- no priv is required to build
@@ -208,6 +208,17 @@ function areas:canInteractInAreaById(name, area_id, reason, quiet, pos)
 		-- 6 shared -- not implemented yet
 		return true
 
+	elseif main_area.type == 7 then
+		-- 7 reserved -- the same as private, but with different reason
+		if main_area.owner == name then
+			return true
+		elseif minetest.check_player_privs(name, "ch_registered_player") then
+			-- TODO: announce if not quiet
+			return true
+		else
+			return false
+		end
+
 	else
 		if not quiet then
 			minetest.log("warning", "areas:canInteractInAreaById found unknown type of area: "..(main_area.type or "nil"))
@@ -235,7 +246,6 @@ end
 -- @return Boolean indicating whether the player can interact in that area.
 -- @return Inaccessible intersecting area ID, if found.
 function areas:canInteractInArea(pos1, pos2, name, allow_open, reason, quiet)
-	minetest.log("warning", "DEBUG: canInteractInArea() called")
 	if name and minetest.check_player_privs(name, "protection_bypass") then
 		return true
 	end

@@ -33,7 +33,7 @@ minetest.register_globalstep(function(dtime)
 				}
 				if area.owner and area.owner ~= "Administrace" then
 					table.insert(str_parts, ", ")
-					table.insert(str_parts, area.owner)
+					table.insert(str_parts, ch_core.prihlasovaci_na_zobrazovaci(area.owner))
 				end
 				if player_is_admin or #areaStrings == 0 then
 					table.insert(str_parts, ", ")
