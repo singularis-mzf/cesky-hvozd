@@ -142,13 +142,13 @@ technic.register_power_tool("replacer:replacer", max_charge)
 minetest.register_tool( "replacer:replacer",
 {
     description = "elektrický nahrazovač",
-    _ch_help = "Vyvrtá blok a současně ho na místě nahradí jiným, dříve zapamatovaným.\nLevý klik vyvrtá blok a nahradí zapamatovaným, pravý klik umístí zapamatovaný blok,\nShift + pravý klik si zapamatuje blok, Aux1 + levý klik vyvolá ovládací panel nahrazovače.\nElektrický nástroj — před použitím nutno nabít.",
+    _ch_help = "Vyvrtá blok a současně ho na místě nahradí jiným, dříve zapamatovaným.\nLevý klik vyvrtá blok a nahradí zapamatovaným, pravý klik umístí zapamatovaný blok,\nAux1 + pravý klik (popř. Shift + pravý klik) si zapamatuje blok, Aux1 + levý klik vyvolá ovládací panel nahrazovače.\nElektrický nástroj — před použitím nutno nabít.",
     groups = {}, 
     inventory_image = "replacer_replacer.png",
     wield_image = "",
     wield_scale = {x=1,y=1,z=1},
     stack_max = 1, -- it has to store information - thus only one can be stacked
-    liquids_pointable = true, -- it is ok to painit in/with water
+    liquids_pointable = false,
 --[[
     -- the tool_capabilities are of nearly no intrest here
     tool_capabilities = {
