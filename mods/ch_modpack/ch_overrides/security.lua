@@ -1,7 +1,11 @@
 -- SECURITY
 
-local area_type_private = areas.area_types_name_to_number.private
-local area_type_reserved = areas.area_types_name_to_number.reserved
+local area_type_private , area_type_reserved
+
+if minetest.get_modpath("areas") then
+	area_type_private = areas.area_types_name_to_number.private
+	area_type_reserved = areas.area_types_name_to_number.reserved
+end
 
 -- Bloky, které smějí nové postavy umísťovat i v sektorech hlubinné těžby:
 local allowed_nodes = {

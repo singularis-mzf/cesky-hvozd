@@ -75,6 +75,12 @@ default_silver_sand.png
 	License: GFDLv1.3
 	Used source: https://commons.wikimedia.org/wiki/File:Sand.jpg
 
+building_blocks_tar.png
+	Author: Singularis
+	License: GFDLv1.3
+	Source: hdx-64 texture pack (Author: VanessaE, License: GFDLv1.3)
+	Source: https://commons.wikimedia.org/wiki/File:Asphalt_concrete.JPG (Author: kallerna, License: GFDLv1.2+ or CC BY-SA 3.0)
+
 default_gravel.png
 	Author: VanessaE
 	Source: hdx-64 texture pack

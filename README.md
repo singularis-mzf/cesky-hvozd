@@ -844,6 +844,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPL 2.1
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/stamina/)
 
+## Streets 2.0 (streets)
+
+* Zdroj: [https://github.com/minetest-streets/streets](https://github.com/minetest-streets/streets), revize 7cd17420d37a7d511eb513922b68611325a05e72
+* Původní licence: MIT pro kód, CC-BY-SA 3.0 pro média
+* Licence úprav: MIT pro kód, CC-BY-SA 3.0 pro média
+* [ContentDB](https://content.minetest.net/packages/webdesigner97/streets/)
+
 ## TechPack Stairway (techpack\_stairway)
 
 * Zdroj: [https://github.com/joe7575/techpack\_stairway](https://github.com/joe7575/techpack\_stairway), revize 7b3deb474df44344677b59f8050e5cfe81d19db9
