@@ -189,7 +189,7 @@ if clothing.have_farming then
 end
 
 for color, hex in pairs(clothing.colors) do
-  if clothing.have_wool then
+  if clothing.have_wool and minetest.registered_items["wool:"..color] then
     spinning_machine:recipe_register_input(
       "wool:"..color,
       {

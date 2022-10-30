@@ -16,35 +16,35 @@ local basic_colors = {
   },
   red = {
     color = "červen",
-    hex = "FF0000",
+    hex = "D11618",
   },
   yellow = {
     color = "žlut",
-    hex = "FFEE00",
+    hex = "DBDB19",
   },
   green = {
     color = "zelen",
-    hex = "32CD32",
+    hex = "17DB19",
   },
   cyan = {
     color = "tyrkysov",
-    hex = "00959D",
+    hex = "16D1E7",
   },
   blue = {
     color = "modr",
-    hex = "003376",
+    hex = "1717F1",
   },
   magenta = {
-    color = "magentov",
-    hex = "D80481",
+    color = "purpurov",
+    hex = "DB17F1",
   },
   orange = {
     color = "oranžov",
-    hex = "E0601A",
+    hex = "CF7218",
   },
   violet = {
     color = "fialov",
-    hex = "480080",
+    hex = "7917F1",
   },
   brown = {
     color = "hněd",
@@ -60,7 +60,45 @@ local basic_colors = {
   },
   dark_green = {
     color = "tmavozelen",
-    hex = "154F00",
+    hex = "05430D",
+  },
+
+-- low saturation colors:
+  red_s50 = {
+    color = "pastelově červen",
+    hex = "D26D6D",
+  },
+  yellow_s50 = {
+    color = "pastelově žlut",
+    hex = "F9F995",
+  },
+  green_s50 = {
+    color = "pastelově zelen",
+    hex = "83E783",
+  },
+  cyan_s50 = {
+    color = "pastelově tyrkysov",
+    hex = "8AEFEF",
+  },
+  blue_s50 = {
+    color = "pastelově modr",
+    hex = "5959BC",
+  },
+  magenta_s50 = {
+    color = "pastelově purpurov",
+    hex = "DB77DB",
+  },
+  orange_s50 = {
+    color = "pastelově oranžov",
+    hex = "DDAC7A",
+  },
+  violet_s50 = {
+    color = "pastelově fialov",
+    hex = "9462C6",
+  },
+  dark_green_s50 = {
+    color = "pastelově tmavozelen",
+    hex = "567F56",
   },
 }
 
