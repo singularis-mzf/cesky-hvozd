@@ -37,17 +37,14 @@ streets.load_submod("streets_concrete")
 streets.load_submod("streets_poles")
 streets.load_submod("streets_rrxing")
 streets.load_submod("streets_signs")
-streets.load_submod("streets_steelsupport")
+-- streets.load_submod("streets_steelsupport")
 streets.load_submod("streets_roadwork")
 streets.load_submod("streets_bollards")
 streets.load_submod("streets_light")
-streets.load_submod("streets_workshop")
 
-if minetest.get_modpath("digilines") then
-	streets.load_submod("streets_trafficlight")
-	streets.load_submod("streets_laneuse")
-	streets.load_submod("streets_matrix_screen")
-end
+-- streets.load_submod("streets_trafficlight") -- not supported yet
+streets.load_submod("streets_laneuse")
+-- streets.load_submod("streets_matrix_screen") -- not supported yet
 
 -- Let the API register everything and finish the setup
 dofile(streets.conf.modpath .. "/api_register_all.lua")

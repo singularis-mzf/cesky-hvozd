@@ -4,9 +4,35 @@
 	Optional: true
 ]]
 
-for surface_name, surface_data in pairs(streets.surfaces.surfacetypes) do
+local S = minetest.get_translator("streets")
+local surfaces = table.copy(streets.surfaces.surfacetypes)
+
+local function add_surface(node_name)
+	local ndef = minetest.registered_nodes[node_name]
+	local tiles = table.copy(ndef.tiles)
+	local tiles_count = #tiles
+	local counter = 0
+	for i = 1, #tiles do
+		if type(tiles[i]) == "table" then
+			tiles[i] = tiles[i].name
+			counter = counter + 1
+		end
+	end
+	if counter > 0 then
+		ndef = table.copy(ndef)
+		ndef.tiles = tiles
+	end
+	surfaces[node_name] = ndef
+end
+
+add_surface("building_blocks:Tar")
+add_surface("default:desert_sandstone")
+add_surface("default:stone")
+add_surface("default:stone_block")
+
+for surface_name, surface_data in pairs(surfaces) do
 	minetest.register_node(":streets:" .. surface_name:sub(2, -1):split(":")[2] .. "_manhole", {
-		description = "Manhole",
+		description = S("průlez v: @1", surface_data.friendlyname or minetest.registered_nodes[surface_name].description),
 		tiles = { surface_data["tiles"][1] .. "^streets_manhole.png", surface_data.tiles[1] },
 		drawtype = "nodebox",
 		paramtype = "light",
@@ -27,7 +53,7 @@ for surface_name, surface_data in pairs(streets.surfaces.surfacetypes) do
 			fixed = {
 				{ -0.5, -0.5, -0.5, 0.5, 0.5, -0.375 }, -- F
 				{ -0.5, -0.5, 0.375, 0.5, 0.5, 0.5 }, -- B
-				{ -0.5, -0.5, -0.4375, -0.375, 0.5, 0.4375 }, -- L
+				{ -0.5, -0.5, -0.4375, -0.375, 0.5, 0.4375 }, -- Lsurface_data.friendlyname or
 				{ 0.375, -0.5, -0.4375, 0.5, 0.5, 0.4375 }, -- R
 				{ -0.25, 0.4375, -0.25, 0.25, 0.5, 0.25 }, -- CenterPlate
 				{ -0.5, 0.4375, -0.0625, 0.5, 0.5, 0.0625 }, -- CenterLR
@@ -77,7 +103,7 @@ for surface_name, surface_data in pairs(streets.surfaces.surfacetypes) do
 	})
 
 	minetest.register_node(":streets:" .. surface_name:sub(2, -1):split(":")[2] .. "_stormdrain", {
-		description = "Stormdrain",
+		description = S("kanalizační vpusť v: @1", surface_data.friendlyname or minetest.registered_nodes[surface_name].description),
 		tiles = { surface_data["tiles"][1] .. "^streets_stormdrain.png", surface_data.tiles[1] },
 		drawtype = "nodebox",
 		paramtype = "light",

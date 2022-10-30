@@ -5,7 +5,9 @@
 	Category: Init
 ]]
 
-local register_surface_nodes = function(friendlyname, name, tiles, groups, sounds, craft)
+local S = minetest.get_translator("streets")
+
+local register_surface_nodes = function(friendlyname, name, tiles, groups, sounds, craft, register_stairs)
 	minetest.register_node(":streets:" .. name, {
 		description = friendlyname,
 		tiles = tiles,
@@ -13,7 +15,7 @@ local register_surface_nodes = function(friendlyname, name, tiles, groups, sound
 		sounds = sounds
 	})
 	minetest.register_craft(craft)
-	if minetest.get_modpath("moreblocks") then
+	if minetest.get_modpath("moreblocks") and register_stairs then
 		stairsplus:register_all("streets", name, "streets:" .. name, {
 			description = friendlyname,
 			tiles = tiles,
@@ -34,6 +36,7 @@ local register_sign_node = function(friendlyname, name, tiles, type, inventory_i
 	def.paramtype = "light"
 	def.paramtype2 = "facedir"
 	def.tiles = tiles
+	def.use_texture_alpha = "clip"
 	def.light_source = light_source
 	def.groups = { cracky = 3, not_in_creative_inventory = 1, sign = 1 }
 	def.drop = "streets:" .. name
@@ -52,6 +55,9 @@ local register_sign_node = function(friendlyname, name, tiles, type, inventory_i
 	local normal_def = table.copy(def)
 	local center_def = table.copy(def)
 	local polemount_def = table.copy(def)
+
+	normal_def.groups = table.copy(normal_def.groups)
+	normal_def.groups.not_in_creative_inventory = nil
 
 	if type == "minetest" then
 		normal_def.node_box = {
@@ -166,6 +172,13 @@ local register_sign_node = function(friendlyname, name, tiles, type, inventory_i
 end
 
 local register_marking_nodes = function(surface_friendlyname, surface_name, surface_tiles, surface_groups, surface_sounds, register_stairs, friendlyname, name, tex, r, basic)
+	local surface_tiles_orig = surface_tiles
+	surface_tiles = table.copy(surface_tiles_orig)
+	for i, def in ipairs(surface_tiles_orig) do
+		if type(def) == "table" and def.name then
+			surface_tiles[i] = def.name
+		end
+	end
 	local rotation_friendly = ""
 	if r == "r90" then
 		rotation_friendly = " (R90)"
@@ -183,17 +196,19 @@ local register_marking_nodes = function(surface_friendlyname, surface_name, surf
 	end
 
 	for color = 1, 2 do
-		local colorname
+		local colorname, colordesc
 		if color == 1 then
 			colorname = "White"
+			colordesc = "bílý"
 		elseif color == 2 then
 			colorname = "Yellow"
+			colordesc = "žlutý"
 			tex = "" .. tex .. "^[colorize:#ecb100"
 		end
 
 		minetest.register_tool(":streets:tool_" .. name:gsub("{color}", colorname:lower()) .. r, {
-			description = "Marking Tool: " .. friendlyname .. rotation_friendly .. " " .. colorname,
-			groups = { not_in_creative_inventory = 1 },
+			description = S("značkovač @1: ", colordesc) .. friendlyname .. rotation_friendly,
+			groups = {},
 			inventory_image = tex,
 			wield_image = tex,
 			on_place = function(itemstack, placer, pointed_thing)
@@ -217,6 +232,7 @@ local register_marking_nodes = function(surface_friendlyname, surface_name, surf
 				else
 					return itemstack
 				end
+				--[[
 				local node = minetest.get_node(pos)
 				local lower_pos = { x = pos.x, y = pos.y - 1, z = pos.z }
 				local lower_node = minetest.get_node(lower_pos)
@@ -238,15 +254,16 @@ local register_marking_nodes = function(surface_friendlyname, surface_name, surf
 					lower_node.name = lower_node.name:gsub("asphalt", ("mark_" .. node.name:sub(14)) .. "_on_asphalt")
 					minetest.set_node(lower_pos, lower_node)
 					minetest.remove_node(pos)
-				end
+				end -- ]]
 				itemstack:add_wear(65535 / 75)
 				return itemstack
 			end,
 		})
 
 		minetest.register_node(":streets:mark_" .. name:gsub("{color}", colorname:lower()) .. r, {
-			description = "Marking Overlay: " .. friendlyname .. rotation_friendly .. " " .. colorname,
+			description = S("značka: ") .. friendlyname .. rotation_friendly .. " " .. colorname,
 			tiles = { tex, "streets_transparent.png" },
+			use_texture_alpha = "clip",
 			drawtype = "nodebox",
 			paramtype = "light",
 			paramtype2 = "facedir",
@@ -266,6 +283,7 @@ local register_marking_nodes = function(surface_friendlyname, surface_name, surf
 			drop = "",
 		})
 
+		--[[
 		local tiles = {}
 		tiles[1] = surface_tiles[1]
 		tiles[2] = surface_tiles[2] or surface_tiles[1] --If less than 6 textures are used, this'll "expand" them to 6
@@ -283,6 +301,7 @@ local register_marking_nodes = function(surface_friendlyname, surface_name, surf
 			groups = groups,
 			sounds = surface_sounds,
 			tiles = tiles,
+			use_texture_alpha = "opaque",
 			paramtype2 = "facedir",
 			drop = "",
 			after_destruct = function(pos, oldnode)
@@ -332,14 +351,16 @@ local register_marking_nodes = function(surface_friendlyname, surface_name, surf
 				"streets:mark_" .. name:gsub("{color}", colorname:lower()) .. r .. "_on_" .. surface_name,
 				stairs_def)
 		end
+		]]
 	end
 end
 
 if streets.surfaces.surfacetypes then
+	local labeltypes = streets.labels.labeltypes
 	for _, v in pairs(streets.surfaces.surfacetypes) do
-		register_surface_nodes(v.friendlyname, v.name, v.tiles, v.groups, v.sounds, v.craft)
-		if streets.labels.labeltypes then
-			for _, w in pairs(streets.labels.labeltypes) do
+		register_surface_nodes(v.friendlyname, v.name, v.tiles, v.groups, v.sounds, v.craft, v.register_stairs)
+		if labeltypes then
+			for _, w in pairs(labeltypes) do
 				register_marking_nodes(v.friendlyname, v.name, v.tiles, v.groups, v.sounds, v.register_stairs, w.friendlyname, w.name, w.tex, "", w.basic)
 				if not streets.only_basic_stairsplus and w.rotation then
 					if w.rotation.r90 then
@@ -363,6 +384,7 @@ if streets.surfaces.surfacetypes then
 					end
 				end
 			end
+			-- labeltypes = nil
 		end
 	end
 end

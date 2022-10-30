@@ -4,6 +4,8 @@
 	Optional: true
 ]]
 
+local S = minetest.get_translator("streets")
+
 local nodebox = {
 	{ -7 / 16, -7 / 16, -1 / 8, 7 / 16, 7 / 16, 1 / 8 }, --Face
 	{ -7 / 16, 0, -1 / 4, -3 / 8, 7 / 16, -1 / 8 }, --Visor Left
@@ -12,8 +14,26 @@ local nodebox = {
 	{ -1 / 4, -1 / 4, 0.85, 1 / 4, 1 / 4, 1 / 8 }, --Mounting Bracket
 }
 
+local index_to_node = {
+	"streets:lane_use_off",
+	"streets:lane_use_red",
+	"streets:lane_use_yellow",
+	"streets:lane_use_green",
+}
+local node_to_index = table.key_value_swap(index_to_node)
+
+local function on_rightclick(pos, node, name)
+	local player_name = name:get_player_name()
+	if minetest.is_protected(pos, player_name) and not minetest.check_player_privs(player_name, { protection_bypass = true }) then
+		minetest.record_protection_violation(pos, player_name)
+		return
+	end
+	node.name = index_to_node[(node_to_index[node.name] % #index_to_node) + 1]
+	minetest.set_node(pos, node)
+end
+
 minetest.register_node("streets:lane_use_off", {
-	description = "Lane Use Signal",
+	description = S("signalizace jízdních pruhů v tunelu"),
 	tiles = {
 		"streets_tl_bg.png",
 		"streets_tl_bg.png",
@@ -25,10 +45,10 @@ minetest.register_node("streets:lane_use_off", {
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	on_construct = function(pos)
+	--[[ on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("formspec", "field[channel;Channel;${channel}]")
-	end,
+	end, ]]
 	groups = { cracky = 3 },
 	node_box = {
 		type = "fixed",
@@ -38,6 +58,8 @@ minetest.register_node("streets:lane_use_off", {
 		type = "fixed",
 		fixed = nodebox
 	},
+	on_rightclick = on_rightclick,
+	--[[
 	on_receive_fields = function(pos, formname, fields, sender)
 		local name = sender:get_player_name()
 		if minetest.is_protected(pos, name) and not minetest.check_player_privs(name, { protection_bypass = true }) then
@@ -70,7 +92,7 @@ minetest.register_node("streets:lane_use_off", {
 				minetest.get_meta(pos):set_string("channel", setchan)
 			end
 		}
-	}
+	} ]]
 })
 
 for _, v in pairs({ "green", "yellow", "red" }) do
@@ -87,11 +109,11 @@ for _, v in pairs({ "green", "yellow", "red" }) do
 		drawtype = "nodebox",
 		paramtype = "light",
 		paramtype2 = "facedir",
-		on_construct = function(pos)
+		--[[ on_construct = function(pos)
 			local meta = minetest.get_meta(pos)
 			meta:set_string("formspec", "field[channel;Channel;${channel}]")
-		end,
-		groups = { cracky = 3, not_in_creative_inventory = 1 },
+		end, ]]
+		groups = { cracky = 3 },
 		light_source = 11,
 		node_box = {
 			type = "fixed",
@@ -101,6 +123,8 @@ for _, v in pairs({ "green", "yellow", "red" }) do
 			type = "fixed",
 			fixed = nodebox
 		},
+		on_rightclick = on_rightclick,
+		--[[
 		on_receive_fields = function(pos, formname, fields, sender)
 			local name = sender:get_player_name()
 			if minetest.is_protected(pos, name) and not minetest.check_player_privs(name, { protection_bypass = true }) then
@@ -133,7 +157,7 @@ for _, v in pairs({ "green", "yellow", "red" }) do
 					minetest.get_meta(pos):set_string("channel", setchan)
 				end
 			}
-		}
+		} ]]
 	})
 end
 

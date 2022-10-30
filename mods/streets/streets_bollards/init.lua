@@ -4,6 +4,8 @@
 	Optional: true
 ]]
 
+local S = minetest.get_translator("streets")
+
 local function toggle_bollard(pos, node, clicker, itemstack, pointed_thing, to_role)
 	if minetest.registered_nodes[minetest.get_node(pos).name].bollard then
 		local n = minetest.get_node(pos)
@@ -26,7 +28,7 @@ local function toggle_bollard(pos, node, clicker, itemstack, pointed_thing, to_r
 end
 
 minetest.register_node("streets:bollard_driver", {
-	description = "Driver for Bollards",
+	description = S("podstavec pro patník"),
 	tiles = { "streets_bollard_driver_top.png", "default_steel_block.png" },
 	groups = { cracky = 1 },
 	-- on_rightclick = toggle_bollard, -- Automatic bollards mustn't be toggled manually!
@@ -67,7 +69,7 @@ minetest.register_craft({
 })
 
 minetest.register_node("streets:bollard_steel_automatic_up", {
-	description = "Steel Bollard",
+	description = S("velký automatický patník (postavte na podstavec, aby reagoval na mesespoje)"),
 	tiles = { "streets_bollard_driver_top.png", "streets_bollard_driver_top.png", "streets_bollard_automatic_side.png" },
 	groups = { cracky = 1 },
 	paramtype = "light",
@@ -115,7 +117,7 @@ minetest.register_craft({
 })
 
 minetest.register_node("streets:bollard_steel_manual_up", {
-	description = "Manual Bollard",
+	description = S("malý patník (lze sklopit ručně)"),
 	tiles = { "streets_bollard_manual_top.png", "streets_bollard_manual_top.png", "streets_bollard_manual_side.png" },
 	groups = { cracky = 1 },
 	paramtype = "light",

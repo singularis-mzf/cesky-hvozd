@@ -4,6 +4,8 @@
 	Optional: true
 ]]
 
+local S = minetest.get_translator("streets")
+
 if minetest.get_modpath("concrete") then
 	minetest.register_alias("streets:concrete", "technic:concrete")
 else
@@ -36,7 +38,7 @@ else
 end
 
 minetest.register_node("streets:concrete_wall", {
-	description = "Concrete Wall",
+	description = S("betonová zeď (s podstavcem)"),
 	paramtype = "light",
 	drawtype = "nodebox",
 	tiles = { streets.concrete_texture },
@@ -65,7 +67,7 @@ minetest.register_craft({
 })
 
 minetest.register_node("streets:concrete_wall_straight", {
-	description = "Concrete Wall (Top)",
+	description = S("betonová zeď (přímá, s podstavcem)"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -93,7 +95,7 @@ minetest.register_craft({
 
 
 minetest.register_node("streets:concrete_wall_top", {
-	description = "Concrete Wall",
+	description = S("betonová zeď (bez podstavce)"),
 	paramtype = "light",
 	drawtype = "nodebox",
 	tiles = { streets.concrete_texture },
@@ -120,7 +122,7 @@ minetest.register_craft({
 })
 
 minetest.register_node("streets:concrete_wall_top_straight", {
-	description = "Concrete Wall (Straight Top)",
+	description = S("betonová zeď (přímá, bez podstavce)"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",

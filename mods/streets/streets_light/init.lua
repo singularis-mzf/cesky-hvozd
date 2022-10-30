@@ -4,6 +4,8 @@
 	Optional: true
 ]]
 
+local S = minetest.get_translator("streets")
+
 local rules = {
 	{ x = 0, y = 0, z = -1 },
 	{ x = 0, y = 0, z = 1 },
@@ -30,34 +32,34 @@ local function update_formspec(pos)
 	local mode = meta:get_string("mode")
 
 	local fs = "size[9,6;]"
-	fs = fs .. "label[0,0;Street Light Setup]"
+	fs = fs .. "label[0,0;"..S("Nastavení veřejného osvětlení").."]"
 	fs = fs .. "box[0,0.4;8.6,0.05;#FFFFFF]"
 	fs = fs .. "box[2.6,0.6;0.05,5.4;#FFFFFF]"
-	fs = fs .. "label[0,0.6;Select Mode:]"
-	fs = fs .. "button[0,1.25;2.5,1;time;Time]"
-	fs = fs .. "button[0,2.25;2.5,1;digiline;Digiline]"
-	fs = fs .. "button[0,3.25;2.5,1;mesecons;Mesecons]"
-	fs = fs .. "button[0,4.25;2.5,1;manual;Manual]"
+	fs = fs .. "label[0,0.6;"..S("Zvolte režim:").."]"
+	fs = fs .. "button[0,1.25;2.5,1;time;"..S("čas").."]"
+	-- fs = fs .. "button[0,2.25;2.5,1;digiline;Digiline]"
+	fs = fs .. "button[0,3.25;2.5,1;mesecons;"..S("mesespoje").."]"
+	fs = fs .. "button[0,4.25;2.5,1;manual;"..S("ručně").."]"
 
 	if mode == "time" then
-		fs = fs .. "label[3,0.6;Selected Mode: Time]"
-		fs = fs .. "field[3.5,2;2,1;time_on;Turn-On-Time;${time_on}]"
-		fs = fs .. "button[5,1.7;1,1;submit_time;OK]"
-		fs = fs .. "field[3.5,4;2,1;time_off;Turn-Off-Time;${time_off}]"
-		fs = fs .. "button[5,3.7;1,1;submit_time;OK]"
-	elseif mode == "digiline" then
+		fs = fs .. "label[3,0.6;"..S("Zvolený režim:").." "..S("čas").."]"
+		fs = fs .. "field[3.5,2;2,1;time_on;"..S("Čas zapnutí")..";${time_on}]"
+		fs = fs .. "button[5,1.7;1,1;submit_time;"..S("Potvrdit").."]"
+		fs = fs .. "field[3.5,4;2,1;time_off;"..S("Čas vypnutí")..";${time_off}]"
+		fs = fs .. "button[5,3.7;1,1;submit_time;"..S("Potvrdit").."]"
+	--[[ elseif mode == "digiline" then
 		fs = fs .. "label[3,0.6;Selected Mode: Digiline]"
 		fs = fs .. "label[3,2;Send digiline message 'ON' to turn the lantern on.]"
 		fs = fs .. "label[3,2.3;Send digiline message 'OFF' to turn the lantern off.]"
 		fs = fs .. "field[3.5,4;2,1;channel;Digiline Channel;${channel}]"
-		fs = fs .. "button[5,3.7;1,1;submit_channel;OK]"
+		fs = fs .. "button[5,3.7;1,1;submit_channel;OK]" ]]
 	elseif mode == "mesecons" then
-		fs = fs .. "label[3,0.6;Selected Mode: Mesecons]"
-		fs = fs .. "label[3,2;The lantern is on when receiving mesecons signal.]"
-		fs = fs .. "label[3,2.3;The lantern is off when not receiving mesecons signal.]"
+		fs = fs .. "label[3,0.6;"..S("Zvolený režim:").." "..S("mesespoje").."]"
+		fs = fs .. "label[3,2;"..S("Světlo se rozsvítí, když je signál mesespojů aktivní.").."]"
+		fs = fs .. "label[3,2.3;"..S("Světlo zhasne, když je signál mesespojů neaktivní.").."]"
 	elseif mode == "manual" then
-		fs = fs .. "label[3,0.6;Selected Mode: Manual]"
-		fs = fs .. "label[3,2;Punch the lantern to change the state (on/off).]"
+		fs = fs .. "label[3,0.6;"..S("Zvolený režim:").." "..S("ručně").."]"
+		fs = fs .. "label[3,2;"..S("Levý klik na světlo pro přepnutí stavu zapnuto/vypnuto.").."]"
 	end
 	meta:set_string("formspec", fs)
 end
@@ -65,7 +67,7 @@ end
 local on_receive_fields = function(pos, formname, fields, sender)
 	local name = sender:get_player_name()
 	if minetest.is_protected(pos, name) and not minetest.check_player_privs(name, { protection_bypass = true }) then
-		minetest.chat_send_player(name, core.colorize("#FF5300", "You don't have access to this lantern. Stop trying to configure it!"))
+		minetest.chat_send_player(name, core.colorize("#FF5300", S("Nemáte právo měnit nastavení tohoto světla!")))
 		minetest.record_protection_violation(pos, name)
 		return
 	end
@@ -74,8 +76,8 @@ local on_receive_fields = function(pos, formname, fields, sender)
 
 	if fields.time then
 		meta:set_string("mode", "time")
-	elseif fields.digiline then
-		meta:set_string("mode", "digiline")
+	--[[ elseif fields.digiline then
+		meta:set_string("mode",  "digiline")]]
 	elseif fields.mesecons then
 		meta:set_string("mode", "mesecons")
 	elseif fields.manual then
@@ -83,7 +85,7 @@ local on_receive_fields = function(pos, formname, fields, sender)
 	end
 
 	if fields.submit_channel then
-		meta:set_string("channel", fields.channel)
+		-- meta:set_string("channel", fields.channel)
 	elseif fields.submit_time then
 		meta:set_int("time_on", tonumber(fields.time_on))
 		meta:set_int("time_off", tonumber(fields.time_off))
@@ -92,6 +94,7 @@ local on_receive_fields = function(pos, formname, fields, sender)
 	update_formspec(pos)
 end
 
+--[[
 local on_digiline_receive = function(pos, node, channel, msg)
 	local meta = minetest.get_meta(pos)
 	local mode = meta:get_string("mode")
@@ -114,11 +117,12 @@ local on_digiline_receive = function(pos, node, channel, msg)
 		end
 	end
 end
+]]
 
 local on_punch = function(pos, node, player, pointed_thing)
 	local player_name = player:get_player_name()
 	if minetest.is_protected(pos, player_name) and not minetest.check_player_privs(player_name, { protection_bypass = true }) then
-		minetest.chat_send_player(player_name, core.colorize("#FF5300", "You don't have access to this lantern. Stop trying to turn it on/off!"))
+		minetest.chat_send_player(player_name, core.colorize("#FF5300", S("Nemáte právo měnit nastavení tohoto světla!")))
 		minetest.record_protection_violation(pos, player_name)
 		return
 	end
@@ -146,6 +150,7 @@ local on_construct = function(pos)
 	update_formspec(pos)
 end
 
+--[[
 local def_digiline =
 {
 	receptor = {},
@@ -157,7 +162,7 @@ local def_digiline =
 		rules = rules
 	}
 }
-
+]]
 local def_mesecons =
 {
 	effector = {
@@ -222,7 +227,7 @@ minetest.register_abm({
 
 
 minetest.register_node(":streets:light_vertical_off", {
-	description = "Streets Light Vertical",
+	description = S("veřejné osvětlení svislé"),
 	tiles = { "streets_pole.png", "streets_pole.png", "streets_light_vertical_off.png", "streets_light_vertical_off.png", "streets_light_vertical_off.png", "streets_light_vertical_off.png" },
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -239,7 +244,7 @@ minetest.register_node(":streets:light_vertical_off", {
 	on_construct = on_construct,
 	on_punch = on_punch,
 	on_receive_fields = on_receive_fields,
-	digiline = def_digiline,
+	-- digiline = def_digiline,
 	mesecons = def_mesecons
 })
 
@@ -261,13 +266,13 @@ minetest.register_node(":streets:light_vertical_on", {
 	on_construct = on_construct,
 	on_punch = on_punch,
 	on_receive_fields = on_receive_fields,
-	digiline = def_digiline,
+	-- digiline = def_digiline,
 	mesecons = def_mesecons
 })
 
 
 minetest.register_node(":streets:light_horizontal_off", {
-	description = "Streets Light Horizontal",
+	description = S("veřejné osvětlení vodorovné"),
 	tiles = { "streets_pole.png", "streets_light_horizontal_off_bottom.png", "streets_light_horizontal_off_side.png", "streets_light_horizontal_off_side.png", "streets_light_horizontal_off_side.png", "streets_light_horizontal_off_side.png" },
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -284,7 +289,7 @@ minetest.register_node(":streets:light_horizontal_off", {
 	on_construct = on_construct,
 	on_punch = on_punch,
 	on_receive_fields = on_receive_fields,
-	digiline = def_digiline,
+	-- digiline = def_digiline,
 	mesecons = def_mesecons
 })
 
@@ -306,13 +311,13 @@ minetest.register_node(":streets:light_horizontal_on", {
 	on_construct = on_construct,
 	on_punch = on_punch,
 	on_receive_fields = on_receive_fields,
-	digiline = def_digiline,
+	-- digiline = def_digiline,
 	mesecons = def_mesecons
 })
 
 
 minetest.register_node(":streets:light_hanging_off", {
-	description = "Streets Light Hanging",
+	description = S("veřejné osvětlení visící"),
 	tiles = { "streets_pole.png", "streets_light_horizontal_off_bottom.png", "streets_light_hanging_off_side.png", "streets_light_hanging_off_side.png", "streets_light_hanging_off_side.png", "streets_light_hanging_off_side.png" },
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -329,7 +334,7 @@ minetest.register_node(":streets:light_hanging_off", {
 	on_construct = on_construct,
 	on_punch = on_punch,
 	on_receive_fields = on_receive_fields,
-	digiline = def_digiline,
+	-- digiline = def_digiline,
 	mesecons = def_mesecons
 })
 
@@ -351,7 +356,7 @@ minetest.register_node(":streets:light_hanging_on", {
 	on_construct = on_construct,
 	on_punch = on_punch,
 	on_receive_fields = on_receive_fields,
-	digiline = def_digiline,
+	-- digiline = def_digiline,
 	mesecons = def_mesecons
 })
 

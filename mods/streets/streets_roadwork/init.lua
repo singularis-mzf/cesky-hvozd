@@ -4,11 +4,12 @@
   Optional: true
 ]]
 
+local S = minetest.get_translator("streets")
 
 -- Traffic Barrier
 
 minetest.register_node("streets:roadwork_traffic_barrier", {
-	description = "Traffic Barrier",
+	description = S("zábrana (s podstavcem)"),
 	paramtype = "light",
 	drawtype = "nodebox",
 	tiles = {
@@ -57,7 +58,7 @@ minetest.register_craft({
 })
 
 minetest.register_node("streets:roadwork_traffic_barrier_straight", {
-	description = "Traffic Barrier (Straight)",
+	description = S("zábrana (s podstavcem, přímá)"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -91,7 +92,7 @@ minetest.register_craft({
 
 
 minetest.register_node("streets:roadwork_traffic_barrier_top", {
-	description = "Traffic Barrier (Top)",
+	description = S("zábrana (s podstavcem)"),
 	paramtype = "light",
 	drawtype = "nodebox",
 	tiles = {
@@ -135,7 +136,7 @@ minetest.register_craft({
 })
 
 minetest.register_node("streets:roadwork_traffic_barrier_top_straight", {
-	description = "Traffic Barrier (Straight Top)",
+	description = S("zábrana (přímá)"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -170,7 +171,7 @@ minetest.register_craft({
 -- Barrier Tape
 
 minetest.register_node("streets:roadwork_barrier_tape", {
-	description = "Barrier Tape",
+	description = S("bílo-červená páska"),
 	paramtype = "light",
 	drawtype = "nodebox",
 	tiles = { "streets_roadwork_barrier_tape.png" },
@@ -205,7 +206,7 @@ minetest.register_craft({
 
 
 minetest.register_node("streets:roadwork_traffic_fence", {
-	description = "Traffic Fence",
+	description = S("zábrana ve tvaru plotu"),
 	paramtype = "light",
 	drawtype = "nodebox",
 	tiles = { "streets_roadwork_traffic_fence_top.png", "streets_roadwork_traffic_fence_top.png", "streets_roadwork_traffic_fence.png" },
@@ -257,7 +258,7 @@ minetest.register_craft({
 
 
 minetest.register_node("streets:roadwork_pylon", {
-	description = "Pylon",
+	description = S("Z 1 Dopravní kužel"),
 	paramtype = "light",
 	drawtype = "nodebox",
 	tiles = { "streets_roadwork_pylon_top.png", "streets_roadwork_pylon_top.png", "streets_roadwork_pylon.png" },
@@ -286,7 +287,7 @@ minetest.register_craft({
 -- Blinking Light
 
 minetest.register_node("streets:roadwork_blinking_light_off", {
-	description = "Blinking Light",
+	description = S("blikající dopravní světlo"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -310,7 +311,6 @@ minetest.register_node("streets:roadwork_blinking_light_off", {
 })
 
 minetest.register_node("streets:roadwork_blinking_light_on", {
-	description = "Blinking Light",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -359,7 +359,7 @@ minetest.register_abm({
 })
 
 minetest.register_node("streets:roadwork_delineator_top", {
-	tile_images = {
+	tiles = {
 		"streets_roadwork_delineator_top.png",
 		"streets_tl_bg.png",
 		"streets_transparent.png",
@@ -385,10 +385,10 @@ minetest.register_node("streets:roadwork_delineator_top", {
 })
 
 minetest.register_node("streets:roadwork_delineator_bottom", {
-	description = "Roadwork Delineator",
+	description = S("směrovací deska se šikmými pruhy"),
 	inventory_image = "streets_roadwork_delineator.png",
 	wield_image = "streets_roadwork_delineator.png",
-	tile_images = {
+	tiles = {
 		"streets_roadwork_delineator_top.png",
 		"streets_tl_bg.png",
 		"streets_roadwork_delineator_bottom_side.png",
@@ -447,7 +447,7 @@ minetest.register_craft({
 
 
 minetest.register_node("streets:roadwork_delineator_light_off_top", {
-	tile_images = {
+	tiles = {
 		"streets_roadwork_delineator_top.png",
 		"streets_tl_bg.png",
 		"streets_transparent.png",
@@ -480,7 +480,7 @@ minetest.register_node("streets:roadwork_delineator_light_off_top", {
 })
 
 minetest.register_node("streets:roadwork_delineator_light_on_top", {
-	tile_images = {
+	tiles = {
 		"streets_roadwork_delineator_top.png",
 		"streets_tl_bg.png",
 		"streets_transparent.png",
@@ -514,10 +514,10 @@ minetest.register_node("streets:roadwork_delineator_light_on_top", {
 })
 
 minetest.register_node("streets:roadwork_delineator_light_bottom", {
-	description = "Roadwork Delineator with Blinking Light",
+	description = S("směrovací deska se šikmými pruhy a blikajícím světlem"),
 	inventory_image = "streets_roadwork_delineator_light.png",
 	wield_image = "streets_roadwork_delineator_light.png",
-	tile_images = {
+	tiles = {
 		"streets_roadwork_delineator_top.png",
 		"streets_tl_bg.png",
 		"streets_roadwork_delineator_bottom_side.png",

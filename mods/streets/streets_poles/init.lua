@@ -4,8 +4,10 @@
 	Optional: true
 ]]
 
+local S = minetest.get_translator("streets")
+
 minetest.register_node(":streets:bigpole", {
-	description = "Pole Straight",
+	description = S("tyč přímá"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -52,7 +54,7 @@ minetest.register_craft({
 
 
 minetest.register_node(":streets:bigpole_short", {
-	description = "Pole Short",
+	description = S("tyč zkrácená"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -97,7 +99,7 @@ minetest.register_craft({
 
 
 minetest.register_node(":streets:bigpole_edge", {
-	description = "Pole Edge",
+	description = S("tyč: záhyb"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -152,7 +154,7 @@ minetest.register_craft({
 
 
 minetest.register_node(":streets:bigpole_tjunction", {
-	description = "Pole T-Junction",
+	description = S("tyč: křížení ve tvaru T"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -198,7 +200,7 @@ minetest.register_craft({
 
 
 minetest.register_node(":streets:bigpole_corner", {
-	description = "Pole Corner",
+	description = S("tyč: roh"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -246,7 +248,7 @@ minetest.register_craft({
 
 
 minetest.register_node(":streets:bigpole_four_side_junction", {
-	description = "Pole 4-Side-Junction",
+	description = S("tyč: křížení čtyř směrů"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -294,7 +296,7 @@ minetest.register_craft({
 
 
 minetest.register_node(":streets:bigpole_cross", {
-	description = "Pole Cross",
+	description = S("tyč: kříž"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -342,7 +344,7 @@ minetest.register_craft({
 
 
 minetest.register_node(":streets:bigpole_five_side_junction", {
-	description = "Pole 5-Side-Junction",
+	description = S("tyč: křížení pěti směrů"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -389,7 +391,7 @@ minetest.register_craft({
 
 
 minetest.register_node(":streets:bigpole_all_sides", {
-	description = "Pole All Sides",
+	description = S("tyč: křížení všech stran"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",

@@ -4,6 +4,8 @@
 	Optional: true
 ]]
 
+local S = minetest.get_translator("streets")
+
 streets.rrxing_sound_handles = {}
 
 local function play_bell(pos)
@@ -319,7 +321,7 @@ minetest.register_node("streets:rrxing_middle", {
 })
 
 minetest.register_node("streets:rrxing_bottom", {
-	description = "Railroad Crossing Signal",
+	description = S("železniční přejezd"),
 	inventory_image = "streets_rrxing_inv.png",
 	wield_image = "streets_rrxing_inv.png",
 	tiles = {
@@ -604,7 +606,7 @@ local function move_arm(pos)
 end
 
 minetest.register_node("streets:rrgate_mech_down", {
-	description = "Railroad Crossing Gate Mechanism",
+	description = S("rameno železničního přejezdu"),
 	tiles = {
 		"streets_rrgate_mech_down_top.png",
 		"streets_rrgate_mech_down_bottom.png",
@@ -819,7 +821,7 @@ minetest.register_node("streets:rrgate_mech_bottom", {
 })
 
 minetest.register_node("streets:rrgate_lightfirst", {
-	description = "Railroad Crossing Gate",
+	description = S("díl závory železničního přejezdu"),
 	tiles = {
 		"streets_rrgate_top.png",
 		"streets_rrgate_side.png",

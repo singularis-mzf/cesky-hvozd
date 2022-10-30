@@ -4,16 +4,13 @@
 	Optional: true
 ]]
 
+local S = minetest.get_translator("streets")
+
 --These register the sections in the workshop that these will be placed into
 streets.signs.sections = {
 	{ name = "warn", friendlyname = "MT Warning" },
 	{ name = "reg", friendlyname = "MT Regulatory" },
 	{ name = "info", friendlyname = "MT Information" },
-	{ name = "usreg", friendlyname = "US Regulatory" },
-	{ name = "uswarn", friendlyname = "US Warning" },
-	{ name = "usinfo", friendlyname = "US Information" },
-	{ name = "usom", friendlyname = "US Object Markers" },
-	{ name = "usttc", friendlyname = "US TTC" },
 	{ name = "euprio", friendlyname = "EU Priority" },
 	{ name = "euwarn", friendlyname = "EU Warning" },
 	{ name = "euprohib", friendlyname = "EU Prohibitory" },
@@ -26,7 +23,7 @@ minetest.register_alias("streets:sign_blank", "default:sign_wall_steel")
 
 streets.register_road_sign({
 	name = "sign_curve_chevron_right",
-	friendlyname = "Curve Chevron Sign (Right)",
+	friendlyname = S("barevné zvýraznění zatáčky vpravo"),
 	tiles = {
 		"streets_sign_back.png",
 		"streets_sign_back.png",
@@ -42,7 +39,7 @@ streets.register_road_sign({
 
 streets.register_road_sign({
 	name = "sign_curve_chevron_left",
-	friendlyname = "Curve Chevron Sign (Left)",
+	friendlyname = S("barevné zvýraznění zatáčky vlevo"),
 	tiles = {
 		"streets_sign_back.png",
 		"streets_sign_back.png",
@@ -55,7 +52,7 @@ streets.register_road_sign({
 	section = "warn",
 	dye_needed = { yellow = 3, black = 3 }
 })
-
+--[[
 streets.register_road_sign({
 	name = "sign_warning",
 	friendlyname = "Warning Sign",
@@ -119,10 +116,11 @@ streets.register_road_sign({
 	section = "warn",
 	dye_needed = { green = 1, blue = 1, brown = 1 }
 })
+]]
 
 streets.register_road_sign({
 	name = "sign_grass",
-	friendlyname = "No Walking on Grass Sign",
+	friendlyname = S("dopravní značka: @1", S("nevstupujte na trávník")),
 	tiles = {
 		"streets_sign_back.png^[colorize:#D20000FF",
 		"streets_sign_back.png^[colorize:#D20000FF",
@@ -136,6 +134,7 @@ streets.register_road_sign({
 	dye_needed = { green = 3, red = 2 }
 })
 
+--[[
 streets.register_road_sign({
 	name = "sign_mine",
 	friendlyname = "Mine Sign",
@@ -183,13 +182,7 @@ streets.register_road_sign({
 	section = "info",
 	dye_needed = { red = 1, yellow = 2, blue = 1 }
 })
-
---US Signs
-dofile(streets.conf.modpath .. "/streets_signs/us/usreg.lua")
-dofile(streets.conf.modpath .. "/streets_signs/us/uswarn.lua")
-dofile(streets.conf.modpath .. "/streets_signs/us/usinfo.lua")
-dofile(streets.conf.modpath .. "/streets_signs/us/usom.lua")
-dofile(streets.conf.modpath .. "/streets_signs/us/usttc.lua")
+]]
 
 --EU Signs
 dofile(streets.conf.modpath .. "/streets_signs/eu/euwarn.lua")

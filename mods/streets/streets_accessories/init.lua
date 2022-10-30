@@ -4,8 +4,10 @@
 	Optional: true
 ]]
 
+local S = minetest.get_translator("streets")
+
 minetest.register_node(":streets:delineator", {
-	description = "Delineator",
+	description = S("Z 11b Směrový sloupek bílý pravý, Z 11a Směrový sloupek bílý levý"),
 	tiles = { "streets_delineator_top.png", "streets_delineator_top.png", "streets_delineator_left.png", "streets_delineator_right.png", "streets_delineator_back.png", "streets_delineator_front.png" },
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -37,7 +39,7 @@ minetest.register_craft({
 })
 
 minetest.register_node("streets:fence_chainlink", {
-	description = "Chainlink Fence",
+	description = S("zelený pletivový plot"),
 	paramtype = "light",
 	drawtype = "nodebox",
 	tiles = { "streets_fence_chainlink.png" },
@@ -93,7 +95,7 @@ local function toggleDoor(pos, node, player, action)
 end
 
 minetest.register_node("streets:fence_chainlink_door_open", {
-	description = "Chainlink Fence Door (Locked)",
+	description = S("dvířka v zeleném pletitovém plotu"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -117,7 +119,7 @@ minetest.register_node("streets:fence_chainlink_door_open", {
 })
 
 minetest.register_node("streets:fence_chainlink_door_closed", {
-	description = "Chainlink Fence Door (Locked)",
+	description = S("dvířka v zeleném pletitovém plotu"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -159,7 +161,7 @@ minetest.register_craft({
 })
 
 minetest.register_node("streets:guardrail", {
-	description = "Guardrail",
+	description = S("svodidla"),
 	paramtype = "light",
 	drawtype = "nodebox",
 	tiles = { "streets_guardrail.png" },
