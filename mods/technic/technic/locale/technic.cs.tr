@@ -55,7 +55,7 @@ Sawdust=dřevoprach
 Machine cannot be removed because it is not empty=Stroj není možné odstranit, protože není prázdný
 Inventory move disallowed due to protection=Ochrana oblasti zabránila zásahu do inventáře
 # $1: Machine name (Includes tier)
-@1 Active (@2 EU)=@1 aktivní (@2 EU)
+@1 Active (@2 EU)=@1 aktivní (@2 EJ)
 @1 Active=@1 aktivní
 @1 Disabled=@1 vypnutý/á/é
 @1 Enabled=@1 zapnutý/á/é
@@ -108,6 +108,7 @@ Channel=Kanál
 @1 Nuclear Reactor Core=@1 jádro jaderného reaktoru
 @1 Quarry=@1 těžební stroj
 @1 Tool Workshop=@1 opravna nářadí
+Admin @1 Generator=@1 administrátorský generátor
 Arrayed Solar @1 Generator=@1 solární generátor
 Fuel-Fired @1 Generator=@1 tepelný generátor
 Geothermal @1 Generator=@1 geotermální generátor
@@ -146,7 +147,8 @@ Power level=Úroveň nabití skříně
 # $1: Tier $2: current_charge $3: max_charge
 @1 Battery Box: @2/@3=@1 bateriová skříň: @2/@3
 # $1: Machine name $2: Supply $3: Demand
-@1. Supply: @2 Demand: @3=@1. Příkon: @2 Požadovaný odběr: @3 
+@1. Supply: @2 Demand: @3=@1. Příkon: @2 Požadovaný odběr: @3
+@1. Supply: @2 Demand: @3=@1. Příkon: @2 Požadovaný odběr: @3
 Production at @1%=Produkce na @1%
 Choose Milling Program:=Vyberte program:
 Slim Elements half / normal height:=Poloviční/normální výška:

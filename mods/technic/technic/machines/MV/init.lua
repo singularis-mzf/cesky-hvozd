@@ -14,6 +14,7 @@ end
 dofile(path.."/generator.lua")
 dofile(path.."/solar_array.lua")
 dofile(path.."/hydro_turbine.lua")
+dofile(path.."/admin_generator.lua")
 
 -- Machines
 dofile(path.."/alloy_furnace.lua")
