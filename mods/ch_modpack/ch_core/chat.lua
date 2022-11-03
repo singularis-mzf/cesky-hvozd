@@ -165,7 +165,7 @@ function ch_core.chat(rezim, odkoho, zprava, pozice)
 
 	-- Zapsat do logu:
 	if rezim == "sepot" then
-		zprava = minetest.sha1(zprava:gsub("%s", ""))
+		zprava = minetest.sha1(odkoho.."/"..zprava:gsub("%s", ""))
 	end
 	minetest.log("action", "CHAT:"..rezim..":"..odkoho..">"..pocitadlo.." characters(ex.:"..(posl_adresat or "nil")..", mv_adr="..(min_vzdal_adresat or "nil")..", znadpost="..zobrazeno_nad_postavou.."): "..zprava)
 
@@ -213,7 +213,7 @@ function ch_core.soukroma_zprava(odkoho, komu, zprava)
 		minetest.chat_send_player(odkoho, color_soukromy .. "-> ".. ch_core.prihlasovaci_na_zobrazovaci(komu)..": "..zprava .. color_reset)
 		minetest.chat_send_player(komu, color_soukromy .. ch_core.prihlasovaci_na_zobrazovaci(odkoho)..": "..zprava .. color_reset)
 		odkoho_info.posl_soukr_adresat = komu
-		zprava = minetest.sha1(zprava:gsub("%s", ""))
+		zprava = minetest.sha1(odkoho.."/"..zprava:gsub("%s", ""))
 		minetest.log("action", "CHAT:soukroma_zprava:"..odkoho..">"..komu..": "..zprava)
 		minetest.sound_play("chat3_bell", {to_player = komu, gain = 1.0}, true)
 

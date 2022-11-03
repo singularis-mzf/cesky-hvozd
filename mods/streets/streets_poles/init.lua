@@ -7,7 +7,7 @@
 local S = minetest.get_translator("streets")
 
 minetest.register_node(":streets:bigpole", {
-	description = S("tyč přímá"),
+	description = S("stožár veřejného osvětlení: přímý díl"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -54,7 +54,7 @@ minetest.register_craft({
 
 
 minetest.register_node(":streets:bigpole_short", {
-	description = S("tyč zkrácená"),
+	description = S("stožár veřejného osvětlení: zkrácený díl"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -99,7 +99,7 @@ minetest.register_craft({
 
 
 minetest.register_node(":streets:bigpole_edge", {
-	description = S("tyč: záhyb"),
+	description = S("stožár veřejného osvětlení: záhyb"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -154,7 +154,7 @@ minetest.register_craft({
 
 
 minetest.register_node(":streets:bigpole_tjunction", {
-	description = S("tyč: křížení ve tvaru T"),
+	description = S("stožár veřejného osvětlení: křížení ve tvaru T"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -200,7 +200,7 @@ minetest.register_craft({
 
 
 minetest.register_node(":streets:bigpole_corner", {
-	description = S("tyč: roh"),
+	description = S("stožár veřejného osvětlení: roh"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -248,7 +248,7 @@ minetest.register_craft({
 
 
 minetest.register_node(":streets:bigpole_four_side_junction", {
-	description = S("tyč: křížení čtyř směrů"),
+	description = S("stožár veřejného osvětlení: křížení čtyř směrů"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -296,7 +296,7 @@ minetest.register_craft({
 
 
 minetest.register_node(":streets:bigpole_cross", {
-	description = S("tyč: kříž"),
+	description = S("stožár veřejného osvětlení: kříž"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -344,7 +344,7 @@ minetest.register_craft({
 
 
 minetest.register_node(":streets:bigpole_five_side_junction", {
-	description = S("tyč: křížení pěti směrů"),
+	description = S("stožár veřejného osvětlení: křížení pěti směrů"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
@@ -391,7 +391,7 @@ minetest.register_craft({
 
 
 minetest.register_node(":streets:bigpole_all_sides", {
-	description = S("tyč: křížení všech stran"),
+	description = S("stožár veřejného osvětlení: křížení všech stran"),
 	paramtype = "light",
 	paramtype2 = "facedir",
 	drawtype = "nodebox",
