@@ -122,7 +122,7 @@ minetest.register_craft({
 
 minetest.register_craft({
 	output = "moretrees:raw_coconut",
-	recipe = {"moretrees:coconut"},
+	recipe = {{"moretrees:coconut"}},
 })
 --[[
 -- coconut milk using food_cutting_board from farming redo
