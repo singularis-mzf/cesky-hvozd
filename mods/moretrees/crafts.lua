@@ -106,57 +106,25 @@ minetest.register_craftitem("moretrees:fir_nuts", {
 	on_use = minetest.item_eat(1),
 })
 
-for i in ipairs(moretrees.cutting_tools) do
-	local tool = moretrees.cutting_tools[i]
-	minetest.register_craft({
-		type = "shapeless",
-		output = "moretrees:coconut_milk",
-		recipe = {
-			"moretrees:coconut",
-			"vessels:drinking_glass",
-			tool
-		},
-		replacements = {
-			{ "moretrees:coconut", "moretrees:raw_coconut" },
-		}
-	})
-end
+minetest.register_craft({
+	type = "shapeless",
+	output = "moretrees:coconut_milk",
+	recipe = {
+		"moretrees:coconut",
+		"vessels:drinking_glass",
+		"farming:cutting_board",
+	},
+	replacements = {
+		{ "moretrees:coconut", "moretrees:raw_coconut" },
+		{ "farming:cutting_board", "farming:cutting_board" },
+	}
+})
 
--- give tool back with wear preserved
-minetest.register_on_craft(function(itemstack, player, old_craft_grid, craft_inv)
-	if (itemstack:get_name() == "moretrees:coconut_milk") then
-		for i, j in pairs(old_craft_grid) do
-			-- find tool used to do the craft
-			local ocg_name = j:get_name()
-			if ((ocg_name ~= "") and (ocg_name ~= "moretrees:coconut") and (ocg_name ~= "vessels:drinking_glass")) then
-				-- abort if using cutting board
-				if minetest.get_item_group(ocg_name, "food_cutting_board") == 1 then
-					return
-				end
-				-- create a new tool and set wear
-				local t = ItemStack(ocg_name)
-				local w = j:get_wear()
-				-- works if tool used is an axe
-				local uses = j:get_tool_capabilities().groupcaps.choppy.uses or 0
-				if (w == 0 and uses ~= 0) then
-					-- tool has never been used
-					-- use tool once
-					t:set_wear(65535/(9*(uses - 1)))
-				else
-					-- set wear back
-					t:set_wear(w)
-					-- use tool once
-					if (uses ~= 0) then
-						t:add_wear(65535/(9*(uses - 1)))
-					end
-				end
-				-- add to craft inventory
-				craft_inv:add_item("craft", t)
-			end
-		end
-	end
-end)
-
+minetest.register_craft({
+	output = "moretrees:raw_coconut",
+	recipe = {"moretrees:coconut"},
+})
+--[[
 -- coconut milk using food_cutting_board from farming redo
 if minetest.registered_items["farming:cutting_board"] then
 	minetest.register_craft({
@@ -173,7 +141,7 @@ if minetest.registered_items["farming:cutting_board"] then
 		}
 	})
 end
-
+]]
 
 minetest.register_craft({
 	type = "shapeless",

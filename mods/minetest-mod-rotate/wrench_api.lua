@@ -780,8 +780,8 @@ end
 
 local known_wrenches = {}
 
-local ch_help_rotating = "Rotační klíč slouží k otáčení bloků.\nLevý klik otočí blok nastaveným způsobem; pravý klik přepne režim otáčení.\nPřes výrobní mřížku můžete klíč změnit na dvě další varianty."
-local ch_help_rotating_group = "wrench_rot"
+local ch_help_rotating = "Rotační klíč slouží k otáčení bloků.\nLevý klik otočí blok nastaveným způsobem; pravý klik přepne režim otáčení.\nAux1+pravý klik přepíná mezi rotačním, relativním a absolutním klíčem."
+local ch_help_rotating_group = "wrench_rot2"
 
 local function register_wrench_rotating(wrench_mod_name, material, material_descr, uses, mode, next_mode)
 	local sep = "_"
@@ -803,7 +803,11 @@ local function register_wrench_rotating(wrench_mod_name, material, material_desc
 		return itemstack
 	end
 	local function on_place(itemstack, player, pointed_thing)
-		itemstack:set_name(wrench_mod_name .. ":wrench_" .. material .. "_" .. next_mode)
+		if player:get_player_control().aux1 then
+			itemstack:set_name(wrench_mod_name .. ":wrench_" .. material .. "_r00")
+		else
+			itemstack:set_name(wrench_mod_name .. ":wrench_" .. material .. "_" .. next_mode)
+		end
 		return itemstack
 	end
 
@@ -820,11 +824,11 @@ local function register_wrench_rotating(wrench_mod_name, material, material_desc
 	})
 end
 
-local ch_help_relative = "Relativní klíč slouží k otáčení bloků tak, aby z vašeho pohledu byly otočeny tak, jak si klíč zapamatoval.\nLevý klik otočí blok; pravý klik na blok si zapamatuje jeho otočení.\nPřes výrobní mřížku můžete klíč změnit na dvě další varianty."
-local ch_help_relative_group = "wrench_rel"
+local ch_help_relative = "Relativní klíč slouží k otáčení bloků tak, aby z vašeho pohledu byly otočeny tak, jak si klíč zapamatoval.\nLevý klik otočí blok; pravý klik na blok si zapamatuje jeho otočení.\nAux1+pravý klik přepíná mezi rotačním, relativním a absolutním klíčem."
+local ch_help_relative_group = "wrench_rel2"
 
-local ch_help_absolute = "Absolutní klíč slouží k otáčení bloků do zapamatovaného světového otočení.\nLevý klik otočí blok; pravý klik na blok si zapamatuje jeho otočení.\nPřes výrobní mřížku můžete klíč změnit na dvě další varianty."
-local ch_help_absolute_group = "wrench_abs"
+local ch_help_absolute = "Absolutní klíč slouží k otáčení bloků do zapamatovaného světového otočení.\nLevý klik otočí blok; pravý klik na blok si zapamatuje jeho otočení.\nAux1+pravý klik přepíná mezi rotačním, relativním a absolutním klíčem."
+local ch_help_absolute_group = "wrench_abs2"
 
 local function register_wrench_positioning(wrench_mod_name, material, material_descr, uses, mode)
 	local notcrea = 1
@@ -855,10 +859,20 @@ local function register_wrench_positioning(wrench_mod_name, material, material_d
 	end
 	local function on_place(itemstack, player, pointed_thing)
 		local new_mode
-		if string.sub(mode,1,1) == "r" then
-			new_mode = get_node_relative_orientation_mode(player, pointed_thing)
+		if player:get_player_control().aux1 then
+			if string.sub(mode,1,1) == "r" then
+				new_mode = "a"..string.sub(mode,2,3)
+			else
+				new_mode = "cw"
+			end
+		elseif pointed_thing.type == "node" then
+			if string.sub(mode,1,1) == "r" then
+				new_mode = get_node_relative_orientation_mode(player, pointed_thing)
+			else
+				new_mode = get_node_absolute_orientation_mode(pointed_thing)
+			end
 		else
-			new_mode = get_node_absolute_orientation_mode(pointed_thing)
+			return itemstack
 		end
 		itemstack:set_name(wrench_mod_name .. ":wrench_" .. material .. "_" .. new_mode)
 		return itemstack
@@ -872,6 +886,7 @@ local function register_wrench_positioning(wrench_mod_name, material, material_d
 		inventory_image = wrench_image .. "^" .. orientation_image,
 		groups = { wrench = 1, ["wrench_"..material.."_"..string.sub(mode,1,1).."pos"] = 1, not_in_creative_inventory = notcrea },
 		on_use = on_use,
+		on_secondary_use = on_place,
 		on_place = on_place,
 	})
 end
@@ -936,7 +951,7 @@ local function register_new_wrench(wrench_spec)
 			})
 		end
 	end
-
+--[[
 	-- Convert rotating wrench to positioning wrench (relative mode)
 	minetest.register_craft({
 		output = wrench_spec.mod_name .. ":wrench_" .. material .. "_r00",
@@ -952,8 +967,10 @@ local function register_new_wrench(wrench_spec)
 		output = wrench_spec.mod_name .. ":wrench_" .. material,
 		recipe = {{"group:wrench_" .. material .. "_apos"}},
 		})
+	]]
 end
 
+--[[
 local function register_crafting_helper()
 	-- When crafting a wrench from a wrench, keep its wear...
 	minetest.register_on_craft(function(itemstack, player, old_craft_grid, craft_inv)
@@ -974,6 +991,7 @@ local function register_crafting_helper()
 						end
 					end)
 end
+]]
 
 local registered_wrench_materials = {}
 
@@ -1065,5 +1083,5 @@ module.api = {
 compute_wrench_orientation_codes()
 precompute_clockwise_rotations()
 register_rotation_privilege()
-register_crafting_helper()
+-- register_crafting_helper()
 

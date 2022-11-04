@@ -914,6 +914,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPLv2+
 * [ContentDB](https://content.minetest.net/packages/RealBadAngel/unified\_inventory/)
 
+## Unified Inventory Plus (unified\_inventory\_plus)
+
+* Zdroj: [https://github.com/bousket/unified\_inventory\_plus](https://github.com/bousket/unified\_inventory\_plus), revize 63b14909888ab9a5799553ae674a52a161ee4539
+* Původní licence: AGPLv3
+* Licence úprav: AGPLv3
+
 ## Visible Wielditem
 
 * Zdroj: [https://github.com/appgurueu/visible\_wielditem](https://github.com/appgurueu/visible\_wielditem), revize d8ce7ba84eef50fc3994fa516a3c03c8ad58da4b

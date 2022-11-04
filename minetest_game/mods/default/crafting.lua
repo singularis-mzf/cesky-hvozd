@@ -399,11 +399,12 @@ minetest.register_craft({
 -- Crafting (tool repair)
 --
 
+--[[
 minetest.register_craft({
 	type = "toolrepair",
 	additional_wear = -0.02,
 })
-
+]]
 
 --
 -- Cooking recipes

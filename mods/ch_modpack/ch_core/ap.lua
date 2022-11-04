@@ -180,6 +180,22 @@ function ch_core.ap_get_level(l)
 	end
 end
 
+function ch_core.ap_announce_craft(player_or_player_name)
+	local player_name
+	if type(player_or_player_name) == "string" then
+		player_name = player_or_player_name
+	else
+		player_name = player_or_player_name and player_or_player_name:is_player() and player_or_player_name:get_player_name()
+	end
+	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
+	if online_charinfo then
+		local ap = online_charinfo.ap
+		if ap then
+			ap.craft_gen = ap.craft_gen + 1
+		end
+	end
+end
+
 function ch_core.ap_init(player, online_charinfo, offline_charinfo)
 	local vector_zero = vector.zero()
 	local default_coef = 0

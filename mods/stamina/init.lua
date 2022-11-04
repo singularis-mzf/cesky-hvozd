@@ -564,6 +564,10 @@ function stamina.eat(hp_change, replace_with_item, itemstack, user, pointed_thin
 	return itemstack
 end
 
+function stamina.exhaust_player_by_craft(player)
+	exhaust_player(player, STAMINA_EXHAUST_CRAFT)
+end
+
 minetest.register_on_joinplayer(function(player)
 	if not player then return end
 

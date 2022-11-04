@@ -215,7 +215,7 @@ ui.register_page("craft", {
 			formspec[n] = string.format("label[%f,%f;%s]", craftx + 6.45, crafty + 2.4, F(S("Trash:")))
 			formspec[n+1] = ui.make_trash_slot(craftx + 6.25, crafty + 2.5)
 
-			formspec[n+2] = string.format("image_button[%g,%g;%g,%g;%s;%s;]", craftx + 4.0, crafty + 2.75, 0.85, 0.85, "ui_trash_icon.png", "trash_craft")
+			formspec[n+2] = string.format("image_button[%g,%g;%g,%g;%s;%s;]", craftx - 1.0, crafty + 2.75, 0.85, 0.85, "ui_trash_icon.png", "trash_craft")
 			formspec[n+3] = "tooltip[trash_craft;"..S("Destroy craft grid contents").."]"
 			n=n + 4
 		end

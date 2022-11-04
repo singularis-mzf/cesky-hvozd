@@ -178,7 +178,7 @@ for _,suffix in ipairs({"_0", "_1", "_2", "_3", ""}) do
 		paramtype = "light",
 		sunlight_propagates = true,
 		walkable = false,
-		groups = { fleshy=3, dig_immediate=3, flammable=2, moretrees_coconut=coco_group },
+		groups = { fleshy=3, dig_immediate=3, flammable=2, moretrees_coconut=coco_group, not_in_creative_inventory = 1 },
 		inventory_image = tile.."^[transformR180",
 		wield_image = tile.."^[transformR180",
 		sounds = default.node_sound_defaults(),
@@ -189,8 +189,10 @@ for _,suffix in ipairs({"_0", "_1", "_2", "_3", ""}) do
 		},
 		on_timer = timerfn,
 		on_construct = constructfn,
-
 	}
+	if suffix == "_0" or suffix == "" then
+		coconutdef.groups.not_in_creative_inventory = nil
+	end
 	minetest.register_node("moretrees:coconut"..suffix, coconutdef)
 end
 
