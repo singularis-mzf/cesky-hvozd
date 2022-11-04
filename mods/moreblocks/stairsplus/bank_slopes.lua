@@ -91,6 +91,7 @@ function stairsplus:register_bank_slopes(recipeitem)
 			new_def.name = nil
 			new_def.mod_origin = nil
 			new_def.drop = nil
+			new_def._stairsplus_category = "bank_slope"
 			new_def.description = S("Bank Slope: @1", new_def.description or S("Unknown"))
 			new_def.mesh = slopedef.mesh
 			local same_box = new_def.collision_box == new_def.selection_box
