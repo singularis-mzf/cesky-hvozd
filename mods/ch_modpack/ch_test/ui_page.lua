@@ -28,7 +28,10 @@ local menu_items = {
 ui.register_button("test_form", {
 	type = "image",
 	image = "ui_craft_icon.png",
-	tooltip = "Test Form"
+	tooltip = "Zkušební karta",
+	condition = function(player)
+		return minetest.check_player_privs(player, "server")
+	end,
 })
 
 local function get_test_form_formspec(player, perplayer_formspec)

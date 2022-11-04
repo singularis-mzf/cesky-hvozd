@@ -180,8 +180,9 @@ function areas:canInteractInAreaById(name, area_id, reason, quiet, pos)
 		return minetest.check_player_privs(name, "ch_registered_player") or main_area.owner == name
 
 	elseif main_area.type == 2 then
-		-- 2 open -- no priv is required to build
-		return true
+		-- 2 open -- ch_registered_player priv or ownership is required to build unless the area is 1x1
+		return minetest.check_player_privs(name, "ch_registered_player") or main_area.owner == name or
+			(main_area.pos1.x == main_area.pos2.x and main_area.pos1.y == main_area.pos2.y and main_area.pos1.z == main_area.pos2.z)
 
 	elseif main_area.type == 3 then
 		-- 3 private -- ch_registered_player priv or ownership is required to build
