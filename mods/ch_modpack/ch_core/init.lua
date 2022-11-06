@@ -42,7 +42,8 @@ dofile(modpath .. "/dennoc.lua") -- : privs, chat
 dofile(modpath .. "/hud.lua") -- : data, lib, chat
 dofile(modpath .. "/ap.lua") -- : data, chat, hud, lib
 dofile(modpath .. "/registrace.lua") -- : chat, data, lib, nametag
-dofile(modpath .. "/joinplayer.lua") -- : data, lib, nametag
+dofile(modpath .. "/pryc.lua") -- : data, lib, chat, privs
+dofile(modpath .. "/joinplayer.lua") -- : data, formspecs, lib, nametag, pryc
 dofile(modpath .. "/nodes.lua")
 dofile(modpath .. "/padlock.lua") -- : data, lib
 dofile(modpath .. "/vezeni.lua") -- : privs, data, lib, chat, hud
@@ -50,7 +51,6 @@ dofile(modpath .. "/timers.lua") -- : data, chat, hud
 dofile(modpath .. "/hotbar.lua")
 dofile(modpath .. "/vgroups.lua")
 dofile(modpath .. "/wielded_light.lua") -- : data, lib, nodes
-dofile(modpath .. "/pryc.lua") -- : data, lib, chat, privs
 dofile(modpath .. "/teleportace.lua") -- : data, lib, chat, privs, timers
 dofile(modpath .. "/creative_inventory.lua") -- : lib
 
@@ -199,6 +199,18 @@ local function globalstep(dtime)
 				end
 			end
 
+			-- pokud se změnil držený předmět, možná bude potřeba zobrazit jeho nápovědu
+			if player_wielded_item_name ~= previous_wield_item_name then
+				disrupt_pryc_flag = true
+				local help_def = ch_core.should_show_help(player, online_charinfo, player_wielded_item_name)
+				if help_def then
+					local zluta = minetest.get_color_escape_sequence("#ffff00")
+					local zelena = minetest.get_color_escape_sequence("#00ff00")
+					local s = zluta.."Nápověda k předmětu „"..zelena..(help_def.description or ""):gsub("\n", "\n  "..zelena)..zluta.."“:\n  "..zluta..(help_def._ch_help or ""):gsub("\n", "\n  "..zluta)
+					ch_core.systemovy_kanal(player_name, s)
+				end
+			end
+
 			-- ZRUŠIT /pryč:
 			if disrupt_pryc_flag and online_charinfo.pryc then
 				online_charinfo.pryc(player, online_charinfo)
@@ -267,17 +279,6 @@ local function globalstep(dtime)
 			while custom_globalsteps[i] do
 				custom_globalsteps[i](player, player_name, online_charinfo, offline_charinfo, us_time)
 				i = i + 1
-			end
-
-			-- pokud se změnil držený předmět, možná bude potřeba zobrazit jeho nápovědu
-			if player_wielded_item_name ~= previous_wield_item_name then
-				local help_def = ch_core.should_show_help(player, online_charinfo, player_wielded_item_name)
-				if help_def then
-					local zluta = minetest.get_color_escape_sequence("#ffff00")
-					local zelena = minetest.get_color_escape_sequence("#00ff00")
-					local s = zluta.."Nápověda k předmětu „"..zelena..(help_def.description or ""):gsub("\n", "\n  "..zelena)..zluta.."“:\n  "..zluta..(help_def._ch_help or ""):gsub("\n", "\n  "..zluta)
-					ch_core.systemovy_kanal(player_name, s)
-				end
 			end
 
 			-- SLEDOVÁNÍ AKTIVITY

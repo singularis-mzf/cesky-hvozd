@@ -43,7 +43,7 @@ dofile(MP.."/control.lua")
 -------------------------------------------------------------------------------
 local function chat(owner, text)
 	if owner ~= nil then
-		minetest.chat_send_player(owner, "[Tower Crane] "..text)
+		minetest.chat_send_player(owner, "["..S("jeřáb").."] "..text)
 	end
 end
 
@@ -227,7 +227,7 @@ local function build_crane_up(pos, owner, height, width)
 				construct_crane(pos, dir, height, width)
 				meta:set_int("height", height)
 				meta:set_int("width", width)
-				meta:set_string("infotext", S("Owner")..": "..owner..
+				meta:set_string("infotext", S("Owner")..": "..ch_core.prihlasovaci_na_zobrazovaci(owner)..
 					", "..S("Crane size")..": "..height..","..width)
 				meta:set_string("formspec", formspec(height, width))
 			else

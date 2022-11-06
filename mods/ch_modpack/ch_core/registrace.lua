@@ -1,5 +1,24 @@
 ch_core.open_submod("registrace", {chat = true, data = true, lib = true, nametag = true})
 
+local survival_creative = {survival = true, creative = true}
+local default_privs_to_reg_type = {
+	ch_registered_player = survival_creative,
+	creative = {new = true, creative = true},
+	fast = true,
+	give = {creative = true},
+	hiking = survival_creative,
+	home = true,
+	interact = true,
+	peaceful_player = true,
+	shout = true,
+	track_builder = survival_creative,
+}
+local reg_types = {
+	new = "nová postava",
+	survival = "dělnický styl hry",
+	creative = "kouzelnický styl hry",
+}
+
 function ch_core.registrovat(player_name, reg_type, extra_privs)
 	if extra_privs == nil then
 		extra_privs = {}
@@ -15,8 +34,15 @@ function ch_core.registrovat(player_name, reg_type, extra_privs)
 	if not offline_charinfo then
 		return false, "offline_charinfo not found!"
 	end
-	if reg_type ~= "survival" and reg_type ~= "creative" and reg_type ~= "new" then
+	local reg_type_desc = reg_types[reg_type]
+	if not reg_type_desc then
 		return false, "unknown registration type "..reg_type
+	end
+
+	for priv, priv_setting in pairs(default_privs_to_reg_type) do
+		if priv_setting == true or (type(priv_setting) == "table" and priv_setting[reg_type]) then
+			extra_privs[priv] = true
+		end
 	end
 	local player = minetest.get_player_by_name(player_name)
 	if not player then
@@ -37,45 +63,10 @@ function ch_core.registrovat(player_name, reg_type, extra_privs)
 	end
 	local new_lists = inv:get_lists()
 	minetest.log("action", "Cleared inventories of "..player_name..", new inventories: "..dump2(new_lists))
-	if reg_type == "new" then
-		extra_privs.fast = true
-		extra_privs.hiking = true
-		extra_privs.home = true
-		extra_privs.interact = true
-		extra_privs.peaceful_player = true
-		extra_privs.shout = true
-		minetest.set_player_privs(player_name, extra_privs)
-		local new_privs = minetest.privs_to_string(minetest.get_player_privs(player_name))
-		minetest.log("action", "Player "..player_name.." privs set to: "..new_privs)
-		ch_core.systemovy_kanal(player_name, "Vaše registrace byla nastavena do režimu „nová postava“. Zkontrolujte si, prosím, vaše nová práva příkazem /práva.")
-	elseif reg_type == "survival" then
-		extra_privs.fast = true
-		extra_privs.hiking = true
-		extra_privs.home = true
-		extra_privs.interact = true
-		extra_privs.peaceful_player = true
-		extra_privs.shout = true
-		extra_privs.ch_registered_player = true
-		minetest.set_player_privs(player_name, extra_privs)
-		local new_privs = minetest.privs_to_string(minetest.get_player_privs(player_name))
-		minetest.log("action", "Player "..player_name.." privs set to: "..new_privs)
-		ch_core.systemovy_kanal(player_name, "Vaše registrace byla nastavena do režimu „dělnický styl hry“. Zkontrolujte si, prosím, vaše nová práva příkazem /práva.")
-	elseif reg_type == "creative" then
-		extra_privs.fast = true
-		extra_privs.hiking = true
-		extra_privs.home = true
-		extra_privs.interact = true
-		extra_privs.peaceful_player = true
-		extra_privs.shout = true
-		extra_privs.give = true
-		extra_privs.ch_registered_player = true
-		minetest.set_player_privs(player_name, extra_privs)
-		local new_privs = minetest.privs_to_string(minetest.get_player_privs(player_name))
-		minetest.log("action", "Player "..player_name.." privs set to: "..new_privs)
-		ch_core.systemovy_kanal(player_name, "Vaše registrace byla nastavena do režimu „kouzelnický styl hry“. Zkontrolujte si, prosím, vaše nová práva příkazem /práva.")
-	else
-		error("Internal error - invalid reg_type "..reg_type.."!")
-	end
+	minetest.set_player_privs(player_name, extra_privs)
+	local new_privs = minetest.privs_to_string(minetest.get_player_privs(player_name))
+	minetest.log("action", "Player "..player_name.." privs set to: "..new_privs)
+	ch_core.systemovy_kanal(player_name, "Vaše registrace byla nastavena do režimu „"..reg_type_desc.."“. Zkontrolujte si, prosím, vaše nová práva příkazem /práva.")
 	player:set_nametag_attributes(ch_core.compute_player_nametag(ch_core.online_charinfo[player_name], offline_charinfo))
 	offline_charinfo.past_playtime = 0
 	offline_charinfo.past_ap_playtime = 0

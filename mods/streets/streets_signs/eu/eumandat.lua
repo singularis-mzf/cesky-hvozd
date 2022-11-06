@@ -18,6 +18,7 @@ local eumandat = {
 	{ "seperatedpedestriansbicyclists", S("C 10a Stezka pro chodce a cyklisty dělená"), { blue = 2, white = 1 } },
 	{ "pedestrianszone", S("IZ 6a Pěší zóna"), { blue = 2, white = 2, black = 1 } },
 	{ "pedestrianszoneend", S("IZ 6b Konec pěší zóny"), { grey = 2, white = 2, black = 1 } },
+	{ "oneway", S("IP 4b Jednosměrný provoz"), { blue = 2, white = 1, black = 1 } },
 }
 
 for k, v in pairs(eumandat) do

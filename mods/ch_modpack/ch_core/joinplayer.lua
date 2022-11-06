@@ -1,4 +1,4 @@
-ch_core.open_submod("joinplayer", {data = true, formspecs = true, lib = true, nametag = true})
+ch_core.open_submod("joinplayer", {data = true, formspecs = true, lib = true, nametag = true, pryc = true})
 
 local F = minetest.formspec_escape
 
@@ -94,6 +94,7 @@ local function on_joinplayer(player, last_login)
 
 	player:set_nametag_attributes(ch_core.compute_player_nametag(online_charinfo, offline_charinfo))
 	player:hud_set_flags({minimap = false, minimap_radar = false})
+	minetest.after(0.5, function() ch_core.set_pryc(player_name, {no_hud = true, silently = true}) end)
 	minetest.after(2, after_joinplayer, player_name)
 	return true
 end

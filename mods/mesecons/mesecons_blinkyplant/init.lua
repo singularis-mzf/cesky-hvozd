@@ -19,6 +19,10 @@ local on_timer = function (pos)
 		mesecon.receptor_off(pos)
 	end
 	toggle_timer(pos)
+	local meta = minetest.get_meta(pos)
+	local counter = meta:get_int("counter") + 1
+	meta:set_int("counter", counter)
+	meta:set_string("infotext", counter)
 end
 
 mesecon.register_node("mesecons_blinkyplant:blinky_plant", {
