@@ -181,6 +181,24 @@ function itemshelf.register_shelf(name, def)
 	    		meta:set_float("itemshelf:depth_displacement", def.depth_offset)
 	    	end
 		end,
+		allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
+			if not minetest.check_player_privs(player, "ch_registered_player") then
+				return 0
+			end
+			return count
+		end,
+		allow_metadata_inventory_put = function(pos, listname, index, stack, player)
+			if not minetest.check_player_privs(player, "ch_registered_player") then
+				return 0
+			end
+			return stack:get_count()
+		end,
+		allow_metadata_inventory_take = function(pos, listname, index, stack, player)
+			if not minetest.check_player_privs(player, "ch_registered_player") then
+				return 0
+			end
+			return stack:get_count()
+		end,
 		--[[
 		allow_metadata_inventory_move = function(pos, from_list, from_index,
 				to_list, to_index, count, player)

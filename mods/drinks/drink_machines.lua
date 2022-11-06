@@ -204,6 +204,9 @@ update_barrel_formspec = function(pos)
 end
 
 local function barrel_allow_metadata_inventory_put(pos, listname, index, stack, player)
+	if not minetest.check_player_privs(player, "ch_registered_player") then
+		return 0
+	end
 	local barrel_state = drinks.get_barrel_state(pos)
 	if not barrel_state then
 		minetest.log("info", "not barrel_state at "..minetest.pos_to_string(pos))
@@ -487,7 +490,16 @@ minetest.register_node('drinks:juice_press', {
       local inv = meta:get_inventory()
       return inv:is_empty("src") and inv:is_empty("dst")
    end,
-   allow_metadata_inventory_put = function(pos, listname, index, stack, player)
+	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
+		if not minetest.check_player_privs(player, "ch_registered_player") then
+			return 0
+		end
+		return count
+	end,
+	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
+		if not minetest.check_player_privs(player, "ch_registered_player") then
+			return 0
+		end
 		if listname ~= "dst" then
 			return stack:get_count()
 		elseif minetest.get_meta(pos):get_inventory():is_empty("dst") and (stack:get_name() == "default:papyrus" or drinks.registered_vessels[stack:get_name()]) then
@@ -495,7 +507,13 @@ minetest.register_node('drinks:juice_press', {
 		else
 			return 0
 		end
-   end,
+	end,
+	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
+		if not minetest.check_player_privs(player, "ch_registered_player") then
+			return 0
+		end
+		return stack:get_count()
+	end,
 })
 
 minetest.register_node('drinks:liquid_barrel', {
@@ -538,7 +556,19 @@ minetest.register_node('drinks:liquid_barrel', {
          return false
       end
    end,
-   allow_metadata_inventory_put = barrel_allow_metadata_inventory_put,
+	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
+		if not minetest.check_player_privs(player, "ch_registered_player") then
+			return 0
+		end
+		return count
+	end,
+	allow_metadata_inventory_put = barrel_allow_metadata_inventory_put,
+	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
+		if not minetest.check_player_privs(player, "ch_registered_player") then
+			return 0
+		end
+		return stack:get_count()
+	end,
 })
 
 minetest.register_node('drinks:liquid_silo', {
@@ -580,5 +610,17 @@ minetest.register_node('drinks:liquid_silo', {
          return false
       end
    end,
-   allow_metadata_inventory_put = barrel_allow_metadata_inventory_put,
+	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
+		if not minetest.check_player_privs(player, "ch_registered_player") then
+			return 0
+		end
+		return count
+	end,
+	allow_metadata_inventory_put = barrel_allow_metadata_inventory_put,
+	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
+		if not minetest.check_player_privs(player, "ch_registered_player") then
+			return 0
+		end
+		return stack:get_count()
+	end,
 })
