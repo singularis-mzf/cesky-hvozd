@@ -36,7 +36,7 @@ local function register_plant(name, min, max, spawnon, spawnby, num, rarety)
 end
 
 
--- add crops to mapgen
+--[[ add crops to mapgen
 register_plant("potato_3", 15, 40, nil, "", -1, farming.potato)
 register_plant("tomato_7", 5, 20, nil, "", -1, farming.tomato)
 register_plant("corn_7", 12, 22, nil, "", -1, farming.corn)
@@ -211,7 +211,6 @@ minetest.register_decoration({
 	num_spawn_by = tmp3
 })
 end
-
 tmp1 = {"default:dry_dirt_with_dry_grass"}
 tmp2 = {"savanna"}
 
@@ -219,6 +218,7 @@ if mg_name == "v6" then
 	tmp1 = {"default:dirt_with_grass"}
 	tmp2 = {"jungle"}
 end
+]]
 
 minetest.register_decoration({
 	name = "farming:cotton_wild",

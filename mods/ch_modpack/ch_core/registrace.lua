@@ -3,7 +3,7 @@ ch_core.open_submod("registrace", {chat = true, data = true, lib = true, nametag
 local survival_creative = {survival = true, creative = true}
 local default_privs_to_reg_type = {
 	ch_registered_player = survival_creative,
-	creative = {new = true, creative = true},
+	creative = {new = true},
 	fast = true,
 	give = {creative = true},
 	hiking = survival_creative,
@@ -17,6 +17,28 @@ local reg_types = {
 	new = "nová postava",
 	survival = "dělnický styl hry",
 	creative = "kouzelnický styl hry",
+}
+local function get_flashlight()
+	local stack = ItemStack("technic:flashlight")
+	stack:set_wear(1)
+	local meta = stack:get_meta()
+	meta:set_int("charge", 30000)
+	return stack
+end
+local default_items = {
+	{stack = ItemStack("ch_extras:jumptool"), new = true, survival = true, creative = true},
+	{stack = ItemStack("rotate:wrench_copper_cw"), survival = true, creative = true},
+	{stack = ItemStack("ch_extras:sickle_steel"), survival = true},
+	{stack = ItemStack("ch_extras:teleporter_unsellable"), new = true, survival = true},
+	{stack = ItemStack("ch_extras:teleporter_unsellable 100"), creative = true},
+	{stack = get_flashlight(), new = true, survival = true, creative = true},
+	{stack = ItemStack("orienteering:map"), new = true, survival = true, creative = true},
+	{stack = ItemStack("orienteering:triangulator"), survival = true, creative = true},
+	-- ItemStack("technic:flashlight 1 1 \"\u0001\u0002return {charge=30000}\u0003\"")
+	{stack = ItemStack("unified_inventory:bag_large"), survival = true, creative = true},
+	{stack = ItemStack("towercrane:base"), survival = true, creative = true},
+	{stack = ItemStack("anvil:hammer"), survival = true},
+	{stack = ItemStack("airtanks:empty_bronze_tank"), survival = true, creative = true},
 }
 
 function ch_core.registrovat(player_name, reg_type, extra_privs)
@@ -39,11 +61,28 @@ function ch_core.registrovat(player_name, reg_type, extra_privs)
 		return false, "unknown registration type "..reg_type
 	end
 
+	-- compute privs
 	for priv, priv_setting in pairs(default_privs_to_reg_type) do
 		if priv_setting == true or (type(priv_setting) == "table" and priv_setting[reg_type]) then
 			extra_privs[priv] = true
 		end
 	end
+
+	-- compute initial inventory
+	local i = 2
+	local initial_inventory = {}
+	for _, def in ipairs(default_items) do
+		if def[reg_type] then
+			local stack = def.stack
+			if stack:is_empty() or minetest.registered_items[stack:get_name()] then
+				initial_inventory[i] = stack
+				i = i + 1
+			else
+				minetest.log("warning", "Default item stack not used, because the item "..stack:get_name().." is unknown!")
+			end
+		end
+	end
+
 	local player = minetest.get_player_by_name(player_name)
 	if not player then
 		return false, "the player is offline"
@@ -53,8 +92,15 @@ function ch_core.registrovat(player_name, reg_type, extra_privs)
 	minetest.log("action", "Will clear inventories of "..player_name..", old inventories: "..dump2(old_lists))
 	local empty_stack = ItemStack()
 	for inv_name, inv_list in pairs(old_lists) do
-		if inv_name ~= "hand" then
-			local list_size = #inv_list
+		local list_size = #inv_list
+		if inv_name == "hand" then
+			-- skip this inventory
+		elseif inv_name == "main" then
+			for i = 1, list_size do
+				inv_list[i] = initial_inventory[i] or empty_stack
+			end
+			inv:set_list(inv_name, inv_list)
+		else
 			for i = 1, list_size do
 				inv_list[i] = empty_stack
 			end

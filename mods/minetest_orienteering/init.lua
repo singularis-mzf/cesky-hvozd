@@ -41,7 +41,7 @@ local minimap_modes = {
 }
 
 local function open_minimap(itemstack, user, pointed_thing)
-	user:set_minimap_modes(minimap_modes, 1)
+	user:set_minimap_modes(minimap_modes, 0)
 	ch_core.systemovy_kanal(user:get_player_name(),
 	                        S("Now you can view a minimap using the appropriate key (the default for computers is V). A minimap will be accessible as long as you would have a Map or Quadcorder on the hotbar."))
 end

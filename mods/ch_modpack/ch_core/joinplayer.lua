@@ -52,11 +52,9 @@ end
 local function on_newplayer(player)
 	local player_name = player:get_player_name()
 	minetest.log("action", "[ch_core] New player '"..player_name.."'");
-	local inv = player:get_inventory();
-	if minetest.registered_tools["orienteering:map"] then
-		inv:add_item("main", "orienteering:map")
-	end
-	return
+	ch_core.delete_offline_charinfo(player_name)
+	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
+	offline_charinfo.pending_registration_type = "new"
 end
 
 local function after_joinplayer(player_name)
