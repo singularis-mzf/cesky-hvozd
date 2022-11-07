@@ -258,6 +258,11 @@ end
 -- CLIMATE PLAYERS FUNCTIONS
 
 local function add_climate_player(player_name, climate_id, downfall_type)
+
+	if downfall_type == "sand" then
+		return
+	end
+
 	local player = minetest.get_player_by_name(player_name)
 	climatez.players[player_name] = {
 		climate_id = climate_id,
@@ -329,9 +334,9 @@ local function remove_climate_player_effects(player_name)
 			stop_rain_sound(player_name, rain_sound_handle)
 	end
 
-	if downfall_type == "sand" and climatez.settings.dust_effect then
+	--[[ if downfall_type == "sand" and climatez.settings.dust_effect then
 		player:hud_remove(climatez.players[player_name].hud_id)
-	end
+	end ]]
 
 	local lightning = player:get_meta():get_int("climatez:lightning")
 	if downfall_type == "storm" and lightning > 0 then
