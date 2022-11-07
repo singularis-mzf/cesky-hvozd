@@ -120,6 +120,14 @@ local function marker_after_place_node(pos, placer, itemstack, pointed_thing)
 	marker_update(pos, meta)
 end
 
+local function marker_check_for_pole(pos, node, def, pole_pos, pole_node, pole_def)
+	if (0 <= pole_node.param2 and pole_node.param2 <= 3) or (20 <= pole_node.param2 and pole_node.param2 <= 23) then
+		return true
+	else
+		return false
+	end
+end
+
 def = {
 	description = "značkovací tyč červeno-bílá",
 	drawtype = "nodebox",
@@ -138,6 +146,7 @@ def = {
 	sunlight_propagates = true,
 	light_source = 3,
 	groups = {oddly_breakable_by_hand = 2, ch_marker = 1},
+	check_for_pole = marker_check_for_pole,
 	after_place_node = marker_after_place_node,
 	preserve_metadata = function(pos, oldnode, oldmeta, drops)
 		for _, stack in ipairs(drops) do

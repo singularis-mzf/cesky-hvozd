@@ -6,6 +6,14 @@
 
 local S = minetest.get_translator("streets")
 
+local function facedir_check_for_pole(pos, node, def, pole_pos, pole_node, pole_def)
+	if (0 <= pole_node.param2 and pole_node.param2 <= 3) or (20 <= pole_node.param2 and pole_node.param2 <= 23) then
+		return true
+	else
+		return false
+	end
+end
+
 minetest.register_node(":streets:delineator", {
 	description = S("Z 11b Směrový sloupek bílý pravý, Z 11a Směrový sloupek bílý levý"),
 	tiles = { "streets_delineator_top.png", "streets_delineator_top.png", "streets_delineator_left.png", "streets_delineator_right.png", "streets_delineator_back.png", "streets_delineator_front.png" },
@@ -28,7 +36,8 @@ minetest.register_node(":streets:delineator", {
 		fixed = {
 			{ -0.125, -0.5, -0.0625, 0.125, 0.5, 0.0625 }, -- Body
 		}
-	}
+	},
+	check_for_pole = facedir_check_for_pole,
 })
 
 minetest.register_craft({

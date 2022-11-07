@@ -325,7 +325,7 @@ minetest.register_craft({
 --
 -- Metal based decoration items
 --
-
+--[[
 minetest.register_craft({
 	output = "darkage:chain 2",
 	recipe = {
@@ -334,7 +334,7 @@ minetest.register_craft({
 		{"darkage:iron_stick"},
 	}
 })
-
+]]
 minetest.register_craft({
 	output = "darkage:iron_bars 2",
 	recipe = {

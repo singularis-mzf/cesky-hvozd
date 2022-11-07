@@ -164,6 +164,7 @@ function technic.register_cable(tier, size)
 			"group:technic_"..ltier, "group:technic_all_tiers"},
 		on_construct = clear_networks,
 		on_destruct = clear_networks,
+		check_for_pole = true,
 	})
 
 	local xyz = {

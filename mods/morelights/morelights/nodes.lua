@@ -48,7 +48,8 @@ morelights.register_variants({
     groups = {cracky = 3, oddly_breakable_by_hand = 3, handy = 1,
               mounted_ceiling = 1},
     _mcl_hardness = 0.2,
-    sounds = morelights.sounds.metal
+    sounds = morelights.sounds.metal,
+    check_for_pole = true,
 })
 
 morelights.register_variants({
@@ -130,7 +131,8 @@ morelights.register_variants({
     groups = {cracky = 3, oddly_breakable_by_hand = 3, handy = 1,
               mounted_ceiling = 1},
     _mcl_hardness = 0.2,
-    sounds = morelights.sounds.metal
+    sounds = morelights.sounds.metal,
+    check_for_pole = true,
 })
 
 morelights.register_variants({

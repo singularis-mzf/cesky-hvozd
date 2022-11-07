@@ -151,6 +151,7 @@ if minetest.settings:get_bool("bridger_enable_trusses", true) then
 			},
 			groups = {cracky=3},
 			sounds = default.node_sound_metal_defaults(),
+			check_for_pole = true,
 		})
 
 		minetest.register_node("bridger:deck_" .. bridge_color, {

@@ -6,6 +6,14 @@
 
 local S = minetest.get_translator("streets")
 
+local function facedir_check_for_pole(pos, node, def, pole_pos, pole_node, pole_def)
+	if (0 <= pole_node.param2 and pole_node.param2 <= 3) or (20 <= pole_node.param2 and pole_node.param2 <= 23) then
+		return true
+	else
+		return false
+	end
+end
+
 minetest.register_node(":streets:bigpole", {
 	description = S("stožár veřejného osvětlení: přímý díl"),
 	paramtype = "light",
@@ -41,7 +49,8 @@ minetest.register_node(":streets:bigpole", {
 		[3] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0 },
 		["t"] = { 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 },
 		["b"] = { 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 }
-	}
+	},
+	check_for_pole = facedir_check_for_pole,
 })
 
 minetest.register_craft({
@@ -87,7 +96,8 @@ minetest.register_node(":streets:bigpole_short", {
 		[3] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 },
 		["t"] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 },
 		["b"] = { 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-	}
+	},
+	check_for_pole = facedir_check_for_pole,
 })
 
 minetest.register_craft({

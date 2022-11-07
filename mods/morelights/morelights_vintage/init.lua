@@ -42,6 +42,7 @@ minetest.register_node("morelights_vintage:chain_b", {
               mounted_ceiling = 1},
     _mcl_hardness = 0.2,
     sounds = morelights.sounds.metal,
+    check_for_pole = true,
 
     on_place = function(itemstack, placer, pointed_thing)
         return morelights.on_place_hanging(itemstack, placer, pointed_thing,
@@ -67,6 +68,7 @@ minetest.register_node("morelights_vintage:chain_ceiling_b", {
         }
     },
     tiles = {"morelights_vintage_brass_32.png"},
+    check_for_pole = true,
     drop = "morelights_vintage:chain_b",
     paramtype = "light",
     sunlight_propagates = true,

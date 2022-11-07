@@ -31,6 +31,16 @@ function technic_cnc.register_program(recipeitem, suffix, model, groups, images,
 		def.mesh = model
 	end
 
+	if suffix == "technic_cnc_stick" then
+		def.check_for_pole = function(pos, node, def, pole_pos, pole_node, pole_def)
+			if (0 <= pole_node.param2 and pole_node.param2 <= 3) or (20 <= pole_node.param2 and pole_node.param2 <= 23) then
+				return true
+			else
+				return false
+			end
+		end
+	end
+
 	local node_def = minetest.registered_nodes[recipeitem]
 	if node_def then
 		if node_def.description then

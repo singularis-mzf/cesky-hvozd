@@ -433,6 +433,7 @@ minetest.register_node("darkage:wood_frame", {
 -- Metal based decoration items
 --
 
+--[[
 minetest.register_node("darkage:chain", {
 	description = S("Chain"),
 	drawtype = "signlike",
@@ -449,6 +450,7 @@ minetest.register_node("darkage:chain", {
 	groups = {snappy=1,cracky=2,oddly_breakable_by_hand=2},
 	legacy_wallmounted = true
 })
+]]
 
 minetest.register_node("darkage:iron_bars", {
 	description = S("Iron Bars"),

@@ -1114,6 +1114,7 @@ minetest.register_node(":homedecor:chain_steel_top", {
 	inventory_image = "basic_materials_chain_steel_inv.png",
 	groups = {cracky=3, dig_glass=1},
 	selection_box = topchains_sbox,
+	check_for_pole = true,
 })
 
 minetest.register_node(":homedecor:chain_brass_top", {
@@ -1128,6 +1129,7 @@ minetest.register_node(":homedecor:chain_brass_top", {
 	inventory_image = "basic_materials_chain_brass_inv.png",
 	groups = {cracky=3, dig_glass=1},
 	selection_box = topchains_sbox,
+	check_for_pole = true,
 })
 
 minetest.register_node(":homedecor:chandelier_steel", {

@@ -35,6 +35,7 @@ minetest.register_node("basic_materials:chain_steel", {
 	inventory_image = "basic_materials_chain_steel_inv.png",
 	groups = {cracky=3},
 	selection_box = chains_sbox,
+	check_for_pole = true,
 })
 
 minetest.register_node("basic_materials:chain_brass", {
@@ -49,6 +50,7 @@ minetest.register_node("basic_materials:chain_brass", {
 	inventory_image = "basic_materials_chain_brass_inv.png",
 	groups = {cracky=3},
 	selection_box = chains_sbox,
+	check_for_pole = true,
 })
 
 minetest.register_node("basic_materials:brass_block", {

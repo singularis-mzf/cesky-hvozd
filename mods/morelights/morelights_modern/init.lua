@@ -68,7 +68,8 @@ morelights.register_variants({
     light_source = minetest.LIGHT_MAX,
     groups = {cracky = 3, oddly_breakable_by_hand = 3, handy = 1},
     _mcl_hardness = 0.3,
-    sounds = morelights.sounds.metal
+    sounds = morelights.sounds.metal,
+	check_for_pole = true,
 })
 
 morelights.register_variants({
@@ -101,7 +102,8 @@ morelights.register_variants({
     sunlight_propagates = true,
     groups = {cracky = 2, oddly_breakable_by_hand = 3, handy = 1},
     _mcl_hardness = 0.3,
-    sounds = morelights.sounds.metal
+    sounds = morelights.sounds.metal,
+    check_for_pole = true,
 })
 
 minetest.register_node("morelights_modern:barlight_c", {
@@ -311,7 +313,8 @@ morelights.register_variants({
     light_source = 8,
     groups = {cracky = 3, oddly_breakable_by_hand = 3, handy = 1},
     _mcl_hardness = 0.2,
-    sounds = morelights.sounds.metal
+    sounds = morelights.sounds.metal,
+    check_for_pole = true,
 })
 
 --
