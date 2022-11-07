@@ -217,38 +217,16 @@ minetest.register_craft({
 	}
 })
 
-local steelmod = minetest.get_modpath("steel")
-
-if streetsmod or steelmod then
+if streetsmod then
 	minetest.register_node(":technic:steel_strut_with_insulator_clip", sclip_def)
-
-	if steelmod then
-		minetest.register_craft({
-			output = "technic:steel_strut_with_insulator_clip",
-			recipe = {
-				{"technic:insulator_clip_fencepost"},
-				{"steel:strut_mount"}
-			}
-		})
-
-		minetest.register_craft({
-			output = "technic:steel_strut_with_insulator_clip",
-			recipe = {
-				{"technic:insulator_clip_fencepost", ""                    },
-				{"steel:strut",                      "default:steel_ingot" },
-			}
-		})
-
-	elseif streetsmod then
-		minetest.register_craft({
-			output = "technic:steel_strut_with_insulator_clip",
-			recipe = {
-				{"technic:insulator_clip_fencepost", ""                   },
-				{"streets:steel_support",           "default:steel_ingot" },
-			}
-		})
-	end
 end
+minetest.register_craft({
+	output = "technic:steel_strut_with_insulator_clip",
+	recipe = {
+		{"technic:insulator_clip_fencepost", ""                   },
+		{"techpack_stairway:lattice", "default:steel_ingot" },
+	}
+})
 
 if minetest.get_modpath("unifieddyes") then
 
@@ -285,28 +263,14 @@ if minetest.get_modpath("unifieddyes") then
 		}
 	})
 
-	if steelmod then
-		unifieddyes.register_color_craft({
-			output = "technic:steel_strut_with_insulator_clip",
-			palette = "wallmounted",
-			neutral_node = "",
-			recipe = {
-				{ "technic:insulator_clip_fencepost", "MAIN_DYE" },
-				{ "steel:strut_mount",                ""         },
-			}
-		})
-	end
-
-	if streetsmod then
-		unifieddyes.register_color_craft({
-			output = "technic:steel_strut_with_insulator_clip",
-			palette = "wallmounted",
-			neutral_node = "technic:steel_strut_with_insulator_clip",
-			recipe = {
-				{ "technic:insulator_clip_fencepost", "MAIN_DYE"            },
-				{ "streets:steel_support",            "default:steel_ingot" },
-			}
-		})
-	end
+	unifieddyes.register_color_craft({
+		output = "technic:steel_strut_with_insulator_clip",
+		palette = "wallmounted",
+		neutral_node = "technic:steel_strut_with_insulator_clip",
+		recipe = {
+			{ "technic:insulator_clip_fencepost", "MAIN_DYE"            },
+			{ "techpack_stairway:lattice", "default:steel_ingot" },
+		}
+	})
 end
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
