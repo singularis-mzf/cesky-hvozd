@@ -222,13 +222,11 @@ minetest.register_abm({
 })
 
 
+for variant, variant_desc in pairs({[""] = "studené světlo", ["_warm"] = "teplé světlo"}) do
 
-
-
-
-minetest.register_node(":streets:light_vertical_off", {
-	description = S("veřejné osvětlení svislé"),
-	tiles = { "streets_pole.png", "streets_pole.png", "streets_light_vertical_off.png", "streets_light_vertical_off.png", "streets_light_vertical_off.png", "streets_light_vertical_off.png" },
+minetest.register_node(":streets:light_vertical"..variant.."_off", {
+	description = S("veřejné osvětlení svislé ("..variant_desc..")"),
+	tiles = { "streets_pole.png", "streets_pole.png", "streets_light_vertical_off"..variant..".png", "streets_light_vertical_off"..variant..".png", "streets_light_vertical_off"..variant..".png", "streets_light_vertical_off"..variant..".png" },
 	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -249,8 +247,8 @@ minetest.register_node(":streets:light_vertical_off", {
 	mesecons = def_mesecons
 })
 
-minetest.register_node(":streets:light_vertical_on", {
-	tiles = { "streets_pole.png", "streets_pole.png", "streets_light_vertical_on.png", "streets_light_vertical_on.png", "streets_light_vertical_on.png", "streets_light_vertical_on.png" },
+minetest.register_node(":streets:light_vertical"..variant.."_on", {
+	tiles = { "streets_pole.png", "streets_pole.png", "streets_light_vertical_on"..variant..".png", "streets_light_vertical_on"..variant..".png", "streets_light_vertical_on"..variant..".png", "streets_light_vertical_on"..variant..".png" },
 	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -264,7 +262,7 @@ minetest.register_node(":streets:light_vertical_on", {
 			{ -5 / 16, -0.5, -5 / 16, 5 / 16, 0.5, 5 / 16 },
 		}
 	},
-	drop = "streets:light_vertical_off",
+	drop = "streets:light_vertical"..variant.."_off",
 	on_construct = on_construct,
 	on_punch = on_punch,
 	on_receive_fields = on_receive_fields,
@@ -273,9 +271,9 @@ minetest.register_node(":streets:light_vertical_on", {
 })
 
 
-minetest.register_node(":streets:light_horizontal_off", {
-	description = S("veřejné osvětlení vodorovné"),
-	tiles = { "streets_pole.png", "streets_light_horizontal_off_bottom.png", "streets_light_horizontal_off_side.png", "streets_light_horizontal_off_side.png", "streets_light_horizontal_off_side.png", "streets_light_horizontal_off_side.png" },
+minetest.register_node(":streets:light_horizontal"..variant.."_off", {
+	description = S("veřejné osvětlení vodorovné ("..variant_desc..")"),
+	tiles = { "streets_pole.png", "streets_light_horizontal_off_bottom"..variant..".png", "streets_light_horizontal_off_side"..variant..".png", "streets_light_horizontal_off_side"..variant..".png", "streets_light_horizontal_off_side"..variant..".png", "streets_light_horizontal_off_side"..variant..".png" },
 	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -296,8 +294,8 @@ minetest.register_node(":streets:light_horizontal_off", {
 	mesecons = def_mesecons
 })
 
-minetest.register_node(":streets:light_horizontal_on", {
-	tiles = { "streets_pole.png", "streets_light_horizontal_on_bottom.png", "streets_light_horizontal_on_side.png", "streets_light_horizontal_on_side.png", "streets_light_horizontal_on_side.png", "streets_light_horizontal_on_side.png" },
+minetest.register_node(":streets:light_horizontal"..variant.."_on", {
+	tiles = { "streets_pole.png", "streets_light_horizontal_on_bottom"..variant..".png", "streets_light_horizontal_on_side"..variant..".png", "streets_light_horizontal_on_side"..variant..".png", "streets_light_horizontal_on_side"..variant..".png", "streets_light_horizontal_on_side"..variant..".png" },
 	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -311,7 +309,7 @@ minetest.register_node(":streets:light_horizontal_on", {
 			{ -3 / 16, -3 / 16, -0.5, 3 / 16, 3 / 16, 0.5 },
 		}
 	},
-	drop = "streets:light_horizontal_off",
+	drop = "streets:light_horizontal"..variant.."_off",
 	on_construct = on_construct,
 	on_punch = on_punch,
 	on_receive_fields = on_receive_fields,
@@ -320,9 +318,9 @@ minetest.register_node(":streets:light_horizontal_on", {
 })
 
 
-minetest.register_node(":streets:light_hanging_off", {
-	description = S("veřejné osvětlení visící"),
-	tiles = { "streets_pole.png", "streets_light_horizontal_off_bottom.png", "streets_light_hanging_off_side.png", "streets_light_hanging_off_side.png", "streets_light_hanging_off_side.png", "streets_light_hanging_off_side.png" },
+minetest.register_node(":streets:light_hanging"..variant.."_off", {
+	description = S("veřejné osvětlení visící ("..variant_desc..")"),
+	tiles = { "streets_pole.png", "streets_light_horizontal_off_bottom"..variant..".png", "streets_light_hanging_off_side"..variant..".png", "streets_light_hanging_off_side"..variant..".png", "streets_light_hanging_off_side"..variant..".png", "streets_light_hanging_off_side"..variant..".png" },
 	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -343,8 +341,8 @@ minetest.register_node(":streets:light_hanging_off", {
 	mesecons = def_mesecons
 })
 
-minetest.register_node(":streets:light_hanging_on", {
-	tiles = { "streets_pole.png", "streets_light_horizontal_on_bottom.png", "streets_light_hanging_on_side.png", "streets_light_hanging_on_side.png", "streets_light_hanging_on_side.png", "streets_light_hanging_on_side.png" },
+minetest.register_node(":streets:light_hanging"..variant.."_on", {
+	tiles = { "streets_pole.png", "streets_light_horizontal_on_bottom"..variant..".png", "streets_light_hanging_on_side"..variant..".png", "streets_light_hanging_on_side"..variant..".png", "streets_light_hanging_on_side"..variant..".png", "streets_light_hanging_on_side"..variant..".png" },
 	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -358,19 +356,20 @@ minetest.register_node(":streets:light_hanging_on", {
 			{ -3 / 16, 2 / 16, -0.5, 3 / 16, 0.5, 0.5 },
 		}
 	},
-	drop = "streets:light_hanging_off",
+	drop = "streets:light_hanging"..variant.."_off",
 	on_construct = on_construct,
 	on_punch = on_punch,
 	on_receive_fields = on_receive_fields,
 	-- digiline = def_digiline,
 	mesecons = def_mesecons
 })
+end
 
 minetest.register_craft({
 	output = "streets:light_vertical_off 3",
 	recipe = {
 		{ "", "default:steel_ingot", "" },
-		{ "", "default:meselamp", "" },
+		{ "", "morelights:bulb", "" },
 		{ "", "default:steel_ingot", "" }
 	}
 })
@@ -378,7 +377,7 @@ minetest.register_craft({
 minetest.register_craft({
 	output = "streets:light_horizontal_off 3",
 	recipe = {
-		{ "default:steel_ingot", "default:meselamp", "default:steel_ingot" },
+		{ "default:steel_ingot", "morelights:bulb", "default:steel_ingot" },
 	}
 })
 
@@ -386,6 +385,42 @@ minetest.register_craft({
 	output = "streets:light_hanging_off 3",
 	recipe = {
 		{ "", "default:stick", "" },
-		{ "default:steel_ingot", "default:meselamp", "default:steel_ingot" },
+		{ "default:steel_ingot", "morelights:bulb", "default:steel_ingot" },
+	}
+})
+
+minetest.register_craft({
+	output = "streets:light_vertical_warm_off 3",
+	recipe = {
+		{ "", "default:steel_ingot", "" },
+		{ "moreblocks:slab_glow_glass_1", "morelights:bulb", "moreblocks:slab_glow_glass_1" },
+		{ "", "default:steel_ingot", "" }
+	}
+})
+
+minetest.register_craft({
+	output = "streets:light_horizontal_warm_off 3",
+	recipe = {
+		{ "",                  "moreblocks:slab_glow_glass_1", "" },
+		{ "default:steel_ingot", "morelights:bulb", "default:steel_ingot" },
+		{ "",                  "moreblocks:slab_glow_glass_1", "" },
+	}
+})
+
+minetest.register_craft({
+	output = "streets:light_hanging_warm_off 3",
+	recipe = {
+		{ "", "default:stick", "" },
+		{ "default:steel_ingot", "morelights:bulb", "default:steel_ingot" },
+		{ "moreblocks:slab_glow_glass_1", "moreblocks:slab_glow_glass_1", "" },
+	}
+})
+
+minetest.register_craft({
+	output = "streets:light_hanging_warm_off 3",
+	recipe = {
+		{ "", "default:stick", "" },
+		{ "default:steel_ingot", "morelights:bulb", "default:steel_ingot" },
+		{ "", "moreblocks:slab_glow_glass_1", "moreblocks:slab_glow_glass_1" },
 	}
 })

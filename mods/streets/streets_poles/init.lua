@@ -22,6 +22,7 @@ minetest.register_node(":streets:bigpole", {
 	tiles = { "streets_pole.png" },
 	sunlight_propagates = true,
 	groups = { cracky = 1, level = 2, bigpole = 1, not_blocking_trains = 1},
+	sounds = default.node_sound_metal_defaults(),
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -70,6 +71,7 @@ minetest.register_node(":streets:bigpole_short", {
 	tiles = { "streets_pole.png" },
 	sunlight_propagates = true,
 	groups = { cracky = 1, level = 2, bigpole = 1, not_blocking_trains = 1},
+	sounds = default.node_sound_metal_defaults(),
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -116,6 +118,7 @@ minetest.register_node(":streets:bigpole_edge", {
 	tiles = { "streets_pole.png" },
 	sunlight_propagates = true,
 	groups = { cracky = 1, level = 2, bigpole = 1, not_blocking_trains = 1},
+	sounds = default.node_sound_metal_defaults(),
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -171,6 +174,7 @@ minetest.register_node(":streets:bigpole_tjunction", {
 	tiles = { "streets_pole.png" },
 	sunlight_propagates = true,
 	groups = { cracky = 1, level = 2, bigpole = 1, not_blocking_trains = 1},
+	sounds = default.node_sound_metal_defaults(),
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -217,6 +221,7 @@ minetest.register_node(":streets:bigpole_corner", {
 	tiles = { "streets_pole.png" },
 	sunlight_propagates = true,
 	groups = { cracky = 1, level = 2, bigpole = 1, not_blocking_trains = 1},
+	sounds = default.node_sound_metal_defaults(),
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -265,6 +270,7 @@ minetest.register_node(":streets:bigpole_four_side_junction", {
 	tiles = { "streets_pole.png" },
 	sunlight_propagates = true,
 	groups = { cracky = 1, level = 2, bigpole = 1, not_blocking_trains = 1},
+	sounds = default.node_sound_metal_defaults(),
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -313,6 +319,7 @@ minetest.register_node(":streets:bigpole_cross", {
 	tiles = { "streets_pole.png" },
 	sunlight_propagates = true,
 	groups = { cracky = 1, level = 2, bigpole = 1, not_blocking_trains = 1},
+	sounds = default.node_sound_metal_defaults(),
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -361,6 +368,7 @@ minetest.register_node(":streets:bigpole_five_side_junction", {
 	tiles = { "streets_pole.png" },
 	sunlight_propagates = true,
 	groups = { cracky = 1, level = 2, bigpole = 1, not_blocking_trains = 1},
+	sounds = default.node_sound_metal_defaults(),
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -408,6 +416,7 @@ minetest.register_node(":streets:bigpole_all_sides", {
 	tiles = { "streets_pole.png" },
 	sunlight_propagates = true,
 	groups = { cracky = 1, level = 2, bigpole = 1, not_blocking_trains = 1},
+	sounds = default.node_sound_metal_defaults(),
 	node_box = {
 		type = "fixed",
 		fixed = {
