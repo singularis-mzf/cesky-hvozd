@@ -7,6 +7,7 @@ check_for_horiz_pole, díky díž budou jako tyče rozpoznány módem signs_lib.
 ]]
 
 local horiz_poles = {
+	"ch_extras:fence_rail_hv",
 	"cherrytree:fence_rail",
 	"chestnuttree:fence_rail",
 	"default:fence_rail_acacia_wood",

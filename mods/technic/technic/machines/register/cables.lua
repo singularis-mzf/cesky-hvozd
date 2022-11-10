@@ -161,7 +161,7 @@ function technic.register_cable(tier, size)
 		drawtype = "nodebox",
 		node_box = node_box,
 		connects_to = {"group:technic_"..ltier.."_cable",
-			"group:technic_"..ltier, "group:technic_all_tiers"},
+			"group:technic_"..ltier, "group:technic_all_tiers", "group:technic_"..ltier.."_cablelike"},
 		on_construct = clear_networks,
 		on_destruct = clear_networks,
 		check_for_pole = true,
