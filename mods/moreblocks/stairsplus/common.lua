@@ -204,6 +204,9 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 			}
 			def.description = desc_base .. " (" .. S(descriptions[category]) .. ", " .. S(readable_alternate) .. ")"
 		end
+		if alternate == "_triplet" then
+			def.groups.not_in_creative_inventory = nil
+		end
 	else
 		def.description = ("%s (%s, %s)"):format(desc_base, S(descriptions[category]), S(readable_alternate))
 		if category == "slope" then

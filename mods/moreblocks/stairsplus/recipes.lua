@@ -254,6 +254,19 @@ stairsplus.register_recipes = function(category, alternate, modname, subname, re
 				output = modname .. ":slab_" .. subname .. "_15",
 				recipe = {modname .. ":slab_" .. subname .. "_14", modname .. ":slab_" .. subname .. "_1"},
 			})
+		elseif alternate == "_triplet" then
+			minetest.register_craft({
+				output = modname..":slab_"..subname.."_triplet",
+				recipe = {{modname..":slab_"..subname.."_1", modname..":slab_"..subname.."_1", modname..":slab_"..subname.."_1"}, {"", "", ""}, {"", "", ""}},
+			})
+			minetest.register_craft({
+				output = modname..":slab_"..subname.."_triplet",
+				recipe = {{modname..":slab_"..subname.."_1", "", ""}, {modname..":slab_"..subname.."_1", "", ""}, {modname..":slab_"..subname.."_1", "", ""}},
+			})
+			minetest.register_craft({
+				output = modname..":slab_"..subname.."_1 3",
+				recipe = {{modname..":slab_"..subname.."_triplet"}},
+			})
 		end
 	elseif category == "slope" then
 		if alternate == "" then
