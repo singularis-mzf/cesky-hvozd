@@ -47,6 +47,11 @@ ch_extras_sickle_mese.png
 	Source: https://github.com/t-affeldt/sickles
 	Modified by Singularis
 
+ch_extras_total_station.png
+	License: CC BY-SA 3.0
+	Author: Singularis
+	Based on source: https://cs.wikipedia.org/wiki/Soubor:DTM-A20LG-04.jpg (Author: PhY, License: CC BY-SA 3.0)
+
 translocator.png
 	Author: Zemtzov7
 	Source: https://github.com/zmv7/minetest-mod-translocator
