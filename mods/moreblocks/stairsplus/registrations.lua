@@ -153,6 +153,7 @@ if minetest.get_modpath("basic_materials") then
 		description = minetest.registered_nodes["basic_materials:brass_block"].description,
 		groups={cracky=1, not_in_creative_inventory=1},
 		tiles={"basic_materials_brass_block.png"},
+		sounds = moreblocks.node_sound_metal_defaults(),
 	})
 
 end

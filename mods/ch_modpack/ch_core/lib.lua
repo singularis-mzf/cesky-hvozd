@@ -786,4 +786,6 @@ else
 	end
 end
 
+doors.login_to_viewname = ch_core.prihlasovaci_na_zobrazovaci
+
 ch_core.close_submod("lib")

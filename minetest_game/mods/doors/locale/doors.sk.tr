@@ -16,3 +16,7 @@ Acacia Wood Fence Gate=drevený plot z akácie
 Jungle Wood Fence Gate=drevený plot z džungľového dreva
 Pine Wood Fence Gate=drevený plot z borovice
 Aspen Wood Fence Gate=drevený plot z osiky
+
+Key for a door=kľúč k dverám (nenastavený)
+Key for: @1 (hash @2)=kľúč k: @1 (kód @2)
+Door=dvere

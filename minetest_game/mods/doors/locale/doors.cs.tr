@@ -17,3 +17,7 @@ Jungle Wood Fence Gate=džunglovníkový plot: brána
 Pine Wood Fence Gate=borový plot: brána
 Aspen Wood Fence Gate=osikový plot: brána
 centered=vystředěné
+
+Key for a door=klíč ke dveřím (nenastavený)
+Key for: @1 (hash @2)=klíč k: @1 (kód @2)
+Door=dveře

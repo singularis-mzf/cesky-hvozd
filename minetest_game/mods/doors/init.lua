@@ -9,6 +9,10 @@ doors.registered_trapdoors = {}
 -- Load support for MT game translation.
 local S = minetest.get_translator("doors")
 
+function doors.login_to_viewname(login)
+	return login
+end
+
 local normal_door_box = {type = "fixed", fixed = {-1/2,-1/2,-1/2,1/2,3/2,-6/16}}
 local centered_door_box_ab = {type = "fixed", fixed = {-1/2,-1/2,0,1/2,3/2,2/16}}
 local centered_door_box_c = {type = "fixed", fixed = {-1,-1/2,-1/2,0,3/2,-6/16}}
@@ -86,6 +90,8 @@ function doors.get(pos)
 	end
 end
 
+dofile(minetest.get_modpath("doors").."/cpanel.lua")
+
 -- this hidden node is placed on top of the bottom, and prevents
 -- nodes from being placed in the top half of the door.
 minetest.register_node("doors:hidden", {
@@ -110,6 +116,27 @@ minetest.register_node("doors:hidden", {
 		type = "fixed",
 		fixed = {-15/32, 13/32, -15/32, -13/32, 1/2, -13/32},
 	},
+})
+
+minetest.register_tool("doors:key", {
+	description = S("Key for a door"),
+	inventory_image = "keys_key.png",
+	wield_image = "keys_key.png",
+	_ch_help = "Pravým klikem nenastaveným klíčem na nějaké vaše dveře tento klíč\ns danými dveřmi spárujete a ostatní hráčské postavy budou k otevření dveří\npotřebovat daný klíč. Nastaveným klíčem můžete otevřít či zavřít dveře,\nkteré byly s klíčem spárovány, i když vám nepatří a jsou zamčené.\nVlastník/ice může svoje dveře otevřít i bez klíče.",
+})
+
+minetest.register_craft({
+	output = "doors:key 8",
+	recipe = {
+		{"default:steel_ingot", "", ""},
+		{"default:steel_ingot", "default:steel_ingot", "default:steel_ingot"},
+		{"", "", ""},
+	},
+})
+
+minetest.register_craft({
+	output = "doors:key",
+	recipe = {{"doors:key"}},
 })
 
 -- table used to aid door opening/closing
@@ -143,6 +170,7 @@ local transform = {
 function doors.door_toggle(pos, node, clicker)
 	local meta = minetest.get_meta(pos)
 	node = node or minetest.get_node(pos)
+	local timer = minetest.get_node_timer(pos)
 	local def = minetest.registered_nodes[node.name]
 	local name = def.door.name
 
@@ -160,8 +188,27 @@ function doors.door_toggle(pos, node, clicker)
 
 	replace_old_owner_information(pos)
 
-	if clicker and not default.can_interact_with_node(clicker, pos) then
-		return false
+	if clicker then
+		-- check permissions
+		local clicker_name = clicker:get_player_name()
+		local owner = meta:get_string("owner")..meta:get_string("placer")
+		local hes = meta:get_int("hes")
+		if hes ~= 0 and clicker_name ~= "" and owner ~= "" and (clicker_name ~= owner and not minetest.check_player_privs(clicker, "protection_bypass")) then
+			-- key to the hotel-door required
+			local key = clicker:get_wielded_item()
+			if key:get_name() ~= "doors:key" then
+				return false
+			end
+			local key_meta = key:get_meta()
+			local key_hes = key_meta:get_int("hes")
+			if key_hes ~= hes then
+				-- access denied
+				minetest.chat_send_player(clicker_name, "*** Tento klíč nepatří k těmto dveřím!")
+				return false
+			end
+		elseif not default.can_interact_with_node(clicker, pos) then
+			return false
+		end
 	end
 
 	-- until Lua-5.2 we have no bitwise operators :(
@@ -181,11 +228,19 @@ function doors.door_toggle(pos, node, clicker)
 	end
 
 	if state % 2 == 0 then
+		-- close the door
 		minetest.sound_play(def.door.sounds[1],
 			{pos = pos, gain = def.door.gains[1], max_hear_distance = 10}, true)
+		if meta:get_int("zavirasamo") > 0 then
+			timer:stop()
+		end
 	else
+		-- open the door
 		minetest.sound_play(def.door.sounds[2],
 			{pos = pos, gain = def.door.gains[2], max_hear_distance = 10}, true)
+		if meta:get_int("zavirasamo") > 0 then
+			timer:start(1)
+		end
 	end
 
 	minetest.swap_node(pos, {
@@ -197,6 +252,74 @@ function doors.door_toggle(pos, node, clicker)
 	return true
 end
 
+function doors.door_rightclick(pos, node, clicker, itemstack, pointed_thing)
+	if not clicker then
+		return false
+	end
+	-- Aux1 => show control panel
+	local controls = clicker:get_player_control()
+	if controls.aux1 then
+		-- Show control panel
+		doors.show_control_panel(clicker, pos)
+		return itemstack
+	end
+
+	-- Empty key used by owner (special case)
+	if default.can_interact_with_node(clicker, pos) then
+		local clicker_name = clicker:get_player_name()
+		local key = clicker:get_wielded_item()
+		local meta = minetest.get_meta(pos)
+		local owner = meta:get_string("owner")..meta:get_string("placer")
+		local door_hes = meta:get_int("hes")
+		if key:get_name() == "doors:key" and clicker_name ~= "" and owner ~= "" and (clicker_name == owner or minetest.check_player_privs(clicker, "server")) then
+			local key_meta = key:get_meta()
+			local key_hes = key_meta:get_int("hes")
+			if key_hes == 0 then
+				-- a new key to be set up to be used with this door
+				local new_hes = math.random(2147483647)
+				local door_name = meta:get_string("nazev")
+				if door_name == "" then
+					door_name = S("Door")
+				end
+				meta:set_int("hes", new_hes)
+				key_meta:set_int("hes", new_hes)
+				key_meta:set_string("description", S("Key for: @1 (hash @2)", door_name, new_hes))
+				minetest.chat_send_player(clicker_name, "*** Dveře a klíč úspěšně spárovány (kód = "..new_hes..")")
+				doors.update_infotext(pos, node, minetest.get_meta(pos))
+				return key
+			end
+		end
+	end
+
+	doors.door_toggle(pos, node, clicker)
+	return nil
+end
+
+function doors.update_infotext(pos, node, meta)
+	local result = {}
+	local nazev = meta:get_string("nazev")
+	local owner = meta:get_string("owner")
+	if owner ~= "" then
+		table.insert(result, "<zamykatelné dveře>")
+	elseif meta:get_int("hes") ~= 0 then
+		table.insert(result, "<hotelové dveře>")
+	end
+	if nazev ~= "" then
+		table.insert(result, "["..nazev.."]")
+	end
+	if owner ~= "" then
+		table.insert(result, "Dveře vlastní: "..doors.login_to_viewname(owner))
+	else
+		local placer = meta:get_string("placer")
+		table.insert(result, "Dveře postavil/a: "..doors.login_to_viewname(placer))
+	end
+	if meta:get_int("zavirasamo") > 0 then
+		table.insert(result, "Zavírá samo")
+	end
+	result = table.concat(result, "\n")
+	meta:set_string("infotext", result)
+	return result
+end
 
 local function on_place_node(place_to, newnode,
 	placer, oldnode, itemstack, pointed_thing)
@@ -220,8 +343,20 @@ local function on_place_node(place_to, newnode,
 end
 
 local function can_dig_door(pos, digger)
+	-- minetest.log("warning", "can_dig_door() called at "..minetest.pos_to_string(pos))
 	replace_old_owner_information(pos)
-	return default.can_interact_with_node(digger, pos)
+	if not default.can_interact_with_node(digger, pos) then
+		return false
+	end
+	local meta = minetest.get_meta(pos)
+	if meta:get_int("hes") ~= 0 then
+		-- hotel doors
+		if digger:get_player_name() ~= meta:get_string("owner")..meta:get_string("placer") and not minetest.check_player_privs(digger, "protection_bypass") then
+			minetest.chat_send_player(digger:get_player_name(), "*** Hotelové dveře může odstranit jen jejich vlastník/ice nebo Administrace!")
+			return false
+		end
+	end
+	return true
 end
 
 function doors.register(name, def)
@@ -348,11 +483,11 @@ function doors.register(name, def)
 			local state = 0
 			if minetest.get_item_group(minetest.get_node(aside).name, "door") == 1 then
 				state = state + 2
-				print("Will place node '"..itemstack_name.."_b'")
+				-- print("Will place node '"..itemstack_name.."_b'")
 				minetest.set_node(pos, {name = itemstack_name .. "_b", param2 = dir})
 				minetest.set_node(above, {name = "doors:hidden", param2 = (dir + 3) % 4})
 			else
-				print("Will place node '"..itemstack_name.."_a'")
+				-- print("Will place node '"..itemstack_name.."_a'")
 				minetest.set_node(pos, {name = itemstack_name .. "_a", param2 = dir})
 				minetest.set_node(above, {name = "doors:hidden", param2 = dir})
 			end
@@ -362,7 +497,9 @@ function doors.register(name, def)
 
 			if def.protected then
 				meta:set_string("owner", pn)
-				meta:set_string("infotext", def.description .. "\n" .. S("Owned by @1", pn))
+				-- meta:set_string("infotext", def.description .. "\n" .. S("Owned by @1", pn))
+			else
+				meta:set_string("placer", pn)
 			end
 
 			if not minetest.is_creative_enabled(pn) then
@@ -373,6 +510,8 @@ function doors.register(name, def)
 
 			on_place_node(pos, minetest.get_node(pos),
 				placer, node, itemstack, pointed_thing)
+
+			doors.update_infotext(pos, nil, meta)
 
 			return itemstack
 		end
@@ -426,10 +565,11 @@ function doors.register(name, def)
 		gains = {def.gain_close, def.gain_open},
 	}
 	if not def.on_rightclick then
-		def.on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		def.on_rightclick = doors.door_rightclick
+		--[[ function(pos, node, clicker, itemstack, pointed_thing)
 			doors.door_toggle(pos, node, clicker)
 			return itemstack
-		end
+		end ]]
 	end
 	def.after_dig_node = function(pos, node, meta, digger)
 		minetest.remove_node({x = pos.x, y = pos.y + 1, z = pos.z})
@@ -438,9 +578,28 @@ function doors.register(name, def)
 	def.on_rotate = function(pos, node, user, mode, new_param2)
 		return false
 	end
+	if not def.on_timer then
+		def.on_timer = function(pos, elapsed)
+			local obj = doors.get(pos)
+			if not obj then
+				return
+			end
+			-- don't close until no player is in 3-meter radius
+			local player_radius = 3
+			local player_radius2 = player_radius * player_radius
+			for _, player in pairs(minetest.get_connected_players()) do
+				local player_pos = player:get_pos()
+				local x, y, z = player_pos.x - pos.x, player_pos.y - pos.y, player_pos.z - pos.z
+				if x * x + y * y + z * z <= player_radius2 then
+					return true -- wait again
+				end
+			end
+			obj:close()
+		end
+	end
 
+	def.can_dig = can_dig_door
 	if def.protected then
-		def.can_dig = can_dig_door
 		def.on_blast = function() end
 		def.on_key_use = function(pos, player)
 			local door = doors.get(pos)
