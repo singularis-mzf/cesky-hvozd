@@ -89,6 +89,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 ## Doxy's Mini Tram (doxy\_mini\_tram)
 
+* Balík módů dočasně stažen z repozitáře.
 * Zdroj: [https://invent.kde.org/davidhurka/doxy\_mini\_tram](https://invent.kde.org/davidhurka/doxy\_mini\_tram), revize f0aa2331419ab85d1b0a7ac01987faffb68eba95
 * Původní licence: převážně MIT, jednotlivé soubory pod různými jinými, ale vše svobodné
 * Licence úprav: uvedeny u jednotlivých souborů stejným způsobem jako v původním módu
@@ -344,11 +345,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: GPLv3
 * Licence úprav: GPLv3
 
-## ch\_core (ch\_core)
-
-* Moje vlastní práce
-* Licence: LGPL-2.1 pro kód, textury: různé licence (viz license.txt)
-
 ## Chess Mod (chess\_mod)
 
 * Zdroj: [https://github.com/bas080/chess-mod](https://github.com/bas080/chess-mod), revize 9d9e032f1be3c4e24a42751ccd8a8bf4f2d6c8d3 (textury z revize 9fc9ac2ded011b6ec834f015ea389a85cda3fc81, viz ostatní-zdroje/chess-mod-textures)
@@ -383,7 +379,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: Unlicense
 * [ContentDB](https://content.minetest.net/packages/sirrobzeroone/comboblock/)
 
-## Compactor
+## Compactor (compactor)
 
 * Zdroj: [https://gitlab.com/alerikaisattera/compactor](https://gitlab.com/alerikaisattera/compactor), revize d1482d303108f64409bab62832945279a1790b7b
 * Původní licence: GPLv3 pro kód, CC-BY-SA-3.0 pro textury
@@ -417,13 +413,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: WTFPL
 * Licence úprav: WTFPL
 * [ContentDB](https://content.minetest.net/packages/addi/darkage/)
-
-## Default (default)
-
-* Z Minetest Game, upraveno. Odnož byla nutná kvůli úpravě hustoty výchozích lesů.
-* Zdroj: [https://github.com/minetest/minetest\_game](https://github.com/minetest/minetest\_game), revize ???
-* Původní licence: LGPL 2.1+
-* Licence úprav: LGPL 2.1+
 
 ## Dense Ores (denseores)
 
@@ -773,7 +762,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/FaceDeer/ropes/)
 
-## Rotate: Wrench - node rotation tool
+## Rotate: Wrench - node rotation tool (minetest-mod-rotate)
 
 * Zdroj: [https://github.com/Rogier-5/minetest-mod-rotate](https://github.com/Rogier-5/minetest-mod-rotate), revize 65125539e1d79464d168f9cd0b3ebf77463379a4
 * Původní licence: LGPLv2.1 pro kód, CC BY-SA-3.0 pro obrázky
@@ -830,13 +819,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: Unlicense pro kód, různé licence pro přidané textury
 * [ContentDB](https://content.minetest.net/packages/cheapie/solidcolor/)
 
-## Spawn Command (spawn\_command)
-
-* Zdroj: [https://github.com/minetest-mods/spawn\_command](https://github.com/minetest-mods/spawn\_command), revize 2d418e2ab800f6565c828cf5c30642e9dfd6da28
-* Původní licence: LGPL 2.1
-* Licence úprav: LGPL 2.1
-* [ContentDB](https://content.minetest.net/packages/lag01/spawn\_command/)
-
 ## Stamina (stamina)
 
 * Zdroj: [https://notabug.org/TenPlus1/stamina](https://notabug.org/TenPlus1/stamina), revize 96570a558e165f23b42389a501ceebaf20e0f3a8
@@ -851,13 +833,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT pro kód, CC-BY-SA 3.0 pro média
 * [ContentDB](https://content.minetest.net/packages/webdesigner97/streets/)
 
-## TechPack Stairway (techpack\_stairway)
-
-* Zdroj: [https://github.com/joe7575/techpack\_stairway](https://github.com/joe7575/techpack\_stairway), revize 7b3deb474df44344677b59f8050e5cfe81d19db9
-* Původní licence: LGPL 2.1+ pro kód, textury, zvuk a dokumentace CC BY-SA 3.0
-* Licence úprav: LGPL 2.1+ pro kód, ostatní CC BY-SA 3.0
-* [ContentDB](https://content.minetest.net/packages/joe7575/techpack\_stairway/)
-
 ## Technic HV Extend (technic\_hv\_extend)
 
 * Zdroj: [https://github.com/Emojigit/technic\_hv\_extend](https://github.com/Emojigit/technic\_hv\_extend), revize b16a76d607cc7df2b2aca25ca1b76d079727290c
@@ -871,6 +846,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: MIT
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/alerikaisattera/technic\_recipes/)
+
+## TechPack Stairway (techpack\_stairway)
+
+* Zdroj: [https://github.com/joe7575/techpack\_stairway](https://github.com/joe7575/techpack\_stairway), revize 7b3deb474df44344677b59f8050e5cfe81d19db9
+* Původní licence: LGPL 2.1+ pro kód, textury, zvuk a dokumentace CC BY-SA 3.0
+* Licence úprav: LGPL 2.1+ pro kód, ostatní CC BY-SA 3.0
+* [ContentDB](https://content.minetest.net/packages/joe7575/techpack\_stairway/)
 
 ## Tower Crane (towercrane)
 
@@ -920,7 +902,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: AGPLv3
 * Licence úprav: AGPLv3
 
-## Visible Wielditem
+## Visible Wielditem (visible\_wielditem)
 
 * Zdroj: [https://github.com/appgurueu/visible\_wielditem](https://github.com/appgurueu/visible\_wielditem), revize d8ce7ba84eef50fc3994fa516a3c03c8ad58da4b
 * Původní licence: MIT (kromě snímku obrazovky)
