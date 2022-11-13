@@ -135,11 +135,12 @@ def = {
 	groups = {tool = 1},
 	on_use = on_use,
 	on_place = on_place,
-
-	-- technic:
-	wear_represents = "technic_RE_charge",
-	on_refill = technic.refill_RE_charge,
 }
+if has_technic then
+	def.wear_represents = "technic_RE_charge"
+	def.on_refill = technic.refill_RE_charge
+end
+
 minetest.register_tool("ch_extras:total_station", def)
 
 if has_technic then

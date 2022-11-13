@@ -326,6 +326,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: AGPLv3
 * [ContentDB](https://content.minetest.net/packages/rheo/builtin\_overrides/)
 
+## Global Bulletin Boards (bulletin\_boards)
+
+* Zdroj: [https://github.com/minetest-mods/bulletin\_boards](https://github.com/minetest-mods/bulletin\_boards), revize 02951241def2ed8d162bfa1f4b0fd8e6192dd640
+* Původní licence: MIT pro kód, různé pro média
+* Licence úprav: MIT pro kód, různé pro média
+* [ContentDB](https://content.minetest.net/packages/FaceDeer/bulletin\_boards/)
+
 ## Bushy Leaves (bushy\_leaves)
 
 * Zdroj: [https://git.minetest.land/erlehmann/bushy\_leaves](https://git.minetest.land/erlehmann/bushy\_leaves), revize 9be33ef9c37836414fac7a9dd78125efed77b581
