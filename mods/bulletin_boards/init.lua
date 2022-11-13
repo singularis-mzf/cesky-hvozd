@@ -33,7 +33,7 @@ end
 
 local max_text_size = 5000 -- half a book
 local max_title_size = 60
-local short_title_size = 12
+local short_title_size = 20
 
 -- gets the bulletins currently on a board
 -- and other persisted data
@@ -161,7 +161,7 @@ local function show_board(player_name, board_name)
 		tip = S("Post your bulletin here")
 	end
 	
-	formspec[#formspec+1] = "size[8,8.5]"
+	formspec[#formspec+1] = "size[14,9]"
 	.. "container[0,0]"
 	.. "label[0.0,-0.25;"..desc.."]"
 	.. "container_end[]"
@@ -172,15 +172,16 @@ local function show_board(player_name, board_name)
 			i = i + 1
 			local bulletin = board[i] or {}
 			local short_title = bulletin.title or ""
+			local short_title_length = ch_core.utf8_length(short_title)
 			--Don't bother triming the title if the trailing dots would make it longer
-			if #short_title > short_title_size + 3 then
-				short_title = short_title:sub(1, short_title_size) .. "..."
+			if short_title_length > short_title_size + 3 then
+				short_title = ch_core.utf8_truncate_right(short_title, short_title_size - 3)
 			end
 			local img = bulletin.icon or ""
 	
 			formspec[#formspec+1] =
-				"image_button["..x..",".. y*1.2 ..";1,1;"..img..";button_"..i..";]"
-				.."label["..x..","..y*1.2-0.35 ..";"..minetest.formspec_escape(short_title).."]"
+				"image_button["..(1.75* x)..",".. y*1.2 ..";1,1;"..img..";button_"..i..";]"
+				.."label["..(1.75*x)..","..y*1.2-0.35 ..";"..minetest.formspec_escape(short_title).."]"
 			if bulletin.title and bulletin.owner and bulletin.timestamp then
 				local days_ago = math.floor((current_time-bulletin.timestamp)/86400)
 				formspec[#formspec+1] = "tooltip[button_"..i..";"
@@ -216,18 +217,23 @@ local function show_bulletin(player, board_name, index)
 		tip = S("Post bulletin with this icon")
 		has_cost = true
 	end
-	
+
 	local admin = minetest.check_player_privs(player, "server")
-	
+	local days_ago
+
+	if bulletin.timestamp then
+		days_ago = math.floor((minetest.get_gametime() - bulletin.timestamp) / 86400)
+	end
+
 	local formspec = {"size[8,8]"
-		.."button[0.2,0;1,1;prev;"..S("Prev").."]"
-		.."button[6.65,0;1,1;next;"..S("Next").."]"}
+		.."button[0.0,0;1.2,1;prev;"..S("Prev").."]"
+		.."button[6.65,0;1.2,1;next;"..S("Next").."]"}
 	local esc = minetest.formspec_escape
 	if ((bulletin.owner == nil or bulletin.owner == player_name) and has_cost) or admin then
 		formspec[#formspec+1] = 
 			"field[1.5,0.75;5.5,0;title;"..S("Title:")..";"..esc(bulletin.title or "").."]"
-			.."textarea[0.5,1.15;7.5,7;text;"..S("Contents:")..";"..esc(bulletin.text or "").."]"
-			.."label[0.3,7;"..S("Post:").."]"
+			.."textarea[0.5,1.15;7.5,6.5;text;"..S("Contents:")..";"..esc(bulletin.text or "").."]"
+			.."label[0.3,6.8;"..S("Post:")..(days_ago and " "..S("(posted @1 days ago)", days_ago) or "").."]"
 		for i, icon in ipairs(icons) do
 			formspec[#formspec+1] = "image_button[".. i*0.75-0.5 ..",7.35;1,1;"..icon..";save_"..i..";]"
 			.."tooltip[save_"..i..";"..tip.."]"
@@ -237,11 +243,11 @@ local function show_bulletin(player, board_name, index)
 			.."label["..(#icons+1)*0.75-0.25 ..",7;"..S("Delete:").."]"
 	elseif bulletin.owner then
 		formspec[#formspec+1] = 
-			"label[1.4,0.5;"..S("Posted by @1", bulletin.owner).."]"
+			"label[1.4,0.5;"..S("Posted by @1 (@2 days ago)", bulletin.owner, math.floor((minetest.get_gametime() - bulletin.timestamp) / 86400)).."]"
 			.."tablecolumns[color;text]"
 			.."tableoptions[background=#00000000;highlight=#00000000;border=false]"
 			.."table[1.35,0.25;5,0.5;title;#FFFF00,"..esc(bulletin.title or "").."]"
-			.."textarea[0.5,1.5;7.5,7;;"..esc(bulletin.text or "")..";]"
+			.."textarea[0.5,1.5;7.5,6.5;;"..esc(bulletin.text or "")..";]"
 			.."button[2.5,7.5;3,1;back;" .. S("Back to Board") .. "]"
 		if bulletin.owner == player_name then
 			formspec[#formspec+1] = "image_button[".. (#icons+1)*0.75-0.25 ..",7.35;1,1;bulletin_boards_delete.png;delete;]"
@@ -309,19 +315,19 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		-- someone's done something funny. Don't be accusatory, though - could be a race condition
 		return
 	end
-	
+
 	if fields.delete then
 		board[state.index] = nil
 		fields.title = ""
 		save_boards()
 	end
-	
+
 	local player_inventory = minetest.get_inventory({type="player", name=player_name})
 	local has_cost = true
 	if def.cost then
 		has_cost = player_inventory:contains_item("main", def.cost)
 	end
-	
+
 	if fields.text ~= "" and (has_cost or admin) then
 		for field, _ in pairs(fields) do
 			if field:sub(1, #"save_") == "save_" then
