@@ -119,6 +119,7 @@ function ch_core.registrovat(player_name, reg_type, extra_privs)
 	offline_charinfo.ap_level = 1
 	offline_charinfo.ap_xp = 0
 	ch_core.save_offline_charinfo(player_name, {"ap_level", "ap_xp", "past_ap_playtime", "past_playtime"})
+	ch_core.ap_add(player_name, offline_charinfo, -1)
 	return true
 end
 

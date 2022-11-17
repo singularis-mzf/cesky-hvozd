@@ -73,24 +73,27 @@ end
 local function stamina_update_hud(player, stamina_level)
 	local player_data, hud_status, is_hunger, hud_maxvalue, hud_value
 	local player_data = stamina.players[player:get_player_name()]
+	local is_hunger
 	-- hud_status: "normal", "poisoned", "drunk"
 	-- is_hunger: true, false
 
-	is_hunger = stamina_level < STAMINA_HUNGER_LEVEL
-	if is_hunger then
+	if stamina_level < STAMINA_HUNGER_LEVEL then
+		is_hunger = true
 		hud_value = STAMINA_HUNGER_LEVEL - stamina_level
 		hud_maxvalue = STAMINA_HUNGER_LEVEL
 	else
+		is_hunger = false
 		hud_value = stamina_level - STAMINA_HUNGER_LEVEL
 		hud_maxvalue = STAMINA_MAX_STAMINA - STAMINA_HUNGER_LEVEL
 	end
+	-- minetest.debug("Stamina update: stamina_level = "..stamina_level..", hunger_level = "..STAMINA_HUNGER_LEVEL..", is_hunger = "..(is_hunger and "true" or "false")..", hud = "..hud_value.." of "..hud_maxvalue)
 
 	if not player_data.hud_status then
 		-- init
 		hud_status = "normal"
 		player_data.hud_status = hud_status
 		player_data.hud_value = hud_value
-		player_data.was_hunger = not is_hunger -- trigger update
+		player_data.was_hunger = nil -- not is_hunger -- trigger update
 		hb.init_hudbar(player, "hlad", 0, hud_maxvalue, true)
 	end
 

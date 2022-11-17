@@ -450,6 +450,7 @@ local function body(admin_name, param)
 end
 
 def = {
+	params = "<Jméno_Postavy> <celé_číslo>",
 	privs = {server = true},
 	description = "Přidá či odebere příslušné postavě body.",
 	func = body,
