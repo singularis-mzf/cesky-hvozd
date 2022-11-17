@@ -266,6 +266,79 @@ function tp.placetrack(pos, nnpref, placer, itemstack, pointed_thing, yaw)
 	end
 end
 
+local function on_place(itemstack, placer, pointed_thing, nnprefix, def)
+	local s, pos, name
+
+	name = placer:get_player_name()
+	if not name then
+		return itemstack, false
+	end
+
+	if pointed_thing.type ~= "node" then
+		return itemstack, true
+	end
+
+	if pointed_thing.above.y == pointed_thing.under.y then
+		pos = pointed_thing.under
+	else
+		pos = pointed_thing.above
+	end
+
+	local upos = vector.offset(pos, 0, -1, 0)
+	local ndef = minetest.registered_nodes[minetest.get_node(pos).name]
+	local undef = minetest.registered_nodes[minetest.get_node(upos).name] -- definition of the node under
+
+	if not advtrains.check_track_protection(pos, name) then
+		return itemstack, false
+	end
+	if not ndef or not ndef.buildable_to then
+		return itemstack, true -- not place for a track
+	end
+	if ndef.suitable_substrate then
+		s = ndef.suitable_substrate(upos)
+	else
+		s = undef and undef.walkable
+	end
+	if s then
+		--	minetest.chat_send_all(nnprefix)
+		local yaw = placer:get_look_horizontal()
+		tp.placetrack(pos, nnprefix, placer, itemstack, pointed_thing, yaw)
+		if not minetest.is_creative_enabled(name) then
+			itemstack:take_item()
+		end
+		return itemstack, true
+	end
+
+	-- try the position below
+	pos.y = pos.y - 1
+	upos.y = upos.y - 1
+	ndef = undef
+	undef = minetest.registered_nodes[minetest.get_node(upos).name]
+	pointed_thing = table.copy(pointed_thing)
+	pointed_thing.below = upos
+	pointed_thing.above = pos
+
+	if not advtrains.check_track_protection(pos, name) then
+		return itemstack, false
+	end
+	if not ndef or not ndef.buildable_to then
+		return itemstack, true -- not place for a track
+	end
+	if ndef.suitable_substrate then
+		s = ndef.suitable_substrate(upos)
+	else
+		s = undef and undef.walkable
+	end
+	if s then
+		--	minetest.chat_send_all(nnprefix)
+		local yaw = placer:get_look_horizontal()
+		tp.placetrack(pos, nnprefix, placer, itemstack, pointed_thing, yaw)
+		if not minetest.is_creative_enabled(name) then
+			itemstack:take_item()
+		end
+	end
+	return itemstack, true
+end
 
 function tp.register_track_placer(nnprefix, imgprefix, dispname, def)
 	minetest.register_craftitem(":"..nnprefix.."_placer",{
@@ -275,34 +348,7 @@ function tp.register_track_placer(nnprefix, imgprefix, dispname, def)
 		groups={advtrains_trackplacer=1, digtron_on_place=1},
 		liquids_pointable = def.liquids_pointable,
 		on_place = function(itemstack, placer, pointed_thing)
-				local name = placer:get_player_name()
-				if not name then
-				   return itemstack, false
-				end
-				if pointed_thing.type=="node" then
-					local pos=pointed_thing.above
-					local upos=vector.subtract(pointed_thing.above, {x=0, y=1, z=0})
-					if not advtrains.check_track_protection(pos, name) then
-						return itemstack, false
-					end
-					if minetest.registered_nodes[minetest.get_node(pos).name] and minetest.registered_nodes[minetest.get_node(pos).name].buildable_to then
-						local s
-						if def.suitable_substrate then
-							s = def.suitable_substrate(upos)
-						else
-							s = minetest.registered_nodes[minetest.get_node(upos).name] and minetest.registered_nodes[minetest.get_node(upos).name].walkable
-						end
-						if s then
---						minetest.chat_send_all(nnprefix)
-							local yaw = placer:get_look_horizontal()
-							tp.placetrack(pos, nnprefix, placer, itemstack, pointed_thing, yaw)
-							if not advtrains.is_creative(name) then
-								itemstack:take_item()
-							end
-						end
-					end
-				end
-				return itemstack, true
+			return on_place(itemstack, placer, pointed_thing, nnprefix, def)
 		end,
 	})
 end
