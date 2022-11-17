@@ -192,33 +192,40 @@ local def_mesecons =
 }
 
 
+local function update_streets_light(pos, node, ...)
+	local meta = minetest.get_meta(pos)
+	local mode = meta:get_string("mode")
+	local state = node.name:find("off") and "off" or "on"
+	local newnode = node
+	if mode == "time" then
+		local time = minetest.get_timeofday() * 24000
+		if state == "on" then
+			if time < meta:get_int("time_on") and time > meta:get_int("time_off") then
+				newnode.name = newnode.name:gsub("_on", "_off")
+				minetest.swap_node(pos, newnode)
+			end
+		else
+			if time > meta:get_int("time_on") or time < meta:get_int("time_off") then
+				newnode.name = newnode.name:gsub("_off", "_on")
+				minetest.swap_node(pos, newnode)
+			end
+		end
+	end
+end
 
-
+minetest.register_lbm({
+	label = "streets light",
+	name = "streets:light",
+	nodenames = { "group:streets_light" },
+	run_at_every_load = true,
+	action = update_streets_light,
+})
 
 minetest.register_abm({
 	nodenames = { "group:streets_light" },
 	interval = 10,
 	chance = 1,
-	action = function(pos, node, active_object_count, active_object_count_wider)
-		local meta = minetest.get_meta(pos)
-		local mode = meta:get_string("mode")
-		local state = node.name:find("off") and "off" or "on"
-		local newnode = node
-		if mode == "time" then
-			local time = minetest.get_timeofday() * 24000
-			if state == "on" then
-				if time < meta:get_int("time_on") and time > meta:get_int("time_off") then
-					newnode.name = newnode.name:gsub("_on", "_off")
-					minetest.swap_node(pos, newnode)
-				end
-			else
-				if time > meta:get_int("time_on") or time < meta:get_int("time_off") then
-					newnode.name = newnode.name:gsub("_off", "_on")
-					minetest.swap_node(pos, newnode)
-				end
-			end
-		end
-	end,
+	action = update_streets_light, -- function(pos, node, active_object_count, active_object_count_wider)
 })
 
 
