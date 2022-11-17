@@ -23,6 +23,33 @@ local nametag_color_unregistered = nametag_color_grey
 ch_core.unregistered_spawn = vector.new(-70,9.5,40)
 ch_core.registered_spawn = ch_core.unregistered_spawn
 
+local zero_by_type = {
+	int = 0,
+	float = 0.0,
+	-- nil = nil,
+	string = "",
+	vector = vector.zero(),
+}
+
+-- GLOBÁLNÍ DATA
+-- ===========================================================================
+local global_data_data_types = {
+	posun_casu = "int",
+	registered_spawn = "vector",
+	unregistered_spawn = "vector",
+}
+
+local initial_global_data = {
+	registered_spawn = vector.new(-70,9.5,40),
+	unregistered_spawn = vector.new(-70,9.5,40),
+}
+
+for k, t in pairs(global_data_data_types) do
+	if initial_global_data[k] == nil then
+		initial_global_data[k] = zero_by_type[t]
+	end
+end
+
 -- DATA O POSTAVÁCH
 -- ===========================================================================
 -- key => "int|float", unknown keys are deserialized as strings
@@ -46,17 +73,12 @@ local initial_offline_charinfo = {
 }
 for k, t in pairs(offline_charinfo_data_types) do
 	if initial_offline_charinfo[k] == nil then
-		local v = ""
-		if t == "int" then
-			v = 0
-		elseif t == "float" then
-			v = 0.0
-		end
-		initial_offline_charinfo[k] = v
+		initial_offline_charinfo[k] = zero_by_type[t]
 	end
 end
 local storage = ch_core.storage
 
+ch_core.global_data = table.copy(initial_global_data)
 ch_core.online_charinfo = {}
 ch_core.offline_charinfo = {}
 local old_online_charinfo = {}
@@ -165,7 +187,38 @@ function ch_core.get_leaving_online_charinfo(player_name)
 	return ch_core.online_charinfo[player_name] or old_online_charinfo[player_name] or {}
 end
 
--- datatype = "string"|"int"|"float"|"nil"
+function ch_core.save_global_data(keys)
+	local ax = type(keys)
+	if ax == "table" then
+		ax = ch_core.save_global_data
+		for _, key in ipairs(keys) do
+			ax(key)
+		end
+		return
+	elseif ax ~= "string" and ax ~= "number" then
+		error("save_global_data() called with an argument of invalid type "..ax.."!")
+	end
+
+	local data_type = global_data_data_types[keys]
+	if data_type == nil then
+		minetest.log("warning", "save_global_data() called for unknown key '"..keys.."', ignored.")
+		return false
+	end
+	local full_key = "/"..keys
+	local value = ch_core.global_data[keys]
+	if data_type == "int" then
+		storage:set_int(full_key, value or 0)
+	elseif data_type == "float" then
+		storage:set_float(full_key, value or 0.0)
+	elseif data_type == "vector" then
+		storage:set_string(full_key, minetest.pos_to_string(vector.round(value)))
+	else
+		storage:set_string(full_key, value or "")
+	end
+	return true
+end
+
+-- datatype = "string"|"int"|"float"|"vector"|"nil"
 function ch_core.save_offline_charinfo(player_name, keys)
 	local offline_charinfo = ch_core.offline_charinfo[player_name]
 	if not offline_charinfo then
@@ -183,6 +236,8 @@ function ch_core.save_offline_charinfo(player_name, keys)
 			storage:set_int(full_key, value or 0)
 		elseif data_type == "float" then
 			storage:set_float(full_key, value or 0.0)
+		elseif data_type == "vector" then
+			storage:set_string(full_key, minetest.pos_to_string(vector.round(value)))
 		else
 			storage:set_string(full_key, value or "")
 		end
@@ -258,12 +313,38 @@ function ch_core.set_temporary_titul(player_name, titul, titul_enabled)
 	end
 end
 
+local function restore_value_by_type(data_type, value, value_description)
+	if data_type == "int" then
+		return math.round(tonumber(value))
+	elseif data_type == "float" then
+		return tonumber(value)
+	elseif data_type == "string" then
+		return value
+	elseif data_type == "vector" then
+		local result = minetest.string_to_pos(value)
+		if restore == nil then
+			minetest.log("warning", "Invalid value ignored on restore! (description = "..(value_description or "nil")..")")
+			return zero_by_type["vector"]
+		end
+		return result
+	elseif data_type == "nil" then
+		return nil
+	else
+		error("restore_value_by_type() called with invalid data_type "..dump2(data_type).."!")
+	end
+end
+
 -- restore offline data from the storage
-local counter, delete_counter = 0, 0
+local player_counter, player_field_counter, global_counter, delete_counter = 0, 0, 0, 0
+local player_set = {}
 local storage_table = (storage:to_table() or {}).fields or {}
 for full_key, value in pairs(storage_table) do
 	local player_name, key = full_key:match("^([^/]*)/(.+)$")
-	if player_name and not is_invalid_player_name(player_name) then
+	if player_name == "" and key ~= "" then
+		local data_type = global_data_data_types[key]
+		ch_core.global_data[key] = restore_value_by_type(data_type, value, "global property "..key)
+		global_counter = global_counter + 1
+	elseif player_name and not is_invalid_player_name(player_name) then
 		local offline_charinfo = ch_core.get_offline_charinfo(player_name)
 		local data_type = offline_charinfo_data_types[key]
 		if data_type == "int" then
@@ -273,14 +354,18 @@ for full_key, value in pairs(storage_table) do
 		else
 			offline_charinfo[key] = value
 		end
-		counter = counter + 1
+		player_field_counter = player_field_counter + 1
+		if player_set[player_name] == nil then
+			player_set[player_name] = true
+			player_counter = player_counter + 1
+		end
 	else
 		storage:set_string(full_key, "")
 		minetest.log("warning", "Invalid key '"..full_key.."' (value "..value..") removed from mod storage!")
 		delete_counter = delete_counter + 1
 	end
 end
-print("[ch_core] Restored "..counter.." data pairs from the mod storage. "..delete_counter.." was deleted.")
+print("[ch_core] Restored "..player_field_counter.." data pairs of "..player_counter.." players and "..global_counter.." global pairs from the mod storage. "..delete_counter.." was deleted.")
 
 -- Check and update keys
 for player_name, offline_charinfo in pairs(ch_core.offline_charinfo) do
@@ -293,6 +378,11 @@ for player_name, offline_charinfo in pairs(ch_core.offline_charinfo) do
 	if offline_charinfo.past_playtime < 0 then
 		minetest.log("warning", "Invalid past_playtime for "..player_name.." ("..offline_charinfo.past_playtime..") corrected to zero!")
 		offline_charinfo.past_playtime = 0 -- correction of invalid data
+	end
+end
+for key, data_type in pairs(global_data_data_types) do
+	if ch_core.global_data[key] == nil and data_type ~= "nil" then
+		ch_core.global_data[key] = zero_by_type[data_type]
 	end
 end
 
@@ -389,5 +479,23 @@ local def = {
 }
 minetest.register_chatcommand("návodyznovu", def)
 minetest.register_chatcommand("navodyznovu", def)
+
+def = {
+	description = "Nastaví posun zobrazovaného času.",
+	privs = {server = true},
+	func = function(player_name, param)
+		local n = tonumber(param)
+		if not n then
+			return false, "Chybné zadán!!"
+		end
+		n = math.round(n)
+		ch_core.global_data.posun_casu = n
+		ch_core.save_global_data("posun_casu")
+		minetest.chat_send_player(player_name, "*** Posun nastaven: "..n)
+	end,
+}
+
+minetest.register_chatcommand("posunčasu", def)
+minetest.register_chatcommand("posuncasu", def)
 
 ch_core.close_submod("data")

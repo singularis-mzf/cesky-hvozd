@@ -720,7 +720,8 @@ function ch_core.utf8_mensi_nez(a, b, store_to_cache)
 end
 
 function ch_core.aktualni_cas()
-	local tm = os.time()
+	local posun = ch_core.global_data.posun_casu
+	local tm = os.time() + posun
 	local t = os.date("!*t", tm)
 	local dst
 
