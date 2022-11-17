@@ -7,6 +7,7 @@ local ap_decrease = 1
 local ap_min = 0
 local ap_max = 26
 local min, max = math.min, math.max
+local def
 
 local levels = {
 	{base = 0, count = 500, next = 500},
@@ -272,6 +273,65 @@ function ch_core.ap_init(player, online_charinfo, offline_charinfo)
 	return true
 end
 
+function ch_core.ap_add(player_name, offline_charinfo, points_to_add, debug_coef_changes)
+	if points_to_add == 0 then
+		return 0
+	end
+	local old_level, old_xp = offline_charinfo.ap_level, offline_charinfo.ap_xp
+	local new_level = old_level
+	local level_def = ch_core.ap_get_level(old_level)
+	local new_xp = old_xp + points_to_add
+
+	if points_to_add > 0 then
+		-- vyhodnotit zvýšení úrovně
+		while new_xp >= level_def.count do
+			new_xp = new_xp - level_def.count
+			new_level = new_level + 1
+			level_def = ch_core.ap_get_level(new_level)
+		end
+	else
+		-- vyhodnotit snížení úrovně
+		while new_xp < 0 do
+			if new_level > 1 then
+				new_level = new_level - 1
+				level_def = ch_core.ap_get_level(new_level)
+				new_xp = new_xp + level_def.count
+			else
+				new_xp = 0
+				break
+			end
+		end
+	end
+
+	-- aktualizovat offline_charinfo
+	local keys_to_update = {"ap_xp"}
+	offline_charinfo.ap_xp = new_xp
+	if new_level ~= old_level then
+		keys_to_update[2] = "ap_level"
+		offline_charinfo.ap_level = new_level
+	end
+	ch_core.save_offline_charinfo(player_name, keys_to_update)
+
+	-- je-li postava online, aktualizovat HUD
+	local player = minetest.get_player_by_name(player_name)
+	if player then
+		update_xp_hud(player, player_name, offline_charinfo)
+	end
+
+	if debug_coef_changes then
+		minetest.log("action", player_name..": level_op="..(new_level > old_level and ">" or new_level < old_level and "<" or "=")..", level="..old_level.."=>"..new_level..", xp="..old_xp.."=>"..new_xp..", coefs = "..table.concat(debug_coef_changes))
+	end
+
+	-- oznámit
+	if new_level > old_level then
+		ch_core.systemovy_kanal("", "Postava "..ch_core.prihlasovaci_na_zobrazovaci(player_name).." dosáhla úrovně "..new_level)
+	elseif new_level < old_level then
+		ch_core.systemovy_kanal("", "Postava "..ch_core.prihlasovaci_na_zobrazovaci(player_name).." klesla na úroveň "..new_level)
+	end
+
+	return new_xp, new_level
+end
+
 function ch_core.ap_update(player, online_charinfo, offline_charinfo)
 	local result, ap, ap1, ap2 = 0, online_charinfo.ap, online_charinfo.ap1, online_charinfo.ap2
 
@@ -320,38 +380,7 @@ function ch_core.ap_update(player, online_charinfo, offline_charinfo)
 		return 0
 	end
 
-	-- vyhodnotit zvýšení úrovně
-	local level_up = false
-	local old_level, old_xp = offline_charinfo.ap_level, offline_charinfo.ap_xp
-	local level = old_level
-	local level_def = ch_core.ap_get_level(old_level)
-	local new_xp = old_xp + result
-	while new_xp >= level_def.count do
-		new_xp = new_xp - level_def.count
-		level = level + 1
-		level_def = ch_core.ap_get_level(level)
-		level_up = true
-	end
-
-	-- aktualizovat offline_charinfo
-	local keys_to_update = {"ap_xp"}
-	offline_charinfo.ap_xp = new_xp
-	if level_up then
-		keys_to_update[2] = "ap_level"
-		offline_charinfo.ap_level = level
-	end
-	ch_core.save_offline_charinfo(online_charinfo.player_name, keys_to_update)
-
-	-- aktualizovat HUD
-	update_xp_hud(player, online_charinfo.player_name, offline_charinfo)
-
-	minetest.log("action", online_charinfo.player_name..": level_up="..(level_up and "true" or "false")..", level="..old_level.."=>"..level..", xp="..old_xp.."=>"..new_xp..", coefs = "..table.concat(debug_coef_changes))
-
-	-- oznámit
-	if level_up then
-		ch_core.systemovy_kanal("", "Postava "..ch_core.prihlasovaci_na_zobrazovaci(online_charinfo.player_name).." dosáhla úrovně "..level)
-	end
-
+	ch_core.ap_add(online_charinfo.player_name, offline_charinfo, result, debug_coef_changes)
 	return result
 end
 
@@ -403,6 +432,30 @@ minetest.register_on_craft(on_craft)
 minetest.register_on_dignode(on_dignode)
 minetest.register_on_placenode(on_placenode)
 
+local function body(admin_name, param)
+	local player_name, ap_to_add = param:match("^(%S+)%s(%S+)$")
+	if not player_name then
+		return false, "Chybné zadání!"
+	end
+	player_name = ch_core.jmeno_na_prihlasovaci(player_name)
+	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	if not offline_charinfo then
+		return false, "Vnitřní chyba: nenalezeno offline_charinfo pro '"..player_name.."'!"
+	end
+	ap_to_add = tonumber(ap_to_add)
+	local old_level, old_xp = offline_charinfo.ap_level, offline_charinfo.ap_xp
+	ch_core.ap_add(player_name, offline_charinfo, ap_to_add)
+	local new_level, new_xp = offline_charinfo.ap_level, offline_charinfo.ap_xp
+	return true, "Změna: úroveň "..old_level.." => "..new_level..", body: "..old_xp.." => "..new_xp
+end
+
+def = {
+	privs = {server = true},
+	description = "Přidá či odebere příslušné postavě body.",
+	func = body,
+}
+minetest.register_chatcommand("body", def)
+
 -- HUD
 if minetest.get_modpath("hudbars") then
 	local hudbar_formatstring = "úr. @1: @2/@3"
@@ -429,7 +482,8 @@ if minetest.get_modpath("hudbars") then
 		end
 	end)
 
-	local def = {
+	def = {
+		description = "Skryje hráči/ce ukazatel úrovní a bodů, je-li zobrazen.",
 		func = function(player_name, param)
 			local offline_charinfo = ch_core.offline_charinfo[player_name]
 			if not offline_charinfo then
@@ -449,6 +503,7 @@ if minetest.get_modpath("hudbars") then
 	minetest.register_chatcommand("skrytbody", def)
 
 	def = {
+		description = "Zobrazí hráči/ce ukazatel úrovní a bodů, je-li skryt.",
 		func = function(player_name, param)
 			local offline_charinfo = ch_core.offline_charinfo[player_name]
 			if not offline_charinfo then
