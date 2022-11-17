@@ -196,6 +196,31 @@ function ch_core.ap_announce_craft(player_or_player_name)
 	end
 end
 
+local update_xp_hud
+
+if minetest.get_modpath("hudbars") then
+	update_xp_hud = function(player, player_name, offline_charinfo)
+		local skryt_body = offline_charinfo.skryt_body == 1
+
+		if skryt_body then
+			hb.hide_hudbar(player, "ch_xp")
+		else
+			local level, xp, max_xp = offline_charinfo.ap_level, offline_charinfo.ap_xp
+			if level and xp then
+				max_xp = ch_core.ap_get_level(level).count
+			else
+				level, xp, max_xp = 1, 0, ch_core.ap_get_level(1).count
+			end
+			hb.unhide_hudbar(player, "ch_xp")
+			hb.change_hudbar(player, "ch_xp", math.min(xp, max_xp), max_xp, nil, nil, nil, level, nil)
+		end
+	end
+else
+	update_xp_hud = function(player, player_name, offline_charinfo)
+		return false
+	end
+end
+
 function ch_core.ap_init(player, online_charinfo, offline_charinfo)
 	local vector_zero = vector.zero()
 	local default_coef = 0
@@ -318,10 +343,7 @@ function ch_core.ap_update(player, online_charinfo, offline_charinfo)
 	ch_core.save_offline_charinfo(online_charinfo.player_name, keys_to_update)
 
 	-- aktualizovat HUD
-	local level_def = ch_core.ap_get_level(level)
-	if minetest.get_modpath("hudbars") then
-		hb.change_hudbar(player, "ch_xp", math.min(new_xp, level_def.count), level_def.count, nil, nil, nil, level, nil)
-	end
+	update_xp_hud(player, online_charinfo.player_name, offline_charinfo)
 
 	minetest.log("action", online_charinfo.player_name..": level_up="..(level_up and "true" or "false")..", level="..old_level.."=>"..level..", xp="..old_xp.."=>"..new_xp..", coefs = "..table.concat(debug_coef_changes))
 
@@ -400,9 +422,49 @@ if minetest.get_modpath("hudbars") then
 		else
 			level, xp, max_xp = 1, 0, ch_core.ap_get_level(1).count
 		end
-		hb.init_hudbar(player, "ch_xp", 0, 10, false)
-		hb.change_hudbar(player, "ch_xp", math.min(xp, max_xp), max_xp, nil, nil, nil, level, nil)
+		local skryt_body = offline_charinfo.skryt_body == 1
+		hb.init_hudbar(player, "ch_xp", 0, 10, skryt_body)
+		if not skryt_body then
+			hb.change_hudbar(player, "ch_xp", math.min(xp, max_xp), max_xp, nil, nil, nil, level, nil)
+		end
 	end)
+
+	local def = {
+		func = function(player_name, param)
+			local offline_charinfo = ch_core.offline_charinfo[player_name]
+			if not offline_charinfo then
+				return false, "Vnitřní chyba"
+			end
+			if offline_charinfo.skryt_body == 1 then
+				return false, "Ukazatel úrovně a bodů je již skryt."
+			end
+			offline_charinfo.skryt_body = 1
+			ch_core.save_offline_charinfo(player_name, "skryt_body")
+			hb.hide_hudbar(minetest.get_player_by_name(player_name), "ch_xp")
+			return true, "Ukazatel úrovně a bodů úspěšně skryt."
+		end,
+	}
+
+	minetest.register_chatcommand("skrýtbody", def)
+	minetest.register_chatcommand("skrytbody", def)
+
+	def = {
+		func = function(player_name, param)
+			local offline_charinfo = ch_core.offline_charinfo[player_name]
+			if not offline_charinfo then
+				return false, "Vnitřní chyba"
+			end
+			if offline_charinfo.skryt_body == 0 then
+				return false, "Ukazatel úrovně a bodů je již zobrazen."
+			end
+			offline_charinfo.skryt_body = 0
+			ch_core.save_offline_charinfo(player_name, "skryt_body")
+			update_xp_hud(minetest.get_player_by_name(player_name), player_name, offline_charinfo)
+			return true, "Ukazatel úrovně a bodů úspěšně zobrazen."
+		end,
+	}
+
+	minetest.register_chatcommand("zobrazitbody", def)
 end
 
 ch_core.close_submod("ap")

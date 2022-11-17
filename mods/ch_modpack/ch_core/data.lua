@@ -62,6 +62,7 @@ local offline_charinfo_data_types = {
 	past_playtime = "float", -- in seconds
 	pending_registration_privs = "string",
 	pending_registration_type = "string",
+	skryt_body = "int", -- 0 => zobrazit, 1 => skrýt
 
 	trest = "int",
 }
