@@ -86,6 +86,17 @@ function technic_cnc.register_all(recipeitem, groups, images, description)
 		end
 		-- Create the node if it passes the test
 		if do_register then
+			local program_groups = groups
+			if data.extra_groups then
+				groups = table.copy(groups)
+				for group, group_value in pairs(data.extra_groups) do
+					if group_value ~= 0 then
+						groups[group] = group_value
+					else
+						groups[group] = nil
+					end
+				end
+			end
 			technic_cnc.register_program(recipeitem, data.suffix, data.model,
 				groups, images, data.desc, data.cbox, data.sbox)
 		end

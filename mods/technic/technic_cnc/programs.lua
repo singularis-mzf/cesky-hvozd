@@ -260,7 +260,8 @@ technic_cnc.programs = {
 			fixed = {
 				{-0.5, -0.5, -0.5,  0.5, -7/16, 0.5},
 			}
-		}
+		},
+		extra_groups = {not_blocking_trains = 1},
 	},
 
 	{ suffix  = "technic_cnc_oct",
@@ -289,7 +290,7 @@ technic_cnc.programs = {
 				{-0.5, -0.5, -0.125, 0.5, -0.125, 0.125},
 				{-0.5, -0.5, -0.0625, 0.5, -0.0625, 0.0625},
 			}
-		}
+		},
 	},
 
 	{ suffix  = "technic_cnc_valley",

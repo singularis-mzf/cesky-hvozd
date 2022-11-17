@@ -153,6 +153,30 @@ local alternate_to_group_value = {
 	["_alt_4"] = 12,
 }
 
+local not_blocking_trains_shapes = {
+	["micro/_1"] = 1,
+	["micro/_2"] = 1,
+	["micro/_4"] = 1,
+	["micro/"] = 1,
+	["panel/_1"] = 1,
+	["panel/_2"] = 1,
+	["panel/_4"] = 1,
+	["panel/"] = 1,
+	["panel/special"] = 1,
+	["slab/_1"] = 1,
+	["slab/_2"] = 1,
+	["slab/_quarter"] = 1,
+	["slab/"] = 1,
+	["slab/_two_sides"] = 1,
+	["slab/_triplet"] = 1,
+	["slope/"] = 1,
+	["slope/_half"] = 1,
+	["slope/_half_raised"] = 1,
+	["slope/_slab"] = 1,
+	["slope/_slab_half"] = 1,
+	["slope/_slab_half_raised"] = 1,
+}
+
 stairsplus.register_single = function(category, alternate, info, modname, subname, recipeitem, fields)
 
 	local src_def = minetest.registered_nodes[recipeitem] or {}
@@ -189,6 +213,11 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 	def.on_place = stairsplus.rotate_node_aux
 	def.groups = stairsplus:prepare_groups(fields.groups)
 	def.groups[category] = alternate_to_group_value[alternate] or 1
+
+	local not_blocking_trains = not_blocking_trains_shapes[category.."/"..alternate]
+	if not_blocking_trains then
+		def.groups.not_blocking_trains = not_blocking_trains
+	end
 
 	if category == "slab" then
 		if type(info) ~= "table" then

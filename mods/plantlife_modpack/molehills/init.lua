@@ -31,7 +31,7 @@ minetest.register_node("molehills:molehill",{
 	paramtype = "light",
 	selection_box = mh_cbox,
 	collision_box = mh_cbox,
-	groups = {crumbly=3},
+	groups = { crumbly = 3, not_blocking_trains = 1 },
 	sounds = default.node_sound_dirt_defaults(),
 })
 
