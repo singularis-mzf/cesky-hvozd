@@ -2,6 +2,7 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 
 local side_texture = mesecon.texture.steel_block or "mesecons_detector_side.png"
 
+local S = minetest.get_translator("mesecons_detector")
 local GET_COMMAND = "GET"
 
 -- Object detector
@@ -12,18 +13,19 @@ local function object_detector_make_formspec(pos)
 	local meta = minetest.get_meta(pos)
 	meta:set_string("formspec", "size[9,2.5]" ..
 		"field[0.3,  0;9,2;scanname;"..S("Name of player to scan for (empty for any):")..";${scanname}]"..
-		"field[0.3,1.5;4,2;digiline_channel;"..S("Digiline Channel (optional):")..";${digiline_channel}]"..
+		-- "field[0.3,1.5;4,2;digiline_channel;"..S("Digiline Channel (optional):")..";${digiline_channel}]"..
 		"button_exit[7,0.75;2,3;;"..S("Save").."]")
 end
 
 local function object_detector_on_receive_fields(pos, _, fields, sender)
-	if not fields.scanname or not fields.digiline_channel then return end
+	if not fields.scanname --[[ or not fields.digiline_channel ]] then return end
 
 	if minetest.is_protected(pos, sender:get_player_name()) then return end
 
 	local meta = minetest.get_meta(pos)
-	meta:set_string("scanname", fields.scanname)
-	meta:set_string("digiline_channel", fields.digiline_channel)
+	meta:set_string("scanname", ch_core.jmeno_na_prihlasovaci(fields.scanname))
+	-- meta:set_string("digiline_channel", fields.digiline_channel)
+	meta:set_string("digiline_channel", "")
 	object_detector_make_formspec(pos)
 end
 
@@ -54,6 +56,7 @@ local function object_detector_scan(pos)
 	return false
 end
 
+--[[
 -- set player name when receiving a digiline signal on a specific channel
 local object_detector_digiline = {
 	effector = {
@@ -66,6 +69,7 @@ local object_detector_digiline = {
 		end,
 	}
 }
+]]
 
 minetest.register_node("mesecons_detector:object_detector_off", {
 	tiles = {side_texture, side_texture, "jeija_object_detector_off.png", "jeija_object_detector_off.png", "jeija_object_detector_off.png", "jeija_object_detector_off.png"},
@@ -81,7 +85,7 @@ minetest.register_node("mesecons_detector:object_detector_off", {
 	on_construct = object_detector_make_formspec,
 	on_receive_fields = object_detector_on_receive_fields,
 	sounds = mesecon.node_sound.stone,
-	digiline = object_detector_digiline,
+	--digiline = object_detector_digiline,
 	on_blast = mesecon.on_blastnode,
 })
 
@@ -99,7 +103,7 @@ minetest.register_node("mesecons_detector:object_detector_on", {
 	on_construct = object_detector_make_formspec,
 	on_receive_fields = object_detector_on_receive_fields,
 	sounds = mesecon.node_sound.stone,
-	digiline = object_detector_digiline,
+	-- digiline = object_detector_digiline,
 	on_blast = mesecon.on_blastnode,
 })
 
@@ -156,19 +160,20 @@ local function node_detector_make_formspec(pos)
 	meta:set_string("formspec", "size[9,2.5]" ..
 		"field[0.3,  0;9,2;scanname;"..S("Name of node to scan for (empty for any):")..";${scanname}]"..
 		"field[0.3,1.5;2.5,2;distance;"..S("Distance (0-@1):", mesecon.setting("node_detector_distance_max", 10))..";${distance}]"..
-		"field[3,1.5;4,2;digiline_channel;"..S("Digiline Channel (optional):")..";${digiline_channel}]"..
+		-- "field[3,1.5;4,2;digiline_channel;"..S("Digiline Channel (optional):")..";${digiline_channel}]"..
 		"button_exit[7,0.75;2,3;;"..S("Save").."]")
 end
 
 local function node_detector_on_receive_fields(pos, _, fields, sender)
-	if not fields.scanname or not fields.digiline_channel then return end
+	if not fields.scanname --[[or not fields.digiline_channel]] then return end
 
 	if minetest.is_protected(pos, sender:get_player_name()) then return end
 
 	local meta = minetest.get_meta(pos)
 	meta:set_string("scanname", fields.scanname)
 	meta:set_string("distance", fields.distance or "0")
-	meta:set_string("digiline_channel", fields.digiline_channel)
+	-- meta:set_string("digiline_channel", fields.digiline_channel)
+	meta:set_string("digiline_channel", "")
 	node_detector_make_formspec(pos)
 end
 
@@ -205,6 +210,7 @@ local function node_detector_send_node_name(pos, node, channel, meta)
 	digiline:receptor_send(pos, digiline.rules.default, channel, nodename)
 end
 
+--[[
 -- set player name when receiving a digiline signal on a specific channel
 local node_detector_digiline = {
 	effector = {
@@ -241,6 +247,7 @@ local node_detector_digiline = {
 	},
 	receptor = {}
 }
+]]
 
 minetest.register_node("mesecons_detector:node_detector_off", {
 	tiles = {side_texture, side_texture, side_texture, side_texture, side_texture, "jeija_node_detector_off.png"},
@@ -256,7 +263,7 @@ minetest.register_node("mesecons_detector:node_detector_off", {
 	on_construct = node_detector_make_formspec,
 	on_receive_fields = node_detector_on_receive_fields,
 	sounds = mesecon.node_sound.stone,
-	digiline = node_detector_digiline,
+	-- digiline = node_detector_digiline,
 	on_blast = mesecon.on_blastnode,
 })
 
@@ -274,7 +281,7 @@ minetest.register_node("mesecons_detector:node_detector_on", {
 	on_construct = node_detector_make_formspec,
 	on_receive_fields = node_detector_on_receive_fields,
 	sounds = mesecon.node_sound.stone,
-	digiline = node_detector_digiline,
+	-- digiline = node_detector_digiline,
 	on_blast = mesecon.on_blastnode,
 })
 
