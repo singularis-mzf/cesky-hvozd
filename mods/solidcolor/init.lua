@@ -8,12 +8,14 @@ local tile_groups = {
 		tiles = {"solidcolor_white.png"},
 		material_groups = {dig_immediate = 2},
 		input_material = "bakedclay:white",
+		deprecated = true,
 	},
 	clay = {
 		description = "barvitelná omítka",
 		tiles = {"solidcolor_clay.png"},
 		material_groups = {dig_immediate = 2},
 		input_material = "default:clay",
+		deprecated = true,
 	},
 	cobble = {
 		description = "barvitelný dlažební kámen",
@@ -167,47 +169,66 @@ for tile_id, tile_def in pairs(tile_groups) do
 			node_def.drawtype = "nodebox"
 			node_def.node_box = shape_def.node_box
 		end
+
+		if shape_id ~= "block" then
+			node_groups.ud_param2_colorable = nil
+			if shape_def.group then
+				node_groups["solidcolor_"..tile_id.."_"..shape_def.group] = nil
+				node_groups["solidcolor_"..shape_def.group] = nil
+			end
+			node_groups.not_in_creative_inventory = 1
+			node_def.description = "[zastaralý blok] " .. tile_def.description .. " (" .. shape_def.description .. ")"
+			node_def.tiles = { "solidcolor_deprecated.png" }
+			node_def.use_texture_alpha = "opaque"
+			node_def.paramtype2 = "none"
+			node_def.palette = nil
+			node_def.on_construct = nil
+			node_def.on_dig = nil
+		end
+
 		minetest.register_node(node_id, node_def)
 		node_count = node_count + 1
 	end
 
-	if tile_def.input_material then
-		minetest.register_craft({
-			output = "solidcolor:"..tile_id.."_block",
-			recipe = {
-				{tile_def.input_material, "unifieddyes:airbrush", ""},
-				{"", "", ""},
-				{"", "", ""},
-			},
-			replacements = {{"unifieddyes:airbrush", "unifieddyes:airbrush"}},
-		})
-	end
+	if not tile_def.deprecated then
+		if tile_def.input_material then
+			minetest.register_craft({
+				output = "solidcolor:"..tile_id.."_block",
+				recipe = {
+					{tile_def.input_material, "unifieddyes:airbrush", ""},
+					{"", "", ""},
+					{"", "", ""},
+				},
+				replacements = {{"unifieddyes:airbrush", "unifieddyes:airbrush"}},
+			})
+		end
 
-	local slabs_group = "group:solidcolor_"..tile_id.."_slabs"
-	local r100, r010, r001 = {slabs_group, "", ""}, {"", slabs_group, ""}, {"", "", slabs_group}
-	minetest.register_craft({
-		output = "solidcolor:"..tile_id.."_slab_down 8",
-		recipe = {{"solidcolor:"..tile_id.."_block"}}})
-	minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_up 2", recipe = {{slabs_group, slabs_group, ""}, r000, r000}})
-	minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_down 2", recipe = {r100, r000, r010}})
-	minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_west 2", recipe = {r100, r010, r000}})
-	minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_east 2", recipe = {r100, r001, r000}})
-	minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_north 2", recipe = {{slabs_group, "", slabs_group}, r000, r000}})
-	minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_south 2", recipe = {r100, r000, r001}})
-	for dir, coord in pairs({
-		up = {"x3", "z3"},
-		down = {"x3", "z3"},
-		east = {"y3", "z3"},
-		west = {"y3", "z3"},
-		north = {"x3", "y3"},
-		south = {"x3", "y3"},}) do
-		-- join slabs to three-part slabs:
-		minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_"..dir.."_"..coord[1], recipe = {r000, {"solidcolor:"..tile_id.."_slab_"..dir, "solidcolor:"..tile_id.."_slab_"..dir, "solidcolor:"..tile_id.."_slab_"..dir}, r000}})
-		local tmp = {"", "solidcolor:"..tile_id.."_slab_"..dir, ""}
-		minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_"..dir.."_"..coord[2], recipe = {tmp, tmp, tmp}})
-		-- separate three-part slabs:
-		minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_"..dir.." 3", recipe = {{"solidcolor:"..tile_id.."_slab_"..dir.."_"..coord[1]}}})
-		minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_"..dir.." 3", recipe = {{"solidcolor:"..tile_id.."_slab_"..dir.."_"..coord[2]}}})
+		local slabs_group = "group:solidcolor_"..tile_id.."_slabs"
+		local r100, r010, r001 = {slabs_group, "", ""}, {"", slabs_group, ""}, {"", "", slabs_group}
+		minetest.register_craft({
+			output = "solidcolor:"..tile_id.."_slab_down 8",
+			recipe = {{"solidcolor:"..tile_id.."_block"}}})
+		minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_up 2", recipe = {{slabs_group, slabs_group, ""}, r000, r000}})
+		minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_down 2", recipe = {r100, r000, r010}})
+		minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_west 2", recipe = {r100, r010, r000}})
+		minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_east 2", recipe = {r100, r001, r000}})
+		minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_north 2", recipe = {{slabs_group, "", slabs_group}, r000, r000}})
+		minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_south 2", recipe = {r100, r000, r001}})
+		for dir, coord in pairs({
+			up = {"x3", "z3"},
+			down = {"x3", "z3"},
+			east = {"y3", "z3"},
+			west = {"y3", "z3"},
+			north = {"x3", "y3"},
+			south = {"x3", "y3"},}) do
+			-- join slabs to three-part slabs:
+			minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_"..dir.."_"..coord[1], recipe = {r000, {"solidcolor:"..tile_id.."_slab_"..dir, "solidcolor:"..tile_id.."_slab_"..dir, "solidcolor:"..tile_id.."_slab_"..dir}, r000}})
+			local tmp = {"", "solidcolor:"..tile_id.."_slab_"..dir, ""}
+			minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_"..dir.."_"..coord[2], recipe = {tmp, tmp, tmp}})
+			-- separate three-part slabs:
+			minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_"..dir.." 3", recipe = {{"solidcolor:"..tile_id.."_slab_"..dir.."_"..coord[1]}}})
+			minetest.register_craft({output = "solidcolor:"..tile_id.."_slab_"..dir.." 3", recipe = {{"solidcolor:"..tile_id.."_slab_"..dir.."_"..coord[2]}}})
+		end
 	end
 end
 print(string.format("[solidcolor] generated %d node types", node_count))
