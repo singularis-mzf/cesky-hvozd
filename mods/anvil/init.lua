@@ -239,8 +239,13 @@ minetest.register_node("anvil:anvil", {
 				-- return 0
 			-- end
 
-			if (minetest.get_item_group(stack:get_name(), "not_repaired_by_anvil") ~= 0) then
-				local item_def = minetest.registered_items[stack:get_name()]
+			local stack_name = stack:get_name()
+			local item_def = minetest.registered_items[stack_name]
+			local item_groups = item_def.groups or {}
+			if (item_groups.not_repaired_by_anvil or 0) ~= 0 or
+				(item_groups.not_repairable or 0) ~= 0 or
+				(item_def.wear_represents and item_def.wear_represents ~= "mechanical_wear")
+			then
 				minetest.chat_send_player( player:get_player_name(), S('@1 cannot be repaired with an anvil.', item_def.description))
 				return 0
 			end

@@ -151,6 +151,9 @@ local alternate_to_group_value = {
 	["_alt_1"] = 10,
 	["_alt_2"] = 11,
 	["_alt_4"] = 12,
+	["_triple"] = 3,
+	["_triplet"] = 3,
+	["_tripleslope"] = 3,
 }
 
 local not_blocking_trains_shapes = {
@@ -175,6 +178,7 @@ local not_blocking_trains_shapes = {
 	["slope/_slab"] = 1,
 	["slope/_slab_half"] = 1,
 	["slope/_slab_half_raised"] = 1,
+	["slope/_tripleslope"] = 1,
 }
 
 stairsplus.register_single = function(category, alternate, info, modname, subname, recipeitem, fields)
@@ -240,6 +244,10 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 		def.description = ("%s (%s, %s)"):format(desc_base, S(descriptions[category]), S(readable_alternate))
 		if category == "slope" then
 			def.drawtype = "mesh"
+			if alternate == "_tripleslope" then
+				def.groups.not_in_creative_inventory = nil
+			end
+
 		elseif category == "stair" and alternate == "" then
 			def.groups.stair = 1
 		end

@@ -139,6 +139,26 @@ local box_slope_outer_half_raised = {
 	}
 }
 
+--==============================================================
+
+local box_slope_triple = {
+	type = "fixed",
+	fixed = {
+		{-0.5,  -0.5,  -1.5, 		0.5, -0.375, 1.5},
+		{-0.5,  -0.375,  -1.125,	0.5, -0.25, 1.5},
+
+		{-0.5, -0.25, -0.75, 		0.5, -0.125, 1.5},
+		{-0.5, -0.125, -0.375, 		0.5,     0, 1.5},
+
+		{-0.5,     0,     0, 		0.5,  0.125, 1.5},
+		{-0.5, 0.125, 0.375, 		0.5,  0.25, 1.5},
+
+		{-0.5,  0.25,  0.75, 		0.5, 0.375, 1.5},
+		{-0.5,  0.375,  1.125, 		0.5, 0.5, 1.5},
+	}
+}
+
+
 stairsplus.defs = {
 	["micro"] = {
 		[""] = {
@@ -377,6 +397,14 @@ stairsplus.defs = {
 			mesh = "moreblocks_slope_slab_half_raised.obj",
 			collision_box = box_slope_slab_half_raised,
 			selection_box = box_slope_slab_half_raised,
+		},
+
+		--==============================================================
+
+		["_tripleslope"] = {
+			mesh = "moreblocks_slope_triple.obj",
+			collision_box = box_slope_triple,
+			selection_box = box_slope_triple,
 		},
 	},
 	["stair"] = {

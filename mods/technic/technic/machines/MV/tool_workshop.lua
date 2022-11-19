@@ -55,6 +55,7 @@ local run = function(pos, node)
 	if not srcstack:is_empty() then
 		local itemdef = minetest.registered_items[srcstack:get_name()]
 		if itemdef and
+				minetest.get_item_group(srcstack:get_name(), "not_repairable") == 0 and
 				(not itemdef.wear_represents or
 				itemdef.wear_represents == "mechanical_wear") and
 				srcstack:get_wear() > min_wear_limit then

@@ -86,8 +86,8 @@ local function on_player_receive_fields(player, formname, fields)
 		minetest.log("warning", player_name..": received fields of form "..(formname or "nil").." when "..(formspec_state.formname or "nil").." was expected")
 		return
 	end
-	local quit = fields and fields.quit == "true"
 	local result = formspec_state.callback(formspec_state.custom_state, player, formname, fields, {}) -- custom_state, player, formname, fields
+	local quit = fields and fields.quit == "true"
 	-- result:
 	--        string => show as formspec
 	if type(result) == "string" then

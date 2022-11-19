@@ -171,6 +171,47 @@ local register_sign_node = function(friendlyname, name, tiles, type, inventory_i
 
 end
 
+local marking_normal_selection_box = {
+	type = "fixed",
+	fixed = { -1 / 2, -1 / 2, -1 / 2, 1 / 2, -1 / 2 + 1 / 16, 1 / 2 }
+}
+
+local marking_normal_node_box = {
+	type = "fixed",
+	fixed = { -0.5, -0.5, -0.5, 0.5, -0.499, 0.5 }
+}
+
+local marking_node_variants = {
+	slope_lower = {
+		description = "svah, spodní polovina",
+		mesh = "streets_road_marking_slope_lower.obj",
+		selection_box = {
+			type = "fixed",
+			fixed = { -1 / 2, -5 / 4, -1 / 4, 1 / 2, -5 / 4 + 1 / 16, 1 / 4 }
+		},
+	},
+	slope_upper = {
+		description = "svah, horní polovina",
+		mesh = "streets_road_marking_slope_upper.obj",
+		selection_box = {
+			type = "fixed",
+			fixed = { -1 / 2, -3 / 4, -1 / 4, 1 / 2, -3 / 4 + 1 / 16, 1 / 4 }
+		},
+	},
+	slope_triple = {
+		description = "svah, trojitý",
+		mesh = "streets_road_marking_slope_triple.obj",
+		selection_box = {
+			type = "fixed",
+			fixed = { -1 / 2, -1, -1 / 4, 1 / 2, -1 + 1 / 16, 1 / 4 }
+		},
+	},
+}
+
+local marker_ch_help_group = "str_marker"
+local marker_ch_help = "Pravým klikem na rovnou podlahu, svah na dva metry či svah na tři metry nakreslí na podklad značku.\nNelze opravovat (musí se vyrobit nový).\nNefunguje na svah 45°.\nAux1+pravý klik na jakýkoliv blok pro změnu kreslené značky."
+local marker_on_place = dofile(minetest.get_modpath("streets") .. "/roadmarkings_placer.lua")
+
 local register_marking_nodes = function(surface_friendlyname, surface_name, surface_tiles, surface_groups, surface_sounds, register_stairs, friendlyname, name, tex, r, basic)
 	local surface_tiles_orig = surface_tiles
 	surface_tiles = table.copy(surface_tiles_orig)
@@ -208,61 +249,19 @@ local register_marking_nodes = function(surface_friendlyname, surface_name, surf
 
 		minetest.register_tool(":streets:tool_" .. name:gsub("{color}", colorname:lower()) .. r, {
 			description = S("značkovač @1: ", colordesc) .. friendlyname .. rotation_friendly,
-			groups = {},
+			groups = { streets_tool = color, not_repairable = 1, },
 			inventory_image = tex,
 			wield_image = tex,
 			on_place = function(itemstack, placer, pointed_thing)
-				local player_name = placer:get_player_name()
-				local pos = {} -- luacheck: no unused
-				if pointed_thing["type"] == "node" then
-					pos = pointed_thing.under
-					pos.y = pos.y + 1
-				else
-					return itemstack
-				end
-				if minetest.is_protected(pos, player_name) and not minetest.check_player_privs(player_name, { protection_bypass = true }) then
-					minetest.record_protection_violation(pos, name)
-					return
-				end
-				if minetest.get_node(pos).name == "air" then
-					minetest.set_node(pos, {
-						name = "streets:mark_" .. name:gsub("{color}", colorname:lower()) .. r,
-						param2 = minetest.dir_to_facedir(placer:get_look_dir())
-					})
-				else
-					return itemstack
-				end
-				--[[
-				local node = minetest.get_node(pos)
-				local lower_pos = { x = pos.x, y = pos.y - 1, z = pos.z }
-				local lower_node = minetest.get_node(lower_pos)
-				if lower_node and
-						minetest.registered_nodes[lower_node.name] and
-						minetest.registered_nodes[lower_node.name].groups and
-						minetest.registered_nodes[lower_node.name].groups.asphalt and
-						streets.surfaces.surfacetypes[lower_node.name] then
-					local lower_node_basename = streets.surfaces.surfacetypes[lower_node.name].name
-					lower_node.name = "streets:mark_" .. (node.name:sub(14)) .. "_on_" .. lower_node_basename
-					lower_node.param2 = node.param2
-					minetest.set_node(lower_pos, lower_node)
-					minetest.remove_node(pos)
-				elseif lower_node and
-						minetest.registered_nodes[lower_node.name] and
-						minetest.registered_nodes[lower_node.name].groups and
-						minetest.registered_nodes[lower_node.name].groups.asphalt and
-						minetest.registered_nodes[lower_node.name:gsub("asphalt", ("mark_" .. node.name:sub(14)) .. "_on_asphalt")] then
-					lower_node.name = lower_node.name:gsub("asphalt", ("mark_" .. node.name:sub(14)) .. "_on_asphalt")
-					minetest.set_node(lower_pos, lower_node)
-					minetest.remove_node(pos)
-				end -- ]]
-				if not minetest.is_creative_enabled(player_name) then
-					itemstack:add_wear(65535 / 75)
-				end
-				return itemstack
+				return marker_on_place(itemstack, placer, pointed_thing, name, colorname, r)
 			end,
+			_ch_help = marker_ch_help,
+			_ch_help_group = marker_ch_help_group,
 		})
 
-		minetest.register_node(":streets:mark_" .. name:gsub("{color}", colorname:lower()) .. r, {
+		local node_name_base = "streets:mark_" .. name:gsub("{color}", colorname:lower())
+
+		minetest.register_node(":" .. node_name_base .. r, {
 			description = S("značka: ") .. friendlyname .. rotation_friendly .. " " .. colorname,
 			tiles = { tex, "streets_transparent.png" },
 			use_texture_alpha = "clip",
@@ -274,16 +273,29 @@ local register_marking_nodes = function(surface_friendlyname, surface_name, surf
 			walkable = false,
 			inventory_image = tex,
 			wield_image = tex,
-			node_box = {
-				type = "fixed",
-				fixed = { -0.5, -0.5, -0.5, 0.5, -0.499, 0.5 }
-			},
-			selection_box = {
-				type = "fixed",
-				fixed = { -1 / 2, -1 / 2, -1 / 2, 1 / 2, -1 / 2 + 1 / 16, 1 / 2 }
-			},
+			node_box = marking_normal_node_box,
+			selection_box = marking_normal_selection_box,
 			drop = "",
 		})
+
+		for variant_name, variant_def in pairs(marking_node_variants) do
+			minetest.register_node(":" .. node_name_base .. "_" .. variant_name .. r, {
+				description = S("značka: ") .. friendlyname .. rotation_friendly .. " " .. colorname .. " (" .. variant_def.description .. ")",
+				tiles = { { name = tex, backface_culling = true } },
+				use_texture_alpha = "clip",
+				drawtype = "mesh",
+				mesh = variant_def.mesh,
+				paramtype = "light",
+				paramtype2 = "facedir",
+				groups = { snappy = 3, --[[attached_node = 1,]] oddly_breakable_by_hand = 1, not_in_creative_inventory = 1 },
+				sunlight_propagates = true,
+				walkable = false,
+				inventory_image = tex,
+				wield_image = tex,
+				selection_box = variant_def.selection_box,
+				drop = "",
+			})
+		end
 
 		--[[
 		local tiles = {}
@@ -395,4 +407,11 @@ if streets.signs.signtypes then
 	for _, v in pairs(streets.signs.signtypes) do
 		register_sign_node(v.friendlyname, v.name, v.tiles, v.type, v.inventory_image, v.light_source)
 	end
+end
+
+for _, color in ipairs({"white", "yellow"}) do
+	minetest.register_craft({
+		output = "streets:tool_solid_"..color.."_center_line",
+		recipe = {{"dye:"..color}, {"darkage:chalk_powder"}, {"default:stick"}},
+	})
 end
