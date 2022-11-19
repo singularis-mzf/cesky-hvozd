@@ -516,12 +516,11 @@ minetest.register_craftitem("bonemeal:mulch", {
 		end
 
 		-- call global on_use function with strength of 1
-		if bonemeal:on_use(pointed_thing.under, 1) then
+		bonemeal:on_use(pointed_thing.under, 1)
 
-			-- take item if not in creative
-			if not bonemeal.is_creative(user:get_player_name()) then
-				itemstack:take_item()
-			end
+		-- take item if not in creative
+		if not bonemeal.is_creative(user:get_player_name()) then
+			itemstack:take_item()
 		end
 
 		return itemstack
@@ -547,12 +546,11 @@ minetest.register_craftitem("bonemeal:bonemeal", {
 		end
 
 		-- call global on_use function with strength of 2
-		if bonemeal:on_use(pointed_thing.under, 2) then
+		bonemeal:on_use(pointed_thing.under, 2)
 
-			-- take item if not in creative
-			if not bonemeal.is_creative(user:get_player_name()) then
-				itemstack:take_item()
-			end
+		-- take item if not in creative
+		if not bonemeal.is_creative(user:get_player_name()) then
+			itemstack:take_item()
 		end
 
 		return itemstack
@@ -578,12 +576,11 @@ minetest.register_craftitem("bonemeal:fertiliser", {
 		end
 
 		-- call global on_use function with strength of 3
-		if bonemeal:on_use(pointed_thing.under, 3) then
+		bonemeal:on_use(pointed_thing.under, 3)
 
-			-- take item if not in creative
-			if not bonemeal.is_creative(user:get_player_name()) then
-				itemstack:take_item()
-			end
+		-- take item if not in creative
+		if not bonemeal.is_creative(user:get_player_name()) then
+			itemstack:take_item()
 		end
 
 		return itemstack
