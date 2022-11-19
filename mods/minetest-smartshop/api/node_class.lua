@@ -130,7 +130,7 @@ end
 --------------------
 
 function node_class:can_access(player)
-	return (
+	return check_player_privs(player, {ch_registered_player = true}) and (
 		self:is_owner(player) or
 		check_player_privs(player, {protection_bypass = true})
 	)
@@ -147,6 +147,10 @@ function node_class:allow_metadata_inventory_put(listname, index, stack, player)
 		return 0
 
 	else
+		if listname == "main" and minetest.check_player_privs(player, "give") and not player_is_admin(player) then
+			ch_core.systemovy_kanal(player:get_player_name(), "Kouzelnické postavy se nesmějí účastnit obchodování, takže nemohou doplňovat zboží do obchodních terminálů a jejich zásobníků. Domluvte se na řešení situace s Administrací.")
+			return 0
+		end
 		return stack:get_count()
 	end
 end

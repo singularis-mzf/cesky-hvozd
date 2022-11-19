@@ -549,23 +549,37 @@ function shop_class:receive_fields(player, fields)
     local buy_index = get_buy_index(fields)
     local changed = false
 
+	local has_setup_right = minetest.check_player_privs(player, "ch_registered_player")
+
     if fields.history then
         self:show_history(player)
 
     elseif fields.close_history then
         self:show_formspec(player)
 
-    elseif fields.tsend then
+    elseif fields.tsend and has_setup_right then
         api.start_storage_linking(player, self, "send")
 
-    elseif fields.trefill then
+    elseif fields.trefill and has_setup_right then
         api.start_storage_linking(player, self, "refill")
 
     elseif fields.customer then
         self:show_formspec(player, true)
 
     elseif buy_index then
-        api.try_purchase(player, self, buy_index)
+		local allow_buy = true
+		if not self:is_unlimited() then
+			if not minetest.check_player_privs(player, "ch_registered_player") then
+				allow_buy = false
+				ch_core.systemovy_kanal(player:get_player_name(), "Děláte to správně, ale nové a kouzelnické postavy mohou nakupovat jen v obchodních terminálech s tyrkysovým pruhem.")
+			elseif minetest.check_player_privs(player, "give") and not player_is_admin(player) then
+				allow_buy = false
+				ch_core.systemovy_kanal(player:get_player_name(), "CHYBA: Kouzelnické postavy se nesmějí účastnit obchodování. S kouzelnickou postavou můžete nakupovat jen v terminálech s tyrkysovým pruhem.")
+			end
+		end
+		if allow_buy then
+			api.try_purchase(player, self, buy_index)
+		end
         self:show_formspec(player, true)
 
     else
@@ -573,23 +587,23 @@ function shop_class:receive_fields(player, fields)
             self:set_unlimited(fields.is_unlimited == "true")
             changed = true
         end
-        if fields.strict_meta then
+        if fields.strict_meta and has_setup_right then
             self:set_strict_meta(fields.strict_meta == "true")
             changed = true
         end
-        if fields.private then
+        if fields.private and has_setup_right then
             self:set_private(fields.private == "true")
             changed = true
         end
-        if fields.freebies then
+        if fields.freebies and has_setup_right then
             self:set_freebies(fields.freebies == "true")
             changed = true
         end
-        if fields.icons then
+        if fields.icons and has_setup_right then
             self:set_icons(fields.icons == "true")
             changed = true
         end
-		if fields.save_title then
+		if fields.save_title and has_setup_right then
 			self:set_shop_title(fields.title or "")
 			minetest.log("action", "Shop title set to: "..(fields.title or ""))
 			changed = true
