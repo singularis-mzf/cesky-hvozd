@@ -67,6 +67,7 @@ local slabs_and_slopes_subset = {
 	{ "slope", "_outer_cut_half" },
 	{ "slope", "_outer_cut_half_raised" },
 	{ "slope", "_cut" },
+	{ "slope", "_slab" },
 	{ "slope", "_tripleslope" },
 }
 
