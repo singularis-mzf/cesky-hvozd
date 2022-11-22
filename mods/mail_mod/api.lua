@@ -77,6 +77,8 @@ function mail.send(src, dst, subject, body)
 	if m.cc then
 		msg.cc  = m.cc
 	end
+	local msg_read = table.copy(msg)
+	msg_read.unread = false
 
 	-- add self as a recipient
 	recipients[m.from] = m.from
@@ -84,7 +86,11 @@ function mail.send(src, dst, subject, body)
 	-- send the mail to all recipients
 	for _, recipient in pairs(recipients) do
 		local messages = mail.getMessages(recipient)
-		table.insert(messages, 1, msg)
+		if recipient ~= m.from then
+			table.insert(messages, 1, msg)
+		else
+			table.insert(messages, 1, msg_read)
+		end
 		mail.setMessages(recipient, messages)
 	end
 
