@@ -119,6 +119,65 @@ local box_slope_outer = {
 	}
 }
 
+local function generate_box_slope_outer_cut()
+	local result = {}
+
+	for i, data in ipairs(box_slope_outer.fixed) do
+		-- local a, b, c = table.copy(data), table.copy(data), table.copy(data)
+
+		table.insert(result, {
+			data[1],
+			(data[2] + 0.5) * 0.9 - 0.5,
+			data[3],
+			(data[4] + 0.5) / 3 - 0.5,
+			(data[5] + 0.5) * 0.9 - 0.5,
+			data[6],
+		})
+
+		table.insert(result, {
+			(data[4] + 0.5) / 3 - 0.5,
+			(data[2] + 0.5) * 0.9 - 0.5,
+			0.5 - (0.5 - data[3]) / 30 * 6 * 2,
+			(data[4] + 0.5) / 3 * 2 - 0.5,
+			(data[5] + 0.5) * 0.9 - 0.5,
+			data[6],
+		})
+
+		table.insert(result, {
+			(data[4] + 0.5) / 3 * 2 - 0.5,
+			(data[2] + 0.5) * 0.9 - 0.5,
+			0.5 - (0.5 - data[3]) / 30 * 6,
+			data[4],
+			(data[5] + 0.5) * 0.9 - 0.5,
+			data[6],
+		})
+	end
+	return result
+end
+
+
+local box_slope_outer_cut = {
+	type = "fixed",
+	fixed = generate_box_slope_outer_cut(),
+}
+
+local function generate_box_slope_outer_cut_half()
+	local result = {}
+
+	for i, data in ipairs(box_slope_outer_cut.fixed) do
+		local new_data = table.copy(data)
+		result[i] = new_data
+		new_data[2] = (data[2] - 0.5) / 2
+		new_data[5] = (data[5] - 0.5) / 2
+	end
+	return result
+end
+
+local box_slope_outer_half_cut = {
+	type = "fixed",
+	fixed = generate_box_slope_outer_cut_half(),
+}
+
 local box_slope_outer_half = {
 	type = "fixed",
 	fixed = {
@@ -360,13 +419,13 @@ stairsplus.defs = {
 
 		["_outer_cut"] = {
 			mesh = "moreblocks_slope_outer_cut.obj",
-			collision_box = box_slope_outer,
-			selection_box = box_slope_outer,
+			collision_box = box_slope_outer_cut,
+			selection_box = box_slope_outer_cut,
 		},
 		["_outer_cut_half"] = {
 			mesh = "moreblocks_slope_outer_cut_half.obj",
-			collision_box = box_slope_outer_half,
-			selection_box = box_slope_outer_half,
+			collision_box = box_slope_outer_half_cut,
+			selection_box = box_slope_outer_half_cut,
 		},
 		["_outer_cut_half_raised"] = {
 			mesh = "moreblocks_slope_outer_cut_half_raised.obj",
