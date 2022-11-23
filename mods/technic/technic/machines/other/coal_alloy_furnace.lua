@@ -151,6 +151,7 @@ minetest.register_abm({
 			return
 		end
 
+                      --[[
 		local recipe = technic.get_recipe("alloy", inv:get_list("src"))
 
 		if not recipe then
@@ -161,6 +162,7 @@ minetest.register_abm({
 			end
 			return
 		end
+                      ]]
 
 		-- Next take a hard look at the fuel situation
 		local fuel = nil

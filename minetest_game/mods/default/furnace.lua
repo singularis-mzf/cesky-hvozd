@@ -181,7 +181,7 @@ local function furnace_node_timer(pos, elapsed)
 			end
 		else
 			-- Furnace ran out of fuel
-			if cookable then
+			if true then -- if cookable then
 				-- We need to get new fuel
 				local afterfuel
 				fuel, afterfuel = minetest.get_craft_result({method = "fuel", width = 1, items = fuellist})
