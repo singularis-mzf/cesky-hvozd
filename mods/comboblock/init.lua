@@ -13,10 +13,11 @@
 --                       This is a fork for Český hvozd                            --
 -------------------------------------------------------------------------------------
 
--- list of allowed combo blocks
+-- list of allowed combo blocks (do not change order!)
 local allowed_combos = {
 	"bakedclay:slab_baked_clay_natural+darkage:slab_ors_brick",
 	"moreblocks:slab_cactus_brick+moreblocks:slab_cobble",
+	"darkage:slab_ors_brick+wool:slab_brown",
 }
 allowed_combos = table.key_value_swap(allowed_combos)
 
