@@ -958,6 +958,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/GreenXenith/mesecons\_wireless/)
 
+## Woodcutting (woodcutting)
+
+* Zdroj: [https://github.com/minetest-mods/woodcutting](https://github.com/minetest-mods/woodcutting), revize b265a9707a1ea60e0ecc79ab6da808a300ca2dff
+* Původní licence: LGPLv3
+* Licence úprav: LGPLv3
+* [ContentDB](https://content.minetest.net/packages/bell07/woodcutting/)
+
 ## XBan 2 (xban2)
 
 * Zdroj: [https://github.com/minetest-mods/xban2](https://github.com/minetest-mods/xban2), revize d2cda4f73a3a5372b70ffa63e2a16bf39d734e40
