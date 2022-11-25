@@ -92,15 +92,15 @@ if minetest.get_modpath("default") then
 	end
 
 	local default_trunks = {
-		"acacia_tree",
-		"aspen_tree",
-		"jungletree",
-		"pine_tree",
-		"tree",
+		acacia_tree = {},
+		aspen_tree = {},
+		jungletree = {allfaces = {stairsplus = "slopes"}},
+		pine_tree = {},
+		tree = {allfaces = {stairsplus = "all"}},
 	}
-	for _, name in ipairs(default_trunks) do
-		stairsplus:register_noface_trunk("moreblocks", name .. "_noface", "default:"..name)
-		stairsplus:register_allfaces_trunk("moreblocks", name .. "_allfaces", "default:"..name)
+	for name, options in pairs(default_trunks) do
+		stairsplus:register_noface_trunk("moreblocks", name .. "_noface", "default:"..name, nil, options.noface)
+		stairsplus:register_allfaces_trunk("moreblocks", name .. "_allfaces", "default:"..name, nil, options.allfaces)
 	end
 end
 
@@ -115,7 +115,7 @@ if minetest.get_modpath("farming") then
 			ndef.sunlight_propagates = true
 
 			mod = "moreblocks"
-			stairsplus:register_all(mod, name, nodename, ndef)
+			stairsplus:register_slabs_and_slopes(mod, name, nodename, ndef)
 			minetest.register_alias_force("stairs:stair_" .. name, mod .. ":stair_" .. name)
 			minetest.register_alias_force("stairs:stair_outer_" .. name, mod .. ":stair_" .. name .. "_outer")
 			minetest.register_alias_force("stairs:stair_inner_" .. name, mod .. ":stair_" .. name .. "_inner")

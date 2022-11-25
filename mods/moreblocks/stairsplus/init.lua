@@ -108,13 +108,17 @@ function stairsplus:register_alias_force_all(modname_old, subname_old, modname_n
 	self:register_micro_alias_force(modname_old, subname_old, modname_new, subname_new)
 end
 
--- stairsplus:register_trunk_noface("default", "tree_noface", "default:tree", 3)
-function stairsplus:register_noface_trunk(modname, subname, original_node_name, tile_index)
+-- stairsplus:register_noface_trunk("default", "tree_noface", "default:tree", 3)
+function stairsplus:register_noface_trunk(modname, subname, original_node_name, tile_index, options)
 	local def = minetest.registered_nodes[original_node_name]
 	if not def then
 		minetest.log("error", "Cannot register noface trunk of unknown node "..original_node_name.."!")
 		return false
 	end
+	if options == nil then
+		options = {}
+	end
+	local stairsplus_level = options.stairsplus or "all"
 	def = table.copy(def)
 	def.description = (def.description or "").." "..S("(no face)")
 	local t = def.tiles[tile_index or 3] or def.tiles[#def.tiles] or def.tiles[1]
@@ -126,7 +130,11 @@ function stairsplus:register_noface_trunk(modname, subname, original_node_name, 
 	minetest.register_node(":"..modname..":"..subname, def)
 	def = table.copy(def)
 	def.sunlight_propagates = true
-	stairsplus:register_all(modname, subname, modname..":"..subname, def)
+	if stairsplus_level == "all" then
+		stairsplus:register_all(modname, subname, modname..":"..subname, def)
+	elseif stairsplus_level == "slopes" then
+		stairsplus:register_slabs_and_slopes(modname, subname, modname..":"..subname, def)
+	end
 
 	local recipe_row = {original_node_name, original_node_name, original_node_name}
 	local recipe_row2 = {original_node_name, "", original_node_name}
@@ -136,12 +144,16 @@ function stairsplus:register_noface_trunk(modname, subname, original_node_name, 
 	})
 end
 
-function stairsplus:register_allfaces_trunk(modname, subname, original_node_name, tile_index)
+function stairsplus:register_allfaces_trunk(modname, subname, original_node_name, tile_index, options)
 	local def = minetest.registered_nodes[original_node_name]
 	if not def then
 		minetest.log("error", "Cannot register all-faces trunk of unknown node "..original_node_name.."!")
 		return false
 	end
+	if options == nil then
+		options = {}
+	end
+	local stairsplus_level = options.stairsplus or "none"
 	def = table.copy(def)
 	def.description = (def.description or "").." "..S("(all faces)")
 	local t = def.tiles[tile_index or 1] or def.tiles[#def.tiles]
@@ -153,7 +165,11 @@ function stairsplus:register_allfaces_trunk(modname, subname, original_node_name
 	minetest.register_node(":"..modname..":"..subname, def)
 	def = table.copy(def)
 	def.sunlight_propagates = true
-	stairsplus:register_all(modname, subname, modname..":"..subname, def)
+	if stairsplus_level == "all" then
+		stairsplus:register_all(modname, subname, modname..":"..subname, def)
+	elseif stairsplus_level == "slopes" then
+		stairsplus:register_slabs_and_slopes(modname, subname, modname..":"..subname, def)
+	end
 
 	local recipe_row = {original_node_name, original_node_name, original_node_name}
 	minetest.register_craft({

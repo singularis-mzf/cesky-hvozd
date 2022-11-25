@@ -323,7 +323,7 @@ if minetest.get_modpath("moreblocks") then
 	})
 
 	stairsplus:register_noface_trunk("ebony", "trunk_noface", "ebony:trunk")
-	stairsplus:register_allfaces_trunk("ebony", "trunk_allfaces", "ebony:trunk")
+	stairsplus:register_allfaces_trunk("ebony", "trunk_allfaces", "ebony:trunk", nil, {stairsplus = "slopes"})
 end
 
 if minetest.get_modpath("bonemeal") ~= nil then

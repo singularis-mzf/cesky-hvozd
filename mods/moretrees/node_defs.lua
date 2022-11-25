@@ -408,9 +408,13 @@ for i in ipairs(moretrees.treelist) do
 			if minetest.get_modpath("moreblocks") then
 
 	--			stairsplus:register_all(modname, subname, recipeitem, {fields})
+				local allfaces_options = nil
+				if treename == "poplar" then
+					allfaces_options = {stairsplus = "slopes"}
+				end
 
 				stairsplus:register_noface_trunk("moretrees", treename.."_trunk_noface", "moretrees:"..treename.."_trunk")
-				stairsplus:register_allfaces_trunk("moretrees", treename.."_trunk_allfaces", "moretrees:"..treename.."_trunk")
+				stairsplus:register_allfaces_trunk("moretrees", treename.."_trunk_allfaces", "moretrees:"..treename.."_trunk", nil, allfaces_options)
 
 				--[[stairsplus:register_all(
 					"moretrees",
