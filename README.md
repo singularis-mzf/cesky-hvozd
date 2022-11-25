@@ -707,6 +707,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/Wuzzy/orienteering/)
 
+## Paintings (paintings)
+
+* Zdroj: [https://forum.minetest.net/viewtopic.php?p=218265&sid=fe7e889d98bce875ef40a65d735ecced#p218265](https://forum.minetest.net/viewtopic.php?p=218265&sid=fe7e889d98bce875ef40a65d735ecced#p218265), příloha „paintings.zip“
+* Původní licence: CC0
+* Licence úprav: CC0
+
 ## Pillars (pillars)
 
 * Zdroj: [https://github.com/CivtestGame/Pillars](https://github.com/CivtestGame/Pillars), revize 43e9b355ed1843e596331433b29926e20206055e
