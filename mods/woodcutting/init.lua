@@ -278,7 +278,7 @@ end
 --- Create hud message
 ----------------------------------
 function woodcutting_class:get_hud_message(pos)
-	local message = "Woodcutting active. Hold sneak key to disable it"
+	local message = "Dřevorubectví aktivní. Přidržte Shift/plížit se pro přerušení automatického kácení."
 	if pos then
 		message = '['..#self.treenodes_sorted..'] '..minetest.pos_to_string(pos).." | "..message
 	end
@@ -395,14 +395,14 @@ end)
 ----------------------------
 -- Command to toggle whether cutting is enabled, per-player
 ----------------------------
-minetest.register_chatcommand("toggle_woodcutting", {
-	description = "Toggle whether woodcutting is enabled",
+local def = {
+	description = "Přepne, zda je vám dostupné dřevorubectví.",
 	func = function(player_name)
 		local is_currently_disabled = disabled_by_player[player_name]
 		if is_currently_disabled then
 			disabled_by_player[player_name] = nil
 			mod_storage:set_string(player_name .. "_disabled", "")
-			return true, "Woodcutting is now enabled."
+			return true, "Dřevorubectví zapnuto."
 		else
 			disabled_by_player[player_name] = true
 			mod_storage:set_string(player_name .. "_disabled", "true")
@@ -410,10 +410,13 @@ minetest.register_chatcommand("toggle_woodcutting", {
 			if process then
 				process:stop_process()
 			end
-			return true, "Woodcutting is now disabled."
+			return true, "Dřevorubectví vypnuto."
 		end
 	end
-})
+}
+
+minetest.register_chatcommand("přepnoutdřevorubectví", def)
+minetest.register_chatcommand("prepnoutdrevorubectvi", def)
 
 minetest.register_on_joinplayer(function(player)
 	-- load player settings
