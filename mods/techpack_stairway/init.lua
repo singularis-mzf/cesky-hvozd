@@ -14,23 +14,37 @@
 
 local S = minetest.get_translator("techpack_stairway")
 local CLIP = "clip"
-local stairway_groups = {cracky = 2, ud_param2_colorable = 1}
+local stairway_groups = {cracky = 2}
 
-local function enhance(def)
-	def.paramtype2 = "colorwallmounted"
-	def.palette = "unifieddyes_palette_colorwallmounted.png"
-	def.on_dig = unifieddyes.on_dig
-	return def
+local function register_node(mode, nodename, def)
+	if mode == "simple" then
+		return minetest.register_node(nodename, def)
+	elseif mode == "split" then
+		def.paramtype2 = "colorfacedir"
+		def.palette = "unifieddyes_palette_greys.png"
+		def.airbrush_replacement_node = nodename.."_grey"
+		def.groups = def.groups and table.copy(def.groups) or {}
+		def.groups.ud_param2_colorable = 1
+		def.on_dig = unifieddyes.on_dig
+		def.groups.not_in_creative_inventory = 1
+		unifieddyes.generate_split_palette_nodes(nodename, def)
+		minetest.register_alias(nodename, nodename.."_grey")
+		def.groups.not_in_creative_inventory = nil
+		minetest.override_item(nodename.."_grey", {groups = def.groups})
+		return
+	elseif mode == "extended" then
+		def.paramtype2 = "color"
+		def.palette = "unifieddyes_palette_extended.png"
+		def.groups = def.groups and table.copy(def.groups) or {}
+		def.groups.ud_param2_colorable = 1
+		def.on_dig = unifieddyes.on_dig
+		return minetest.register_node(nodename, def)
+	else
+		error("Unknown mode '"..mode.."'!")
+	end
 end
 
-local function enhance_extended(def)
-	def.paramtype2 = "color"
-	def.palette = "unifieddyes_palette_extended.png"
-	def.on_dig = unifieddyes.on_dig
-	return def
-end
-
-minetest.register_node("techpack_stairway:grating", enhance({
+register_node("split", "techpack_stairway:grating", {
 	description = S("TechPack Grating"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -60,9 +74,9 @@ minetest.register_node("techpack_stairway:grating", enhance({
 	is_ground_content = false,
 	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
-}))
+})
 
-minetest.register_node("techpack_stairway:handrail1", enhance({
+register_node("split", "techpack_stairway:handrail1", {
 	description = S("TechPack Handrail 1"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -92,9 +106,9 @@ minetest.register_node("techpack_stairway:handrail1", enhance({
 	is_ground_content = false,
 	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
-}))
+})
 
-minetest.register_node("techpack_stairway:handrail2", enhance({
+register_node("split", "techpack_stairway:handrail2", {
 	description = S("TechPack Handrail 2"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -126,9 +140,9 @@ minetest.register_node("techpack_stairway:handrail2", enhance({
 	is_ground_content = false,
 	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
-}))
+})
 
-minetest.register_node("techpack_stairway:handrail3", enhance({
+register_node("split", "techpack_stairway:handrail3", {
 	description = S("TechPack Handrail 3"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -160,9 +174,9 @@ minetest.register_node("techpack_stairway:handrail3", enhance({
 	is_ground_content = false,
 	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
-}))
+})
 
-minetest.register_node("techpack_stairway:handrail4", enhance({
+register_node("split", "techpack_stairway:handrail4", {
 	description = S("TechPack Handrail 4"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -196,9 +210,9 @@ minetest.register_node("techpack_stairway:handrail4", enhance({
 	is_ground_content = false,
 	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
-}))
+})
 
-minetest.register_node("techpack_stairway:bridge1", enhance({
+register_node("split", "techpack_stairway:bridge1", {
 	description = S("TechPack Bridge 1"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -229,9 +243,9 @@ minetest.register_node("techpack_stairway:bridge1", enhance({
 	is_ground_content = false,
 	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
-}))
+})
 
-minetest.register_node("techpack_stairway:bridge2", enhance({
+register_node("split", "techpack_stairway:bridge2", {
 	description = S("TechPack Bridge 2"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -263,9 +277,9 @@ minetest.register_node("techpack_stairway:bridge2", enhance({
 	is_ground_content = false,
 	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
-}))
+})
 
-minetest.register_node("techpack_stairway:bridge3", enhance({
+register_node("split", "techpack_stairway:bridge3", {
 	description = S("TechPack Bridge 3"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -297,9 +311,9 @@ minetest.register_node("techpack_stairway:bridge3", enhance({
 	is_ground_content = false,
 	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
-}))
+})
 
-minetest.register_node("techpack_stairway:bridge4", enhance({
+register_node("split", "techpack_stairway:bridge4", {
 	description = S("TechPack Bridge 4"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -332,9 +346,9 @@ minetest.register_node("techpack_stairway:bridge4", enhance({
 	is_ground_content = false,
 	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
-}))
+})
 
-minetest.register_node("techpack_stairway:stairway", {
+register_node("split", "techpack_stairway:stairway", {
 	description = S("TechPack Stairway"),
 	tiles = {
 		'techpack_stairway_steps.png',
@@ -373,7 +387,7 @@ minetest.register_node("techpack_stairway:stairway", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
-minetest.register_node("techpack_stairway:ladder1", enhance({
+register_node("split", "techpack_stairway:ladder1", {
 	description = S("TechPack Ladder 1"),
 	tiles = {
 		'techpack_stairway_steps.png',
@@ -403,9 +417,9 @@ minetest.register_node("techpack_stairway:ladder1", enhance({
 	is_ground_content = false,
 	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
-}))
+})
 
-minetest.register_node("techpack_stairway:ladder2", enhance({
+register_node("split", "techpack_stairway:ladder2", {
 	description = S("TechPack Ladder 2"),
 	tiles = {
 		'techpack_stairway_steps.png',
@@ -436,9 +450,9 @@ minetest.register_node("techpack_stairway:ladder2", enhance({
 	is_ground_content = false,
 	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
-}))
+})
 
-minetest.register_node("techpack_stairway:ladder3", enhance({
+register_node("split", "techpack_stairway:ladder3", {
     description = S("TechPack Ladder 3"),
     tiles = {
         'techpack_stairway_steps.png',
@@ -469,9 +483,9 @@ minetest.register_node("techpack_stairway:ladder3", enhance({
     is_ground_content = false,
     groups = stairway_groups,
     sounds = default.node_sound_metal_defaults(),
-}))
+})
 
-minetest.register_node("techpack_stairway:ladder4", enhance({
+register_node("split", "techpack_stairway:ladder4", {
 	description = S("TechPack Ladder 4"),
 	tiles = {
 		'techpack_stairway_ladder.png',
@@ -500,10 +514,9 @@ minetest.register_node("techpack_stairway:ladder4", enhance({
 	is_ground_content = false,
 	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
-}))
+})
 
-
-minetest.register_node("techpack_stairway:lattice", enhance_extended({
+register_node("extended", "techpack_stairway:lattice", {
 	description = S("TechPack Lattice"),
 	tiles = {
 		'techpack_stairway_lattice.png',
@@ -525,7 +538,7 @@ minetest.register_node("techpack_stairway:lattice", enhance_extended({
 		type = "fixed",
 		fixed = {-8/16, -8/16, -8/16,  8/16, 8/16, 8/16},
 	},
-	
+
 	paramtype2 = "facedir",
 	paramtype = "light",
 	use_texture_alpha = CLIP,
@@ -533,9 +546,9 @@ minetest.register_node("techpack_stairway:lattice", enhance_extended({
 	is_ground_content = false,
 	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
-}))
+})
 
-local def = {
+register_node("split", "techpack_stairway:lattice_slop", {
 	description = S("TechPack Lattice Slope"),
 	tiles = {'techpack_stairway_lattice.png'},
 	use_texture_alpha = CLIP,
@@ -560,22 +573,13 @@ local def = {
 		},
 	},
 	paramtype = "light",
-	paramtype2 = "colorfacedir",
-	palette = "unifieddyes_palette_greys.png",
-	airbrush_replacement_node = "techpack_stairway:lattice_slop_grey",
-	on_dig = unifieddyes.on_dig,
+	-- paramtype2 = "colorfacedir",
 
 	sunlight_propagates = true,
 	is_ground_content = false,
 	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
-}
-minetest.register_node("techpack_stairway:lattice_slop_grey", def)
-def = table.copy(def)
-def.groups = table.copy(def.groups)
-def.groups.not_in_creative_inventory = 1
-unifieddyes.generate_split_palette_nodes("techpack_stairway:lattice_slop", table.copy(def), nil)
-
+})
 
 minetest.register_craft({
 	output = "techpack_stairway:grating 6",

@@ -486,7 +486,6 @@ for _, sideinfo in ipairs(banister_sides) do
 			}
 			def2.inventory_image = "homedecor_banister_wood_colored_"..side.."_inv.png"
 			def2.groups.not_in_creative_inventory = 1
-			-- def2.drop = nn -- Will cause a loss of color, but I don't know how to do it better and allow stacking.
 
 			unifieddyes.generate_split_palette_nodes(nn, def2, nil)
 		end
