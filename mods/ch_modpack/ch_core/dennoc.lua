@@ -30,7 +30,7 @@ local def = {
 			local s = param:gsub(",", ".")
 			c = tonumber(s)
 		end
-		if 0.0 <= c and c <= 1.0 then
+		if c ~= nil and 0.0 <= c and c <= 1.0 then
 			player:override_day_night_ratio(c)
 			ch_core.systemovy_kanal(player_name, "/dennoc: osobní osvětlení světa nastaveno na koeficient "..c)
 			return true
