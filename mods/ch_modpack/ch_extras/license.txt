@@ -19,7 +19,15 @@ Licenses of media (models and textures)
 ch_extras_creative_inv.png
 ch_extras_crvb_pruhy.png
 ch_extras_czl_pruhy.png
+ch_extras_rohlik.png
+ch_extras_rohlik_testo.png
+ch_extras_parekvrohliku.png
+ch_extras_parekvrohliku_h.png
+ch_extras_parekvrohliku_k.png
 ch_extras_skakadlo.png
+ch_extras_switch_arrow.png
+ch_extras_switch_off.png
+ch_extras_switch_straight.png
 	License: CC BY-SA 3.0
 	Author: Singularis
 
