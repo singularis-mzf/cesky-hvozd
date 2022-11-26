@@ -121,7 +121,24 @@ function drinks.add_drink(drink_id, drink_desc1, color, def)
 		elseif full_vessel_item ~= false then
 			if minetest.registered_items[full_vessel_item] then
 				-- pre-existing item
-				minetest.override_item(full_vessel_item, {juice_type = drink_id})
+				local override = {juice_type = drink_id}
+
+				if empty_vessel_item == glass and def.override_glass_tiles and vessel_def.get_template then
+					local template = vessel_def.get_template(drink_id, def.drink_desc2 or def.drink_desc, color, math.ceil((def.health_per_unit or 0.5) * vessel_def.capacity))
+					if template then
+						local tiles = template.tiles
+						if tiles == nil and template.inventory_image ~= nil then
+							tiles = {template.inventory_image}
+						end
+						if tiles ~= nil then
+							override.tiles = tiles
+							override.inventory_image = tiles[1]
+							override.wield_image = tiles[1]
+						end
+					end
+				end
+
+				minetest.override_item(full_vessel_item, override)
 				spill_from_results[full_vessel_item] = { drink_id = drink_id, units_produced = vessel_def.capacity, empty_vessel_item = empty_vessel_item }
 			else
 				-- non-existent item
@@ -583,6 +600,13 @@ if minetest.get_modpath("wine") then
 		[glass] = "wine:glass_sparkling_blackberry_juice",
 		[glass_bottle] = "wine:sparkling_blackberry_juice",
 		[bucket] = false,
+	})
+
+	drinks.add_drink("burcak", "burčák", "#9fad62", {
+		drink_desc2 = "burčáku",
+		drink_desc4 = "burčák",
+		[glass] = "wine:glass_burcak",
+		override_glass_tiles = true,
 	})
 end
 

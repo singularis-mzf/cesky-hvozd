@@ -1,7 +1,7 @@
 # Translation of wine mod
 # textdomain: wine
 # author: Singularis
-# last update: 2022/September/15
+# last update: 2022/November/26
 
 Glass of Wine=sklenice vína
 Bottle of Wine=láhev vína
@@ -21,6 +21,7 @@ Glass of Sake=miska saké
 Bottle of Sake=láhev saké
 Glass of Bourbon=sklenice burbonu
 Bottle of Bourbon=láhev burbonu
+Glass of burčák=sklenice burčáku
 Glass of Vodka=sklenice vodky
 Bottle of Vodka=láhev vodky
 Glass of Champagne=sklenice šampaňského

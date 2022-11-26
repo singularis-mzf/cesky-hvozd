@@ -14,6 +14,7 @@ wine:add_drink("coffee_liquor", "Coffee Liquor", true, 3, 4, 1)
 wine:add_drink("champagne", "Champagne", true, 4, 5, 1)
 wine:add_drink("cointreau", "Cointreau", true, 2, 3, 1)
 wine:add_drink("margarita", "Margarita", false, 4, 5, 1)
+wine:add_drink("burcak", "burčák", false, 2, 3, 1)
 
 -- non-alcoholic drinks:
 
@@ -116,7 +117,8 @@ if minetest.get_modpath("farming") then
 		})
 
 		wine:add_item({
-			{"farming:grapes", "wine:glass_wine"},
+			{"farming:grapes", "wine:glass_burcak"},
+			{{"wine:glass_burcak"}, "wine:glass_wine"},
 			{{"farming:barley", "vessels:large_drinking_glass"}, "wine:glass_beer"},
 			{"farming:rice", "wine:glass_sake"},
 			{"farming:corn", "wine:glass_bourbon"},
