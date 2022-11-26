@@ -473,6 +473,35 @@ function ch_core.prihlasovaci_na_zobrazovaci(prihlasovaci, s_barvami)
 end
 
 --[[
+Zaregistruje bloky, které mají něco společného.
+]]
+function ch_core.register_nodes(common_def, nodes, crafts)
+	if type(common_def) ~= "table" then
+		error("common_def must be a table!")
+	end
+	if type(nodes) ~= "table" then
+		error("nodes must be a table!")
+	end
+	if crafts ~= nil and type(crafts) ~= "table" then
+		error("crafts must be a table or nil!")
+	end
+
+	for node_name, node_def in pairs(nodes) do
+		local def = table.copy(common_def)
+		for k, v in pairs(node_def) do
+			def[k] = v
+		end
+		minetest.register_node(node_name, def)
+	end
+
+	if crafts ~= nil then
+		for _, def in ipairs(crafts) do
+			minetest.register_craft(def)
+		end
+	end
+end
+
+--[[
 Nastaví dané postavě status „immortal“. Používá se pro postavy s právem
 usnadnění hry.
 ]]

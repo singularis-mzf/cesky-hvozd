@@ -326,6 +326,98 @@ minetest.register_alias("ch_core:railway_gravel", "ch_extras:railway_gravel")
 stairsplus:register_slabs_and_slopes("ch_extras", "railway_gravel", "ch_extras:railway_gravel", minetest.registered_nodes["ch_extras:railway_gravel"])
 stairsplus:register_alias_all("ch_core", "railway_gravel", "ch_extras", "railway_gravel")
 
+-- ch_extras:switch
+---------------------------------------------------------------
+local groups_in_ci = {dig_immediate = 2}
+local groups_not_in_ci = table.copy(groups_in_ci)
+groups_not_in_ci.not_in_creative_inventory = 1
+
+local mesecons_off, mesecons_on
+
+if minetest.get_modpath("mesecons_switch") then
+	mesecons_off = { receptor = { state = mesecon.state.off }}
+	mesecons_on = { receptor = { state = mesecon.state.on }}
+end
+
+local tiles_straight = {
+	"ch_extras_switch_off.png",
+	"ch_extras_switch_off.png",
+	"ch_extras_switch_off.png",
+	"ch_extras_switch_off.png",
+	"ch_extras_switch_off.png",
+	"ch_extras_switch_straight.png",
+}
+local tiles_arrow = table.copy(tiles_straight)
+tiles_arrow[6] = "ch_extras_switch_arrow.png"
+
+def = {
+	description = "výměnové návěstidlo",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	is_ground_content = false,
+	light_source = 4,
+	sounds = default.node_sound_stone_defaults(),
+}
+if mesecons_on then
+	def.on_rightclick = function(pos, node)
+		if node.name:find("_off$") then
+			node.name = node.name:sub(1, -5) .. "_on"
+			minetest.swap_node(pos, node)
+			mesecon.receptor_on(pos)
+			minetest.debug("receptor_on => "..node.name)
+		else
+			node.name = node.name:sub(1, -4) .. "_off"
+			minetest.swap_node(pos, node)
+			mesecon.receptor_off(pos)
+			minetest.debug("receptor_off => "..node.name)
+		end
+		minetest.sound_play("mesecons_switch", { pos = pos }, true)
+	end
+end
+
+ch_core.register_nodes(
+	def,
+	{
+		["ch_extras:switch_off"] = {
+			tiles = tiles_straight,
+			groups = groups_in_ci,
+			mesecons = mesecons_off,
+		},
+		["ch_extras:switch_on"] = {
+			tiles = tiles_arrow,
+			groups = groups_not_in_ci,
+			mesecons = mesecons_on,
+			drop = "ch_extras:switch_off",
+		},
+		["ch_extras:switch_r_off"] = {
+			description = "výměnové návěstidlo (opačná logika)",
+			tiles = tiles_arrow,
+			groups = groups_in_ci,
+			mesecons = mesecons_off,
+		},
+		["ch_extras:switch_r_on"] = {
+			description = "výměnové návěstidlo (opačná logika)",
+			tiles = tiles_straight,
+			groups = groups_not_in_ci,
+			mesecons = mesecons_on,
+			drop = "ch_extras:switch_r_off",
+		},
+	},
+	{
+		{
+			output = "ch_extras:switch_off",
+			recipe = {
+				{"dye:black", "dye:white", "dye:black"},
+				{"default:steel_ingot", "default:cobble", "default:steel_ingot"},
+				{"mesecons:wire_00000000_off", "", "mesecons:wire_00000000_off"},
+			},
+		}, {
+			output = "ch_extras:switch_r_off", recipe = {{"ch_extras:switch_off"}}
+		}, {
+			output = "ch_extras:switch_off", recipe = {{"ch_extras:switch_r_off"}}
+		}
+	})
+
 --[[ PLAKÁTY
 local box = {
 		type = "fixed",
