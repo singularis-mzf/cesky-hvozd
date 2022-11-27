@@ -17,9 +17,15 @@ https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 Licenses of media (models and textures)
 ----------------------------
 
+default_cobble.png
+default_desert_cobble.png
+default_desert_sandstone_block.png
+default_desert_sandstone_brick.png
 default_dirt.png
-default_grass.png
-default_grass_side.png
+default_sandstone_block.png
+default_sandstone_brick.png
+default_silver_sandstone_block.png
+default_silver_sandstone_brick.png
 	Copyright (C) 2010-2018:
 		celeron55, Perttu Ahola <celeron55@gmail.com>
 		Cisoun
@@ -54,6 +60,46 @@ default_grass_side.png
 		An0n3m0us
 	Source: Minetest Game
 	Modified by: Singularis
+	License: CC BY-SA 3.0
+
+default_grass.png
+default_grass_side.png
+	Copyright (C) 2010-2018:
+		celeron55, Perttu Ahola <celeron55@gmail.com>
+		Cisoun
+		G4JC
+		VanessaE
+		RealBadAngel
+		Calinou
+		MirceaKitsune
+		Jordach
+		PilzAdam
+		jojoa1997
+		InfinityProject
+		Splizard
+		Zeg9
+		paramat
+		BlockMen
+		sofar
+		Neuromancer
+		Gambit
+		asl97
+		KevDoy
+		Mito551
+		GreenXenith
+		kaeza
+		kilbith
+		tobyplowy
+		CloudyProton
+		TumeniNodes
+		Mossmanikin
+		random-geek
+		Extex101
+		An0n3m0us
+	Used sources:
+		Minetest Game (CC BY-SA 3.0)
+		https://commons.wikimedia.org/wiki/File:Green_grass_texture_above.jpg by Kurt Kaiser (CC0)
+	Created from sources and adapted by: Singularis
 	License: CC BY-SA 3.0
 
 default_river_water.png
