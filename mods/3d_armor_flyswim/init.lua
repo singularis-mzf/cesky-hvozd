@@ -197,7 +197,7 @@ minetest.register_globalstep(function()
 			end
 		end
 		
-		if crouch_sneak and
+		--[[if crouch_sneak and
 		   nc_slab == 1 and
 		   not attached_to and
 		   not controls.sneak and 
@@ -223,7 +223,7 @@ minetest.register_globalstep(function()
 			player:set_properties({eye_height = 1.27})
 			if tdebug then minetest.debug("crouch catch") end				
 
-		elseif swim_sneak and
+		else]]if swim_sneak and
 		       nc_node == 1 and
 		       node_down_fsable(pos,1,"s") and
 		       not attached_to and			   
@@ -281,7 +281,6 @@ minetest.register_globalstep(function()
 	-- First slab player enters counts as a true slab and has an edge.
 	-- As such the shift edge detection kicks in and player can't move forwards
 	-- This case sets the player collision box to 1 high for that first slab 
---[[
 		elseif 	crouch_anim 	and
 				controls.sneak 	and 
 				controls.up    	and 
@@ -299,7 +298,6 @@ minetest.register_globalstep(function()
 						player:set_properties({collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.0, 0.3}})
 					end
 					if tdebug then minetest.debug("crouch_1") end
-]]
 		elseif 	crouch_anim    and
 				controls.sneak and
 				not node_fsable(pos,2,"a") and
