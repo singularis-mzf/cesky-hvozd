@@ -344,7 +344,7 @@ function wagon:on_step(dtime)
 						if pc.up or pc.down then
 							self:get_off(seatno)
 						end
-					end		      
+					end
 				end
 				if pc.aux1 and pc.sneak then
 					self:get_off(seatno)
@@ -355,10 +355,9 @@ function wagon:on_step(dtime)
 		--check infotext
 		local outside=train.text_outside or ""
 		if setting_show_ids then
-			outside = outside .. "\nT:" .. data.train_id .. " W:" .. self.id .. " O:" .. data.owner
+			outside = outside .. "\nvlak:" .. data.train_id .. " vagon:" .. self.id .. " vlastník/ice:" .. data.owner
 		end
-		
-		
+
 		--show off-track information in outside text instead of notifying the whole server about this
 		if train.off_track then
 			outside = outside .."\n" .. attrans("!!! Train off track !!!")
