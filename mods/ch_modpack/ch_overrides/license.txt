@@ -528,6 +528,11 @@ solidcolor_stone_block.png
 	Used source: https://commons.wikimedia.org/wiki/File:Light_brown_stone_texture.jpg (public domain)
 	License: CC BY 4.0
 
+default_grass_1.png
+default_grass_2.png
+default_grass_3.png
+default_grass_4.png
+default_grass_5.png
 moon.png
 moon_tonemap.png
 sun.png
