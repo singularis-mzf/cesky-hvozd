@@ -58,6 +58,7 @@ local offline_charinfo_data_types = {
 	ap_xp = "int", -- >= 0
 	ap_version = "int", -- >= 0
 	doslech = "int", -- >= 0
+	last_login = "int", -- >= 0, in seconds since 1. 1. 2000 UTC; 0 is invalid value
 	past_ap_playtime = "float", -- in seconds
 	past_playtime = "float", -- in seconds
 	pending_registration_privs = "string",
@@ -392,6 +393,10 @@ local function on_joinplayer(player, last_login)
 	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
 	local offline_charinfo = ch_core.get_offline_charinfo(player_name) -- create offline_charinfo, if not exists
 	online_charinfo.doslech = offline_charinfo.doslech
+
+	offline_charinfo.last_login = os.time() - 946684800
+	ch_core.save_offline_charinfo(player_name, "last_login")
+
 	return true
 end
 
@@ -498,5 +503,23 @@ def = {
 
 minetest.register_chatcommand("posunčasu", def)
 minetest.register_chatcommand("posuncasu", def)
+
+def = {
+	description = "Odstraní údaje o postavě uložené v systému ch_core. Postava nesmí být ve hře.",
+	privs = {server = true},
+	func = function(player_name, param)
+		local offline_charinfo = ch_core.offline_charinfo[param]
+		if not offline_charinfo then
+			return false, "Data o "..param.." nenalezena!"
+		end
+		if ch_core.delete_offline_charinfo(param) then
+			return true, "Data o "..param.." smazána."
+		else
+			return false, "Při odstraňování nastala chyba."
+		end
+	end,
+}
+
+minetest.register_chatcommand("delete_offline_charinfo", def)
 
 ch_core.close_submod("data")

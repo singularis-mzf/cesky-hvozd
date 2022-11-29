@@ -818,4 +818,51 @@ end
 
 doors.login_to_viewname = ch_core.prihlasovaci_na_zobrazovaci
 
+-- PŘÍKAZY
+-- ===========================================================================
+local function cmp_oci(a, b)
+	return (ch_core.offline_charinfo[a].last_login or -1) < (ch_core.offline_charinfo[b].last_login or -1)
+end
+
+def = {
+	description = "Vypíše seznam postav seřazený podle času posledního přihlášení.",
+	privs = {server = true},
+	func = function(player_name, param)
+		local players = {}
+		local shifted_now = os.time() - 946684800
+
+		for other_player_name, _ in pairs(ch_core.offline_charinfo) do
+			table.insert(players, other_player_name)
+		end
+		table.sort(players, cmp_oci)
+		local result = {}
+		for i, other_player_name in ipairs(players) do
+			local s = "- "..other_player_name
+			local offline_charinfo = ch_core.offline_charinfo[other_player_name]
+			local s2 = offline_charinfo.last_login
+			if s2 == 0 then
+				s2 = "???"
+			else
+				s2 = math.floor((shifted_now - s2) / 86400)
+			end
+			s2 = " (posl. přihl. před "..s2.." dny, odehráno "..(math.round(offline_charinfo.past_playtime / 36) / 100).." hodin, z toho "..(math.round(offline_charinfo.past_ap_playtime / 36) / 100).." aktivně)"
+			if ch_core.online_charinfo[other_player_name] then
+				s2 = s2.." <je ve hře>"
+			end
+			if (offline_charinfo.pending_registration_type or "") ~= "" then
+				s2 = s2.." <plánována registrace: "..(offline_charinfo.pending_registration_type or "")..">"
+			end
+			result[i] = "- "..other_player_name..s2
+		end
+
+		result = table.concat(result, "\n")
+		minetest.log("warning", result)
+		minetest.chat_send_player(player_name, result)
+		return true
+	end,
+}
+
+minetest.register_chatcommand("postavynauklid", def)
+minetest.register_chatcommand("postavynaúklid", def)
+
 ch_core.close_submod("lib")
