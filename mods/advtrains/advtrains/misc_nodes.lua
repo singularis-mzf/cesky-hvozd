@@ -1,6 +1,6 @@
 --all nodes that do not fit in any other category
 
-function advtrains.register_platform(modprefix, preset)
+function advtrains.register_platform(modprefix, preset, use_full_nodename)
 	local ndef=minetest.registered_nodes[preset]
 	if not ndef then 
 		minetest.log("warning", " register_platform couldn't find preset node "..preset)
@@ -9,9 +9,24 @@ function advtrains.register_platform(modprefix, preset)
 	local btex=ndef.tiles
 	if type(btex)=="table" then
 		btex=btex[1]
+		if type(btex) == "table" then
+			btex = btex.name
+			if type(btex) ~= "string" then
+				error("Error in tiles when registering a platform for "..preset.."!")
+			end
+		end
 	end
 	local desc=ndef.description or ""
-	local nodename=string.match(preset, ":(.+)$")
+	local nodename
+
+	if use_full_nodename then
+		local a, b = string.match(":"..preset, ":(.+):(.+)$")
+		nodename = a.."_"..b
+		-- minetest.log("warning", "DEBUG: generated name '"..nodename.."'")
+	else
+		nodename =string.match(preset, ":(.+)$")
+	end
+	-- minetest.log("action", "DEBUG: will register platforms for "..preset.." using nodename = ("..nodename..")")
 	minetest.register_node(modprefix .. ":platform_low_"..nodename, {
 		description = attrans("@1 Platform (low)", desc),
 		tiles = {btex.."^advtrains_platform.png", btex, btex, btex, btex, btex},
@@ -118,6 +133,71 @@ function advtrains.register_platform(modprefix, preset)
     })
 end
 
-
 advtrains.register_platform("advtrains", "default:stonebrick")
-advtrains.register_platform("advtrains", "default:sandstonebrick")
+-- advtrains.register_platform("advtrains", "default:sandstonebrick")
+
+local platform_materials = {
+	"basic_materials:cement_block",
+	"basic_materials:concrete_block",
+	"building_blocks:Tar",
+	{"cherrytree:wood"},
+	{"chestnuttree:wood"},
+	"darkage:basalt",
+	"darkage:basalt_brick",
+	-- "darkage:basalt_cobble",
+	--"darkage:gneiss",
+	"darkage:gneiss_brick",
+	--"darkage:gneiss_cobble",
+	{"darkage:marble"},
+	-- "darkage:ors",
+	"darkage:ors_brick",
+	-- "darkage:ors_cobble",
+	"darkage:serpentine",
+	-- "darkage:slate",
+	"darkage:slate_brick",
+	-- "darkage:slate_cobble",
+	"darkage:stone_brick",
+	"default:acacia_wood",
+	"default:aspen_wood",
+	"default:desert_stone",
+	"default:desert_stone_block",
+	"default:junglewood",
+	"default:pine_wood",
+	"default:steelblock",
+	"default:stone",
+	"default:stone_block",
+	"default:wood",
+	{"ebony:wood"},
+	"moretrees:cedar_planks",
+	"moretrees:date_palm_planks",
+	"moretrees:birch_planks",
+	-- "moretrees:beech_planks",
+	"moretrees:apple_tree_planks",
+	"moretrees:fir_planks",
+	"moretrees:oak_planks",
+	"moretrees:palm_planks",
+	"moretrees:rubber_tree_planks",
+	"moretrees:sequoia_planks",
+	"moretrees:spruce_planks",
+	"moretrees:poplar_planks",
+	"moreblocks:wood_tile_center",
+	"moreblocks:wood_tile_full",
+	{"plumtree:wood"},
+	{"technic:marble"},
+	{"willow:wood"},
+}
+for _, name in ipairs(platform_materials) do
+	local nodename, use_full_nodename
+	if type(name) == "string" then
+		nodename = name
+	else
+		nodename = name[1]
+		use_full_nodename = true
+	end
+
+	if minetest.registered_nodes[nodename] then
+		advtrains.register_platform("advtrains", nodename, use_full_nodename)
+	else
+		minetest.log("warning", nodename.." not find as a node to build a platform")
+	end
+end
