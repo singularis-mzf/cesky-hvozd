@@ -135,7 +135,7 @@ if minetest.get_modpath("wool") then
 		local ndef = table.copy(minetest.registered_nodes[nodename])
 		ndef.sunlight_propagates = true
 
-		stairsplus:register_all(mod, name, nodename, ndef)
+		stairsplus:register_slabs_and_slopes(mod, name, nodename, ndef)
 	end
 end
 

@@ -30,6 +30,7 @@ climatez.settings = {
 }
 
 local timer = 0 -- A timer to create climates each x seconds an for lightning too.
+local climatez_disabled = false
 
 --Helper Functions
 
@@ -259,7 +260,7 @@ end
 
 local function add_climate_player(player_name, climate_id, downfall_type)
 
-	if downfall_type == "sand" then
+	if climatez_disabled or downfall_type == "sand" then
 		return
 	end
 
@@ -600,7 +601,7 @@ minetest.register_globalstep(function(dtime)
 				add_climate_player(player_name, climate_id, downfall_type)
 				--minetest.chat_send_all(player_name.." entered into the climate")
 			elseif not(climate_id) and not(_climate) then --chance to create a climate
-				if not climate_disabled then --if not in a disabled climate
+				if not climatez_disabled and not climate_disabled then --if not in a disabled climate
 					local chance = math.random(climatez.settings.climate_change_ratio)
 					if chance == 1 then
 						local new_climate_id = get_id()
@@ -643,7 +644,7 @@ minetest.register_chatcommand("climatez", {
 			end
 			i = i + 1
 		end
-		if not(subcommand == "stop") and not(subcommand == "start") then
+		if not(subcommand == "stop") and not(subcommand == "start") and not(subcommand == "enable") and not(subcommand == "disable") then
 			return true, "Chyba: Podpříkazy příkazu climatez jsou 'stop | start'"
 		end
 		--if subcommand then
@@ -684,6 +685,8 @@ minetest.register_chatcommand("climatez", {
 					local new_climate_id = get_id()
 					climatez.climates[new_climate_id] = climate:new(new_climate_id, name)
 			end
+		elseif subcommand == "enable" or subcommand == "disable" then
+			climatez_disabled = subcommand == "disable"
 		end
     end,
 })
