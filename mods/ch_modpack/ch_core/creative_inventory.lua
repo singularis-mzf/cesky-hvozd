@@ -68,11 +68,33 @@ local partition_defs = {
 	},
 
 	{
-		name = "drevodesky",
+		name = "drevo",
 		in_creative_inventory = true,
 		groups = {"wood"},
 		items = none,
 		mods = none,
+		exclude_items = {
+			"moreblocks:wood_tile",
+			"moreblocks:wood_tile_center",
+			"moreblocks:wood_tile_offset",
+			"moreblocks:wood_tile_full",
+			"pkarcs:acacia_wood_arc",
+			"pkarcs:acacia_wood_inner_arc",
+			"pkarcs:acacia_wood_outer_arc",
+			"pkarcs:aspen_wood_arc",
+			"pkarcs:aspen_wood_inner_arc",
+			"pkarcs:aspen_wood_outer_arc",
+			"pkarcs:junglewood_arc",
+			"pkarcs:junglewood_inner_arc",
+			"pkarcs:junglewood_outer_arc",
+			"pkarcs:pine_wood_arc",
+			"pkarcs:pine_wood_inner_arc",
+			"pkarcs:pine_wood_outer_arc",
+			"pkarcs:wood_arc",
+			"pkarcs:wood_inner_arc",
+			"pkarcs:wood_outer_arc",
+		},
+		-- not_in_mods = {"cottages", "moreblocks", "pkarcs"},
 	},
 	{
 		name = "drevokmeny",
@@ -80,6 +102,15 @@ local partition_defs = {
 		groups = {"tree"},
 		items = none,
 		mods = none,
+		exclude_items = {"cottages:water_gen"},
+	},
+	{
+		name = "ploty",
+		in_creative_inventory = true,
+		groups = {"fence"},
+		items = none,
+		mods = none,
+		exclude_items = {"technic:insulator_clip_fencepost"},
 	},
 	{
 		name = "jil",
@@ -231,7 +262,18 @@ function ch_core.update_creative_inventory(force_update)
 	local name_to_partition = {}
 	local group_to_partition = {}
 	local mod_to_partition = {}
+	local not_in_mods = {} -- [partition.."/"..mod]
+	local partition_to_exclude_items = {others = none}
 	for order, part_def in ipairs(partition_defs) do
+		if (part_def.exclude_items or none)[1] then
+			local set = {}
+			partition_to_exclude_items[part_def.name] = set
+			for _, name in ipairs(part_def.exclude_items) do
+				set[name] = true
+			end
+		else
+			partition_to_exclude_items[part_def.name] = none
+		end
 		for _, name in ipairs(part_def.items or none) do
 			if name_to_partition[name] then
 				minetest.log("warning", "ERROR in creative_inventory! Item "..name.." has been already set to partition "..name_to_partition[name].." while it is also set to partition "..part_def.name.."!")
@@ -268,21 +310,26 @@ function ch_core.update_creative_inventory(force_update)
 			elseif name_to_partition[name] then
 				partition = name_to_partition[name]
 			else
+				local mod, subname = name:match("^([^:]*):([^:]*)$")
 				local success = false
 				for group, rank in pairs(groups) do
-					if rank > 0 and group_to_partition[group] then
+					if rank > 0 and group_to_partition[group] and not partition_to_exclude_items[group_to_partition[group]][name] then
 						partition = group_to_partition[group]
 						success = true
 						break
 					end
 				end
 				if not success then
-					local mod, subname = name:match("^([^:]*):([^:]*)$")
-					if mod and mod_to_partition[mod] then
+					if mod and mod_to_partition[mod] and not partition_to_exclude_items[mod_to_partition[mod]][name] then
 						partition = mod_to_partition[mod]
 					end
 				end
 			end
+
+			if partition_to_exclude_items[partition][name] then
+				partition = "others"
+			end
+
 			local partition_list = existing_partitions[partition]
 			if not partition_list then
 				existing_partitions[partition] = {name}
