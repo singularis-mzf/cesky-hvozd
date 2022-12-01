@@ -351,11 +351,11 @@ function wagon:on_step(dtime)
 				end
 			end
 		end
-		
+
 		--check infotext
 		local outside=train.text_outside or ""
 		if setting_show_ids then
-			outside = outside .. "\nvlak:" .. data.train_id .. " vagon:" .. self.id .. " vlastník/ice:" .. data.owner
+			outside = outside .. "\nvlak:" .. data.train_id .. " vagon:" .. self.id .. " vlastník/ice:" .. ch_core.prihlasovaci_na_zobrazovaci(data.owner)
 		end
 
 		--show off-track information in outside text instead of notifying the whole server about this
@@ -868,13 +868,13 @@ function wagon:show_wagon_properties(pname)
 	if data.fc then
 		if not data.fcind then data.fcind = 1 end
 		if data.fcind > 1 then
-			form=form.."button[0.5,3.5;1,1;fcp;" .. S("prev FC") .."]"
+			form=form.."button[0.5,3.5;1,1;fcp;" .. attrans("prev FC") .."]"
 		end
-		form=form.."label[1.5,3.5;" .. S("Current FC:").."]"
+		form=form.."label[1.5,3.5;" .. attrans("Current FC:").."]"
 
 		local cur = data.fc[data.fcind] or ""
 		form=form.."label[1.5,3.75;"..minetest.formspec_escape(cur).."]"
-		form=form.."button[3.5,3.5;1,1;fcn;" .. S("next FC") .. "]"
+		form=form.."button[3.5,3.5;1,1;fcn;" .. attrans("next FC") .. "]"
 	end
 	form=form.."button_exit[0.5,4.5;4,1;save;"..attrans("Save wagon properties").."]"
 	minetest.show_formspec(pname, "advtrains_prop_"..self.id, form)
