@@ -545,8 +545,15 @@ for _,v1 in pairs(slab_index) do
 				-- == 0 or not. Doing slabs this way means remaining code can effectively ignore
 				-- axis and param2 except for final placement.
 				local pointed = combo_raycast(placer)
-				local point = vector.subtract(pointed.intersection_point,pointed.under)
-				local normal = pointed.intersection_normal
+				local point, normal
+				if pointed ~= nil then
+					point = vector.subtract(pointed.intersection_point,pointed.under)
+					normal = pointed.intersection_normal
+				else
+					minetest.log("warning", "Raycast failed for "..placer:get_player_name().." at "..minetest.pos_to_string(placer:get_pos()).."!")
+					point = pointed_thing.under
+					normal = vector.normalize(vector.subtract(pointed_thing.above, pointed_thing.under))
+				end
 				local nor_string = tostring(math.abs(normal.x)..math.abs(normal.y)..math.abs(normal.z))
 				local pot_short_axis = point[comboblock_param_side_offset[nor_string][1]]                   -- When == 0 large flat side is inside node
 				local node_ax_pos     = vector.add(pos,normal)
