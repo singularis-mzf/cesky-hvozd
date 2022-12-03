@@ -125,6 +125,38 @@ if minetest.get_modpath("farming") then
 end
 
 -- wool registrations
+local wool_shapes = {
+	{ "micro", "" },
+	{ "panel", "" },
+	{ "panel", "_4" },
+	{ "panel", "_special" },
+	{ "slab",  "" },
+	{ "slab",  "_quarter" },
+	{ "slab",  "_three_quarter" },
+	{ "slab",  "_1" },
+	{ "slab",  "_2" },
+	{ "slab",  "_14" },
+	{ "slab",  "_15" },
+	{ "slope", "" },
+	{ "slope", "_half" },
+	{ "slope", "_half_raised" },
+	{ "slope", "_inner" },
+	{ "slope", "_inner_half" },
+	{ "slope", "_inner_half_raised" },
+	{ "slope", "_inner_cut" },
+	{ "slope", "_inner_cut_half" },
+	{ "slope", "_inner_cut_half_raised" },
+	{ "slope", "_outer" },
+	{ "slope", "_outer_half" },
+	{ "slope", "_outer_half_raised" },
+	{ "slope", "_outer_cut" },
+	{ "slope", "_outer_cut_half" },
+	{ "slope", "_outer_cut_half_raised" },
+	{ "slope", "_cut" },
+	{ "slope", "_slab" },
+	{ "slope", "_tripleslope" },
+}
+
 if minetest.get_modpath("wool") then
 	local dyes = {"white", "grey", "black", "red", "yellow", "green", "cyan",
 	              "blue", "magenta", "orange", "violet", "brown", "pink",
@@ -135,7 +167,8 @@ if minetest.get_modpath("wool") then
 		local ndef = table.copy(minetest.registered_nodes[nodename])
 		ndef.sunlight_propagates = true
 
-		stairsplus:register_slabs_and_slopes(mod, name, nodename, ndef)
+		-- stairsplus:register_slabs_and_slopes(mod, name, nodename, ndef)
+		stairsplus:register_custom_subset(wool_shapes, mod, name, nodename, ndef)
 	end
 end
 
