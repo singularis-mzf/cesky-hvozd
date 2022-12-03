@@ -128,6 +128,8 @@ end
 local wool_shapes = {
 	{ "micro", "" },
 	{ "panel", "" },
+	{ "panel", "_1" },
+	{ "panel", "_2" },
 	{ "panel", "_4" },
 	{ "panel", "_special" },
 	{ "slab",  "" },
