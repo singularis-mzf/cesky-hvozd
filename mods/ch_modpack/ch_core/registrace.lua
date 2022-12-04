@@ -10,8 +10,10 @@ local default_privs_to_reg_type = {
 	home = true,
 	interact = true,
 	peaceful_player = true,
+	railway_operator = survival_creative,
 	shout = true,
 	track_builder = survival_creative,
+	train_operator = survival_creative,
 }
 local reg_types = {
 	new = "nová postava",
@@ -22,7 +24,7 @@ local function get_flashlight()
 	local stack = ItemStack("technic:flashlight")
 	stack:set_wear(1)
 	local meta = stack:get_meta()
-	meta:set_int("charge", 30000)
+	meta:set_string("", "return {charge=30000}")
 	return stack
 end
 local default_items = {
@@ -36,10 +38,41 @@ local default_items = {
 	{stack = ItemStack("orienteering:triangulator"), survival = true, creative = true},
 	-- ItemStack("technic:flashlight 1 1 \"\u0001\u0002return {charge=30000}\u0003\"")
 	{stack = ItemStack("unified_inventory:bag_large"), survival = true, creative = true},
+	{stack = ItemStack("bridger:scaffolding 100"), survival = true},
 	{stack = ItemStack("towercrane:base"), survival = true, creative = true},
 	{stack = ItemStack("anvil:hammer"), survival = true},
 	{stack = ItemStack("airtanks:empty_bronze_tank"), survival = true, creative = true},
 }
+
+local function compute_initial_inventory(reg_type)
+	local i = 2
+	local initial_inventory = {}
+	for _, def in ipairs(default_items) do
+		if def[reg_type] then
+			local stack = def.stack
+			if not stack:is_empty() and not minetest.registered_items[stack:get_name()] then
+				minetest.log("warning", "Default item stack not used, because the item "..stack:get_name().." is unknown!")
+			elseif stack:get_name() ~= "technic:flashlight" then
+				initial_inventory[i] = stack
+				i = i + 1
+				while initial_inventory[i] ~= nil do
+					i = i + 1
+				end
+			else
+				local j = 17
+				while initial_inventory[j] ~= nil do
+					j = j + 1
+				end
+				initial_inventory[j] = stack
+				if i >= 17 then
+					i = j + 1
+				end
+			end
+		end
+	end
+
+	return initial_inventory
+end
 
 function ch_core.registrovat(player_name, reg_type, extra_privs)
 	if extra_privs == nil then
@@ -68,21 +101,7 @@ function ch_core.registrovat(player_name, reg_type, extra_privs)
 		end
 	end
 
-	-- compute initial inventory
-	local i = 2
-	local initial_inventory = {}
-	for _, def in ipairs(default_items) do
-		if def[reg_type] then
-			local stack = def.stack
-			if stack:is_empty() or minetest.registered_items[stack:get_name()] then
-				initial_inventory[i] = stack
-				i = i + 1
-			else
-				minetest.log("warning", "Default item stack not used, because the item "..stack:get_name().." is unknown!")
-			end
-		end
-	end
-
+	local initial_inventory = compute_initial_inventory(reg_type)
 	local player = minetest.get_player_by_name(player_name)
 	if not player then
 		return false, "the player is offline"

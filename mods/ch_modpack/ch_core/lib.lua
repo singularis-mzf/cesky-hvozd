@@ -592,10 +592,10 @@ end
 	Je-li řetězec s delší než max_chars znaků, vrátí jeho prvních max_chars znaků
 	+ "...", jinak vrátí původní řetězec.
 ]]
-function ch_core.utf8_truncate_right(s, max_chars)
+function ch_core.utf8_truncate_right(s, max_chars, dots_string)
 	local i = ch_core.utf8_seek(s, 1, max_chars)
 	if i then
-		return s:sub(1, i - 1) .. "..."
+		return s:sub(1, i - 1) .. (dots_string or "...")
 	else
 		return s
 	end
