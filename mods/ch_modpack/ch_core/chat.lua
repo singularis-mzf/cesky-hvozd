@@ -284,7 +284,7 @@ local function on_chat_message(jmeno, zprava)
 			local kandidati = {}
 			local predpona = zprava:sub(2, i - 1)
 			for prihlasovaci, _ in pairs(ch_core.online_charinfo) do
-				local zobrazovaci = ch_core.prihlasovaci_na_zobrazovaci(prihlasovaci)
+				local zobrazovaci = ch_core.prihlasovaci_na_zobrazovaci(prihlasovaci):gsub(" ", "_")
 				if (#prihlasovaci >= #predpona and prihlasovaci:sub(1, #predpona) == predpona)
 				   or (#zobrazovaci >= #predpona and zobrazovaci:sub(1, #predpona) == predpona) then
 					table.insert(kandidati, prihlasovaci)
