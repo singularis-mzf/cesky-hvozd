@@ -220,6 +220,7 @@ local function barrel_allow_metadata_inventory_put(pos, listname, index, stack, 
 	end
 	if listname == "src" then
 		local spill_from_result = drinks.spill_from(stack:get_name()) -- { drink_id, units_produced, empty_vessel_item }
+		print("spill_from_result = "..dump2(spill_from_result))
 		if not spill_from_result then
 			minetest.log("info", "no spill result for "..stack:get_name().."!")
 			return 0
@@ -259,7 +260,13 @@ local function barrel_on_metadata_inventory_put(pos, listname, index, stack, pla
 	if listname == "src" then
 		local spill_from_result = drinks.spill_from(stack:get_name()) -- { drink_id, units_produced, empty_vessel_item }
 		if spill_from_result and drinks.try_change_barrel_state(pos, stack:get_count() * spill_from_result.units_produced, spill_from_result.drink_id).success then
-			inv:set_stack("src", 1, ItemStack(spill_from_result.empty_vessel_item.." "..stack:get_count()))
+			local new_stack
+			if spill_from_result.empty_vessel_item ~= "" then
+				new_stack = ItemStack(spill_from_result.empty_vessel_item.." "..stack:get_count())
+			else
+				new_stack = ItemStack()
+			end
+			inv:set_stack("src", 1, new_stack)
 		end
 	elseif listname == "dst" then
 		local fill_to_result = drinks.fill_to(barrel_state.drink_id, stack:get_name())

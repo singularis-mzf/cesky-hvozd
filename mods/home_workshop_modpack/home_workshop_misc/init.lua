@@ -76,9 +76,9 @@ home_workshop_misc.beer_mug_def = {
 	inventory_image = "home_workshop_misc_beer_mug_inv.png",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = { snappy=3, oddly_breakable_by_hand=3 },
+	groups = { snappy=3, oddly_breakable_by_hand=3, drink = 1 },
 	walkable = false,
-	sounds = default and default.node_sound_glass_defaults() or nil,
+	sounds = minetest.registered_nodes["vessels:drinking_glass"].sounds,
 	selection_box = beer_cbox,
 	--[[ on_use = function(itemstack, user, pointed_thing)
 		if not minetest.is_creative_enabled(user:get_player_name()) then

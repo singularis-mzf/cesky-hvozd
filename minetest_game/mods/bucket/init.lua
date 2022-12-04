@@ -291,9 +291,6 @@ function bucket.register_full_bucket(name, empty_bucket, liquid_source, def)
 		on_use = on_use,
 		on_place = def.on_place or bucket_on_place,
 	}
-	if def.stack_max then
-		ndef.stack_max = def.stack_max
-	end
 	minetest.register_craftitem(long_name, ndef)
 	bucket.full_buckets[name] = {
 		force_renew = def.force_renew,

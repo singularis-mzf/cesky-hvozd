@@ -17,6 +17,7 @@ local glass_bottle = "vessels:glass_bottle" -- 1 l
 local steel_bottle = "vessels:steel_bottle" -- 1 l
 local bucket = "bucket:bucket_empty" -- 8 l
 local wooden_bucket = "bucket_wooden:bucket_empty" -- 8 l
+local source = ":source:" -- 1 l
 
 local bucket_selection_box = {
 	type = "fixed",
@@ -26,6 +27,7 @@ local bucket_groups = {
 	vessel = 1, dig_immediate = 3, attached_node = 1, drink = 1
 }
 local eat_func_cache = {
+	[source] = {},
 	[glass] = {},
 	[large_glass] = {},
 	[glass_bottle] = {},
@@ -78,7 +80,7 @@ function drinks.add_vessel(empty_vessel_item, def)
 		error("All vessels must be registered before any drinks!")
 	end
 
-	if not minetest.registered_items[empty_vessel_item] then
+	if empty_vessel_item ~= source and not minetest.registered_items[empty_vessel_item] then
 		error("Vessel item "..empty_vessel_item.." not registered by Minetest!")
 	end
 	if registered_vessels[empty_vessel_item] then
@@ -89,6 +91,18 @@ function drinks.add_vessel(empty_vessel_item, def)
 	-- TODO: Update full vessels definitions to allow drinks to be registered before vessels.
 
 	return true
+end
+
+local function set_spill_from_results(full_vessel_item, drink_id, units_produced, empty_vessel_item)
+	if empty_vessel_item == source then
+		empty_vessel_item = ""
+	end
+	local result = { drink_id = drink_id, units_produced = units_produced, empty_vessel_item = empty_vessel_item }
+	if spill_from_results[full_vessel_item] ~= nil then
+		minetest.log("warning", "[drinks] spill_from_results["..full_vessel_item.."] is already set (old drink_id = "..spill_from_results[full_vessel_item].drink_id..", new drink_id = "..drink_id..")!")
+	end
+	spill_from_results[full_vessel_item] = result
+	return result
 end
 
 function drinks.add_drink(drink_id, drink_desc1, color, def)
@@ -104,7 +118,7 @@ function drinks.add_drink(drink_id, drink_desc1, color, def)
 		local full_vessel_item = def[empty_vessel_item]
 		if full_vessel_item == true or full_vessel_item == nil then
 			if vessel_def.get_template and (full_vessel_item == true or not vessel_def.default_only_for_true) then
-				local template = vessel_def.get_template(drink_id, def.drink_desc2 or def.drink_desc, color, math.ceil((def.health_per_unit or 0.5) * vessel_def.capacity))
+				local template = empty_vessel_item ~= source and vessel_def.get_template(drink_id, def.drink_desc2 or def.drink_desc, color, math.ceil((def.health_per_unit or 0.5) * vessel_def.capacity))
 				if template then
 					full_vessel_item = "drinks:"..vessel_def.abbr3.."_"..drink_id
 					if template.drawtype then
@@ -115,7 +129,7 @@ function drinks.add_drink(drink_id, drink_desc1, color, def)
 						drinks.register_item(full_vessel_item, empty_vessel_item, template)
 					end
 					def[empty_vessel_item] = full_vessel_item
-					spill_from_results[full_vessel_item] = { drink_id = drink_id, units_produced = vessel_def.capacity, empty_vessel_item = empty_vessel_item }
+					set_spill_from_results(full_vessel_item, drink_id, vessel_def.capacity, empty_vessel_item)
 				end
 			end
 		elseif full_vessel_item ~= false then
@@ -123,7 +137,7 @@ function drinks.add_drink(drink_id, drink_desc1, color, def)
 				-- pre-existing item
 				local override = {juice_type = drink_id}
 
-				if empty_vessel_item == glass and def.override_glass_tiles and vessel_def.get_template then
+				if empty_vessel_item == glass and def.override_glass_tiles and empty_vessel_item ~= source and vessel_def.get_template then
 					local template = vessel_def.get_template(drink_id, def.drink_desc2 or def.drink_desc, color, math.ceil((def.health_per_unit or 0.5) * vessel_def.capacity))
 					if template then
 						local tiles = template.tiles
@@ -139,7 +153,7 @@ function drinks.add_drink(drink_id, drink_desc1, color, def)
 				end
 
 				minetest.override_item(full_vessel_item, override)
-				spill_from_results[full_vessel_item] = { drink_id = drink_id, units_produced = vessel_def.capacity, empty_vessel_item = empty_vessel_item }
+				set_spill_from_results(full_vessel_item, drink_id, vessel_def.capacity, empty_vessel_item)
 			else
 				-- non-existent item
 				def[empty_vessel_item] = false
@@ -300,6 +314,12 @@ drinks.add_vessel(bucket, {
 	end,
 })
 
+drinks.add_vessel(source, {
+	capacity = 10,
+	abbr3 = "src",
+	-- no get_template!
+})
+
 if minetest.get_modpath("bucket_wooden") then
 	drinks.add_vessel(wooden_bucket, {
 		capacity = 80, -- 8 l
@@ -442,7 +462,31 @@ drinks.add_drink("water", "voda", "#2b639e", {
 	drink_desc4 = "vodu",
 	[glass] = "farming:glass_water",
 	[bucket] = "bucket:bucket_water",
+	[source] = "default:water_source",
 })
+
+drinks.add_drink("soy_milk", "sójové mléko", "#d8d0c2", {
+	drink_desc2 = "sójového mléka",
+	drink_desc4 = "sójové mléko",
+	[glass] = "farming:soy_milk",
+})
+
+drinks.add_drink("mint_tea", "mátový čaj", "#d2df56", {
+	drink_desc2 = "mátového čaje",
+	drink_desc4 = "mátový čaj",
+	[glass] = "farming:mint_tea",
+})
+
+-- mobs_animal
+if minetest.get_modpath("mobs_animal") then
+	drinks.add_drink("milk", "mléko", "#ffffff", {
+		drink_desc2 = "mléka",
+		drink_desc4 = "mléko",
+		[glass] = "mobs:glass_milk",
+		[bucket] = "mobs:bucket_milk",
+		[wooden_bucket] = "mobs:bucket_wooden_milk",
+	})
+end
 
 -- wine
 if minetest.get_modpath("wine") then

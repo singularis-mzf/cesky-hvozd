@@ -503,6 +503,11 @@ local function craftguide_giveme(player, formname, fields)
 	local output = ui.current_item[player_name]
 	if (not output) or (output == "") then return end
 
+	local stack_max = ItemStack(output):get_stack_max()
+	if stack_max < amount then
+		amount = stack_max
+	end
+
 	local player_inv = player:get_inventory()
 
 	minetest.log("action", player_name.." gived themself "..output.." "..amount.." using craft guide")

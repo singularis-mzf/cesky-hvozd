@@ -94,6 +94,12 @@ minetest.register_craft({
 	}
 })
 
+local glass_sounds = default.node_sound_defaults({
+	dig = {name = "default_dig_oddly_breakable_by_hand", gain = 0.3},
+	dug = {name = "default_dig_oddly_breakable_by_hand", gain = 0.5},
+	footstep = {name = "", gain = 1.0},
+})
+
 minetest.register_node("vessels:glass_bottle", {
 	description = S("Empty Glass Bottle"),
 	drawtype = "plantlike",
@@ -108,7 +114,7 @@ minetest.register_node("vessels:glass_bottle", {
 		fixed = {-0.25, -0.5, -0.25, 0.25, 0.3, 0.25}
 	},
 	groups = {vessel = 1, dig_immediate = 3, attached_node = 1},
-	sounds = default.node_sound_glass_defaults(),
+	sounds = glass_sounds,
 })
 
 minetest.register_craft( {
@@ -134,7 +140,7 @@ minetest.register_node("vessels:drinking_glass", {
 		fixed = {-0.25, -0.5, -0.25, 0.25, 0.3, 0.25}
 	},
 	groups = {vessel = 1, dig_immediate = 3, attached_node = 1},
-	sounds = default.node_sound_glass_defaults(),
+	sounds = glass_sounds,
 })
 
 minetest.register_craft( {

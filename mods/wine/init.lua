@@ -3,10 +3,13 @@ wine = {}
 local path = minetest.get_modpath("wine")
 local def = minetest.get_modpath("default")
 local snd_d = def and default.node_sound_defaults()
-local snd_g = def and default.node_sound_glass_defaults()
+local snd_g = minetest.registered_nodes["vessels:drinking_glass"].sounds
 local glass_item = def and "default:glass"
 local txt
 
+if not snd_g then
+	error("Missing sounds for a drinking glass!")
+end
 
 -- check for MineClone2
 local mcl = minetest.get_modpath("mcl_core")
