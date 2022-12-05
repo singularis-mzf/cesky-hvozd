@@ -33,15 +33,16 @@ local default_items = {
 	{stack = ItemStack("ch_extras:sickle_steel"), survival = true},
 	{stack = ItemStack("ch_extras:teleporter_unsellable"), new = true, survival = true},
 	{stack = ItemStack("ch_extras:teleporter_unsellable 100"), creative = true},
-	{stack = get_flashlight(), new = true, survival = true, creative = true},
 	{stack = ItemStack("orienteering:map"), new = true, survival = true, creative = true},
 	{stack = ItemStack("orienteering:triangulator"), survival = true, creative = true},
-	-- ItemStack("technic:flashlight 1 1 \"\u0001\u0002return {charge=30000}\u0003\"")
 	{stack = ItemStack("unified_inventory:bag_large"), survival = true, creative = true},
 	{stack = ItemStack("bridger:scaffolding 100"), survival = true},
 	{stack = ItemStack("towercrane:base"), survival = true, creative = true},
 	{stack = ItemStack("anvil:hammer"), survival = true},
 	{stack = ItemStack("airtanks:empty_bronze_tank"), survival = true, creative = true},
+	{stack = ItemStack("ch_core:kcs_kcs 1000"), survival = true},
+
+	{stack = get_flashlight(), new = true, survival = true, creative = true},
 }
 
 local function compute_initial_inventory(reg_type)
