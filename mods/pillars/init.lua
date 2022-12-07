@@ -100,19 +100,30 @@ end)
 
 pillars = {}
 
+local function join_groups(a, b)
+	local result = table.copy(a)
+	for g, v in pairs(b) do
+		result[g] = v
+	end
+	return result
+end
+
 function pillars.register_pillar(name, def)
     local groups = table.copy(def.groups)
 	groups.pillar = 1
 	
 	local no_inv_groups = table.copy(groups)
 	no_inv_groups.not_in_creative_inventory = 1
-    
-	for k, v in pairs({{"", basic_shape, groups},
-	                   {"_top", top_shape, no_inv_groups},
-	                   {"_bot", bottom_shape, no_inv_groups},
-	                   {"_mid", middle_shape, no_inv_groups}}) do
+
+	local shapes_def = {
+		{"", basic_shape, join_groups(def.groups, {pillar = 4})},
+		{"_top", top_shape, join_groups(def.groups, {pillar = 3, not_in_creative_inventory = 1})},
+		{"_bot", bottom_shape, join_groups(def.groups, {pillar = 1, not_in_creative_inventory = 1})},
+		{"_mid", middle_shape, join_groups(def.groups, {pillar = 2, not_in_creative_inventory = 1})}}
+
+	for k, v in pairs(shapes_def) do
         local sides = { "top", "bottom" }
-	    
+
         if v[1] == "_top" then
             sides = { "bottom" }
         elseif v[1] == "_bot" then
@@ -120,11 +131,12 @@ function pillars.register_pillar(name, def)
         elseif v[1] == "" then
             sides = {}
         end
-	
+
 	    minetest.register_node(":pillars:" .. name .. v[1], {
 		    description = def.description,
 		    drawtype = "nodebox",
 		    paramtype = "light",
+			paramtype2 = "facedir",
 		    is_ground_content = false,
 		    sunlight_propagates = def.sunlight_propagates,
 		    inventory_image = def.inventory_image,
@@ -143,7 +155,18 @@ function pillars.register_pillar(name, def)
 			    type = "fixed",
 			    fixed = v[2]
 		    },
-		    connect_sides = sides
+		    connect_sides = sides,
+			on_punch = function(pos, node, puncher)
+				local player_name = puncher and puncher:get_player_name()
+				if player_name and puncher:get_player_control().aux1 then
+					if minetest.is_protected(pos, player_name) then
+						minetest.record_protection_violation(pos, player_name)
+					else
+						node.name = "pillars:"..name..(shapes_def[k + 1] or shapes_def[1])[1]
+						minetest.swap_node(pos, node)
+					end
+				end
+			end,
 	    })
 	end
 
@@ -162,62 +185,257 @@ end
 -- Create Pillar from nodes defined in default mod
 
 local default_lib_nodes = {
-    -- Define all pillars from stone
-    
-    {"stone", "pilíř ze skalního kamene"},
-    {"cobble", "pilíř z dlažebního kamene"},
-    {"stonebrick", "pilíř z kamenných cihel", "stone_brick"},
-    {"stone_block", "pilíř z kamenných bloků"},
-    {"mossycobble", "pilíř z dlažebního kamene porostlého mechem"},
-    
-    {"desert_stone", "pilíř z pouštního skalního kamene"},
-    {"desert_cobble", "pilíř z pouštního dlažebního kamene"},
-    {"desert_stonebrick", "pilíř z cihel z pouštního kamene", "desert_stone_brick"},
-    {"desert_stone_block", "pilíř z bloků pouštního kamene"},
-    
-    {"sandstone", "pilíř ze žlutého pískovce"},
-    {"sandstonebrick", "pilíř ze žlutých pískovcových cihel", "sandstone_brick"},
-    {"sandstone_block", "pilíř ze žlutých pískovcových bloků"},
-    
-    {"desert_sandstone", "pilíř z pouštního pískovce"},
-    {"desert_sandstone_brick", "pilíř z pouštních pískovcových cihel"},
-    {"desert_sandstone_block", "pilíř z pouštních pískovcových bloků"},
-    
-    {"silver_sandstone", "pilíř z bílého pískovce"},
-    {"silver_sandstone_brick", "pilíř z bílých pískovcových cihel"},
-    {"silver_sandstone_block", "pilíř z bílých pískovcových bloků"},
-    
-    {"obsidian", "pilíř z obsidiánu"},
-    {"obsidianbrick", "pilíř z obsidiánových cihel", "obsidian_brick"},
-    {"obsidian_block", "pilíř z obsidiánových bloků"},
-    
-    -- Define all pillar from wood planks
-    {"wood", "pilíř z jabloňového dřeva", sound = default.node_sound_wood_defaults()},
-    {"junglewood", "pilíř z dřeva džunglovníku", sound = default.node_sound_wood_defaults()},
-    {"pine_wood", "pilíř z borového dřeva", sound = default.node_sound_wood_defaults()},
-    {"acacia_wood", "pilíř z akáciového dřeva", sound = default.node_sound_wood_defaults()},
-    {"aspen_wood", "pilíř z osikového dřeva", sound = default.node_sound_wood_defaults()},
+    -- STONE:
+	stone = {
+		basenode = "default:stone",
+		description = "pilíř ze skalního kamene",
+	},
+	stonebrick = {
+		basenode = "default:stonebrick",
+		description = "pilíř z kamenných cihel",
+	},
+	stone_brick = {
+		basenode = "darkage:stone_brick",
+		description = "pilíř z kamenných cihel 2",
+	},
+	desert_stone = {
+		basenode = "default:desert_stone",
+		description = "pilíř z pouštního skalního kamene",
+	},
+	desert_cobble = {
+		basenode = "default:desert_cobble",
+		description = "pilíř z pouštního dlažebního kamene",
+	},
+	desert_stonebrick = {
+		basenode = "default:desert_stonebrick",
+		description = "pilíř z cihel z pouštního kamene",
+	},
+	sandstone = {
+		basenode = "default:sandstone",
+		description = "pilíř ze žlutého pískovce",
+	},
+	sandstonebrick = {
+		basenode = "default:sandstonebrick",
+		description = "pilíř ze žlutých pískovcových cihel",
+	},
+	desert_sandstone = {
+		basenode = "default:desert_sandstone",
+		description = "pilíř z pouštního pískovce",
+	},
+	desert_sandstone_brick = {
+		basenode = "default:desert_sandstone_brick",
+		description = "pilíř z pouštních pískovcových cihel",
+	},
+	silver_sandstone = {
+		basenode = "default:silver_sandstone",
+		description = "pilíř z bílého pískovce",
+	},
+	silver_sandstone_brick = {
+		basenode = "default:silver_sandstone_brick",
+		description = "pilíř z bílých pískovcových cihel",
+	},
+	obsidian = {
+		basenode = "default:obsidian",
+		description = "pilíř z obsidiánu",
+	},
+		da_marble = {
+		basenode = "darkage:marble",
+		description = "pilíř z bílého mramoru",
+	},
+	jz_marble = {
+		basenode = "jonez:marble",
+		description = "pilíř z nehodivského mramoru",
+	},
+	tc_marble = {
+		basenode = "technic:marble",
+		description = "pilíř z podzemního mramoru",
+	},
+
+	basalt = {
+		basenode = "darkage:basalt",
+		description = "pilíř z čediče",
+	},
+	basalt_brick = {
+		basenode = "darkage:basalt_brick",
+		description = "pilíř z čedičových cihel",
+	},
+	basalt_cobble = {
+		basenode = "darkage:basalt_cobble",
+		description = "pilíř z čedičové dlažby",
+	},
+	serpentine = {
+		basenode = "darkage:serpentine",
+		description = "pilíř z hadce (serpentinitu)",
+	},
+	ors_brick = {
+		basenode = "darkage:ors_brick",
+		description = "pilíř z cihlovcových cihel",
+	},
+	concrete = {
+		basenode = "basic_materials:concrete_block",
+		description = "pilíř z betonu",
+	},
+	cement = {
+		basenode = "basic_materials:cement_block",
+		description = "pilíř z cementu",
+	},
+
+	-- WOOD:
+	wood = {
+		basenode = "default:wood",
+		description = "pilíř z jabloňového dřeva",
+		sounds = default.node_sound_wood_defaults(),
+	},
+	junglewood = {
+		basenode = "default:junglewood",
+		description = "pilíř z dřeva džunglovníku",
+		sounds = default.node_sound_wood_defaults(),
+	},
+	pine_wood = {
+		basenode = "default:pine_wood",
+		description = "pilíř z borového dřeva",
+		sounds = default.node_sound_wood_defaults(),
+	},
+	acacia_wood = {
+		basenode = "default:acacia_wood",
+		description = "pilíř z akáciového dřeva",
+		sounds = default.node_sound_wood_defaults(),
+	},
+	aspen_wood = {
+		basenode = "default:aspen_wood",
+		description = "pilíř z osikového dřeva",
+		sounds = default.node_sound_wood_defaults(),
+	},
+	date_palm = {
+		basenode = "moretrees:date_palm_planks",
+		description = "pilíř z datlovníkového dřeva",
+		sounds = default.node_sound_wood_defaults(),
+	},
+	ebony = {
+		basenode = "ebony:wood",
+		description = "pilíř z ebenového dřeva",
+		sounds = default.node_sound_wood_defaults(),
+	},
+	spruce = {
+		basenode = "moretrees:spruce_planks",
+		description = "pilíř ze smrkového dřeva",
+		sounds = default.node_sound_wood_defaults(),
+	},
+	plumtree = {
+		basenode = "plumtree:wood",
+		description = "pilíř ze švestkového dřeva",
+		sounds = default.node_sound_wood_defaults(),
+	},
+	poplar = {
+		basenode = "moretrees:poplar_planks",
+		description = "pilíř z topolového dřeva",
+		sounds = default.node_sound_wood_defaults(),
+	},
+
+	-- METAL:
+	copper = {
+		basenode = "default:copperblock",
+		description = "pilíř z mědi",
+		sounds = default.node_sound_metal_defaults(),
+	},
+	copperpatina = {
+		basenode = "moreblocks:copperpatina",
+		description = "pilíř z mědi s patinou",
+		sounds = default.node_sound_metal_defaults(),
+	},
+	iron = {
+		basenode = "default:steelblock",
+		description = "pilíř ze železa",
+		sounds = default.node_sound_metal_defaults(),
+	},
+	cast_iron = {
+		basenode = "technic:cast_iron_block",
+		description = "pilíř z litého železa",
+		sounds = default.node_sound_metal_defaults(),
+	},
+	gold = {
+		basenode = "default:goldblock",
+		description = "pilíř ze zlata",
+		sounds = default.node_sound_metal_defaults(),
+	},
+	brass = {
+		basenode = "basic_materials:brass_block",
+		description = "pilíř z mosazi",
+		sounds = default.node_sound_metal_defaults(),
+	},
+	bronze = {
+		basenode = "default:bronzeblock",
+		description = "pilíř z bronzu",
+		sounds = default.node_sound_metal_defaults(),
+	},
+
+	-- PLASTER:
+	plaster_white = {
+		basenode = "solidcolor:plaster_white",
+		description = "pilíř s bílou omítkou",
+	},
+	plaster_red = {
+		basenode = "solidcolor:plaster_red",
+		description = "pilíř s červenou omítkou",
+	},
+	plaster_blue = {
+		basenode = "solidcolor:plaster_blue ",
+		description = "pilíř s modrou omítkou",
+	},
+	plaster_medium_amber_s50 = {
+		basenode = "solidcolor:plaster_medium_amber_s50",
+		description = "pilíř s okrovou omítkou",
+	},
+	plaster_orange = {
+		basenode = "solidcolor:plaster_orange",
+		description = "pilíř s oranžovou omítkou",
+	},
+	plaster_pink = {
+		basenode = "solidcolor:plaster_pink",
+		description = "pilíř s růžovou omítkou",
+	},
+	plaster_grey = {
+		basenode = "solidcolor:plaster_grey",
+		description = "pilíř s šedou omítkou",
+	},
+	plaster_dark_grey = {
+		basenode = "solidcolor:plaster_dark_grey",
+		description = "pilíř s tmavě šedou omítkou",
+	},
+	plaster_dark_green = {
+		basenode = "solidcolor:plaster_dark_green",
+		description = "pilíř s tmavozelenou omítkou",
+	},
+	plaster_cyan = {
+		basenode = "solidcolor:plaster_cyan",
+		description = "pilíř s tykrysovou omítkou",
+	},
+	plaster_green = {
+		basenode = "solidcolor:plaster_green",
+		description = "pilíř se zelenou omítkou",
+	},
+	plaster_yellow = {
+		basenode = "solidcolor:plaster_yellow",
+		description = "pilíř se žlutou omítkou",
+	},
 }
 
 for k, v in pairs(default_lib_nodes) do
-    texture_name = v[1]
-    sound = default.node_sound_stone_defaults()
-    
-    if v[3] then
-        texture_name = v[3]
-    end
-    
-    if v.sound then
-        sound = v.sound
-    end
-    
-    pillars.register_pillar(v[1], {
-	    description = v[2],
-	    textures = {"default_" .. texture_name .. ".png"},
-	    sounds = sound,
-	    groups = {snappy=2, cracky=3, oddly_breakable_by_hand=3},
-	    basenode = "default:" .. v[1]
-    })
+    -- texture_name = v[3] or v[1]
+
+	local ndef = minetest.registered_nodes[v.basenode]
+
+	if ndef then
+		pillars.register_pillar(k, {
+			description = v.description or "pilíř",
+			textures = ndef.tiles, -- v.tiles or ndef.tiles,
+			sounds = v.sounds or default.node_sound_stone_defaults(),
+			groups = {snappy=2, cracky=3, oddly_breakable_by_hand=3},
+			basenode = v.basenode,
+		})
+	else
+		minetest.log("warning", v.basenode.." not found as a basenode for a pillar!")
+	end
 end
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

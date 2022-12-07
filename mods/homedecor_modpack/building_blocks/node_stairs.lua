@@ -59,7 +59,7 @@ if minetest.get_modpath("default") then
 	grasstex = minetest.registered_nodes["default:dirt_with_grass"].tiles
 end
 building_blocks_stairs("building_blocks:fakegrass", {
-	tiles = grasstex,
+	tiles = {grasstex[1]},
 	description = S("Fake Grass"),
 	is_ground_content = true,
 	groups = {crumbly=3, dig_sand=3},
