@@ -31,6 +31,10 @@ ch_extras_switch_straight.png
 	License: CC BY-SA 3.0
 	Author: Singularis
 
+ch_extras_noise.png
+	License: CC0 (probably public domain, because it's white noise)
+	Author: Singularis
+
 ch_extras_cz_flag.png
 ch_extras_cz_flag_inv.png
 	License: public domain by the Czech law
