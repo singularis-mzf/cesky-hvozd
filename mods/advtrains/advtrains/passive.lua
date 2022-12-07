@@ -38,7 +38,7 @@ end
 
 function advtrains.setstate(parpos, newstate, pnode)
 	local pos
-	if atlatc then
+	if minetest.get_modpath("advtrains_luaautomation") and atlatc then
 		pos = atlatc.pcnaming.resolve_pos(parpos)
 	else
 		pos = advtrains.round_vector_floor_y(parpos)
