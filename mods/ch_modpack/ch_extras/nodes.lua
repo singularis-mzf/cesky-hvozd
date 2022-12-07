@@ -350,6 +350,9 @@ local tiles_straight = {
 local tiles_arrow = table.copy(tiles_straight)
 tiles_arrow[6] = "ch_extras_switch_arrow.png"
 
+local tiles_arrow_r = table.copy(tiles_straight)
+tiles_arrow_r[6] = "ch_extras_switch_arrow.png^[transformR180"
+
 def = {
 	description = "výměnové návěstidlo",
 	paramtype = "light",
@@ -357,19 +360,40 @@ def = {
 	is_ground_content = false,
 	light_source = 4,
 	sounds = default.node_sound_stone_defaults(),
+	after_place_node = function(pos, placer, itemstack, pointed_thing)
+		local meta = minetest.get_meta(pos)
+		local player_name = placer and placer:get_player_name()
+		if player_name then
+			meta:set_string("owner", player_name)
+			meta:set_string("infotext", "návěstidlo postavil/a: "..ch_core.prihlasovaci_na_zobrazovaci(player_name))
+		end
+	end,
 }
 if mesecons_on then
-	def.on_rightclick = function(pos, node)
+	def.on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		local player_name = clicker and clicker:get_player_name()
+		if not player_name then
+			return
+		end
+		if minetest.is_protected(pos, player_name) then
+			minetest.record_protection_violation(pos, player_name)
+			return false
+		end
+		if not minetest.check_player_privs(player_name, {railway_operator = true}) then
+			ch_core.systemovy_kanal(player_name, "Nemáte právo přehazovat výhybky!")
+			return false
+		end
+
 		if node.name:find("_off$") then
 			node.name = node.name:sub(1, -5) .. "_on"
 			minetest.swap_node(pos, node)
 			mesecon.receptor_on(pos)
-			minetest.debug("receptor_on => "..node.name)
+			minetest.log("action", player_name.." set turnout at "..minetest.pos_to_string(pos).." to ON state ("..node.name..")")
 		else
 			node.name = node.name:sub(1, -4) .. "_off"
 			minetest.swap_node(pos, node)
 			mesecon.receptor_off(pos)
-			minetest.debug("receptor_off => "..node.name)
+			minetest.log("action", player_name.." set turnout at "..minetest.pos_to_string(pos).." to OFF state ("..node.name..")")
 		end
 		minetest.sound_play("mesecons_switch", { pos = pos }, true)
 	end
@@ -402,6 +426,19 @@ ch_core.register_nodes(
 			mesecons = mesecons_on,
 			drop = "ch_extras:switch_r_off",
 		},
+		["ch_extras:switch_lr_off"] = {
+			description = "výměnové návěstidlo (vlevo/vpravo)",
+			tiles = tiles_arrow,
+			groups = groups_in_ci,
+			mesecons = mesecons_off,
+		},
+		["ch_extras:switch_lr_on"] = {
+			description = "výměnové návěstidlo (vlevo/vpravo)",
+			tiles = tiles_arrow_r,
+			groups = groups_not_in_ci,
+			mesecons = mesecons_on,
+			drop = "ch_extras:switch_lr_off",
+		},
 	},
 	{
 		{
@@ -415,6 +452,10 @@ ch_core.register_nodes(
 			output = "ch_extras:switch_r_off", recipe = {{"ch_extras:switch_off"}}
 		}, {
 			output = "ch_extras:switch_off", recipe = {{"ch_extras:switch_r_off"}}
+		}, {
+			output = "ch_extras:switch_lr_off 2", recipe = {{"ch_extras:switch_r_off", "ch_extras:switch_r_off"}, {"", ""}}
+		}, {
+			output = "ch_extras:switch_r_off", recipe = {{"ch_extras:switch_lr_off"}}
 		}
 	})
 
