@@ -319,7 +319,7 @@ function ch_core.ap_add(player_name, offline_charinfo, points_to_add, debug_coef
 	end
 
 	if debug_coef_changes then
-		minetest.log("action", player_name..": level_op="..(new_level > old_level and ">" or new_level < old_level and "<" or "=")..", level="..old_level.."=>"..new_level..", xp="..old_xp.."=>"..new_xp..", coefs = "..table.concat(debug_coef_changes))
+		minetest.log("info", player_name..": level_op="..(new_level > old_level and ">" or new_level < old_level and "<" or "=")..", level="..old_level.."=>"..new_level..", xp="..old_xp.."=>"..new_xp..", coefs = "..table.concat(debug_coef_changes))
 	end
 
 	-- oznámit
