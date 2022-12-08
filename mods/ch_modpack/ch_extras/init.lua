@@ -4,6 +4,7 @@ local modpath = minetest.get_modpath("ch_extras")
 
 dofile(modpath.."/craftitems.lua")
 dofile(modpath.."/nodes.lua")
+dofile(modpath.."/switch.lua")
 dofile(modpath.."/tools.lua")
 dofile(modpath.."/totalst.lua")
 
