@@ -379,7 +379,7 @@ local default_lib_nodes = {
 		description = "pilíř s červenou omítkou",
 	},
 	plaster_blue = {
-		basenode = "solidcolor:plaster_blue ",
+		basenode = "solidcolor:plaster_blue",
 		description = "pilíř s modrou omítkou",
 	},
 	plaster_medium_amber_s50 = {
