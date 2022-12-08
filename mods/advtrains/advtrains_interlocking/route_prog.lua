@@ -126,11 +126,11 @@ the distant signal aspect is determined as DANGER.
 ]]--
 
 local function chat(pname, message)
-	minetest.chat_send_player(pname, "[Route programming] "..message)
+	minetest.chat_send_player(pname, "[Programování cesty] "..message)
 end
 local function clear_lock(locks, pname, pts)
 	locks[pts] = nil
-	chat(pname, pts.." is no longer affected when this route is set.")
+	chat(pname, pts.." již není ovlivněn/a, když je tato cesta nastavena.")
 end
 
 local function otherside(s)
@@ -178,7 +178,7 @@ function advtrains.interlocking.visualize_route(origin, route, context, tmp_lcks
 		-- display locks
 		for pts, state in pairs(v.locks) do
 			local pos = minetest.string_to_pos(pts)
-			routesprite(context, pos, "fix"..k..pts, "at_il_route_lock.png", "Fixed in state '"..state.."' by route "..route.name.." until segment #"..k.." is freed.")
+			routesprite(context, pos, "fix"..k..pts, "at_il_route_lock.png", "Zajištěna ve stavu '"..state.."' po cestě "..route.name.." dokud není úsek #"..k.." uvolněn.")
 		end
 	end
 	
@@ -205,7 +205,7 @@ function advtrains.interlocking.visualize_route(origin, route, context, tmp_lcks
 	-- display locks set by player		
 		for pts, state in pairs(tmp_lcks) do
 			local pos = minetest.string_to_pos(pts)
-			routesprite(context, pos, "fixp"..pts, "at_il_route_lock_edit.png", "Fixed in state '"..state.."' by route "..route.name.." (punch to unfix)",
+			routesprite(context, pos, "fixp"..pts, "at_il_route_lock_edit.png", "Zajištěna ve stavu '"..state.."' cestou "..route.name.." (levý klik pro uvolnění)",
 				function() clear_lock(tmp_lcks, pname, pts) end)
 		end
 	end
@@ -216,7 +216,7 @@ local player_rte_prog = {}
 
 function advtrains.interlocking.init_route_prog(pname, sigd)
 	if not minetest.check_player_privs(pname, "interlocking") then
-		minetest.chat_send_player(pname, "Insufficient privileges to use this!")
+		minetest.chat_send_player(pname, attrans("Insufficient privileges to use this!"))
 		return
 	end
 	player_rte_prog[pname] = {
@@ -227,7 +227,7 @@ function advtrains.interlocking.init_route_prog(pname, sigd)
 		tmp_lcks = {},
 	}
 	advtrains.interlocking.visualize_route(sigd, player_rte_prog[pname].route, "prog_"..pname, player_rte_prog[pname].tmp_lcks, pname)
-	minetest.chat_send_player(pname, "Route programming mode active. Punch TCBs to add route segments, punch turnouts to lock them.")
+	minetest.chat_send_player(pname, "Režim programování cesty je aktivní. Klikejte levým tlačítkem na TCB pro přidání úseků a na výhybky pro jejich uzamčení.")
 end
 
 local function get_last_route_item(origin, route)
@@ -240,32 +240,32 @@ end
 local function do_advance_route(pname, rp, sigd, tsname)
 	table.insert(rp.route, {next = sigd, locks = rp.tmp_lcks})
 	rp.tmp_lcks = {}
-	chat(pname, "Added track section '"..tsname.."' to the route.")
+	chat(pname, "Úsek '"..tsname.."' přidán na cestu.")
 end
 
 local function finishrpform(pname)
 	local rp = player_rte_prog[pname]
 	if not rp then return end
 	
-	local form = "size[7,6]label[0.5,0.5;Finish programming route]"
+	local form = "size[7,6]label[0.5,0.5;Dokončit programování cesty]"
 	local terminal = get_last_route_item(rp.origin, rp.route)
 	if terminal then
 		local term_tcbs = advtrains.interlocking.db.get_tcbs(terminal)
 		
 		if term_tcbs.signal then
-			form = form .. "label[0.5,1.5;Route ends at signal:]"
+			form = form .. "label[0.5,1.5;Cesta končí na signalizaci:]"
 			form = form .. "label[0.5,2  ;"..term_tcbs.signal_name.."]"
 		else
-			form = form .. "label[0.5,1.5;WARNING: Route does not end at a signal.]"
-			form = form .. "label[0.5,2  ;Routes should in most cases end at signals.]"
-			form = form .. "label[0.5,2.5;Cancel if you are unsure!]"
+			form = form .. "label[0.5,1.5;VAROVÁNÍ: Cesta nekončí na signalizaci.]"
+			form = form .. "label[0.5,2  ;Cesty většinou končí na signlizacích.]"
+			form = form .. "label[0.5,2.5;Nejste-li si jistý/á, zrušte programování!]"
 		end
 	else
-		form = form .. "label[0.5,1.5;Route leads into]"
-		form = form .. "label[0.5,2  ;non-interlocked area]"
+		form = form .. "label[0.5,1.5;Cesta vede do]"
+		form = form .. "label[0.5,2  ;nezabezpečené oblasti]"
 	end
-	form = form.."field[0.8,3.5;5.2,1;name;Enter Route Name;]"
-	form = form.."button_exit[0.5,4.5;  5,1;save;Save Route]"
+	form = form.."field[0.8,3.5;5.2,1;name;Zadejte název cesty;]"
+	form = form.."button_exit[0.5,4.5;  5,1;save;Uložit cestu]"
 	
 	
 	minetest.show_formspec(pname, "at_il_routepf", form)
@@ -313,7 +313,7 @@ local function check_advance_valid(tcbpos, rp)
 	local adv_tcbs = advtrains.interlocking.db.get_tcbs(this_sigd)
 	local next_tsid = adv_tcbs.ts_id
 	local can_over, over_ts, next_tc_bs = false, nil, nil
-	local cannotover_rsn = "Next section is diverging (>2 TCBs)"
+	local cannotover_rsn = "Rozbíhavý úsek (>2 TCB)"
 	if next_tsid then
 		-- you may not advance over EOI. While this is technically possible,
 		-- in practise this just enters an unnecessary extra empty route item.
@@ -321,7 +321,7 @@ local function check_advance_valid(tcbpos, rp)
 		next_tc_bs = over_ts.tc_breaks
 		can_over = #next_tc_bs <= 2
 	else
-		cannotover_rsn = "End of interlocking"
+		cannotover_rsn = "Konec zabezpečené oblasti"
 	end
 	
 	local over_sigd = nil
@@ -363,29 +363,29 @@ local function show_routing_form(pname, tcbpos, message)
 	--  show nothing at all
 	-- In all cases, Discard and Backtrack buttons needed.
 	
-	local form = "size[7,9.5]label[0.5,0.5;Advance/Complete Route]"
+	local form = "size[7,9.5]label[0.5,0.5;Pokračovat/ukončit cestu]"
 	if message then
 		form = form .. "label[0.5,1;"..message.."]"
 	end
 	
 	if advance_valid and not is_endpoint then
-		form = form.. "label[0.5,1.8;Advance to next route section]"
+		form = form.. "label[0.5,1.8;Pokračovat s cestou do dalšího úseku]"
 		form = form.."image_button[0.5,2.2;  5,1;at_il_routep_advance.png;advance;]"
 		
 		form = form.. "label[0.5,3.5;-------------------------]"
 	else
-		form = form.. "label[0.5,2.3;This TCB is not suitable as]"
-		form = form.. "label[0.5,2.8;route continuation.]"
+		form = form.. "label[0.5,2.3;Tato TCB není vhodná]"
+		form = form.. "label[0.5,2.8;pro pokračování cesty.]"
 	end
 	if advance_valid or is_endpoint then
-		form = form.. "label[0.5,3.8;Finish route HERE]"
+		form = form.. "label[0.5,3.8;Ukonči cestu ZDE]"
 		form = form.."image_button[0.5,  4.2;  5,1;at_il_routep_end_here.png;endhere;]"
 		if can_over then
-			form = form.. "label[0.5,5.3;Finish route at end of NEXT section]"
+			form = form.. "label[0.5,5.3;Ukončit cestu na konci NÁSLEDUJÍCÍHO úseku]"
 			form = form.."image_button[0.5,5.7;  5,1;at_il_routep_end_over.png;endover;]"
 		else
-			form = form.. "label[0.5,5.3;Advancing over next section is]"
-			form = form.. "label[0.5,5.8;impossible at this place.]"
+			form = form.. "label[0.5,5.3;Pokračování do následujícího úseku]"
+			form = form.. "label[0.5,5.8;zde není možné.]"
 			if cannotover_rsn then
 				form = form.. "label[0.5,6.3;"..cannotover_rsn.."]"
 			end
@@ -394,9 +394,9 @@ local function show_routing_form(pname, tcbpos, message)
 	
 	form = form.. "label[0.5,7;-------------------------]"
 	if #rp.route > 0 then
-		form = form.."button[0.5,7.4;  5,1;retract;Step back one section]"
+		form = form.."button[0.5,7.4;  5,1;retract;Zpět o jeden úsek]"
 	end
-	form = form.."button[0.5,8.4;  5,1;cancel;Cancel route programming]"
+	form = form.."button[0.5,8.4;  5,1;cancel;Zrušit programování cesty]"
 	
 	minetest.show_formspec(pname, "at_il_rprog_"..minetest.pos_to_string(tcbpos), form)
 end
@@ -447,12 +447,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			end
 			rp.tmp_locks = rp.route[#rp.route].locks
 			rp.route[#rp.route] = nil
-			chat(pname, "Route section "..(#rp.route+1).." removed.") 
+			chat(pname, "Úsek cesty  "..(#rp.route+1).." odstraněn.") 
 		end
 		if fields.cancel then
 			player_rte_prog[pname] = nil
 			advtrains.interlocking.clear_visu_context("prog_"..pname)
-			chat(pname, "Route discarded.")
+			chat(pname, "Cesta zahozena.")
 			minetest.close_formspec(pname, formname)
 			return
 		end
@@ -473,13 +473,13 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		local rp = player_rte_prog[pname]
 		if rp then
 			if #rp.route <= 0 then
-				chat(pname, "Cannot program route without a target")
+				chat(pname, "Bez cíle nemohu naprogramovat cestu.")
 				return
 			end
 			
 			local tcbs = advtrains.interlocking.db.get_tcbs(rp.origin)
 			if not tcbs then
-				chat(pname, "The origin TCB has become unknown during programming. Try again.")
+				chat(pname, "Původní TCB se během programování ztratilo. Zkuste cestu naprogramovat znovu.")
 				return
 			end
 			
@@ -491,7 +491,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			
 			advtrains.interlocking.clear_visu_context("prog_"..pname)
 			player_rte_prog[pname] = nil
-			chat(pname, "Successfully programmed route.")
+			chat(pname, "Cesta úspěšně naprogramována.")
 			
 			advtrains.interlocking.show_route_edit_form(pname, rp.origin, #tcbs.routes)
 			return
@@ -514,7 +514,7 @@ minetest.register_on_punchnode(function(pos, node, player, pointed_thing)
 			local meta = minetest.get_meta(pos)
 			local tcbpts = meta:get_string("tcb_pos")
 			if tcbpts == "" then 
-				chat(pname, "This TCB is unconfigured, you first need to assign it to a rail")
+				chat(pname, "Tato TCB není nastavena, nejprve k ní musíte přiřadit kolej")
 				return
 			end
 			local tcbpos = minetest.string_to_pos(tcbpts)
@@ -534,7 +534,7 @@ minetest.register_on_punchnode(function(pos, node, player, pointed_thing)
 			else
 				local state = advtrains.getstate(pos)
 				rp.tmp_lcks[pts] = state
-				chat(pname, pts.." is held in "..state.." position when this route is set and freed ")
+				chat(pname, pts.." je držena ve stavu "..state.." , když je tato cesta nastavena a uvolněna.")
 			end
 			advtrains.interlocking.visualize_route(rp.origin, rp.route, "prog_"..pname, rp.tmp_lcks, pname)
 			return

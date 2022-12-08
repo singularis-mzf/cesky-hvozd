@@ -243,7 +243,7 @@ local function mktcbformspec(tcbs, btnpref, offset, pname)
 		end
 	else
 		tcbs.ts_id = nil
-		form = form.."label[0.5,"..offset..";Side "..btnpref..": "..attrans("End of interlocking").."]"
+		form = form.."label[0.5,"..offset..";Strana "..btnpref..": "..attrans("End of interlocking").."]"
 		form = form.."button[0.5,"..(offset+0.5)..";5,1;"..btnpref.."_makeil;"..attrans("Create Interlocked Track Section").."]"
 		--if tcbs.section_free then
 			--form = form.."button[0.5,"..(offset+1.5)..";5,1;"..btnpref.."_setlocked;Section is free]"

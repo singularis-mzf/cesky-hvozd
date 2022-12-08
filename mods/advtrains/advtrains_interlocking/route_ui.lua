@@ -15,7 +15,7 @@ end
 function atil.show_route_edit_form(pname, sigd, routeid)
 
 	if not minetest.check_player_privs(pname, {train_operator=true, interlocking=true}) then
-		minetest.chat_send_player(pname, "Insufficient privileges to use this!")
+		minetest.chat_send_player(pname, attrans("Insufficient privileges to use this!"))
 		return
 	end
 	
@@ -24,9 +24,9 @@ function atil.show_route_edit_form(pname, sigd, routeid)
 	local route = tcbs.routes[routeid]
 	if not route then return end
 	
-	local form = "size[9,10]label[0.5,0.2;Route overview]"
-	form = form.."field[0.8,1.2;6.5,1;name;Route name;"..minetest.formspec_escape(route.name).."]"
-	form = form.."button[7.0,0.9;1.5,1;setname;Set]"
+	local form = "size[9,10]label[0.5,0.2;Přehled cesty]"
+	form = form.."field[0.8,1.2;6.5,1;name;Název cesty;"..minetest.formspec_escape(route.name).."]"
+	form = form.."button[7.0,0.9;1.5,1;setname;Nastavit]"
 	
 	-- construct textlist for route information
 	local tab = {}
@@ -43,12 +43,12 @@ function atil.show_route_edit_form(pname, sigd, routeid)
 	while c_sigd and i<=#route do
 		c_tcbs = ildb.get_tcbs(c_sigd)
 		if not c_tcbs then
-			itab("-!- No TCBS at "..sigd_to_string(c_sigd)..". Please reconfigure route!")
+			itab("-!- Na "..sigd_to_string(c_sigd).." nejsou žádné TCB. Prosím, přenastavte cestu!")
 			break
 		end
 		c_ts_id = c_tcbs.ts_id
 		if not c_ts_id then
-			itab("-!- No track section adjacent to "..sigd_to_string(c_sigd)..". Please reconfigure route!")
+			itab("-!- S "..sigd_to_string(c_sigd).." nesousedí žádný traťový úsek. Prosím přenastavte cestu!")
 			break
 		end
 		c_ts = ildb.get_ts(c_ts_id)
@@ -56,15 +56,15 @@ function atil.show_route_edit_form(pname, sigd, routeid)
 		c_rseg = route[i]
 		c_lckp = {}
 		
-		itab(""..i.." Entry "..sigd_to_string(c_sigd).." -> Sec. "..(c_ts and c_ts.name or "-").." -> Exit "..(c_rseg.next and sigd_to_string(c_rseg.next) or "END"))
+		itab(""..i.." Vjezd "..sigd_to_string(c_sigd).." -> Ús. "..(c_ts and c_ts.name or "-").." -> Výjezd "..(c_rseg.next and sigd_to_string(c_rseg.next) or "KONEC"))
 		
 		if c_rseg.locks then
 			for pts, state in pairs(c_rseg.locks) do
 				
 				local pos = minetest.string_to_pos(pts)
-				itab("  Lock: "..pts.." -> "..state)
+				itab("  Zámek: "..pts.." -> "..state)
 				if not advtrains.is_passive(pos) then
-					itab("-!- No passive component at "..pts..". Please reconfigure route!")
+					itab("-!- Na "..pts.." není žádná pasivní komponenta. Prosím, přenastavte cestu!")
 					break
 				end
 			end
@@ -75,21 +75,21 @@ function atil.show_route_edit_form(pname, sigd, routeid)
 	end
 	if c_sigd then
 		local e_tcbs = ildb.get_tcbs(c_sigd)
-		itab("Route end: "..sigd_to_string(c_sigd).." ("..(e_tcbs and e_tcbs.signal_name or "-")..")")
+		itab("Konec cesty: "..sigd_to_string(c_sigd).." ("..(e_tcbs and e_tcbs.signal_name or "-")..")")
 	else
-		itab("Route ends on dead-end")
+		itab("Cesta je slepá")
 	end
 	
 	form = form.."textlist[0.5,2;7.75,3.9;rtelog;"..table.concat(tab, ",").."]"
 	
-	form = form.."button[0.5,6;3,1;back;<<< Back to signal]"
-	form = form.."button[4.5,6;2,1;aspect;Signal Aspect]"
-	form = form.."button[6.5,6;2,1;delete;Delete Route]"
+	form = form.."button[0.5,6;3,1;back;<<< Zpět na signalizaci]"
+	form = form.."button[4.5,6;2,1;aspect;Stav signalizace]"
+	form = form.."button[6.5,6;2,1;delete;Smazat cestu]"
 	
 	--atdebug(route.ars)
 	form = form.."style[ars;font=mono]"
-	form = form.."textarea[0.8,7.3;5,3;ars;ARS Rule List;"..atil.ars_to_text(route.ars).."]"
-	form = form.."button[5.5,7.23;3,1;savears;Save ARS List]"
+	form = form.."textarea[0.8,7.3;5,3;ars;Pravidla ARS;"..atil.ars_to_text(route.ars).."]"
+	form = form.."button[5.5,7.23;3,1;savears;Uložit pravidla ARS]"
 	
 	minetest.show_formspec(pname, "at_il_routeedit_"..minetest.pos_to_string(sigd.p).."_"..sigd.s.."_"..routeid, form)
 
