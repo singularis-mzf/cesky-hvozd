@@ -169,11 +169,7 @@ homedecor.register("kitchen_chair_padded", {
 	end
 })
 
-local ofchairs_sbox = {
-	type = "fixed",
-	fixed = { -8/16, -8/16, -8/16, 8/16, 29/32, 8/16 }
-}
-local ofchairs_cbox = {
+local ofchairs_box = {
 	type = "fixed",
 	fixed = {
 		{ -5/16,   1/16, -7/16,  5/16,   4/16,  7/16 }, -- seat
@@ -197,8 +193,8 @@ for _, c in pairs(chairs) do
 		mesh = "homedecor_office_chair_"..name..".obj",
 		groups = { snappy = 3, dig_tree=2 },
 		sounds = default.node_sound_wood_defaults(),
-		selection_box = ofchairs_sbox,
-		collision_box = ofchairs_cbox,
+		selection_box = ofchairs_box,
+		collision_box = ofchairs_box,
 		expand = { top = "placeholder" },
 		on_rotate = minetest.get_modpath("screwdriver") and screwdriver.rotate_simple or nil,
 	})
