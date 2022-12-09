@@ -84,6 +84,16 @@ function technic_cnc.register_all(recipeitem, groups, images, description)
 				end
 			end
 		end
+
+		local images2 = {}
+		for k, v in ipairs(images) do
+			if type(v) == "string" then
+				images2[k] = {name = v, backface_culling = true}
+			else
+				images2[k] = v
+			end
+		end
+
 		-- Create the node if it passes the test
 		if do_register then
 			local program_groups = groups
@@ -97,8 +107,9 @@ function technic_cnc.register_all(recipeitem, groups, images, description)
 					end
 				end
 			end
+
 			technic_cnc.register_program(recipeitem, data.suffix, data.model,
-				groups, images, data.desc, data.cbox, data.sbox)
+				groups, images2, data.desc, data.cbox, data.sbox)
 		end
 	end
 	cnc_recipe_items[recipeitem] = 1
