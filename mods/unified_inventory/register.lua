@@ -41,6 +41,7 @@ ui.register_button("craftguide", {
 	tooltip = S("Crafting Guide")
 })
 
+--[[
 ui.register_button("home_gui_set", {
 	type = "image",
 	image = "ui_sethome_icon.png",
@@ -89,6 +90,7 @@ ui.register_button("home_gui_go", {
 		return minetest.check_player_privs(player:get_player_name(), {home=true})
 	end,
 })
+]]
 
 local def = {
 	params = "",
@@ -166,7 +168,6 @@ ui.register_button("misc_set_night", {
 		return minetest.check_player_privs(player:get_player_name(), {settime=true})
 	end,
 })
-]]
 ui.register_button("clear_inv", {
 	type = "image",
 	image = "ui_trash_icon.png",
@@ -191,6 +192,7 @@ ui.register_button("clear_inv", {
 		return ui.is_creative(player:get_player_name())
 	end,
 })
+]]
 
 ui.register_page("craft", {
 	get_formspec = function(player, perplayer_formspec)
