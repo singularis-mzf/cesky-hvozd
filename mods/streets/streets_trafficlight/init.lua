@@ -1141,6 +1141,7 @@ minetest.register_node(":streets:trafficlight_portable_off", {
 	drawtype = "nodebox",
 	on_receive_fields = streets.portable_tl_on_receive_fields,
 	tiles = { "streets_tl_bg.png", "streets_tl_bg.png", "streets_tl_off.png", "streets_tl_off.png", "streets_tl_off.png", "streets_tl_off.png" },
+	use_texture_alpha = "opaque",
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -1171,6 +1172,7 @@ minetest.register_node(":streets:trafficlight_portable_allred", {
 	drawtype = "nodebox",
 	on_receive_fields = streets.portable_tl_on_receive_fields,
 	tiles = { "streets_tl_bg.png", "streets_tl_bg.png", "streets_tl_red.png", "streets_tl_red.png", "streets_tl_red.png", "streets_tl_red.png" },
+	use_texture_alpha = "opaque",
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -1191,6 +1193,7 @@ minetest.register_node(":streets:trafficlight_portable_yellowa", {
 	drawtype = "nodebox",
 	on_receive_fields = streets.portable_tl_on_receive_fields,
 	tiles = { "streets_tl_bg.png", "streets_tl_bg.png", "streets_tl_red.png", "streets_tl_red.png", "streets_tl_yellow.png", "streets_tl_yellow.png" },
+	use_texture_alpha = "opaque",
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -1211,6 +1214,7 @@ minetest.register_node(":streets:trafficlight_portable_yellowb", {
 	drawtype = "nodebox",
 	on_receive_fields = streets.portable_tl_on_receive_fields,
 	tiles = { "streets_tl_bg.png", "streets_tl_bg.png", "streets_tl_yellow.png", "streets_tl_yellow.png", "streets_tl_red.png", "streets_tl_red.png" },
+	use_texture_alpha = "opaque",
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -1231,6 +1235,7 @@ minetest.register_node(":streets:trafficlight_portable_maingreen", {
 	drawtype = "nodebox",
 	on_receive_fields = streets.portable_tl_on_receive_fields,
 	tiles = { "streets_tl_bg.png", "streets_tl_bg.png", "streets_tl_red.png", "streets_tl_red.png", "streets_tl_green.png", "streets_tl_green.png" },
+	use_texture_alpha = "opaque",
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -1251,6 +1256,7 @@ minetest.register_node(":streets:trafficlight_portable_sidegreen", {
 	drawtype = "nodebox",
 	on_receive_fields = streets.portable_tl_on_receive_fields,
 	tiles = { "streets_tl_bg.png", "streets_tl_bg.png", "streets_tl_green.png", "streets_tl_green.png", "streets_tl_red.png", "streets_tl_red.png" },
+	use_texture_alpha = "opaque",
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -1281,6 +1287,7 @@ minetest.register_node(":streets:trafficlight_portable_rrflash", {
 	drawtype = "nodebox",
 	on_receive_fields = streets.portable_tl_on_receive_fields,
 	tiles = { "streets_tl_bg.png", "streets_tl_bg.png", streets.portable_tl_tile_flashred, streets.portable_tl_tile_flashred, streets.portable_tl_tile_flashred, streets.portable_tl_tile_flashred },
+	use_texture_alpha = "opaque",
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -1301,6 +1308,7 @@ minetest.register_node(":streets:trafficlight_portable_yyflash", {
 	drawtype = "nodebox",
 	on_receive_fields = streets.portable_tl_on_receive_fields,
 	tiles = { "streets_tl_bg.png", "streets_tl_bg.png", streets.portable_tl_tile_flashyellow, streets.portable_tl_tile_flashyellow, streets.portable_tl_tile_flashyellow, streets.portable_tl_tile_flashyellow },
+	use_texture_alpha = "opaque",
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -1321,6 +1329,7 @@ minetest.register_node(":streets:trafficlight_portable_yrflash", {
 	drawtype = "nodebox",
 	on_receive_fields = streets.portable_tl_on_receive_fields,
 	tiles = { "streets_tl_bg.png", "streets_tl_bg.png", streets.portable_tl_tile_flashred, streets.portable_tl_tile_flashred, streets.portable_tl_tile_flashyellow, streets.portable_tl_tile_flashyellow },
+	use_texture_alpha = "opaque",
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -1358,6 +1367,7 @@ minetest.register_node("streets:pedbutton_left", {
 		"streets_pedbutton_us_back.png",
 		"streets_pedbutton_us_left.png"
 	},
+	use_texture_alpha = "opaque",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	legacy_wallmounted = true,
@@ -1392,6 +1402,7 @@ minetest.register_node("streets:pedbutton_left_off", {
 		"streets_pedbutton_us_back.png",
 		"streets_pedbutton_us_left.png"
 	},
+	use_texture_alpha = "opaque",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	legacy_wallmounted = true,
@@ -1435,6 +1446,7 @@ minetest.register_node("streets:pedbutton_right", {
 		"streets_pedbutton_us_back.png",
 		"streets_pedbutton_us_right.png"
 	},
+	use_texture_alpha = "opaque",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	legacy_wallmounted = true,
@@ -1484,6 +1496,7 @@ minetest.register_node("streets:pedbutton_right_off", {
 		"streets_pedbutton_us_back.png",
 		"streets_pedbutton_us_right.png"
 	},
+	use_texture_alpha = "opaque",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	legacy_wallmounted = true,
