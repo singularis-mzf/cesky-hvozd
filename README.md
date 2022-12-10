@@ -223,6 +223,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/Liil/animalworld/)
 
+## Anti Exploit (anti\_exploit)
+
+* Zdroj: [https://github.com/appgurueu/anti\_exploit](https://github.com/appgurueu/anti\_exploit), revize 509ff1ad57e888b87926a9a7086dee644ca96e96
+* Původní licence: kód MIT, snímek obrazovky MIT a CC BY-SA 3.0
+* Licence úprav: kód MIT, média CC BY-SA 3.0
+* [ContentDB](https://content.minetest.net/packages/LMD/anti\_exploit/)
+
 ## Anvil (anvil)
 
 * Zdroj: [https://github.com/minetest-mods/anvil](https://github.com/minetest-mods/anvil), revize c9292b4cb3fb03a04638f491abf8b48a59d4c972
