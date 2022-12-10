@@ -42,7 +42,7 @@ streets.load_submod("streets_roadwork")
 streets.load_submod("streets_bollards")
 streets.load_submod("streets_light")
 
--- streets.load_submod("streets_trafficlight") -- not supported yet
+streets.load_submod("streets_trafficlight")
 streets.load_submod("streets_laneuse")
 -- streets.load_submod("streets_matrix_screen") -- not supported yet
 

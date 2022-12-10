@@ -15,11 +15,25 @@
 
 -- list of allowed combo blocks (do not change order!)
 local allowed_combos = {
-	"bakedclay:slab_baked_clay_natural+darkage:slab_ors_brick",
-	"moreblocks:slab_cactus_brick+moreblocks:slab_cobble",
-	"darkage:slab_ors_brick+wool:slab_brown",
+	[1] = "bakedclay:slab_baked_clay_natural+darkage:slab_ors_brick",
+	[2] = "moreblocks:slab_cactus_brick+moreblocks:slab_cobble",
+	[3] = "darkage:slab_ors_brick+wool:slab_brown",
+	[4] = "bakedclay:slab_baked_clay_red+darkage:slab_ors_brick",
+	[5] = "bakedclay:slab_baked_clay_brown+darkage:slab_ors_brick",
 }
-allowed_combos = table.key_value_swap(allowed_combos)
+local allowed_combos_tmp = {}
+for i, v in ipairs(allowed_combos) do
+	local a, b = v:match("^([^+]+)%+([^+]+)$")
+	if not a then
+		error("allowed_combos: Invalid format for index "..i)
+	end
+	local x = allowed_combos_tmp[a.."+"..b] or allowed_combos[b.."+"..a]
+	if x then
+		error("allowed_combos: Duplicity at ["..i.."] = ["..x.."] = "..v)
+	end
+	allowed_combos_tmp[v] = i
+end
+allowed_combos = allowed_combos_tmp
 
 local ch_help = "Kombinované bloky získáte položením desky (8/16) jednoho typu\nna desku (8/16) druhého typu. Jen některé kombinace jsou dovoleny.\nZáleží na pořadí; při položení v opačném pořadí získáte jiný blok. Výsledný blok lze otáčet."
 local ch_help_group = "comboblock"
@@ -416,7 +430,7 @@ for _,v1 in pairs(slab_index) do
 				elseif v1_is_glass and v2_is_glass then                                                           -- glass_glass nodes so drawtype = glasslike
 						local combo_name = "comboblock:"..v1:split(":")[2].."_onc_"..v2:split(":")[2]
 						minetest.register_node(combo_name, {  -- registering the new combo node
-							description = string.format("%02d%s %s", allowed_combo_index, allowed_combo_index_suffix, preprocess_description(v1_def.description).." na "..preprocess_description(v2_def.description)),
+							description = string.format("%02d%s %s", allowed_combo_index, "", preprocess_description(v1_def.description).." na "..preprocess_description(v2_def.description)),
 							_ch_help = ch_help,
 							_ch_help_group = ch_help_group,
 							tiles = {v1_tiles[1].name.."^[resize:"..cs.."x"..cs,
@@ -455,7 +469,7 @@ for _,v1 in pairs(slab_index) do
 				elseif not v1_is_glass and not v2_is_glass then -- normal nodes
 						local combo_name = "comboblock:"..v1:split(":")[2].."_onc_"..v2:split(":")[2]
 						minetest.register_node(combo_name, {
-							description = preprocess_description(v1_def.description).." na "..preprocess_description(v2_def.description).." ["..allowed_combo_index..allowed_combo_index_suffix.."]",
+							description = string.format("%02d%s %s", allowed_combo_index, "", preprocess_description(v1_def.description).." na "..preprocess_description(v2_def.description)),
 							_ch_help = ch_help,
 							_ch_help_group = ch_help_group,
 							tiles = {v1_tiles[1].name.."^[resize:"..cs.."x"..cs,

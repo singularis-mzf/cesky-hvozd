@@ -166,18 +166,14 @@ local function globalstep(dtime)
 			local old_control_bits = online_charinfo.klavesy_b or 0
 			local new_control_bits = player:get_player_control_bits()
 			if not (new_control_bits == old_control_bits) then
-				local old_controls = online_charinfo.klavesy
 				local new_controls = player:get_player_control()
+				local old_controls = online_charinfo.klavesy or new_controls
 				online_charinfo.klavesy = new_controls
 				online_charinfo.klavesy_b = new_control_bits
-				if not old_controls then
-					--
-				elseif new_controls.aux1 and not old_controls.aux1 then
-					print(player_name.." pressed aux1")
+				if new_controls.aux1 and not old_controls.aux1 then
 					ch_core.show_player_list(player, online_charinfo)
 					player:set_properties(stepheight_high)
 				elseif not new_controls.aux1 and old_controls.aux1 then
-					print(player_name.." leaved aux1")
 					ch_core.hide_player_list(player, online_charinfo)
 					player:set_properties(stepheight_low)
 				end
