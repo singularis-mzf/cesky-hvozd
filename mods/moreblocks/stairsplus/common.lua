@@ -154,6 +154,7 @@ local alternate_to_group_value = {
 	["_triple"] = 3,
 	["_triplet"] = 3,
 	["_tripleslope"] = 3,
+	["_special"] = 19,
 }
 
 local not_blocking_trains_shapes = {

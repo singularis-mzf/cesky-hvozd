@@ -4,21 +4,17 @@ if not minetest.get_modpath("moreblocks") then
 	return
 end
 
-local function after_place_node(pos, placer, itemstack, pointed_thing)
+local function on_place(itemstack, placer, pointed_thing)
 	if pointed_thing.type == "node" then
 		local old_node = minetest.get_node(pointed_thing.under)
-		local recipeitem, category, alternate = stairsplus:analyze_shape(old_node.name)
-		if recipeitem and category == "panel" and alternate == "_special" then
-			local new_node = minetest.get_node(pos)
-			if new_node.param2 ~= old_node.param2 then
-				new_node.param2 = old_node.param2
-				minetest.swap_node(pos, new_node)
-			end
+		if minetest.get_item_group(old_node.name, "panel") == 19 then
+			return minetest.item_place(itemstack, placer, pointed_thing, old_node.param2)
 		end
 	end
+	return stairsplus.rotate_node_aux(itemstack, placer, pointed_thing)
 end
 
-local override = {after_place_node = after_place_node}
+local override = {on_place = on_place}
 
 for _, recipeitem in ipairs(stairsplus:get_recipeitems()) do
 	local itemname = stairsplus:get_shape(recipeitem, "panel", "_special")
