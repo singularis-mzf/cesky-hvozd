@@ -186,6 +186,24 @@ if display_api.is_rotation_restricted() then
 	end
 end
 
+
+local function update_box(fields, box_name, on_pole_offset)
+	local result = fields[box_name]
+	if result == nil then
+		return
+	end
+	result = table.copy(result)
+	fields[box_name] = result
+	local fixed = table.copy(result.fixed)
+	result.fixed = fixed
+	if type(fixed[1]) == "table" then
+		error("Multi-nodebox signs are not supported yet")
+	end
+	fixed[3] = fixed[3] + on_pole_offset
+	fixed[6] = fixed[6] + on_pole_offset
+	return result
+end
+
 function signs_api.register_sign(mod, name, model)
 	-- Default fields
 	local fields = {
@@ -259,6 +277,49 @@ function signs_api.register_sign(mod, name, model)
 	end
 
 	minetest.register_node(mod..":"..name, fields)
+
+	if model.allow_on_pole then
+		local on_pole_offset = 0.375
+
+		fields = table.copy(fields)
+		if fields.drawtype == "nodebox" then
+			update_box(fields, "node_box", on_pole_offset)
+			update_box(fields, "selection_box", on_pole_offset)
+			update_box(fields, "collision_box", on_pole_offset)
+		elseif fields.drawtype == "mesh" then
+			fields.mesh = fields.mesh:gsub("%.obj", "_onpole.obj")
+			update_box(fields, "selection_box", on_pole_offset)
+			update_box(fields, "collision_box", on_pole_offset)
+		else
+			error("Sign "..mod..":"..name.." cannot be allowed on poles with a drawtype "..(fields.drawtype or "nil").."!")
+		end
+		if fields.description ~= nil then
+			fields.description = fields.description.." (na tyč)"
+		end
+		if fields.drop == nil then
+			fields.drop = mod..":"..name
+		end
+		if fields.signs_other_dir ~= nil then
+			fields.signs_other_dir = fields.signs_other_dir.."_on_pole"
+		end
+		fields.inventory_image = "signs_api_pole.png^[resize:32x32^("..fields.inventory_image..")"
+
+		fields.display_entities = table.copy(fields.display_entities)
+		fields.display_entities["signs:display_text"] = table.copy(fields.display_entities["signs:display_text"])
+		local tmp = fields.display_entities["signs:display_text"]
+		tmp.depth = tmp.depth + on_pole_offset
+
+		minetest.register_node(mod..":"..name.."_on_pole", fields)
+		minetest.register_craft({
+			output = mod..":"..name.."_on_pole",
+			recipe = {{"default:fence_wood", mod..":"..name}, {"", ""}},
+			replacements = {{"default:fence_wood", "default:fence_wood"}},
+		})
+		minetest.register_craft({
+			output = mod..":"..name,
+			recipe = {{mod..":"..name.."_on_pole"}},
+		})
+	end
 end
 
 -- Text entity for all signs

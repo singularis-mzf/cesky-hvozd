@@ -21,6 +21,8 @@
 
 local S = signs_road.intllib
 
+local prefix5 = "[combine:32x32:-16,-16=ch_core_5.png^"
+
 local models = {
 	blue_street_sign = {
 		depth = 1/16,
@@ -39,6 +41,7 @@ local models = {
 			use_texture_alpha = "opaque",
 			inventory_image = "signs_road_blue_street.png",
 		},
+		allow_on_pole = true,
 	},
 	large_street_sign = {
 		depth = 1/16,
@@ -73,7 +76,7 @@ local models = {
 			          "signs_road_sides.png", "signs_road_sides.png",
 			          "signs_road_sides.png", "signs_road_large_white.png^[multiply:#0040C0" },
 			use_texture_alpha = "opaque",
-			inventory_image = "signs_road_white.png^[multiply:#0040C0",
+			inventory_image = prefix5.."(signs_road_white.png^[multiply:#0040C0)",
 		},
 	},
 	green_large_street_sign = {
@@ -91,7 +94,7 @@ local models = {
 			          "signs_road_sides.png", "signs_road_sides.png",
 			          "signs_road_sides.png", "signs_road_large_white.png^[multiply:#008040" },
 			use_texture_alpha = "opaque",
-			inventory_image = "signs_road_white.png^[multiply:#008040",
+			inventory_image = prefix5.."(signs_road_white.png^[multiply:#008040)",
 		},
 	},
 	red_large_street_sign = {
@@ -109,7 +112,7 @@ local models = {
 			          "signs_road_sides.png", "signs_road_sides.png",
 			          "signs_road_sides.png", "signs_road_large_white.png^[multiply:#ff0000" },
 			use_texture_alpha = "opaque",
-			inventory_image = "signs_road_white.png^[multiply:#ff0000",
+			inventory_image = prefix5.."(signs_road_white.png^[multiply:#ff0000)",
 		},
 	},
 	black_large_street_sign = {
@@ -127,7 +130,7 @@ local models = {
 			          "signs_road_sides.png", "signs_road_sides.png",
 			          "signs_road_sides.png", "signs_road_large_white.png^[multiply:#000000" },
 			use_texture_alpha = "opaque",
-			inventory_image = "signs_road_white.png^[multiply:#000000",
+			inventory_image = prefix5.."(signs_road_white.png^[multiply:#000000)",
 		},
 	},
 	yellow_large_street_sign = {
@@ -145,7 +148,7 @@ local models = {
 			          "signs_road_sides.png", "signs_road_sides.png",
 			          "signs_road_sides.png", "signs_road_large_white.png^[multiply:#fbdf00" },
 			use_texture_alpha = "opaque",
-			inventory_image = "signs_road_white.png^[multiply:#fbdf00",
+			inventory_image = prefix5.."(signs_road_white.png^[multiply:#fbdf00)",
 		},
 	},
 	brown_large_street_sign = {
@@ -163,7 +166,7 @@ local models = {
 			          "signs_road_sides.png", "signs_road_sides.png",
 			          "signs_road_sides.png", "signs_road_large_white.png^[multiply:#754222" },
 			use_texture_alpha = "opaque",
-			inventory_image = "signs_road_white.png^[multiply:#754222",
+			inventory_image = prefix5.."(signs_road_white.png^[multiply:#754222)",
 		},
 	},
 	invisible_large_street_sign_black_text = {
@@ -181,7 +184,7 @@ local models = {
 			          "signs_road_sides.png^[opacity:0", "signs_road_sides.png^[opacity:0",
 			          "signs_road_sides.png^[opacity:0", "signs_road_large_white.png^[opacity:0" },
 			use_texture_alpha = "clip",
-			inventory_image = "signs_road_white.png^[multiply:#999999",
+			inventory_image = prefix5.."(signs_road_white.png^[multiply:#999999)^default_invisible_node_overlay.png",
 		},
 	},
 	invisible_large_street_sign_white_text = {
@@ -199,7 +202,7 @@ local models = {
 			          "signs_road_sides.png^[opacity:0", "signs_road_sides.png^[opacity:0",
 			          "signs_road_sides.png^[opacity:0", "signs_road_large_white.png^[opacity:0" },
 			use_texture_alpha = "clip",
-			inventory_image = "signs_road_white.png^[multiply:#999999",
+			inventory_image = prefix5.."(signs_road_white.png^[multiply:#999999)^default_invisible_node_overlay.png",
 		},
 	},
 	red_street_sign = {
@@ -219,6 +222,7 @@ local models = {
 			use_texture_alpha = "opaque",
 			inventory_image="signs_road_red_white.png",
 		},
+		allow_on_pole = true,
 	},
 	white_sign = {
 		depth = 1/16,
@@ -237,6 +241,7 @@ local models = {
 			use_texture_alpha = "opaque",
 			inventory_image = "signs_road_white.png",
 		},
+		allow_on_pole = true,
 	},
 	black_sign = {
 		depth = 1/16,
@@ -255,6 +260,7 @@ local models = {
 			use_texture_alpha = "opaque",
 			inventory_image = "signs_road_white.png^[multiply:#000000",
 		},
+		allow_on_pole = true,
 	},
 	brown_sign = {
 		depth = 1/16,
@@ -273,6 +279,7 @@ local models = {
 			use_texture_alpha = "opaque",
 			inventory_image = "signs_road_white.png^[multiply:#754222",
 		},
+		allow_on_pole = true,
 	},
 	blue_sign = {
 		depth = 1/16,
@@ -291,6 +298,7 @@ local models = {
 			use_texture_alpha = "opaque",
 			inventory_image = "signs_road_blue.png",
 		},
+		allow_on_pole = true,
 	},
 	green_sign = {
 		depth = 1/16,
@@ -309,6 +317,7 @@ local models = {
 			use_texture_alpha = "opaque",
 			inventory_image = "signs_road_green.png",
 		},
+		allow_on_pole = true,
 	},
 	yellow_sign = {
 		depth = 1/16,
@@ -327,6 +336,7 @@ local models = {
 			use_texture_alpha = "opaque",
 			inventory_image="signs_road_yellow.png",
 		},
+		allow_on_pole = true,
 	},
 	red_sign = {
 		depth = 1/16,
@@ -345,6 +355,7 @@ local models = {
 			use_texture_alpha = "opaque",
 			inventory_image = "signs_road_red.png",
 		},
+		allow_on_pole = true,
 	},
 	inv_sign_black_text = {
 		depth = 1/16,
@@ -403,6 +414,7 @@ local models = {
 			on_place = signs_api.on_place_direction,
 			on_rightclick = signs_api.on_right_click_direction,
 		},
+		allow_on_pole = true,
 	},
 	black_left_sign = {
 		depth = 1/32,
@@ -427,6 +439,7 @@ local models = {
 			on_place = signs_api.on_place_direction,
 			on_rightclick = signs_api.on_right_click_direction,
 		},
+		allow_on_pole = true,
 	},
 	white_right_sign = {
 		depth = 1/16,
@@ -451,6 +464,7 @@ local models = {
 			selection_box = { type = "fixed", fixed = { -0.5, -7/32, 0.5, 7/16, 7/32, 7/16 } },
 			collision_box = { type = "fixed", fixed = { -0.5, -7/32, 0.5, 7/16, 7/32, 7/16 } },
 		},
+		allow_on_pole = true,
 	},
 	white_left_sign = {
 		depth = 1/16,
@@ -477,6 +491,7 @@ local models = {
 			groups = { not_in_creative_inventory = 1 },
 			drop = "signs_road:white_right_sign",
 		},
+		allow_on_pole = true,
 	},
 	brown_right_sign = {
 		depth = 1/16,
@@ -501,6 +516,7 @@ local models = {
 			selection_box = { type = "fixed", fixed = { -0.5, -7/32, 0.5, 7/16, 7/32, 7/16 } },
 			collision_box = { type = "fixed", fixed = { -0.5, -7/32, 0.5, 7/16, 7/32, 7/16 } },
 		},
+		allow_on_pole = true,
 	},
 	brown_left_sign = {
 		depth = 1/16,
@@ -527,6 +543,7 @@ local models = {
 			groups = { not_in_creative_inventory = 1 },
 			drop = "signs_road:brown_right_sign",
 		},
+		allow_on_pole = true,
 	},
 	blue_right_sign = {
 		depth = 1/16,
@@ -551,6 +568,7 @@ local models = {
 			selection_box = { type = "fixed", fixed = { -0.5, -7/32, 0.5, 7/16, 7/32, 7/16 } },
 			collision_box = { type = "fixed", fixed = { -0.5, -7/32, 0.5, 7/16, 7/32, 7/16 } },
 		},
+		allow_on_pole = true,
 	},
 	blue_left_sign = {
 		depth = 1/16,
@@ -577,6 +595,7 @@ local models = {
 			groups = { not_in_creative_inventory = 1 },
 			drop = "signs_road:blue_right_sign",
 		},
+		allow_on_pole = true,
 	},
 	green_right_sign = {
 		depth = 1/16,
@@ -601,6 +620,7 @@ local models = {
 			selection_box = { type = "fixed", fixed = { -0.5, -7/32, 0.5, 7/16, 7/32, 7/16 } },
 			collision_box = { type = "fixed", fixed = { -0.5, -7/32, 0.5, 7/16, 7/32, 7/16 } },
 		},
+		allow_on_pole = true,
 	},
 	green_left_sign = {
 		depth = 1/16,
@@ -627,6 +647,7 @@ local models = {
 			groups = { not_in_creative_inventory = 1 },
 			drop = "signs_road:green_right_sign",
 		},
+		allow_on_pole = true,
 	},
 	yellow_right_sign = {
 		depth = 1/16,
@@ -651,6 +672,7 @@ local models = {
 			selection_box = { type = "fixed", fixed = { -0.5, -7/32, 0.5, 7/16, 7/32, 7/16 } },
 			collision_box = { type = "fixed", fixed = { -0.5, -7/32, 0.5, 7/16, 7/32, 7/16 } },
 		},
+		allow_on_pole = true,
 	},
 	yellow_left_sign = {
 		depth = 1/16,
@@ -677,6 +699,7 @@ local models = {
 			groups = { not_in_creative_inventory = 1 },
 			drop = "signs_road:yellow_right_sign",
 		},
+		allow_on_pole = true,
 	},
 	red_right_sign = {
 		depth = 1/16,
@@ -701,6 +724,7 @@ local models = {
 			selection_box = { type = "fixed", fixed = { -0.5, -7/32, 0.5, 7/16, 7/32, 7/16 } },
 			collision_box = { type = "fixed", fixed = { -0.5, -7/32, 0.5, 7/16, 7/32, 7/16 } },
 		},
+		allow_on_pole = true,
 	},
 	red_left_sign = {
 		depth = 1/16,
@@ -727,6 +751,7 @@ local models = {
 			groups = { not_in_creative_inventory = 1 },
 			drop = "signs_road:red_right_sign",
 		},
+		allow_on_pole = true,
 	},
 }
 
