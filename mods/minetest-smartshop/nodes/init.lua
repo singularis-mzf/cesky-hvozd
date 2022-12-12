@@ -19,13 +19,15 @@ smartshop.nodes = {
     after_place_node = function(pos, placer, itemstack)
 
 		-- check rights
-		if not check_any_priv(placer, {ch_registered_player = true, protection_bypass = true, server = true, smartshop_admin = true}) then
-			ch_core.systemovy_kanal(placer:get_player_name(), "Děláte to správně, ale nové postavy nesmějí umístit obchodní terminál ani jeho zásobník!")
-			minetest.remove_node(pos)
-			return
-		end
-		if minetest.check_player_privs(placer, "give") then
-			ch_core.systemovy_kanal(placer:get_player_name(), "VAROVÁNÍ: Kouzelnické postavy se nesmějí účastnit obchodování! Výjimky jsou možné v odůvodněných případech po dohodě s Administrací. Pokud je obchodní terminál žádoucí součástí vaší stavby, doporučuji k jeho zřízení a plnění využít dělnickou postavu nebo o jeho zřízení požádat Administraci. Kouzelnickým postavám, jako je ta vaše, nebude umožněno do obchodního terminálu doplňovat zboží.")
+		if not minetest.check_player_privs(placer, "smartshop_admin") then
+			if not check_any_priv(placer, {ch_registered_player = true, protection_bypass = true, server = true}) then
+				ch_core.systemovy_kanal(placer:get_player_name(), "Děláte to správně, ale nové postavy nesmějí umístit obchodní terminál ani jeho zásobník!")
+				minetest.remove_node(pos)
+				return
+			end
+			if minetest.check_player_privs(placer, "give") then
+				ch_core.systemovy_kanal(placer:get_player_name(), "VAROVÁNÍ: Kouzelnické postavy se nesmějí účastnit obchodování! Výjimky jsou možné v odůvodněných případech po dohodě s Administrací. Pokud je obchodní terminál žádoucí součástí vaší stavby, doporučuji k jeho zřízení a plnění využít dělnickou postavu nebo o jeho zřízení požádat Administraci. Kouzelnickým postavám, jako je ta vaše, nebude umožněno do obchodního terminálu doplňovat zboží.")
+			end
 		end
 
         local obj = get_object(pos)

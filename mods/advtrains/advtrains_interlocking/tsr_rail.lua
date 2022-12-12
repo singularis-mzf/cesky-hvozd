@@ -8,7 +8,7 @@ local function updateform(pos)
 	local pe = advtrains.encode_pos(pos)
 	local npr = advtrains.interlocking.npr_rails[pe] or 2
 	
-	meta:set_string("infotext", advtrans("Point speed restriction") .. ": "..npr)
+	meta:set_string("infotext", attrans("Point speed restriction") .. ": "..npr)
 	meta:set_string("formspec", "field[npr;"..attrans("Set point speed restriction:")..";"..npr.."]")
 end
 
