@@ -6,6 +6,7 @@ local mods = {
 	"cucina_vegana",
 	"cutepie",
 	"digistuff",
+	"petz",
 }
 
 for _, mod in ipairs(mods) do

@@ -150,6 +150,15 @@ minetest.register_node(":mobs:honey_block", {
 	sounds = default.node_sound_dirt_defaults(),
 })
 
+if minetest.get_modpath("moreblocks") then
+	stairsplus:register_slabs_and_slopes("mobs", "honey_block", "mobs:honey_block", {
+		description = S("Honey Block"),
+		tiles = {"mobs_honey_block.png"},
+		groups = {snappy = 3, flammable = 2},
+		sounds = default.node_sound_dirt_defaults(),
+	})
+end
+
 minetest.register_craft({
 	output = "mobs:honey_block",
 	recipe = {

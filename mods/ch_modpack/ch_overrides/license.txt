@@ -604,3 +604,47 @@ gui_hotbar_selected.png
 		rudzik8
 	Source: Graceful 32x (texture pack)
 	License: CC BY-SA 3.0
+
+mobs_honey_block.png
+	Source: Petz Mod (https://github.com/runsy/petz , file petz_honey.png)
+	License: CC BY-SA 4.0
+
+mobs_chicken_cooked.png
+	Source: Petz Mod (https://github.com/runsy/petz , file petz_roasted_chicken.png)
+	License: CC BY-SA 4.0
+
+mobs_chicken_raw.png
+	Source: Petz Mod (https://github.com/runsy/petz , file petz_raw_chicken.png)
+	License: CC BY-SA 4.0
+
+mobs_meat.png
+	Source: Petz Mod (https://github.com/runsy/petz , file petz_roasted_lamb_chop.png)
+	License: CC BY-SA 4.0
+
+mobs_meat_raw.png
+	Source: Petz Mod (https://github.com/runsy/petz , file petz_beef.png)
+	License: CC BY-SA 4.0
+
+mobs_mutton_cooked.png
+	Source: Petz Mod (https://github.com/runsy/petz , file petz_roasted_goat_meat.png)
+	License: CC BY-SA 4.0
+
+mobs_mutton_raw.png
+	Source: Petz Mod (https://github.com/runsy/petz , file petz_raw_goat.png)
+	License: CC BY-SA 4.0
+
+mobs_pork_cooked.png
+	Source: Petz Mod (https://github.com/runsy/petz , file petz_roasted_porkchop.png)
+	License: CC BY-SA 4.0
+
+mobs_pork_raw.png
+	Source: Petz Mod (https://github.com/runsy/petz , file petz_raw_porkchop.png)
+	License: CC BY-SA 4.0
+
+mobs_rabbit_cooked.png
+	Source: Petz Mod (https://github.com/runsy/petz , file petz_roasted_rabbit.png)
+	License: CC BY-SA 4.0
+
+mobs_rabbit_raw.png
+	Source: Petz Mod (https://github.com/runsy/petz , file petz_raw_rabbit.png)
+	License: CC BY-SA 4.0

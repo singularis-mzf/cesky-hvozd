@@ -30,6 +30,10 @@ digistuff.lua
 	Modified and adapted by: Singularis
 	License: LGPLv3+ (may contain some code from mesecons and digilines)
 
+petz.lua
+	Author: Singularis
+	License: MIT
+
 Media files licenses:
 ================================================
 bbq_chimney_smoke.png
@@ -65,6 +69,21 @@ digistuff_camera_top.png
 	Author: cheapie (from cheapiesystems.com)
 	Source: Digistuff Mod
 	License: CC BY-SA 3.0 Generic (according to the mod contains modified versions of textures from mesecons and digilines)
+
+petz_grey_gables.png
+petz_red_gables.png
+	Author: runsy (?)(I'm not sure)
+	Modified and adapted by: Singularis
+	Source: Petz Mod (https://github.com/runsy/petz)
+	License: CC BY-SA 4.0
+
+petz_butterfly_showcase.png
+petz_candy_cane.png
+petz_glass_syringe.png
+petz_honeycomb.png
+	Author: runsy (?)(I'm not sure)
+	Source: Petz Mod (https://github.com/runsy/petz)
+	License: CC BY-SA 4.0
 
 MIT license text for init.lua, LICENSE and mod.conf files:
 ================================================
