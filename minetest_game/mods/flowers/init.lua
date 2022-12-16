@@ -232,9 +232,17 @@ function flowers.mushroom_spread(pos, node)
 		end
 		return
 	end
+	local current_mushrooms = minetest.find_nodes_in_area(
+		{x = pos.x - 2, y = pos.y - 2, z = pos.z - 2},
+		{x = pos.x + 2, y = pos.y + 2, z = pos.z + 2},
+		{"group:mushroom"})
+	if #current_mushrooms > 3 then
+		-- too many mushrooms
+		return
+	end
 	local positions = minetest.find_nodes_in_area_under_air(
-		{x = pos.x - 1, y = pos.y - 2, z = pos.z - 1},
-		{x = pos.x + 1, y = pos.y + 1, z = pos.z + 1},
+		{x = pos.x - 2, y = pos.y - 2, z = pos.z - 2},
+		{x = pos.x + 2, y = pos.y + 1, z = pos.z + 2},
 		{"group:soil", "group:tree"})
 	if #positions == 0 then
 		return
