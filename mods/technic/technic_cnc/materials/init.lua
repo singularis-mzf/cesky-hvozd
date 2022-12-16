@@ -8,6 +8,7 @@ local optional_mods = {
 	"bakedclay",
 	"building_blocks",
 	"cottages",
+	"darkage",
 	"ethereal",
 	"moreblocks",
 	"technic",

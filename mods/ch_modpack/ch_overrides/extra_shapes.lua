@@ -16,6 +16,7 @@ if minetest.get_modpath("technic_cnc") then
 		"cottages:brown",
 		"cottages:red",
 		"cottages:reet",
+		"darkage:slate_tile",
 		"default:acacia_wood",
 		"default:aspen_wood",
 		"default:copperblock",
