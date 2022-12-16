@@ -113,8 +113,8 @@ advtrains.register_wagon("construction_train", {
 		local rpos = round_new(self.object:get_pos())
 		rpos.y = rpos.y -1
 		-- Find train tracks, if we find train tracks, we will only replace blocking nodes
-		local tracks_below = false
-		for y =-1,0 do
+		local tracks_below = #(minetest.find_nodes_in_area(vector.offset(rpos, -1, -2, -2), vector.offset(rpos, 0, 2, 2), {"group:advtrains_track"})) > 0
+		--[[ for y =-1,0 do
 			for x = -2,2 do
 				for z = -2,2 do
 					local ps = {x=rpos.x+x, y=rpos.y+y, z=rpos.z+z}
@@ -124,7 +124,7 @@ advtrains.register_wagon("construction_train", {
 					end
 				end
 			end
-		end
+		end ]]
 		local gravel_node -- "železniční" => use railway_gravel
 		if attributes.zeleznicni and minetest.registered_nodes["ch_core:railway_gravel"] then
 			gravel_node = {name = "ch_core:railway_gravel"}
@@ -134,13 +134,31 @@ advtrains.register_wagon("construction_train", {
 		local cobble_node = {name = "default:cobble"}
 		for x = -1,1 do
 			for z = -1,1 do
-				local ps = {x=rpos.x+x, y=rpos.y, z=rpos.z+z}
+				local ps = vector.offset(rpos, x, 0, z)
 				local name = minetest.get_node(ps).name
-				if (not tracks_below) or (minetest.get_item_group(name, "not_blocking_trains") ==  0 and minetest.registered_nodes[name].walkable ) then
+				if (not tracks_below) or (minetest.get_item_group(name, "not_blocking_trains") ==  0 and minetest.registered_nodes[name].walkable) then
 					minetest.set_node(ps, gravel_node)
 					ps.y = ps.y-1
 					if not minetest.registered_nodes[minetest.get_node(ps).name].walkable then
 						minetest.set_node(ps, cobble_node)
+					end
+				end
+			end
+		end
+
+		if not attributes.nechattravu then
+			for x = -1,1 do
+				for z = -1,1 do
+					for y = 0,2 do
+						local ps = vector.offset(rpos, x, y, z)
+						local node = minetest.get_node_or_nil(ps)
+						if node ~= nil and node.name ~= "air" then
+							local ndef = minetest.registered_nodes[node.name]
+							if ndef ~= nil and ndef.buildable_to then
+								minetest.remove_node(ps)
+								minetest.check_for_falling(ps)
+							end
+						end
 					end
 				end
 			end
