@@ -61,3 +61,7 @@ Textures by Sirrobzeroone (CC-by-3.0)
   wine_sparkling_carrot_juice_glass.png
   wine_sparkling_carrot_juice_bottle.png
   screenshot.png
+
+Textures by Singularis (CC-By-3.0)
+  wine_slivovice_glass.png
+  wine_slivovice_bottle.png

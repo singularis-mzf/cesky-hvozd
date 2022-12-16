@@ -652,6 +652,14 @@ if minetest.get_modpath("wine") then
 		[glass] = "wine:glass_burcak",
 		override_glass_tiles = true,
 	})
+
+	drinks.add_drink("slivovice", "slivovice", "#f9fbfe", {
+		drink_desc2 = "slivovice",
+		drink_desc4 = "slivovici",
+		[glass] = "wine:glass_slivovice",
+		[glass_bottle] = "wine:bottle_slivovice",
+		override_glass_tiles = true,
+	})
 end
 
 -- Generate recipes for drinks and bottles

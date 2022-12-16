@@ -15,6 +15,7 @@ wine:add_drink("champagne", "Champagne", true, 4, 5, 1)
 wine:add_drink("cointreau", "Cointreau", true, 2, 3, 1)
 wine:add_drink("margarita", "Margarita", false, 4, 5, 1)
 wine:add_drink("burcak", "burčák", false, 2, 3, 1)
+wine:add_drink("slivovice", "slivovice", true, 2, 3, 1)
 
 -- non-alcoholic drinks:
 
@@ -154,6 +155,13 @@ if minetest.registered_items["farming:lemon"] then
 		recipe = {
 			"wine:glass_cointreau", "wine:glass_tequila", "farming:lemon"
 		}
+	})
+end
+
+-- plumtree
+if minetest.get_modpath("plumtree") then
+	wine:add_item({
+		{ "plumtree:plum", "wine:glass_slivovice" }
 	})
 end
 
