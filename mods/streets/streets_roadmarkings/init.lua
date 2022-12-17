@@ -223,6 +223,8 @@ streets.register_road_marking({
 	section = "sidelines",
 	dye_needed = 1,
 	rotation = { r90 = 1, r180 = 1, r270 = 1 },
+	basic = true,
+	basic_rotation = { r180 = 1 },
 })
 
 
