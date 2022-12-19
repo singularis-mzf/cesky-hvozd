@@ -9,7 +9,6 @@ local S = moreblocks.S
 if minetest.get_modpath("default") then
 	local default_nodes_limited = {
 		["desert_sand"] = true,
-		["dirt"] = true,
 		["dirt_with_coniferous_litter"] = true,
 		-- ["dirt_with_dry_grass"] = true,
 		["dirt_with_grass"] = true,
@@ -39,6 +38,7 @@ if minetest.get_modpath("default") then
 		"desert_stone_block",
 		"desert_stonebrick",
 		"diamondblock",
+		"dirt",
 		"glass",
 		"goldblock",
 		"ice",

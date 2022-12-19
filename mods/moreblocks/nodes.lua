@@ -168,6 +168,7 @@ local nodes = {
 		groups = {crumbly=2},
 		is_ground_content = false,
 		sounds = sound_dirt,
+		no_stairs = true,
 	},
 	["cobble_compressed"] = {
 		description = S("Compressed Cobblestone"),

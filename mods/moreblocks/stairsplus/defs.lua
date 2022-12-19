@@ -446,6 +446,7 @@ stairsplus.defs = {
 			selection_box = box_slope_slab,
 		},
 
+		--[[
 		["_slab_half"] = {
 			mesh = "moreblocks_slope_slab_half.obj",
 			collision_box = box_slope_slab_half,
@@ -456,7 +457,7 @@ stairsplus.defs = {
 			mesh = "moreblocks_slope_slab_half_raised.obj",
 			collision_box = box_slope_slab_half_raised,
 			selection_box = box_slope_slab_half_raised,
-		},
+		}, ]]
 
 		--==============================================================
 
