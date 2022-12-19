@@ -7,6 +7,22 @@ Licensed under the zlib license. See LICENSE.md for more information.
 local S = moreblocks.S
 -- default registrations
 if minetest.get_modpath("default") then
+	local default_nodes_limited = {
+		["desert_sand"] = true,
+		["dirt"] = true,
+		["dirt_with_coniferous_litter"] = true,
+		-- ["dirt_with_dry_grass"] = true,
+		["dirt_with_grass"] = true,
+		["dirt_with_rainforest_litter"] = true,
+		-- ["dirt_with_snow"] = true,
+		["dry_dirt"] = true,
+		["dry_dirt_with_dry_grass"] = true,
+		["gravel"] = true,
+		["sand"] = true,
+		["silver_sand"] = true,
+		["snowblock"] = true,
+	}
+
 	local default_nodes = { -- Default stairs/slabs/panels/microblocks:
 		"acacia_wood",
 		"aspen_wood",
@@ -16,7 +32,6 @@ if minetest.get_modpath("default") then
 		"copperblock",
 		"coral_skeleton",
 		"desert_cobble",
-		"desert_sand",
 		"desert_sandstone",
 		"desert_sandstone_block",
 		"desert_sandstone_brick",
@@ -24,10 +39,8 @@ if minetest.get_modpath("default") then
 		"desert_stone_block",
 		"desert_stonebrick",
 		"diamondblock",
-		"dirt",
 		"glass",
 		"goldblock",
-		"gravel",
 		"ice",
 		"junglewood",
 		"meselamp",
@@ -37,7 +50,6 @@ if minetest.get_modpath("default") then
 		"obsidian_glass",
 		"obsidianbrick",
 		"pine_wood",
-		"sand",
 		"sandstone",
 		"sandstone_block",
 		"sandstonebrick",
@@ -45,7 +57,6 @@ if minetest.get_modpath("default") then
 		"silver_sandstone",
 		"silver_sandstone_block",
 		"silver_sandstone_brick",
-		"snowblock",
 		"steelblock",
 		"stone",
 		"stone_block",
@@ -53,16 +64,14 @@ if minetest.get_modpath("default") then
 		-- "tinblock",
 		"wood",
 	}
-	local default_nodes_limited = {
-		["desert_sand"] = true,
-		["dirt"] = true,
-		["gravel"] = true,
-		["sand"] = true,
-		["silver_sand"] = true,
-		["snowblock"] = true,
-	}
 
-	for _, name in pairs(default_nodes) do
+	for name, condition in pairs(default_nodes_limited) do
+		if condition then
+			table.insert(default_nodes, name)
+		end
+	end
+
+	for i, name in ipairs(default_nodes) do
 		local mod = "default"
 		local nodename = mod .. ":" .. name
 		local ndef = table.copy(minetest.registered_nodes[nodename])

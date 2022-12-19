@@ -1,9 +1,13 @@
--- PLACEMENT
-
-if not minetest.get_modpath("moreblocks") then
-	return
+if minetest.get_modpath("technic") then
+	stairsplus:register_all("technic", "warning_block", "technic:warning_block", {
+		description = "varovný blok",
+		tiles = {"technic_hv_cable.png"},
+		groups = {cracky = 1},
+		sounds = default.node_sound_wood_defaults(),
+	})
 end
 
+-- PLACEMENT
 local function on_place(itemstack, placer, pointed_thing)
 	if pointed_thing.type == "node" then
 		local old_node = minetest.get_node(pointed_thing.under)

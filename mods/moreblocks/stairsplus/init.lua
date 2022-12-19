@@ -71,14 +71,29 @@ local slabs_and_slopes_subset = {
 	{ "slope", "_tripleslope" },
 }
 
-function stairsplus:register_all(modname, subname, recipeitem, fields)
-	if type(fields.tiles) == "table" then
-		for i, tile in ipairs(table.copy(fields.tiles)) do
-			if type(tile) ~= "table" then
-				fields.tiles[i] = {name = tile, backface_culling = true}
+local function preprocess_tiles(tiles)
+	local result
+	if type(tiles) == "string" then
+		result = {{name = tiles, backface_culling = true}}
+	elseif type(tiles) == "table" then
+		result = {}
+		for i, tile in ipairs(tiles) do
+			if type(tile) == "table" then
+				result[i] = table.copy(tile)
+				result[i].tileable_vertical = nil
+				result[i].backface_culling = true
+			else
+				result[i] = {name = tile, backface_culling = true}
 			end
 		end
+	else
+		error("Invalid tiles format! "..dump2(tiles))
 	end
+	return result
+end
+
+function stairsplus:register_all(modname, subname, recipeitem, fields)
+	fields.tiles = preprocess_tiles(fields.tiles)
 
 	self:register_stair(modname, subname, recipeitem, fields)
 	self:register_slab(modname, subname, recipeitem, fields)
@@ -90,6 +105,8 @@ function stairsplus:register_all(modname, subname, recipeitem, fields)
 end
 
 function stairsplus:register_slabs_and_slopes(modname, subname, recipeitem, fields)
+	fields.tiles = preprocess_tiles(fields.tiles)
+
 	return self:register_custom_subset(slabs_and_slopes_subset, modname, subname, recipeitem, fields)
 end
 

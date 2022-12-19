@@ -231,6 +231,7 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 				fixed = {-0.5, -0.5, -0.5, 0.5, (info/16)-0.5, 0.5},
 			}
 			def.description = ("%s (%s, %d/16)"):format(desc_base, S("Slab"), info)
+			-- print("DEBUG: tiles of "..modname.. ":" .. category .. "_" .. subname .. alternate.." are: "..dump2(def.tiles))
 		else
 			def.node_box = {
 				type = "fixed",

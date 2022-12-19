@@ -30,6 +30,7 @@ minetest.register_node("cherrytree:cherries", {
 		leafdecay = 3, leafdecay_drop = 1},
 	on_use = minetest.item_eat(2),
 	sounds = default.node_sound_leaves_defaults(),
+	visual_scale = 0.8,
 
 	after_place_node = function(pos, placer, itemstack)
 		minetest.set_node(pos, {name = "cherrytree:cherries", param2 = 1})
