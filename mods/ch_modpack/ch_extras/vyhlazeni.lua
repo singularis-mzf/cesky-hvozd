@@ -798,11 +798,11 @@ minetest.register_chatcommand("vyhladit_rollback", def)
 local function on_use(itemstack, user, pointed_thing)
 	local player_name = user and user:get_player_name()
 	if not player_name or not minetest.check_player_privs(player_name, "server") then
-		return false
+		return
 	end
 	if pointed_thing.type ~= "node" then
 		ch_core.systemovy_kanal(player_name, "Nutno kliknout na blok.")
-		return false
+		return
 	end
 	local result = vyhladit(pointed_thing.under)
 	if result == nil then
