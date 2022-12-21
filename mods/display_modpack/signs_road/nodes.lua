@@ -58,7 +58,7 @@ local models = {
 			          "signs_road_sides.png", "signs_road_sides.png",
 			          "signs_road_sides.png", "signs_road_large_white.png" },
 			use_texture_alpha = "opaque",
-			inventory_image = "signs_road_white.png",
+			inventory_image = prefix5.."signs_road_white.png",
 		},
 	},
 	blue_large_street_sign = {
