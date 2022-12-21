@@ -1,0 +1,48 @@
+License for code and documentation files:
+===================
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+License for other files:
+===================
+
+books_admin_pencil.png
+books_book_closed_front.png
+books_book_closed_front_overlay.png
+books_book_closed_left.png
+books_book_closed_right.png
+books_book_closed_right_overlay.png
+books_book_closed_topbottom.png
+books_book_open_bottom.png
+books_book_open_front.png
+books_book_open_front_overlay.png
+books_book_open_side.png
+books_book_open_side_overlay.png
+books_book_open_top.png
+books_book_open_top_overlay.png
+	License: LGPLv2.1+
+	Source: Books mod ( https://github.com/everamzah/books )
+	Some files are modified by Singularis to allow colorization
+
+homedecor_book.obj
+homedecor_book_open.obj
+homedecor_book_cover.png
+homedecor_book_cover_trim.png
+homedecor_book_edges.png
+homedecor_book_inv.png
+homedecor_book_pages.png
+homedecor_book_trim_inv.png
+	Author: VanessaE
+	License: CC BY-SA 4.0
+	Source: Home Decor ( https://content.minetest.net/packages/VanessaE/homedecor_modpack/ )

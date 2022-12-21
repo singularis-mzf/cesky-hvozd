@@ -9,237 +9,149 @@ local F = minetest.formspec_escape
 
 local lpp = 14 -- Lines per book's page
 
-local function copymeta(frommeta, tometa)
-	tometa:from_table( frommeta:to_table() )
+local function copy_book_metadata(frommeta, tometa)
+	tometa:set_string("owner", frommeta:get_string("owner"))
+	tometa:set_string("title", frommeta:get_string("title"))
+	tometa:set_string("text", frommeta:get_string("text"))
 end
 
-local function on_place(itemstack, placer, pointed_thing)
-	if minetest.is_protected(pointed_thing.above, placer:get_player_name()) then
-		-- TODO: record_protection_violation()
-		return itemstack
-	end
-
-	local pointed_on_rightclick = minetest.registered_nodes[minetest.get_node(pointed_thing.under).name].on_rightclick
-	if pointed_on_rightclick and not placer:get_player_control().sneak then
-		return pointed_on_rightclick(pointed_thing.under, minetest.get_node(pointed_thing.under), placer, itemstack)
-	end
-	local data = itemstack:get_meta()
-	local data_owner = data:get_string("owner")
-	local stack = ItemStack({name = "default:book_closed"})
-	if data and data_owner then
-		copymeta(itemstack:get_meta(), stack:get_meta() )
-	end
-	local _, placed = minetest.item_place_node(stack, placer, pointed_thing, nil)
-	if placed then
-		itemstack:take_item()
-	end
-	return itemstack
-end
-
-local function after_place_node(pos, placer, itemstack, pointed_thing)
-
-	local itemmeta = itemstack:get_meta()
-	if itemmeta then
-		local nodemeta = minetest.get_meta(pos)
-		copymeta(itemmeta, nodemeta)
-		nodemeta:set_string("infotext", S("@1\n\nby @2", itemmeta:get_string("title"),
-			itemmeta:get_string("owner")))
-	end
-end
-
-local function formspec_display(meta, player_name, pos)
+-- if pos is nil, expects that the wielded item is a book and edit it
+local function get_book_formspec(player_name, pos)
 	-- Courtesy of minetest_game/mods/default/craftitems.lua
-	local title, text, owner = "", "", player_name
-	local page, page_max, lines, string = 1, 1, {}, ""
+	local meta, owner, title, text --, page, page_max, lines, string
 
-	if meta:to_table().fields.owner then
-		title = meta:get_string("title")
-		text = meta:get_string("text")
-		owner = meta:get_string("owner")
+	local player = minetest.get_player_by_name(player_name)
+	local wielded_item = player and player:get_wielded_item()
 
-		for str in (text .. "\n"):gmatch("([^\n]*)[\n]") do
-			lines[#lines+1] = str
-		end
-
-		if meta:to_table().fields.page then
-			page = meta:to_table().fields.page
-			page_max = meta:to_table().fields.page_max
-
-			for i = ((lpp * page) - lpp) + 1, lpp * page do
-				if not lines[i] then break end
-				string = string .. lines[i] .. "\n"
-			end
-		end
+	if wielded_item == nil then
+		minetest.log("warning", "get_book_formspec(): not a player!")
+		return -- not a player
 	end
 
-	local formspec
-	if owner == player_name or (minetest.check_player_privs(player_name, {editor = true}) and minetest.get_player_by_name(player_name):get_wielded_item():get_name() == "books:admin_pencil" ) then
-		formspec = "size[8,8]" ..
-			default.gui_bg ..
-			default.gui_bg_img ..
-			"field[-4,-4;0,0;owner;"..F(S("Owner:"))..";" .. owner .. "]" ..
-
-			"field[0.5,1;7.5,0;title;"..F(S("Title:"))..";" ..
-				F(title) .. "]" ..
-			"textarea[0.5,1.5;7.5,7;text;"..F(S("Contents:"))..";" ..
-				F(text) .. "]" ..
-			"button_exit[2.5,7.5;3,1;save;"..F(S("Save")).."]"
-			-- TODO FIXME WE NEED TO SET A HIDDEN "owner" FIELD !!
+	if pos ~= nil then
+		meta = minetest.get_meta(pos)
+	elseif minetest.get_item_group(wielded_item:get_name(), "book") > 0 then
+		meta = wielded_item:get_meta()
 	else
-		formspec = "size[8,8]" ..
-			default.gui_bg ..
-			default.gui_bg_img ..
-			"label[0.5,0.5;by " .. owner .. "]" ..
-			"tablecolumns[color;text]" ..
-			"tableoptions[background=#00000000;highlight=#00000000;border=false]" ..
-			"table[0.4,0;7,0.5;title;#FFFF00," .. F(title) .. "]" ..
-			"textarea[0.5,1.5;7.5,7;;" ..
-				F(string ~= "" and string or text) .. ";]" ..
-			"button[2.4,7.6;0.8,0.8;book_prev;<]" ..
-			"label[3.2,7.7;"..F(S("Page @1 of @2", page, page_max)) .. "]" ..
-			"button[4.9,7.6;0.8,0.8;book_next;>]"
+		return -- not a book
 	end
 
-	minetest.show_formspec(player_name,
-			"default:book_" .. minetest.pos_to_string(pos), formspec)
-end
-
-local function on_rightclick(pos, node, clicker, itemstack, pointed_thing)
-	if node.name == "default:book_closed" then
-		node.name = "default:book_open"
-		minetest.swap_node(pos, node)
-		local meta = minetest.get_meta(pos)
-		meta:set_string("infotext",
-				meta:get_string("text"))
-	elseif node.name == "default:book_open" then
-		local player_name = clicker:get_player_name()
-		local meta = minetest.get_meta(pos)
-		formspec_display(meta, player_name, pos)
+	owner = meta:get_string("owner")
+	if owner == "" then
+		owner = player_name
 	end
-end
+	title = meta:get_string("title")
+	text = meta:get_string("text")
 
-local function on_punch(pos, node, puncher, pointed_thing)
-	if node.name == "default:book_open" then
-		node.name = "default:book_closed"
-		minetest.swap_node(pos, node)
-		local meta = minetest.get_meta(pos)
-		if meta:get_string("owner") ~= "" then
-			meta:set_string("infotext",
-					S("@1\n\nby @2", meta:get_string("title"),
-					meta:get_string("owner")))
+	local formspec = {
+		"size[8,8]",
+		default.gui_bg,
+		default.gui_bg_img,
+	}
+	if owner == player_name or wielded_item:get_name() == "books:admin_pencil" then
+		table.insert(formspec, "field[-4,-4;0,0;owner;"..F(S("Owner:"))..";" .. ch_core.prihlasovaci_na_zobrazovaci(owner) .. "]")
+		table.insert(formspec, "field[0.5,1;7.5,0;title;"..F(S("Title:"))..";" .. F(title) .. "]")
+		table.insert(formspec, "textarea[0.5,1.5;7.5,7;text;"..F(S("Contents:"))..";" .. F(text) .. "]")
+		table.insert(formspec, "button_exit[2.5,7.5;3,1;save;"..F(S("Save")).."]")
+	else
+		print("DEBUG: Will show book content, because owner == \""..owner.."\" and player_name == \""..player_name.."\" and weilded item == \""..(wielded_item:get_name() or "nil").."\"")
+		local page, page_max
+		local lines = {}
+		for str in (text .. "\n"):gmatch("([^\n]*)[\n]") do
+			table.insert(lines, str)
 		end
+
+		local page = meta:get_int("page")
+		local string = ""
+		if page > 0 then
+			page_max = meta:get_int("page_max")
+			for i = (lpp * page - lpp + 1), lpp * page do
+				if lines[i] == nil then break end
+				string = string..lines[i].."\n"
+			end
+		else
+			page = 1
+			page_max = 1
+		end
+
+		table.insert(formspec, "label[0.5,0.5;by " .. ch_core.prihlasovaci_na_zobrazovaci(owner) .. "]")
+		table.insert(formspec, "tablecolumns[color;text]")
+		table.insert(formspec, "tableoptions[background=#00000000;highlight=#00000000;border=false]")
+		table.insert(formspec, "table[0.4,0;7,0.5;title;#FFFF00," .. F(title) .. "]")
+		table.insert(formspec, "textarea[0.5,1.5;7.5,7;;" ..F(string ~= "" and string or text) .. ";]")
+		table.insert(formspec, "button[2.4,7.6;0.8,0.8;book_prev;<]")
+		table.insert(formspec, "label[3.2,7.7;"..F(S("Page @1 of @2", page, page_max)) .. "]")
+		table.insert(formspec, "button[4.9,7.6;0.8,0.8;book_next;>]")
+	end
+	return table.concat(formspec)
+end
+
+local function compute_infotext(book_meta)
+	local meta = book_meta
+	if meta:get_string("owner") ~= "" then
+		return S("@1\n\nby @2", meta:get_string("title"), ch_core.prihlasovaci_na_zobrazovaci(meta:get_string("owner")))
+	else
+		return ""
 	end
 end
 
-local function on_dig(pos, node, digger)
-	if minetest.is_protected(pos, digger:get_player_name()) then
-		-- TODO: record_protection_violation()
+local function update_infotext(book_meta)
+	book_meta:set_string("infotext", compute_infotext(book_meta))
+end
+
+local function open_book(pos)
+	local node = minetest.get_node(pos)
+	print("DEBUG: open_book("..minetest.pos_to_string(pos)..")")
+	if minetest.get_item_group(node.name, "book_closed") == 0 then
 		return false
 	end
-
-	local nodemeta = minetest.get_meta(pos)
-	local stack
-	if nodemeta:get_string("owner") ~= "" then
-		stack = ItemStack({name = "default:book_written"})
-		copymeta(nodemeta, stack:get_meta() )
-	else
-		stack = ItemStack({name = "default:book"})
-	end
-
-	local adder = digger:get_inventory():add_item("main", stack)
-	if adder then
-		minetest.item_drop(adder, digger, digger:getpos())
-	end
-	minetest.remove_node(pos)
+	node.name = node.name:gsub("_closed", "_open")
+	minetest.swap_node(pos, node)
+	local meta = minetest.get_meta(pos)
+	meta:set_string("infotext", meta:get_string("text"))
+	return true
 end
 
+local function close_book(pos)
+	local node = minetest.get_node(pos)
+	if minetest.get_item_group(node.name, "book_open") == 0 then
+		return false
+	end
+	node.name = node.name:gsub("_open", "_closed")
+	minetest.swap_node(pos, node)
+	update_infotext(minetest.get_meta(pos))
+	return true
+end
 
-
-minetest.override_item("default:book", {on_place = on_place})
-
-minetest.override_item("default:book_written", {on_place = on_place})
-
--- TODO: for book_open, book_written_open
-minetest.register_node(":default:book_open", {
-	description = S("Book Open"),
-	inventory_image = "default_book.png",
-	tiles = {
-		"books_book_open_top.png",	-- Top
-		"books_book_open_bottom.png",	-- Bottom
-		"books_book_open_side.png",	-- Right
-		"books_book_open_side.png",	-- Left
-		"books_book_open_front.png",	-- Back
-		"books_book_open_front.png"	-- Front
-	},
-	use_texture_alpha = "opaque",
-	drawtype = "nodebox",
-	paramtype = "light",
-	paramtype2 = "facedir",
-	sunlight_propagates = true,
-	node_box = {
-		type = "fixed",
-		fixed = {
-			{-0.375, -0.47, -0.282, 0.375, -0.4125, 0.282}, -- Top
-			{-0.4375, -0.5, -0.3125, 0.4375, -0.47, 0.3125},
-		}
-	},
-	--groups = {attached_node = 1}, -- FIXME
-	groups = {not_in_creative_inventory = 1},
-	on_punch = on_punch,
-	on_rightclick = on_rightclick,
-})
-
--- TODO: for book_closed, book_written_closed
-minetest.register_node(":default:book_closed", {
-	description = S("Book Closed"),
-	inventory_image = "default_book.png",
-	tiles = {
-		"books_book_closed_topbottom.png",	-- Top
-		"books_book_closed_topbottom.png",	-- Bottom
-		"books_book_closed_right.png",	-- Right
-		"books_book_closed_left.png",	-- Left
-		"books_book_closed_front.png^[transformFX",	-- Back
-		"books_book_closed_front.png"	-- Front
-	},
-	use_texture_alpha = "opaque",
-	drawtype = "nodebox",
-	paramtype = "light",
-	paramtype2 = "facedir",
-	sunlight_propagates = true,
-	node_box = {
-		type = "fixed",
-		fixed = {
-			{-0.25, -0.5, -0.3125, 0.25, -0.35, 0.3125},
-		}
-	},
-	groups = {oddly_breakable_by_hand = 3, dig_immediate = 2, not_in_creative_inventory = 1}, --, attached_node = 1}, -- FIXME
-	on_dig = on_dig,
-	on_rightclick = on_rightclick,
-	after_place_node = after_place_node,
-})
-
-minetest.register_on_player_receive_fields(function(player, formname, fields)
-	if formname:sub(1, 13) ~= "default:book_" then
-		return
+local function formspec_callback(custom_state, player, formname, fields)
+	local owner = custom_state.owner
+	local pos = custom_state.pos
+	local item
+	local meta
+	if pos == nil then
+		item = player:get_wielded_item()
+		meta = item:get_meta()
+	else
+		meta = minetest.get_meta(pos)
 	end
 
 	if fields.save and fields.title ~= "" and fields.text ~= "" then
-		local pos = minetest.string_to_pos(formname:sub(14))
-		local node = minetest.get_node(pos)
-		local meta = minetest.get_meta(pos)
-
 		meta:set_string("title", fields.title)
 		meta:set_string("text", fields.text)
-		meta:set_string("owner", fields.owner or player:get_player_name() )
-		meta:set_string("infotext", fields.text)
+		meta:set_string("owner", owner)
 		meta:set_int("text_len", fields.text:len())
 		meta:set_int("page", 1)
 		meta:set_int("page_max", math.ceil((fields.text:gsub("[^\n]", ""):len() + 1) / lpp))
-	elseif fields.book_next or fields.book_prev then
-		local pos = minetest.string_to_pos(formname:sub(14))
-		local node = minetest.get_node(pos)
-		local meta = minetest.get_meta(pos)
 
+		if pos == nil then
+			-- item
+			meta:set_string("description", compute_infotext(meta))
+			player:set_wielded_item(item)
+		else
+			-- node (open book)
+			meta:set_string("infotext", fields.text)
+		end
+	elseif fields.book_next or fields.book_prev then
 		if fields.book_next then
 			meta:set_int("page", meta:get_int("page") + 1)
 			if meta:get_int("page") > meta:get_int("page_max") then
@@ -252,9 +164,225 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			end
 		end
 
-		formspec_display(meta, player:get_player_name(), pos)
+		if pos == nil then
+			player:set_weilded_item(item)
+		end
+
+		return get_book_formspec(player:get_player_name(), pos)
 	end
-end)
+end
+
+local function closed_on_rightclick(pos, node, clicker, itemstack, pointed_thing)
+	open_book(pos)
+end
+
+local function open_on_rightclick(pos, node, clicker, itemstack, pointed_thing)
+	if clicker then
+		local player_name = clicker:get_player_name()
+		local formspec = get_book_formspec(player_name, pos)
+		local meta = minetest.get_meta(pos)
+		local owner = meta:get_string("owner")
+		if owner == "" then
+			owner = clicker:get_player_name()
+		end
+		ch_core.show_formspec(clicker, "books:book", formspec, formspec_callback, {
+			type = "pos",
+			pos = pos,
+			owner = owner,
+		}, {})
+	end
+end
+
+local function on_punch(pos, node, puncher, pointed_thing)
+	close_book(pos)
+end
+
+-- minetest.override_item("default:book", override)
+-- minetest.override_item("default:book_written", override)
+
+local function preserve_metadata(pos, oldnode, oldmeta, drops)
+	local item = drops[1]
+	if item == nil then
+		return
+	end
+	if drops[2] ~= nil then
+		minetest.log("warning", "preserve_metadata() called for a book, but drops contains more than one item: "..dump2(drops))
+	end
+
+	local itemname = item:get_name()
+	if minetest.get_item_group(itemname, "book_closed") == 0 then
+		minetest.log("warning", "Openned book "..itemname.." was dug!")
+		item:set_name(itemname:gsub("_open", "_closed"))
+	end
+
+	local itemmeta = item:get_meta()
+	itemmeta:set_string("owner", oldmeta.owner or "")
+	itemmeta:set_string("title", oldmeta.title or "")
+	itemmeta:set_string("text", oldmeta.text or "")
+	itemmeta:set_string("description", compute_infotext(itemmeta))
+end
+
+local function after_place_node(pos, placer, itemstack, pointed_thing)
+	local itemmeta = itemstack:get_meta()
+	if itemmeta then
+		local nodemeta = minetest.get_meta(pos)
+		nodemeta:from_table(itemmeta:to_table())
+		update_infotext(nodemeta)
+	end
+end
+
+local function on_use(itemstack, user, pointed_thing)
+	local player_name = user and user:get_player_name()
+	if player_name then
+		local meta = itemstack:get_meta()
+		local owner = meta:get_string("owner")
+		if owner == "" then
+			owner = player_name
+		elseif owner ~= player_name then
+			return
+		end
+		local formspec = get_book_formspec(player_name)
+		if formspec ~= nil then
+			ch_core.show_formspec(user, "books:book", formspec, formspec_callback, {
+				type = "item",
+				owner = owner,
+			}, {})
+			return itemstack
+		end
+	end
+end
+
+local groups_common = {
+	book = 1, snappy = 3, ud_param2_colorable = 1, not_in_creative_inventory = 1
+}
+local groups_open = {book_open = 1}
+local groups_closed = {book_closed = 1, oddly_breakable_by_hand = 3,}
+local groups_closed2 = table.copy(groups_closed)
+groups_closed2.not_in_creative_inventory = nil
+
+local node_box_openned = {
+	type = "fixed",
+		fixed = {
+			{-0.375, -0.47, -0.282, 0.375, -0.4125, 0.282}, -- Top
+			{-0.4375, -0.5, -0.3125, 0.4375, -0.47, 0.3125},
+		}
+}
+local node_box_closed = {
+	type = "fixed",
+	fixed = {
+		{-0.25, -0.5, -0.3125, 0.25, -0.35, 0.3125},
+	}
+}
+
+local def_common = {
+	-- inventory_image = "default_book.png", -- TODO
+	use_texture_alpha = "opaque",
+	drawtype = "nodebox",
+	paramtype = "light",
+	paramtype2 = "colorfacedir",
+	-- palette = "unifieddyes_palette_greys.png",
+	sunlight_propagates = true,
+	stack_max = 1,
+	preserve_metadata = preserve_metadata,
+	on_use = on_use,
+	sounds = default.node_sound_leaves_defaults(),
+}
+
+local def_open = {
+	description = "Kniha B5",
+	tiles = {
+		"books_book_open_top.png",	-- Top
+		"books_book_open_bottom.png",	-- Bottom
+		"books_book_open_side.png",	-- Right
+		"books_book_open_side.png",	-- Left
+		"books_book_open_front.png",	-- Back
+		"books_book_open_front.png"	-- Front
+	},
+	overlay_tiles = {
+		{name = "books_book_open_top_overlay.png", color = "white"},	-- Top
+		"",	-- Bottom
+		{name = "books_book_open_side_overlay.png", color = "white"},	-- Right
+		{name = "books_book_open_side_overlay.png", color = "white"},	-- Left
+		{name = "books_book_open_front_overlay.png", color = "white"},	-- Back
+		{name = "books_book_open_front_overlay.png", color = "white"},	-- Front
+	},
+	airbrush_replacement_node = "books:book_open_grey",
+	node_box = node_box_openned,
+	groups = groups_open,
+	on_dig = unifieddyes.on_dig,
+	on_punch = on_punch, -- close the book
+	on_rightclick = open_on_rightclick, -- edit the book
+}
+
+local def_closed = {
+	description = "Kniha B5",
+	tiles = {
+		"books_book_closed_topbottom.png",	-- Top
+		"books_book_closed_topbottom.png",	-- Bottom
+		"books_book_closed_right.png",	-- Right
+		"books_book_closed_left.png",	-- Left
+		"books_book_closed_front.png^[transformFX",	-- Back
+		"books_book_closed_front.png"	-- Front
+	},
+	overlay_tiles = {
+		"", -- Top
+		"", -- Bottom
+		{name = "books_book_closed_right_overlay.png", color = "white"}, -- Right
+		"", -- Left
+		{name = "books_book_closed_front_overlay.png^[transformFX", color = "white"}, -- Back
+		{name = "books_book_closed_front_overlay.png", color = "white"}, -- Front
+	},
+	node_box = node_box_closed,
+	groups = groups_closed,
+	on_rightclick = closed_on_rightclick,
+	after_place_node = after_place_node,
+}
+
+for k, v in pairs(def_common) do
+	def_open[k] = def_open[k] or v
+	def_closed[k] = def_closed[k] or v
+end
+
+-- minetest.register_node("books:book_open_grey", def)
+unifieddyes.generate_split_palette_nodes("books:book_b5_open", table.copy(def_open))
+unifieddyes.generate_split_palette_nodes("books:book_b5_closed", table.copy(def_closed))
+minetest.override_item("books:book_b5_closed_grey", {groups = groups_closed2})
+
+def_open.node_box = nil
+def_open.drawtype = "mesh"
+def_open.mesh = "homedecor_book_open.obj"
+def_open.selection_box = {
+	type = "fixed",
+	fixed = {-0.35, -0.5, -0.25, 0.35, -0.4, 0.25}
+}
+def_open.tiles = {
+	{name = "homedecor_book_cover.png", backface_culling = true},
+	{name = "homedecor_book_edges.png", color = "white", backface_culling = true},
+	{name = "homedecor_book_pages.png", color = "white", backface_culling = true}
+}
+def_open.overlay_tiles = nil
+def_open.description = "Kniha (B6)"
+
+def_closed.node_box = nil
+def_closed.drawtype = "mesh"
+def_closed.mesh = "homedecor_book.obj"
+def_closed.selection_box = {
+	type = "fixed",
+	fixed = {-0.2, -0.5, -0.25, 0.2, -0.35, 0.25}
+}
+def_closed.tiles = {
+	{name = "homedecor_book_cover.png", backface_culling = true},
+	{name = "homedecor_book_edges.png", color = "white", backface_culling = true},
+}
+def_closed.overlay_tiles = {
+	{name = "homedecor_book_cover_trim.png", color = "white", backface_culling = true},
+	"",
+}
+def_closed.description = "Kniha (B6)"
+
+unifieddyes.generate_split_palette_nodes("books:book_b6_open", def_open)
+unifieddyes.generate_split_palette_nodes("books:book_b6_closed", def_closed)
+minetest.override_item("books:book_b6_closed_grey", {groups = groups_closed2})
 
 if minetest.settings:get_bool("books.editor", true) then
 	minetest.register_privilege("editor", S("Allow player to edit books with the Admin Pencil"))
@@ -290,3 +418,35 @@ if minetest.settings:get_bool("books.editor", true) then
 		}
 	}) ]]
 end
+
+-- CRAFTS
+minetest.clear_craft({output = "default:book"})
+minetest.clear_craft({output = "default:bookshelf"})
+minetest.unregister_item("default:book")
+minetest.unregister_item("default:book_written")
+
+minetest.register_craft({
+	output = "books:book_b5_closed_grey",
+	recipe = {
+		{"default:paper", "default:paper", ""},
+		{"default:paper", "default:paper", ""},
+		{"default:paper", "default:paper", ""},
+	},
+})
+minetest.register_craft({
+	output = "books:book_b6_closed_grey",
+	recipe = {
+		{"default:paper", "default:paper"},
+		{"default:paper", "default:paper"},
+	},
+})
+
+--[[
+local colors = unifieddyes.HUES_WITH_GREY
+for _, hue in ipairs(unifieddyes.HUES_WITH_GREY) do
+	local name = "books:book_b5_closed_"..hue
+	minetest.register_craft({output = name, recipe = {{name}}})
+	name = "books:book_b6_closed_"..hue
+	minetest.register_craft({output = name, recipe = {{name}}})
+end
+]]
