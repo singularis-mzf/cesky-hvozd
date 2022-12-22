@@ -385,7 +385,10 @@ function ch_core.ap_update(player, online_charinfo, offline_charinfo)
 end
 
 local function on_dignode(pos, oldnode, digger)
-	local player_name = digger and digger:is_player() and digger:get_player_name()
+	if digger == nil then
+		return
+	end
+	local player_name = digger:is_player() and digger:get_player_name()
 	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
 	if online_charinfo then -- nil if digged by digtron
 		local ap = online_charinfo.ap
@@ -400,7 +403,10 @@ local function on_dignode(pos, oldnode, digger)
 end
 
 local function on_placenode(pos, newnode, placer, oldnode, itemstack, pointed_thing)
-	local player_name = placer and placer:is_player() and placer:get_player_name()
+	if placer == nil then
+		return
+	end
+	local player_name = placer:is_player() and placer:get_player_name()
 	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
 	if online_charinfo then
 		local ap = online_charinfo.ap

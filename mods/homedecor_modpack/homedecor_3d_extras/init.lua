@@ -1,5 +1,6 @@
 print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
+--[[
 if minetest.get_modpath("default") then
 	minetest.override_item("default:bookshelf", {
 		drawtype = "mesh",
@@ -13,8 +14,10 @@ if minetest.get_modpath("default") then
 		paramtype2 = "facedir",
 	})
 end
+]]
 
 if minetest.get_modpath("vessels") then
+	--[[
 	minetest.override_item("vessels:shelf", {
 		drawtype = "mesh",
 		mesh = "homedecor_3d_vessels_shelf.obj",
@@ -27,6 +30,7 @@ if minetest.get_modpath("vessels") then
 		paramtype2 = "facedir",
 		use_texture_alpha = "blend",
 	})
+	]]
 
 	local sbox = {
 		type = "fixed",

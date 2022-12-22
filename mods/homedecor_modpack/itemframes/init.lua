@@ -207,7 +207,11 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 		return 0
 	end
 	local inv = meta:get_inventory()
-	inv:set_stack(listname, index, ItemStack(stack:get_name()))
+	local new_stack = ItemStack(stack:get_name())
+	local old_meta = stack:get_meta()
+	local new_meta = new_stack:get_meta()
+	new_meta:set_int("palette_index", old_meta:get_int("palette_index"))
+	inv:set_stack(listname, index, new_stack)
 	update_item(pos, minetest.get_node(pos))
 	return 0
 end

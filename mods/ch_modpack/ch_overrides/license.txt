@@ -648,3 +648,42 @@ mobs_rabbit_cooked.png
 mobs_rabbit_raw.png
 	Source: Petz Mod (https://github.com/runsy/petz , file petz_raw_rabbit.png)
 	License: CC BY-SA 4.0
+
+moreblocks_empty_shelf.png
+	Author: Singularis
+	License: CC BY-SA 4.0
+	Used sources:
+	- Graceful 32x (texture pack), derived from "Minetest Game (license CC BY-SA 3.0)
+		Copyright (C) 2010-2018:
+			celeron55, Perttu Ahola <celeron55@gmail.com>
+			Cisoun
+			G4JC
+			VanessaE
+			RealBadAngel
+			Calinou
+			MirceaKitsune
+			Jordach
+			PilzAdam
+			jojoa1997
+			InfinityProject
+			Splizard
+			Zeg9
+			paramat
+			BlockMen
+			sofar
+			Neuromancer
+			Gambit
+			asl97
+			KevDoy
+			Mito551
+			GreenXenith
+			kaeza
+			kilbith
+			tobyplowy
+			CloudyProton
+			TumeniNodes
+			Mossmanikin
+			random-geek
+			Extex101
+			An0n3m0us
+	- "Polygonia_64px texture pack" by Lukas Reichlin (license CC BY-SA 4.0)

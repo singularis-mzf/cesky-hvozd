@@ -101,7 +101,6 @@ end
 
 local function open_book(pos)
 	local node = minetest.get_node(pos)
-	print("DEBUG: open_book("..minetest.pos_to_string(pos)..")")
 	if minetest.get_item_group(node.name, "book_closed") == 0 then
 		return false
 	end
@@ -238,8 +237,6 @@ local function on_use(itemstack, user, pointed_thing)
 		local owner = meta:get_string("owner")
 		if owner == "" then
 			owner = player_name
-		elseif owner ~= player_name then
-			return
 		end
 		local formspec = get_book_formspec(player_name)
 		if formspec ~= nil then
@@ -253,14 +250,21 @@ local function on_use(itemstack, user, pointed_thing)
 end
 
 local groups_common = {
-	book = 1, snappy = 3, ud_param2_colorable = 1, not_in_creative_inventory = 1
+	snappy = 3, ud_param2_colorable = 1, not_in_creative_inventory = 1
 }
-local groups_open = {book_open = 1}
-local groups_closed = {book_closed = 1, oddly_breakable_by_hand = 3,}
-local groups_closed2 = table.copy(groups_closed)
-groups_closed2.not_in_creative_inventory = nil
+local groups_open_b5 = table.copy(groups_common)
+local groups_closed_b5 = table.copy(groups_common)
+groups_open_b5.book = 5
+groups_open_b5.book_open = 1
+groups_closed_b5.book = 5
+groups_closed_b5.book_closed = 1
+groups_closed_b5.oddly_breakable_by_hand = 3
+local groups_open_b6 = table.copy(groups_open_b5)
+local groups_closed_b6 = table.copy(groups_closed_b5)
+groups_open_b6.book = 6
+groups_closed_b6.book = 6
 
-local node_box_openned = {
+local node_box_open = {
 	type = "fixed",
 		fixed = {
 			{-0.375, -0.47, -0.282, 0.375, -0.4125, 0.282}, -- Top
@@ -307,8 +311,8 @@ local def_open = {
 		{name = "books_book_open_front_overlay.png", color = "white"},	-- Front
 	},
 	airbrush_replacement_node = "books:book_open_grey",
-	node_box = node_box_openned,
-	groups = groups_open,
+	node_box = node_box_open,
+	groups = groups_open_b5,
 	on_dig = unifieddyes.on_dig,
 	on_punch = on_punch, -- close the book
 	on_rightclick = open_on_rightclick, -- edit the book
@@ -333,7 +337,7 @@ local def_closed = {
 		{name = "books_book_closed_front_overlay.png", color = "white"}, -- Front
 	},
 	node_box = node_box_closed,
-	groups = groups_closed,
+	groups = groups_closed_b5,
 	on_rightclick = closed_on_rightclick,
 	after_place_node = after_place_node,
 }
@@ -346,7 +350,9 @@ end
 -- minetest.register_node("books:book_open_grey", def)
 unifieddyes.generate_split_palette_nodes("books:book_b5_open", table.copy(def_open))
 unifieddyes.generate_split_palette_nodes("books:book_b5_closed", table.copy(def_closed))
-minetest.override_item("books:book_b5_closed_grey", {groups = groups_closed2})
+local groups2 = table.copy(groups_closed_b5)
+groups2.not_in_creative_inventory = nil
+minetest.override_item("books:book_b5_closed_grey", {groups = groups2})
 
 def_open.node_box = nil
 def_open.drawtype = "mesh"
@@ -361,6 +367,7 @@ def_open.tiles = {
 	{name = "homedecor_book_pages.png", color = "white", backface_culling = true}
 }
 def_open.overlay_tiles = nil
+def_open.groups = groups_open_b6
 def_open.description = "Kniha (B6)"
 
 def_closed.node_box = nil
@@ -378,11 +385,14 @@ def_closed.overlay_tiles = {
 	{name = "homedecor_book_cover_trim.png", color = "white", backface_culling = true},
 	"",
 }
+def_closed.groups = groups_closed_b6
 def_closed.description = "Kniha (B6)"
 
 unifieddyes.generate_split_palette_nodes("books:book_b6_open", def_open)
 unifieddyes.generate_split_palette_nodes("books:book_b6_closed", def_closed)
-minetest.override_item("books:book_b6_closed_grey", {groups = groups_closed2})
+groups2 = table.copy(groups_closed_b6)
+groups2.not_in_creative_inventory = nil
+minetest.override_item("books:book_b6_closed_grey", {groups = groups2})
 
 if minetest.settings:get_bool("books.editor", true) then
 	minetest.register_privilege("editor", S("Allow player to edit books with the Admin Pencil"))
@@ -390,22 +400,6 @@ if minetest.settings:get_bool("books.editor", true) then
 	minetest.register_craftitem("books:admin_pencil", {
 		description = S("Admin Pencil"),
 		inventory_image = "books_admin_pencil.png",
-		--[[
-		-- FIXME - this does not work
-		on_use = function(itemstack, user, pointed_thing)
-			if not pointed_thing or not pointed_thing.under then
-				return
-			end
-
-			local node = minetest.get_node(pointed_thing.under)
-
-			if node.name == "default:book_open" then
-				itemstack = itemstack:take_item()
-			end
-
-			return itemstack
-		end,
-		--]]
 	})
 
 	--[[ MAKE IT EXPENSIVE

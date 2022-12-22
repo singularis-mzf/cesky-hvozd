@@ -24,6 +24,7 @@ dofile(modpath.."/extra_shapes.lua")
 dofile(modpath.."/falling_nodes.lua")
 dofile(modpath.."/ores.lua")
 dofile(modpath.."/poles.lua")
+dofile(modpath.."/shelves.lua")
 dofile(modpath.."/security.lua")
 
 -- log giveme
