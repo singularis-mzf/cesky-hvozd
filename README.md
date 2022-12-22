@@ -929,6 +929,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/SFENCE/wateringcan/)
 
+## What is This Uwu (what\_is\_this\_uwu-minetest)
+
+* Zdroj: [https://github.com/Rotfuchs-von-Vulpes/what\_is\_this\_uwu-minetest/](https://github.com/Rotfuchs-von-Vulpes/what\_is\_this\_uwu-minetest/), revize 2ba5e0ed69ada71304d3025d1e54eefba5f44d3d
+* Původní licence: MIT
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/Rotfuchs-von-Vulpes/what_is_this_uwu/)
+
 ## Wielded Light (wielded\_light)
 
 * Zdroj: [https://github.com/minetest-mods/wielded\_light](https://github.com/minetest-mods/wielded\_light), revize b5236562af9772dff8522fe2bda5b5f738e81b88
