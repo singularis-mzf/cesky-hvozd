@@ -540,7 +540,7 @@ function letter_cutter.on_receive_fields(pos, formname, fields, sender)
 end
 
 minetest.register_node("letters:letter_cutter_lower",  {
-	description = "Řezačka na malá písmena",
+	description = "řezačka na malá písmena",
 	drawtype = "nodebox",
 	node_box = {
 		type = "fixed",
@@ -600,7 +600,7 @@ minetest.register_craft({
 })
 
 minetest.register_node("letters:letter_cutter_upper",  {
-	description = "Řezačka na velká písmena a číslice",
+	description = "řezačka na velká písmena a číslice",
 	drawtype = "nodebox",
 	node_box = {
 		type = "fixed",

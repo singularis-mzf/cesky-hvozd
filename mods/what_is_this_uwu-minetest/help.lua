@@ -86,7 +86,7 @@ end
 local function string_to_pixels(str)
 	local size = 0
 
-	str:gsub('.', function(char)
+	ch_core.odstranit_diakritiku(str):gsub('.', function(char)
 		local pixels = char_width[char]
 
 		if pixels then
@@ -251,7 +251,7 @@ function what_is_this_uwu.get_node_tiles(node_name)
 	end
 
 	if node.groups['not_in_creative_inventory'] then
-		drop = node.drop
+		local drop = node.drop
 		if drop and type(drop) == 'string' then
 			node_name = drop
 			node = minetest.registered_nodes[drop]

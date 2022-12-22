@@ -40,6 +40,11 @@ ch_extras_cz_flag_inv.png
 	License: public domain by the Czech law
 	Source: https://cs.wikipedia.org/wiki/Soubor:Flag_of_the_Czech_Republic.svg
 
+ch_extras_lupa.png
+	License: CC0
+	Source: https://commons.wikimedia.org/wiki/File:Magnifying_glass_icon_mgx2.svg
+	Modified by Singularis
+
 ch_extras_sk_flag.png
 ch_extras_sk_flag_inv.png
 	License: public domain by the Slovak law

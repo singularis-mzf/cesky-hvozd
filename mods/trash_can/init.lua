@@ -156,7 +156,7 @@ end
 
 -- Dumpster
 minetest.register_node("trash_can:dumpster", {
-	description = "Odpadkový kontejner",
+	description = "odpadkový kontejner",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	inventory_image = "dumpster_wield.png",

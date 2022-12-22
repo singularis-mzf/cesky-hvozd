@@ -291,7 +291,7 @@ local def_common = {
 }
 
 local def_open = {
-	description = "Kniha B5",
+	description = "kniha B5",
 	tiles = {
 		"books_book_open_top.png",	-- Top
 		"books_book_open_bottom.png",	-- Bottom
@@ -317,7 +317,7 @@ local def_open = {
 }
 
 local def_closed = {
-	description = "Kniha B5",
+	description = "kniha B5",
 	tiles = {
 		"books_book_closed_topbottom.png",	-- Top
 		"books_book_closed_topbottom.png",	-- Bottom
@@ -366,7 +366,7 @@ def_open.tiles = {
 }
 def_open.overlay_tiles = nil
 def_open.groups = groups_open_b6
-def_open.description = "Kniha (B6)"
+def_open.description = "kniha B6"
 
 def_closed.node_box = nil
 def_closed.drawtype = "mesh"
@@ -384,7 +384,7 @@ def_closed.overlay_tiles = {
 	"",
 }
 def_closed.groups = groups_closed_b6
-def_closed.description = "Kniha (B6)"
+def_closed.description = "kniha B6"
 
 unifieddyes.generate_split_palette_nodes("books:book_b6_open", def_open)
 unifieddyes.generate_split_palette_nodes("books:book_b6_closed", def_closed)

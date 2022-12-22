@@ -168,7 +168,7 @@ end
 
 -- Register the spawn block
 minetest.register_node("chess:spawn",{
-    description = "Šachovnice",
+    description = "šachovnice",
     tiles = {"chess_border_spawn.png", "chess_board_black.png", "chess_board_black.png^chess_border_side.png"},
     groups = {snappy=1,choppy=2,oddly_breakable_by_hand=1},
     after_dig_node = dig_chessboard,
@@ -206,7 +206,7 @@ minetest.register_craft({
 
 --Register the Board Blocks: white
 minetest.register_node("chess:board_white",{
-    description = "Bílé pole šachovnice",
+    description = "bílé pole šachovnice",
     tiles = {"chess_board_white.png"},
     inventory_image = "chess_board_white.png",
 	paramtype = "light",
@@ -219,7 +219,7 @@ register_stopper("chess:board_white")
 
 --Register the Board Blocks: black
 minetest.register_node("chess:board_black",{
-    description = "Černé pole šachovnice",
+    description = "černé pole šachovnice",
     tiles = {"chess_board_black.png"},
     inventory_image = "chess_board_black.png",
 	paramtype = "light",
@@ -242,7 +242,7 @@ register_stopper("chess:border")
 
 for iii = innerSize, 1, -1 do
     minetest.register_node("chess:border_" .. letters[iii],{
-        description = "Bílé pole šachovnice",
+        description = "okraj šachovnice",
         tiles = {"chess_board_black.png^chess_border_" .. letters[iii] .. ".png", "chess_board_black.png", "chess_board_black.png^chess_border_side.png"},
         inventory_image = "chess_board_white.png",
         paramtype2 = "facedir",
@@ -253,7 +253,7 @@ for iii = innerSize, 1, -1 do
 	register_stopper("chess:border_" .. letters[iii])
 
     minetest.register_node("chess:border_" .. iii,{
-        description = "Bílé pole šachovnice",
+        description = "okraj šachovnice",
         tiles = {"chess_board_black.png^chess_border_" .. iii .. ".png", "chess_board_black.png", "chess_board_black.png^chess_border_side.png"},
         inventory_image = "chess_board_white.png",
         paramtype2 = "facedir",

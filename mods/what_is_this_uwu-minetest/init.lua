@@ -1,4 +1,4 @@
-local what_is_this_uwu = dofile(minetest.get_modpath('what_is_this_uwu')..'/help.lua')
+what_is_this_uwu = dofile(minetest.get_modpath('what_is_this_uwu')..'/help.lua')
 
 minetest.register_on_joinplayer(function(player)
 	local meta = player:get_meta()
@@ -58,7 +58,7 @@ minetest.register_on_joinplayer(function(player)
 	meta:set_string('wit:pointed_thing', 'ignore')
 	meta:set_string('wit:item_type_in_pointer', 'node')
 
-	what_is_this_uwu.register_player(player, player:get_player_name())
+	-- what_is_this_uwu.register_player(player, player:get_player_name())
 end)
 
 minetest.register_on_leaveplayer(function(player)
@@ -83,7 +83,14 @@ minetest.register_globalstep(function()
 					return
 				end
 
-				local node_description = what_is_this_uwu.destrange(node_definition.description)
+				local online_charinfo = ch_core.online_charinfo[player:get_player_name()]
+				local lang_code = (online_charinfo and online_charinfo.lang_code) or "cs"
+				local s = minetest.get_translated_string(lang_code, node_definition.description)
+				local i = s:find("\n")
+				if i ~= nil then
+					s = s:sub(1, i - 1)
+				end
+				local node_description = what_is_this_uwu.destrange(s)
 				local mod_name, _ = what_is_this_uwu.split_item_name(node_name)
 
 				what_is_this_uwu.show(player, meta, form_view, node_description, node_name, item_type, mod_name)
@@ -94,6 +101,7 @@ minetest.register_globalstep(function()
 	end
 end)
 
+--[[
 minetest.register_chatcommand('wituwu', {
 	params = '',
 	description = 'Show and unshow the wituwu pop-up',
@@ -110,3 +118,4 @@ minetest.register_chatcommand('wituwu', {
 		return true, 'Option flipped'
 	end
 })
+]]
