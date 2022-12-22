@@ -356,7 +356,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 * Zdroj: [https://github.com/bas080/chess-mod](https://github.com/bas080/chess-mod), revize 9d9e032f1be3c4e24a42751ccd8a8bf4f2d6c8d3 (textury z revize 9fc9ac2ded011b6ec834f015ea389a85cda3fc81, viz ostatní-zdroje/chess-mod-textures)
 * Původní licence: WTFPL
-* Licence úprav: WTFPL
+* Licence úprav: LGPLv2.1
 
 ## Christmass Tree (christmastree)
 
@@ -979,6 +979,11 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Zdroj: [https://github.com/Grizzly-Adam/BBQ](https://github.com/Grizzly-Adam/BBQ), revize 1a72f7c2baacc6798033a7973545ab74cc52341e
 * Původní licence: LGPLv2.1+ (kód), CC-BY-SA-3.0 (textury), CC-BY-3.0 (zvuky)
 * [ContentDB](https://content.minetest.net/packages/Grizzly%20Adam/bbq/)
+
+## Chess from Tunneler's Abyss (chess)
+
+* Zdroj: [https://gitlab.com/tunnelers-abyss/chess](https://gitlab.com/tunnelers-abyss/chess), revize 2f518972f9fee3c2cb0efc16ece5069b99226c44
+* Původní licence: CC0 (kód a textury), CC-BY-4.0 (modely)
 
 ## Cucina Vegana (cucina\_vegana)
 

@@ -1,18 +1,25 @@
--- CHESS MOD
--- ======================================
--- chess/init.lua
--- ======================================
--- Registers the basic chess stuff
---
--- Contents:
---
--- [regis] Spawn Block
--- [craft] Spawn Block
--- [regis] board_black
--- [regis] board_white
--- ======================================
-
 print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
+chess = {
+	letters = {"a", "b", "c", "d", "e", "f", "g", "h"},
+	colors = {
+		black = {
+			description = "čern",
+			texture = "chess_black.png",
+			place_param2 = 0,
+		},
+		white = {
+			description = "bíl",
+			texture = "chess_white.png",
+			place_param2 = 2,
+		},
+		gray = {
+			description = "šed",
+			texture = "chess_gray.png",
+			place_param2 = 3,
+		},
+	},
+}
 
 dofile(minetest.get_modpath("chess").."/pieces.lua")
 
@@ -20,7 +27,7 @@ local register_stopper = minetest.get_modpath("mesecons_mvps") and mesecon.regis
 	return true
 end
 
-local letters = {"a", "b", "c", "d", "e", "f", "g", "h"}
+local letters = chess.letters
 
 local size = 9 --total width(10) including the border coordinate 0,0
 local innerSize = 8 --inner width(8) including the coordinate 1,1
@@ -123,6 +130,10 @@ local function place_chessboard(pos, placer)
 				else
 					minetest.add_node(p, {name="chess:board_white"})
 				end
+				local meta = minetest.get_meta(p)
+				meta:set_int("chess_offset_x", i)
+				meta:set_int("chess_offset_z", ii)
+				meta:set_string("infotext", letters[i]..ii)
 			end
 			--place pieces
 			local face = 2
@@ -179,6 +190,7 @@ minetest.register_node("chess:spawn",{
 		dig_chessboard(pos, nil, nil)
 		return nil
 	end,
+	_ch_help = "Šachovnice se rozloží do prostoru 10x10 metrů na severovýchod od místa umístění.\nOdstranit ji lze jen vytěžením výchozího bloku.\nShift+levý klik na výchozí blok pro reset hry.",
 })
 register_stopper("chess:spawn")
 
@@ -197,6 +209,8 @@ minetest.register_node("chess:board_white",{
     description = "Bílé pole šachovnice",
     tiles = {"chess_board_white.png"},
     inventory_image = "chess_board_white.png",
+	paramtype = "light",
+	light_source = 6,
     groups = {indestructable=1, not_in_creative_inventory=1},
 	diggable = false,
 	on_blast = get_nil,
@@ -208,6 +222,8 @@ minetest.register_node("chess:board_black",{
     description = "Černé pole šachovnice",
     tiles = {"chess_board_black.png"},
     inventory_image = "chess_board_black.png",
+	paramtype = "light",
+	light_source = 6,
     groups = {indestructable=1, not_in_creative_inventory=1},
 	diggable = false,
 	on_blast = get_nil,
@@ -256,7 +272,7 @@ for _, n in ipairs({"pawn", "rook", "knight", "bishop", "queen", "king"}) do
 	})
 end
 
-for _, color in ipairs({"white", "gray", "black"}) do
+for color, _ in pairs(chess.colors) do
 	for _, n in ipairs({"rook", "knight", "bishop", "queen"}) do
 		minetest.register_craft({
 			output = "chess:" .. n .. "_" .. color .. " 2",
@@ -266,10 +282,12 @@ for _, color in ipairs({"white", "gray", "black"}) do
 	end
 end
 
+--[[
 if register_stopper then
 	for _, n in ipairs({""}) do
 		register_stopper("chess:" .. n)
 	end
 end
+]]
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
