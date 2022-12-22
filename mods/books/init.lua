@@ -54,7 +54,6 @@ local function get_book_formspec(player_name, pos)
 		table.insert(formspec, "textarea[0.5,1.5;7.5,7;text;"..F(S("Contents:"))..";" .. F(text) .. "]")
 		table.insert(formspec, "button_exit[2.5,7.5;3,1;save;"..F(S("Save")).."]")
 	else
-		print("DEBUG: Will show book content, because owner == \""..owner.."\" and player_name == \""..player_name.."\" and weilded item == \""..(wielded_item:get_name() or "nil").."\"")
 		local page, page_max
 		local lines = {}
 		for str in (text .. "\n"):gmatch("([^\n]*)[\n]") do
@@ -279,7 +278,6 @@ local node_box_closed = {
 }
 
 local def_common = {
-	-- inventory_image = "default_book.png", -- TODO
 	use_texture_alpha = "opaque",
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -416,8 +414,13 @@ end
 -- CRAFTS
 minetest.clear_craft({output = "default:book"})
 minetest.clear_craft({output = "default:bookshelf"})
-minetest.unregister_item("default:book")
-minetest.unregister_item("default:book_written")
+-- minetest.unregister_item("default:book")
+-- minetest.unregister_item("default:book_written")
+
+minetest.override_item("default:book", {
+	groups = {not_in_creative_inventory = 1},
+	description = "[zastaralý předmět!]",
+})
 
 minetest.register_craft({
 	output = "books:book_b5_closed_grey",
