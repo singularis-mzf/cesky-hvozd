@@ -310,10 +310,10 @@ for style_id, style_name in pairs(styles) do
 end
 
 local vines = {
-	{name= "jonez:swedish_ivy", description= "Swedish Ivy", texture= "jonez_sweedish_ivy.png"},
-	{name= "jonez:ruin_creeper", description= "Ruin Creeper", texture= "jonez_ruin_creeper.png"},
-	{name= "jonez:ruin_vine", description= "Ruin Vine", texture= "jonez_ruin_vine.png"},
-	{name= "jonez:climbing_rose", description= "Climbing Rose", texture= "jonez_climbing_rose.png"},
+	{name= "jonez:swedish_ivy", description= "břečťan", texture= "jonez_sweedish_ivy.png"},
+	{name= "jonez:ruin_creeper", description= "popínavý keř", texture= "jonez_ruin_creeper.png"},
+	{name= "jonez:ruin_vine", description= "popínavá rostlina", texture= "jonez_ruin_vine.png"},
+	{name= "jonez:climbing_rose", description= "popínavá růže", texture= "jonez_climbing_rose.png"},
 }
 
 for i = 1, #vines do
