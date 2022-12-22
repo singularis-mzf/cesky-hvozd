@@ -318,6 +318,23 @@ technic_cnc.programs = {
 			}
 		}
 	},
+	{ suffix  = "technic_cnc_bannerstone",
+		desc  = S("Bannerstone"),
+		model = {
+				-- box from Facade mod, used under LGPLv2.1+ license
+				{-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
+				{-0.5625, 0.25, -0.5625, 0.5625, 0.375, 0.5625},
+				{-0.5625, -0.375, -0.5625, 0.5625, -0.25, 0.5625},
+		},
+		tiles_overlay = {
+			"",
+			"",
+			"^facade_bannerstone.png",
+			"^facade_bannerstone.png",
+			"^facade_bannerstone.png",
+			"^facade_bannerstone.png",
+		},
+	},
 }
 
 -- Allow disabling certain programs for some node. Default is allowing all types for all nodes
@@ -339,6 +356,7 @@ technic_cnc.programs_disable = {
 technic_cnc.onesize_products = {
 	arch216                  = 1,
 	arch216_flange           = 1,
+	bannerstone              = 1,
 	block_fluted             = 1,
 	circle                   = 8,
 	cylinder                 = 2,

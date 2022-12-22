@@ -1003,6 +1003,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: kód MIT, textury různé, ale neoznačené také MIT
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/ethereal/)
 
+## Facade (facade)
+
+* Zdroj: [https://github.com/TumeniNodes/facade](https://github.com/TumeniNodes/facade), revize c5158b49f958cea0a8cf76ba520b8f6a23f01f3f
+* Původní licence: LGPL 2.1+
+* [ContentDB](https://content.minetest.net/packages/TumeniNodes/facade/)
+
 ## Folks (folks)
 
 * Zdroj: [https://gitlab.com/SonoMichele/folks](https://gitlab.com/SonoMichele/folks), revize 4975480eec558307ab94a979b3cc1e5f4b6d0e23

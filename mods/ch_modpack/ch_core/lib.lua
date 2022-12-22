@@ -335,6 +335,37 @@ function ch_core.get_nearest_player(pos, player_name_to_ignore)
 end
 
 --[[
+Vytvoří kopii vstupu (input) a zapíše do ní nové hodnoty skupin podle
+parametru override. Skupiny s hodnotou 0 v override z tabulky odstraní.
+Je-li některý z parametrů nil, je interpretován jako prázdná tabulka.
+]]
+function ch_core.override_groups(input, override)
+	local result
+	if input ~= nil then
+		result = table.copy(input)
+		if override ~= nil then
+			for k, v in pairs(override) do
+				if v ~= 0 then
+					result[k] = v
+				else
+					result[k] = nil
+				end
+			end
+		end
+	elseif override ~= nil then
+		result = table.copy(override)
+		for k, v in pairs(override) do
+			if v == 0 then
+				result[k] = nil
+			end
+		end
+	else
+		result = {}
+	end
+	return result
+end
+
+--[[
 Převede zobrazovací nebo přihlašovací jméno na přihlašovací jméno,
 bez ohledu na to, zda takové jméno existuje.
 ]]

@@ -2,6 +2,12 @@ License for code: LGPLv2+ (source: Technic Plus)
 
 License for media:
 
+facade_bannerstone.png
+	Author: TumeniNodes
+	Copyright (C) 2016 - 2018 TumeniNodes
+	Source: https://github.com/TumeniNodes/facade
+	License: CC BY-SA 4.0
+
 mymeshnodes_circle.obj
 mymeshnodes_oct.obj
 mymeshnodes_peek.obj
@@ -20,6 +26,12 @@ technic_cnc_valley.png
 	Source: https://github.com/DonBatman/mymeshnodes
 	Modified by: Singularis
 	License: DWYWPL (probably, please examine source also)
+
+technic_cnc_bannerstone.png
+	Author: Singularis
+	Used source: facade_bannerstone.png from https://github.com/TumeniNodes/facade (under CC BY-SA 4.0)
+		Copyright (C) 2016 - 2018 TumeniNodes
+	License: CC BY-SA 4.0
 
 technic_cnc_cylinder_horizontal.obj
 technic_cnc_cylinder.obj

@@ -85,18 +85,26 @@ function technic_cnc.register_all(recipeitem, groups, images, description)
 			end
 		end
 
-		local images2 = {}
-		for k, v in ipairs(images) do
-			if type(v) == "string" then
-				images2[k] = {name = v, backface_culling = true}
-			else
-				images2[k] = v
-			end
-		end
-
 		-- Create the node if it passes the test
 		if do_register then
-			local program_groups = groups
+			local images2 = {}
+			for k, v in ipairs(images) do
+				if type(v) == "string" then
+					images2[k] = {name = v, backface_culling = true}
+				else
+					images2[k] = v
+				end
+			end
+
+			if data.tiles_overlay ~= nil then
+				while #images2 < 6 do
+					table.insert(images2, table.copy(images2[1]))
+				end
+				for i = 1, 6 do
+					images2[i].name = images2[i].name..data.tiles_overlay[i]
+				end
+			end
+
 			if data.extra_groups then
 				groups = table.copy(groups)
 				for group, group_value in pairs(data.extra_groups) do
