@@ -7,6 +7,7 @@ local mods = {
 	"cutepie",
 	"digistuff",
 	"petz",
+	"xdecor",
 }
 
 for _, mod in ipairs(mods) do

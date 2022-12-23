@@ -85,6 +85,11 @@ petz_honeycomb.png
 	Source: Petz Mod (https://github.com/runsy/petz)
 	License: CC BY-SA 4.0
 
+xdecor_wood_tile.png
+	Authors: Gambit, kilbith, Cisoun
+	Source: X-Decor Libre (https://codeberg.org/Wuzzy/xdecor-libre)
+	License: CC0
+
 MIT license text for init.lua, LICENSE and mod.conf files:
 ================================================
 MIT License

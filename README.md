@@ -1118,7 +1118,12 @@ Prohlášení autora/ky na [fóru](https://forum.minetest.net/viewtopic.php?f=4&
 
 ## Wardrobe Outfits (wardrobe\_outfits)
 
-* Mod není použit na serveru přímo, ale textury z něj jsou vloženy do modu SkinsDB.
 * Zdroj: [https://github.com/AntumMT/mod-wardrobe\_outfits](https://github.com/AntumMT/mod-wardrobe\_outfits), revize 7a874cf83d7109ea4cd81f1b15506f7bdb331d71
 * Původní licence: kód MIT, textury postav všechny CC-BY-SA-3.0
 * [ContentDB](https://content.minetest.net/packages/AntumDeluge/wardrobe\_outfits/)
+
+## X-Decor Libre (xdecor-libre)
+
+* Zdroj: [https://codeberg.org/Wuzzy/xdecor-libre](https://codeberg.org/Wuzzy/xdecor-libre), revize 902674e8db4f324e14e68cb9d9a1eba954220d78
+* Původní licence: kód BSD, média různé
+* [ContentDB](https://content.minetest.net/packages/Wuzzy/xdecor/)

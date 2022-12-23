@@ -129,6 +129,7 @@ local function process_figure_changed(spawn_pos, figure_pos, old_figure_node, ne
 		else
 			message = tah..". *** "..message
 		end
+		minetest.log("action", minetest.pos_to_string(spawn_pos).." "..message)
 
 		for _, player2 in pairs(minetest.get_connected_players()) do
 			local player_pos = player2:get_pos()
