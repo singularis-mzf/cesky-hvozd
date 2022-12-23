@@ -69,6 +69,7 @@ local function process_figure_changed(spawn_pos, figure_pos, old_figure_node, ne
 	local meta = minetest.get_meta(spawn_pos)
 	local fdesc = get_field_description(spawn_pos, figure_pos) or "??"
 	local color, figure, abbr, message
+	local save_tah = true
 	if old_figure_node == nil then
 		local nfndef = minetest.registered_nodes[new_figure_node.name]
 		local figure = nfndef._chess_figure
@@ -98,6 +99,7 @@ local function process_figure_changed(spawn_pos, figure_pos, old_figure_node, ne
 		meta:set_string(color.."_last_type", abbr)
 		meta:set_string(color.."_last_pos", fdesc)
 		message = abbr..fdesc.."-..."
+		save_tah = false
 	else
 		local ofndef = minetest.registered_nodes[old_figure_node.name]
 		local nfndef = minetest.registered_nodes[new_figure_node.name]
@@ -122,7 +124,9 @@ local function process_figure_changed(spawn_pos, figure_pos, old_figure_node, ne
 		local tah = meta:get_int("tah")
 		if color == "white" then
 			tah = tah + 1
-			meta:set_int("tah", tah)
+			if save_tah then
+				meta:set_int("tah", tah)
+			end
 			message = tah..". "..message
 		elseif color == "black" then
 			message = tah..". ... "..message
@@ -148,6 +152,11 @@ local function after_dig_node(pos, oldnode, oldmetadata, digger)
 	if digger == nil or not digger:is_player() then
 		return
 	end
+	if digger:get_player_control().sneak then
+		minetest.set_node(pos, oldnode)
+		return -- allow piece duplication while holding Sneak key
+	end
+
 	local spawn_pos = find_chess_spawn(pos)
 	if spawn_pos == nil then
 		return
@@ -202,11 +211,24 @@ local function on_construct(pos)
 end
 
 local function on_secondary_use(itemstack, user, pointed_thing)
+	local inv = user:get_inventory()
+	local list = inv:get_list("main")
+	if itemstack:get_count() == 1 then
+		local count = 0
+		for _, stack in ipairs(list) do
+			if not stack:is_empty() and minetest.get_item_group(stack:get_name(), "chess_figure") > 0 then
+				count = count + 1
+			end
+		end
+		if count <= 1 then
+			return -- neodebrat jedinou figuru v inventáři
+		end
+	end
 	itemstack:take_item()
 	return itemstack
 end
 
-local _ch_help = "Šachové figury vznikají z ničeho při postavení nebo resetu šachovnice.\nLze je vzít do inventáře levým klikem a položit pravým klikem (i mimo šachovnici).\nBraní se dělá tak, že vezmete do ruky figuru, kterou chcete brát, a levým klikem vytěžíte branou figuru.\nDržená figura se umístí na šachovnici namísto vzaté.\nNepotřebné figury se můžete zbavit pravým klikem do vzduchu.\nNové figury získáte po vyresetování šachovnice nebo je lze vykouzlit.\nPěšce lze proměnit v jinou figuru přes výrobní mřížku (viz knihu receptů)."
+local _ch_help = "Šachové figury vznikají z ničeho při postavení nebo resetu šachovnice.\nLevý klik na figuru ji vezme do inventáře, pravý klik figurou ji umístí (i mimo šachovnici).\nLevým klikem figurou na jinou figuru se vymění. Shift+levý klik na figuru pro získání její kopie.\nPravým klikem do vzduchu se figury zbavíte, pokud není jediná ve vašem inventáři."
 local _ch_help_group = "chess_figure"
 
 for color_name, color_def in pairs(colors) do
