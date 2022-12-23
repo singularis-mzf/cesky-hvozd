@@ -36,11 +36,15 @@ if minetest.get_modpath("dye") then
 
 	-- overwrite the existing crafting recipes
 	local dyes = {"white", "red", "yellow", "blue", "violet", "orange"}
+	local crafts_to_clear = {}
 	for _, color in ipairs(dyes) do
-		minetest.clear_craft({
+		crafts_to_clear[color] = {
 			type = "shapeless",
 			recipe = {"group:flower,color_"..color},
-		})
+		}
+	end
+	ch_core.clear_crafts("extractor_recipes", crafts_to_clear)
+	for _, color in ipairs(dyes) do
 		minetest.register_craft({
 			type = "shapeless",
 			output = "dye:"..color.." 1",
@@ -48,10 +52,10 @@ if minetest.get_modpath("dye") then
 		})
 	end
 
-	minetest.clear_craft({
+	ch_core.clear_crafts("extractor_recipes2", {{
 		type = "shapeless",
 		recipe = {"group:coal"},
-	})
+	}})
 	minetest.register_craft({
 		type = "shapeless",
 		output = "dye:black 1",
@@ -59,10 +63,10 @@ if minetest.get_modpath("dye") then
 	})
 
 	if unifieddyes then
-		minetest.clear_craft({
+		ch_core.clear_crafts("extractor_recipes3", {{
 			type = "shapeless",
 			recipe = {"default:cactus"},
-		})
+		}})
 		minetest.register_craft({
 			type = "shapeless",
 			output = "dye:green 1",

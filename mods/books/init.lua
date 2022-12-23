@@ -412,8 +412,10 @@ if minetest.settings:get_bool("books.editor", true) then
 end
 
 -- CRAFTS
-minetest.clear_craft({output = "default:book"})
-minetest.clear_craft({output = "default:bookshelf"})
+ch_core.clear_crafts("books", {
+	{output = "default:book"},
+	{output = "default:bookshelf"},
+})
 -- minetest.unregister_item("default:book")
 -- minetest.unregister_item("default:book_written")
 

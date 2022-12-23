@@ -21,16 +21,15 @@ function compactor.register_block_recipes_override(ingot_name, ingot_count, bloc
 	local recipe_row = {ingot_name, ingot_name, ingot_name}
 	local ingot_stack = ItemStack(ingot_name)
 	local block_stack = ItemStack(block_name)
-	minetest.log("info", "Will clear recipe for "..block_name)
 	local craft_result = minetest.get_craft_result({method = "normal", width = 3, items = {ingot_stack, ingot_stack, ingot_stack, ingot_stack, ingot_stack, ingot_stack, ingot_stack, ingot_stack, ingot_stack}})
 	if not craft_result.item:is_empty() then
-		minetest.clear_craft({
+		ch_core.clear_crafts("compactor", {[block_name] = {
 			recipe = {recipe_row, recipe_row, recipe_row},
-		})
+		}})
 	end
 	craft_result = minetest.get_craft_result({method = "normal", width = 1, items = {block_stack}})
 	if not craft_result.item:is_empty() then
-		craft_result = minetest.clear_craft({recipe = {{block_name}}})
+		craft_result = ch_core.clear_crafts("compactor", {{recipe = {{block_name}}}}) > 0
 	end
 	--[[ craft_result = minetest.get_craft_result({method = "shapeless", width = 1, items = {block_stack}})
 	if not craft_result.item:is_empty() then

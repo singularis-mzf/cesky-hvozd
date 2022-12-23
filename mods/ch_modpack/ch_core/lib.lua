@@ -310,6 +310,27 @@ function ch_core.add_wear(player, itemstack, wear_to_add)
 end
 
 --[[
+Smaže recepty jako minetest.clear_craft(), ale s lepším logováním.
+]]
+function ch_core.clear_crafts(log_prefix, crafts)
+	if log_prefix == nil then
+		log_prefix = ""
+	else
+		log_prefix = log_prefix.."/"
+	end
+	local count = 0
+	for k, v in pairs(crafts) do
+		minetest.log("action", "Will clear craft "..log_prefix..k)
+		if minetest.clear_craft(v) then
+			count = count + 1
+		else
+			minetest.log("warning", "Craft "..log_prefix..k.." not cleared! Dump = "..dump2(v))
+		end
+	end
+	return count
+end
+
+--[[
 Najde hráčskou postavu nejbližší k dané pozici. Parametr player_name_to_ignore
 je volitelný; je-li vyplněn, má obsahovat přihlašovací jméno postavy
 k ignorování.

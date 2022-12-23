@@ -20,8 +20,10 @@ if ropes.replace_default_ladders then
 
 -- minetest.unregister_item("default:ladder_wood")
 -- minetest.unregister_item("default:ladder_steel")
-minetest.clear_craft({output = "default:ladder_wood"})
-minetest.clear_craft({output = "default:ladder_steel"})
+ch_core.clear_crafts("ropes", {
+	{output = "default:ladder_wood"},
+	{output = "default:ladder_steel"},
+})
 
 local wallmounted_to_facedir =
 {[0] = 15, -- ceiling

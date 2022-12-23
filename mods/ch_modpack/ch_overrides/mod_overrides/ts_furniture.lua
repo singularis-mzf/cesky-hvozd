@@ -42,7 +42,7 @@ for color, color_code in pairs(bakedclay_colors) do
 			groups = minetest.registered_nodes["ts_furniture:default_wood_"..furntype].groups,
 				sounds = normal_sounds,
 			})
-			minetest.clear_craft({output = name})
+			ch_core.clear_crafts("ts_furniture", {{output = name}})
 			minetest.register_craft({type = "shapeless", output = name, recipe = {"group:ts_"..furntype, "dye:"..color}})
 		end
 	end

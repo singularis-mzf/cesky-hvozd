@@ -118,15 +118,22 @@ function drinks.add_drink(drink_id, drink_desc1, color, def)
 		local full_vessel_item = def[empty_vessel_item]
 		if full_vessel_item == true or full_vessel_item == nil then
 			if vessel_def.get_template and (full_vessel_item == true or not vessel_def.default_only_for_true) then
-				local template = empty_vessel_item ~= source and vessel_def.get_template(drink_id, def.drink_desc2 or def.drink_desc, color, math.ceil((def.health_per_unit or 0.5) * vessel_def.capacity))
+				local template, template_type
+				if empty_vessel_item ~= source then
+					template, template_type =  vessel_def.get_template(drink_id, def.drink_desc2 or def.drink_desc, color, math.ceil((def.health_per_unit or 0.5) * vessel_def.capacity))
+				end
 				if template then
 					full_vessel_item = "drinks:"..vessel_def.abbr3.."_"..drink_id
-					if template.drawtype then
+					if template_type == "node" then
 						-- node definition (like a bucket)
 						minetest.register_node(full_vessel_item, template)
-					else
+					elseif template_type == "plantlike" then
 						-- plantlike node definition
 						drinks.register_item(full_vessel_item, empty_vessel_item, template)
+					elseif template_type == "craftitem" then
+						minetest.register_craftitem(full_vessel_item, template)
+					else
+						error("Invalid template_type "..(template_type or "nil").." for empty_vessel_item "..empty_vessel_item.."!")
 					end
 					def[empty_vessel_item] = full_vessel_item
 					set_spill_from_results(full_vessel_item, drink_id, vessel_def.capacity, empty_vessel_item)
@@ -138,16 +145,23 @@ function drinks.add_drink(drink_id, drink_desc1, color, def)
 				local override = {juice_type = drink_id}
 
 				if empty_vessel_item == glass and def.override_glass_tiles and empty_vessel_item ~= source and vessel_def.get_template then
-					local template = vessel_def.get_template(drink_id, def.drink_desc2 or def.drink_desc, color, math.ceil((def.health_per_unit or 0.5) * vessel_def.capacity))
+					local template, template_type = vessel_def.get_template(drink_id, def.drink_desc2 or def.drink_desc, color, math.ceil((def.health_per_unit or 0.5) * vessel_def.capacity))
 					if template then
-						local tiles = template.tiles
-						if tiles == nil and template.inventory_image ~= nil then
-							tiles = {template.inventory_image}
-						end
-						if tiles ~= nil then
-							override.tiles = tiles
-							override.inventory_image = tiles[1]
-							override.wield_image = tiles[1]
+						if template_type == "node" or template_type == "plantlike" then
+							local tiles = template.tiles
+							if tiles == nil and template.inventory_image ~= nil then
+								tiles = {template.inventory_image}
+							end
+							if tiles ~= nil then
+								override.tiles = tiles
+								override.inventory_image = tiles[1]
+								override.wield_image = tiles[1]
+							end
+						elseif template_type == "craftitem" then
+							override.inventory_image = template.inventory_image
+							override.wield_image = template.wield_image or template.inventory_image
+						else
+							error("Invalid template_type "..(template_type or "nil").." for empty_vessel_item "..empty_vessel_item.."!")
 						end
 					end
 				end
@@ -220,7 +234,7 @@ local function get_glass_template(drink_id, drink_desc2, color, health)
 		juice_type = drink_id,
 		inventory_image = "drinks_glass_contents.png^[colorize:"..color..":200^drinks_drinking_glass.png",
 		on_use = eat_func,
-	}
+	}, "plantlike"
 end
 
 local function get_large_glass_template(drink_id, drink_desc2, color, health)
@@ -234,7 +248,7 @@ local function get_large_glass_template(drink_id, drink_desc2, color, health)
 		juice_type = drink_id,
 		inventory_image = "drinks_glass_contents.png^[colorize:"..color..":200^drinks_drinking_glass.png",
 		on_use = eat_func,
-	}
+	}, "plantlike"
 end
 
 local function get_glass_bottle_template(drink_id, drink_desc2, color, health)
@@ -248,7 +262,7 @@ local function get_glass_bottle_template(drink_id, drink_desc2, color, health)
 		juice_type = drink_id,
 		inventory_image = "drinks_bottle_contents.png^[colorize:"..color..":200^drinks_glass_bottle.png",
 		on_use = eat_func,
-	}
+	}, "plantlike"
 end
 
 local function get_steel_bottle_template(drink_id, drink_desc2, color, health)
@@ -263,7 +277,7 @@ local function get_steel_bottle_template(drink_id, drink_desc2, color, health)
 		groups = {drink = 1},
 		inventory_image = "vessels_steel_bottle.png",
 		on_use = eat_func,
-	}
+	}, "craftitem"
 end
 
 drinks.add_vessel(glass, {
@@ -299,18 +313,18 @@ drinks.add_vessel(bucket, {
 		local image = "bucket.png^(drinks_bucket_contents.png^[colorize:"..color..":200)"
 		return {
 			description = "kbelík "..drink_desc2,
-			drawtype = "plantlike",
-			tiles = {image},
+			-- drawtype = "plantlike",
+			-- tiles = {image},
 			inventory_image = image,
 			wield_image = image,
-			paramtype = "light",
+			--paramtype = "light",
 			juice_type = drink_id,
-			is_ground_content = false,
-			walkable = false,
-			selection_box = bucket_selection_box,
+			-- is_ground_content = false,
+			-- walkable = false,
+			-- selection_box = bucket_selection_box,
 			groups = bucket_groups,
-			sounds = default.node_sound_defaults(),
-		}
+			-- sounds = default.node_sound_defaults(),
+		}, "craftitem"
 	end,
 })
 

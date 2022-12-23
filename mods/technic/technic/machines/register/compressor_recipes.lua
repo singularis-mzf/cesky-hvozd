@@ -22,23 +22,23 @@ local recipes = {
 }
 
 -- defuse the default sandstone recipe, since we have the compressor to take over in a more realistic manner
-minetest.clear_craft({
+ch_core.clear_crafts("technic", {
+{
 	recipe = {
 		{"default:sand", "default:sand"},
 		{"default:sand", "default:sand"},
 	},
-})
-minetest.clear_craft({
+}, {
 	recipe = {
 		{"default:desert_sand", "default:desert_sand"},
 		{"default:desert_sand", "default:desert_sand"},
 	},
-})
-minetest.clear_craft({
+}, {
 	recipe = {
 		{"default:silver_sand", "default:silver_sand"},
 		{"default:silver_sand", "default:silver_sand"},
 	},
+}
 })
 
 for _, data in pairs(recipes) do

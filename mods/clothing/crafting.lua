@@ -52,13 +52,13 @@ minetest.register_craft({
 })
 
 if clothing.have_farming then
-  minetest.clear_craft({
+  ch_core.clear_crafts("clothing1", {{
     --output = "farming:string 2"
     recipe = {
       {"farming:cotton"},
       {"farming:cotton"},
     },
-  })
+  }})
   minetest.register_craft({
     output = "farming:string",
     recipe = {
@@ -73,15 +73,14 @@ if clothing.have_farming then
 end
 
 if minetest.registered_items["farming:hemp_fibre"] then
-  minetest.clear_craft({
+  ch_core.clear_crafts("clothing2", {{
     --output = "farming:cotton 3"
     recipe = {
       {"farming:hemp_fibre"},
       {"farming:hemp_fibre"},
       {"farming:hemp_fibre"},
     },
-  })
-  
+  }})
 end
 
 

@@ -44,7 +44,7 @@ local change_recipe_amount = function(product, recipe, func)
 	if shapeless then
 		redo.type = "shapeless"
 	end
-	minetest.clear_craft(redo)
+	ch_core.clear_crafts("moreblocks", {redo})
 
 	-- new output
 	redo.output = ("%s %d"):format(product, newamount)

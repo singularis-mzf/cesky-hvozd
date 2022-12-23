@@ -21,8 +21,10 @@ local function override_homedecor_oven(hd_base_name, data, recipe)
 		technic.register_base_machine(data2)
 	end
 
-	minetest.clear_craft({output = hd_base_name})
-	minetest.clear_craft({output = hd_base_name.."_locked"})
+	ch_core.clear_crafts("ch_overrides:homedecor_kitchen", {
+		{output = hd_base_name},
+		{output = hd_base_name.."_locked"}
+	})
 
 	minetest.unregister_item(hd_base_name)
 	minetest.unregister_item(hd_base_name.."_active")

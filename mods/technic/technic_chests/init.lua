@@ -55,7 +55,7 @@ dofile(modpath.."/chests.lua")
 
 -- Undo all of the locked wooden chest recipes, and just make them use a padlock.
 minetest.register_on_mods_loaded(function()
-	minetest.clear_craft({output = "default:chest_locked"})
+	ch_core.clear_crafts("technic_chests", {{output = "default:chest_locked"}})
 	minetest.register_craft({
 		output = "default:chest_locked",
 		recipe = {

@@ -351,11 +351,11 @@ for color, data in pairs(clothing.basic_colors) do
         production_time = 45,
         consumption_step_size = 1,
       });
-    minetest.clear_craft({
+    ch_core.clear_crafts("dye_machine", {{
         type = "shapeless",
         --output = "wool:"..color,
         recipe = {"group:dye,color_"..color, "group:wool"},
-      });
+      }});
   end
   dye_machine:recipe_register_input(
     "clothing:yarn_spool_white",

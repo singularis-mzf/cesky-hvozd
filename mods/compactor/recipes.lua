@@ -16,7 +16,7 @@ compactor.register_block_recipes_override("technic:uranium35_ingot", 10, "techni
 compactor.register_block_recipes_override("technic:uranium_ingot", 10, "technic:uranium_block")
 compactor.register_block_recipes_override("technic:zinc_ingot", 10, "technic:zinc_block")
 
-minetest.clear_craft({type = "fuel", recipe = "default:coalblock"})
+ch_core.clear_crafts("compactor_recipes", {{type = "fuel", recipe = "default:coalblock"}})
 minetest.register_craft({type = "fuel", recipe = "default:coalblock", burntime = 420})
 
 if minetest.get_modpath("moreblocks") then

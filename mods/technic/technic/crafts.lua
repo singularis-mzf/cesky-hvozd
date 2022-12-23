@@ -3,10 +3,10 @@ local mesecons_materials = minetest.get_modpath("mesecons_materials")
 
 -- Remove some recipes
 -- Bronze
-minetest.clear_craft({
+ch_core.clear_crafts("technic_crafts1", {{
 	type = "shapeless",
 	output = "default:bronze_ingot"
-})
+}})
 -- Restore recipe for bronze block to ingots
 minetest.register_craft({
 	output = "default:bronze_ingot 9",
@@ -17,9 +17,9 @@ minetest.register_craft({
 
 -- Accelerator tube
 if pipeworks.enable_accelerator_tube then
-	minetest.clear_craft({
+	ch_core.clear_crafts("technic_crafts1", {{
 		output = "pipeworks:accelerator_tube_1",
-	})
+	}})
 
 	minetest.register_craft({
 		output = 'pipeworks:accelerator_tube_1',
@@ -31,9 +31,9 @@ end
 
 -- Teleport tube
 if pipeworks.enable_teleport_tube then
-	minetest.clear_craft({
+	ch_core.clear_crafts("technic_crafts1", {{
 		output = "pipeworks:teleport_tube_1",
-	})
+	}})
 
 	minetest.register_craft({
 		output = 'pipeworks:teleport_tube_1',
@@ -47,9 +47,9 @@ end
 
 -- basic materials' brass ingot
 
-minetest.clear_craft({
+ch_core.clear_crafts("technic_crafts1", {{
 	output = "basic_materials:brass_ingot",
-})
+}})
 
 minetest.register_craft( {
 	type = "shapeless",
