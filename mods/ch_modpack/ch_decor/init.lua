@@ -6,6 +6,7 @@ local mods = {
 	"cucina_vegana",
 	"cutepie",
 	"digistuff",
+	"ethereal",
 	"petz",
 	"xdecor",
 }
