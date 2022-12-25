@@ -479,6 +479,7 @@ minetest.register_craft({
 	}
 })
 
+minetest.register_alias("mesecons:piston", "mesecons:piston_normal_off")
 
 -- load legacy code
 dofile(minetest.get_modpath("mesecons_pistons").."/legacy.lua")

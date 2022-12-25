@@ -261,4 +261,7 @@ if minetest.registered_aliases["mesecons_gamecompat:mese"] then
 		cooktime = 30,
 	})
 end
+
+minetest.register_alias("mesecons:mesecon", "mesecons:wire_00000000_off")
+
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

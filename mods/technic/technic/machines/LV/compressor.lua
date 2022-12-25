@@ -5,7 +5,7 @@ minetest.register_craft({
 	output = 'technic:lv_compressor',
 	recipe = {
 		{'default:stone',            'basic_materials:motor',          'default:stone'},
-		{'mesecons:piston',          'technic:machine_casing', 'mesecons:piston'},
+		{'mesecons_pistons:piston_normal_off', 'technic:machine_casing', 'mesecons_pistons:piston_normal_off'},
 		{'basic_materials:silver_wire', 'technic:lv_cable',       'basic_materials:silver_wire'},
 	},
 	replacements = {

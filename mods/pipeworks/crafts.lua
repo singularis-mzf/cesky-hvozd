@@ -7,10 +7,12 @@ local materials = {
 	steel_ingot = "default:steel_ingot",
 	gold_ingot = "default:gold_ingot",
 	mese = "default:mese",
+	mesecon = "mesecons:wire_00000000_off",
 	mese_crystal = "default:mese_crystal",
 	mese_crystal_fragment = "default:mese_crystal_fragment",
 	teleporter = "default:mese",
 	glass = "default:glass",
+	piston = "mesecons_pistons:piston_normal_off",
 }
 
 if minetest.get_modpath("mcl_core") then
@@ -141,7 +143,7 @@ minetest.register_craft( {
 minetest.register_craft( {
 	output = "pipeworks:flow_sensor_empty 2",
 	recipe = {
-			{ "pipeworks:pipe_1_empty", "mesecons:mesecon", "pipeworks:pipe_1_empty" },
+			{ "pipeworks:pipe_1_empty", materials.mesecon, "pipeworks:pipe_1_empty" },
 	},
 })
 
@@ -326,8 +328,8 @@ if pipeworks.enable_deployer then
 		output = "pipeworks:deployer_off",
 		recipe = {
 			{ "group:wood",	materials.chest,	"group:wood"	},
-			{ materials.stone, "mesecons:piston",  materials.stone },
-			{ materials.stone, "mesecons:mesecon", materials.stone },
+			{ materials.stone, materials.piston,  materials.stone },
+			{ materials.stone, materials.mesecon, materials.stone },
 		}
 	})
 end
@@ -337,8 +339,8 @@ if pipeworks.enable_dispenser then
 		output = "pipeworks:dispenser_off",
 		recipe = {
 			{ materials.desert_sand, materials.chest,	materials.desert_sand },
-			{ materials.stone,	   "mesecons:piston",  materials.stone	   },
-			{ materials.stone,	   "mesecons:mesecon", materials.stone	  },
+			{ materials.stone, materials.piston,  materials.stone	   },
+			{ materials.stone, materials.mesecon, materials.stone	  },
 		}
 	})
 end
@@ -348,8 +350,8 @@ if pipeworks.enable_node_breaker then
 		output = "pipeworks:nodebreaker_off",
 		recipe = {
 			{ "basic_materials:gear_steel", "basic_materials:gear_steel",   "basic_materials:gear_steel"	},
-			{ materials.stone, "mesecons:piston",   materials.stone },
-			{ "group:wood",	"mesecons:mesecon",  "group:wood" },
+			{ materials.stone, materials.piston,   materials.stone },
+			{ "group:wood",	materials.mesecon,  "group:wood" },
 		}
 	})
 end
