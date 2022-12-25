@@ -106,13 +106,24 @@ local function skakadlo(itemstack, player, new_speed, wear_to_add)
 	end
 	local player_name = player:get_player_name()
 	local pos = player:get_pos()
-	local node_at_player = minetest.get_node(pos)
-	local node_under_player = minetest.get_node(vector.new(pos.x, pos.y - 0.05, pos.z))
 	local current_velocity = player:get_velocity()
 	local reason
 
 	if current_velocity.y ~= 0 then
 		reason = "Current velocity = "..minetest.pos_to_string(current_velocity)
+	end
+
+	local node_at_player, node_under_player
+	if reason == nil then
+		local cast_result = Raycast(pos, vector.offset(pos, 0, -0.5, 0), false, true):next()
+		if cast_result ~= nil and cast_result.above ~= nil and cast_result.under ~= nil then
+			node_at_player = minetest.get_node(cast_result.above)
+			node_under_player = minetest.get_node(cast_result.under)
+		else
+			node_at_player = minetest.get_node(pos)
+			node_under_player = minetest.get_node(vector.new(pos.x, pos.y - 0.05, pos.z))
+			minetest.log("warning", "Raycast at "..minetest.pos_to_string(pos).." for skakadlo failed! result = "..dump2(cast_result))
+		end
 	end
 
 	if reason == nil and node_at_player.name ~= "air" then
@@ -726,16 +737,17 @@ minetest.register_craft({
 if minetest.get_modpath("what_is_this_uwu") then
 	local function playerstep(player, player_name, online_charinfo, offline_charinfo, us_time)
 		local wielded_item = player:get_wielded_item()
+		local item_name
 		if not wielded_item:is_empty() then
-			local item_name = wielded_item:get_name()
-			if item_name == "ch_extras:lupa" then
-				if not what_is_this_uwu.players_set[player_name] then
-					what_is_this_uwu.register_player(player, player_name)
-				end
-			elseif what_is_this_uwu.players_set[player_name] then
-				what_is_this_uwu.remove_player(player_name)
-				what_is_this_uwu.unshow(player, player:get_meta())
+			item_name = wielded_item:get_name()
+		end
+		if item_name == "ch_extras:lupa" then
+			if not what_is_this_uwu.players_set[player_name] then
+				what_is_this_uwu.register_player(player, player_name)
 			end
+		elseif what_is_this_uwu.players_set[player_name] then
+			what_is_this_uwu.remove_player(player_name)
+			what_is_this_uwu.unshow(player, player:get_meta())
 		end
 	end
 	ch_core.register_player_globalstep(playerstep)
