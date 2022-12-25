@@ -687,3 +687,11 @@ moreblocks_empty_shelf.png
 			Extex101
 			An0n3m0us
 	- "Polygonia_64px texture pack" by Lukas Reichlin (license CC BY-SA 4.0)
+
+bamboo.png
+	Author: Singularis
+	License: CC-BY-SA-3.0
+	Used source:
+		https://commons.wikimedia.org/wiki/File:Bamboo_Richelieu.jpg
+		Author: Manfred Heyde
+		License: CC-BY-SA-3.0
