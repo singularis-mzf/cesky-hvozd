@@ -167,6 +167,7 @@ minetest.register_craft({
 
 -- grapes definition
 local def = {
+	description = S("Grapes"),
 	drawtype = "plantlike",
 	tiles = {"farming_grapes_1.png"},
 	visual_scale = 1.9,

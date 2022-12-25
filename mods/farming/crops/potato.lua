@@ -58,6 +58,7 @@ minetest.register_craft({
 
 -- potato definition
 local def = {
+	description = S("Potato"),
 	drawtype = "plantlike",
 	tiles = {"farming_potato_1.png"},
 	paramtype = "light",

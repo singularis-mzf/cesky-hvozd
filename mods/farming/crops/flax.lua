@@ -39,6 +39,7 @@ minetest.register_craftitem("farming:flax_roasted", {
 
 -- node definitions
 local def = {
+	description = S("Flax"),
 	drawtype = "plantlike",
 	tiles = {"cucina_vegana_flax_1.png"},
 	paramtype = "light",

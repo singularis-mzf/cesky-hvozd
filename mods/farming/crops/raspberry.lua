@@ -32,6 +32,7 @@ minetest.register_craft({
 
 -- raspberries definition
 local def = {
+	description = S("Raspberries"),
 	drawtype = "plantlike",
 	tiles = {"farming_raspberry_1.png"},
 	paramtype = "light",

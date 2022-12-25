@@ -35,6 +35,7 @@ minetest.register_craft({
 })
 
 local def = {
+	description = S("Peas"),
 	drawtype = "plantlike",
 	tiles = {"farming_pea_1.png"},
 	paramtype = "light",

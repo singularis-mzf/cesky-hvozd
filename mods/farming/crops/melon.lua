@@ -28,6 +28,7 @@ minetest.register_craft({
 
 -- melon definition
 local def = {
+	description = S("Melon"),
 	drawtype = "plantlike",
 	tiles = {"farming_melon_1.png"},
 	paramtype = "light",

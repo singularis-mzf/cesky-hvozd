@@ -10,6 +10,7 @@ local banana_item_t = {banana_item}
 
 -- node definitions
 local def = {
+	description = S("Banana"),
 	drawtype = "plantlike",
 	tiles = {"cucina_vegana_banana_1.png"},
 	paramtype = "light",

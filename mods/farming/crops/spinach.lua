@@ -14,6 +14,7 @@ minetest.register_craftitem("farming:spinach", {
 
 -- definition
 local def = {
+	description = S("spinach"),
 	drawtype = "plantlike",
 	tiles = {"farming_spinach_1.png"},
 	paramtype = "light",

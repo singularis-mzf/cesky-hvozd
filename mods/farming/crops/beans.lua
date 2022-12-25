@@ -171,6 +171,7 @@ minetest.register_craft({
 
 -- green bean definition
 local def = {
+	description = S("Green Beans"),
 	drawtype = "plantlike",
 	tiles = {"farming_beanpole_1.png"},
 	visual_scale = 1.90,

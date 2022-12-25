@@ -13,6 +13,7 @@ minetest.register_craftitem("farming:cabbage", {
 })
 
 local def = {
+	description = S("Cabbage"),
 	drawtype = "plantlike",
 	tiles = {"farming_cabbage_1.png"},
 	paramtype = "light",

@@ -19,6 +19,7 @@ minetest.register_craftitem("farming:cucumber", {
 
 -- cucumber definition
 local def = {
+	description = S("Cucumber"),
 	drawtype = "plantlike",
 	tiles = {"farming_cucumber_1.png"},
 	paramtype = "light",

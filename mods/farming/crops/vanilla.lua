@@ -13,6 +13,7 @@ minetest.register_craftitem("farming:vanilla", {
 
 -- crop definition
 local def = {
+	description = S("Vanilla"),
 	drawtype = "plantlike",
 	tiles = {"farming_vanilla_1.png"},
 	paramtype = "light",

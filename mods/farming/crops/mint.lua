@@ -41,6 +41,7 @@ minetest.register_craft({
 
 -- mint definition
 local def = {
+	description = S("Mint"),
 	drawtype = "plantlike",
 	tiles = {"farming_mint_1.png"},
 	paramtype = "light",

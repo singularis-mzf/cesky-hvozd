@@ -135,6 +135,7 @@ minetest.register_craft({
 
 -- pumpkin definition
 local def = {
+	description = S("Pumpkin"),
 	drawtype = "plantlike",
 	tiles = {"farming_pumpkin_1.png"},
 	paramtype = "light",

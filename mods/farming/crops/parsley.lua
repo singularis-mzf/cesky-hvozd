@@ -12,6 +12,7 @@ minetest.register_craftitem("farming:parsley", {
 
 -- crop definition
 local def = {
+	description = S("Parsley"),
 	drawtype = "plantlike",
 	tiles = {"farming_parsley_1.png"},
 	paramtype = "light",

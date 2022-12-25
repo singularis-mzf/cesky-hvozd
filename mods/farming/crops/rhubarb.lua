@@ -31,6 +31,7 @@ minetest.register_craft({
 
 -- rhubarb definition
 local def = {
+	description = S("Rhubarb"),
 	drawtype = "plantlike",
 	tiles = {"farming_rhubarb_1.png"},
 	paramtype = "light",

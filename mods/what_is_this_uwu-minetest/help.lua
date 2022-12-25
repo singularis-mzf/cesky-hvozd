@@ -250,7 +250,7 @@ function what_is_this_uwu.get_node_tiles(node_name)
 		return 'ignore', 'node', false
 	end
 
-	if node.groups['not_in_creative_inventory'] then
+	if node.groups['not_in_creative_inventory'] and not node.groups.growing then
 		local drop = node.drop
 		if drop and type(drop) == 'string' then
 			node_name = drop

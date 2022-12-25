@@ -14,6 +14,7 @@ minetest.register_craftitem("farming:asparagus", {
 
 -- asparagus definition
 local def = {
+	description = S("asparagus"),
 	drawtype = "plantlike",
 	tiles = {"farming_asparagus_1.png"},
 	paramtype = "light",

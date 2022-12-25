@@ -45,6 +45,7 @@ minetest.register_craft( {
 
 -- coffee definition
 local def = {
+	description = S("Coffee Beans"),
 	drawtype = "plantlike",
 	tiles = {"farming_coffee_1.png"},
 	paramtype = "light",

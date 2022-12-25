@@ -45,6 +45,7 @@ minetest.register_craft({
 
 -- rice definition
 local def = {
+	description = S("Rice"),
 	drawtype = "plantlike",
 	tiles = {"farming_rice_1.png"},
 	paramtype = "light",

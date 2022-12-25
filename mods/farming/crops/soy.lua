@@ -115,6 +115,7 @@ minetest.register_craft({
 -- crop definition
 
 local def = {
+	description = S("Soy Pod"),
 	drawtype = "plantlike",
 	tiles = {"farming_soy_1.png"},
 	paramtype = "light",

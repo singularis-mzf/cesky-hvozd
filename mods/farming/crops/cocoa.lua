@@ -144,6 +144,7 @@ minetest.register_craft({
 
 -- cocoa definition
 local def = {
+	description = "Cocoa Beans",
 	drawtype = "plantlike",
 	tiles = {"farming_cocoa_1.png"},
 	paramtype = "light",

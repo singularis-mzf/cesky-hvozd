@@ -36,6 +36,7 @@ minetest.register_craft({
 
 -- tomato definition
 local def = {
+	description = S("Tomato"),
 	drawtype = "plantlike",
 	tiles = {"farming_tomato_1.png"},
 	paramtype = "light",

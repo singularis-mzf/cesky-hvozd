@@ -53,6 +53,7 @@ minetest.register_craft({
 
 -- blueberry definition
 local def = {
+	description = S("Wild Blueberries"),
 	drawtype = "plantlike",
 	tiles = {"farming_blueberry_1.png"},
 	paramtype = "light",

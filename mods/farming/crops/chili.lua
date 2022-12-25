@@ -35,6 +35,7 @@ minetest.register_craft({
 
 -- chili definition
 local def = {
+	description = S("Chili Pepper"),
 	drawtype = "plantlike",
 	tiles = {"farming_chili_1.png"},
 	paramtype = "light",

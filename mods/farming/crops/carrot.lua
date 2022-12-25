@@ -55,6 +55,7 @@ minetest.register_craft({
 
 -- carrot definition
 local def = {
+	description = S("Carrot"),
 	drawtype = "plantlike",
 	tiles = {"farming_carrot_1.png"},
 	paramtype = "light",

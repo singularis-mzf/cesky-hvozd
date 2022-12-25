@@ -14,6 +14,7 @@ minetest.register_craftitem("farming:blackberry", {
 })
 
 local def = {
+	description = S("Blackberries"),
 	drawtype = "plantlike",
 	tiles = {"farming_blackberry_1.png"},
 	paramtype = "light",

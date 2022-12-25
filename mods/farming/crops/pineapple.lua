@@ -77,6 +77,7 @@ minetest.register_craft({
 
 -- crop definition
 local def = {
+	description = S("Pineapple"),
 	drawtype = "plantlike",
 	visual_scale = 1.5,
 	tiles = {"farming_pineapple_1.png"},

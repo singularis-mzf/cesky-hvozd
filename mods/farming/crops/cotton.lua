@@ -92,6 +92,7 @@ minetest.register_craft({
 
 -- cotton definition
 local def = {
+	description = S("Cotton"),
 	drawtype = "plantlike",
 	tiles = {"farming_cotton_1.png"},
 	paramtype = "light",

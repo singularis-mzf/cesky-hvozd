@@ -91,6 +91,7 @@ minetest.register_craft({
 
 -- sunflower definition
 local def = {
+	description = S("Sunflower"),
 	drawtype = "plantlike",
 	tiles = {"farming_sunflower_1.png"},
 	paramtype = "light",

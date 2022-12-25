@@ -109,6 +109,7 @@ minetest.register_craft({
 
 -- corn definition
 local def = {
+	description = S("Corn"),
 	drawtype = "plantlike",
 	tiles = {"farming_corn_1.png"},
 	paramtype = "light",

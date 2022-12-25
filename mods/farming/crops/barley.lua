@@ -38,6 +38,7 @@ minetest.register_craft({
 
 -- barley definition
 local def = {
+	description = S("Barley"),
 	drawtype = "plantlike",
 	tiles = {"farming_barley_1.png"},
 	paramtype = "light",

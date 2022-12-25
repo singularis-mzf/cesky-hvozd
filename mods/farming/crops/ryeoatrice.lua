@@ -18,9 +18,18 @@ minetest.override_item("farming:rye", {
 	groups = {food_rye = 1, flammable = 4}
 })
 
-minetest.override_item("farming:rye_1", {drop = {}})
-minetest.override_item("farming:rye_2", {drop = {}, move_resistance = 1})
-minetest.override_item("farming:rye_3", {drop = {}, move_resistance = 1})
+for i = 1, 8 do
+	local override = {
+		description = S("Rye"),
+	}
+	if i < 4 then
+		drop = {}
+		if i > 1 then
+			override.move_resistance = 1
+		end
+	end
+	minetest.override_item("farming:rye_"..i, override)
+end
 
 minetest.register_craft({
 	output = "farming:flour",
@@ -46,9 +55,22 @@ minetest.override_item("farming:oat", {
 	groups = {food_oats = 1, flammable = 4}
 })
 
-minetest.override_item("farming:oat_1", {drop = {}})
-minetest.override_item("farming:oat_2", {drop = {}, move_resistance = 1})
-minetest.override_item("farming:oat_3", {drop = {}, move_resistance = 1})
+minetest.override_item("farming:oat_1", {description = S("Oats"), drop = {}})
+minetest.override_item("farming:oat_2", {description = S("Oats"), drop = {}, move_resistance = 1})
+minetest.override_item("farming:oat_3", {description = S("Oats"), drop = {}, move_resistance = 1})
+
+for i = 1, 8 do
+	local override = {
+		description = S("Oats"),
+	}
+	if i <= 3 then
+		drop = {}
+		if i >= 2 then
+			override.move_resistance = 1
+		end
+	end
+	minetest.override_item("farming:oat_"..i, override)
+end
 
 minetest.register_craft({
 	output = "farming:flour",

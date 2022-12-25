@@ -149,6 +149,7 @@ minetest.register_craft({
 
 -- wheat definition
 local def = {
+	description = S("Wheat"),
 	drawtype = "plantlike",
 	tiles = {"farming_wheat_1.png"},
 	paramtype = "light",

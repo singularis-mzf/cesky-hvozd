@@ -81,6 +81,7 @@ minetest.register_craft({
 
 -- crop definition
 local def = {
+	description = S("Garlic"),
 	drawtype = "plantlike",
 	tiles = {"crops_garlic_plant_1.png"},
 	paramtype = "light",

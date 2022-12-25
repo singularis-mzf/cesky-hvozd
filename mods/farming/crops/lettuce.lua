@@ -12,6 +12,7 @@ minetest.register_craftitem("farming:lettuce", {
 })
 
 local def = {
+	description = S("Lettuce"),
 	drawtype = "plantlike",
 	tiles = {"farming_lettuce_1.png"},
 	paramtype = "light",

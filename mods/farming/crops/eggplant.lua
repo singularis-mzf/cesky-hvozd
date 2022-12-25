@@ -14,6 +14,7 @@ minetest.register_craftitem("farming:eggplant", {
 
 -- definition
 local def = {
+	description = S("Eggplant"),
 	drawtype = "plantlike",
 	tiles = {"farming_eggplant_1.png"},
 	paramtype = "light",

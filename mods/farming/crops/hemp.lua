@@ -184,6 +184,7 @@ minetest.register_craft( {
 
 -- hemp definition
 local def = {
+	description = S("Hemp"),
 	drawtype = "plantlike",
 	tiles = {"farming_hemp_1.png"},
 	paramtype = "light",

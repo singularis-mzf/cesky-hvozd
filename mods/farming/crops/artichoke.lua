@@ -13,6 +13,7 @@ minetest.register_craftitem("farming:artichoke", {
 
 -- crop definition
 local def = {
+	description = S("Artichoke"),
 	drawtype = "plantlike",
 	tiles = {"farming_artichoke_1.png"},
 	paramtype = "light",

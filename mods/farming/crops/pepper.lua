@@ -78,6 +78,7 @@ minetest.register_craft( {
 
 -- crop definition
 local def = {
+	description = S("Pepper"),
 	drawtype = "plantlike",
 	tiles = {"crops_pepper_plant_1.png"},
 	paramtype = "light",
@@ -113,6 +114,7 @@ def.move_resistance = 1
 minetest.register_node("farming:pepper_4", table.copy(def))
 
 -- stage 5 (green pepper)
+def.description = S("Green Pepper")
 def.tiles = {"crops_pepper_plant_5.png"}
 def.drop = {
 	max_items = 2, items = {
@@ -124,6 +126,7 @@ def.drop = {
 minetest.register_node("farming:pepper_5", table.copy(def))
 
 -- stage 6 (yellow pepper)
+def.description = S("Yellow Pepper")
 def.tiles = {"crops_pepper_plant_6.png"}
 def.drop = {
 	max_items = 2, items = {
@@ -135,6 +138,7 @@ def.drop = {
 minetest.register_node("farming:pepper_6", table.copy(def))
 
 -- stage 7 (red pepper)
+def.description = S("Red Pepper")
 def.tiles = {"crops_pepper_plant_7.png"}
 def.groups.growing = nil
 def.selection_box = farming.select_final

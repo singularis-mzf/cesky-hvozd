@@ -38,6 +38,7 @@ minetest.register_craft({
 
 -- crop definition
 local def = {
+	description = S("Onion"),
 	drawtype = "plantlike",
 	tiles = {"crops_onion_plant_1.png"},
 	paramtype = "light",
