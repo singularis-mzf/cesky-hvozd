@@ -9,6 +9,7 @@ local mods = {
 	"moreblocks",
 	"moretrees",
 	"screwdriver",
+	"technic_cnc",
 	"ts_furniture", -- colored chairs and sitting
 }
 
@@ -20,7 +21,6 @@ end
 
 dofile(modpath.."/chests.lua")
 dofile(modpath.."/extra_recipes.lua")
-dofile(modpath.."/extra_shapes.lua")
 dofile(modpath.."/falling_nodes.lua")
 dofile(modpath.."/ores.lua")
 dofile(modpath.."/poles.lua")
