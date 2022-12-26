@@ -4,20 +4,20 @@
 local paintings = {}
 paintings.dyes = {
 	{"white",      "White", "dekorativní malba 21: Sněžné údolí"},
-	{"grey",       "Grey", "dekorativní malba 29: Horské jezero"},
+	{"grey",       "Grey", "dekorativní malba 30: Horské jezero"},
 	{"black",      "Black", "dekorativní malba 22: Na Blatech"},
 	{"red",        "Red", "dekorativní malba 23: Vulkán"},
-	{"yellow",     "Yellow", "dekorativní malba 34: Cesta"},
-	{"green",      "Green", "dekorativní malba 33: Horská stezka"},
-	{"cyan",       "Cyan", "dekorativní malba 32: Na horách"},
+	{"yellow",     "Yellow", "dekorativní malba 35: Cesta"},
+	{"green",      "Green", "dekorativní malba 34: Horská stezka"},
+	{"cyan",       "Cyan", "dekorativní malba 33: Na horách"},
 	{"blue",       "Blue", "dekorativní malba 26: Pláž"},
 	{"magenta",    "Magenta", "dekorativní malba 28: Oáza"},
 	{"orange",     "Orange", "dekorativní malba 27: Útesy pouště"},
 	{"violet",     "Violet", "dekorativní malba 24: Fialová fantazie"},
 	{"brown",      "Brown", "dekorativní malba 25: Podzimní louka"},
-	{"pink",       "Pink", "dekorativní malba 28: Západ/východ slunce 2"},
-	{"dark_grey",  "Dark Grey", "dekorativní malba 30: Tajuplný les"},
-	{"dark_green", "Dark Green", "dekorativní malba 31: Močál"},
+	{"pink",       "Pink", "dekorativní malba 29: Západ/východ slunce 2"},
+	{"dark_grey",  "Dark Grey", "dekorativní malba 31: Tajuplný les"},
+	{"dark_green", "Dark Green", "dekorativní malba 32: Močál"},
 }
 
 local selection_box = minetest.registered_nodes["homedecor:painting_1"].selection_box
