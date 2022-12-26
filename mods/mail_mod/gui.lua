@@ -447,6 +447,10 @@ function mail.handle_receivefields(player, formname, fields)
 				mail.setMessages(name, messages)
 			end
 			mail.show_inbox(name)
+		elseif fields.quit then
+			if minetest.get_modpath("unified_inventory") then
+				unified_inventory.set_inventory_formspec(player, "craft")
+			end
 		end
 		return true
 
@@ -508,7 +512,7 @@ function mail.handle_receivefields(player, formname, fields)
 				body = fields.body,
 			}
 			mail.show_select_contact(name, fields.to, fields.cc, fields.bcc)
-		elseif fields.cancel then
+		elseif fields.cancel or fields.quit then
 			message_drafts[name] = nil
 			mail.show_inbox(name)
 		end
@@ -638,7 +642,7 @@ function mail.handle_receivefields(player, formname, fields)
 
 			mail.show_contacts(name)
 
-		elseif fields.back then
+		elseif fields.back or fields.quit then
 			mail.show_inbox(name)
 
 		end
@@ -686,7 +690,7 @@ function mail.handle_receivefields(player, formname, fields)
 			mail.setContacts(name, contacts)
 			mail.show_contacts(name)
 
-		elseif fields.back then
+		elseif fields.back or fields.quit then
 			mail.show_contacts(name)
 
 		end

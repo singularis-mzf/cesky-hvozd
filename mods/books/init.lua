@@ -78,9 +78,11 @@ local function get_book_formspec(player_name, pos)
 		table.insert(formspec, "tableoptions[background=#00000000;highlight=#00000000;border=false]")
 		table.insert(formspec, "table[0.4,0;7,0.5;title;#FFFF00," .. F(title) .. "]")
 		table.insert(formspec, "textarea[0.5,1.5;7.5,7;;" ..F(string ~= "" and string or text) .. ";]")
-		table.insert(formspec, "button[2.4,7.6;0.8,0.8;book_prev;<]")
-		table.insert(formspec, "label[3.2,7.7;"..F(S("Page @1 of @2", page, page_max)) .. "]")
-		table.insert(formspec, "button[4.9,7.6;0.8,0.8;book_next;>]")
+		if page_max > 1 then
+			table.insert(formspec, "button[2.4,7.6;0.8,0.8;book_prev;<]")
+			table.insert(formspec, "label[3.2,7.7;"..F(S("Page @1 of @2", page, page_max)) .. "]")
+			table.insert(formspec, "button[4.9,7.6;0.8,0.8;book_next;>]")
+		end
 	end
 	return table.concat(formspec)
 end
@@ -163,7 +165,7 @@ local function formspec_callback(custom_state, player, formname, fields)
 		end
 
 		if pos == nil then
-			player:set_weilded_item(item)
+			player:set_wielded_item(item)
 		end
 
 		return get_book_formspec(player:get_player_name(), pos)
