@@ -95,3 +95,28 @@ minetest.register_craft({
 		{'', '', ''},
 	}
 })
+
+minetest.register_craft({
+	output = 'signs_road:white_end_sign 2',
+	recipe = {
+		{'dye:white', 'dye:black', 'dye:red'},
+		{'default:steel_ingot', 'default:steel_ingot', 'default:steel_ingot'},
+		{'', '', ''},
+	}
+})
+
+minetest.register_craft({
+	output = 'signs_road:white_end_sign',
+	recipe = {
+		{'signs_road:white_sign', 'dye:red'},
+		{'', ''},
+	}
+})
+
+minetest.register_craft({
+	output = 'signs_road:white_end_sign_on_pole',
+	recipe = {
+		{'signs_road:white_sign', ''},
+		{'dye:red', ''},
+	}
+})

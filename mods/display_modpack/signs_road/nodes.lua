@@ -243,6 +243,25 @@ local models = {
 		},
 		allow_on_pole = true,
 	},
+	white_end_sign = {
+		depth = 1/16,
+		width = 1,
+		height = 7/16,
+		entity_fields = {
+			size = { x = 1, y = 6/16 },
+			maxlines = 2,
+			color = "#000",
+		},
+		node_fields = {
+			description = S("White road end sign"),
+			tiles = { "signs_road_sides.png", "signs_road_sides.png",
+			          "signs_road_sides.png", "signs_road_sides.png",
+			          "signs_road_sides.png", "signs_road_white_end.png" },
+			use_texture_alpha = "opaque",
+			inventory_image = "signs_road_white_end.png^[resize:32x32",
+		},
+		allow_on_pole = true,
+	},
 	black_sign = {
 		depth = 1/16,
 		width = 1,
