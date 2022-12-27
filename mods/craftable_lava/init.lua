@@ -1,22 +1,20 @@
 print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 minetest.register_node("craftable_lava:hot_stone", {
-    description = "vřelá skála",
+	description = "vřelá skála",
 	-- tiles = {"default_stone.png^craftable_lava_hot_stone.png"},
-    tiles = {
-	    {
-	    name = "[combine:64x384:0,0=default_stone.png:0,64=default_stone.png:0,128=default_stone.png:0,192=default_stone.png:0,256=default_stone.png:0,320=default_stone.png^(craftable_lava_hot_stone_animation.png^[resize:64x384)",
-		    animation = {
-			    type = "vertical_frames",
-				aspect_w = 64,
-				aspect_h = 64,
-				length = 1.5
-		    },
-	    },
-	},--]]--
+	tiles = {{
+		name = "[combine:64x384:0,0=default_stone.png:0,64=default_stone.png:0,128=default_stone.png:0,192=default_stone.png:0,256=default_stone.png:0,320=default_stone.png^[multiply:#aaaaaa^(craftable_lava_hot_stone_animation.png^[resize:64x384)",
+		animation = {
+			type = "vertical_frames",
+			aspect_w = 64,
+			aspect_h = 64,
+			length = 1.5
+		},
+	}},--]]--
 	groups = {cracky = 2},
 	sounds = default.node_sound_stone_defaults(),
-  light_source = 4,
+	light_source = 4,
 })
 
 minetest.register_craft({

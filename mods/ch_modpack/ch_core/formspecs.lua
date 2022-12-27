@@ -103,6 +103,27 @@ local function on_player_receive_fields(player, formname, fields)
 end
 minetest.register_on_player_receive_fields(on_player_receive_fields)
 
+--[[
+	Aktualizuje zobrazený formulář voláním předané funkce.
+	Vrací: true = formulář úspěšně nahrazen, false = nahrazebí selhalo,
+	nil = formulář měl být nahrazen, ale update_callback vrátil nil.
+]]
+function ch_core.update_shown_formspec(player_name, formname, update_callback)
+	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
+	if not online_charinfo then
+		return false
+	end
+	local formspec_state = online_charinfo.formspec_state
+	if not formspec_state or formspec_state.formname ~= formname then
+		return false
+	end
+	local update_result = update_callback(formspec_state.custom_state)
+	if update_result ~= nil then
+		minetest.show_formspec(player_name, formname, update_result)
+		return true
+	end
+end
+
 --[[ PŘÍKLAD POUŽITÍ:
 minetest.register_chatcommand("test", {
 	description = "Jen test",
