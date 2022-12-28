@@ -89,8 +89,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 ## Doxy's Mini Tram (doxy\_mini\_tram)
 
-* Balík módů dočasně stažen z repozitáře.
-* Zdroj: [https://invent.kde.org/davidhurka/doxy\_mini\_tram](https://invent.kde.org/davidhurka/doxy\_mini\_tram), revize f0aa2331419ab85d1b0a7ac01987faffb68eba95
+* Zdroj: [https://invent.kde.org/davidhurka/doxy\_mini\_tram](https://invent.kde.org/davidhurka/doxy\_mini\_tram), revize 3cfebc01254b5f93d59ec707cb5dda17c6b7be1d
 * Původní licence: převážně MIT, jednotlivé soubory pod různými jinými, ale vše svobodné
 * Licence úprav: uvedeny u jednotlivých souborů stejným způsobem jako v původním módu
 * [ContentDB](https://content.minetest.net/packages/doxygen\_spammer/doxy\_mini\_tram/)

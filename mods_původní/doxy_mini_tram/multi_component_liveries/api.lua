@@ -121,6 +121,10 @@ function multi_component_liveries.paint_on_livery(player, livery_definition, liv
     local playername = player and player.is_player and player:is_player() and player:get_player_name();
     local r, g, b, a = multi_component_liveries.get_components_from_painting_tool(playername, tool);
 
+    if not r then
+        return nil;
+    end
+
     -- A meta painting operation is when the player chooses certain special
     -- colors, e. g. to choose which livery layer shall be painted next.
     local is_meta_color;

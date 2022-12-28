@@ -337,6 +337,7 @@ function minitram_konstal_105_liveries.add_liveries_konstal_105(wagon_definition
             };
         };
         base_texture_file = "minitram_konstal_105_normal_base_texture.png";
+        icon = "[combine:64x64:0,0=minitram_konstal_105_normal_inv.png";
     };
 
     local livery_texture_slot = 2;

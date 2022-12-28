@@ -9,7 +9,7 @@ local S = minetest.get_translator("minitram_crafting_recipes");
 --! If none is registered, prints a warning message.
 local function choose(names)
     for _, name in ipairs(names) do
-        if name == "" or minetest.registered_items[names] then
+        if name == "" or minetest.registered_items[name] then
             return name;
         end
     end
