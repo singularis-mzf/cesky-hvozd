@@ -180,6 +180,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 # Doplňky k balíku Advtrains
 
+## advtrains\_bboe\_1080
+
+* Zdroj: [https://notabug.org/advtrains\_supplemental/advtrains\_bboe\_1080](https://notabug.org/advtrains\_supplemental/advtrains\_bboe\_1080), revize 9c3b2da02ca27b3db14f2951fc53313ca313ced5
+* Původní licence: CC BY-SA 3.0
+* Licence úprav: CC BY-SA 3.0
+* [ContentDB](https://content.minetest.net/packages/advtrains\_supplemental/advtrains\_bboe\_1080/)
+
 ## Advtrains Construction Train (advtrains\_construction\_train)
 
 * Zdroj: [https://git.bananach.space/advtrains\_construction\_train.git/](https://git.bananach.space/advtrains\_construction\_train.git/), revize 2b27b8d8f1a629ff10f295cb8432225a3a9a943b
