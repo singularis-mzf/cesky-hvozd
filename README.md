@@ -157,12 +157,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: kód: { mobs\_bat: GPL, ostatní módy: MIT }; modely a textury: CC-BY-SA-3.0
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/mobs\_sky/)
 
-## Some More Trains (some\_more\_trains)
-
-* Zdroj: [https://github.com/APercy/some\_more\_trains](https://github.com/APercy/some\_more\_trains), revize 326f7e73a73e05e26a4cc25c8cc5acc777429443
-* Původní licence: AGPLv3
-* Licence úprav: AGPLv3
-
 ## Technic (technic)
 
 * Zdroj: [https://github.com/minetest-mods/technic](https://github.com/minetest-mods/technic), revize d2b68a6bef53e34e166deadd64e02b58bcae59a1
@@ -206,6 +200,20 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: CC BY-SA 3.0
 * Licence úprav: CC BY-SA 3.0
 * [ContentDB](https://content.minetest.net/packages/advtrains\_supplemental/advtrains\_transib/)
+
+## Mese Trains (mese\_trains)
+
+* Zdroj: [https://gitlab.com/xenonca/mese\_trains](https://gitlab.com/xenonca/mese\_trains), revize a4ff9a793e227df93bc6f8b35ab452d3b1507d89
+* Původní licence: LGPLv2.1 (only) pro kód, CC BY-SA 3.0 pro modely a textury, CC0 pro zvuky
+* Licence úprav: LGPLv2.1 (only) pro kód, CC BY-SA 3.0 pro modely a textury, CC0 pro zvuky
+* [ContentDB](https://content.minetest.net/packages/xenonca/mese\_trains/)
+
+## Some More Trains (some\_more\_trains)
+
+* Zdroj: [https://github.com/APercy/some\_more\_trains](https://github.com/APercy/some\_more\_trains), revize 326f7e73a73e05e26a4cc25c8cc5acc777429443
+* Původní licence: AGPLv3
+* Licence úprav: AGPLv3
+
 
 # Doplňky k balíku Display
 
