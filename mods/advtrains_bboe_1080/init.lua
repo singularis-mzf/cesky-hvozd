@@ -1,9 +1,4 @@
-local S
-if minetest.get_modpath("intllib") then
-    S = intllib.Getter()
-else
-    S = function(s,a,...)a={a,...}return s:gsub("@(%d+)",function(n)return a[tonumber(n)]end)end
-end
+local S = attrans
 
 advtrains.register_wagon("engine_BBOE_1080", {
 	mesh="advtrains_engine_BBOE_1080.b3d",
@@ -44,13 +39,13 @@ advtrains.register_wagon("engine_BBOE_1080", {
 	},
 	seat_groups = {
 		dstand={
-			name = "Driver Stand",
+			name = S("Driver Stand"),
 			access_to = {"pass"},
 			require_doors_open=true,
 			driving_ctrl_access = true
 		},
 		pass={
-			name = "Crew Seats",
+			name = S("Crew Seats"),
 			access_to = {"dstand"},
 			require_doors_open=true,
 		},
@@ -71,8 +66,16 @@ advtrains.register_wagon("engine_BBOE_1080", {
 	wagon_span=3.0,
 	is_locomotive=true,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"advtrains:engine_BBOE_1080"},
-}, S("BBÖ 1080 "), "advtrains_engine_BBOE_1080_inv.png")
+	drops={
+		"dye:green",
+		"basic_materials:steel_bar",
+		"default:steelblock 2",
+		"advtrains:driver_cab",
+		"advtrains:wheel 5",
+		"basic_materials:motor 3",
+		"dye:blue", -- only because of the crafting recipe
+	},
+}, S("BBÖ 1080"), "advtrains_engine_BBOE_1080_inv.png")
 
 advtrains.register_wagon("wagon_ware", {
 	mesh="advtrains_wagon_BBOE_ware.b3d",
@@ -83,7 +86,10 @@ advtrains.register_wagon("wagon_ware", {
 	visual_size = {x=1, y=1},
 	wagon_span=2.8,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"advtrains:wagon_ware"},
+	drops={
+		"moreblocks:slab_steelblock 3",
+		"advtrains:wheel 2",
+	},
 	has_inventory = true,
 	get_inventory_formspec = advtrains.standard_inventory_formspec,
 	inventory_list_sizes = {
@@ -91,4 +97,20 @@ advtrains.register_wagon("wagon_ware", {
 	},
 }, S("Ware Wagon (BBÖ)"), "advtrains_wagon_BBOE_ware_inv.png")
 
+minetest.register_craft({
+	output = "advtrains:engine_BBOE_1080",
+	recipe = {
+		{"", "dye:green", ""},
+		{"basic_materials:motor", "basic_materials:motor", "basic_materials:motor"},
+		{"advtrains:wheel", "advtrains:engine_zugspitzbahn", "advtrains:wheel"},
+	},
+})
 
+minetest.register_craft({
+	output = "advtrains:wagon_ware",
+	recipe = {
+		{"", "", ""},
+		{"moreblocks:slab_steelblock", "moreblocks:slab_steelblock", "moreblocks:slab_steelblock"},
+		{"advtrains:wheel", "", "advtrains:wheel"},
+	},
+})
