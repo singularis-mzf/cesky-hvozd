@@ -1,12 +1,4 @@
-local S
-
-if minetest.get_translator ~= nil then
-    S = minetest.get_translator(minetest.get_current_modname())
-else
-    S = function(str)
-        return(str)
-    end
-end
+local S = attrans
 
 local lines = {
 	"#ff1111",
@@ -86,7 +78,13 @@ advtrains.register_wagon("mese_trains_mesejet:mese_trains_mesejet_wagon", {
 	visual_size = {x = 1, y = 1},
 	wagon_span = 2.96,
 	collisionbox = {-1.0, -0.5, -1.0, 1.0, 2.5, 1.0},
-	drops = {"default:steelblock"},
+	drops = {
+		"default:steelblock 2",
+		"default:steel_ingot",
+		"default:obsidian_glass 2",
+		"default:mese",
+		"advtrains:wheel 2",
+	},
 	custom_on_step = function(self, dtime, data, train)
 		if train.line and self.line_cache ~= train.line then
 			self.line_cache = train.line
@@ -151,13 +149,13 @@ advtrains.register_wagon("mese_trains_mesejet:mese_trains_mesejet_engine", {
 	},
 	seat_groups = {
 		dstand = {
-			name = "Driver Stand",
+			name = S("Driver Stand"),
 			access_to = {"pass"},
 			require_doors_open = true,
 			driving_ctrl_access = true,
 		},
 		pass = {
-			name = "Passenger area",
+			name = S("Passenger area"),
 			access_to = {"dstand"},
 			require_doors_open = true,
 		},
@@ -178,7 +176,12 @@ advtrains.register_wagon("mese_trains_mesejet:mese_trains_mesejet_engine", {
 	wagon_span = 3.1,
 	is_locomotive = true,
 	collisionbox = {-1.0, -0.5, -1.0, 1.0, 2.5, 1.0},
-	drops = {"default:steelblock"},
+	drops = {
+		"default:steelblock 3",
+		"default:mese",
+		"default:obsidian_glass",
+		"advtrains:wheel 2",
+	},
 	horn_sound = "mese_trains_mesejet_horn",
 	custom_on_step = function(self, dtime, data, train)
 		if train.line and self.line_cache ~= train.line then
