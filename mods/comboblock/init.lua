@@ -20,6 +20,7 @@ local allowed_combos = {
 	[3] = "darkage:slab_ors_brick+wool:slab_brown",
 	[4] = "bakedclay:slab_baked_clay_red+darkage:slab_ors_brick",
 	[5] = "bakedclay:slab_baked_clay_brown+darkage:slab_ors_brick",
+	[6] = "solidcolor:slab_plaster_white+xdecor:slab_wood_tile",
 }
 local allowed_combos_tmp = {}
 for i, v in ipairs(allowed_combos) do
