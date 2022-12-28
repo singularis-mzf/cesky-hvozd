@@ -214,6 +214,11 @@ tiles_arrow[6] = "ch_extras_switch_arrow.png"
 local tiles_arrow_r = table.copy(tiles_straight)
 tiles_arrow_r[6] = "ch_extras_switch_arrow.png^[transformR180"
 
+local full_box = {
+	type = "fixed",
+	fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
+}
+
 def = {
 	description = "výměnové návěstidlo",
 	paramtype = "light",
@@ -290,4 +295,61 @@ ch_core.register_nodes(
 		}, {
 			output = "ch_extras:switch_r_off", recipe = {{"ch_extras:switch_lr_off"}}
 		}
+	})
+
+def.drawtype = "mesh"
+def.mesh = "ch_core_normal_45.obj"
+def.selection_box = full_box
+def.collision_box = full_box
+
+ch_core.register_nodes(def,
+	{
+		["ch_extras:switch_45_off"] = {
+			description = "výměnové návěstidlo (45°)",
+			tiles = tiles_straight,
+			groups = groups_off,
+			mesecons = mesecons_off,
+			_alt_shape = "ch_extras:switch_45_on",
+		},
+		["ch_extras:switch_45_on"] = {
+			description = "výměnové návěstidlo (45°)",
+			tiles = tiles_arrow,
+			groups = groups_on,
+			mesecons = mesecons_on,
+			drop = "ch_extras:switch_45_off",
+			_alt_shape = "ch_extras:switch_45_off",
+		},
+		["ch_extras:switch_lr45_off"] = {
+			description = "výměnové návěstidlo (vlevo/vpravo, 45°)",
+			tiles = tiles_arrow,
+			groups = groups_off,
+			mesecons = mesecons_off,
+			_alt_shape = "ch_extras:switch_lr45_on",
+		},
+		["ch_extras:switch_lr45_on"] = {
+			description = "výměnové návěstidlo (vlevo/vpravo, 45°)",
+			tiles = tiles_arrow_r,
+			groups = groups_on,
+			mesecons = mesecons_on,
+			drop = "ch_extras:switch_lr45_off",
+			_alt_shape = "ch_extras:switch_lr45_off",
+		},
+	},
+	{
+		{
+			output = "ch_extras:switch_45_off",
+			recipe = {
+				{"mesecons:wire_00000000_off", "default:steel_ingot", "dye:black"},
+				{"", "default:cobble", "dye:white"},
+				{"mesecons:wire_00000000_off", "default:steel_ingot", "dye:black"},
+			},
+		},
+		{
+			output = "ch_extras:switch_lr45_off",
+			recipe = {{"ch_extras:switch_45_off"}},
+		},
+		{
+			output = "ch_extras:switch_45_off",
+			recipe = {{"ch_extras:switch_lr45_off"}},
+		},
 	})
