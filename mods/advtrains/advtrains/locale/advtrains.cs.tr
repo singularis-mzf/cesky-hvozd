@@ -285,3 +285,7 @@ Wait for this route to be cancelled in order to do anything here.=Počkejte na z
 Signal has been unassigned. Name and routes are kept for reuse.=Signál byl odpojen. Jméno a vlakové cesty jsou zachovány pro znovupoužití.
 Please cancel route first!=Nejdřív prosím zrušte vlakovou cestu!
 Side @1=Strana @1
+
+Zugspitzbahn engine=modrá elektrická lokomotiva
+Passenger Zugspitzbahn wagon=modrý osobní vagon
+Passenger Zugspitzbahn wagon green=zelený osobní vagon
