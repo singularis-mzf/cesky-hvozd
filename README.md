@@ -195,10 +195,17 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 ## advtrains\_train\_zugspitzbahn
 
-* Zdroj: [https://notabug.org/advtrains_supplemental/advtrains\_train\_zugspitzbahn.git](https://notabug.org/advtrains_supplemental/advtrains\_train\_zugspitzbahn.git), revize 8ba8b04709deb7d433f7357d65400aed75bd252a
+* Zdroj: [https://notabug.org/advtrains_supplemental/advtrains\_train\_zugspitzbahn](https://notabug.org/advtrains_supplemental/advtrains\_train\_zugspitzbahn), revize 8ba8b04709deb7d433f7357d65400aed75bd252a
 * Původní licence: CC BY-SA 3.0
 * Licence úprav: CC BY-SA 3.0
 * [ContentDB](https://content.minetest.net/packages/advtrains\_supplemental/advtrains\_train\_zugspitzbahn/)
+
+## advtrains\_transib
+
+* Zdroj: [https://notabug.org/advtrains\_supplemental/advtrains\_transib](https://notabug.org/advtrains\_supplemental/advtrains\_transib), revize 7cbcb5bb995591f8e4016c350db36e9905c23b31
+* Původní licence: CC BY-SA 3.0
+* Licence úprav: CC BY-SA 3.0
+* [ContentDB](https://content.minetest.net/packages/advtrains\_supplemental/advtrains\_transib/)
 
 # Doplňky k balíku Display
 
