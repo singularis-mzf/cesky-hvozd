@@ -292,3 +292,5 @@ Passenger Zugspitzbahn wagon=modrý osobní vagon
 Passenger Zugspitzbahn wagon green=zelený osobní vagon
 BBÖ 1080=zelená elektrická lokomotiva (výkonná)
 Ware Wagon (BBÖ)=jednoduchý otevřený nákladní vagon
+transib=transsibiřská lokomotiva
+Coal Wagon(for transib)=výsypný nákladní vagon
