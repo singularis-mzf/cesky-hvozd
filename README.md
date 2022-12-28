@@ -178,6 +178,21 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: AGPLv3
 * [ContentDB](https://content.minetest.net/packages/sfan5/worldedit/)
 
+# Doplňky k balíku Advtrains
+
+## Advtrains Construction Train (advtrains\_construction\_train)
+
+* Zdroj: [https://git.bananach.space/advtrains\_construction\_train.git/](https://git.bananach.space/advtrains\_construction\_train.git/), revize 2b27b8d8f1a629ff10f295cb8432225a3a9a943b
+* Původní licence: AGPLv3
+* Licence úprav: AGPLv3
+
+## advtrains\_train\_zugspitzbahn
+
+* Zdroj: [https://notabug.org/advtrains_supplemental/advtrains\_train\_zugspitzbahn.git](https://notabug.org/advtrains_supplemental/advtrains\_train\_zugspitzbahn.git), revize 8ba8b04709deb7d433f7357d65400aed75bd252a
+* Původní licence: CC BY-SA 3.0
+* Licence úprav: CC BY-SA 3.0
+* [ContentDB](https://content.minetest.net/packages/advtrains\_supplemental/advtrains\_train\_zugspitzbahn/)
+
 # Doplňky k balíku Display
 
 ## Font Old Wizard (font\_oldwizard)
@@ -194,12 +209,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: kód LGPLv2.1 (malá část MIT), modely CC BY-SA 3.0, textury různé
 * Licence úprav: LGPLv2.1
 * [ContentDB](https://content.minetest.net/packages/sirrobzeroone/3d\_armor\_flyswim/)
-
-## Advtrains Construction Train (advtrains\_construction\_train)
-
-* Zdroj: [https://git.bananach.space/advtrains\_construction\_train.git/](https://git.bananach.space/advtrains\_construction\_train.git/), revize 2b27b8d8f1a629ff10f295cb8432225a3a9a943b
-* Původní licence: AGPLv3
-* Licence úprav: AGPLv3
 
 ## Airtanks (airtanks)
 
