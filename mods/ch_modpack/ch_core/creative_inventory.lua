@@ -6,7 +6,7 @@ local partition_defs = {
 		name = "empty_buckets",
 		in_creative_inventory = true,
 		groups = none,
-		items = {"bucket:bucket_empty"},
+		items = {"bucket:bucket_empty", "bucket_wooden:bucket_empty"},
 		mods = none,
 	},
 	{
@@ -102,7 +102,7 @@ local partition_defs = {
 		groups = {"tree"},
 		items = none,
 		mods = none,
-		exclude_items = {"cottages:water_gen"},
+		exclude_items = {"cottages:water_gen", "bamboo:trunk"},
 	},
 	{
 		name = "ploty",
@@ -125,6 +125,21 @@ local partition_defs = {
 		groups = {"flower"},
 		items = none,
 		mods = none,
+	},
+	{
+		name = "vlaky",
+		in_creative_inventory = true,
+		groups = {"at_wagon"},
+		items = none,
+		mods = none,
+	},
+	{
+		name = "elektrickestroje",
+		in_creative_inventory = true,
+		groups = {"technic_machine"},
+		items = none,
+		mods = none,
+		exclude_items = {"digtron:power_connector"},
 	},
 	--[[ {
 		name = "obleceni",
@@ -192,10 +207,31 @@ local partition_defs = {
 	{
 		name = "sklo",
 		in_creative_inventory = true,
-		group = none,
+		groups = none,
 		items = {"building_blocks:woodglass", "building_blocks:smoothglass", "cucina_vegana:mushroomlight_glass", "darkage:glow_glass",
                  "darkage:glass", "default:obsidian_glass", "default:glass", "moreblocks:clean_glass", "moreblocks:clean_super_glow_glass",
                  "moreblocks:clean_glow_glass", "moreblocks:iron_glass", "moreblocks:super_glow_glass", "moreblocks:glow_glass", "moreblocks:coal_glass"},
+		mods = none,
+	},
+	{
+		name = "kombinace",
+		in_creative_inventory = true,
+		groups = none,
+		items = none,
+		mods = {"comboblock"},
+	},
+	{
+		name = "trojdesky",
+		in_creative_inventory = true,
+		groups = {"slab"},
+		items = none,
+		mods = none,
+	},
+	{
+		name = "trojsvahy",
+		in_creative_inventory = true,
+		groups = {"slope"},
+		items = none,
 		mods = none,
 	},
 }

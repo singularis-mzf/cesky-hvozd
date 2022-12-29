@@ -53,7 +53,6 @@ if minetest.get_modpath("default") then
 		"sandstone",
 		"sandstone_block",
 		"sandstonebrick",
-		"silver_sand",
 		"silver_sandstone",
 		"silver_sandstone_block",
 		"silver_sandstone_brick",

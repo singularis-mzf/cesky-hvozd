@@ -162,6 +162,7 @@ local nodes = {
 		groups = {cracky=2, tar_block=1},
 		is_ground_content = false,
 		sounds = sound_stone,
+		no_stairs = true,
 	},
 	["dirt_compressed"] = {
 		description = S("Compressed Dirt"),
