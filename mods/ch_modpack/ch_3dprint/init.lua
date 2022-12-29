@@ -447,6 +447,14 @@ local function on_timer(pos, elapsed)
 	end
 end
 
+local function preserve_metadata(pos, oldnode, oldmeta, drops)
+	for i, stack in ipairs(drops) do
+		if not stack:is_empty() then
+			stack:get_meta():set_int("palette_index", 0)
+		end
+	end
+end
+
 local default_override = {
 	allow_metadata_inventory_move = allow_metadata_inventory_move,
 	allow_metadata_inventory_put = allow_metadata_inventory_put,
@@ -457,6 +465,7 @@ local default_override = {
 	on_metadata_inventory_take = on_metadata_inventory_take,
 	on_rightclick = on_rightclick,
 	on_timer = on_timer,
+	preserve_metadata = preserve_metadata,
 }
 
 for _, name in ipairs(printers) do
