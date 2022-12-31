@@ -6,6 +6,7 @@ local mods = {
 	"cavestuff",
 	"farming",
 	"homedecor_kitchen",
+	"jonez",
 	"moreblocks",
 	"moretrees",
 	"screwdriver",
