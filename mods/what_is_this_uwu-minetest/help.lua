@@ -270,12 +270,12 @@ function what_is_this_uwu.get_node_tiles(node_name)
 	local mod_name, item_name = what_is_this_uwu.split_item_name(node_name)
 
 	if node.inventory_image:sub(1, 14) == '[inventorycube' then
-		return node.inventory_image..'^[resize:146x146', 'node', minetest.registered_nodes[node_name]
+		return node.inventory_image..'^[resize:146x146', 'node', minetest.registered_items[node_name]
 	elseif node.inventory_image ~= '' then
-		return node.inventory_image..'^[resize:16x16', 'craft_item', minetest.registered_nodes[node_name]
+		return node.inventory_image..'^[resize:16x16', 'craft_item', minetest.registered_items[node_name]
 	else
 		if not tiles[1] then
-			return '', 'node', minetest.registered_nodes[node_name]
+			return '', 'node', minetest.registered_items[node_name]
 		end
 
 		tiles[3] = tiles[3] or tiles[1]
@@ -291,7 +291,7 @@ function what_is_this_uwu.get_node_tiles(node_name)
 			tiles[6] = tiles[6].name
 		end
 
-		return inventorycube(tiles[1], tiles[6], tiles[3]), 'node', minetest.registered_nodes[node_name]
+		return inventorycube(tiles[1], tiles[6], tiles[3]), 'node', minetest.registered_items[node_name]
 	end
 end
 

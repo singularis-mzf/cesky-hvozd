@@ -407,7 +407,10 @@ local function on_placenode(pos, newnode, placer, oldnode, itemstack, pointed_th
 		return
 	end
 	local player_name = placer:is_player() and placer:get_player_name()
-	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
+	if player_name == nil or player_name == false or player_name == "" then
+		return
+	end
+	local online_charinfo = ch_core.online_charinfo[player_name]
 	if online_charinfo then
 		local ap = online_charinfo.ap
 		if ap then
@@ -419,7 +422,7 @@ local function on_placenode(pos, newnode, placer, oldnode, itemstack, pointed_th
 			end
 		end
 	else
-		minetest.log("warning", "on_placenode called with none or invalid placer")
+		minetest.log("warning", "on_placenode called with an offline player "..player_name)
 	end
 end
 

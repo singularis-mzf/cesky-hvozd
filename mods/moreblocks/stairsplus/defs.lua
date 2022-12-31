@@ -477,24 +477,6 @@ stairsplus.defs = {
 				},
 			},
 		},
-		["_half"] = {
-			node_box = {
-				type = "fixed",
-				fixed = {
-					{-0.5, -0.5, -0.5, 0, 0, 0.5},
-					{-0.5, 0, 0, 0, 0.5, 0.5},
-				},
-			},
-		},
-		["_right_half"] = {
-			node_box = {
-				type = "fixed",
-				fixed = {
-					{0, -0.5, -0.5, 0.5, 0, 0.5},
-					{0, 0, 0, 0.5, 0.5, 0.5},
-				},
-			},
-		},
 		["_inner"] = {
 			node_box = {
 				type = "fixed",

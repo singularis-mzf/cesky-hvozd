@@ -77,6 +77,8 @@ local function stamina_update_hud(player, stamina_level)
 	-- hud_status: "normal", "poisoned", "drunk"
 	-- is_hunger: true, false
 
+	-- stamina_level 0..29 = hlad, stamina_level 30..60 = sytost
+
 	if stamina_level < STAMINA_HUNGER_LEVEL then
 		is_hunger = true
 		hud_value = STAMINA_HUNGER_LEVEL - stamina_level
@@ -86,7 +88,7 @@ local function stamina_update_hud(player, stamina_level)
 		hud_value = stamina_level - STAMINA_HUNGER_LEVEL
 		hud_maxvalue = STAMINA_MAX_STAMINA - STAMINA_HUNGER_LEVEL
 	end
-	-- minetest.debug("Stamina update: stamina_level = "..stamina_level..", hunger_level = "..STAMINA_HUNGER_LEVEL..", is_hunger = "..(is_hunger and "true" or "false")..", hud = "..hud_value.." of "..hud_maxvalue)
+	minetest.log("action", "[debug] Stamina update: stamina_level = "..stamina_level..", hunger_level = "..STAMINA_HUNGER_LEVEL..", is_hunger = "..(is_hunger and "true" or "false")..", hud = "..hud_value.." of "..hud_maxvalue)
 
 	if not player_data.hud_status then
 		-- init
@@ -94,6 +96,9 @@ local function stamina_update_hud(player, stamina_level)
 		player_data.hud_status = hud_status
 		player_data.hud_value = hud_value
 		player_data.was_hunger = nil -- not is_hunger -- trigger update
+
+		player_data.hud_label = "" -- DEBUG
+
 		hb.init_hudbar(player, "hlad", 0, hud_maxvalue, true)
 	end
 
@@ -121,13 +126,19 @@ local function stamina_update_hud(player, stamina_level)
 			hud_bar = "hudbars_bar_stamina.png"
 		end
 
+		minetest.log("action", "[debug] Stamina of "..player:get_player_name().." HUD label: ("..player_data.hud_label..") => ("..hud_label.."), HUD value: ("..player_data.hud_value..") => ("..hud_value..")")
+
 		player_data.hud_status = hud_status
 		player_data.was_hunger = is_hunger
 		player_data.hud_value = hud_value
 		hb.unhide_hudbar(player, "hlad")
 		result = hb.change_hudbar(player, "hlad", hud_value, hud_maxvalue, hud_icon, hud_bgicon, hud_bar, hud_label)
+
+		player_data.hud_label = hud_label
+
 	elseif player_data.hud_value ~= hud_value then
 		-- update only the value
+		minetest.log("action", "[debug] Stamina of "..player:get_player_name().." HUD value update: ("..player_data.hud_value..") => ("..hud_value..")")
 		player_data.hud_value = hud_value
 		result = hb.change_hudbar(player, "hlad", hud_value)
 	else
@@ -671,5 +682,20 @@ minetest.register_on_player_hpchange(function(player, hp_change, reason)
 	end
 	return hp_change
 end, true)
+
+minetest.register_chatcommand("stamina", {
+	params = "<new_value>",
+	privs = {server = true},
+	func = function(chat_player_name, param)
+		local player = minetest.get_player_by_name(chat_player_name)
+		local new_value = tonumber(param)
+		if new_value ~= nil then
+			stamina_update_level(player, new_value)
+			return true
+		else
+			return false, "Chybné číslo: "..param
+		end
+	end,
+})
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

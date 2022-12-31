@@ -179,7 +179,11 @@ local datetime_huds = {
 
 local function on_joinplayer(player, last_login)
 	local player_name = player:get_player_name()
-	datetime_huds[player_name] = player:hud_add(datetime_hud_defaults)
+	datetime_huds[player_name] = {
+		counter = 0,
+		hud_id = player:hud_add(datetime_hud_defaults),
+		hud_text = "",
+	}
 end
 
 local function on_leaveplayer(player, timed_out)
@@ -193,16 +197,13 @@ local function on_step(dtime)
 	acc_time = acc_time + dtime
 	if acc_time > 0.5 then
 		local cas = ch_core.aktualni_cas()
-		local time_text = string.format("%s\n%d. %s %s\n%02d:%02d %s", cas.den_v_tydnu_nazev, cas.den, cas.nazev_mesice_2, cas.rok, cas.hodina, cas.minuta, cas.posun_text)
-		local time_text_2 = string.format("%s\n%d. %s %s\n%02d:%02d:%02d %s\ndtime = %.3f", cas.den_v_tydnu_nazev, cas.den, cas.nazev_mesice_2, cas.rok, cas.hodina, cas.minuta, cas.sekunda, cas.posun_text, dtime)
-		for player_name, hud_id in pairs(datetime_huds) do
+		local text = string.format("%s\n%d. %s %s\n%02d:%02d %s", cas.den_v_tydnu_nazev, cas.den, cas.nazev_mesice_2, cas.rok, cas.hodina, cas.minuta, cas.posun_text)
+		for player_name, record in pairs(datetime_huds) do
 			local player = minetest.get_player_by_name(player_name)
-			if player then
-				if player_name == "Administrace" or player_name == "singleplayer" then
-					player:hud_change(hud_id, "text", time_text_2)
-				else
-					player:hud_change(hud_id, "text", time_text)
-				end
+			if player and record.hud_text ~= text then
+				player:hud_change(record.hud_id, "text", text.." ["..record.counter.."]")
+				record.counter = record.counter + 1
+				record.hud_text = text
 			end
 		end
 	end

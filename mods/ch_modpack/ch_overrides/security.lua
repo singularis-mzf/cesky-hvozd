@@ -62,8 +62,27 @@ end
 local function on_placenode(pos, newnode, placer, oldnode, itemstack, pointed_thing)
 
 	if placer == nil or not placer:is_player() then
-		minetest.log("warning", "on_placenode: placer at "..minetest.pos_to_string(pos).." is not a player!")
 		return
+		--[[
+		minetest.log("warning", "on_placenode: placer at "..minetest.pos_to_string(pos).." is not a player!")
+
+		local s = ""
+		if placer == nil then
+			s = "placer == nil"
+		elseif placer.get_player_name == nil then
+			s = "placer.get_player_name == nil"
+		else
+			local pn = placer:get_player_name()
+			if pn == nil then
+				s = "placer:get_player_name() == nil"
+			elseif pn == "" then
+				s = "placer:get_player_name() == \"\""
+			else
+				s = "placer:get_player_name() == \""..pn.."\""
+			end
+		end
+		print("DEBUG: "..s)
+		return ]]
 	end
 
 	local player_name = placer:get_player_name()
@@ -107,7 +126,7 @@ end
 
 local function on_dignode(pos, oldnode, digger)
 	if not digger or not digger.get_player_name or (digger:get_player_name() or "") == "" then
-		minetest.log("on_dignode called with an invalid digger")
+		-- minetest.log("on_dignode called with an invalid digger")
 		return
 	end
 	if minetest.get_modpath("areas") then

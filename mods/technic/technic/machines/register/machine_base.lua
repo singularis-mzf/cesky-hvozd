@@ -77,6 +77,9 @@ function technic.register_base_machine(data)
 	if data.insert_object then
 		tube.insert_object = data.insert_object
 	end
+	if tube.input_inventory == nil then
+		tube.input_inventory = "dst"
+	end
 
 	local run = function(pos, node)
 		local meta     = minetest.get_meta(pos)
