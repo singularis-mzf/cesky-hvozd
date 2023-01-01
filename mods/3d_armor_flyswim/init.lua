@@ -147,7 +147,7 @@ minetest.register_globalstep(function()
 		end
 
 		local vel = player:get_velocity()
-		
+
 		-- basically 3D Pythagorean Theorem km/h
 		local play_s = (math.sqrt(math.pow(math.abs(vel.x),2) + 
 		                math.pow(math.abs(vel.y),2) + 
@@ -313,7 +313,7 @@ minetest.register_globalstep(function()
 						player:set_properties({collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.45, 0.3}})
 					end
 					if tdebug then minetest.debug("crouch_2") end
-					
+
 	-----------------------------
 	--      Flying Cases       --
 	-----------------------------						
@@ -321,7 +321,7 @@ minetest.register_globalstep(function()
 			   privs.fly == true and
 			   node_down_fsable(pos,3,"a") and
 			   not attached_to then
-				
+
 				-- Vel.y value is a compromise for code simplicity,
 				-- Flyers wont get fall animation until below -18m/s
 				if controls_wasd then					

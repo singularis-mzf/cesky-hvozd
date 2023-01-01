@@ -96,26 +96,62 @@ function node_fsable(pos,num,type)
 	return false
 end
 
+-- hash/num/type => {}
+local node_down_fsable_cache = {}
+local node_down_fsable_cache_old = node_down_fsable_cache
+local node_down_fsable_cache_expiration = 0
+
 -----------------------------------------------
 --  Check X number nodes down fly/Swimmable  --
 -----------------------------------------------
 function node_down_fsable(pos,num,type)
+	pos = vector.round(pos)
+	local now = minetest.get_us_time()
+	-- cache rolling
+	if now > node_down_fsable_cache_expiration then
+		node_down_fsable_cache_old = node_down_fsable_cache
+		node_down_fsable_cache = {}
+		node_down_fsable_cache_expiration = now + 60000000
+	end
+	local cache_key = minetest.hash_node_position(pos).."/"..num.."/"..type
+	local cached_result = node_down_fsable_cache[cache_key]
+	if cached_result == nil then
+		cached_result = node_down_fsable_cache_old[cache_key]
+	end
+	if cached_result ~= nil then
+		return cached_result -- cache hit
+	end
 
-local draw_ta = {"airlike"}
-local draw_tl = {"liquid","flowingliquid"}
-local i = 0
-local nodes = {}
-local result ={}
-local compare = draw_ta
-	while (i < num ) do
-		table.insert(nodes, minetest.get_node({x=pos.x,y=pos.y-i,z=pos.z}))
-		i=i+1
+	-- cache miss
+	local draw_ta = {"airlike"}
+	local draw_tl = {"liquid","flowingliquid"}
+	local i
+	local nodes = {}
+	local result = {}
+	local compare = draw_ta
+
+	local raycast = Raycast(vector.offset(pos, 0, 0.1, 0), vector.offset(pos, 0, -num, 0), false, true)
+	local raycast_result = raycast:next()
+	local raycast_cache = {}
+
+	while raycast_result ~= nil do
+		local y = raycast_result.under.y
+		if raycast_result.type == "node" and raycast_cache[y] == nil then
+			raycast_cache[y] = raycast_result.under
+		end
+		raycast_result = raycast:next()
+	end
+
+	for i = 0, num - 1 do
+		local y = pos.y - i
+		local lpos = raycast_cache[y] or vector.new(pos.x, y, pos.z)
+		table.insert(nodes, minetest.get_node(lpos))
 	end
 
 	if type == "s" then
 		compare = draw_tl
-	end	
-		
+	end
+
 	local n_draw
 	for k,v in pairs(nodes) do
 		local n_draw
@@ -131,13 +167,16 @@ local compare = draw_ta
 				  	table.insert(result,"t")
 				end
 			end
-	end	
-	
-	if #result == num then
-		return true
-	else
-	    return false
 	end
+
+	if #result == num then
+		result = true
+	else
+		result = false
+	end
+	node_down_fsable_cache[cache_key] = result -- save to the cache
+
+	return result
 end
 
 ------------------------------------------
