@@ -39,6 +39,7 @@ local function get_formspec(pos, meta, player)
 	local is_enabled, interval, interval_string = get_bplant_info(meta)
 	local is_locked = meta:get_int("locked") ~= 0
 	local owner = meta:get_string("owner")
+	local is_registered_player = minetest.check_player_privs(player, "ch_registered_player")
 	local formspec = {
 		"formspec_version[4]",
 		"size[8,7]",
@@ -51,17 +52,15 @@ local function get_formspec(pos, meta, player)
 		"label[0.25,4.75;interval \\[s\\]:]",
 		"field[2,4.5;1.5,0.5;interval;;", interval_string , "]",
 	}
-	if not is_locked or owner == "" or player:get_player_name() == owner or minetest.check_player_privs(player, "protection_bypass") then
+	if is_registered_player and is_enabled then
+		table.insert(formspec, "button[3.0,2.1;3,0.75;vyp;vypnout mrkání]")
+	end
+	if is_registered_player and (not is_locked or owner == "" or player:get_player_name() == owner or minetest.check_player_privs(player, "protection_bypass")) then
 		-- owner interface
 		local s
-		if is_enabled then
-			s = "vyp;vypnout mrkání"
-		else
-			s = "zap;zapnout mrkání"
+		if not is_enabled then
+			table.insert(formspec, "button[3.0,2.1;3,0.75;zap;zapnout mrkání]")
 		end
-		table.insert(formspec, "button[3.0,2.1;3,0.75;")
-		table.insert(formspec, s)
-		table.insert(formspec, "]")
 		table.insert(formspec, "button[3.0,2.85;3,0.75;reset;vynulovat počítadlo]")
 		if is_locked then
 			s = "unlock;odemknout květinu"
@@ -206,40 +205,52 @@ local function formspec_callback(custom_state, player, formname, fields)
 	end
 	local meta = minetest.get_meta(pos)
 	local owner = meta:get_string("owner")
-
+	local update_infotext = false
 	local is_locked = meta:get_int("locked") ~= 0
-	if is_locked and owner ~= "" and owner ~= player_name and not minetest.check_player_privs(player_name, "protection_bypass") then
-		return -- no rights to the node
-	end
 
 	if fields.vyp then
 		local is_enabled, interval = get_bplant_info(meta)
 		meta:set_float("interval", -interval)
 		set_interval(pos, interval)
-	elseif fields.zap then
-		local is_enabled, interval = get_bplant_info(meta)
-		meta:set_float("interval", interval)
-		set_interval(pos, interval)
-	elseif fields.reset then
-		meta:set_int("counter", 0)
-	elseif fields.lock then
-		meta:set_int("locked", 1)
-	elseif fields.unlock then
-		meta:set_int("locked", 0)
-	elseif fields.setinterval then
-		local new_interval = fields.interval:gsub(",", ".")
-		new_interval = tonumber(new_interval)
-		if new_interval ~= nil then
-			local check = math.round(new_interval)
-			if new_interval >= 0 and (allowed_fractions[new_interval] or new_interval == check) then
-				minetest.log("action", "[blinky_plant @ "..minetest.pos_to_string(pos).."] interval will be set to "..new_interval)
-				set_interval(pos, new_interval)
-			else
-				ch_core.systemovy_kanal(player_name, "Chyba! "..fields.interval.." není platná a povolená hodnota intervalu v sekundách!")
+		update_infotext = true
+		minetest.log("action", player_name.." disabled blinky plant owned by "..owner.." at "..minetest.pos_to_string(pos))
+	end
+
+	if not is_locked or owner == "" or owner == player_name or minetest.check_player_privs(player_name, "protection_bypass") then
+		if not fields.vyp and fields.zap then
+			local is_enabled, interval = get_bplant_info(meta)
+			meta:set_float("interval", interval)
+			set_interval(pos, interval)
+			update_infotext = true
+			minetest.log("action", player_name.." enabled blinky plant owned by "..owner.." at "..minetest.pos_to_string(pos))
+		elseif fields.reset then
+			meta:set_int("counter", 0)
+			update_infotext = true
+			minetest.log("action", player_name.." reset blinky plant counter owned by "..owner.." at "..minetest.pos_to_string(pos))
+		elseif fields.lock then
+			meta:set_int("locked", 1)
+			update_infotext = true
+		elseif fields.unlock then
+			meta:set_int("locked", 0)
+			update_infotext = true
+		elseif fields.setinterval then
+			local new_interval = fields.interval:gsub(",", ".")
+			new_interval = tonumber(new_interval)
+			if new_interval ~= nil then
+				local check = math.round(new_interval)
+				if new_interval >= 0 and (allowed_fractions[new_interval] or new_interval == check) then
+					minetest.log("action", "[blinky_plant @ "..minetest.pos_to_string(pos).."] interval will be set to "..new_interval)
+					set_interval(pos, new_interval)
+					update_infotext = true
+				else
+					ch_core.systemovy_kanal(player_name, "Chyba! "..fields.interval.." není platná a povolená hodnota intervalu v sekundách!")
+				end
 			end
 		end
 	end
-	meta:set_string("infotext", get_infotext(meta))
+	if update_infotext then
+		meta:set_string("infotext", get_infotext(meta))
+	end
 	return get_formspec(pos, meta, player)
 end
 
