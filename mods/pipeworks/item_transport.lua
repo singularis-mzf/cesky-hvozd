@@ -83,9 +83,10 @@ local function go_next_compat(pos, cnode, cmeta, cycledir, vel, stack, owner)
 	local next_positions = {}
 	local max_priority = 0
 	local can_go
+	local tube = (minetest.registered_nodes[cnode.name] or {}).tube or {}
 
-	if minetest.registered_nodes[cnode.name] and minetest.registered_nodes[cnode.name].tube and minetest.registered_nodes[cnode.name].tube.can_go then
-		can_go = minetest.registered_nodes[cnode.name].tube.can_go(pos, cnode, vel, stack)
+	if tube.can_go then
+		can_go = tube.can_go(pos, cnode, vel, stack)
 	else
 		local adjlist_string = minetest.get_meta(pos):get_string("adjlist")
 		local adjlist = minetest.deserialize(adjlist_string) or default_adjlist -- backward compat: if not found, use old behavior: all directions
@@ -129,6 +130,11 @@ local function go_next_compat(pos, cnode, cmeta, cycledir, vel, stack, owner)
 	-- otherwise rotate to the next output direction and return that
 	local n = (cycledir % (#next_positions)) + 1
 	local new_velocity = vector.multiply(next_positions[n].vect, vel.speed)
+
+	if tube.after_leave then
+		tube.after_leave(pos, next_positions[n].pos, stack)
+	end
+
 	return n, true, new_velocity, nil
 end
 

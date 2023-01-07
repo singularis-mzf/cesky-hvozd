@@ -94,6 +94,14 @@ Mesecon and Digiline Conducting Pneumatic Tube Segment on=vodivá pneumatická r
 ## sorting tubes
 Sorting Pneumatic Tube Segment=třídicí pneumatická roura
 Sorting pneumatic tube=třídicí pneumatická roura
+White=bílá
+Black=černá
+Green=zelená
+Yellow=žlutá
+Blue=modrá
+Red=červená
+Other=ostatní
+Count=počet
 
 ## teleport tube
 Receive=Příjem
