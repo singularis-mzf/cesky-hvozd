@@ -53,8 +53,8 @@ for chest_name, chest_def in pairs(default_chests) do
 		local old_after_place_node = ndef.after_place_node
 		if chest_def.type == "locked" then
 			if chest_def.infotext then
-				override.after_place_node = function(pos, placer)
-					if old_after_place_node then old_after_place_node(pos, placer) end
+				override.after_place_node = function(pos, placer, itemstack, pointed_thing)
+					if old_after_place_node then old_after_place_node(pos, placer, itemstack, pointed_thing) end
 					local meta = minetest.get_meta(pos)
 					local player_name = placer.get_player_name and placer:get_player_name()
 					if player_name then
@@ -74,8 +74,8 @@ for chest_name, chest_def in pairs(default_chests) do
 			end
 		else
 			if chest_def.infotext then
-				override.after_place_node = function(pos, placer)
-					if old_after_place_node then old_after_place_node(pos, placer) end
+				override.after_place_node = function(pos, placer, itemstack, pointed_thing)
+					if old_after_place_node then old_after_place_node(pos, placer, itemstack, pointed_thing) end
 					local meta = minetest.get_meta(pos)
 					local player_name = placer.get_player_name and placer:get_player_name()
 					if player_name then
