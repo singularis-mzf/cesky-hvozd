@@ -185,7 +185,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		minetest.sound_play("click",
 				{to_player=player_name, gain = 0.1})
 		local page = unified_inventory.current_page[player_name]
-		local player_creative = unified_inventory.is_creative(player_name)
+		local player_creative = minetest.check_player_privs(player_name, {give = true, ch_registered_player = true}) -- unified_inventory.is_creative(player_name)
 		if not player_creative then
 			page = "craftguide"
 		end

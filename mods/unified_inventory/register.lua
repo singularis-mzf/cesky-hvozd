@@ -350,7 +350,7 @@ ui.register_page("craftguide", {
 			alternates = #crafts
 			craft = crafts[alternate]
 		end
-		local has_give = player_privs.give or ui.is_creative(player_name)
+		local has_give = player_privs.give and player_privs.ch_registered_player -- or ui.is_creative(player_name)
 
 		formspec[n] = string.format("image[%f,%f;%f,%f;ui_crafting_arrow.png]",
 	                            craftguidearrowx, craftguidey, ui.imgscale, ui.imgscale)
@@ -486,8 +486,9 @@ ui.register_page("craftguide", {
 local function craftguide_giveme(player, formname, fields)
 	local player_name = player:get_player_name()
 	local player_privs = minetest.get_player_privs(player_name)
-	if not player_privs.give and
-			not ui.is_creative(player_name) then
+	if not player_privs.give or not player_privs.ch_registered_player
+			-- and not ui.is_creative(player_name)
+			then
 		minetest.log("action", "[unified_inventory] Denied give action to player " ..
 			player_name)
 		return
