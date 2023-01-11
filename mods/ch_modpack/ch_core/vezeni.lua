@@ -82,6 +82,14 @@ function ch_core.vezeni_kontrola_krumpace(player)
 end
 
 -- PRISON STONE
+local function on_construct(pos)
+	local meta = minetest.get_meta(pos)
+	if ch_core.je_ve_vezeni(pos) then
+		meta:set_string("infotext", "Vězeňský kámen. Těžte tento kámen železným nebo lepším krumpáčem pro odpykání si trestu.")
+	else
+		meta:set_string("infotext", "")
+	end
+end
 local box = {
 	type = "fixed",
 	fixed = {-0.4, -0.5, -0.4, 0.4, 0.4, 0.4}
@@ -96,11 +104,6 @@ local def = {
 	groups = {cracky = 1},
 	drop = "default:stone",
 	sounds = default.node_sound_stone_defaults(),
-
-	after_place_node = function(pos, placer, itemstack)
-		local meta = minetest.get_meta(pos)
-		meta:set_string("infotext", "Vězeňský kámen. Těžte tento kámen železným nebo lepším krumpáčem pro odpykání si trestu.")
-	end,
 
 	can_dig = function(pos, player)
 		if not ch_core.je_ve_vezeni(pos) or minetest.check_player_privs(player, "server") then
@@ -123,9 +126,19 @@ local def = {
 			ch_core.systemovy_kanal(player_name, "Váš trest: "..trest_old.." >> "..trest_new)
 		end
 		return false
-	end
+	end,
+	on_construct = on_construct,
 }
 minetest.register_node("ch_core:prison_stone", def)
+
+def = {
+	label = "Update prison stone infotext",
+	name = "ch_core:prison_stone_infotext",
+	nodenames = {"ch_core:prison_stone"},
+	run_at_every_load = true,
+	action = on_construct,
+}
+minetest.register_lbm(def)
 
 local prison_bar_icon = "default_snowball.png"
 local prison_bar_bgicon = nil
