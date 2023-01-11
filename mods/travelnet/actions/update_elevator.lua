@@ -5,6 +5,7 @@ return function (node_info, fields, player)
 	local meta = node_info.meta
 	local player_name = player:get_player_name()
 
+	-- local fields_owner    = ch_core.jmeno_na_prihlasovaci(fields.owner)
 	local owner_name      = node_info.props.owner_name
 	local station_network = node_info.props.station_network
 	local station_name	  = node_info.props.station_name
@@ -39,7 +40,7 @@ return function (node_info, fields, player)
 	then
 		return false, S("This %s belongs to %s. You can't edit it.",
 				"elevator",
-				tostring(owner_name)
+				ch_core.prihlasovaci_na_zobrazovaci(tostring(owner_name))
 			)
 	end
 
@@ -81,7 +82,7 @@ return function (node_info, fields, player)
 			S("Station '@1'" .. " " ..
 				"on travelnet '@2' (owned by @3)" .. " " ..
 				"ready for usage.",
-				tostring(fields.station_name), tostring(station_network), tostring(owner_name)))
+				tostring(fields.station_name), tostring(station_network), ch_core.prihlasovaci_na_zobrazovaci(tostring(owner_name))))
 
 	-- save the updated network data in a savefile over server restart
 	travelnet.save_data()

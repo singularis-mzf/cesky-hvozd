@@ -9,6 +9,7 @@ return function (node_info, fields, player)
 		return false, S("Invalid data or node.")
 	end
 
+	local fields_owner = ch_core.jmeno_na_prihlasovaci(fields.owner)
 	local owner_name      = node_info.props.owner_name
 	local station_network = node_info.props.station_network
 	local station_name	  = node_info.props.station_name
@@ -20,7 +21,7 @@ return function (node_info, fields, player)
 		return false, S("Unknown node.")
 	end
 
-	if owner_name == fields.owner
+	if owner_name == fields_owner
 		and station_network == fields.station_network
 		and station_name == fields.station_name
 	then
@@ -36,7 +37,7 @@ return function (node_info, fields, player)
 		error_message = error_message .. ' '
 			..S('Please provide a network name.')
 	end
-	if travelnet.is_falsey_string(fields.owner) then
+	if travelnet.is_falsey_string(fields_owner) then
 		error_message = error_message .. ' '
 			..S('Please provide an owner.')
 	end
@@ -55,7 +56,7 @@ return function (node_info, fields, player)
 	then
 		return false, S("This %s belongs to %s. You can't edit it.",
 				description,
-				tostring(owner_name)
+				ch_core.prihlasovaci_na_zobrazovaci(tostring(owner_name))
 			)
 	end
 
@@ -66,13 +67,13 @@ return function (node_info, fields, player)
 		minetest.record_protection_violation(pos, player_name)
 		return false, S("This @1 belongs to @2. You can't edit it.",
 				description,
-				tostring(owner_name)
+				ch_core.prihlasovaci_na_zobrazovaci(tostring(owner_name))
 			)
 	end
 
 	local network
 	local timestamp = os.time()
-	if owner_name ~= fields.owner then
+	if owner_name ~= fields_owner then
 		-- new owner -> remove station from old network then add to new owner
 		-- but only if there is space on the network
 		if  not minetest.check_player_privs(player_name, { travelnet_attach=true })
@@ -83,11 +84,11 @@ return function (node_info, fields, player)
 	end
 
 		-- get the new network
-		network = travelnet.get_or_create_network(fields.owner, fields.station_network)
+		network = travelnet.get_or_create_network(fields_owner, fields.station_network)
 		-- does a station with the new name already exist?
 		if network[fields.station_name] then
 			return false, S('Station "@1" already exists on network "@2" of player "@3".',
-					fields.station_name, fields.station_network, fields.owner)
+					fields.station_name, fields.station_network, fields_owner)
 		end
 		-- does the new network have space at all?
 		if travelnet.MAX_STATIONS_PER_NETWORK ~= 0 and 1 + #network > travelnet.MAX_STATIONS_PER_NETWORK then
@@ -111,7 +112,7 @@ return function (node_info, fields, player)
 		-- update meta
 		meta:set_string("station_name",    fields.station_name)
 		meta:set_string("station_network", fields.station_network)
-		meta:set_string("owner",           fields.owner)
+		meta:set_string("owner",           fields_owner)
 		meta:set_int   ("timestamp",       timestamp)
 
 		minetest.chat_send_player(player_name,
@@ -120,9 +121,9 @@ return function (node_info, fields, player)
 				.. 'and from owner "@5" to owner "@6".',
 				station_name, fields.station_name,
 				station_network, fields.station_network,
-				owner_name, fields.owner))
+				ch_core.prihlasovaci_na_zobrazovaci(owner_name), ch_core.prihlasovaci_na_zobrazovaci(fields_owner)))
 
-		new_owner_name = fields.owner
+		new_owner_name = fields_owner
 		new_station_network = fields.station_network
 		new_station_name = fields.station_name
 	elseif station_network ~= fields.station_network then
@@ -199,7 +200,7 @@ return function (node_info, fields, player)
 			S("Station '@1' on travelnet '@2' (owned by @3) ready for usage.",
 				tostring(new_station_name or station_name),
 				tostring(new_station_network or station_network),
-				tostring(new_owner_name or owner_name)
+				ch_core.prihlasovaci_na_zobrazovaci(tostring(new_owner_name or owner_name))
 			))
 
 	-- save the updated network data in a savefile over server restart

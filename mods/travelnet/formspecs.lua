@@ -69,7 +69,7 @@ function travelnet.formspecs.edit_travelnet(options, player_name)
 		),
 		S("You can have more than one network. If unsure, use your character name. Networks with name starting by @@ are private and inaccessible for other players."),
 		S("Owned by:"),
-		minetest.formspec_escape(options.owner_name or ""),
+		minetest.formspec_escape(ch_core.prihlasovaci_na_zobrazovaci(options.owner_name or "")),
 		S("Unless you know what you are doing, leave this empty."),
 		S("Save"),
 		S("Exit")
@@ -117,7 +117,7 @@ function travelnet.formspecs.primary(options, player_name)
 			S("Assigned to Network:"),
 			minetest.formspec_escape(options.station_network or "?"),
 			S("Owned by:"),
-			minetest.formspec_escape(options.owner_name or "?"),
+			minetest.formspec_escape(ch_core.prihlasovaci_na_zobrazovaci(options.owner_name or "?")),
 			S("Click on target to travel there:"),
 			S("Exit")
 		)

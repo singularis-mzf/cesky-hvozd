@@ -16,7 +16,7 @@ return function (node_info, fields, player)
 	local meta = node_info.meta
 	local station_name = fields.station_name or node_info.props.station_name
 	local station_network = fields.station_network or node_info.props.station_network
-	local owner_name = fields.owner_name or node_info.props.owner_name
+	local owner_name = ch_core.jmeno_na_prihlasovaci(fields.owner_name or node_info.props.owner_name)
 
 	-- if it is an elevator, determine the network name through x and z coordinates
 	local is_elevator = node_info.props.is_elevator
@@ -83,7 +83,7 @@ return function (node_info, fields, player)
 
 		meta:set_string("infotext",
 				S("Station '@1' on travelnet '@2' (owned by @3) ready for usage.",
-					tostring(station_name), tostring(station_network), tostring(owner_name)))
+					tostring(station_name), tostring(station_network), ch_core.prihlasovaci_na_zobrazovaci(tostring(owner_name))))
 
 		-- save the updated network data in a savefile over server restart
 		travelnet.save_data()
