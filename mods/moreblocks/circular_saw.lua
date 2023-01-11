@@ -384,16 +384,14 @@ end
 
 local has_default_mod = minetest.get_modpath("default")
 
-function circular_saw.on_construct(pos)
-	local meta = minetest.get_meta(pos)
+local function get_formspec()
 	local fancy_inv = ""
 	if has_default_mod then
 		-- prepend background and slot styles from default if available
 		fancy_inv = default.gui_bg..default.gui_bg_img..default.gui_slots
 	end
-	meta:set_string(
 		--FIXME Not work with @n in this part bug in minetest/minetest#7450.
-		"formspec", "size[11,11]"..fancy_inv..
+	return "size[11,11]"..fancy_inv..
 		"label[0,0;" ..S("Input material").. "]" ..
 		"list[current_name;input;1.7,0;1,1;]" ..
 		"label[0,1;" ..F(S("Left-over")).. "]" ..
@@ -412,7 +410,13 @@ function circular_saw.on_construct(pos)
 		"listring[current_player;main]" ..
 		"listring[current_name;recycle]" ..
 		"listring[current_player;main]"
-	)
+end
+
+local circular_saw_formspec = get_formspec()
+
+function circular_saw.on_construct(pos)
+	local meta = minetest.get_meta(pos)
+	meta:set_string("formspec", circular_saw_formspec)
 
 	meta:set_int("anz", 0) -- No microblocks inside yet.
 	meta:set_string("max_offered", 10) -- How many items of this kind are offered by default?
@@ -427,6 +431,19 @@ function circular_saw.on_construct(pos)
 	circular_saw:reset(pos)
 end
 
+minetest.register_lbm({
+	label = "Update circular saw formspec",
+	name = "moreblocks:update_circular_saw_formspec",
+	nodenames = {"moreblocks:circular_saw"},
+	run_at_every_load = true,
+	action = function(pos, node, dtime_s)
+		local meta = minetest.get_meta(pos)
+		if meta:get_string("formspec") ~= circular_saw_formspec then
+			meta:set_string("formspec", circular_saw_formspec)
+			minetest.log("action", "Circular Saw formspec updated at "..minetest.pos_to_string(pos))
+		end
+	end
+})
 
 function circular_saw.can_dig(pos,player)
 	local meta = minetest.get_meta(pos)
