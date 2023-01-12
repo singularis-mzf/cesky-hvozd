@@ -132,20 +132,27 @@ local function stamina_update_hud(player, stamina_level)
 		player_data.was_hunger = is_hunger
 		player_data.hud_value = hud_value
 		hb.unhide_hudbar(player, "hlad")
-		result = hb.change_hudbar(player, "hlad", hud_value, hud_maxvalue, hud_icon, hud_bgicon, hud_bar, hud_label)
+		local state_before = hb.get_hudbar_state(player, "hlad")
+		result = hb.change_hudbar(player, "hlad", hud_value, hud_maxvalue, hud_icon, hud_bgicon, hud_bar, hud_label, 0xFFFFFF)
+		local state_after = hb.get_hudbar_state(player, "hlad")
 
 		player_data.hud_label = hud_label
+
+		minetest.log("action", "[debug] Stamina: change = "..dump2({before = state_before, after = state_after, arguments = {player, "hlad", hud_value, hud_maxvalue, hud_icon, hud_bgicon, hud_bar, hud_label, 0xFFFFFF}}))
 
 	elseif player_data.hud_value ~= hud_value then
 		-- update only the value
 		minetest.log("action", "[debug] Stamina of "..player:get_player_name().." HUD value update: ("..player_data.hud_value..") => ("..hud_value..")")
 		player_data.hud_value = hud_value
-		result = hb.change_hudbar(player, "hlad", hud_value)
+		if not hb.get_hudbar_state(player, "hlad").hidden then
+			result = hb.change_hudbar(player, "hlad", hud_value, nil, nil, nil, nil, player_data.hud_label)
+		end
 	else
 		result = false
 	end
 	if hud_status ~= "normal" or hud_value > 5 then
 		hb.unhide_hudbar(player, "hlad")
+		hb.change_hudbar(player, "hlad", player_data.hud_value, nil, nil, nil, nil, player_data.hud_label)
 	elseif hud_value < 4 then
 		hb.hide_hudbar(player, "hlad")
 	end
