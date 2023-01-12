@@ -94,7 +94,7 @@ minetest.register_craft({
 
 
 minetest.register_node("streets:roadwork_traffic_barrier_top", {
-	description = S("zábrana (s podstavcem)"),
+	description = S("zábrana (bez podstavce)"),
 	paramtype = "light",
 	drawtype = "nodebox",
 	tiles = {

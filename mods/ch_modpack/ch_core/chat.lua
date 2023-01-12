@@ -540,7 +540,7 @@ minetest.send_leave_message = function(player_name, is_timedout)
 end
 
 -- /info_o
-local function info_o(player_name, param)
+local function info_o(player_name, param, non_privileged)
 	local admin_name = player_name
 	player_name = ch_core.jmeno_na_prihlasovaci(param)
 	local view_name = ch_core.prihlasovaci_na_zobrazovaci(player_name)
@@ -577,6 +577,13 @@ minetest.register_chatcommand("info_o", {
 	description = "Vypíše systémové informace o postavě",
 	privs = { server = true },
 	func = info_o,
+})
+
+minetest.register_chatcommand("info", {
+	description = "Vypíše systémové informace o Vaší postavě",
+	func = function(player_name, param)
+		return info_o(player_name, player_name, true)
+	end,
 })
 
 -- log all chatcommands except /msg
