@@ -492,6 +492,7 @@ for _, sideinfo in ipairs(banister_sides) do
 	end
 end
 
+--[[
 homedecor.register("spiral_staircase", {
 	description = S("Spiral Staircase"),
 	mesh = "homedecor_spiral_staircase.obj",
@@ -582,6 +583,7 @@ minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack
 		end
 	end
 end)
+]]
 
 minetest.register_node(":homedecor:tatami_mat", {
 	tiles = {
@@ -917,6 +919,7 @@ minetest.register_craft({
 	},
 })
 
+--[[
 minetest.register_craft({
 	output = "homedecor:spiral_staircase",
 	recipe = {
@@ -925,6 +928,7 @@ minetest.register_craft({
 		{ "default:steelblock", "homedecor:pole_wrought_iron", "" }
 	},
 })
+]]
 
 minetest.register_craftitem(":homedecor:flower_pot_small", {
 	description = S("Small Flower Pot"),
