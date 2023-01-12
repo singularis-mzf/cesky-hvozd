@@ -34,10 +34,12 @@ local function set_injector_formspec(pos)
 	else
 		formspec = formspec.."button[0,1;4,1;mode_stack;"..S("Itemwise").."]"
 	end
-	if minetest.get_node_timer(pos):is_started() then
-		formspec = formspec.."button[4,1;4,1;disable;"..S("Enabled").."]"
+	if not minetest.get_node_timer(pos):is_started() then
+		formspec = formspec.."button[4,1;4,1;bymesecons;"..S("Disabled").."]"
+	elseif meta:get_int("mesecon_mode") == 1 then
+		formspec = formspec.."button[4,1;4,1;enable;"..S("By Mesecons").."]"
 	else
-		formspec = formspec.."button[4,1;4,1;enable;"..S("Disabled").."]"
+		formspec = formspec.."button[4,1;4,1;disable;"..S("Enabled").."]"
 	end
 	meta:set_string("formspec", formspec)
 end
@@ -67,11 +69,23 @@ minetest.register_node("technic:injector", {
 		end,
 		connect_sides = {left=1, right=1, back=1, top=1, bottom=1},
 	},
+	mesecons = {
+		effector = {
+			action_on = function(pos, node)
+				minetest.get_meta(pos):set_int("mesecon_effect", 1)
+			end,
+			action_off = function(pos, node)
+				minetest.get_meta(pos):set_int("mesecon_effect", 0)
+			end,
+		},
+	},
 	sounds = default.node_sound_wood_defaults(),
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("infotext", S("Self-Contained Injector"))
 		meta:set_string("mode", "single items")
+		meta:set_int("mesecon_mode", 0) -- 0 = ignore mesecons, 1 = check mesecons
+		meta:set_int("mesecon_effect", 0)
 		meta:get_inventory():set_size("main", 16)
 		minetest.get_node_timer(pos):start(1)
 		set_injector_formspec(pos)
@@ -92,12 +106,19 @@ minetest.register_node("technic:injector", {
 			minetest.get_node_timer(pos):stop()
 		elseif fields.enable then
 			minetest.get_node_timer(pos):start(1)
+			meta:set_int("mesecon_mode", 0)
+		elseif fields.bymesecons then
+			minetest.get_node_timer(pos):start(1)
+			meta:set_int("mesecon_mode", 1)
 		end
 		fs_helpers.on_receive_fields(pos, fields)
 		set_injector_formspec(pos)
 	end,
 	on_timer = function(pos, elapsed)
 		local meta = minetest.get_meta(pos)
+		if meta:get_int("mesecon_mode") == 1 and meta:get_int("mesecon_effect") == 0 then
+			return true -- disabled by mesecons
+		end
 		local node = minetest.get_node(pos)
 		local dir = param2_to_under[math.floor(node.param2 / 4)]
 		local node_under = minetest.get_node(vector.add(pos, dir))

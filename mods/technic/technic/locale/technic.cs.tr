@@ -88,6 +88,7 @@ Public=Veřejný
 Private=Soukromý
 Digiline Channel=Kanál digilinky
 Channel=Kanál
+By Mesecons=Dle mesespojů
 
 ## Machine names
 # $1: Tier
