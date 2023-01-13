@@ -116,3 +116,25 @@ if minetest.get_modpath("cottages") then
 		},
 	})
 end
+
+if minetest.get_modpath("technic") then
+	minetest.register_craft({
+		output = "technic:cast_iron_block",
+		type = "cooking",
+		cooktime = 10,
+		recipe = "default:steelblock",
+	})
+
+	minetest.register_craft({
+		output = "default:steelblock",
+		type = "cooking",
+		cooktime = 20,
+		recipe = "technic:cast_iron_block",
+	})
+
+	technic.register_alloy_recipe({input = {"default:steelblock", "technic:coal_dust 5"}, output = "technic:carbon_steel_block", time = 50})
+	technic.register_alloy_recipe({input = {"technic:carbon_steel_block", "technic:coal_dust 5"}, output = "technic:cast_iron_block", time = 50})
+	technic.register_alloy_recipe({input = {"default:copperblock 7", "default:tinblock"}, output = "default:bronzeblock 8", time = 120})
+	technic.register_alloy_recipe({input = {"technic:carbon_steel_block 4", "technic:chromium_block"}, output = "technic:stainless_steel_block 5", time = 75})
+	technic.register_alloy_recipe({input = {"default:copperblock 2", "technic:zinc_block"}, output = "basic_materials:brass_block 3", time = 10})
+end
