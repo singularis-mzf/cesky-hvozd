@@ -1,0 +1,6 @@
+
+color_flags (Enable single color flags) bool true
+
+default_flag (Default flag) string white
+
+flagpole_material (Flagpole material) string default:steel_ingot

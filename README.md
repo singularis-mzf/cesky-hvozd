@@ -536,6 +536,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: GNU Affero GPLv3
 * [ContentDB](https://content.minetest.net/packages/rheo/futil/)
 
+## Generic Inoffensive Flags (generic\_flags)
+
+* Zdroj: [https://content.minetest.net/packages/AwesomeDragon97/generic\_flags/](https://content.minetest.net/packages/AwesomeDragon97/generic\_flags/), verze Generic Inoffensive Flags 1.2
+* Původní licence: LGPLv3 pro kód, CC BY-SA 3.0 pro média
+* Licence úprav: LGPLv3 pro kód, CC BY-SA 3.0 pro média
+* [ContentDB](https://content.minetest.net/packages/AwesomeDragon97/generic\_flags/)
+
 ## Giftbox2 (minetest\_giftbox2)
 
 * Zdroj: [https://repo.or.cz/minetest\_giftbox2.git](https://repo.or.cz/minetest\_giftbox2.git), revize d0c150741f2d6bb840623a5f24c09890a1220aa9
