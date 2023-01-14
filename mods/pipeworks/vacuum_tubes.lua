@@ -1,7 +1,7 @@
 local S = minetest.get_translator("pipeworks")
 if pipeworks.enable_sand_tube then
 	pipeworks.register_tube("pipeworks:sand_tube", {
-		description = S("Vacuuming Pneumatic Tube Segment"),
+		description = S("Vacuuming Pneumatic Tube Segment (priority @1)", 50),
 		inventory_image = "pipeworks_sand_tube_inv.png",
 		short = "pipeworks_sand_tube_short.png",
 		noctr = {"pipeworks_sand_tube_noctr.png"},
@@ -29,7 +29,7 @@ end
 
 if pipeworks.enable_mese_sand_tube then
 	pipeworks.register_tube("pipeworks:mese_sand_tube", {
-			description = S("Adjustable Vacuuming Pneumatic Tube Segment"),
+			description = S("Adjustable Vacuuming Pneumatic Tube Segment (priority @1)", 50),
 			inventory_image = "pipeworks_mese_sand_tube_inv.png",
 			short = "pipeworks_mese_sand_tube_short.png",
 			noctr = {"pipeworks_mese_sand_tube_noctr.png"},
@@ -64,7 +64,7 @@ if pipeworks.enable_mese_sand_tube then
 						dist = math.max(0, dist)
 						dist = math.min(8, dist)
 						meta:set_int("dist", dist)
-						meta:set_string("infotext", S("Adjustable Vacuuming Pneumatic Tube Segment (@1m)", dist))
+						meta:set_string("infotext", S("Adjustable Vacuuming Pneumatic Tube Segment (@1m)", (2 * dist + 1).."x"..(2 * dist + 1).."x"..(2 * dist + 1)))
 					end
 				end,
 			},

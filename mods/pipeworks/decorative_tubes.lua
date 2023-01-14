@@ -5,7 +5,7 @@ local steel_tex = "[combine:16x16^[noalpha^[colorize:#D3D3D3"
 if minetest.get_modpath("default") then steel_tex = "default_steel_block.png" end
 
 minetest.register_node("pipeworks:steel_block_embedded_tube", {
-	description = S("Airtight steelblock embedded tube"),
+	description = S("Airtight steelblock embedded tube (priority @1)", 50),
 	tiles = {
 		steel_tex, steel_tex,
 		steel_tex, steel_tex,
@@ -45,7 +45,7 @@ local texture_alpha_mode = minetest.features.use_texture_alpha_string_modes
 
 minetest.register_node("pipeworks:steel_pane_embedded_tube", {
 	drawtype = "nodebox",
-	description = S("Airtight panel embedded tube"),
+	description = S("Airtight panel embedded tube (priority @1)", 50),
 	tiles = {
 		pipeworks.make_tube_tile("pipeworks_pane_embedded_tube_sides.png^[transformR90"),
 		pipeworks.make_tube_tile("pipeworks_pane_embedded_tube_sides.png^[transformR90"),

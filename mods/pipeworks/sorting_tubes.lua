@@ -218,7 +218,7 @@ if pipeworks.enable_mese_tube then
 	end
 
 	pipeworks.register_tube("pipeworks:mese_tube", {
-			description = S("Sorting Pneumatic Tube Segment"),
+			description = S("Sorting Pneumatic Tube Segment (priority @1)", 50),
 			inventory_image = "pipeworks_mese_tube_inv.png",
 			noctr = {"pipeworks_mese_tube_noctr_1.png", "pipeworks_mese_tube_noctr_2.png", "pipeworks_mese_tube_noctr_3.png",
 				"pipeworks_mese_tube_noctr_4.png", "pipeworks_mese_tube_noctr_5.png", "pipeworks_mese_tube_noctr_6.png"},

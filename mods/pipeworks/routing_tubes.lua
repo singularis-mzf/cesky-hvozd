@@ -1,6 +1,6 @@
 local S = minetest.get_translator("pipeworks")
 -- the default tube and default textures
-pipeworks.register_tube("pipeworks:tube", S("Pneumatic tube segment"))
+pipeworks.register_tube("pipeworks:tube", S("Pneumatic tube segment (priority @1)", 50))
 minetest.register_craft( {
 	output = "pipeworks:tube_1 6",
 	recipe = {
@@ -97,7 +97,7 @@ if pipeworks.enable_priority_tube then
 	local color = "#30fff7:128"
 	nodecolor = 0xff30fff7
 	pipeworks.register_tube("pipeworks:priority_tube", {
-			description = S("High Priority Tube Segment"),
+			description = S("High Priority Tube Segment (priority @1)", 150),
 			inventory_image = "pipeworks_tube_inv.png^[colorize:" .. color,
 			plain = { { name = "pipeworks_tube_plain.png", color = nodecolor } },
 			noctr = { { name = "pipeworks_tube_noctr.png", color = nodecolor } },
@@ -107,11 +107,25 @@ if pipeworks.enable_priority_tube then
 				tube = { priority = 150 } -- higher than tubedevices (100)
 			},
 	})
+
+	color = "#909090:128"
+	nodecolor = 0xff909090
+	pipeworks.register_tube("pipeworks:low_priority_tube", {
+			description = S("Low Priority Tube Segment (priority @1)", 2),
+			inventory_image = "pipeworks_tube_inv.png^[colorize:" .. color,
+			plain = { { name = "pipeworks_tube_plain.png", color = nodecolor } },
+			noctr = { { name = "pipeworks_tube_noctr.png", color = nodecolor } },
+			ends  = { { name = "pipeworks_tube_end.png",   color = nodecolor } },
+			short =   { name = "pipeworks_tube_short.png", color = nodecolor },
+			node_def = {
+				tube = { priority = 2 }
+			},
+	})
 end
 
 if pipeworks.enable_accelerator_tube then
 	pipeworks.register_tube("pipeworks:accelerator_tube", {
-			description = S("Accelerating Pneumatic Tube Segment"),
+			description = S("Accelerating Pneumatic Tube Segment (priority @1)", 50),
 			inventory_image = "pipeworks_accelerator_tube_inv.png",
 			plain = { "pipeworks_accelerator_tube_plain.png" },
 			noctr = { "pipeworks_accelerator_tube_noctr.png" },
@@ -128,7 +142,7 @@ end
 
 if pipeworks.enable_crossing_tube then
 	pipeworks.register_tube("pipeworks:crossing_tube", {
-			description = S("Crossing Pneumatic Tube Segment"),
+			description = S("Crossing Pneumatic Tube Segment (priority @1)", 50),
 			inventory_image = "pipeworks_crossing_tube_inv.png",
 			plain = { "pipeworks_crossing_tube_plain.png" },
 			noctr = { "pipeworks_crossing_tube_noctr.png" },
@@ -150,7 +164,7 @@ if pipeworks.enable_one_way_tube then
 		tiles[i] = pipeworks.make_tube_tile(tile)
 	end
 	minetest.register_node("pipeworks:one_way_tube", {
-		description = S("One way tube"),
+		description = S("One way tube (priority @1)", 75),
 		tiles = tiles,
 		use_texture_alpha = texture_alpha_mode,
 		paramtype2 = "facedir",
@@ -178,4 +192,38 @@ if pipeworks.enable_one_way_tube then
 		check_for_horiz_pole = pipeworks.check_for_horiz_tube
 	})
 	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:one_way_tube"
+
+	-- direct tube
+	tiles = {"pipeworks_tube_plain.png", "pipeworks_tube_plain.png", "pipeworks_tube_noctr.png",
+		"pipeworks_tube_noctr.png", "pipeworks_tube_plain.png", "pipeworks_tube_plain.png"}
+	for i, tile in ipairs(tiles) do
+		tiles[i] = pipeworks.make_tube_tile(tile)
+	end
+	minetest.register_node("pipeworks:direct_tube", {
+		description = S("Direct tube (priority @1)", 50),
+		tiles = tiles,
+		use_texture_alpha = texture_alpha_mode,
+		paramtype2 = "facedir",
+		drawtype = "nodebox",
+		paramtype = "light",
+		node_box = {type = "fixed",
+			fixed = {{-1/2, -9/64, -9/64, 1/2, 9/64, 9/64}}},
+		groups = {snappy = 3 --[[, choppy = 2, oddly_breakable_by_hand = 2]], tubedevice = 1},
+		_sound_def = {
+			key = "node_sound_wood_defaults",
+		},
+		tube = {
+			connect_sides = {left = 1, right = 1},
+			can_go = function(pos, node, velocity, stack)
+				return {velocity}
+			end,
+			priority = 50
+		},
+		after_place_node = pipeworks.after_place,
+		after_dig_node = pipeworks.after_dig,
+		on_rotate = pipeworks.on_rotate,
+		check_for_pole = pipeworks.check_for_vert_tube,
+		check_for_horiz_pole = pipeworks.check_for_horiz_tube
+	})
+	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:direct_tube"
 end

@@ -32,8 +32,8 @@ Autocrafter=výrobní automat
 Allow splitting incoming material (not fuel) stacks from tubes=Dovolit dělení dávek (kromě paliva) při vstupu z rour
 
 ## decorative tubes
-Airtight steelblock embedded tube=Roura v bloku železa
-Airtight panel embedded tube=Roura skrz panel
+Airtight steelblock embedded tube (priority @1)=roura v bloku železa (priorita @1)
+Airtight panel embedded tube (priority @1)=roura skrz panel (priorita @1)
 
 ## devices
 Pump/Intake Module=vodní pumpa
@@ -72,13 +72,15 @@ Pipe Segment (legacy)=vodovodní potrubí (zastaralé)
 
 
 ## routing tubes
-Pneumatic tube segment=pneumatická roura
+Pneumatic tube segment (priority @1)=pneumatická roura (priorita @1)
 Broken Tube=prasklá roura
-High Priority Tube Segment=pneumatická roura s vysokou prioritou
-Accelerating Pneumatic Tube Segment=zrychlující pneumatická roura
-Crossing Pneumatic Tube Segment=křížící pneumatická roura
-One way tube=jednosměrná pneumatická roura
-Lua controlled Tube=roura řízená jazykem Lua
+High Priority Tube Segment (priority @1)=pneumatická roura s vysokou prioritou (priorita @1)
+Low Priority Tube Segment (priority @1)=pneumatická roura s nízkou prioritou (priorita @1)
+Accelerating Pneumatic Tube Segment (priority @1)=zrychlující pneumatická roura (priorita @1)
+Crossing Pneumatic Tube Segment (priority @1)=křížící pneumatická roura (priorita @1)
+One way tube (priority @1)=jednosměrná pneumatická roura (priorita @1)
+Direct tube (priority @1)=přímá roura (priorita @1)
+Lua controlled Tube (priority @1)=roura řízená jazykem Lua (priorita @1)
 
 ## signal tubes
 Detecting Pneumatic Tube Segment on=detekující pneumatická roura (mesespoje, aktivní)
@@ -92,7 +94,7 @@ Mesecon and Digiline Conducting Pneumatic Tube Segment=vodivá pneumatická rour
 Mesecon and Digiline Conducting Pneumatic Tube Segment on=vodivá pneumatická roura (mesespoje i digilinky, aktivní)
 
 ## sorting tubes
-Sorting Pneumatic Tube Segment=třídicí pneumatická roura
+Sorting Pneumatic Tube Segment (priority @1)=třídicí pneumatická roura (priorita @1)
 Sorting pneumatic tube=třídicí pneumatická roura
 White=bílá
 Black=černá
@@ -108,7 +110,7 @@ Receive=Příjem
 Channels are public by default=Standardně jsou kanály volně přístupné
 Use <player>:<channel> for fully private channels=Pro oboustranně soukromé kanály použijte tvar <hráč/ka>:<kanál>
 Use <player>;<channel> for private receivers=Pro soukromý příjem použijte tvar <hráč/ka>;<kanál>
-Teleporting Pneumatic Tube Segment=teleportující pneumatická roura
+Teleporting Pneumatic Tube Segment (priority @1)=teleportující pneumatická roura (priorita @1)
 Teleporting Tube=teleportující pneumatická roura
 Unconfigured Teleportation Tube=nenastavená teleportující pneumatická roura
 Sorry, channel '@1' is reserved for exclusive use by @2=Kanál '@1' je soukromý kanál vyhrazený pro @2.
@@ -116,17 +118,17 @@ Sorry, receiving from channel '@1' is reserved for @2=Příjem z kanálu '@1' je
 Teleportation Tube @1 on '@2'=Teleportační trubka @1 z/na '@2'
 
 ## trashcan
-Trash Can=odpadkový koš@nVeškerý vstupující materiál je ihned zničen
+Trash Can (priority @1)=odpadkový koš (priorita @1)@nVeškerý vstupující materiál je ihned zničen
 
 ## tube registration
 Pneumatic tube segment (legacy)=Pneumatická roura (zastaralá)
 
 ## vacuum tubes
 Radius=Dosah
-Vacuuming Pneumatic Tube Segment=nasávací pneumatická roura (5x5x5 metrů)
-Adjustable Vacuuming Tube=nastavitelná nasávací pneumatické roura
-Adjustable Vacuuming Pneumatic Tube Segment=nastavitelná nasávací pneumatické roura
-Adjustable Vacuuming Pneumatic Tube Segment (@1m)=Nastavitelná nasávací pneumatické roura (@1 m)
+Vacuuming Pneumatic Tube Segment (priority @1)=nasávací pneumatická roura (5x5x5 metrů) (priorita @1)
+Adjustable Vacuuming Tube=nastavitelná nasávací pneumatická roura
+Adjustable Vacuuming Pneumatic Tube Segment (priority @1)=nastavitelná nasávací pneumatická roura (priorita @1)
+Adjustable Vacuuming Pneumatic Tube Segment (@1m)=nastavitelná nasávací pneumatická roura (@1 m)
 
 ## wielder
 Node Breaker=naběrač bloků

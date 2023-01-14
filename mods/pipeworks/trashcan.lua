@@ -1,6 +1,6 @@
 local S = minetest.get_translator("pipeworks")
 minetest.register_node("pipeworks:trashcan", {
-	description = S("Trash Can"),
+	description = S("Trash Can (priority @1)", 1),
 	drawtype = "normal",
 	tiles = {
 		"pipeworks_trashcan_bottom.png",

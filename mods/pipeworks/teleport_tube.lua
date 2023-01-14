@@ -159,7 +159,7 @@ local function update_meta(meta, can_receive)
 end
 
 pipeworks.register_tube("pipeworks:teleport_tube", {
-	description = S("Teleporting Pneumatic Tube Segment"),
+	description = S("Teleporting Pneumatic Tube Segment (priority @1)", 50),
 	inventory_image = "pipeworks_teleport_tube_inv.png",
 	noctr = { "pipeworks_teleport_tube_noctr.png" },
 	plain = { "pipeworks_teleport_tube_plain.png" },

@@ -275,6 +275,26 @@ if pipeworks.enable_one_way_tube then
 			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
 		},
 	})
+	minetest.register_craft({
+		output = "pipeworks:direct_tube 3",
+		recipe = {
+			{ "pipeworks:tube_1", "pipeworks:tube_1", "pipeworks:tube_1" },
+			{ "", "", "" },
+			{ "", "", "" },
+		},
+	})
+	minetest.register_craft({
+		output = "pipeworks:direct_tube 3",
+		recipe = {
+			{ "pipeworks:tube_1", "", "" },
+			{ "pipeworks:tube_1", "", "" },
+			{ "pipeworks:tube_1", "", "" },
+		},
+	})
+	minetest.register_craft({
+		output = "pipeworks:tube_1",
+		recipe = {{"pipeworks:direct_tube"}},
+	})
 end
 
 if pipeworks.enable_mese_tube then
