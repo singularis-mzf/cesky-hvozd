@@ -6,6 +6,7 @@ local materials = {
 	copper_ingot = "default:copper_ingot",
 	steel_ingot = "default:steel_ingot",
 	gold_ingot = "default:gold_ingot",
+	tin_ingot = "default:tin_ingot",
 	mese = "default:mese",
 	mesecon = "mesecons:wire_00000000_off",
 	mese_crystal = "default:mese_crystal",
@@ -239,6 +240,14 @@ if pipeworks.enable_priority_tube then
 		recipe = {
 			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
 			{ materials.gold_ingot, "", materials.gold_ingot },
+			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
+		},
+	})
+	minetest.register_craft( {
+		output = "pipeworks:low_priority_tube_1 6",
+		recipe = {
+			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" },
+			{ materials.tin_ingot, "", materials.tin_ingot },
 			{ "basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet" }
 		},
 	})
