@@ -94,7 +94,8 @@ pipeworks.register_tube("pipeworks:broken_tube", {
 -- where players would use them for simple routing (turning off paths)
 -- without doing actual sorting, like at outputs of tubedevices that might both accept and eject items
 if pipeworks.enable_priority_tube then
-	local color = "#ff3030:128"
+	local color = "#30fff7:128"
+	nodecolor = 0xff30fff7
 	pipeworks.register_tube("pipeworks:priority_tube", {
 			description = S("High Priority Tube Segment"),
 			inventory_image = "pipeworks_tube_inv.png^[colorize:" .. color,
