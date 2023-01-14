@@ -118,7 +118,6 @@ minetest.register_abm({
 			else
 				meta:set_int("src_time", 0)
 			end
-			print("was_active="..(was_active and "true" or "false")..", sound_timer="..sound_timer_counter)
 			if sound_timer_counter == 0 or sound_timer_counter > 5 then
 				minetest.sound_play("default_furnace_active", {pos = pos, max_hear_distance = 16, gain = 0.5}, true)
 				meta:set_int("sound_timer", 1)
