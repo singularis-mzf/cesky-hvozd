@@ -102,6 +102,24 @@ technic_track4.ogg
 	License: CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/)
 	Comment: All of the audio files were created by Daniel Rosenfeld (C418), with "minimal" and "depado" coming from "circle" (album), and "krank" and "phlips" coming from "zweitonegoismus" (album). All of these tracks are published under Creative Commons Attribution 3.0 Unported licenses.
 
+technic_track5.ogg
+	Author: Jordach
+	Name: Eastern Feeling
+	Source: MineClone 5 (https://git.minetest.land/MineClone5/MineClone5), mcl_jukebox_track_3.ogg
+	License: CC0
+
+technic_track6.ogg
+	Author: SoundHelix
+	Name: The Clueless Frog (Jordach's Mix)
+	Source: MineClone 5 (https://git.minetest.land/MineClone5/MineClone5), mcl_jukebox_track_8.ogg
+	License: CC0
+
+technic_track7.ogg
+	Author: SoundHelix
+	Name: The Evil Sister (Jordach's Mix)
+	Source: MineClone 5 (https://git.minetest.land/MineClone5/MineClone5), mcl_jukebox_track_1.ogg
+	License: CC0
+
 xdecor_wood_tile.png
 	Authors: Gambit, kilbith, Cisoun
 	Source: X-Decor Libre (https://codeberg.org/Wuzzy/xdecor-libre)

@@ -199,6 +199,7 @@ if pipeworks.enable_one_way_tube then
 	for i, tile in ipairs(tiles) do
 		tiles[i] = pipeworks.make_tube_tile(tile)
 	end
+	local normal_tube_def = minetest.registered_nodes["pipeworks:tube_1"]
 	minetest.register_node("pipeworks:direct_tube", {
 		description = S("Direct tube (priority @1)", 50),
 		tiles = tiles,
@@ -223,7 +224,8 @@ if pipeworks.enable_one_way_tube then
 		after_dig_node = pipeworks.after_dig,
 		on_rotate = pipeworks.on_rotate,
 		check_for_pole = pipeworks.check_for_vert_tube,
-		check_for_horiz_pole = pipeworks.check_for_horiz_tube
+		check_for_horiz_pole = pipeworks.check_for_horiz_tube,
+		on_punch = normal_tube_def and normal_tube_def.on_punch,
 	})
 	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:direct_tube"
 end

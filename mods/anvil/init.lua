@@ -178,6 +178,7 @@ minetest.register_node("anvil:anvil", {
 	description = S("Anvil"),
 	_doc_items_longdesc = S("A tool for repairing other tools in conjunction with a blacksmith's hammer."),
 	_doc_items_usagehelp = S("Right-click on this anvil with a damaged tool to place the damaged tool upon it. You can then repair the damaged tool by striking it with a blacksmith's hammer. Repeated blows may be necessary to fully repair a badly worn tool. To retrieve the tool either punch or right-click the anvil with an empty hand."),
+	_ch_help = "Kladivo slouží k opravám nářadí na kovadlině\na opravám rozbitých pneumatických rour. Používá se levým klikem.\nLevým klikem dokáže rovněž rozbít některé druhy neporušených pneumatických rour.\nOmezeně lze použít i k těžbě některých materiálů.",
 	tiles = {"default_stone.png"},
 	paramtype  = "light",
 	paramtype2 = "facedir",
