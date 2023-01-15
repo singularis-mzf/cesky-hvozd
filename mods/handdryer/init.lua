@@ -1,7 +1,16 @@
 local sounds = {}
 
+local function on_construct(pos)
+	local node = minetest.get_node(pos)
+	local meta = minetest.get_meta(pos)
+	local ndef = minetest.registered_nodes[node.name]
+	if ndef ~= nil then
+		meta:set_string("infotext", ndef.description)
+	end
+end
+
 minetest.register_node("handdryer:a",{
-	description = "Hand Dryer",
+	description = "vysoušeč rukou",
 	groups = {cracky=3},
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -23,6 +32,7 @@ minetest.register_node("handdryer:a",{
 		"handdryer_metal.png",
 		"handdryer_a_front.png",
 	},
+	on_construct = on_construct,
 	on_rightclick = function(pos)
 		local hash = minetest.hash_node_position(pos)
 		local handle = sounds[hash]
@@ -34,7 +44,7 @@ minetest.register_node("handdryer:a",{
 })
 
 minetest.register_node("handdryer:ra",{
-	description = "Recessed Hand Dryer",
+	description = "vestavěný vysoušeč rukou",
 	groups = {cracky=3},
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -56,6 +66,7 @@ minetest.register_node("handdryer:ra",{
 		"handdryer_metal.png",
 		"handdryer_ra_front.png",
 	},
+	on_construct = on_construct,
 	on_rightclick = function(pos)
 		local hash = minetest.hash_node_position(pos)
 		local handle = sounds[hash]
@@ -67,7 +78,7 @@ minetest.register_node("handdryer:ra",{
 })
 
 minetest.register_node("handdryer:xa5",{
-	description = "Automatic Hand Dryer",
+	description = "automatický vysoušeč rukou",
 	groups = {cracky=3},
 	drawtype = "nodebox",
 	paramtype = "light",
@@ -80,6 +91,7 @@ minetest.register_node("handdryer:xa5",{
 			{-0.202, -0.094, 0.1, -0.077, 0.1085, 0.204}, --Outlet
 		},
 	},
+	on_construct = on_construct,
 	tiles = {
 		"handdryer_a_xa5_sides.png",
 		"handdryer_a_xa5_bottom.png^[transformFY",
