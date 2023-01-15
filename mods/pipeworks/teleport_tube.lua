@@ -256,7 +256,7 @@ pipeworks.register_tube("pipeworks:teleport_tube", {
 			if dirty then
 				if channel ~= "" then
 					set_tube(pos, channel, can_receive)
-					local cr_description = (can_receive == 1) and "sending and receiving" or "sending"
+					local cr_description = S((can_receive == 1) and "sending and receiving" or "sending")
 					meta:set_string("infotext", S("Teleportation Tube @1 on '@2'", cr_description, channel))
 				else
 					-- remove empty channel tubes, to not have to search through them

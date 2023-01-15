@@ -116,6 +116,8 @@ Unconfigured Teleportation Tube=nenastavená teleportující pneumatická roura
 Sorry, channel '@1' is reserved for exclusive use by @2=Kanál '@1' je soukromý kanál vyhrazený pro @2.
 Sorry, receiving from channel '@1' is reserved for @2=Příjem z kanálu '@1' je vyhrazený pro @2.
 Teleportation Tube @1 on '@2'=Teleportační trubka @1 z/na '@2'
+sending and receiving=odesílá a přijímá
+sending=odesílá
 
 ## trashcan
 Trash Can (priority @1)=odpadkový koš (priorita @1)@nVeškerý vstupující materiál je ihned zničen
