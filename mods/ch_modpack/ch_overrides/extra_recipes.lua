@@ -117,6 +117,13 @@ if minetest.get_modpath("cottages") then
 	})
 end
 
+if minetest.get_modpath("darkage") then
+	minetest.register_craft({
+		output = "dye:white 8",
+		recipe = {{"darkage:chalk_powder"}},
+	})
+end
+
 if minetest.get_modpath("technic") then
 	minetest.register_craft({
 		output = "technic:cast_iron_block",

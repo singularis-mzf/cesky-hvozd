@@ -790,7 +790,7 @@ function mob_class:update_tag()
 		nt = nt.."\n"
 	end
 	self.infotext = nt.."zdraví: " .. self.health .. " / " .. self.hp_max
-		.. (self.owner == "" and "" or "\n" .. "vlastník/ice: " .. self.owner)
+		.. (self.owner == "" and "" or "\n" .. "vlastník/ice: " .. ch_core.prihlasovaci_na_zobrazovaci(self.owner))
 		.. text
 
 	-- set changes
