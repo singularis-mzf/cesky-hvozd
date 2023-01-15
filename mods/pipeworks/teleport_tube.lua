@@ -173,16 +173,24 @@ pipeworks.register_tube("pipeworks:teleport_tube", {
 				velocity.y = 0
 				velocity.z = 0
 
+				local pos_str = minetest.pos_to_string(pos)
 				local channel = minetest.get_meta(pos):get_string("channel")
-				if channel == "" then return {} end
+				if channel == "" then
+					minetest.log("warning", "Stack "..stack:get_name().." "..stack:get_count().." refused by Teleporting Tube at "..pos_str.." due to channel not set.")
+					return {}
+				end
 
 				local target = get_receivers(pos, channel)
-				if target[1] == nil then return {} end
+				if target[1] == nil then
+					minetest.log("warning", "Stack "..stack:get_name().." "..stack:get_count().." refused by Teleporting Tube at "..pos_str.." due to no receivers found at channel '"..channel.."'")
+					return {}
+				end
 
 				local d = math.random(1,#target)
 				pos.x = target[d].x
 				pos.y = target[d].y
 				pos.z = target[d].z
+				minetest.log("action", "Stack "..stack:get_name().." "..stack:get_count().." teleported by Teleporting Tube from "..pos_str.." to "..minetest.pos_to_string(pos).." (selected from "..#target.." receivers) via channel '"..channel.."'")
 				return pipeworks.meseadjlist
 			end
 		},
