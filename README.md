@@ -557,6 +557,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/DrPlamsa/guinea\_pig/)
 
+## Hand Dryer (handdryer)
+
+* Zdroj: [https://cheapiesystems.com/git/handdryer/](https://cheapiesystems.com/git/handdryer/), revize 21868b05ee0677736bc9d9611994905d95faf2af
+* Původní licence: public domain prohlášením autora v USA
+* Licence úprav: CC0
+* [ContentDB](https://content.minetest.net/packages/cheapie/handdryer/)
+
 ## Hang-Gliders (minetest-hangglider)
 
 * Zdroj: [https://notabug.org/Piezo\_/minetest-hangglider](https://notabug.org/Piezo\_/minetest-hangglider), revize 206704ffabcdddc61150ed798c88add9965a110d
