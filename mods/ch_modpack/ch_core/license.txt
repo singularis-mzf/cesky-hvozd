@@ -56,3 +56,9 @@ chat3_bell.ogg
 	License: CC-BY-SA 3.0
 	Source: https://github.com/octacian/chat3 (unmodified)
 	Original source: https://opengameart.org/content/point-bell
+
+flag_cz.png
+flag_sk.png
+	License: public domain due to Czech and Slovak copyright law
+	Source: https://raw.githubusercontent.com/snowyu/minetest-country_flags
+	Derived from: https://github.com/lipis/flag-icons

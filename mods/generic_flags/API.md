@@ -5,9 +5,10 @@ get a list of all flags, and set and get the flag of flag pole nodes.
 
 ## Functions
 
-### `generic_flags.add_flag(name)`
+### `generic_flags.add_flag(name, description)`
 
-Add a new flag to the game. `name` is the flag identifier.
+Add a new flag to the game. `name` is the flag identifier and `description` is
+the description of the item used to spawn the flag.
 There *must* exist a texture with the name `flag_<name>.png`.
 The texture *should* have an aspect ratio of 1.3.
 The recommended size is 78×60, but other sizes are OK
