@@ -354,6 +354,193 @@ end
 
 minetest.register_node("ch_extras:noise", def)
 
+-- BAREVNÉ SKLO
+
+--[[
+local glass_colors = {
+	black = {color = "#000000", name = "černé"},
+	blue = {color = "#0000ff", name = "modré"},
+	cyan = {color = "#00ffff", name = "tyrkysové"},
+	dark_green = {color = "#009900", name = "tmavě zelené"},
+	dark_grey = {color = "#333333", name = "tmavě šedé"},
+	grey = {color = "#999999", name = "šedé"},
+	green = {color = "#00ff00", name = "zelené"},
+	magenta = {color = "#ff00ff", name = "purpurové"},
+	orange = {color = "#ff6002", name = "oranžové"},
+	red = {color = "#ff0000", name = "červené"},
+	violet = {color = "#800080", name = "fialové"},
+	white = {color = "#ffffff", name = "bílé"},
+	yellow = {color = "#ffff00", name = "žluté"},
+}
+]]
+
+local epsilon = 0.001
+-- local e2 = 1 / 16
+
+--[[
+local function box(x_min, x_max, y_min, y_max, z_min, z_max)
+	return {x_min or -0.5, y_min or -0.5, z_min or -0.5, x_max or 0.5, y_max or 0.5, z_max or 0.5}
+end
+]]
+
+local node_box_full = {
+	type = "connected",
+	disconnected_top = {-0.5, 0.5 - epsilon, -0.5, 0.5, 0.5, 0.5},
+	disconnected_bottom = {-0.5, -0.5, -0.5, 0.5, -0.5 + epsilon, 0.5},
+	disconnected_front = {-0.5, -0.5, -0.5, 0.5, 0.5, -0.5 + epsilon},
+	disconnected_left = {-0.5, -0.5, -0.5, -0.5 + epsilon, 0.5, 0.5},
+	disconnected_back = {-0.5, -0.5, 0.5 - epsilon, 0.5, 0.5, 0.5},
+	disconnected_right = {0.5 - epsilon, -0.5, -0.5, 0.5, 0.5, 0.5},
+}
+--[[
+local node_box_front = { -- +Z
+	type = "connected",
+	disconnected_top = box(nil, nil,		0.5 - epsilon, nil,		0.5 - e2, nil),
+	disconnected_bottom = box(nil, nil,		nil, -0.5 + epsilon,	0.5 - e2, nil),
+	fixed = {
+		box(nil, nil,		nil, nil,		0.5 - epsilon, 0.5),
+		box(nil, nil,		nil, nil,		0.5 - e2, 0.5 - e2 + epsilon),
+	},
+	disconnected_left = box(nil, -0.5 + epsilon,  nil, nil,		0.5 - e2, nil),
+	disconnected_right = box(0.5 - epsilon, nil,  nil, nil,		0.5 - e2, nil),
+}
+]]
+
+local cbox_full = {
+	type = "fixed",
+	fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
+}
+--[[local cbox_front = {
+	type = "fixed",
+	fixed = {-0.5, -0.5, 0.5 - 1/16, 0.5, 0.5, 0.5},
+} ]]
+--[[
+for color_name, color_def in pairs(glass_colors) do
+	local image = "ch_extras_glass.png^[colorize:"..color_def.color..":128^[opacity:127"
+	def = {
+		drawtype = "nodebox",
+		description = color_def.name.." sklo",
+		tiles = {{
+			name = image,
+			backface_culling = true,
+		}},
+		use_texture_alpha = "blend",
+		paramtype = "light",
+		light_source = 1,
+		paramtype2 = "facedir",
+		is_ground_content = false,
+		sunlight_propagates = true,
+		inventory_image = image,
+		wield_image = image,
+		sounds = default.node_sound_glass_defaults(),
+		groups = {cracky = 1, glass = 1, ch_colored_glass = 1},
+		node_box = node_box_full,
+		collision_box = cbox_full,
+		selection_box = cbox_full,
+		connects_to = {"group:ch_colored_glass"},
+		connect_sides = {"top", "bottom", "front", "left", "back", "right"},
+	}
+	minetest.register_node("ch_extras:"..color_name.."_glass", def)
+	minetest.register_craft({
+		output = "ch_extras:"..color_name.."_glass",
+		recipe = {
+			{"dye:"..color_name, ""},
+			{"default:glass", ""},
+		},
+	})
+
+	def = {
+		drawtype = "nodebox",
+		description = color_def.name.." sklo (vepředu)",
+		tiles = {{
+			name = image,
+			-- backface_culling = false,
+		}},
+		use_texture_alpha = "blend",
+		paramtype = "light",
+		light_source = 1,
+		paramtype2 = "facedir",
+		is_ground_content = false,
+		sunlight_propagates = true,
+		inventory_image = image,
+		wield_image = image,
+		sounds = default.node_sound_glass_defaults(),
+		groups = {cracky = 1, glass = 1, ch_colored_glass = 1},
+		node_box = node_box_front,
+		collision_box = cbox_front,
+		selection_box = cbox_front,
+		connects_to = {"group:ch_colored_glass"},
+		connect_sides = {"top", "bottom", "front", "left", "right"},
+	}
+	minetest.register_node("ch_extras:"..color_name.."_glass_front", def)
+end
+]]
+
+if minetest.get_modpath("unifieddyes") then
+	local inventory_image = "[combine:16x16:1,1=ch_extras_glass.png\\^[opacity\\:127\\^[resize\\:14x14"
+	def = {
+		description = "tónované sklo (blok, barvitelné)",
+		tiles = {{
+			name = "ch_extras_glass.png^[opacity:120",
+			backface_culling = true,
+		}},
+		use_texture_alpha = "blend",
+
+		drawtype = "glasslike",
+		--[[ collision_box = cbox_full,
+		selection_box = cbox_full, ]]
+
+		paramtype = "light",
+		light_source = 1,
+		paramtype2 = "color",
+		palette = "unifieddyes_palette_extended.png",
+		is_ground_content = false,
+		sunlight_propagates = true,
+		inventory_image = inventory_image,
+		wield_image = inventory_image,
+		sounds = default.node_sound_glass_defaults(),
+		groups = {
+			cracky = 1, glass = 1, ch_colored_glass = 1, ch_colored_glass_full = 1,
+			oddly_breakable_by_hand = 2, ud_param2_colorable = 1,
+		},
+		--[[ connects_to = {"group:ch_colored_glass_full"},
+		connect_sides = {"top", "bottom", "front", "left", "back", "right"}, ]]
+		on_dig = unifieddyes.on_dig,
+	}
+	minetest.register_node("ch_extras:colorable_glass", def)
+
+	--[[
+	def = {
+		drawtype = "nodebox",
+		description = "sklo (barvitelné, deska)",
+		tiles = {{
+			name = "ch_extras_glass.png^[opacity:127",
+			backface_culling = true,
+		}},
+		use_texture_alpha = "blend",
+		paramtype = "light",
+		light_source = 1,
+		paramtype2 = "colorwallmounted",
+		palette = "unifieddyes_palette_colorwallmounted.png",
+		is_ground_content = false,
+		sunlight_propagates = true,
+		inventory_image = "ch_extras_glass.png^[opacity:127",
+		wield_image = "ch_extras_glass.png^[opacity:127",
+		sounds = default.node_sound_glass_defaults(),
+		groups = {cracky = 1, glass = 1, ch_colored_glass = 1, ud_param2_colorable = 1},
+		node_box = node_box_front,
+		collision_box = cbox_front,
+		selection_box = cbox_front,
+		connects_to = {"group:ch_colored_glass"},
+		connect_sides = {"top", "bottom", "front", "left", "back", "right"},
+
+		on_dig = unifieddyes.on_dig,
+		after_place_node = unifieddyes.fix_rotation,
+	}
+	minetest.register_node("ch_extras:colorable_glass_front", def)
+	]]
+end
+
 --[[ PLAKÁTY
 local box = {
 		type = "fixed",

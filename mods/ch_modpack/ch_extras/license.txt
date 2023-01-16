@@ -19,6 +19,7 @@ Licenses of media (models and textures)
 ch_extras_creative_inv.png
 ch_extras_crvb_pruhy.png
 ch_extras_czl_pruhy.png
+ch_extras_glass.png
 ch_extras_rohlik.png
 ch_extras_rohlik_testo.png
 ch_extras_parekvrohliku.png

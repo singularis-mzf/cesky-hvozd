@@ -68,6 +68,33 @@ local diakritika_na_mala = {
 	["Ž"] = "ž",
 }
 
+local facedir_to_rotation_data = {
+	[0] = vector.new(0, 0, 0),
+	[1] = vector.new(0, -0.5 * math.pi, 0),
+	[2] = vector.new(0, -math.pi, 0),
+	[3] = vector.new(0, 0.5 * math.pi, 0),
+	[4] = vector.new(-0.5 * math.pi, 0, 0),
+	[5] = vector.new(0, -0.5 * math.pi, -0.5 * math.pi),
+	[6] = vector.new(0.5 * math.pi, 0, math.pi),
+	[7] = vector.new(0, 0.5 * math.pi, 0.5 * math.pi),
+	[8] = vector.new(0.5 * math.pi, 0, 0),
+	[9] = vector.new(0, -0.5 * math.pi, 0.5 * math.pi),
+	[10] = vector.new(-0.5 * math.pi, 0, math.pi),
+	[11] = vector.new(0, 0.5 * math.pi, -0.5 * math.pi),
+	[12] = vector.new(0, 0, 0.5 * math.pi),
+	[13] = vector.new(-0.5 * math.pi, 0, 0.5 * math.pi),
+	[14] = vector.new(0, -math.pi, -0.5 * math.pi),
+	[15] = vector.new(0.5 * math.pi, 0, 0.5 * math.pi),
+	[16] = vector.new(0, 0, -0.5 * math.pi),
+	[17] = vector.new(0.5 * math.pi, 0, -0.5 * math.pi),
+	[18] = vector.new(0, -math.pi, 0.5 * math.pi),
+	[19] = vector.new(-0.5 * math.pi, 0, -0.5 * math.pi),
+	[20] = vector.new(0, 0, math.pi),
+	[21] = vector.new(0, 0.5 * math.pi, math.pi),
+	[22] = vector.new(0, -math.pi, math.pi),
+	[23] = vector.new(0, -0.5 * math.pi, math.pi),
+}
+
 local utf8_charlen = {}
 for i = 1, 191, 1 do
 	-- 1 to 127 => jednobajtové znaky
@@ -331,6 +358,14 @@ function ch_core.clear_crafts(log_prefix, crafts)
 end
 
 --[[
+Pro zadanou hodnotu facedir vrátí rotační vektor symbolizující rotaci
+z výchozího otočení (facedir = 0) do otočení cílového.
+]]
+function ch_core.facedir_to_rotation(facedir)
+	return vector.copy(facedir_to_rotation_data[facedir % 24])
+end
+
+--[[
 Najde hráčskou postavu nejbližší k dané pozici. Parametr player_name_to_ignore
 je volitelný; je-li vyplněn, má obsahovat přihlašovací jméno postavy
 k ignorování.
@@ -551,6 +586,42 @@ function ch_core.register_nodes(common_def, nodes, crafts)
 			minetest.register_craft(def)
 		end
 	end
+end
+
+--[[
+Otočí axis-aligned bounding box o zadané otočení. Nejde-li o pravoúhlé
+otočení, výsledný kvádr bude větší. <zatím nezkoušeno>
+]]
+function ch_core.rotate_aabb(aabb, r)
+	local points = {}
+	for _, x in ipairs({r[1], r[4]}) do
+		for _, y in ipairs({r[2], r[5]}) do
+			for _, z in ipairs({r[3], r[6]}) do
+				table.insert(points, vector.rotate(vector.new(x, y, z), r))
+			end
+		end
+	end
+	local p = points[1]
+	local result = {p.x, p.y, p.z, p.x, p.y, p.z}
+	for i = 2, 8 do
+		p = points[i]
+		if p.x < result[1] then
+			result[1] = p.x
+		elseif p.x > result[4] then
+			result[4] = p.x
+		end
+		if p.y < result[2] then
+			result[2] = p.y
+		elseif p.y > result[5] then
+			result[5] = p.y
+		end
+		if p.z < result[3] then
+			result[3] = p.z
+		elseif p.z > result[6] then
+			result[6] = p.z
+		end
+	end
+	return result
 end
 
 --[[
