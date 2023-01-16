@@ -508,6 +508,14 @@ if minetest.get_modpath("unifieddyes") then
 		on_dig = unifieddyes.on_dig,
 	}
 	minetest.register_node("ch_extras:colorable_glass", def)
+	minetest.register_craft({
+		output = "ch_extras:colorable_glass 6",
+		recipe = {
+			{"dye:red", "dye:green", "dye:blue"},
+			{"building_blocks:smoothglass", "building_blocks:smoothglass", "building_blocks:smoothglass"},
+			{"building_blocks:smoothglass", "building_blocks:smoothglass", "building_blocks:smoothglass"},
+		},
+	})
 
 	--[[
 	def = {
