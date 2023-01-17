@@ -79,7 +79,7 @@ Low Priority Tube Segment (priority @1)=pneumatická roura s nízkou prioritou (
 Accelerating Pneumatic Tube Segment (priority @1)=zrychlující pneumatická roura (priorita @1)
 Crossing Pneumatic Tube Segment (priority @1)=křížící pneumatická roura (priorita @1)
 One way tube (priority @1)=jednosměrná pneumatická roura (priorita @1)
-Direct tube (priority @1)=přímá roura (priorita @1)
+Direct tube (priority @1)=přímá pneumatická roura (priorita @1)
 Lua controlled Tube (priority @1)=roura řízená jazykem Lua (priorita @1)
 
 ## signal tubes

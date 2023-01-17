@@ -11,7 +11,8 @@ end
 local function on_place(itemstack, placer, pointed_thing)
 	if pointed_thing.type == "node" then
 		local old_node = minetest.get_node(pointed_thing.under)
-		if minetest.get_item_group(old_node.name, "panel") == 19 then
+		local panel_group = minetest.get_item_group(old_node.name, "panel")
+		if panel_group == 19 or panel_group == 20 then
 			return minetest.item_place(itemstack, placer, pointed_thing, old_node.param2)
 		end
 	end
@@ -22,6 +23,10 @@ local override = {on_place = on_place}
 
 for _, recipeitem in ipairs(stairsplus:get_recipeitems()) do
 	local itemname = stairsplus:get_shape(recipeitem, "panel", "_special")
+	if itemname then
+		minetest.override_item(itemname, override)
+	end
+	itemname = stairsplus:get_shape(recipeitem, "panel", "_l")
 	if itemname then
 		minetest.override_item(itemname, override)
 	end

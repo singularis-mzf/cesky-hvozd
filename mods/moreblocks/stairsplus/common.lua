@@ -155,6 +155,7 @@ local alternate_to_group_value = {
 	["_triplet"] = 3,
 	["_tripleslope"] = 3,
 	["_special"] = 19,
+	["_l"] = 20,
 }
 
 local not_blocking_trains_shapes = {
@@ -253,6 +254,20 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 		elseif category == "stair" and alternate == "" then
 			def.groups.stair = 1
 		end
+	end
+
+	-- world-aligned textures
+	if category == "stair" or (category == "panel" and (alternate == "_special" or alternate == "_l")) then
+		local new_tiles = {}
+		for i, v in ipairs(def.tiles) do
+			if type(v) == "table" then
+				new_tiles[i] = table.copy(v)
+				new_tiles[i].align_style = "world"
+			else
+				new_tiles[i] = v
+			end
+		end
+		def.tiles = new_tiles
 	end
 
 	--[[ if fields.drop and not (type(fields.drop) == "table") then
