@@ -32,7 +32,7 @@ local function set_filter_formspec(data, meta)
 		local exmatch_button = ""
 		if data.stackwise then
 			exmatch_button =
-				fs_helpers.cycling_button(meta, "button["..(10.2-(0.22)-4)..",4.5;4,1", "exmatch_mode",
+				fs_helpers.cycling_button(meta, "button["..(10.2-(0.22)-4.5)..",4.5;4.5,1", "exmatch_mode",
 					{S("Exact match - off"),
 					 S("Exact match - on")})
 		end
@@ -55,7 +55,7 @@ local function set_filter_formspec(data, meta)
 			"label[0.22,1.5;"..S("Prefer item types:").."]"..
 			list_backgrounds..
 			"list[context;main;0.22,1.75;8,2;]"..
-			fs_helpers.cycling_button(meta, "button[0.22,4.5;4,1", "slotseq_mode",
+			fs_helpers.cycling_button(meta, "button[0.22,4.5;4.5,1", "slotseq_mode",
 				{S("Sequence slots by Priority"),
 				 S("Sequence slots Randomly"),
 				 S("Sequence slots by Rotation")})..
