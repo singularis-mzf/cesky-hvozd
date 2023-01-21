@@ -45,6 +45,8 @@ local cz_sk = {cz = true, sk = true}
 
 local holidays = {
 	["01-01"] = cz_sk, -- Nový rok, Deň vzniku Slovenskej republiky
+	["01-28"] = cz_sk, -- DOČASNĚ (kvůli ladění)
+	["01-29"] = cz_sk, -- DOČASNĚ (kvůli ladění)
 	-- ["05-01"] = cz, -- Svátek práce
 	["05-08"] = cz, -- Den vítězství
 	["07-05"] = cz_sk, -- Den slovanských věrozvěstů Cyrila a Metoděje, Sviatok svätého Cyrila a svätého Metoda
@@ -53,6 +55,7 @@ local holidays = {
 	["09-01"] = sk, -- Deň Ústavy Slovenskej republiky
 	["09-28"] = cz, -- Den české státnosti
 	["10-28"] = cz_sk, -- Den vzniku samostatného československého státu, Deň vzniku samostatného česko-slovenského štátu
+	["11-03"] = cz_sk, -- (výročí otevření Českého hvozdu)
 	["11-17"] = cz_sk, -- Den boje za svobodu a demokracii a Mezinárodní den studentstva, Deň boja za slobodu a demokraciu
 	-- ["12-24"] = cz, -- Štědrý den
 	-- ["12-25"] = cz, -- 1. svátek vánoční
@@ -78,8 +81,7 @@ local function is_flag_inactive(flag_name)
 		return nil -- unknown or non-dynamic flag
 	end
 	local now = ch_core.aktualni_cas()
-	if now.minuta % 2 == 0 then
-	-- if is_holiday(flag_def.on_holiday, now.rok, now.mesic, now.den) then
+	if is_holiday(flag_def.on_holiday, now.rok, now.mesic, now.den) then
 		return false
 	else
 		return true

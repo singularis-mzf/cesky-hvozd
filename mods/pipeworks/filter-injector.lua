@@ -374,12 +374,12 @@ for _, data in ipairs({
 		wise_desc = S("Stackwise"),
 		stackwise = true,
 	},
-	{ -- register even if no digilines
+	--[[ { -- register even if no digilines
 		name = "digiline_filter",
 		wise_desc = S("Digiline"),
 		stackwise = true,
 		digiline = true,
-	},
+	}, ]]
 }) do
 	local node = {
 		description = S("@1 Filter-Injector", data.wise_desc),
@@ -411,6 +411,16 @@ for _, data in ipairs({
 		allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 			if not pipeworks.may_configure(pos, player) then
 				return 0
+			end
+			if data.stackwise then
+				if stack:get_count() == 1 then
+					local meta = stack:get_meta()
+					meta:set_string("count_meta", "∞")
+				end
+			else
+				if stack:get_count() > 1 then
+					stack:set_count(1)
+				end
 			end
 			local inv = minetest.get_meta(pos):get_inventory()
 			inv:set_stack("main", index, stack)
