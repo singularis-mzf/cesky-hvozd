@@ -339,8 +339,6 @@ default_leaves_simple.png
 default_marram_grass_1.png
 default_marram_grass_2.png
 default_marram_grass_3.png
-default_mese_post_light_side.png
-default_mese_post_light_side_dark.png
 default_mese_post_light_top.png
 default_moss.png
 default_moss_side.png
@@ -495,6 +493,8 @@ default_pine_needles.png
 
 default_coniferous_litter.png
 default_coniferous_litter_side.png
+default_mese_post_light_side.png
+default_mese_post_light_side_dark.png
 default_rainforest_litter.png
 default_rainforest_litter_side.png
 travelnet_travelnet_back.png

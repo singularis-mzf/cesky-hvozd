@@ -15,7 +15,7 @@ do
     local def = {
         description = S("Grass Light"),
         tiles = {
-            "default_grass.png^morelights_extras_blocklight.png",
+            "default_grass.png^(morelights_extras_blocklight.png^[resize:128x128)",
             "default_dirt.png",
             "default_dirt.png^default_grass_side.png"
         },
@@ -106,7 +106,7 @@ do
 
     minetest.register_node("morelights_extras:stone_block", {
         description = S("Stone Block Light"),
-        tiles = {tile .. "^morelights_extras_blocklight.png"},
+        tiles = {tile .. "^(morelights_extras_blocklight.png^[resize:64x64)"},
         paramtype = "light",
         light_source = 12,
         groups = {cracky = 2, oddly_breakable_by_hand = 3, handy = 1},
@@ -125,7 +125,7 @@ do
 
     minetest.register_node("morelights_extras:sandstone_block", {
         description = S("Sandstone Block Light"),
-        tiles = {tile .. "^morelights_extras_blocklight.png"},
+        tiles = {tile .. "^(morelights_extras_blocklight.png^[resize:32x32)"},
         paramtype = "light",
         light_source = 12,
         groups = {cracky = 2, oddly_breakable_by_hand = 3, handy = 1},

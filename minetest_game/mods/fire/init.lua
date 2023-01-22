@@ -91,7 +91,7 @@ minetest.register_tool("fire:flint_and_steel", {
 
 	on_use = function(itemstack, user, pointed_thing)
 		local player_name = user:get_player_name()
-		if not minetest.check_player_privs(user, "ch_registered_user") then
+		if not minetest.check_player_privs(user, "ch_registered_player") then
 			minetest.chat_send_player(player_name, S("Děláte to správně, ale nové postavy nesmějí používat @1.", S("Flint and Steel")))
 			return
 		end
