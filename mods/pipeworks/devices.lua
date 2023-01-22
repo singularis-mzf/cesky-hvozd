@@ -452,6 +452,57 @@ pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:entry_pan
 new_flow_logic_register.directional_horizonal_rotate(nodename_panel_empty, true)
 new_flow_logic_register.directional_horizonal_rotate(nodename_panel_loaded, true)
 
+local nodename_block_empty = "pipeworks:entry_block_empty"
+
+minetest.register_node(nodename_block_empty, {
+	description = S("Airtight Pipe entry/exit Block"),
+	tiles = {
+		"default_steel_block.png", "default_steel_block.png",
+		"default_steel_block.png", "default_steel_block.png",
+		"default_steel_block.png^pipeworks_pipe_connection.png",
+		"default_steel_block.png^pipeworks_pipe_connection.png",
+		},
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {snappy=3, pipe=1, dig_generic = 4},
+	legacy_facedir_simple = true,
+	sounds = default.node_sound_metal_defaults(),
+	walkable = true,
+	on_place = pipeworks.rotate_on_place,
+	after_dig_node = function(pos)
+		pipeworks.scan_for_pipe_objects(pos)
+	end,
+	on_rotate = pipeworks.fix_after_rotation
+})
+
+local nodename_block_loaded = "pipeworks:entry_block_loaded"
+minetest.register_node(nodename_block_loaded, {
+	description = S("Airtight Pipe entry/exit Block"),
+	tiles = {
+		"default_steel_block.png", "default_steel_block.png",
+		"default_steel_block.png", "default_steel_block.png",
+		"default_steel_block.png^pipeworks_pipe_connection.png",
+		"default_steel_block.png^pipeworks_pipe_connection.png",
+		},
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4},
+	sounds = default.node_sound_metal_defaults(),
+	walkable = true,
+	on_place = pipeworks.rotate_on_place,
+	after_dig_node = function(pos)
+		pipeworks.scan_for_pipe_objects(pos)
+	end,
+	drop = "pipeworks:entry_block_empty",
+	on_rotate = pipeworks.fix_after_rotation
+})
+
+pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:entry_block_empty"
+table.insert(pipeworks.pipes_empty_nodenames, nodename_block_empty)
+table.insert(pipeworks.pipes_full_nodenames, nodename_block_loaded)
+
+new_flow_logic_register.directional_horizonal_rotate(nodename_block_empty, true)
+new_flow_logic_register.directional_horizonal_rotate(nodename_block_loaded, true)
 
 
 local nodename_sensor_empty = "pipeworks:flow_sensor_empty"
