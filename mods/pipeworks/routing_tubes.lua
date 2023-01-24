@@ -218,6 +218,10 @@ if pipeworks.enable_one_way_tube then
 			can_go = function(pos, node, velocity, stack)
 				return {velocity}
 			end,
+			can_insert = function(pos, node, stack, direction)
+				local dir = pipeworks.facedir_to_right_dir(node.param2)
+				return direction.x * direction.x == dir.x * dir.x and direction.z * direction.z == dir.z * dir.z and direction.y * direction.y == dir.y * dir.y
+			end,
 			priority = 50
 		},
 		after_place_node = pipeworks.after_place,

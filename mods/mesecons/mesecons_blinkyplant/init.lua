@@ -32,7 +32,7 @@ local function get_bplant_info(meta)
 	else
 		is_enabled, interval = raw_interval >= 0.0, math.abs(raw_interval)
 	end
-	return is_enabled, interval, tostring(interval):gsub("[.](.?).*$", ",%1")
+	return is_enabled, interval, tostring(interval):gsub("[.](.?[^0]?).*$", ",%1")
 end
 
 local function get_formspec(pos, meta, player)
@@ -50,7 +50,7 @@ local function get_formspec(pos, meta, player)
 		"label[0.25,3.25;počítadlo: ", meta:get_int("counter"), "]",
 		"label[0.25,4.0;zamčena: ", is_locked and "ano" or "ne", "]",
 		"label[0.25,4.75;interval \\[s\\]:]",
-		"field[2,4.5;1.5,0.5;interval;;", interval_string , "]",
+		"field[2,4.5;1.5,0.5;interval;;", minetest.formspec_escape(interval_string), "]",
 	}
 	if is_registered_player and is_enabled then
 		table.insert(formspec, "button[3.0,2.1;3,0.75;vyp;vypnout mrkání]")
