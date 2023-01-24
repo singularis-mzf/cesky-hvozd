@@ -57,8 +57,9 @@ Straight-only Pipe=jednosměrné potrubí
 Sequence slots by Priority=Brát vždy od začátku
 Sequence slots Randomly=Brát náhodně
 Sequence slots by Rotation=Brát postupně
-Exact match - off=Filtrace vypnuta
-Exact match - on=Filtrace zapnuta
+Exact match - off=Počet = max. vel. dávky
+Exact match - on=Počet = přesná vel. dávky
+Filter disabled=Filtrování vypnuto
 Prefer item types:=Filtrovat:
 Itemwise=po kusech
 Stackwise=po dávkách

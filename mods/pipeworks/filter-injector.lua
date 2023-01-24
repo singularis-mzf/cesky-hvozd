@@ -26,7 +26,8 @@ local function set_filter_formspec(data, meta)
 				 S("Sequence slots by Rotation")})..
 			fs_helpers.cycling_button(meta, "button[4.25,2.3;4.05,1", "exmatch_mode",
 				{S("Exact match - off"),
-				 S("Exact match - on")})..
+				 S("Exact match - on"),
+				 S("Filter disabled")})..
 			"button_exit[6.3,1.3;2,1;close;"..S("Close").."]"
 	else
 		local exmatch_button = ""
@@ -34,7 +35,8 @@ local function set_filter_formspec(data, meta)
 			exmatch_button =
 				fs_helpers.cycling_button(meta, "button["..(10.2-(0.22)-4)..",4.5;4,1", "exmatch_mode",
 					{S("Exact match - off"),
-					 S("Exact match - on")})
+					 S("Exact match - on"),
+					 S("Filter disabled")})
 		end
 		local size = "10.2,11"
 		local list_backgrounds = ""
@@ -162,7 +164,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 
 			local exmatch = msg.exmatch
 			local t_exmatch = type(exmatch)
-			if t_exmatch == "number" and (exmatch == 0 or exmatch == 1) then
+			if t_exmatch == "number" and (exmatch == 0 or exmatch == 1 or exmatch == 2) then
 				exmatch_mode = exmatch
 			elseif t_exmatch == "boolean" then
 				exmatch_mode = exmatch and 1 or 0
@@ -226,6 +228,10 @@ local function punch_filter(data, filtpos, filtnode, msg)
 
 	if exmatch_mode == nil then
 		exmatch_mode = filtmeta:get_int("exmatch_mode")
+	end
+
+	if exmatch_mode == 2 then
+		filters = {""}
 	end
 
 	local frominv
@@ -321,7 +327,7 @@ local function punch_filter(data, filtpos, filtnode, msg)
 					count = math.min(stack:get_count(), doRemove)
 					if filterfor.count and (filterfor.count > 1 or data.digiline) then
 						if exmatch_mode ~= 0 and filterfor.count > count then
-							return false -- not enough, fail
+							count = 0 -- not enough, fail
 						else
 							-- limit quantity to filter amount
 							count = math.min(filterfor.count, count)
@@ -330,21 +336,23 @@ local function punch_filter(data, filtpos, filtnode, msg)
 				else
 					count = 1
 				end
-				if fromtube.remove_items then
-					-- it could be the entire stack...
-					item = fromtube.remove_items(frompos, fromnode, stack, dir, count, frominvname, spos)
-				else
-					item = stack:take_item(count)
-					frominv:set_stack(frominvname, spos, stack)
-					if fromdef.on_metadata_inventory_take then
-						fromdef.on_metadata_inventory_take(frompos, frominvname, spos, item, fakePlayer)
+				if count > 0 then
+					if fromtube.remove_items then
+						-- it could be the entire stack...
+						item = fromtube.remove_items(frompos, fromnode, stack, dir, count, frominvname, spos)
+					else
+						item = stack:take_item(count)
+						frominv:set_stack(frominvname, spos, stack)
+						if fromdef.on_metadata_inventory_take then
+							fromdef.on_metadata_inventory_take(frompos, frominvname, spos, item, fakePlayer)
+						end
 					end
+					local pos = vector.add(frompos, vector.multiply(dir, 1.4))
+					local start_pos = vector.add(frompos, dir)
+					pipeworks.tube_inject_item(pos, start_pos, dir, item,
+						fakePlayer:get_player_name())
+					return true -- only fire one item, please
 				end
-				local pos = vector.add(frompos, vector.multiply(dir, 1.4))
-				local start_pos = vector.add(frompos, dir)
-				pipeworks.tube_inject_item(pos, start_pos, dir, item,
-					fakePlayer:get_player_name())
-				return true -- only fire one item, please
 			end
 		end
 		return false
@@ -414,6 +422,7 @@ for _, data in ipairs({
 			end
 			if data.stackwise then
 				if stack:get_count() == 1 then
+					stack = ItemStack(stack)
 					local meta = stack:get_meta()
 					meta:set_string("count_meta", "∞")
 				end
@@ -440,11 +449,13 @@ for _, data in ipairs({
 			if not pipeworks.may_configure(pos, player) then return 0 end
 			return count
 		end,
+		--[[
 		can_dig = function(pos, player)
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
 			return inv:is_empty("main")
 		end,
+		]]
 		tube = {connect_sides = {right = 1}},
 	}
 
