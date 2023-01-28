@@ -297,6 +297,12 @@ if minetest.settings:get_bool("cool_fences", true) then
 		fence.description = S("Ebony Fence Gate")
 		doors.register_fencegate("ebony:gate", table.copy(fence))
 	end
+
+	default.register_mesepost("ebony:mese_post_light", {
+		description = S("Ebony Mese Post Light"),
+		texture = "ebony_wood.png",
+		material = "ebony:wood",
+	})
 end
 
 --Stairs

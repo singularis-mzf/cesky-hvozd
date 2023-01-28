@@ -32,6 +32,7 @@ moretrees.treedesc = {
 		fence = S("Beech Tree Fence"),
 		fence_rail = S("Beech Tree Fence Rail"),
 		fence_gate = S("Beech Tree Fence Gate"),
+		mesepost_light = S("Beech Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.beech_model)
 		end,
@@ -48,6 +49,7 @@ moretrees.treedesc = {
 		fence = S("Apple Tree Fence"),
 		fence_rail = S("Apple Tree Fence Rail"),
 		fence_gate = S("Apple Tree Fence Gate"),
+		mesepost_light = S("Apple Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.apple_tree_model)
 		end,
@@ -64,6 +66,7 @@ moretrees.treedesc = {
 		fence = S("Oak Tree Fence"),
 		fence_rail = S("Oak Tree Fence Rail"),
 		fence_gate = S("Oak Tree Fence Gate"),
+		mesepost_light = S("Oak Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.oak_model)
 		end,
@@ -80,6 +83,7 @@ moretrees.treedesc = {
 		fence = S("Giant Sequoia Fence"),
 		fence_rail = S("Giant Sequoia Fence Rail"),
 		fence_gate = S("Giant Sequoia Fence Gate"),
+		mesepost_light = S("Giant Sequoia Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.sequoia_model)
 		end,
@@ -96,6 +100,7 @@ moretrees.treedesc = {
 		fence = S("Birch Tree Fence"),
 		fence_rail = S("Birch Tree Fence Rail"),
 		fence_gate = S("Birch Tree Fence Gate"),
+		mesepost_light = S("Birch Tree Mese Post Light"),
 		grow_function = moretrees.grow_birch,
 	},
 	palm = {
@@ -110,6 +115,7 @@ moretrees.treedesc = {
 		fence = S("Palm Tree Fence"),
 		fence_rail = S("Palm Tree Fence Rail"),
 		fence_gate = S("Palm Tree Fence Gate"),
+		mesepost_light = S("Palm Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.palm_model)
 		end,
@@ -126,6 +132,7 @@ moretrees.treedesc = {
 		fence = S("Date Palm Tree Fence"),
 		fence_rail = S("Date Palm Tree Fence Rail"),
 		fence_gate = S("Date Palm Tree Fence Gate"),
+		mesepost_light = S("Date Palm Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.date_palm_model)
 		end,
@@ -142,6 +149,7 @@ moretrees.treedesc = {
 		fence = S("Spruce Tree Fence"),
 		fence_rail = S("Spruce Tree Fence Rail"),
 		fence_gate = S("Spruce Tree Fence Gate"),
+		mesepost_light = S("Spruce Tree Mese Post Light"),
 		grow_function = moretrees.grow_spruce,
 	},
 	cedar =  {
@@ -156,6 +164,7 @@ moretrees.treedesc = {
 		fence = S("Cedar Tree Fence"),
 		fence_rail = S("Cedar Tree Fence Rail"),
 		fence_gate = S("Cedar Tree Fence Gate"),
+		mesepost_light = S("Cedar Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.cedar_model)
 		end,
@@ -172,6 +181,7 @@ moretrees.treedesc = {
 		fence = S("Poplar Tree Fence"),
 		fence_rail = S("Poplar Tree Fence Rail"),
 		fence_gate = S("Poplar Tree Fence Gate"),
+		mesepost_light = S("Poplar Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.poplar_model)
 		end,
@@ -188,6 +198,7 @@ moretrees.treedesc = {
 		fence = S("Willow Tree Fence"),
 		fence_rail = S("Willow Tree Fence Rail"),
 		fence_gate = S("Willow Tree Fence Gate"),
+		mesepost_light = S("Willow Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.willow_model)
 		end,
@@ -204,6 +215,7 @@ moretrees.treedesc = {
 		fence = S("Rubber Tree Fence"),
 		fence_rail = S("Rubber Tree Fence Rail"),
 		fence_gate = S("Rubber Tree Fence Gate"),
+		mesepost_light = S("Rubber Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.rubber_tree_model)
 		end,
@@ -220,6 +232,7 @@ moretrees.treedesc = {
 		fence = S("Douglas Fir Fence"),
 		fence_rail = S("Douglas Fir Fence Rail"),
 		fence_gate = S("Douglas Fir Fence Gate"),
+		mesepost_light = S("Douglas Fir Tree Mese Post Light"),
 		grow_function = moretrees.grow_fir,
 	},
 	jungletree = {
@@ -501,6 +514,13 @@ for i in ipairs(moretrees.treelist) do
 					texture = planks_tile,
 					material = planks_name,
 					groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2}
+				})
+			end
+			if moretrees.treedesc[treename].mesepost_light then
+				default.register_mesepost("moretrees:"..treename.."_mese_post_light", {
+					description = moretrees.treedesc[treename].mesepost_light,
+					texture = planks_tile,
+					material = planks_name,
 				})
 			end
 		end

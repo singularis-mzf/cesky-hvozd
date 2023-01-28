@@ -113,6 +113,13 @@ local partition_defs = {
 		exclude_items = {"technic:insulator_clip_fencepost"},
 	},
 	{
+		name = "mesesloupky",
+		in_creative_inventory = true,
+		groups = {"mesepost_light"},
+		items = none,
+		mods = none,
+	},
+	{
 		name = "jil",
 		in_creative_inventory = true,
 		groups = {"bakedclay"},

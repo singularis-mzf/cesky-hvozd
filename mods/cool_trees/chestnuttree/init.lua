@@ -263,6 +263,12 @@ if minetest.settings:get_bool("cool_fences", true) then
 		fence.description = S("Chestnut Tree Fence Gate")
 		doors.register_fencegate("chestnuttree:gate", table.copy(fence))
 	end
+
+	default.register_mesepost("chestnuttree:mese_post_light", {
+		description = S("Chestnut Tree Mese Post Light"),
+		texture = "chestnuttree_wood.png",
+		material = "chestnuttree:wood",
+	})
 end
 
 --Stairs
