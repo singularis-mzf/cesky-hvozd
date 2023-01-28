@@ -7,6 +7,10 @@ if minetest.get_modpath("technic") then
 	})
 end
 
+if minetest.get_modpath("basic_materials") then
+	stairsplus:register_bank_slopes("basic_materials:cement_block")
+end
+
 -- PLACEMENT
 local function on_place(itemstack, placer, pointed_thing)
 	if pointed_thing.type == "node" then

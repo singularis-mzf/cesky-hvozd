@@ -139,6 +139,13 @@ function shadows:update_shadows(min, max)
 		local points = {}
 		local strides = { 1, va.ystride, va.zstride }
 		for y = 0,max.y-min.y do
+			local decay_minimum_light
+			if min.y + y > 0 then
+				decay_minimum_light = self.map_params.decay_minimum_light
+			else
+				decay_minimum_light = 0
+			end
+
 			for z = 0,max.z-min.z do
 				for x = 0,max.x-min.x do
 					-- try current point and it's central reflection
@@ -153,7 +160,7 @@ function shadows:update_shadows(min, max)
 							for d = -1,1,2 do
 								for stride = 1,#strides do
 									ilight = decay_light((light[i + d*strides[stride]] or 0),
-											self.map_params.decay_minimum_light,
+											decay_minimum_light,
 											self.map_params.decay_light_threshold,
 											self.map_params.decay_factor_bright,
 											self.map_params.decay_factor_dark)

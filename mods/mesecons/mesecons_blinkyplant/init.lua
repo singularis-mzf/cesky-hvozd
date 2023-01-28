@@ -105,11 +105,11 @@ local function set_counter(meta, new_value)
 end
 
 local function toggle_timer(pos)
-	local meta = minetest.get_meta(pos)
 	local timer = minetest.get_node_timer(pos)
 	if timer:is_started() then
 		timer:stop()
 	else
+		local meta = minetest.get_meta(pos)
 		local is_enabled, interval = get_bplant_info(meta)
 		if is_enabled then
 			timer:start(interval)
@@ -119,7 +119,9 @@ end
 
 local function on_timer(pos)
 	local node = minetest.get_node(pos)
-	if(mesecon.flipstate(pos, node) == "on") then
+	local flipstate = mesecon.flipstate(pos, node)
+	print("on_timer() called with node = "..node.name..", flipstate == "..flipstate)
+	if flipstate == "on" then
 		mesecon.receptor_on(pos)
 	else
 		mesecon.receptor_off(pos)
@@ -162,6 +164,10 @@ local function set_interval(pos, new_interval)
 		meta:set_float("interval", -new_interval)
 		meta:set_string("infotext", get_infotext(meta))
 		timer:stop()
+		local node = minetest.get_node(pos)
+		node.name = "mesecons_blinkyplant:blinky_plant_off"
+		minetest.swap_node(pos, node)
+		mesecon.receptor_off(pos)
 	end
 	return new_interval
 end
@@ -209,6 +215,7 @@ local function formspec_callback(custom_state, player, formname, fields)
 	local is_locked = meta:get_int("locked") ~= 0
 
 	if fields.vyp then
+		-- disable the blinky plant
 		local is_enabled, interval = get_bplant_info(meta)
 		meta:set_float("interval", -interval)
 		set_interval(pos, interval)
