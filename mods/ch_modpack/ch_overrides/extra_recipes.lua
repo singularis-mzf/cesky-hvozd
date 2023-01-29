@@ -124,6 +124,14 @@ if minetest.get_modpath("darkage") then
 	})
 end
 
+if minetest.get_modpath("pipeworks") then
+	minetest.register_craft({
+		output = "pipeworks:conductor_direct_tube_off_1",
+		type = "shapeless",
+		recipe = {"pipeworks:direct_tube", "mesecons:mesecon"},
+	})
+end
+
 if minetest.get_modpath("technic") then
 	minetest.register_craft({
 		output = "technic:cast_iron_block",

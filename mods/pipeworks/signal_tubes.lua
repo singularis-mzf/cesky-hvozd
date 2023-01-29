@@ -14,7 +14,7 @@ end
 if minetest.get_modpath("mesecons") and pipeworks.enable_detector_tube then
 	local detector_tube_step = 5 * tonumber(minetest.settings:get("dedicated_server_step"))
 	pipeworks.register_tube("pipeworks:detector_tube_on", {
-			description = S("Detecting Pneumatic Tube Segment on"),
+			description = S("Detecting Pneumatic Tube Segment (priority @1)", 50),
 			inventory_image = "pipeworks_detector_tube_inv.png",
 			plain = { "pipeworks_detector_tube_plain.png" },
 			node_def = {
@@ -50,7 +50,7 @@ if minetest.get_modpath("mesecons") and pipeworks.enable_detector_tube then
 			},
 	})
 	pipeworks.register_tube("pipeworks:detector_tube_off", {
-			description = S("Detecting Pneumatic Tube Segment"),
+			description = S("Detecting Pneumatic Tube Segment (priority @1)", 50),
 			inventory_image = "pipeworks_detector_tube_inv.png",
 			plain = { "pipeworks_detector_tube_plain.png" },
 			node_def = {
@@ -139,7 +139,7 @@ end
 
 if minetest.get_modpath("mesecons") and pipeworks.enable_conductor_tube then
 	pipeworks.register_tube("pipeworks:conductor_tube_off", {
-			description = S("Conducting Pneumatic Tube Segment"),
+			description = S("Conducting Pneumatic Tube Segment (priority @1)", 50),
 			inventory_image = "pipeworks_conductor_tube_inv.png",
 			short = "pipeworks_conductor_tube_short.png",
 			plain = { "pipeworks_conductor_tube_plain.png" },
@@ -153,7 +153,7 @@ if minetest.get_modpath("mesecons") and pipeworks.enable_conductor_tube then
 			},
 	})
 	pipeworks.register_tube("pipeworks:conductor_tube_on", {
-			description = S("Conducting Pneumatic Tube Segment on"),
+			description = S("Conducting Pneumatic Tube Segment (priority @1)", 50),
 			inventory_image = "pipeworks_conductor_tube_inv.png",
 			short = "pipeworks_conductor_tube_short.png",
 			plain = { "pipeworks_conductor_tube_on_plain.png" },
@@ -168,10 +168,109 @@ if minetest.get_modpath("mesecons") and pipeworks.enable_conductor_tube then
 			},
 	})
 
-	minetest.register_craft({
+		minetest.register_craft({
 		type = "shapeless",
 		output = "pipeworks:conductor_tube_off_1",
 		recipe = {"pipeworks:tube_1", "mesecons:mesecon"}
+	})
+
+	-- Conducting Direct Tube
+	local cdt_mesecon_rules_normal = {
+		{x = -1, y = 0, z = 0},
+		{x = 1, y = 0, z = 0},
+		{x = 0, y = 0, z = -1},
+		{x = 0, y = 0, z = 1},
+	}
+	local cdt_mesecon_rules_extended = table.copy(cdt_mesecon_rules_normal)
+	table.insert(cdt_mesecon_rules_extended, {x = 0, y = -1, z = 0})
+	table.insert(cdt_mesecon_rules_extended, {x = 0, y = 1, z = 0})
+	local texture_alpha_mode = minetest.features.use_texture_alpha_string_modes and "clip" or true
+	local normal_tube_def = minetest.registered_nodes["pipeworks:tube_1"]
+	local vertical_facedirs = {
+		[5] = true,
+		[7] = true,
+		[9] = true,
+		[11] = true,
+		[12] = true,
+		[14] = true,
+		[16] = true,
+		[18] = true,
+	}
+	local function get_cdt_rules(node)
+		if vertical_facedirs[node.param2] then
+			return cdt_mesecon_rules_extended
+		else
+			return cdt_mesecon_rules_normal
+		end
+	end
+	def = {
+		description = S("Conducting Direct Pneumatic Tube Segment (priority @1)", 50),
+		tiles = {
+			"pipeworks_conductor_tube_plain.png", "pipeworks_conductor_tube_plain.png",
+			"pipeworks_conductor_tube_noctr.png", "pipeworks_conductor_tube_noctr.png",
+			"pipeworks_conductor_tube_plain.png", "pipeworks_conductor_tube_plain.png",
+		},
+		use_texture_alpha = texture_alpha_mode,
+		paramtype2 = "facedir",
+		drawtype = "nodebox",
+		paramtype = "light",
+		node_box = {type = "fixed",
+			fixed = {{-1/2, -9/64, -9/64, 1/2, 9/64, 9/64}}},
+		groups = {snappy = 3, tubedevice = 1, mesecon = 2},
+		_sound_def = {
+			key = "node_sound_wood_defaults",
+		},
+		tube = {
+			connect_sides = {left = 1, right = 1},
+			can_go = function(pos, node, velocity, stack)
+				return {velocity}
+			end,
+			can_insert = function(pos, node, stack, direction)
+				local dir = pipeworks.facedir_to_right_dir(node.param2)
+				return direction.x * direction.x == dir.x * dir.x and direction.z * direction.z == dir.z * dir.z and direction.y * direction.y == dir.y * dir.y
+			end,
+			priority = 50
+		},
+		mesecons = {conductor = {
+			state = "off",
+			rules = get_cdt_rules,
+			onstate = "pipeworks:conductor_direct_tube_on_1"}},
+
+		after_place_node = pipeworks.after_place,
+		after_dig_node = pipeworks.after_dig,
+		on_rotate = pipeworks.on_rotate,
+		check_for_pole = pipeworks.check_for_vert_tube,
+		check_for_horiz_pole = pipeworks.check_for_horiz_tube,
+		on_punch = normal_tube_def and normal_tube_def.on_punch,
+	}
+	minetest.register_node("pipeworks:conductor_direct_tube_off_1", table.copy(def))
+	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:direct_tube_off_1"
+
+	def.description = nil
+	def.tiles = {
+		"pipeworks_conductor_tube_on_plain.png", "pipeworks_conductor_tube_on_plain.png",
+		"pipeworks_conductor_tube_on_noctr.png", "pipeworks_conductor_tube_on_noctr.png",
+		"pipeworks_conductor_tube_on_plain.png", "pipeworks_conductor_tube_on_plain.png",
+	}
+	def.mesecons = {conductor = {
+		state = "on",
+		rules = get_cdt_rules,
+		offstate = "pipeworks:conductor_direct_tube_off_1",
+	}}
+	def.groups = {snappy = 3, tubedevice = 1, mesecon = 2, not_in_creative_inventory = 1}
+	def.drop = "pipeworks:conductor_direct_tube_off_1"
+
+	minetest.register_node("pipeworks:conductor_direct_tube_on_1", def)
+	pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:direct_tube_on_1"
+
+	minetest.register_craft({
+		output = "pipeworks:conductor_direct_tube_off_1",
+		recipe = {{"pipeworks:conductor_tube_off_1"}},
+	})
+
+	minetest.register_craft({
+		output = "pipeworks:conductor_tube_off_1",
+		recipe = {{"pipeworks:conductor_direct_tube_off_1"}},
 	})
 end
 

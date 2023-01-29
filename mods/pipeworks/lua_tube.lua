@@ -144,7 +144,7 @@ local mesecons = {
 }
 
 minetest.register_node(node_name, {
-	description = S("Lua controlled Tube"),
+	description = S("Lua controlled Tube (priority @1)", 50),
 	drawtype = "nodebox",
 	tiles = tiles,
 	use_texture_alpha = texture_alpha_mode,

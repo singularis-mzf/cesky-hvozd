@@ -120,7 +120,6 @@ end
 local function on_timer(pos)
 	local node = minetest.get_node(pos)
 	local flipstate = mesecon.flipstate(pos, node)
-	print("on_timer() called with node = "..node.name..", flipstate == "..flipstate)
 	if flipstate == "on" then
 		mesecon.receptor_on(pos)
 	else
