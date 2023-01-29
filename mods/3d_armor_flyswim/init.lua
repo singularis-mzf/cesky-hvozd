@@ -133,8 +133,12 @@ minetest.register_globalstep(function()
 		local ani_spd       = 30		
 		local offset        = 0
 		local tdebug        = false
-		local online_charinfo = ch_core.online_charinfo[player:get_player_name()] or {}
-		
+		local empty_list    = {}
+		local player_name   = player:get_player_name()
+		local online_charinfo = ch_core.online_charinfo[player_name] or empty_list
+		local offline_charinfo = ch_core.offline_charinfo[player_name] or empty_list
+		local sneak_allowed = offline_charinfo.neshybat == 0
+
 		-- reset player collisionbox, eye height, speed override 
 		player:set_properties({collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.7, 0.3}})
 		player:set_properties({eye_height = 1.47})
@@ -223,18 +227,19 @@ minetest.register_globalstep(function()
 			player:set_properties({eye_height = 1.27})
 			if tdebug then minetest.debug("crouch catch") end				
 
-		else]]if swim_sneak and
+		else]]if sneak_allowed and
+		       swim_sneak and
 		       nc_node == 1 and
 		       node_down_fsable(pos,1,"s") and
 		       not attached_to and			   
 		       not controls.sneak then
-			   
+
 				player_api.set_animation(player, "swim",ani_spd)
 				player:set_properties({collisionbox = {-0.4, 0, -0.4, 0.4, 0.5, 0.4}})
 				player:set_properties({eye_height = 0.7}) 
 				offset = 90
 				if tdebug then minetest.debug("swim through catch") end
-				
+
 	-----------------------------
 	--      Climb Cases        --
 	-----------------------------
@@ -262,7 +267,7 @@ minetest.register_globalstep(function()
 				offset = 90                                                  -- Offset for Headanim  
 				if tdebug then minetest.debug("swim") end
 			
-		elseif swim_sneak == true and
+		elseif sneak_allowed and swim_sneak == true and
 			   swim_anim == true and
 			   controls.sneak and									      
 			   node_down_fsable(pos,1,"s") and                    	 		 -- Node player standing in swimmable
@@ -281,7 +286,8 @@ minetest.register_globalstep(function()
 	-- First slab player enters counts as a true slab and has an edge.
 	-- As such the shift edge detection kicks in and player can't move forwards
 	-- This case sets the player collision box to 1 high for that first slab 
-		elseif 	crouch_anim 	and
+		elseif 	sneak_allowed	and
+				crouch_anim 	and
 				controls.sneak 	and 
 				controls.up    	and 
 				not node_fsable(pos,2,"a") and                        	 -- No air node below feet
@@ -298,7 +304,8 @@ minetest.register_globalstep(function()
 						player:set_properties({collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.0, 0.3}})
 					end
 					if tdebug then minetest.debug("crouch_1") end
-		elseif 	crouch_anim    and
+		elseif 	sneak_allowed	and
+				crouch_anim    and
 				controls.sneak and
 				not node_fsable(pos,2,"a") and
 				not attached_to then			                    

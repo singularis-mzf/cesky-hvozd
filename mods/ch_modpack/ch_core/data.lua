@@ -59,6 +59,7 @@ local offline_charinfo_data_types = {
 	ap_version = "int", -- >= 0
 	doslech = "int", -- >= 0
 	last_login = "int", -- >= 0, in seconds since 1. 1. 2000 UTC; 0 is invalid value
+	neshybat = "int", -- 0 = shýbat se při stisku Shift, 1 = neshýbat se
 	past_ap_playtime = "float", -- in seconds
 	past_playtime = "float", -- in seconds
 	pending_registration_privs = "string",
@@ -521,5 +522,32 @@ def = {
 }
 
 minetest.register_chatcommand("delete_offline_charinfo", def)
+
+def = {
+	description = "Trvale vypne či zapne shýbání postavy při držení Shiftu.",
+	params = "<ano|ne>",
+	func = function(player_name, param)
+		local new_state
+		if param == "ano" then
+			new_state = 0
+		elseif param == "ne" then
+			new_state = 1
+		else
+			return false, "Chybná syntaxe."
+		end
+		local offline_charinfo = ch_core.offline_charinfo[player_name]
+		if offline_charinfo == nil then
+			minetest.log("error", "/shybat: Expected offline charinfo for player "..player_name.." not found!")
+			return false, "Vnitřní chyba serveru: Data postavy nenalezena."
+		end
+		offline_charinfo.neshybat = new_state
+		ch_core.save_offline_charinfo(player_name, "neshybat")
+		minetest.chat_send_player(player_name, "*** Shýbání postavy "..(new_state == 1 and "vypnuto" or "zapnuto")..".")
+		return true
+	end,
+}
+
+minetest.register_chatcommand("shýbat", def)
+minetest.register_chatcommand("shybat", def)
 
 ch_core.close_submod("data")
