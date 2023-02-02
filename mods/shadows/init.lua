@@ -228,7 +228,7 @@ if shadows.log_counters then
 			queue = state.queue or {}
 			queue_length = queue_length + #queue - (queue.count or 0)
 		end
-		local s = "queue_length="..queue_length
+		local s = "[shadows] queue_length="..queue_length
 		local counters = self.counters
 		self.counters = {}
 		for _,name in ipairs({"ignore", "queue", "dequeue", "calc", "blur", "update", "skip", "reset", "requeue" }) do
@@ -241,7 +241,7 @@ if shadows.log_counters then
 		s = s.." generation="..self.generation
 		s = s.." params_dirty="..tostring(self.params_dirty)
 		s = s.." params="..dump(self.map_params,"")
-		minetest.chat_send_all(s)
+		minetest.log("warning", s)
 	end
 else
 	function shadows:inc_counter(name) end
@@ -260,7 +260,7 @@ function shadows:watch_players()
 	-- ensure generation is set
 	if self.generation == nil then
 		self.generation = 48*(minetest.get_day_count() + minetest.get_timeofday())
-		minetest.chat_send_all("setting new generation to "..self.generation)
+		minetest.log("warning", "[shadows] nová generace nastavena na "..self.generation)
 		storage:set_string("generation", tostring(self.generation))
 	end
 

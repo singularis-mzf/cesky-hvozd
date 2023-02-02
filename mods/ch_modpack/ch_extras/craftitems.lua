@@ -1,5 +1,28 @@
 local def
 
+-- ch_extras:clean_dirt
+---------------------------------------------------------------
+local image = "default_dirt.png^[resize:32x32^(default_sand.png^[resize:32x32^[opacity:128)"
+
+image = "default_dirt.png&[resize:32x32&(default_sand.png&[resize:32x32&[opacity:128)"
+image = "[inventorycube{"..image.."{"..image.."{"..image
+def = {
+	description = "přebraná hlína",
+	inventory_image = image,
+	wield_image = image,
+	_ch_help = "přebranou hlínu nelze umístit do světa,\nlze ji smísit s pískem",
+	-- groups = {}
+}
+
+minetest.register_craftitem("ch_extras:clean_dirt", def)
+minetest.register_craft({
+	output = "default:sand 5",
+	recipe = {
+		{"default:sand", "default:sand", ""},
+		{"default:sand", "default:sand", ""},
+		{"ch_extras:clean_dirt", "", ""},
+	},
+})
 
 -- ch_extras:rohlik...
 ---------------------------------------------------------------

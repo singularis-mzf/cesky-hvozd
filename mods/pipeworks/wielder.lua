@@ -123,10 +123,14 @@ local function wielder_on(data, wielder_pos, wielder_node)
 	})
 
 	local pointed_thing = { type="node", under=under_pos, above=above_pos }
+	local pointed_node = minetest.get_node(under_pos)
 	data.act(virtplayer, pointed_thing)
 	if data.eject_drops then
 		for i, stack in ipairs(inv:get_list("main")) do
 			if not stack:is_empty() then
+				if pointed_node.name == "default:dirt" and stack:get_name() == "default:dirt" and minetest.registered_items["ch_extras:clean_dirt"] then
+					stack:set_name("ch_extras:clean_dirt")
+				end
 				pipeworks.tube_inject_item(wielder_pos, wielder_pos, dir, stack)
 				inv:set_stack("main", i, ItemStack(""))
 			end

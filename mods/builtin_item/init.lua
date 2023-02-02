@@ -614,7 +614,9 @@ core.register_entity(":__builtin:item", {
 
 		self:step_apply_forces()
 
-		self:step_try_collect() -- merge
+		if math.random(1, 64) == 1 then -- performance optimization
+			self:step_try_collect() -- merge
+		end
 	end,
 
 	on_punch = function(self, hitter)
