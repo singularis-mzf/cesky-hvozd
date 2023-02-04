@@ -13,7 +13,7 @@ local shadows = {
 	log_counters = false,
 	hfov = 1.1,
 	vfov = 1.4,
-	vector = vector.new(-1, -2, 1),
+	vector = vector.new(-1, -4, 1),
 	transparency = {},
 	buffers = { light = {}, content = {} },
 	players = {},
@@ -139,13 +139,7 @@ function shadows:update_shadows(min, max)
 		local points = {}
 		local strides = { 1, va.ystride, va.zstride }
 		for y = 0,max.y-min.y do
-			local decay_minimum_light
-			if min.y + y > 0 then
-				decay_minimum_light = self.map_params.decay_minimum_light
-			else
-				decay_minimum_light = 0
-			end
-
+			local decay_minimum_light = self.map_params.decay_minimum_light
 			for z = 0,max.z-min.z do
 				for x = 0,max.x-min.x do
 					-- try current point and it's central reflection
