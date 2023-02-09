@@ -3,75 +3,77 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 local side_texture = mesecon.texture.steel_block or "mesecons_detector_side.png"
 
 local S = minetest.get_translator("mesecons_detector")
-local GET_COMMAND = "GET"
+
+local od_default_radius = 10
+local od_max_radius = 64
+
+local function get_od_formspec(pos, node)
+	local meta = minetest.get_meta(pos)
+	local scanname = meta:get_string("scanname")
+	local radius = meta:get_int("radius")
+	if radius == 0 then
+		radius = od_default_radius
+	end
+	return "size[9,2.5]" ..
+	"field[0.3,  0;9,2;scanname;"..S("Name of player to scan for (empty for any):")..";"..minetest.formspec_escape(scanname).."]"..
+	"field[0.3,1.5;4,2;radius;".."Dosah (1-"..od_max_radius..") \\[m\\] (volitelný):"..";"..radius.."]"..
+	"button_exit[7,0.75;2,3;save;"..S("Save").."]"
+end
 
 -- Object detector
 -- Detects players in a certain radius
--- The radius can be specified in mesecons/settings.lua
 
-local function object_detector_make_formspec(pos)
-	local meta = minetest.get_meta(pos)
-	meta:set_string("formspec", "size[9,2.5]" ..
-		"field[0.3,  0;9,2;scanname;"..S("Name of player to scan for (empty for any):")..";${scanname}]"..
-		-- "field[0.3,1.5;4,2;digiline_channel;"..S("Digiline Channel (optional):")..";${digiline_channel}]"..
-		"button_exit[7,0.75;2,3;;"..S("Save").."]")
-end
+local function object_detector_formspec_callback(custom_state, player, formname, fields)
+	if not fields.save then return end
+	if minetest.is_protected(custom_state.pos, player:get_player_name()) then return end
 
-local function object_detector_on_receive_fields(pos, _, fields, sender)
-	if not fields.scanname --[[ or not fields.digiline_channel ]] then return end
-
-	if minetest.is_protected(pos, sender:get_player_name()) then return end
-
-	local meta = minetest.get_meta(pos)
+	local meta = minetest.get_meta(custom_state.pos)
 	meta:set_string("scanname", ch_core.jmeno_na_prihlasovaci(fields.scanname))
-	-- meta:set_string("digiline_channel", fields.digiline_channel)
-	meta:set_string("digiline_channel", "")
-	object_detector_make_formspec(pos)
+	local new_radius = tonumber(fields.radius)
+	if new_radius ~= nil then
+		new_radius = math.round(new_radius)
+		if 1 <= new_radius and new_radius <= od_max_radius then
+			meta:set_int("radius", new_radius)
+		end
+	end
 end
 
 -- returns true if player was found, false if not
 local function object_detector_scan(pos)
-	local objs = minetest.get_objects_inside_radius(pos, mesecon.setting("detector_radius", 6))
-
-	-- abort if no scan results were found
-	if next(objs) == nil then return false end
-
-	local scanname = minetest.get_meta(pos):get_string("scanname")
-	local scan_for = {}
-	for _, str in pairs(string.split(scanname:gsub(" ", ""), ",")) do
-		scan_for[str] = true
+	-- local objs = minetest.get_objects_inside_radius(pos, mesecon.setting("detector_radius", 6))
+	local node = minetest.get_node(pos)
+	local meta = minetest.get_meta(pos)
+	local scanname = meta:get_string("scanname")
+	local radius = meta:get_int("radius")
+	if radius <= 0 then
+		radius = 10
 	end
-
-	local every_player = scanname == ""
-	for _, obj in pairs(objs) do
-		-- "" is returned if it is not a player; "" ~= nil; so only handle objects with foundname ~= ""
-		local foundname = obj:get_player_name()
-		if foundname ~= "" then
-			if every_player or scan_for[foundname] then
-				return true
-			end
+	local scan_for
+	if scanname ~= "" then
+		scan_for = {}
+		for _, str in pairs(string.split(scanname:gsub(" ", ""), ",")) do
+			scan_for[str] = true
 		end
 	end
 
+	for player_name, player in pairs(minetest.get_connected_players()) do
+		if (scan_for == nil or scan_for[player_name]) and vector.distance(player:get_pos(), pos) <= radius then
+			return true
+		end
+	end
 	return false
 end
 
---[[
--- set player name when receiving a digiline signal on a specific channel
-local object_detector_digiline = {
-	effector = {
-		action = function(pos, _, channel, msg)
-			local meta = minetest.get_meta(pos)
-			if channel == meta:get_string("digiline_channel") then
-				meta:set_string("scanname", msg)
-				object_detector_make_formspec(pos)
-			end
-		end,
-	}
-}
-]]
+local function object_detector_on_rightclick(pos, node, clicker, itemstack, pointed_thing)
+	local player_name = clicker and clicker:get_player_name()
+	if player_name == nil then return end
+	if minetest.is_protected(pos, player_name) then
+		return
+	end
+	ch_core.show_formspec(clicker, "mesecons_detector:object_detector", get_od_formspec(pos, node), object_detector_formspec_callback, {pos = pos}, {})
+end
 
-minetest.register_node("mesecons_detector:object_detector_off", {
+local def = {
 	tiles = {side_texture, side_texture, "jeija_object_detector_off.png", "jeija_object_detector_off.png", "jeija_object_detector_off.png", "jeija_object_detector_off.png"},
 	paramtype = "light",
 	is_ground_content = false,
@@ -82,30 +84,40 @@ minetest.register_node("mesecons_detector:object_detector_off", {
 		state = mesecon.state.off,
 		rules = mesecon.rules.pplate
 	}},
-	on_construct = object_detector_make_formspec,
-	on_receive_fields = object_detector_on_receive_fields,
+	on_rightclick = object_detector_on_rightclick,
 	sounds = mesecon.node_sound.stone,
-	--digiline = object_detector_digiline,
 	on_blast = mesecon.on_blastnode,
-})
+}
 
-minetest.register_node("mesecons_detector:object_detector_on", {
-	tiles = {side_texture, side_texture, "jeija_object_detector_on.png", "jeija_object_detector_on.png", "jeija_object_detector_on.png", "jeija_object_detector_on.png"},
-	paramtype = "light",
-	is_ground_content = false,
-	walkable = true,
-	groups = {cracky=3,not_in_creative_inventory=1},
-	drop = 'mesecons_detector:object_detector_off',
-	mesecons = {receptor = {
-		state = mesecon.state.on,
-		rules = mesecon.rules.pplate
-	}},
-	on_construct = object_detector_make_formspec,
-	on_receive_fields = object_detector_on_receive_fields,
-	sounds = mesecon.node_sound.stone,
-	-- digiline = object_detector_digiline,
-	on_blast = mesecon.on_blastnode,
-})
+if minetest.get_modpath("unifieddyes") then
+	def.paramtype2 = "color"
+	def.palette = "unifieddyes_palette_extended.png"
+	def.groups.ud_param2_colorable = 1
+	def.on_construct = unifieddyes.on_construct
+	def.on_dig = unifieddyes.on_dig
+end
+
+minetest.register_node("mesecons_detector:object_detector_off", table.copy(def))
+
+def.tiles = {side_texture, side_texture, "jeija_object_detector_on.png", "jeija_object_detector_on.png", "jeija_object_detector_on.png", "jeija_object_detector_on.png"}
+def.groups = {cracky=3,not_in_creative_inventory=1}
+def.mesecons = {receptor = {
+	state = mesecon.state.on,
+	rules = mesecon.rules.pplate
+}}
+
+if minetest.get_modpath("unifieddyes") then
+	def.groups.ud_param2_colorable = 1
+	def.on_dig = function(pos, node, digger)
+		node.name = "mesecons_detector:object_detector_off"
+		minetest.swap_node(pos, node)
+		return unifieddyes.on_dig(pos, node, digger)
+	end
+else
+	def.drop = "mesecons_detector:object_detector_off"
+end
+
+minetest.register_node("mesecons_detector:object_detector_on", def)
 
 minetest.register_craft({
 	output = 'mesecons_detector:object_detector_off',
@@ -148,6 +160,21 @@ minetest.register_abm({
 		node.name = "mesecons_detector:object_detector_off"
 		minetest.swap_node(pos, node)
 		mesecon.receptor_off(pos, mesecon.rules.pplate)
+	end,
+})
+
+minetest.register_lbm({
+	label = "Upgrade legacy object detectors",
+	name = "mesecons_detector:upgrade_object_detectors",
+	nodenames = {"mesecons_detector:object_detector_on", "mesecons_detector:object_detector_off"},
+	action = function(pos, node, dtime_s)
+		local meta = minetest.get_meta(pos)
+		if meta:get_string("formspec") ~= "" then
+			meta:set_string("formspec", "")
+			node.param2 = 240
+			minetest.swap_node(pos, node)
+			minetest.log("action", "Legacy object detector at "..minetest.pos_to_string(pos).." upgraded.")
+		end
 	end,
 })
 

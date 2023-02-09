@@ -5,3 +5,4 @@ Digiline Channel (optional):=Kanál digilinek (nepovinný):
 Save=Uložit
 Name of node to scan for (empty for any):=Identifikátor bloku pro sken (prázdný pro jakýkoliv blok):
 Distance (0-@1):=Vzdálenost (0 až @1):
+Radius (1-64) \[m\] (optional):=Dosah (1-64) [m] (volitelný):
