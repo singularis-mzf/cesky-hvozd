@@ -890,6 +890,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT pro kód, CC-BY-SA 3.0 pro média
 * [ContentDB](https://content.minetest.net/packages/webdesigner97/streets/)
 
+## Summer (summer\_22\_08\_15)
+
+* Zdroj: [https://github.com/IIIullaIII/summer\_22\_08\_15](https://github.com/IIIullaIII/summer\_22\_08\_15), revize e4d147fbbaa6d5b9d32d8a168c1eb195e33b89d9
+* Původní licence (pozor!): CC-BY-SA 3.0 pro kód, MIT pro média
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/ulla/summer/)
+
 ## Technic HV Extend (technic\_hv\_extend)
 
 * Zdroj: [https://github.com/Emojigit/technic\_hv\_extend](https://github.com/Emojigit/technic\_hv\_extend), revize b16a76d607cc7df2b2aca25ca1b76d079727290c
