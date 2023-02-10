@@ -21,7 +21,7 @@ for i in ipairs(Ombrellone_list) do
 		use_texture_alpha = "opaque",
         inventory_image = "ombo_"..colour.."_q.png",
 
-       wield_image  = {"ombo_"..colour.."_q.png"},
+       wield_image = "ombo_"..colour.."_q.png",
 	    paramtype = "light",
 	    paramtype2 = "facedir",
 	    sunlight_propagates = true,
@@ -48,7 +48,7 @@ minetest.register_node("summer:ombrellone_"..colour.."_ch", {
 		use_texture_alpha = "opaque",
         inventory_image = "ombc_"..colour.."_q.png",
 
-        wield_image  = {"ombc_"..colour.."_q.png"},
+        wield_image  = "ombc_"..colour.."_q.png",
 	    paramtype = "light",
 	    paramtype2 = "facedir",
 	    sunlight_propagates = true,

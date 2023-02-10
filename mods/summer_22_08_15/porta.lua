@@ -52,8 +52,7 @@ for i in ipairs(Porta_list) do
 	    },	    
        inventory_image = "summer_p_"..colour..".png",
 	    
-        wield_image  = {"summer_p_"..colour..".png",
-	   },
+        wield_image  = "summer_p_"..colour..".png",
 	    paramtype = "light",
 	    paramtype2 = "facedir",
 	    sunlight_propagates = true,
@@ -92,8 +91,7 @@ minetest.register_node("summer:porta_"..colour.."_ch", {
 	    },
         inventory_image = "summer_p_"..colour..".png",
 	    
-        wield_image  = {"summer_p_"..colour..".png",
-	    },
+        wield_image  = "summer_p_"..colour..".png",
 	    paramtype = "light",
 	    paramtype2 = "facedir",
 	    sunlight_propagates = true,
