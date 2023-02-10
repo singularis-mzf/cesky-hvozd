@@ -16,6 +16,11 @@ https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 
 Licenses of media (models and textures)
 ----------------------------
+breccia.png
+	License: MIT
+	Source: https://github.com/IIIullaIII/summer_22_08_15
+	Author: Ulla
+
 ch_extras_creative_inv.png
 ch_extras_crvb_pruhy.png
 ch_extras_czl_pruhy.png

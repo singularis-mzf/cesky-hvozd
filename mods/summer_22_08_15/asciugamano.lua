@@ -1,33 +1,25 @@
-
-
-    
-    local Asciugamano_list = {
-	{ "Red Asciugamano", "red"},
-	{ "Orange Asciugamano", "orange"},
-    { "Black Asciugamano", "black"},
-	{ "Yellow Asciugamano", "yellow"},
-	{ "Green Asciugamano", "green"},
-	{ "Blue Asciugamano", "blue"},
-	{ "Violet Asciugamano", "violet"},
+local Asciugamano_list = {
+	{ "červená osuška", "red"},
+	{ "oranžová osuška", "orange"},
+    { "černá osuška", "black"},
+	{ "žlutá osuška", "yellow"},
+	{ "zelená osuška", "green"},
+	{ "modrá osuška", "blue"},
+	{ "fialová osuška", "violet"},
 }
 
 for i in ipairs(Asciugamano_list) do
 	local asciugamanodesc = Asciugamano_list[i][1]
 	local colour = Asciugamano_list[i][2]
- 
 
-
-    
    minetest.register_node("summer:asciugamano_"..colour.."", {
 	    description = asciugamanodesc.."",
 	    drawtype = "mesh",
 		mesh = "asciugamano.obj",
-	    tiles = {"asciugsmano_"..colour..".png",
-	    },	    
+	    tiles = {"asciugsmano_"..colour..".png"},
+		use_texture_alpha = "opaque",
         inventory_image = "asciugsmano_a_"..colour..".png",
-	    
-        wield_image  = {"asciugsmano_a_"..colour..".png",
-	    },
+        wield_image  = "asciugsmano_a_"..colour..".png",
 	    paramtype = "light",
 	    paramtype2 = "facedir",
 	    sunlight_propagates = true,
@@ -40,19 +32,18 @@ for i in ipairs(Asciugamano_list) do
 		--sounds = default.node_sound_wood_defaults(),
         drop = "summer:asciugamano_"..colour.."",        
 		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-				return minetest.sleep_in_asciugamano( pos, node, clicker, itemstack, pointed_thing );
+			-- TODO: [ ] Implement better
+				-- return minetest.sleep_in_asciugamano( pos, node, clicker, itemstack, pointed_thing );
 			end
-        
- 
    })
-   
 
+--[[
 minetest.allow_sit = function( player )
 	-- no check possible
-	if( not( player.get_player_velocity )) then
+	if( not( player.get_velocity )) then
 		return true;
 	end
-	local velo = player:get_player_velocity();
+	local velo = player:get_velocity();
 	if( not( velo )) then
 		return false;
 	end
@@ -84,7 +75,7 @@ minetest.sleep_in_asciugamano = function( pos, node, clicker, itemstack, pointed
 	-- let players get back up
 	if( animation and animation.animation=="lay" ) then
 		default.player_attached[pname] = false
-		clicker:setpos({x=pos.x,y=pos.y-0.5,z=pos.z})
+		clicker:set_pos({x=pos.x,y=pos.y-0.5,z=pos.z})
 		clicker:set_eye_offset({x=0,y=0,z=0}, {x=0,y=0,z=0})
 		clicker:set_physics_override(1, 1, 1)
 		default.player_set_animation(clicker, "stand", 30)
@@ -185,7 +176,7 @@ minetest.sleep_in_asciugamano = function( pos, node, clicker, itemstack, pointed
 		-- no sleeping on this place
 		else
 			default.player_attached[pname] = false
-			clicker:setpos({x=pos.x,y=pos.y-0.5,z=pos.z})
+			clicker:set_pos({x=pos.x,y=pos.y-0.5,z=pos.z})
 			clicker:set_eye_offset({x=0,y=0,z=0}, {x=0,y=0,z=0})
 			clicker:set_physics_override(1, 1, 1)
 			default.player_set_animation(clicker, "stand", 30)
@@ -196,7 +187,7 @@ minetest.sleep_in_asciugamano = function( pos, node, clicker, itemstack, pointed
 
 
 	clicker:set_eye_offset({x=0,y=-7,z=2}, {x=0,y=0,z=0})
-	clicker:setpos( p );
+	clicker:set_pos( p );
 	default.player_set_animation(clicker, new_animation, 30)
 	clicker:set_physics_override(0, 0, 0)
 	default.player_attached[pname] = true
@@ -207,9 +198,9 @@ minetest.sleep_in_asciugamano = function( pos, node, clicker, itemstack, pointed
 		minetest.chat_send_player( pname, 'Comftable, but not good enough for a nap. Right-click again if you want to get back up.');
 	end
 end
+]]
 
-	
-	
+
 end
     --state=true: lay, state=false: stand up
-    
+

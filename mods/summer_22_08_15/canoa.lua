@@ -23,7 +23,7 @@ end
 local function get_v(v)
 	return math.sqrt(v.x ^ 2 + v.z ^ 2)
 end
-local function reg_canoa_(color)
+local function reg_canoa_(color, popis)
 
 	local canoa_item_name = "summer:canoa_"..color.."_item"
 	local canoa_ent_name = "summer:canoa_"..color.."_entity"
@@ -56,10 +56,10 @@ function canoa_.on_rightclick(self, clicker)
 		clicker:set_detach()
 		default.player_attached[name] = false
 		default.player_set_animation(clicker, "stand" , 30)
-		local pos = clicker:getpos()
+		local pos = clicker:get_pos()
 		pos = {x = pos.x, y = pos.y + 0.2, z = pos.z}
 		minetest.after(0.1, function()
-			clicker:setpos(pos)
+			clicker:set_pos(pos)
 		end)
 	elseif not self.driver then
 		local attach = clicker:get_attach()
@@ -77,7 +77,7 @@ function canoa_.on_rightclick(self, clicker)
 		minetest.after(0.2, function()
 			default.player_set_animation(clicker, "sit" , 30)
 		end)
-		self.object:setyaw(clicker:get_look_yaw() - math.pi / 2)
+		self.object:set_yaw(clicker:get_look_horizontal() - math.pi / 2)
 	end
 end
 
@@ -111,12 +111,12 @@ function canoa_.on_punch(self, puncher)
 		minetest.after(0.1, function()
 			self.object:remove()
 		end)
-		if not minetest.setting_getbool("creative_mode") then
+		if not minetest.is_creative_enabled(puncher:get_player_name()) then
 			local inv = puncher:get_inventory()
 			if inv:room_for_item("main", "summer:canoa_"..color.."_item") then
 				inv:add_item("main", "summer:canoa_"..color.."_item")
 			else
-				minetest.add_item(self.object:getpos(), canoa_item_name)
+				minetest.add_item(self.object:get_pos(), canoa_item_name)
 			end
 		end
 	end
@@ -124,10 +124,10 @@ end
 
 
 function canoa_.on_step(self, dtime)
-	self.v = get_v(self.object:getvelocity()) * get_sign(self.v)
+	self.v = get_v(self.object:get_velocity()) * get_sign(self.v)
 	if self.driver then
 		local ctrl = self.driver:get_player_control()
-		local yaw = self.object:getyaw()
+		local yaw = self.object:get_yaw()
 		if ctrl.up then
 			self.v = self.v + 0.1
 		elseif ctrl.down then
@@ -135,27 +135,27 @@ function canoa_.on_step(self, dtime)
 		end
 		if ctrl.left then
 			if self.v < 0 then
-				self.object:setyaw(yaw - (1 + dtime) * 0.03)
+				self.object:set_yaw(yaw - (1 + dtime) * 0.03)
 			else
-				self.object:setyaw(yaw + (1 + dtime) * 0.03)
+				self.object:set_yaw(yaw + (1 + dtime) * 0.03)
 			end
 		elseif ctrl.right then
 			if self.v < 0 then
-				self.object:setyaw(yaw + (1 + dtime) * 0.03)
+				self.object:set_yaw(yaw + (1 + dtime) * 0.03)
 			else
-				self.object:setyaw(yaw - (1 + dtime) * 0.03)
+				self.object:set_yaw(yaw - (1 + dtime) * 0.03)
 			end
 		end
 	end
-	local velo = self.object:getvelocity()
+	local velo = self.object:get_velocity()
 	if self.v == 0 and velo.x == 0 and velo.y == 0 and velo.z == 0 then
-		self.object:setpos(self.object:getpos())
+		self.object:set_pos(self.object:get_pos())
 		return
 	end
 	local s = get_sign(self.v)
 	self.v = self.v - 0.02 * s
 	if s ~= get_sign(self.v) then
-		self.object:setvelocity({x = 0, y = 0, z = 0})
+		self.object:set_velocity({x = 0, y = 0, z = 0})
 		self.v = 0
 		return
 	end
@@ -163,7 +163,7 @@ function canoa_.on_step(self, dtime)
 		self.v = 5 * get_sign(self.v)
 	end
 
-	local p = self.object:getpos()
+	local p = self.object:get_pos()
 	p.y = p.y - 0.5
 	local new_velo = {x = 0, y = 0, z = 0}
 	local new_acce = {x = 0, y = 0, z = 0}
@@ -175,13 +175,13 @@ function canoa_.on_step(self, dtime)
 		else
 			new_acce = {x = 0, y = -9.8, z = 0}
 		end
-		new_velo = get_velocity(self.v, self.object:getyaw(),
-			self.object:getvelocity().y)
-		self.object:setpos(self.object:getpos())
+		new_velo = get_velocity(self.v, self.object:get_yaw(),
+			self.object:get_velocity().y)
+		self.object:set_pos(self.object:get_pos())
 	else
 		p.y = p.y + 1
 		if is_water(p) then
-			local y = self.object:getvelocity().y
+			local y = self.object:get_velocity().y
 			if y >= 5 then
 				y = 5
 			elseif y < 0 then
@@ -189,24 +189,24 @@ function canoa_.on_step(self, dtime)
 			else
 				new_acce = {x = 0, y = 5, z = 0}
 			end
-			new_velo = get_velocity(self.v, self.object:getyaw(), y)
-			self.object:setpos(self.object:getpos())
+			new_velo = get_velocity(self.v, self.object:get_yaw(), y)
+			self.object:set_pos(self.object:get_pos())
 		else
 			new_acce = {x = 0, y = 0, z = 0}
-			if math.abs(self.object:getvelocity().y) < 1 then
-				local pos = self.object:getpos()
+			if math.abs(self.object:get_velocity().y) < 1 then
+				local pos = self.object:get_pos()
 				pos.y = math.floor(pos.y) + 0.5
-				self.object:setpos(pos)
-				new_velo = get_velocity(self.v, self.object:getyaw(), 0)
+				self.object:set_pos(pos)
+				new_velo = get_velocity(self.v, self.object:get_yaw(), 0)
 			else
-				new_velo = get_velocity(self.v, self.object:getyaw(),
-					self.object:getvelocity().y)
-				self.object:setpos(self.object:getpos())
+				new_velo = get_velocity(self.v, self.object:get_yaw(),
+					self.object:get_velocity().y)
+				self.object:set_pos(self.object:get_pos())
 			end
 		end
 	end
-	self.object:setvelocity(new_velo)
-	self.object:setacceleration(new_acce)
+	self.object:set_velocity(new_velo)
+	self.object:set_acceleration(new_acce)
 end
 
 
@@ -214,7 +214,7 @@ minetest.register_entity("summer:canoa_"..color.."", canoa_)
 
 
 minetest.register_craftitem(canoa_item_name, {
-	description = "canoa ("..color..")",
+	description = popis,
 	inventory_image = "canoa_"..color.."_inv.png",
 	wield_image = "canoa_"..color.."_inv.png",
 	wield_scale = {x = 2, y = 2, z = 1},
@@ -229,7 +229,7 @@ minetest.register_craftitem(canoa_item_name, {
 		end
 		pointed_thing.under.y = pointed_thing.under.y + 0.5
 		minetest.add_entity(pointed_thing.under, "summer:canoa_"..color.."")
-		if not minetest.setting_getbool("creative_mode") then
+		if not minetest.is_creative_enabled(placer:get_player_name()) then
 			itemstack:take_item()
 		end
 		return itemstack
@@ -260,12 +260,18 @@ minetest.register_craft({
 end
 end
 
-colors = {
-	"black", "red", "green", "blue", "yellow", "violet","orange"
+local canoa_colors = {
+	black = "černá kánoe",
+	red = "červená kánoe",
+	green = "zelená kánoe",
+	blue = "modrá kánoe",
+	yellow = "žlutá kánoe",
+	violet = "fialová kánoe",
+	orange = "oranžová kánoe",
 }
 
-for _,color in ipairs(colors) do
-	reg_canoa_(color)
+for color, desc in pairs(canoa_colors) do
+	reg_canoa_(color, desc)
 end
 
 

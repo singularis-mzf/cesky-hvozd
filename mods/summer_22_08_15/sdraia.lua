@@ -1,30 +1,25 @@
-    
-    local sdraia_list = {
-	{ "Red sdraia", "red"},
-	{ "Orange sdraia", "orange"},
-    { "Black sdraia", "black"},
-	{ "Yellow sdraia", "yellow"},
-	{ "Green sdraia", "green"},
-	{ "Blue sdraia", "blue"},
-	{ "Violet sdraia", "violet"},
+local sdraia_list = {
+	{ "červené lehátko", "red"},
+	{ "oranžové lehátko", "orange"},
+    { "černé lehátko", "black"},
+	{ "žluté lehátko", "yellow"},
+	{ "zelené lehátko", "green"},
+	{ "modré lehátko", "blue"},
+	{ "fialové lehátko", "violet"},
 }
 
 for i in ipairs(sdraia_list) do
 	local sdraiadesc = sdraia_list[i][1]
 	local colour = sdraia_list[i][2]
- 
 
-
-    
    minetest.register_node("summer:sdraia_"..colour.."", {
 	    description = sdraiadesc.."",
 	    drawtype = "mesh",
 		mesh = "sdraia.obj",
-	    tiles = {"sdraia_"..colour..".png",
-	    },	    
+	    tiles = {"sdraia_"..colour..".png",},
         inventory_image = "sdraia_"..colour.."_inv.png",
-	    
-        wield_image  = {"sdraia_"..colour..".png" },
+
+        wield_image  = "sdraia_"..colour..".png" ,
 	    paramtype = "light",
 	    paramtype2 = "facedir",
 	    sunlight_propagates = true,
@@ -35,12 +30,11 @@ for i in ipairs(sdraia_list) do
 	    },
 		groups = {snappy=2,cracky=3,oddly_breakable_by_hand=3,not_in_creative_inventory=0},
 		--sounds = default.node_sound_wood_defaults(),
-        drop = "summer:sdraia_"..colour.."",        
-		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+        drop = "summer:sdraia_"..colour.."",
+		-- TODO: Opravit!
+		--[[ on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 				return minetest.sleep_in_sdraia( pos, node, clicker, itemstack, pointed_thing );
-			end
-        
- 
+			end ]]
    })
    
 
@@ -202,5 +196,5 @@ minetest.sleep_in_sdraia = function( pos, node, clicker, itemstack, pointed_thin
 end
 
 
-	
-	end
+
+end

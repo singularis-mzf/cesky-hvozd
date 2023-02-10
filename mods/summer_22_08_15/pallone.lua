@@ -1,7 +1,7 @@
 --pallone
 local CALCIO = 0.1
 
-local function reg_ball(color)
+local function reg_ball(color, popis)
 
 	local ball_item_name = "summer:ball_"..color.."_item"
 	local ball_ent_name = "summer:ball_"..color.."_entity"
@@ -14,6 +14,7 @@ local function reg_ball(color)
         liquids_pointable = true,
 		groups = { immortal = true },
 		textures = { "ball_"..color..".png" },
+		use_texture_alpha = "opaque",
 		collisionbox = { -0.2, -0.2, -0.2, 0.2, 0.2, 0.2 }, --{ -1, -1, -1, 1, 1, 1 },
 
 		timer = 0,
@@ -21,12 +22,12 @@ local function reg_ball(color)
 		on_step = function(self, dtime)
 			self.timer = self.timer + dtime
 			if self.timer >= CALCIO then
-				self.object:setacceleration({x=0, y=-10, z=0})
+				self.object:set_acceleration({x=0, y=-10, z=0})
 				self.timer = 0
-				local vel = self.object:getvelocity()
-				local p = self.object:getpos();
+				local vel = self.object:get_velocity()
+				local p = self.object:get_pos();
 				p.y = p.y - 0.5
-				if minetest.registered_nodes[minetest.env:get_node(p).name].walkable then
+				if minetest.registered_nodes[minetest.get_node(p).name].walkable then
 					vel.x = vel.x * 0.85
 					if vel.y < 0 then vel.y = vel.y * -0.65 end
 					vel.z = vel.z * 0.90
@@ -36,9 +37,9 @@ local function reg_ball(color)
 					vel.x = 0
 					vel.z = 0
 				end
-				self.object:setvelocity(vel)
-				local pos = self.object:getpos()
-				local objs = minetest.env:get_objects_inside_radius(pos, 1)
+				self.object:set_velocity(vel)
+				local pos = self.object:get_pos()
+				local objs = minetest.get_objects_inside_radius(pos, 1)
 				local player_count = 0
 				local final_dir = { x=0, y=0, z=0 }
 				for _,obj in ipairs(objs) do
@@ -58,7 +59,7 @@ local function reg_ball(color)
 					final_dir.x = (final_dir.x * 5) / player_count
 					final_dir.y = (final_dir.y * 5) / player_count
 					final_dir.z = (final_dir.z * 5) / player_count
-					self.object:setvelocity(final_dir)
+					self.object:set_velocity(final_dir)
 				end
 			end
 		end,
@@ -72,12 +73,12 @@ local function reg_ball(color)
 		end,
 
 		is_moving = function(self)
-			local v = self.object:getvelocity()
+			local v = self.object:get_velocity()
 			if  (math.abs(v.x) <= 0.1)
 			 and (math.abs(v.z) <= 0.1) then
 				v.x = 0
 				v.z = 0
-				self.object:setvelocity(v)
+				self.object:set_velocity(v)
 				return false
 			end
 			return true
@@ -85,47 +86,39 @@ local function reg_ball(color)
 	})
 
 	minetest.register_craftitem(ball_item_name,{
-		description = "Summer Ball ("..color..")",
+		description = popis,
 		inventory_image = "summer_ball_"..color.."_inv.png",
 
 		on_place = function(itemstack, placer, pointed_thing)
 			local pos = pointed_thing.above
 			--pos = { x=pos.x+0.5, y=pos.y, z=pos.z+0.5 }
-			local ent = minetest.env:add_entity(pos, ball_ent_name)
-			ent:setvelocity({x=0, y=-15, z=0})
+			local ent = minetest.add_entity(pos, ball_ent_name)
+			ent:set_velocity({x=0, y=-15, z=0})
 			itemstack:take_item()
 			return itemstack
 		end,
 	})
-	
-minetest.register_craft({
-		output = ball_item_name,
-		recipe = {
-			{ "default:paper", "group:leaves", "default:paper" },
-			{ "group:leaves", "wool:"..color, "group:leaves" },
-			{ "default:paper", "group:leaves", "default:paper" },
-		},
-	})
 
-
-	
-if minetest.get_modpath("cannabis") then
 	minetest.register_craft({
 		output = ball_item_name,
 		recipe = {
-			{ "", "cannabis:canapa_plastic", "" },
-			{ "cannabis:canapa_plastic", "wool:"..color, "cannabis:canapa_plastic" },
-			{ "", "cannabis:canapa_plastic", "" },
+			{ "basic_materials:plastic_strip", "basic_materials:plastic_strip", "basic_materials:plastic_strip" },
+			{ "basic_materials:plastic_strip", "dye:"..color, "basic_materials:plastic_strip" },
+			{ "basic_materials:plastic_strip", "basic_materials:plastic_strip", "basic_materials:plastic_strip" },
 		},
 	})
-
-end
 end
 
-colors = {
-	"black", "red", "green", "blue", "yellow", "violet","orange"
+local pallone_colors = {
+	black = "černý míč",
+	red = "červený míč",
+	green = "zelený míč",
+	blue = "modrý míč",
+	yellow = "žlutý míč",
+	violet = "fialový míč",
+	orange = "oranžový míč",
 }
 
-for _,color in ipairs(colors) do
-	reg_ball(color)
+for color, desc in pairs(pallone_colors) do
+	reg_ball(color, desc)
 end

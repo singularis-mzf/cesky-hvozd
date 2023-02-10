@@ -1,12 +1,12 @@
 local Ombrellone_list = {
-	{ "Red Ombrellone", "red"},
-	{ "White Ombrellone", "white"},
-	{ "Orange Ombrellone", "orange"},
-    { "Black Ombrellone", "black"},
-	{ "Yellow Ombrellone", "yellow"},
-	{ "Green Ombrellone", "green"},
-	{ "Blue Ombrellone", "blue"},
-	{ "Violet Ombrellone", "violet"},
+	{ "červený plážový slunečník (čtveratý)", "red"},
+	{ "oranžový plážový slunečník (čtveratý)", "orange"},
+    { "černý plážový slunečník (čtveratý)", "black"},
+	{ "žlutý plážový slunečník (čtveratý)", "yellow"},
+	{ "zelený plážový slunečník (čtveratý)", "green"},
+	{ "modrý plážový slunečník (čtveratý)", "blue"},
+	{ "fialový plážový slunečník (čtveratý)", "violet"},
+	{ "bílý plážový slunečník (čtveratý)", "white"},
 }
 
 for i in ipairs(Ombrellone_list) do
@@ -14,13 +14,13 @@ for i in ipairs(Ombrellone_list) do
 	local colour = Ombrellone_list[i][2]
     
    minetest.register_node("summer:ombrellone_"..colour.."", {
-	    description = ombrellonedesc.."",
+	    description = ombrellonedesc.." (otevřený)",
 	    drawtype = "mesh",
 		mesh = "omb_o.obj",
-	    tiles = {"ball_"..colour..".png",
-	    },	    
+	    tiles = {"ball_"..colour..".png"},
+		use_texture_alpha = "opaque",
         inventory_image = "ombo_"..colour.."_q.png",
-	    
+
        wield_image  = {"ombo_"..colour.."_q.png"},
 	    paramtype = "light",
 	    paramtype2 = "facedir",
@@ -41,13 +41,13 @@ for i in ipairs(Ombrellone_list) do
 
 
 minetest.register_node("summer:ombrellone_"..colour.."_ch", {
-	    description = ombrellonedesc.." ch",
+	    description = ombrellonedesc.." (zavřený)",
 	    drawtype = "mesh",
 		mesh = "omb_c.obj",
-	    tiles = {"ball_"..colour..".png",
-	    },
+	    tiles = {"ball_"..colour..".png"},
+		use_texture_alpha = "opaque",
         inventory_image = "ombc_"..colour.."_q.png",
-	    
+
         wield_image  = {"ombc_"..colour.."_q.png"},
 	    paramtype = "light",
 	    paramtype2 = "facedir",

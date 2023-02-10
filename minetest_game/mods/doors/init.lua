@@ -427,7 +427,6 @@ function doors.register(name, def)
 			local pos
 			local itemstack_name = itemstack:get_name() or name
 
-			print("onplace called for " .. name)
 			if not pointed_thing.type == "node" then
 				return itemstack
 			end

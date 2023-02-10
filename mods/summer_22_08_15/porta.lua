@@ -19,7 +19,31 @@ local Porta_list = {
 for i in ipairs(Porta_list) do
 	local portadesc = Porta_list[i][1]
 	local colour = Porta_list[i][2]
-    
+
+	doors.register("summer_porta_"..colour, {
+		mesh = "porta",
+		mesh_level = 2,
+		tiles = {{ name = "porta_"..colour..".png", backface_culling = true }},
+		description = portadesc,
+		inventory_image = "summer_p_"..colour..".png",
+		groups = {node = 1, choppy = 2, oddly_breakable_by_hand = 2, flammable = 2},
+		gain_open = 0.06,
+		gain_close = 0.13,
+		sounds = default.node_sound_wood_defaults(),
+		sound_open = "summer_porta_ch",
+		sound_close = "summer_porta_ch",
+		recipe = {
+			{"group:wood", "wool:"..colour, "", },
+			{"wool:"..colour, "group:wood", "", },
+			{"group:wood", "group:wood", "", }
+		},
+	})
+
+--[[
+	
+	
+	
+	
    minetest.register_node("summer:porta_"..colour.."", {
 	    description = portadesc.."",
 	    drawtype = "mesh",
@@ -95,7 +119,5 @@ minetest.register_node("summer:porta_"..colour.."_ch", {
 })
 	    end,
 	})
-
-
-	
+	]]
 end
