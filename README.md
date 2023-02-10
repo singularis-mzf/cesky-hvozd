@@ -918,6 +918,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPL 2.1+ pro kód, ostatní CC BY-SA 3.0
 * [ContentDB](https://content.minetest.net/packages/joe7575/techpack\_stairway/)
 
+## Tomb Stones (tombs)
+
+* Zdroj: [https://github.com/NathanSalapat/tombs](https://github.com/NathanSalapat/tombs), revize 1e88b4a878566c1587a8d52835128c2b9b8d8b41
+* Původní licence: GPLv3 pro kód, CC BY-SA 4.0 ostatní (s výjimkou jednoho CC0)
+* Licence úprav: GPLv3 pro vše; pro vše kromě kódu alernativně také CC BY-SA 4.0
+* [ContentDB](https://content.minetest.net/packages/Nathan.S/tombs/)
+
 ## Tower Crane (towercrane)
 
 * Zdroj: [https://github.com/minetest-mods/towercrane](https://github.com/minetest-mods/towercrane), revize 3975b970ee7bc33c10237e0e5bd4c84616e70e78
