@@ -181,7 +181,7 @@ function display_api.update_entities(pos)
 
 		if objref.set_rotation then
 			objref:set_rotation({
-				x = ov.rotation.x*math.pi/2,
+				x = ov.rotation.x*math.pi/2 + (edef.pitch or 0),
 				y = ov.rotation.y*math.pi/2 + (edef.yaw or 0),
 				z = ov.rotation.z*math.pi/2,
 			})

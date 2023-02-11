@@ -1,5 +1,5 @@
 minetest.register_tool('tombs:chisel', {
-   description = 'Stone Chisel',
+   description = 'rydlo na náhrobky',
    inventory_image = 'tombs_chisel.png',
    wield_image = 'tombs_chisel.png',
 })

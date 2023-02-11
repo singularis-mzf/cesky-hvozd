@@ -1,7 +1,7 @@
 -- ARRAY STATS
 
-local function array_stats(name, table)
-	if not table then
+local function array_stats(name, tbl)
+	if not tbl then
 		return name..":nil"
 	end
 
@@ -10,7 +10,7 @@ local function array_stats(name, table)
 	local count_per_mod = {}
 	local i, m, k2
 
-	for k, _ in pairs(table) do
+	for k, _ in pairs(tbl) do
 		i = string.find(k, ":")
 		if i then
 			m = k:sub(1, i - 1)
@@ -33,6 +33,19 @@ local function array_stats(name, table)
 		if count > mod_with_most_count then
 			mod_with_most_name = mod
 			mod_with_most_count = count
+		end
+	end
+
+	if name == "registered_nodes" then
+		local t = {}
+		for m, c in pairs(count_per_mod) do
+			if c >= 100 then
+				table.insert(t, {name = m, count = c})
+			end
+		end
+		table.sort(t, function(a, b) return a.count < b.count end)
+		for _, row in ipairs(t) do
+			print("registered_nodes: ["..row.name.."] = "..row.count.." nodes")
 		end
 	end
 

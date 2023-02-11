@@ -8,53 +8,73 @@ dofile(minetest.get_modpath('tombs')..'/gravestones.lua')
 dofile(minetest.get_modpath('tombs')..'/formspec.lua')
 dofile(minetest.get_modpath('tombs')..'/chisel.lua')
 
---support for other mods
-if minetest.get_modpath('bakedclay') and (minetest.settings:get_bool('tombs.load_bakedclay')) then
-   dofile(minetest.get_modpath('tombs')..'/bakedclay.lua')
-   minetest.log('action', 'Tombs loaded support for bakedclay.')
-end
+-- materials
 
-if minetest.get_modpath('caverealms') and (minetest.settings:get_bool('tombs.load_caverealms')) then
-   dofile(minetest.get_modpath('tombs')..'/caverealms.lua')
-   minetest.log('action', 'Tombs loaded support for caverealms.')
-end
+local color_gold = "#C0AA1C"
+local color_white = "#FFFFFF"
 
-if minetest.get_modpath('darkage') and (minetest.settings:get_bool('tombs.load_darkage')) then
-   dofile(minetest.get_modpath('tombs')..'/darkage.lua')
-   minetest.log('action', 'Tombs loaded support for darkage.')
-end
+local materials = {
+	["bakedclay:black"] = {color = color_gold},
+	["bakedclay:blue"] = {color = color_gold},
+	-- ["bakedclay:brown"] = true,
+	["bakedclay:cyan"] = {color = color_white},
+	["bakedclay:dark_green"] = {color = color_gold},
+	["bakedclay:dark_grey"] = {color = color_white},
+	["bakedclay:green"] = {color = color_white},
+	["bakedclay:grey"] = true,
+	["bakedclay:magenta"] = {color = color_white},
+	-- ["bakedclay:natural"] = true,
+	["bakedclay:orange"] = true,
+	["bakedclay:pink"] = true,
+	["bakedclay:red"] = {color = color_gold},
+	["bakedclay:violet"] = {color = color_gold},
+	["bakedclay:white"] = true,
+	-- ["bakedclay:yellow"] = true,
+	-- ["basic_materials:cement_block"] = true,
+	["basic_materials:concrete_block"] = {color = color_gold},
+	-- ["darkage:marble"] = true,
+	-- ["default:desert_sandstone"] = true,
+	["default:desert_stone"] = {color = color_white},
+	["default:goldblock"] = true,
+	-- ["default:sandstone"] = true,
+	-- ["default:silver_sandstone"] = true,
+	["default:steelblock"] = true,
+	["default:stone"] = {color = color_gold},
+	["default:wood"] = {color = color_white},
+	["jonez:marble"] = true,
+	["moreblocks:copperpatina"] = true,
+	-- ["technic:blast_resistant_concrete"] = true,
+	["technic:granite"] = {color = color_white},
+	["technic:marble"] = true,
+}
 
-if minetest.get_modpath('default') and (minetest.settings:get_bool('tombs.load_default')) then
-   dofile(minetest.get_modpath('tombs')..'/default.lua')
-   minetest.log('action', 'Tombs loaded support for default.')
-end
+-- bakedclay
 
-if minetest.get_modpath('ethereal') and (minetest.settings:get_bool('tombs.load_ethereal')) then
-   dofile(minetest.get_modpath('tombs')..'/ethereal.lua')
-   minetest.log('action', 'Tombs loaded support for ethereal.')
-end
+local empty_table = {}
 
-if minetest.get_modpath('geominer') and (minetest.settings:get_bool('tombs.load_geominer')) then
-   dofile(minetest.get_modpath('tombs')..'/geominer.lua')
-   minetest.log('action', 'Tombs loaded support for geominer.')
-end
-
-if minetest.get_modpath('maple') and (minetest.settings:get_bool('tombs.load_maple')) then
-   dofile(minetest.get_modpath('tombs')..'/maple.lua')
-   minetest.log('action', 'Tombs loaded support for maple.')
-end
-
-if minetest.get_modpath('moreores') and (minetest.settings:get_bool('tombs.load_moreores')) then
-   dofile(minetest.get_modpath('tombs')..'/moreores.lua')
-   minetest.log('action', 'Tombs loaded support for moreores.')
-end
-
-if minetest.get_modpath('moretrees') and (minetest.settings:get_bool('tombs.load_moretrees')) then
-   dofile(minetest.get_modpath('tombs')..'/moretrees.lua')
-   minetest.log('action', 'Tombs loaded support for moretrees.')
-end
-
-if minetest.get_modpath('wool') and (minetest.settings:get_bool('tombs.load_wool')) then
-   dofile(minetest.get_modpath('tombs')..'/wool.lua')
-   minetest.log('action', 'Tombs loaded support for wool.')
+for name, mdef in pairs(materials) do
+	local ndef = minetest.registered_nodes[name]
+	if ndef ~= nil then
+		if mdef == true then
+			mdef = {color = "black"}
+		end
+		if ndef.description == nil then
+			error("[tombs] Invalid description for "..name)
+		end
+		local tiles = ndef.tiles
+		if type(tiles) == "table" then
+			tiles = tiles[1]
+			if type(tiles) == "table" then
+				tiles = tiles.name
+			end
+		end
+		if type(tiles) == "string" then
+			tiles = tiles:gsub(".png$", "")
+		else
+			error("[tombs] Cannot parse tiles of "..name..": "..dump2(ndef.tiles))
+		end
+		tombs.register_stones(name, name:gsub(":", "_"), ndef.description, tiles, mdef)
+	else
+		minetest.log("warning", "Material "..name.." expected for tomb stone not found!")
+	end
 end
