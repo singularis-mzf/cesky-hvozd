@@ -105,6 +105,8 @@ function stairsplus:register_bank_slopes(recipeitem)
 					new_def.selection_box = process_box(new_def.selection_box)
 				end
 			end
+			new_def.paramtype = "none"
+			new_def._transparency = 0 -- for mod shadows
 
 			local groups = new_def.groups or {}
 			groups.not_in_creative_inventory = nil
