@@ -8,6 +8,12 @@ local sdraia_list = {
 	{ "fialové lehátko", "violet"},
 }
 
+local box = {
+	type = "fixed",
+	-- fixed = { 0.4, 0.1,1.0, -0.4,-0.49, -1.0 },
+	fixed = {-0.4, -0.49, -1.0, 0.4, -0.1, 1.0 },
+}
+
 for i in ipairs(sdraia_list) do
 	local sdraiadesc = sdraia_list[i][1]
 	local colour = sdraia_list[i][2]
@@ -23,14 +29,11 @@ for i in ipairs(sdraia_list) do
 	    paramtype = "light",
 	    paramtype2 = "facedir",
 	    sunlight_propagates = true,
-	    walkable = false,
-	    selection_box = {
-	        type = "fixed",
-	        fixed = { 0.4, 0.1,1.0, -0.4,-0.49, -1.0 },
-	    },
-		groups = {snappy=2,cracky=3,oddly_breakable_by_hand=3,not_in_creative_inventory=0},
-		--sounds = default.node_sound_wood_defaults(),
-        drop = "summer:sdraia_"..colour.."",
+	    selection_box = box,
+		collision_box = box,
+		groups = {snappy=2,cracky=3,oddly_breakable_by_hand=3},
+		sounds = default.node_sound_wood_defaults(),
+        -- drop = "summer:sdraia_"..colour.."",
 		-- TODO: Opravit!
 		--[[ on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 				return minetest.sleep_in_sdraia( pos, node, clicker, itemstack, pointed_thing );

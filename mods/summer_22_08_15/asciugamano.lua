@@ -30,12 +30,15 @@ for i in ipairs(Asciugamano_list) do
 	    },
 		groups = {snappy=2,cracky=3,oddly_breakable_by_hand=3,not_in_creative_inventory=0},
 		--sounds = default.node_sound_wood_defaults(),
-        drop = "summer:asciugamano_"..colour.."",        
-		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+        -- drop = "summer:asciugamano_"..colour.."",
+		--[[on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 			-- TODO: [ ] Implement better
 				-- return minetest.sleep_in_asciugamano( pos, node, clicker, itemstack, pointed_thing );
-			end
+			end ]]
    })
+	if minetest.get_modpath("emote") then
+		emote.register_bed("summer:asciugamano_"..colour.."", "asciugamano")
+	end
 
 --[[
 minetest.allow_sit = function( player )

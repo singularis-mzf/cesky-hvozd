@@ -133,27 +133,42 @@ local function sednout(zidle_pos, zidle_node, player, config)
 	return true
 end
 
+local summer_colors = {
+	"red", "orange", "black", "yellow", "green", "blue", "violet"
+}
 local sitting_nodes = {
 	{ name = "cottages:bench", x = 0, y = 0, z = -0.3 },
 	{ name = "homedecor:deckchair", x = 0, y = -0.2, z = -0.4, look_vertical = -math.pi / 8 },
 	{ name = "homedecor:deckchair_striped_blue", x = 0, y = -0.2, z = -0.4, look_vertical = -math.pi / 8 },
-	{ name = "homedecor:kitchen_chair_wood" },
-	{ name = "homedecor:kitchen_chair_padded" },
+	{ name = "homedecor:kitchen_chair_*", name_args = {"wood", "padded"} },
 	{ name = "homedecor:bench_large_1", x = -1, x_max = 0, y = 0, z = 0 },
 	{ name = "homedecor:bench_large_2", x = -1, x_max = 0, y = -0.1, z = 0 },
 	{ name = "homedecor:armchair" },
 	{ name = "lrfurn:armchair" },
-	{ name = "homedecor:office_chair_basic", x = 0, y = 0.15, z = 0 },
-	{ name = "homedecor:office_chair_upscale", x = 0, y = 0.15, z = 0 },
+	{ name = "homedecor:office_chair_basic", name_args = {"basic", "upscale"}, x = 0, y = 0.15, z = 0 },
 	{ name = "lrfurn:sofa", x = -1, y = -0.05, z = 0, x_max = 0, rotation = math.pi / 2 },
 	{ name = "lrfurn:longsofa", x = -1.7, y = -0.05, z = 0, x_max = 0, rotation = math.pi / 2 },
+	{ name = "summer:sdraia_*", name_args = summer_colors, x = 0, y = -0.1, z = -0.2 },
 }
 
 for _, node_config in ipairs(sitting_nodes) do
-	if minetest.registered_nodes[node_config.name] then
-		minetest.override_item(node_config.name, {
-			on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-				sednout(pos, node, clicker, node_config)
-			end})
+	local override = {
+		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+			sednout(pos, node, clicker, node_config)
+		end,
+	}
+	if node_config.name_args == nil then
+		-- single node override
+		if minetest.registered_nodes[node_config.name] then
+			minetest.override_item(node_config.name, override)
+		end
+	else
+		-- multi-node override
+		for _, arg in ipairs(node_config.name_args) do
+			local name = node_config.name:gsub("%*", arg)
+			if minetest.registered_nodes[name] then
+				minetest.override_item(name, override)
+			end
+		end
 	end
 end
