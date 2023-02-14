@@ -525,13 +525,29 @@ if minetest.get_modpath("unifieddyes") then
 		connect_sides = {"top", "bottom", "front", "left", "back", "right"}, ]]
 		on_dig = unifieddyes.on_dig,
 	}
-	minetest.register_node("ch_extras:colorable_glass", def)
+	minetest.register_node("ch_extras:colorable_glass", table.copy(def))
 	minetest.register_craft({
 		output = "ch_extras:colorable_glass 6",
 		recipe = {
 			{"dye:red", "dye:green", "dye:blue"},
 			{"building_blocks:smoothglass", "building_blocks:smoothglass", "building_blocks:smoothglass"},
 			{"building_blocks:smoothglass", "building_blocks:smoothglass", "building_blocks:smoothglass"},
+		},
+	})
+
+	def.description = "tlustší tónované sklo (blok, barvitelné)"
+	def.tiles = {{
+		name = "ch_extras_glass.png^[opacity:220",
+		backface_culling = true,
+	}}
+	def.inventory_image = "[combine:16x16:1,1=ch_extras_glass.png\\^[opacity\\:240\\^[resize\\:14x14"
+	def.wield_image = def.inventory_image
+	minetest.register_node("ch_extras:colorable_glass_thick", def)
+	minetest.register_craft({
+		output = "ch_extras:colorable_glass_thick",
+		recipe = {
+			{"ch_extras:colorable_glass", "ch_extras:colorable_glass"},
+			{"", ""},
 		},
 	})
 
