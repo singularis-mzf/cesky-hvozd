@@ -27,7 +27,7 @@ local empty_table = {}
 
 minetest.register_on_mods_loaded(function()
 	for name, ndef in pairs(minetest.registered_nodes) do
-		if passable_drawtypes[ndef.drawtype or ""] then
+		if passable_drawtypes[ndef.drawtype or ""] then -- or ndef.sunlight_propagates == true
 			node_types[name] = passable
 		else
 			local groups = ndef.groups or empty_table
@@ -38,11 +38,15 @@ minetest.register_on_mods_loaded(function()
 			end
 		end
 	end
-	local n = 0
-	for _, _ in pairs(node_types) do
-		n = n + 1
+	local passable_count, evadable_count = 0, 0
+	for _, value in pairs(node_types) do
+		if value == passable then
+			passable_count = passable_count + 1
+		elseif value == evadable then
+			evadable_count = evadable_count + 1
+		end
 	end
-	print("[ch_test] "..n.." passable and evadable nodes found.")
+	print("[ch_test] "..passable_count.." passable and "..evadable_count.." evadable nodes found.")
 end)
 
 -- local debug_steps_counter = 0

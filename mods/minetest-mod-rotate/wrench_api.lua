@@ -518,7 +518,12 @@ local function get_node_absolute_orientation_mode(pointed_thing)
 
 	local node = minetest.get_node(pos)
 	local ndef = minetest.registered_nodes[node.name]
-	if not ndef or ndef.paramtype2 ~= "facedir" or
+	if minetest.get_item_group(node.name, "walldir") > 0 then
+		local param2 = ndef._facedir
+		local axis = mt_axis_code(param2)
+		local rot = mt_rot_code(param2)
+		return string.format("a%d%d",axis,rot)
+	elseif not ndef or ndef.paramtype2 ~= "facedir" or
 			(ndef.drawtype == "nodebox" and
 			ndef.node_box.type ~= "fixed") or
 			node.param2 == nil then
@@ -540,7 +545,17 @@ local function get_node_relative_orientation_mode(player, pointed_thing)
 
 	local node = minetest.get_node(pos)
 	local ndef = minetest.registered_nodes[node.name]
-	if not ndef or ndef.paramtype2 ~= "facedir" or
+	if minetest.get_item_group(node.name, "walldir") > 0 then
+		local param2 = ndef._facedir
+		local state = player_node_state(player, pointed_thing)
+		if not state then
+			return
+		end
+		local relative = mt_to_relative_orientation(state, param2)
+		local axis = mt_axis_code(relative)
+		local rot = mt_rot_code(relative)
+		return string.format("r%d%d",axis,rot)
+	elseif not ndef or ndef.paramtype2 ~= "facedir" or
 			(ndef.drawtype == "nodebox" and
 			ndef.node_box.type ~= "fixed") or
 			node.param2 == nil then
@@ -634,6 +649,46 @@ local function param2_to_facedir(paramtype2, param2)
 	return result, extra_data
 end
 
+local function node_to_facedir(ndef, param2) -- returns new_param2, extra_data or nil, nil if not supported
+	local result, extra_data, back, color
+	local paramtype2 = ndef.paramtype2 or "none"
+	color = minetest.strip_param2_color(param2, paramtype2)
+	if paramtype2 == "facedir" then
+		result = param2
+		extra_data = 0
+	elseif paramtype2 == "colorfacedir" then
+		result = param2 - color
+		extra_data = color
+	elseif paramtype2 == "wallmounted" then
+		result = wallmounted_to_facedir[param2]
+		extra_data = 0
+	elseif paramtype2 == "colorwallmounted" then
+		result = wallmounted_to_facedir[param2 - color]
+		extra_data = color
+	--[[elseif paramtype2 == "4dir" then
+		result = param2 % 4
+		extra_data = 0
+	elseif paramtype2 == "color4dir" then
+		result = param2 - color
+		extra_data = color ]]
+	elseif ndef.groups ~= nil and (ndef.groups.walldir or 0) > 0 then
+		-- walldir node
+		result = ndef._facedir
+		if result == nil then
+			error("_facedir expected: "..dump2(ndef))
+		end
+		extra_data = param2
+	end
+	if not result then
+		extra_data = nil
+	--[[ else
+		back = facedir_to_param2(paramtype2, result, extra_data)
+		print("DEBUG: ["..(paramtype2 or "nil").."] ("..param2..") => ("..result..", "..extra_data..") => ("..(back or "nil")..")")
+		]]
+	end
+	return result, extra_data
+end
+
 -- Main rotation function
 local function wrench_handler(itemstack, player, pointed_thing, mode, material, max_uses)
 
@@ -652,16 +707,22 @@ local function wrench_handler(itemstack, player, pointed_thing, mode, material, 
 		return
 	end
 
-	local node = minetest.get_node(pos)
-	local ndef = minetest.registered_nodes[node.name]
+	local node, ndef, old_param2, old_facedir, extra_data
+
+	node = minetest.get_node(pos)
+	ndef = minetest.registered_nodes[node.name]
 	if not ndef or not ndef.paramtype2 or node.param2 == nil then
 		return
 	end
-	local old_param2 = node.param2
-	local old_facedir, extra_data = param2_to_facedir(ndef.paramtype2, old_param2)
-	if not old_facedir or not extra_data then
-		minetest.log("warning", "param2_to_facedir() returned nil (ndef.paramtype2 == "..(ndef.paramtype2 or "nil")..", old_param2 == "..(old_param2 or "nil")..")")
-		return
+	old_param2 = node.param2
+	if minetest.get_item_group(node.name, "walldir") <= 0 then
+		old_facedir, extra_data = node_to_facedir(ndef, old_param2)
+		if not old_facedir or not extra_data then
+			minetest.log("warning", "node_to_facedir() returned nil (node.name == \""..node.name.."\", ndef.paramtype2 == "..(ndef.paramtype2 or "nil")..", old_param2 == "..(old_param2 or "nil")..")")
+			return
+		end
+	else
+		old_facedir, extra_data = ndef._facedir, old_param2
 	end
 
 	local new_facedir
@@ -685,7 +746,12 @@ local function wrench_handler(itemstack, player, pointed_thing, mode, material, 
 		new_facedir = lookup_node_rotation(pointed_thing, old_facedir, player, mode)
 	end
 
-	local new_param2 = facedir_to_param2(ndef.paramtype2, new_facedir, extra_data)
+	local new_param2
+	if minetest.get_item_group(node.name, "walldir") <= 0 then
+		new_param2 = facedir_to_param2(ndef.paramtype2, new_facedir, extra_data)
+	else
+		new_param2 = facedir_to_param2("facedir", new_facedir, extra_data)
+	end
 
 	if not new_param2 then
 		minetest.log("warning", "Conversion failed: "..new_facedir.." cannot be converted to "..ndef.paramtype2)

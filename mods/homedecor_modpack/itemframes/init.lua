@@ -236,7 +236,7 @@ local function allow_metadata_inventory_take(pos, listname, index, stack, player
 end
 
 local function on_rotate(pos, node, user, mode, new_param2)
-	local player_name = player and player:get_player_name()
+	local player_name = user and user:get_player_name()
 	if not player_name then
 		return false
 	end

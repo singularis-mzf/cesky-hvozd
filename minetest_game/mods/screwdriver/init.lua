@@ -117,6 +117,15 @@ screwdriver.handler = function(itemstack, user, pointed_thing, mode, uses)
 	local new_param2
 	if fn then
 		new_param2 = fn(pos, node, mode)
+	elseif minetest.get_item_group(node.name, "walldir") > 0 then
+		-- call facedir handler for walldir nodes
+		if mode == screwdriver.ROTATE_FACE and ndef._facedir == 13 then
+			new_param2 = 15 -- exception
+		elseif mode == screwdriver.ROTATE_FACE and ndef._facedir == 15 then
+			new_param2 = 13 -- exception
+		else
+			new_param2 = screwdriver.rotate["facedir"](pos, {name = node.name, param1 = node.param1, param2 = ndef._facedir}, mode)
+		end
 	else
 		new_param2 = node.param2
 	end
