@@ -148,46 +148,6 @@ local function toggle_timer(pos)
 	end
 end
 
-local function on_timer(pos)
-	local node = minetest.get_node(pos)
-	local flipstate = mesecon.flipstate(pos, node)
-	local meta = minetest.get_meta(pos)
-	local counter = meta:get_int("counter") + 1
-	local limit = meta:get_int("blinky_plant_limit")
-	local limit_reached = false
-	if flipstate == "on" then
-		mesecon.receptor_on(pos)
-	elseif limit == 0 or counter < limit then
-		mesecon.receptor_off(pos)
-	else
-		minetest.log("warning", "Blinky plant of "..meta:get_string("owner").." at "..minetest.pos_to_string(pos).." reached the limit "..limit)
-		limit_reached = true
-	end
-	meta:set_int("counter", counter)
-	if not limit_reached then
-		toggle_timer(pos)
-	end
-	meta:set_string("infotext", get_infotext(meta))
-end
-
---[[
-metadata:
-int counter -- počítadlo přepnutí
-int limit -- > 0: limit počítadla přepnutí, == 0: bez limitu
-int locked -- je soukromá?
-float interval -- interval časovače, záporný znamená, že květina je vypnutá
-
-string infotext
-
-]]
-
-local function on_construct(pos)
-	local meta = minetest.get_meta(pos)
-	meta:set_int("locked", 1)
-	meta:set_float("interval", default_interval)
-	toggle_timer(pos)
-end
-
 local function set_interval(pos, new_interval)
 	local meta = minetest.get_meta(pos)
 	local timer = minetest.get_node_timer(pos)
@@ -208,6 +168,50 @@ local function set_interval(pos, new_interval)
 		mesecon.receptor_off(pos)
 	end
 	return new_interval
+end
+
+local function on_timer(pos)
+	local node = minetest.get_node(pos)
+	local flipstate = mesecon.flipstate(pos, node)
+	local meta = minetest.get_meta(pos)
+	local counter = meta:get_int("counter") + 1
+	local limit = meta:get_int("blinky_plant_limit")
+	local limit_reached = false
+	if flipstate == "on" then
+		mesecon.receptor_on(pos)
+	elseif limit == 0 or counter < limit then
+		mesecon.receptor_off(pos)
+	else
+		minetest.log("warning", "Blinky plant of "..meta:get_string("owner").." at "..minetest.pos_to_string(pos).." reached the limit "..limit)
+		limit_reached = true
+	end
+	meta:set_int("counter", counter)
+	if not limit_reached then
+		toggle_timer(pos)
+	else
+		local interval = math.abs(meta:get_float("interval"))
+		meta:set_float("interval", -interval)
+		set_interval(pos, interval)
+	end
+	meta:set_string("infotext", get_infotext(meta))
+end
+
+--[[
+metadata:
+int counter -- počítadlo přepnutí
+int limit -- > 0: limit počítadla přepnutí, == 0: bez limitu
+int locked -- je soukromá?
+float interval -- interval časovače, záporný znamená, že květina je vypnutá
+
+string infotext
+
+]]
+
+local function on_construct(pos)
+	local meta = minetest.get_meta(pos)
+	meta:set_int("locked", 1)
+	meta:set_float("interval", default_interval)
+	toggle_timer(pos)
 end
 
 local function after_place_node(pos, placer, itemstack, pointed_thing)
