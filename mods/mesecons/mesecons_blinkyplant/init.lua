@@ -40,6 +40,12 @@ local function get_formspec(pos, meta, player)
 	local is_locked = meta:get_int("locked") ~= 0
 	local owner = meta:get_string("owner")
 	local is_registered_player = minetest.check_player_privs(player, "ch_registered_player")
+	local limit = meta:get_int("blinky_plant_limit")
+	if limit > 0 then
+		limit = "limit "..limit
+	else
+		limit = "bez limitu"
+	end
 	local formspec = {
 		"formspec_version[4]",
 		"size[8,7]",
@@ -47,27 +53,27 @@ local function get_formspec(pos, meta, player)
 		"label[1.5,0.75;mrkající květina]",
 		"label[0.25,1.75;vlastník/ice: ", ch_core.prihlasovaci_na_zobrazovaci(owner), "]",
 		"label[0.25,2.5;mrká: ", is_enabled and "ano" or "ne", "]",
-		"label[0.25,3.25;počítadlo: ", meta:get_int("counter"), "]",
+		"label[0.25,3.25;počítadlo: ", meta:get_int("counter"), " (", limit, ")]",
 		"label[0.25,4.0;zamčena: ", is_locked and "ano" or "ne", "]",
 		"label[0.25,4.75;interval \\[s\\]:]",
 		"field[2,4.5;1.5,0.5;interval;;", minetest.formspec_escape(interval_string), "]",
 	}
 	if is_registered_player and is_enabled then
-		table.insert(formspec, "button[3.0,2.1;3,0.75;vyp;vypnout mrkání]")
+		table.insert(formspec, "button[4.0,2.1;3,0.75;vyp;vypnout mrkání]")
 	end
 	if is_registered_player and (not is_locked or owner == "" or player:get_player_name() == owner or minetest.check_player_privs(player, "protection_bypass")) then
 		-- owner interface
 		local s
 		if not is_enabled then
-			table.insert(formspec, "button[3.0,2.1;3,0.75;zap;zapnout mrkání]")
+			table.insert(formspec, "button[4.0,2.1;3,0.75;zap;zapnout mrkání]")
 		end
-		table.insert(formspec, "button[3.0,2.85;3,0.75;reset;vynulovat počítadlo]")
+		table.insert(formspec, "button[4.0,2.85;3,0.75;reset;vynulovat počítadlo]")
 		if is_locked then
 			s = "unlock;odemknout květinu"
 		else
 			s = "lock;zamknout květinu"
 		end
-		table.insert(formspec, "button[3.0,3.55;3,0.75;")
+		table.insert(formspec, "button[4.0,3.55;3,0.75;")
 		table.insert(formspec, s)
 		table.insert(formspec, "]")
 		table.insert(formspec, "button[3.75,4.4;3,0.75;setinterval;nastavit interval]")
@@ -99,6 +105,31 @@ local function get_infotext(meta)
 	return line_1.."\n"..line_2.."\n"..line_3
 end
 
+local function can_bypass_limit(player_name)
+	return minetest.check_player_privs(player_name, "protection_bypass")
+end
+
+local function reset_limit(meta)
+	local owner = meta:get_string("owner")
+	local counter = meta:get_int("counter")
+	local limit = meta:get_int("blinky_plant_limit")
+	if owner == "" or can_bypass_limit(owner) then
+		-- privileged owner
+		print("A")
+		if limit ~= 0 then
+			meta:set_int("blinky_plant_limit", 0)
+		end
+		return 0
+	else
+		print("B")
+		-- has a limit, update
+		-- limit = counter + 100000
+		limit = counter + 10 -- DEBUG
+		meta:set_int("blinky_plant_limit", limit)
+		return limit
+	end
+end
+
 local function set_counter(meta, new_value)
 	meta:set_int("counter", new_value)
 	meta:set_string("infotext", get_infotext(meta))
@@ -120,21 +151,29 @@ end
 local function on_timer(pos)
 	local node = minetest.get_node(pos)
 	local flipstate = mesecon.flipstate(pos, node)
-	if flipstate == "on" then
-		mesecon.receptor_on(pos)
-	else
-		mesecon.receptor_off(pos)
-	end
-	toggle_timer(pos)
 	local meta = minetest.get_meta(pos)
 	local counter = meta:get_int("counter") + 1
+	local limit = meta:get_int("blinky_plant_limit")
+	local limit_reached = false
+	if flipstate == "on" then
+		mesecon.receptor_on(pos)
+	elseif limit == 0 or counter < limit then
+		mesecon.receptor_off(pos)
+	else
+		minetest.log("warning", "Blinky plant of "..meta:get_string("owner").." at "..minetest.pos_to_string(pos).." reached the limit "..limit)
+		limit_reached = true
+	end
 	meta:set_int("counter", counter)
+	if not limit_reached then
+		toggle_timer(pos)
+	end
 	meta:set_string("infotext", get_infotext(meta))
 end
 
 --[[
 metadata:
 int counter -- počítadlo přepnutí
+int limit -- > 0: limit počítadla přepnutí, == 0: bez limitu
 int locked -- je soukromá?
 float interval -- interval časovače, záporný znamená, že květina je vypnutá
 
@@ -176,6 +215,9 @@ local function after_place_node(pos, placer, itemstack, pointed_thing)
 	if player_name ~= nil and player_name ~= "" then
 		local meta = minetest.get_meta(pos)
 		meta:set_string("owner", player_name)
+		if not can_bypass_limit(player_name) then
+			reset_limit(meta)
+		end
 	end
 end
 
@@ -255,6 +297,7 @@ local function formspec_callback(custom_state, player, formname, fields)
 		end
 	end
 	if update_infotext then
+		reset_limit(meta)
 		meta:set_string("infotext", get_infotext(meta))
 	end
 	return get_formspec(pos, meta, player)
@@ -301,5 +344,28 @@ minetest.register_craft({
 			{"","group:mesecon_conductor_craftable",""},
 			{"group:sapling","group:sapling","group:sapling"}}
 })
+
+minetest.register_lbm{
+	label = "Upgrade blinky plants",
+	name = "mesecons_blinkyplant:update",
+	nodenames = {"mesecons_blinkyplant:blinky_plant_off", "mesecons_blinkyplant:blinky_plant_on"},
+	run_at_every_load = false,
+	action = function(pos, node, dtime_s)
+		local meta = minetest.get_meta(pos)
+		local limit = meta:get_int("blinky_plant_limit")
+		if limit == 0 then
+			local owner = meta:get_string("owner")
+			if owner ~= "" and not can_bypass_limit(owner) then
+				reset_limit(meta)
+				minetest.log("action", "Old blinky plant at "..minetest.pos_to_string(pos).."upgraded, new limit is "..meta:get_int("blinky_plant_limit"))
+			end
+		end
+		local enabled = get_bplant_info(meta)
+		if enabled and not minetest.get_node_timer(pos):is_started() then
+			minetest.log("warning", "Blinky plant at "..minetest.pos_to_string(pos).." restarted by LBM")
+			toggle_timer(pos)
+		end
+	end,
+}
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
