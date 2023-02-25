@@ -115,16 +115,13 @@ local function reset_limit(meta)
 	local limit = meta:get_int("blinky_plant_limit")
 	if owner == "" or can_bypass_limit(owner) then
 		-- privileged owner
-		print("A")
 		if limit ~= 0 then
 			meta:set_int("blinky_plant_limit", 0)
 		end
 		return 0
 	else
-		print("B")
 		-- has a limit, update
-		-- limit = counter + 100000
-		limit = counter + 10 -- DEBUG
+		limit = counter + 100000
 		meta:set_int("blinky_plant_limit", limit)
 		return limit
 	end
