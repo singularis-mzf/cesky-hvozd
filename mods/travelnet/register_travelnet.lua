@@ -125,7 +125,10 @@ function travelnet.register_travelnet_box(cfg)
 
 		on_destruct = function(pos)
 			minetest.remove_node(vector.add(pos, { x=0, y=1, z=0 }))
-		end
+		end,
+
+		_ch_help_group = "travelnet",
+		_ch_help = "postavenou budku je možné přebarvit na jinou barvu\nShift+levým klikem dávkou příslušného barviva",
 	})
 
 	if cfg.recipe then

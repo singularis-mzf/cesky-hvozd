@@ -586,7 +586,6 @@ if minetest.get_modpath("unifieddyes") then
 		def.connect_sides = ch_core.rotate_connect_sides_for_walldir(i, odef.connect_sides)
 		def.walldir_nodes = walldir_nodes_normal
 		def._facedir = ch_core.walldir_to_facedir(i)
-		print("will register ch_extras:colorable_glass_thick_front_"..i)
 		minetest.register_node("ch_extras:colorable_glass_thick_front_"..i, def)
 	end
 

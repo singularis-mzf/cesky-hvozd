@@ -185,6 +185,9 @@ for dye, data in pairs(colors) do
 			stairsplus:register_all("solidcolor", "plaster_"..dye, "solidcolor:plaster_"..dye, def)
 		end
 		minetest.register_craft({output = "solidcolor:plaster_"..dye, type = "shapeless", recipe = {"group:plaster", "dye:"..dye}})
+		if minetest.get_modpath("pkarcs") then
+			pkarcs.register_node("solidcolor:plaster_"..dye)
+		end
 	else
 		minetest.log("warning", "Colorful clay not registered because dye:"..dye.." does not exist!")
 	end
