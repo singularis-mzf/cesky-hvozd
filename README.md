@@ -223,6 +223,22 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: LGPL 2.1 pro kód, font public domain
 * Bez úprav
 
+# Doplňky k balíku Mesecons
+
+## Mesecon Register Circuits (mesecons\_regs)
+
+* Zdroj: [https://gitlab.com/deetmit/mesecons\_regs](https://gitlab.com/deetmit/mesecons\_regs), revize fc772a32999fd2c70b2f09e28d43580e9a0b6ca2
+* Původní licence: kód LGPLv3, vše ostatní CC BY-SA 3.0
+* Licence úprav: kód LGPLv3, vše ostatní CC BY-SA 3.0
+* [ContentDB](https://content.minetest.net/packages/marek/mesecons\_regs/)
+
+## Wireless Mesecons (mesecons\_wireless)
+
+* Zdroj: [https://github.com/GreenXenith/mesecons\_wireless](https://github.com/GreenXenith/mesecons\_wireless), revize 8ca249c10bcef8f2a9304fe6ef0e68a7d2910bd8
+* Původní licence: MIT
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/GreenXenith/mesecons\_wireless/)
+
 # Samostatné módy
 
 ## 3D Armor Fly & Swim (3d\_armor\_flyswim)
@@ -1015,13 +1031,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT (kód)
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/wine/)
 * Poznámka: mód obsahuje a používá model sudu z módu Cottages od Sokomine; autorství a licence modelu nejsou spolehlivě známy, protože mód Cottages je nezmiňuje; vycházím však z předpokladu, že model byl považován za součást kódu, a tedy podléhá licenci GPLv3 a autorem/kou je Sokomine.
-
-## Wireless Mesecons (mesecons\_wireless)
-
-* Zdroj: [https://github.com/GreenXenith/mesecons\_wireless](https://github.com/GreenXenith/mesecons\_wireless), revize 8ca249c10bcef8f2a9304fe6ef0e68a7d2910bd8
-* Původní licence: MIT
-* Licence úprav: MIT
-* [ContentDB](https://content.minetest.net/packages/GreenXenith/mesecons\_wireless/)
 
 ## Woodcutting (woodcutting)
 
