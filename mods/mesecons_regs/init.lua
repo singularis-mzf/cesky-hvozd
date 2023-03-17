@@ -88,7 +88,7 @@ local function register_latch()
 	local basename = "mesecons_regs:"..name
 	mesecon.register_node(basename, 
 	{
-		description = "bistabilní klopný obvod reagující na náběžnou hranu (latch)",
+		description = "bistabilní klopný obvod reagující na hodinový signál (latch)",
 		inventory_image = "jeija_gate_off.png^jeija_gate_"..name..".png",
 		paramtype = "light",
 		paramtype2 = "facedir",
@@ -103,7 +103,7 @@ local function register_latch()
 		offstate = basename.."_off",
 		after_dig_node = mesecon.do_cooldown,
 		_ch_help_group = "latch",
-		_ch_help = "vlevo = vstup, vpravo = výstup, vepředu = hodinový signál\nObvod typu latch zkopíruje signál ze vstupu na výstup při náběžné hraně hodinového signálu,\nve všech ostatních případech se signál na výstupu nemění.",
+		_ch_help = "vlevo = vstup, vpravo = výstup, vepředu = hodinový signál\nObvod typu latch kopíruje signál ze vstupu na výstup po celou dobu, kdy je hodinový signál aktivní,\njinak se signál na výstupu nemění.",
 	},{
 		tiles = {"jeija_microcontroller_bottom.png^".."jeija_gate_off.png^"..
 			"jeija_gate_"..name..".png"},
@@ -181,7 +181,7 @@ local function register_flipflop()
 	local basename = "mesecons_regs:"..name
 	mesecon.register_node(basename, 
 	{
-		description = "bistabilní klopný obvod reagující na hodinový signál (flip-flop)",
+		description = "bistabilní klopný obvod reagující na náběžnou hranu (flip-flop)",
 		inventory_image = "jeija_gate_off.png^jeija_gate_"..name..".png",
 		paramtype = "light",
 		paramtype2 = "facedir",
@@ -196,7 +196,7 @@ local function register_flipflop()
 		offstate = basename.."_off",
 		after_dig_node = mesecon.do_cooldown,
 		_ch_help_group = "flipflop",
-		_ch_help = "vlevo = vstup, vpravo = výstup, vepředu = hodinový signál\nObvod typu flip-flop kopíruje signál ze vstupu na výstup po celou dobu, kdy je hodinový signál aktivní,\njinak se signál na výstupu nemění.",
+		_ch_help = "vlevo = vstup, vpravo = výstup, vepředu = hodinový signál\nObvod typu flip-flop zkopíruje signál ze vstupu na výstup při náběžné hraně hodinového signálu,\nve všech ostatních případech se signál na výstupu nemění.",
 	},{
 		tiles = {"jeija_microcontroller_bottom.png^".."jeija_gate_off.png^"..
 			"jeija_gate_"..name..".png"},
