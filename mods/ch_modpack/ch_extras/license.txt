@@ -21,10 +21,18 @@ breccia.png
 	Source: https://github.com/IIIullaIII/summer_22_08_15
 	Author: Ulla
 
+ch_extras_geocaching.png
+	License: public domain by author in USA
+	Source: https://cs.wikipedia.org/wiki/Soubor:Geocaching.svg
+	Author: brdad (Leatherman)
+	Unmodified, but downscaled
+
+ch_extras_cracks.obj
 ch_extras_creative_inv.png
 ch_extras_crvb_pruhy.png
 ch_extras_czl_pruhy.png
 ch_extras_glass.png
+ch_extras_geocache.obj
 ch_extras_rohlik.png
 ch_extras_rohlik_testo.png
 ch_extras_parekvrohliku.png
