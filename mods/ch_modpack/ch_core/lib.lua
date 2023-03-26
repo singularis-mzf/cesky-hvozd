@@ -880,12 +880,12 @@ function ch_core.aktualni_cas()
 	if t.month == 3 then
 		local dst_date = dst_dates_03[t.year]
 		if dst_date ~= nil then
-			dst = t.day > dst_date or (t.day == dst_date and t.hour == 0)
+			dst = t.day > dst_date or (t.day == dst_date and t.hour > 0)
 		end
 	elseif t.month == 10 then
 		local dst_date = dst_dates_10[t.year]
 		if dst_date ~= nil then
-			dst = t.day < dst_date or (t.day == dst_date and t.hour == 0)
+			dst = t.day < dst_date or (t.day == dst_date and t.hour <= 0)
 		end
 	else
 		dst = 3 < t.month and t.month < 10
