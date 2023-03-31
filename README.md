@@ -201,6 +201,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: CC BY-SA 3.0
 * [ContentDB](https://content.minetest.net/packages/advtrains\_supplemental/advtrains\_transib/)
 
+## Tieless Tracks (minetest\_tieless\_tracks)
+
+* Zdroj: [https://github.com/SamMatzko/minetest\_tieless\_tracks](https://github.com/SamMatzko/minetest\_tieless\_tracks), revize 0424a3408af080a6f74246fd684227470f9a41c3
+* Původní licence: AGPLv3 pro veškerý kód, CC BY-SA 3.0 pro média
+* Licence úprav: AGPLv3 pro úpravy v kódu, CC BY-SA 3.0 pro úpravy v médiích
+* [ContentDB](https://content.minetest.net/packages/sylvester\_kruin/tieless\_tracks/)
+
 ## Mese Trains (mese\_trains)
 
 * Zdroj: [https://gitlab.com/xenonca/mese\_trains](https://gitlab.com/xenonca/mese\_trains), revize a4ff9a793e227df93bc6f8b35ab452d3b1507d89
