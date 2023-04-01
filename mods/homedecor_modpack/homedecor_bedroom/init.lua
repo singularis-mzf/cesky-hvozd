@@ -6,32 +6,14 @@ local sc_disallow = minetest.get_modpath("screwdriver") and screwdriver.disallow
 
 local wood_tex, wool_tex = homedecor.textures.default_wood, homedecor.textures.wool_white
 
-local bed_sbox = {
-	type = "wallmounted",
-	wall_side = { -0.5, -0.5, -0.5, 0.5, 0.5, 1.5 }
-}
-
 local bed_cbox = {
-	type = "wallmounted",
-	wall_side = {
-		{ -0.5, -0.5, -0.5, 0.5, -0.05, 1.5 },
-		{ -0.5, -0.5, 1.44, 0.5, 0.5, 1.5 },
-		{ -0.5, -0.5, -0.5, 0.5, 0.18, -0.44 },
-	}
-}
-
-local kbed_sbox = {
-	type = "wallmounted",
-	wall_side = { -0.5, -0.5, -0.5, 1.5, 0.5, 1.5 }
+	type = "fixed",
+	fixed = {-0.5, -0.5, -0.5, 1.5, 0.5, -0.05 },
 }
 
 local kbed_cbox = {
-	type = "wallmounted",
-	wall_side = {
-		{ -0.5, -0.5, -0.5, 1.5, -0.05, 1.5 },
-		{ -0.5, -0.5, 1.44, 1.5, 0.5, 1.5 },
-		{ -0.5, -0.5, -0.5, 1.5, 0.18, -0.44 },
-	}
+	type = "fixed",
+	fixed = {-0.5, -0.5, -0.5, 1.5, 1.5, -0.05 },
 }
 
 
@@ -53,8 +35,8 @@ homedecor.register("bed_regular", {
 	palette = "unifieddyes_palette_colorwallmounted.png",
 	description = S("Bed"),
 	groups = {snappy=3, ud_param2_colorable = 1, dig_generic=2},
-	selection_box = bed_sbox,
-	node_box = bed_cbox,
+	selection_box = bed_cbox,
+	collision_box = bed_cbox,
 	sounds = default.node_sound_wood_defaults(),
 	on_rotate = sc_disallow or nil,
 	after_place_node = function(pos, placer, itemstack, pointed_thing)
@@ -87,6 +69,10 @@ homedecor.register("bed_regular", {
 	}
 })
 
+if minetest.get_modpath("emote") then
+	emote.register_bed("homedecor:bed_regular", "homedecor_regular")
+end
+
 homedecor.register("bed_extended", {
 	mesh = "homedecor_bed_extended.obj",
 	tiles = {
@@ -99,7 +85,7 @@ homedecor.register("bed_extended", {
 	},
 	paramtype2 = "colorwallmounted",
 	palette = "unifieddyes_palette_colorwallmounted.png",
-	selection_box = bed_sbox,
+	selection_box = bed_cbox,
 	node_box = bed_cbox,
 	groups = {snappy=3, ud_param2_colorable = 1, dig_generic=2},
 	sounds = default.node_sound_wood_defaults(),
@@ -133,7 +119,7 @@ homedecor.register("bed_kingsize", {
 	inventory_image = "homedecor_bed_kingsize_inv.png",
 	description = S("Bed (king sized)"),
 	groups = {snappy=3, ud_param2_colorable = 1, dig_generic=2},
-	selection_box = kbed_sbox,
+	selection_box = kbed_cbox,
 	node_box = kbed_cbox,
 	sounds = default.node_sound_wood_defaults(),
 	on_rotate = sc_disallow or nil,
@@ -162,6 +148,10 @@ homedecor.register("bed_kingsize", {
 		}
 	}
 })
+
+if minetest.get_modpath("emote") then
+	emote.register_bed("homedecor:bed_kingsize", "homedecor_kingsize")
+end
 
 for w, d in pairs({ ["mahogany"] = S("mahogany"), ["oak"] = S("oak") }) do
 	homedecor.register("nightstand_"..w.."_one_drawer", {

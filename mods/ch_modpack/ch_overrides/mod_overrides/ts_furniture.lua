@@ -145,7 +145,7 @@ local sitting_nodes = {
 	{ name = "homedecor:bench_large_2", x = -1, x_max = 0, y = -0.1, z = 0 },
 	{ name = "homedecor:armchair" },
 	{ name = "lrfurn:armchair" },
-	{ name = "homedecor:office_chair_basic", name_args = {"basic", "upscale"}, x = 0, y = 0.15, z = 0 },
+	{ name = "homedecor:office_chair_*", name_args = {"basic", "upscale"}, x = 0, y = 0.15, z = 0 },
 	{ name = "lrfurn:sofa", x = -1, y = -0.05, z = 0, x_max = 0, rotation = math.pi / 2 },
 	{ name = "lrfurn:longsofa", x = -1.7, y = -0.05, z = 0, x_max = 0, rotation = math.pi / 2 },
 	{ name = "summer:sdraia_*", name_args = summer_colors, x = 0, y = -0.1, z = -0.2 },
