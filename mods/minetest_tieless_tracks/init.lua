@@ -119,10 +119,10 @@ advtrains.register_tracks("default", {
 
 minetest.register_craft({
 	type = "shapeless",
-	output = 'advtrains:dtrack_slopeplacer 2',
+	output = 'advtrains:dtrack_tieless_slopeplacer 2',
 	recipe = {
-		"advtrains:dtrack_placer",
-		"advtrains:dtrack_placer",
+		"advtrains:dtrack_tieless_placer",
+		"advtrains:dtrack_tieless_placer",
 		"default:gravel",
 	},
 })
@@ -140,10 +140,10 @@ advtrains.register_tracks("default", {
 
 minetest.register_craft({
 	type = "shapeless",
-	output = 'advtrains:dtrack_rg_slopeplacer 2',
+	output = 'advtrains:dtrack_tieless_rg_slopeplacer 2',
 	recipe = {
-		"advtrains:dtrack_placer",
-		"advtrains:dtrack_placer",
+		"advtrains:dtrack_tieless_placer",
+		"advtrains:dtrack_tieless_placer",
 		"ch_core:railway_gravel",
 	},
 })
@@ -369,4 +369,12 @@ if minetest.get_modpath("advtrains_train_track") ~= nil then
 		formats={},
 		get_additional_definiton = adefunc,
 	}, advtrains.trackpresets.t_30deg_straightonly)
+
+	minetest.register_craft({
+		output = "advtrains_line_automation:dtrack_stop_tieless_placer 2",
+		recipe = {
+			{"default:coal_lump", ""},
+			{"advtrains:dtrack_tieless_placer", "advtrains:dtrack_tieless_placer"},
+		},
+	})
 end

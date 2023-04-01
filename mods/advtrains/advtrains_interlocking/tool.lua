@@ -43,6 +43,15 @@ minetest.register_craftitem("advtrains_interlocking:tool",{
 	end,
 })
 
+minetest.register_craft({
+	output = "advtrains_interlocking:tool",
+	recipe = {
+		{"default:diamond", "", ""},
+		{"ch_extras:lupa", "", ""},
+		{"default:steel_ingot", "", ""},
+	},
+})
+
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local pname = player:get_player_name()
 	if not minetest.check_player_privs(pname, "interlocking") then

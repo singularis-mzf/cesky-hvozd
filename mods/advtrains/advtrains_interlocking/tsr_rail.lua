@@ -63,4 +63,12 @@ if minetest.get_modpath("advtrains_train_track") ~= nil then
 		formats={},
 		get_additional_definiton = adefunc,
 	}, advtrains.trackpresets.t_30deg_straightonly)
+
+	minetest.register_craft({
+		output = "advtrains_interlocking:dtrack_npr_placer 2",
+		recipe = {
+			{"group:sand", ""},
+			{"advtrains:dtrack_placer", "advtrains:dtrack_placer"},
+		},
+	})
 end

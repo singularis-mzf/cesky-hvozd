@@ -95,3 +95,10 @@ minetest.register_node("advtrains_interlocking:ds_slow", {
 	after_dig_node = advtrains.interlocking.signal_after_dig,
 })
 
+minetest.register_craft({
+	output = "advtrains_interlocking:ds_danger",
+	recipe = {
+		{"bakedclay:black", "dye:red"},
+		{"default:glass", "default:glass"},
+	},
+})

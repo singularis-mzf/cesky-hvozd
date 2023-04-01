@@ -222,4 +222,12 @@ if minetest.get_modpath("advtrains_train_track") ~= nil then
 		formats={},
 		get_additional_definiton = adefunc,
 	}, advtrains.trackpresets.t_30deg_straightonly)
+
+	minetest.register_craft({
+		output = "advtrains_line_automation:dtrack_stop_placer 2",
+		recipe = {
+			{"default:coal_lump", ""},
+			{"advtrains:dtrack_placer", "advtrains:dtrack_placer"},
+		},
+	})
 end

@@ -351,6 +351,15 @@ minetest.register_node("advtrains:across_on", {
 	end,
 })
 
+minetest.register_craft({
+	output = "advtrains:across_off",
+	recipe = {
+		{"default:steel_ingot", "", "default:steel_ingot"},
+		{"", "mesecons_lightstone:lightstone_red_off", ""},
+		{"default:steel_ingot", "", "default:steel_ingot"},
+	},
+})
+
 minetest.register_abm(
 	{
         label = "Sound for Level Crossing",
