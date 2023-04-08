@@ -668,6 +668,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Zdroj: [https://github.com/minetest-mail/mail\_mod](https://github.com/minetest-mail/mail\_mod), revize d9771ded2a01c8707033760478df482311abe4c6
 * Původní licence: MIT
 * Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/mt-mods/mail/)
 
 ## Markdown2Formspec (markdown2formspec)
 

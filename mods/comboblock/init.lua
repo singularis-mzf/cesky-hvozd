@@ -21,6 +21,17 @@ local allowed_combos = {
 	[4] = "bakedclay:slab_baked_clay_red+darkage:slab_ors_brick",
 	[5] = "bakedclay:slab_baked_clay_brown+darkage:slab_ors_brick",
 	[6] = "solidcolor:slab_plaster_white+xdecor:slab_wood_tile",
+	[7] = "solidcolor:slab_plaster_white+solidcolor:slab_plaster_blue",
+	[8] = "solidcolor:slab_plaster_white+solidcolor:slab_plaster_cyan",
+	[9] = "solidcolor:slab_plaster_white+solidcolor:slab_plaster_dark_green",
+	[10] = "solidcolor:slab_plaster_white+solidcolor:slab_plaster_dark_grey",
+	[11] = "solidcolor:slab_plaster_white+solidcolor:slab_plaster_grey",
+	[12] = "solidcolor:slab_plaster_white+solidcolor:slab_plaster_medium_amber_s50",
+	[13] = "solidcolor:slab_plaster_white+solidcolor:slab_plaster_orange",
+	[14] = "solidcolor:slab_plaster_white+solidcolor:slab_plaster_pink",
+	[15] = "solidcolor:slab_plaster_white+solidcolor:slab_plaster_red",
+	[16] = "solidcolor:slab_plaster_white+solidcolor:slab_plaster_green",
+	[17] = "solidcolor:slab_plaster_white+solidcolor:slab_plaster_yellow",
 }
 local allowed_combos_tmp = {}
 for i, v in ipairs(allowed_combos) do
@@ -73,6 +84,8 @@ local m_path = minetest.get_modpath(m_name)
 				if string.sub(name_split[i],1,1) == "[" then
 					if name_split[i] =="[transformR90" then                -- remove the rotate 90's
 						new_name = new_name.."^[transformR180FY"..name_split[i]
+					elseif i > 1 and string.sub(name_split[i], 1, 10) == "[multiply:" then
+						new_name = new_name.."\\^[multiply\\:"..string.sub(name_split[i],11,-1) -- apply coloring only on lower part
 					else
 						new_name = new_name.."^"..name_split[i]            -- catch coloring etc
 					end
@@ -430,17 +443,18 @@ for _,v1 in pairs(slab_index) do
 					-- not allowed
 				elseif v1_is_glass and v2_is_glass then                                                           -- glass_glass nodes so drawtype = glasslike
 						local combo_name = "comboblock:"..v1:split(":")[2].."_onc_"..v2:split(":")[2]
+						local combo_tiles = {v1_tiles[1].name.."^[resize:"..cs.."x"..cs,
+							v2_tiles[2].name.."^[resize:"..cs.."x"..cs,
+							v1_tiles[3].name.."^[resize:"..cs.."x"..cs..v2_tiles[3].name,                      -- Stairs registers it's tiles slightly differently now
+							v1_tiles[4].name.."^[resize:"..cs.."x"..cs..v2_tiles[4].name,                      -- in a nested table structure and now makes use of
+							v1_tiles[5].name.."^[resize:"..cs.."x"..cs..v2_tiles[5].name,                      -- align_style = "world" for most slabs....I think
+							v1_tiles[6].name.."^[resize:"..cs.."x"..cs..v2_tiles[6].name
+						}
 						minetest.register_node(combo_name, {  -- registering the new combo node
 							description = string.format("%02d%s %s", allowed_combo_index, "", preprocess_description(v1_def.description).." na "..preprocess_description(v2_def.description)),
 							_ch_help = ch_help,
 							_ch_help_group = ch_help_group,
-							tiles = {v1_tiles[1].name.."^[resize:"..cs.."x"..cs,
-									 v2_tiles[2].name.."^[resize:"..cs.."x"..cs,
-									 v1_tiles[3].name.."^[resize:"..cs.."x"..cs..v2_tiles[3].name,                      -- Stairs registers it's tiles slightly differently now
-									 v1_tiles[4].name.."^[resize:"..cs.."x"..cs..v2_tiles[4].name,                      -- in a nested table structure and now makes use of
-									 v1_tiles[5].name.."^[resize:"..cs.."x"..cs..v2_tiles[5].name,                      -- align_style = "world" for most slabs....I think
-									 v1_tiles[6].name.."^[resize:"..cs.."x"..cs..v2_tiles[6].name
-									},
+							tiles = combo_tiles,
 							paramtype = "light",
 							paramtype2 = "facedir",
 							drawtype = "glasslike",
@@ -469,17 +483,18 @@ for _,v1 in pairs(slab_index) do
 
 				elseif not v1_is_glass and not v2_is_glass then -- normal nodes
 						local combo_name = "comboblock:"..v1:split(":")[2].."_onc_"..v2:split(":")[2]
+						local combo_tiles = {v1_tiles[1].name.."^[resize:"..cs.."x"..cs,
+							v2_tiles[2].name.."^[resize:"..cs.."x"..cs,
+							v1_tiles[3].name.."^[resize:"..cs.."x"..cs..v2_tiles[3].name,						-- Stairs registers it's tiles slightly differently now
+							v1_tiles[4].name.."^[resize:"..cs.."x"..cs..v2_tiles[4].name,						-- in a nested table structure and now makes use of
+							v1_tiles[5].name.."^[resize:"..cs.."x"..cs..v2_tiles[5].name,						-- align_style = "world" for most slabs....I think
+							v1_tiles[6].name.."^[resize:"..cs.."x"..cs..v2_tiles[6].name
+						}
 						minetest.register_node(combo_name, {
 							description = string.format("%02d%s %s", allowed_combo_index, "", preprocess_description(v1_def.description).." na "..preprocess_description(v2_def.description)),
 							_ch_help = ch_help,
 							_ch_help_group = ch_help_group,
-							tiles = {v1_tiles[1].name.."^[resize:"..cs.."x"..cs,
-									 v2_tiles[2].name.."^[resize:"..cs.."x"..cs,
-									 v1_tiles[3].name.."^[resize:"..cs.."x"..cs..v2_tiles[3].name,						-- Stairs registers it's tiles slightly differently now
-									 v1_tiles[4].name.."^[resize:"..cs.."x"..cs..v2_tiles[4].name,						-- in a nested table structure and now makes use of
-									 v1_tiles[5].name.."^[resize:"..cs.."x"..cs..v2_tiles[5].name,						-- align_style = "world" for most slabs....I think
-									 v1_tiles[6].name.."^[resize:"..cs.."x"..cs..v2_tiles[6].name
-									},
+							tiles = combo_tiles,
 							paramtype2 = "facedir",
 							drawtype = "normal",
 							sounds = v1_def.sounds,
