@@ -311,6 +311,36 @@ local m_path = minetest.get_modpath(m_name)
 		end
 	end
 
+	-----------------------
+	-- Comboblock Switch --
+	-----------------------
+
+	local function cb_on_punch(pos, node, puncher, pointed_thing)
+		if puncher and puncher:is_player() then
+			local player_name = puncher:get_player_name()
+			if minetest.is_protected(pos, player_name) then
+				minetest.record_protection_violation(pos, player_name)
+				return
+			end
+			local controls = puncher:get_player_control()
+			if not controls.aux1 then
+				return -- Aux1 must be pressed
+			end
+		end
+		local old_name = node.name
+		local ndef = minetest.registered_nodes[old_name]
+		if not ndef or not ndef.comboblock_v1 or not ndef.comboblock_v2 then
+			-- probably not a comboblock node
+			return
+		end
+		node.name = "comboblock:"..ndef.comboblock_v2:split(":")[2].."_onc_"..ndef.comboblock_v1:split(":")[2]
+		if not minetest.registered_nodes[node.name] then
+			minetest.log("warning", "cb_on_punch() should set node "..old_name.." at "..minetest.pos_to_string(pos).." to "..node.name..", but it's an unknown node!")
+			return
+		end
+		minetest.set_node(pos, node)
+	end
+
 ----------------------------
 --       Main Code        --
 ----------------------------
@@ -465,6 +495,7 @@ for _,v1 in pairs(slab_index) do
 									{items = {tostring(v1), tostring(v2)}},
 								},
 							},
+							on_punch = cb_on_punch,
 							comboblock_v1 = tostring(v1),
 							comboblock_v2 = tostring(v2)})
 
@@ -504,6 +535,7 @@ for _,v1 in pairs(slab_index) do
 									{items = {tostring(v1), tostring(v2)}},
 								},
 							},
+							on_punch = cb_on_punch,
 							comboblock_v1 = tostring(v1),
 							comboblock_v2 = tostring(v2)})
 						minetest.register_craft({output = tostring(v1), recipe = {{combo_name}}, replacements = {{combo_name, tostring(v2)}}})
