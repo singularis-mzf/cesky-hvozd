@@ -25,6 +25,7 @@ local recipeitems = {
 	"default:steelblock",
 	"default:tinblock",
 	"default:wood",
+	"farming:straw",
 	"moreblocks:cactus_checker",
 	"moreblocks:copperpatina",
 	"technic:cast_iron_block",

@@ -38,6 +38,7 @@ local default_items = {
 	{stack = ItemStack("unified_inventory:bag_large"), survival = true, creative = true},
 	{stack = ItemStack("bridger:scaffolding 100"), survival = true},
 	{stack = ItemStack("towercrane:base"), survival = true, creative = true},
+	{stack = ItemStack("bike:bike"), new = true, survival = true, creative = false},
 	{stack = ItemStack("anvil:hammer"), survival = true},
 	{stack = ItemStack("airtanks:empty_bronze_tank"), survival = true, creative = true},
 	{stack = ItemStack("ch_core:kcs_kcs 1000"), survival = true},
@@ -48,7 +49,7 @@ local default_items = {
 local function compute_initial_inventory(reg_type)
 	local i = 2
 	local initial_inventory = {}
-	for _, def in ipairs(default_items) do
+	for j, def in ipairs(default_items) do
 		if def[reg_type] then
 			local stack = def.stack
 			if not stack:is_empty() and not minetest.registered_items[stack:get_name()] then
@@ -69,8 +70,11 @@ local function compute_initial_inventory(reg_type)
 					i = j + 1
 				end
 			end
+		else
+			print("DEBUG: Default item ["..j.."] not used, because it does not support registration type "..(reg_type or "nil"))
 		end
 	end
+	print("DEBUG: initial_inventory = "..dump2(initial_inventory))
 
 	return initial_inventory
 end
@@ -102,7 +106,9 @@ function ch_core.registrovat(player_name, reg_type, extra_privs)
 		end
 	end
 
+	print("Will compute initial inventory for reg_type \""..(reg_type or "nil").."\"")
 	local initial_inventory = compute_initial_inventory(reg_type)
+	print("Computed initial inventory for reg_type \""..(reg_type or "nil").."\": "..dump2({initial_inventory = initial_inventory, reg_type = reg_type}))
 	local player = minetest.get_player_by_name(player_name)
 	if not player then
 		return false, "the player is offline"
@@ -116,6 +122,7 @@ function ch_core.registrovat(player_name, reg_type, extra_privs)
 		if inv_name == "hand" then
 			-- skip this inventory
 		elseif inv_name == "main" then
+			print("DEBUG: List size for the main inventory = "..list_size)
 			for i = 1, list_size do
 				inv_list[i] = initial_inventory[i] or empty_stack
 			end

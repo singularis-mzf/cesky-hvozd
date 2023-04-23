@@ -10,6 +10,7 @@ local optional_mods = {
 	"cottages",
 	"darkage",
 	"ethereal",
+	"farming",
 	"moreblocks",
 	"technic",
 	"technic_worldgen",

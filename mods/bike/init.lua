@@ -377,7 +377,7 @@ function bike.on_punch(self, puncher)
 	local us_time = minetest.get_us_time()
 	local us_diff = us_time - (punch_cache[pos_hash] or 0)
 
-	if us_diff < 1000 then
+	if us_diff < 250000 then
 		return
 	end
 	local new_punch_cache = {[pos_hash] = us_time}
@@ -423,8 +423,8 @@ function bike.on_punch(self, puncher)
 	elseif itemstack:get_name() == "basic_materials:padlock" then
 		-- Lock
 		local pname = puncher and puncher:is_player() and puncher:get_player_name()
-		if pname == nil or self.driver or (self.owner ~= nil and self.owner ~= pname and not minetest.check_player_privs(pname, "protection_bypass")) then
-			return -- only the owner can lock or unlock the bike
+		if pname == nil or not minetest.check_player_privs(pname, "ch_registered_player") or self.driver or (self.owner ~= nil and self.owner ~= pname and not minetest.check_player_privs(pname, "protection_bypass")) then
+			return -- only the registered owner can lock or unlock the bike
 		end
 		if self.owner == nil then
 			self.owner = pname
@@ -460,7 +460,7 @@ function bike.on_punch(self, puncher)
 	-- Make sure no one is riding
 	if not self.driver then
 		local pname = puncher:get_player_name()
-		if ((self.lock or 0) ~= 0 or setting_ownable) and self.owner and (pname ~= self.owner and not minetest.check_player_privs(pname, "protection_bypass")) then
+		if ((self.lock or 0) ~= 0 or setting_ownable or not minetest.check_player_privs(pname, "ch_registered_player")) and self.owner and (pname ~= self.owner and not minetest.check_player_privs(pname, "protection_bypass")) then
 			ch_core.systemovy_kanal(pname, S("You cannot take @1's bike.", self.owner))
 			return
 		end
@@ -808,8 +808,7 @@ minetest.register_craftitem("bike:bike", {
 				bike:set_properties({infotext = get_infotext(sdata.owner, sdata.lock)})
 			end
 			local player_name = placer and placer:get_player_name() or ""
-			if not (creative and creative.is_enabled_for and
-					creative.is_enabled_for(player_name)) then
+			if not minetest.check_player_privs(player_name, "ch_registered_player") or not minetest.is_creative_enabled(player_name) then
 				itemstack:take_item()
 			end
 		end
