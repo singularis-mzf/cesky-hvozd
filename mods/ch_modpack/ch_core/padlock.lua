@@ -18,6 +18,17 @@ How to use padlock:
 ]]
 
 local function padlock_remove(itemstack, player, pointed_thing)
+	if pointed_thing.type == "object" then
+		local o, e, f
+		o = pointed_thing.ref
+		e = o:get_luaentity()
+		f = e and e.on_punch
+		if f then
+			return f(e, player)
+		else
+			return
+		end
+	end
 	local pos = minetest.get_pointed_thing_position(pointed_thing, false)
 	if not player or not player:is_player() or not pos then
 		return nil
@@ -41,6 +52,18 @@ local function padlock_remove(itemstack, player, pointed_thing)
 end
 
 local function padlock_place(itemstack, player, pointed_thing)
+	if pointed_thing.type == "object" then
+		local o, e, f
+		o = pointed_thing.ref
+		e = o:get_luaentity()
+		f = e and e.on_rightclick
+		if f then
+			return f(e, player)
+		else
+			return
+		end
+	end
+
 	local pos = minetest.get_pointed_thing_position(pointed_thing, false)
 	if not player or not player:is_player() or not pos then
 		return nil

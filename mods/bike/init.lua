@@ -167,12 +167,17 @@ minetest.register_node("bike:hand", {
 })
 
 -- Infotext
-local function get_infotext(owner)
+local function get_infotext(owner, lock)
+	local result
 	if owner and owner ~= "" then
-		return "vlastník/ice: ".. ch_core.prihlasovaci_na_zobrazovaci(owner)
+		result = "vlastník/ice: ".. ch_core.prihlasovaci_na_zobrazovaci(owner)
+		if lock ~= nil and lock ~= 0 then
+			result = result.."\n(zabezpečeno zámkem)"
+		end
 	else
-		return "bez vlastníka/ice"
+		result = "bez vlastníka/ice"
 	end
+	return result
 end
 
 --[[ Bike ]]--
@@ -272,10 +277,11 @@ function bike.on_rightclick(self, clicker)
 	end
 	if not self.driver then
 		local pname = clicker:get_player_name()
-		if setting_ownable and self.owner and pname ~= self.owner then
-			minetest.chat_send_player(pname, S("You cannot ride @1's bike.", self.owner))
+		if ((self.lock or 0) ~= 0 or setting_ownable) and self.owner and (pname ~= self.owner and not minetest.check_player_privs(pname, "protection_bypass")) then
+			ch_core.systemovy_kanal(pname, S("You cannot ride @1's bike.", self.owner))
 			return
 		end
+		-- print("DEBUG: self.lock = "..(self.lock or "nil")..", self.owner = "..(self.owner or "nil")..", pname = "..(pname or "nil")..", check_player_privs() = "..(minetest.check_player_privs(pname, "protection_bypass") and "true" or "false"))
 
 		-- Make integrated player appear
 		self.object:set_properties({
@@ -340,10 +346,11 @@ function bike.on_activate(self, staticdata, dtime_s)
 			self.color = data.color
 			self.alpha = data.alpha
 			self.owner = data.owner
+			self.lock = data.lock or 0
 		end
 	end
 	self.object:set_properties({
-		infotext = get_infotext(self.owner),
+		infotext = get_infotext(self.owner, self.lock),
 		textures = default_tex(self.color, self.alpha),
 	})
 	self.last_v = self.v
@@ -356,13 +363,33 @@ function bike.get_staticdata(self)
 		color = self.color,
 		alpha = self.alpha,
 		owner = self.owner,
+		lock = self.lock or 0,
 	}
 	return minetest.serialize(data)
 end
 
+local punch_cache = {
+}
+
 -- Pick up/color
 function bike.on_punch(self, puncher)
+	local pos_hash = minetest.hash_node_position(vector.round(self.object:get_pos()))
+	local us_time = minetest.get_us_time()
+	local us_diff = us_time - (punch_cache[pos_hash] or 0)
+
+	if us_diff < 1000 then
+		return
+	end
+	local new_punch_cache = {[pos_hash] = us_time}
+	for k, v in pairs(punch_cache) do
+		if us_time - v > 1000000 then
+			new_punch_cache[k] = v
+		end
+	end
+	punch_cache = new_punch_cache
+
 	local itemstack = puncher:get_wielded_item()
+	-- print("LADĚNÍ: bike.on_punch() called with itemstack = "..dump2({itemstack = itemstack, name = itemstack:get_name(), count = itemstack:get_count()}))
 	-- Bike painting
 	if itemstack:get_name() == "bike:painter" then
 		-- No painting while someone is riding :P
@@ -393,6 +420,39 @@ function bike.on_punch(self, puncher)
 			},
 		})
 		return
+	elseif itemstack:get_name() == "basic_materials:padlock" then
+		-- Lock
+		local pname = puncher and puncher:is_player() and puncher:get_player_name()
+		if pname == nil or self.driver or (self.owner ~= nil and self.owner ~= pname and not minetest.check_player_privs(pname, "protection_bypass")) then
+			return -- only the owner can lock or unlock the bike
+		end
+		if self.owner == nil then
+			self.owner = pname
+		end
+		if (self.lock or 0) == 0 then
+			-- lock the bike
+			self.lock = 1
+			minetest.log("action", pname.." locked the bike of "..(self.owner or "null").." at "..minetest.pos_to_string(self.object:get_pos()))
+			if itemstack:get_count() > 1 then
+				itemstack:take_item(1)
+			else
+				itemstack = ItemStack()
+			end
+		else
+			-- unlock the bike
+			self.lock = 0
+			minetest.log("action", pname.." unlocked the bike of "..(self.owner or "null").." at "..minetest.pos_to_string(self.object:get_pos()))
+			if itemstack:get_count() < itemstack:get_stack_max() then
+				itemstack:set_count(itemstack:get_count() + 1)
+			end
+		end
+		self.object:set_properties({infotext = get_infotext(self.owner, self.lock)})
+
+		if minetest.is_creative_enabled(pname) then
+			return
+		else
+			return itemstack
+		end
 	end
 	if not puncher or not puncher:is_player() or self.removed then
 		return
@@ -400,8 +460,8 @@ function bike.on_punch(self, puncher)
 	-- Make sure no one is riding
 	if not self.driver then
 		local pname = puncher:get_player_name()
-		if setting_ownable and self.owner and pname ~= self.owner then
-			minetest.chat_send_player(pname, S("You cannot take @1's bike.", self.owner))
+		if ((self.lock or 0) ~= 0 or setting_ownable) and self.owner and (pname ~= self.owner and not minetest.check_player_privs(pname, "protection_bypass")) then
+			ch_core.systemovy_kanal(pname, S("You cannot take @1's bike.", self.owner))
 			return
 		end
 
@@ -414,6 +474,7 @@ function bike.on_punch(self, puncher)
 			meta:set_string("color", self.color)
 			meta:set_string("alpha", self.alpha)
 			meta:set_string("owner", self.owner)
+			meta:set_int("lock", self.lock)
 			local leftover = inv:add_item("main", stack)
 			-- If no room in inventory add the bike to the world
 			if not leftover:is_empty() then
@@ -724,6 +785,7 @@ minetest.register_craftitem("bike:bike", {
 			alpha = tonumber(meta:get_string("alpha")),
 			-- Store owner
 			owner = meta:get_string("owner"),
+			lock = meta:get_int("lock"),
 		}
 		if sdata.owner == "" then
 			sdata.owner = placer:get_player_name()
@@ -743,7 +805,7 @@ minetest.register_craftitem("bike:bike", {
 		if bike then
 			if placer then
 				bike:set_yaw(placer:get_look_horizontal())
-				bike:set_properties({infotext = get_infotext(sdata.owner)})
+				bike:set_properties({infotext = get_infotext(sdata.owner, sdata.lock)})
 			end
 			local player_name = placer and placer:get_player_name() or ""
 			if not (creative and creative.is_enabled_for and
@@ -900,6 +962,11 @@ minetest.register_craft({
 		{iron, red_dye, green_dye},
 		{"", rubber, blue_dye},
 	},
+})
+
+minetest.override_item("basic_materials:padlock", {
+	_ch_help_group = "lock",
+	_ch_help = "Levým klikem na svoje kolo je zamknete, nebo naopak odstraníte existující zámek.",
 })
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

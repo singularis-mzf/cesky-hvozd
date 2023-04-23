@@ -1,9 +1,6 @@
 local counter = 0
 
-local allowed_players = {
-	Administrace = true,
-	singleplayer = true,
-}
+local allowed_players = {}
 
 local passable_drawtypes = {
 	airlike = true,
