@@ -688,6 +688,9 @@ bamboo.png
 		Author: Manfred Heyde
 		License: CC-BY-SA-3.0
 
+darkage_basalt_cobble.png
+darkage_ors_cobble.png
+darkage_slate_cobble.png
 default_cobble.png
 default_desert_cobble.png
 	Authors: Sirrobzeroone, Various Artists, Denzis, Cestmír Dammer,
@@ -696,6 +699,15 @@ default_desert_cobble.png
 	License: CC0
 	Used source:
 		https://github.com/sirrobzeroone/DungeonSoup
+
+darkage_gneiss_cobble.png
+	Authors: Sirrobzeroone, Various Artists, Denzis, Cestmír Dammer,
+		Matt Rumble, Calinou, 7Soul1, Glitch, Rubberduck, ScratchIO,
+		MasterGollum, Singularis
+	License: CC0 (except for MasterGollum's part that is WTFPL)
+	Used sources:
+		https://github.com/sirrobzeroone/DungeonSoup
+		https://github.com/kakalak-lumberJack/darkage
 
 basic_materials_copper_wire.png
 basic_materials_empty_spool.png
