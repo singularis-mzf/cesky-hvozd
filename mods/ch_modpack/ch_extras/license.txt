@@ -83,6 +83,18 @@ ch_extras_total_station.png
 	Author: Singularis
 	Based on source: https://cs.wikipedia.org/wiki/Soubor:DTM-A20LG-04.jpg (Author: PhY, License: CC BY-SA 3.0)
 
+ch_extras_glass_door.png
+ch_extras_glass_door_item.png
+ch_extras_obsidian_door.png
+ch_extras_obsidian_door_item.png
+ch_extras_wood_door.png
+ch_extras_wood_door_item.png
+	License: CC0
+	Authors: Sirrobzeroone, Various Artists, Denzis, Cestmír Dammer,
+		Matt Rumble, Calinou, 7Soul1, Glitch, Rubberduck, ScratchIO
+	Source:
+		https://github.com/sirrobzeroone/DungeonSoup
+
 translocator.png
 	Author: Zemtzov7
 	Source: https://github.com/zmv7/minetest-mod-translocator
