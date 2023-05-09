@@ -24,6 +24,8 @@ local euwarn = {
 	{ "deercrossing", S("A 14 Zvěř"), { red = 2, white = 2, black = 1 } },
 	-- { "busses", S(""), { red = 2, white = 2, black = 1 } },
 	-- { "railroadcrossing", "Railroad Crossing", { red = 2, white = 2, black = 1 } },
+	{ "cross1", S("A 32a Výstražný kříž pro železniční přejezd jednokolejný"), {white = 1, red = 2 }},
+	{ "cross2", S("A 32b Výstražný kříž pro železniční přejezd vícekolejný"), {white = 2, red = 3 }},
 }
 
 for k, v in pairs(euwarn) do

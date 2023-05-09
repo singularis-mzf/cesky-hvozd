@@ -3,7 +3,7 @@ minetest.register_node(FB.NAME..":a01", {
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = {cracky = 2, not_blocking_trains = 1},
 	tiles = {FB.NAME.."_00.png"},
 	node_box = {type = "fixed", fixed = FB.MODELS.A01},
 })
@@ -12,7 +12,7 @@ minetest.register_node(FB.NAME..":a02", {
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = {cracky = 2, not_blocking_trains = 1},
 	tiles = {FB.NAME.."_00.png"},
 	node_box = {type = "fixed", fixed = FB.MODELS.A02},
 })
@@ -39,7 +39,7 @@ minetest.register_node(FB.NAME..":a05", {
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = {cracky = 2, not_blocking_trains = 1},
 	tiles = {FB.NAME.."_00.png"},
 	node_box = {type = "fixed", fixed = FB.MODELS.A05},
 })
@@ -120,7 +120,7 @@ minetest.register_node(FB.NAME..":a13", {
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = {cracky = 2, not_blocking_trains = 1},
 	tiles = {FB.NAME.."_00.png"},
 	node_box = {type = "fixed", fixed = FB.MODELS.A13},
 })
@@ -129,7 +129,7 @@ minetest.register_node(FB.NAME..":a14", {
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = {cracky = 2, not_blocking_trains = 1},
 	tiles = {FB.NAME.."_00.png"},
 	node_box = {type = "fixed", fixed = FB.MODELS.A14},
 })
@@ -148,7 +148,7 @@ minetest.register_node(FB.NAME..":a13lower", {
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = {cracky = 2, not_blocking_trains = 1},
 	tiles = {FB.NAME.."_00.png"},
 	node_box = {type = "fixed", fixed = FB.MODELS.A13L},
 })
@@ -157,7 +157,7 @@ minetest.register_node(FB.NAME..":a14lower", {
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = {cracky = 2, not_blocking_trains = 1},
 	tiles = {FB.NAME.."_00.png"},
 	node_box = {type = "fixed", fixed = FB.MODELS.A14L},
 })
@@ -176,7 +176,7 @@ minetest.register_node(FB.NAME..":a13upper", {
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = {cracky = 2, not_blocking_trains = 1},
 	tiles = {FB.NAME.."_00.png"},
 	node_box = {type = "fixed", fixed = FB.MODELS.A13H},
 })
@@ -185,7 +185,7 @@ minetest.register_node(FB.NAME..":a14upper", {
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {cracky = 2},
+	groups = {cracky = 2, not_blocking_trains = 1},
 	tiles = {FB.NAME.."_00.png"},
 	node_box = {type = "fixed", fixed = FB.MODELS.A14H},
 })
@@ -386,7 +386,7 @@ minetest.register_node(FB.NAME..":s00", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	climbable = true,
-	groups = {cracky = 2},
+	groups = {cracky = 2, not_blocking_trains = 1},
 	tiles = {FB.NAME.."_00.png"},
 	node_box = {type = "fixed", fixed = FB.MODELS.S00},
 })

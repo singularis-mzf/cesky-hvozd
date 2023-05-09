@@ -508,6 +508,8 @@ if minetest.get_modpath("streets") then
 	rr("streets:sign_eu_danger")
 	rr("streets:sign_eu_jam")
 	rr("streets:sign_eu_intersectionrightofwayright")
+	rr("streets:sign_eu_cross1", 2, 0, 2, 2, 0)
+	rr("streets:sign_eu_cross2", 3, 0, 3, 3, 0)
 	rr("streets:sign_eu_downhillgrade", 3, 2, 2, 2, 3)
 	rr("streets:sign_eu_uphillgrade", 3, 2, 2, 2, 3)
 	rr("streets:sign_eu_roadnarrowsboth")

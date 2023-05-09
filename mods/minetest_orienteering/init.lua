@@ -156,7 +156,7 @@ minetest.register_tool("orienteering:quadcorder", {
 -- Displays game time
 minetest.register_tool("orienteering:watch", {
 	description = S("Watch"),
-	_ch_help = "Je-li na výběrové liště, zobrazí vám herní čas.",
+	_ch_help = "Jsou-li na výběrové liště, zobrazí vám herní čas.",
 	_ch_help_group = "o:w",
 	_tt_help = S("Shows the time"),
 	_doc_items_longdesc = S("It shows you the current time."),

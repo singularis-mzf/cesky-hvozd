@@ -78,6 +78,47 @@ local function tram_set_livery(self, puncher, itemstack, data)
     end
 end
 
+function tram_on_velocity_change(self, velocity, old_velocity, dtime)
+	if not velocity or not old_velocity then return end
+	if old_velocity == 0 and velocity > 0 then
+		minetest.sound_play("somemoretrains_tram_depart", {object = self.object})
+	end
+	if velocity < 2 and (old_velocity >= 2 or old_velocity == velocity) and not self.sound_arrive_handle then
+		self.sound_arrive_handle = minetest.sound_play("somemoretrains_tram_arrive", {object = self.object})
+	elseif (velocity > old_velocity) and self.sound_arrive_handle then
+		minetest.sound_stop(self.sound_arrive_handle)
+		self.sound_arrive_handle = nil
+	end
+	if velocity > 0 and (self.sound_loop_tmr or 0)<=0 then
+		self.sound_loop_handle = minetest.sound_play({name="somemoretrains_tram_loop", gain=0.3}, {object = self.object})
+		self.sound_loop_tmr=3
+	elseif velocity>0 then
+		self.sound_loop_tmr = self.sound_loop_tmr - dtime
+	elseif velocity==0 then
+		if self.sound_loop_handle then
+			minetest.sound_stop(self.sound_loop_handle)
+			self.sound_loop_handle = nil
+		end
+		self.sound_loop_tmr=0
+	end
+end
+
+function tram_on_step(self, dtime, data, train)
+	if data.livery == nil then
+		data.livery = {painting="somemoretrains_tram_painting.png",line="somemoretrains_tram_line.png"}
+		tram_set_textures(self, data)
+	end
+	--[[if data.livery ~= self.textures[2] then
+		minetest.chat_send_all('data.livery: '.. data.livery .. ' - texture: ' .. self.textures[2])
+		tram_set_textures(self, data)
+	end]]--
+	--set line number
+	local line = nil
+	if train.line and self.line_cache ~= train.line then
+		tram_set_line(self, data, train)
+	end	
+end
+
 advtrains.register_wagon("tram", {
 	mesh="somemoretrains_tram.b3d",
 	textures = {
@@ -149,45 +190,8 @@ advtrains.register_wagon("tram", {
 	is_locomotive=true,
 	drops={"default:steelblock 5", "default:wood 3", "default:glass"},
 	horn_sound = "somemoretrains_tram_horn",
-	custom_on_velocity_change = function(self, velocity, old_velocity, dtime)
-		if not velocity or not old_velocity then return end
-		if old_velocity == 0 and velocity > 0 then
-			minetest.sound_play("somemoretrains_tram_depart", {object = self.object})
-		end
-		if velocity < 2 and (old_velocity >= 2 or old_velocity == velocity) and not self.sound_arrive_handle then
-			self.sound_arrive_handle = minetest.sound_play("somemoretrains_tram_arrive", {object = self.object})
-		elseif (velocity > old_velocity) and self.sound_arrive_handle then
-			minetest.sound_stop(self.sound_arrive_handle)
-			self.sound_arrive_handle = nil
-		end
-		if velocity > 0 and (self.sound_loop_tmr or 0)<=0 then
-			self.sound_loop_handle = minetest.sound_play({name="somemoretrains_tram_loop", gain=0.3}, {object = self.object})
-			self.sound_loop_tmr=3
-		elseif velocity>0 then
-			self.sound_loop_tmr = self.sound_loop_tmr - dtime
-		elseif velocity==0 then
-			if self.sound_loop_handle then
-				minetest.sound_stop(self.sound_loop_handle)
-				self.sound_loop_handle = nil
-			end
-			self.sound_loop_tmr=0
-		end
-	end,
-	custom_on_step = function(self, dtime, data, train)
-        if data.livery == nil then
-            data.livery = {painting="somemoretrains_tram_painting.png",line="somemoretrains_tram_line.png"}
-            tram_set_textures(self, data)
-        end
-        --[[if data.livery ~= self.textures[2] then
-            minetest.chat_send_all('data.livery: '.. data.livery .. ' - texture: ' .. self.textures[2])
-            tram_set_textures(self, data)
-        end]]--
-		--set line number
-		local line = nil
-		if train.line and self.line_cache ~= train.line then
-            tram_set_line(self, data, train)
-		end	
-	end,
+	custom_on_velocity_change = tram_on_velocity_change,
+	custom_on_step = tram_on_step,
 	set_textures = tram_set_textures,
     set_livery = tram_set_livery,
 }, S("Tram"), "somemoretrains_tram_inv.png")

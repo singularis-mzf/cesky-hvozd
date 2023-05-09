@@ -454,3 +454,51 @@ minetest.register_craft({
 		{ "streets:bigpole_short", "streets:bigpole_cross", "streets:bigpole_short" }
 	}
 })
+
+minetest.register_node(":streets:smallpole", {
+	description = S("tyč na dopravní značky"),
+	paramtype = "light",
+	paramtype2 = "facedir",
+	drawtype = "nodebox",
+	tiles = { "streets_pole.png" },
+	sunlight_propagates = true,
+	groups = { cracky = 1, level = 2, bigpole = 1, not_blocking_trains = 1},
+	sounds = default.node_sound_metal_defaults(),
+	node_box = {
+		type = "fixed",
+		fixed = {
+			{ -1/32, -0.5, -0.15, 1/32, 0.5, -0.15 + 1/16 }
+		}
+	},
+	on_place = minetest.rotate_node,
+	--[[ digiline = {
+		wire = {
+			rules = {
+				{ x = 0, y = 0, z = -1 },
+				{ x = 0, y = 0, z = 1 },
+				{ x = 1, y = 0, z = 0 },
+				{ x = -1, y = 0, z = 0 },
+				{ x = 0, y = -1, z = 0 },
+				{ x = 0, y = 1, z = 0 },
+				{ x = 0, y = -2, z = 0 }
+			}
+		}
+	}, ]]
+	streets_pole_connection = {
+		[0] = { 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+		[1] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0 },
+		[2] = { 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+		[3] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0 },
+		["t"] = { 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 },
+		["b"] = { 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 }
+	},
+	check_for_pole = facedir_check_for_pole,
+})
+
+minetest.register_craft({
+	output = "streets:smallpole 8",
+	recipe = {
+		{ "default:steel_ingot", "default:steel_ingot" },
+		{ "", "" },
+	}
+})

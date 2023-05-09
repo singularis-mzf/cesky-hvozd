@@ -38,5 +38,11 @@ MIT License
 ### Media
 CC-BY-SA 3.0
 
+With exception of streets_sign_eu_cross1.png and streets_sign_eu_cross2.png
+that are public domain because of Slovak copyright law, used sources:
+
+* [https://commons.wikimedia.org/wiki/File:201_V%C3%BDstra%C5%BEn%C3%BD_kr%C3%AD%C5%BE_pre_%C5%BEelezni%C4%8Dn%C3%A9_priecestie_jednoko%C4%BEajov%C3%A9.jpg](https://commons.wikimedia.org/wiki/File:201_V%C3%BDstra%C5%BEn%C3%BD_kr%C3%AD%C5%BE_pre_%C5%BEelezni%C4%8Dn%C3%A9_priecestie_jednoko%C4%BEajov%C3%A9.jpg)
+* [https://commons.wikimedia.org/wiki/File:202_V%C3%BDstra%C5%BEn%C3%BD_kr%C3%AD%C5%BE_pre_%C5%BEelezni%C4%8Dn%C3%A9_priecestie_viacko%C4%BEajov%C3%A9.jpg](https://commons.wikimedia.org/wiki/File:202_V%C3%BDstra%C5%BEn%C3%BD_kr%C3%AD%C5%BE_pre_%C5%BEelezni%C4%8Dn%C3%A9_priecestie_viacko%C4%BEajov%C3%A9.jpg)
+
 ### License File
 See the file `LICENSE` for more details.

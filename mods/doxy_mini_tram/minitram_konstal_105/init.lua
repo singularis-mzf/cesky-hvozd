@@ -153,6 +153,7 @@ local konstal_105_definition = {
 	},
 
 	horn_sound = "somemoretrains_tram_horn",
+	custom_on_velocity_change = tram_on_velocity_change,
 };
 
 if minitram_konstal_105_liveries and minitram_konstal_105_liveries.add_liveries_konstal_105 then
