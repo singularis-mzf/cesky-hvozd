@@ -223,7 +223,7 @@ local function on_rightclick(pos, node, clicker, itemstack, pointed_thing)
 		return
 	end
 	local player_name = clicker:get_player_name()
-	ch_core.show_formspec(clicker, "ch_overrides:piano", get_formspec(pos, clicker), formspec_callback, {pos = pos}, {})
+	ch_core.show_formspec(clicker, "ch_overrides:piano", get_formspec(pos, player_name), formspec_callback, {pos = pos}, {})
 end
 
 local def = {
