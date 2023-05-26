@@ -446,31 +446,42 @@ minetest.register_craft({
 })
 
 -- žezlo usnadnění
+local function switch_creative(player, target_state)
+	if not player or not player:is_player() then
+		return
+	end
+	local player_name = player:get_player_name()
+	local player_privs = minetest.get_player_privs(player_name)
+	local was_creative = player_privs.creative
+	local message
+	if not player_privs.privs and not player_privs.ch_switchable_creative then
+		message = "K použití žezla usnadnění nemáte dostatečná práva!"
+	else
+		if target_state then
+			player_privs.creative = true
+			message = "režim usnadnění hry zapnut"
+		else
+			player_privs.creative = nil
+			message = "režim usnadnění hry vypnut"
+		end
+		minetest.set_player_privs(player_name, player_privs)
+	end
+	ch_core.systemovy_kanal(player_name, message)
+end
+
 def = {
 	description = "žezlo usnadnění",
-	_ch_help = "Postavám s právem privs nebo ch_switchable_creative umožňuje levým klikem\nsi zapnout či vypnout režim usnadnění hry podle potřeby.\nTento nástroj je určen výhradně pro kouzelnické postavy.",
+	_ch_help = "Postavám s právem privs nebo ch_switchable_creative umožňuje levým klikem\nsi zapnout či pravý klikem vypnout režim usnadnění hry podle potřeby.\nTento nástroj je určen výhradně pro kouzelnické postavy.",
 	_ch_help_group = "creative_zezlo",
 	inventory_image = "ch_extras_creative_inv.png",
 	on_use = function(itemstack, user, pointed_thing)
-		if user and user:is_player() then
-			local player_name = user:get_player_name()
-			local privs = minetest.get_player_privs(player_name)
-			local message
-			if privs.privs or privs.ch_switchable_creative then
-				if privs.creative then
-					privs.creative = nil
-					message = "režim usnadnění hry vypnut"
-				else
-					privs.creative = true
-					message = "režim usnadnění hry zapnut"
-				end
-				minetest.set_player_privs(player_name, privs)
-				
-			else
-				message = "K použití žezla usnadnění nemáte dostatečná práva!"
-			end
-			ch_core.systemovy_kanal(player_name, message)
-		end
+		switch_creative(user, true)
+	end,
+	on_secondary_use = function(itemstack, user, pointed_thing)
+		switch_creative(user, false)
+	end,
+	on_place = function(itemstack, user, pointed_thing)
+		switch_creative(user, false)
 	end,
 }
 minetest.register_craftitem("ch_extras:staff_of_creativity", def)
