@@ -3,6 +3,7 @@
 --[[
     Replacement tool for creative building (Mod for MineTest)
     Copyright (C) 2013 Sokomine
+    Copyright (C) 2022 Singularis
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,9 +19,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
--- Version 3.0
+-- Version 3.1
 
 -- Changelog: 
+-- 26.05.2023 * Fixed bug when nodes with can_dig callbacks could be replaced
+--              freely.
 -- 02.09.2021 * Added a history of stored patterns (not saved over server restart)
 --            * Added a menu to select a history entry. It is accessable via AUX1 + left click.
 --            * Removed deprecated functions get/set_metadata(..) and renamed metadata to pattern
@@ -113,6 +116,7 @@ local function replacer_on_place(itemstack, placer, pointed_thing)
 end
 
 local function replacer_on_use(itemstack, user, pointed_thing)
+	print("replacer_on_use")
 	if not user or not pointed_thing then
 		return itemstack
 	end
@@ -173,130 +177,111 @@ minetest.register_tool( "replacer:replacer",
 
 replacer.replace = function( itemstack, user, pointed_thing, mode )
 
-       if( user == nil or pointed_thing == nil) then
-          return nil;
-       end
-       local name = user:get_player_name();
- 
-       if( pointed_thing.type ~= "node" ) then
-          minetest.chat_send_player( name, "  Chyba: Žádný blok.");
-          return nil;
-       end
+	if user == nil or pointed_thing == nil then
+		return nil
+	end
+	local name = user:get_player_name()
 
-       local pos  = minetest.get_pointed_thing_position( pointed_thing, mode );
-       local node = minetest.get_node_or_nil( pos );
-       
-       if( node == nil ) then
+	if pointed_thing.type ~= "node" then
+		minetest.chat_send_player( name, "  Chyba: Žádný blok.")
+		return nil
+	end
 
-          minetest.chat_send_player( name, "Chyba: Cílový blok ještě není načtený. Počkejte prosím, než se server vzpamatuje.");
-          return nil;
-       end
+	local pos  = minetest.get_pointed_thing_position( pointed_thing, mode )
+	local node = minetest.get_node_or_nil( pos )
+	if  node == nil then
+		minetest.chat_send_player( name, "Chyba: Cílový blok ještě není načtený. Počkejte prosím, než se server vzpamatuje.");
+		return nil;
+	end
 
+	local meta = itemstack:get_meta()
+	local pattern = meta:get_string("pattern")
 
-       local meta = itemstack:get_meta()
-       local pattern = meta:get_string("pattern")
+	-- make sure it is defined
+	if not(pattern) or pattern == "" then
+		pattern = "default:dirt 0 0"
+	end
 
-       -- make sure it is defined
-       if(not(pattern) or pattern == "") then
-          pattern = "default:dirt 0 0";
-       end
+	local keys = user:get_player_control()
+	if keys.aux1 then
+		minetest.show_formspec(name, "replacer:menu", replacer.get_formspec(name, pattern, user))
+		return nil
+	end
 
-       local keys=user:get_player_control();
-       if( keys["aux1"]) then
-           minetest.show_formspec(name, "replacer:menu", replacer.get_formspec(name, pattern, user))
-           return nil
-       end
+	-- regain information about nodename, param1 and param2
+	local daten = pattern:split( " " )
+	-- the old format stored only the node name
+	if #daten < 3 then
+		daten[2] = 0
+		daten[3] = 0
+	end
 
-       -- regain information about nodename, param1 and param2
-       local daten = pattern:split( " " );
-       -- the old format stored only the node name
-       if( #daten < 3 ) then
-          daten[2] = 0;
-          daten[3] = 0;
-       end
+	-- if someone else owns that node then we can not change it
+	if replacer_homedecor_node_is_owned(pos, user) then
+		return nil
+	end
 
-       -- if someone else owns that node then we can not change it
-       if( replacer_homedecor_node_is_owned(pos, user)) then
+	local daten = replacer.get_new_node_data(node, daten, name)
+	-- nothing to replace
+	if not daten then
+		return
+	end
 
-          return nil;
-       end
+	if node.name and node.name ~= "" and replacer.blacklist[node.name] then
+		minetest.chat_send_player( name, "Nahrazování bloků typu '"..( node.name or "?" ).."' není na tomto serveru dovoleno. Nahrazení selhalo.")
+		return nil
+	end
 
-       local daten = replacer.get_new_node_data(node, daten, name)
-       -- nothing to replace
-       if(not(daten)) then
-          return
-       end
+	if replacer.blacklist[daten[1]] then
+		minetest.chat_send_player( name, "Umísťování bloků typu '"..( daten[1] or "?" ).."' nahrazovačem není na tomto serveru dovoleno. Nahrazení selhalo.")
+		return nil
+	end
 
-       if( node.name and node.name ~= "" and replacer.blacklist[ node.name ]) then
-          minetest.chat_send_player( name, "Nahrazování bloků typu '"..( node.name or "?" )..
-		"' není na tomto serveru dovoleno. Nahrazení selhalo.");
-          return nil;
-       end
+	-- do not replace if there is nothing to be done
+	if node.name == daten[1] then
+		-- the node itshelf remains the same, but the orientation was changed
+		if node.param1 ~= daten[2] or node.param2 ~= daten[3] then
+			minetest.swap_node( pos, { name = node.name, param1 = daten[2], param2 = daten[3] } );
+		end
+		return nil
+	end
 
-       if( replacer.blacklist[ daten[1] ]) then
-          minetest.chat_send_player( name, "Umísťování bloků typu '"..( daten[1] or "?" )..
-		"' nahrazovačem není na tomto serveru dovoleno. Nahrazení selhalo.");
-          return nil;
-       end
+	-- in survival mode, the player has to provide the node he wants to place
+	-- does the player carry at least one of the desired nodes with him?
+	local is_creative = minetest.is_creative_enabled(name)
+	if not is_creative and not user:get_inventory():contains_item("main", daten[1]) then
+		minetest.chat_send_player( name, "Již nemáte žádné další '"..( daten[1] or "?" ).."'. Nahrazení selhalo.")
+		return nil
+	end
 
-       -- do not replace if there is nothing to be done
-       if( node.name == daten[1] ) then
+	-- give the player the item by simulating digging if possible
+	if node.name ~= "air" and node.name ~= "ignore" then
+		local ndef = minetest.registered_nodes[node.name]
+		if ndef ~= nil then
+			ndef.on_dig(pos, node, user) -- I don't understand this, but it seems to work.
+		else
+			minetest.node_dig( pos, node, user );
+		end
 
-          -- the node itshelf remains the same, but the orientation was changed
-          if( node.param1 ~= daten[2] or node.param2 ~= daten[3] ) then
-             minetest.add_node( pos, { name = node.name, param1 = daten[2], param2 = daten[3] } );
-          end
+		local digged_node = minetest.get_node_or_nil(pos)
+		if not digged_node or digged_node.name == node.name then
+			-- some nodes - like liquids - cannot be digged. but they are buildable_to and
+			-- thus can be replaced
+			local node_def = minetest.registered_nodes[node.name]
+			if not node_def or not node_def.buildable_to then
+				minetest.chat_send_player( name, "Nahrazení '"..( node.name or "air" ).."' s '"..( pattern or "?" ).."' selhalo. Nemohu odstranit původní blok.")
+				return nil
+			end
+		end
+	end
 
-          return nil;
-       end
-
-       -- in survival mode, the player has to provide the node he wants to place
-       if( not(minetest.settings:get_bool("creative_mode") )
-	  and not( minetest.check_player_privs( name, {creative=true}))) then
- 
-          -- players usually don't carry dirt_with_grass around; it's safe to assume normal dirt here
-          -- fortunately, dirt and dirt_with_grass does not make use of rotation
-          if( daten[1] == "default:dirt_with_grass" ) then
-             daten[1] = "default:dirt";
-             pattern = "default:dirt 0 0";
-          end
-
-          -- does the player carry at least one of the desired nodes with him?
-          if( not( user:get_inventory():contains_item("main", daten[1]))) then
- 
-
-             minetest.chat_send_player( name, "Již nemáte žádné další '"..( daten[1] or "?" ).."'. Nahrazení selhalo.");
-             return nil;
-          end
-
-
-          -- give the player the item by simulating digging if possible
-          if(   node.name ~= "air" 
-            and node.name ~= "ignore") then
-
-             minetest.node_dig( pos, node, user );
-
-             local digged_node = minetest.get_node_or_nil( pos );
-             if( not( digged_node ) 
-                or digged_node.name == node.name ) then
-
-                -- some nodes - like liquids - cannot be digged. but they are buildable_to and
-                -- thus can be replaced
-                local node_def = minetest.registered_nodes[node.name]
-                if(not(node_def) or not(node_def.buildable_to)) then
-                   minetest.chat_send_player( name, "Nahrazení '"..( node.name or "air" ).."' s '"..( pattern or "?" ).."' selhalo. Nemohu odstranit původní blok.");
-                   return nil;
-                end
-             end
-            
-          end
-
-          -- consume the item
-          user:get_inventory():remove_item("main", daten[1].." 1");
-       end
-       minetest.add_node( pos, { name =  daten[1], param1 = daten[2], param2 = daten[3] } );
-       return nil; -- no item shall be removed from inventory
-    end
+	-- consume the item
+	if not is_creative then
+		user:get_inventory():remove_item("main", daten[1].." 1")
+	end
+	minetest.set_node( pos, { name =  daten[1], param1 = daten[2], param2 = daten[3] } )
+	return nil -- no item shall be removed from inventory
+end
 
 
 --[[
