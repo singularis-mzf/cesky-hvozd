@@ -701,10 +701,8 @@ function doors.register(name, def)
 
 	doors.registered_doors[name .. "_a"] = true
 	doors.registered_doors[name .. "_b"] = true
-	if mesh_level > 2 then
-		doors.registered_doors[name .. "_c"] = true
-		doors.registered_doors[name .. "_d"] = true
-	end
+	doors.registered_doors[name .. "_c"] = true
+	doors.registered_doors[name .. "_d"] = true
 	if mesh_prefix == "door" then
 		doors.registered_doors[name .. "_cd_a"] = true
 		doors.registered_doors[name .. "_cd_b"] = true
