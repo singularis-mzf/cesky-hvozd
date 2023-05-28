@@ -29,6 +29,7 @@ dofile(modpath.."/ores.lua")
 dofile(modpath.."/poles.lua")
 dofile(modpath.."/shelves.lua")
 dofile(modpath.."/security.lua")
+dofile(modpath.."/tool_breaking.lua")
 
 -- log giveme
 
