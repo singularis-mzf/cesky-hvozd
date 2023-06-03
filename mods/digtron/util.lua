@@ -93,7 +93,7 @@ digtron.can_build_to = function(pos, protected_nodes, dug_nodes)
 	local target = minetest.get_node(pos)
 	if target.name == "air" or
 	   dug_nodes:get(pos.x, pos.y, pos.z) == true or
-	   minetest.registered_nodes[target.name].buildable_to == true
+	   (minetest.registered_nodes[target.name] or {}).buildable_to == true
 	   then
 		return true
 	end

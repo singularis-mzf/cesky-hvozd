@@ -121,6 +121,12 @@ replacer.identify_shape_and_material = function(full_node_name)
 	end
 
 	-- check if we are dealing with a node from the circular saw from moreblocks
+	local craftitem, category, alternate = stairsplus:analyze_shape(full_node_name)
+	if craftitem ~= nil then
+		local result = {"circular_saw", craftitem, mod_name, category.."_", node_name:sub(#category + 2, -#alternate - 1), alternate}
+		return result
+	end
+--[[
 	for prefix, suffixes in pairs(replacer.saw_prefixes) do
 		-- the prefix matches; does any suffix match?
 		if(node_name:sub(1, #prefix) == prefix) then
@@ -129,8 +135,9 @@ replacer.identify_shape_and_material = function(full_node_name)
 					local material = node_name:sub(#prefix + 1, -#suffix-1)
 					for m_name, m_parts in pairs(circular_saw.known_nodes) do
 						if(m_parts[2] == material) then
-							return {"circular_saw", m_name,
-								m_parts[1], prefix, material, suffix}
+							local result = {"circular_saw", m_name, m_parts[1], prefix, material, suffix}
+							print("LADĚNÍ: "..dump2({result = result}))
+							return result
 						end
 					end
 				end
@@ -139,6 +146,7 @@ replacer.identify_shape_and_material = function(full_node_name)
 			return ""
 		end
 	end
+	]]
 
 	-- check if we are dealing with a node from the cnc machine
 	if(minetest.global_exists("technic_cnc") and technic_cnc.programs) then
