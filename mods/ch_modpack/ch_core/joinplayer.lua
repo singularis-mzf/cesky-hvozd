@@ -64,6 +64,7 @@ local function after_joinplayer(player_name)
 		if not controls.aux1 then
 			player:set_properties({stepheight = 0.3})
 		end
+		player:set_clouds({density = 0}) -- disable clouds
 	end
 end
 
