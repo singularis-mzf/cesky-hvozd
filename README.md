@@ -808,6 +808,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT pro kód, CC-BY-SA 4.0 pro média
 * [ContentDB](https://content.minetest.net/packages/OgelGames/powerbanks/)
 
+## Punch and Place Particles (p\_particles)
+
+* Zdroj: [https://github.com/epCode/p\_particles](https://github.com/epCode/p\_particles), revize 651bc97b0c90fd2097e92e2cce974e3f2677c78a
+* Původní licence: LGPLv3 pro kód, bez licence pro ostatní
+* Licence úprav: LGPLv3 pro kód
+* [ContentDB](https://content.minetest.net/packages/epCode/punch\_and\_place\_particles/)
+
 ## Realtime Elevator (elevator)
 
 * Zdroj: [https://github.com/shacknetisp/elevator](https://github.com/shacknetisp/elevator), revize ef9ae22b81e7227bee627089f4e7c8c2b608fcb9
