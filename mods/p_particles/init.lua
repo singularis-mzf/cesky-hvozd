@@ -41,7 +41,7 @@ local function particle_node(pos, node, inside)
 					velocity = vector.add(vector.zero(), { x = math.random(-10, 10)/100, y = math.random(-10, 10)/100, z = math.random(-10, 10)/100 }),
 					acceleration = { x = 0, y = -9.81, z = 0 },
 					expirationtime = math.random(5,40)/100,
-					size = 1,
+					size = 0,
 					collisiondetection = true,
 					vertical = false,
 					drag = vector.new(1,1,1),
@@ -53,23 +53,94 @@ local function particle_node(pos, node, inside)
 	end
 end
 
-minetest.register_on_punchnode(function(pos, node, puncher, pointed_thing)
-  if punch_particles then
-  	particle_node(pos, node)
-  end
-end)
+local groups_1 = {"crumbly", "cracky", "snappy", "choppy", "wood", "tree"}
+local falses = {on_punch = false, on_placenode = false, on_dignode = false}
+local generates_particles_cache = {air = falses, ignore = falses}
 
-minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack, pointed_thing)
-  if place_particles then
-		if pointed_thing.type == "node" and minetest.get_node(pointed_thing.under) then
-			particle_node(pointed_thing.under, minetest.get_node(pointed_thing.under))
+local function generates_particles(node_name)
+	local result = generates_particles_cache[node_name]
+	if result ~= nil then
+		return result
+	end
+	local ndef = minetest.registered_nodes[node_name]
+	if ndef == nil then
+		minetest.log("warning", "generates_particles_cache["..node_name.."] cached as falses, because it is an unknown node!")
+		generates_particles_cache[node_name] = falses
+		return falses
+	end
+	result = table.copy(falses)
+	for _, group in ipairs(groups_1) do
+		if minetest.get_item_group(node_name, group) > 0 then
+			result.on_punchnode = true
 		end
-    particle_node(pos, newnode)
-  end
-end)
+	end
+	if ((ndef.sounds or {}).dug or {}).name == "default_dug_metal" then
+		result.on_punchnode = false
+	end
+	if result.on_punchnode then
+		result.on_placenode = true
+	end
+	if result.on_punchnode or (ndef.liquidtype or "none") == "none" and (ndef.drawtype or "normal") == "normal" then
+		result.on_dignode = true
+	end
+	if not place_particles then
+		result.on_placenode = false
+	end
+	if not dug_particles then
+		result.on_dignode = false
+	end
+	if not punch_particles then
+		result.on_punchnode = false
+	end
+	if not (result.on_placenode or result.on_punchnode or result.on_dignode) then
+		result = falses
+	end
+	-- minetest.log("warning", "DEBUG: liquid_type == '"..(ndef.liquidtype or "none").."', drawtype == '"..(ndef.drawtype or "normal").."', place_particles == "..(place_particles and "true" or "false")..", dug_particles == "..(dug_particles and "true" or "false"))
+	generates_particles_cache[node_name] = result
+	return result
+end
 
-minetest.register_on_dignode(function(pos, oldnode, digger)
-	if dug_particles then
+local function on_punchnode(pos, node, puncher, pointed_thing)
+	local node_def, node_groups, wielded_item, tool_def, tool_capabilities, is_diggable
+
+	node_def = minetest.registered_nodes[node.name]
+	if node_def == nil then return end -- unknown node
+	node_groups = node_def.groups or {}
+	wielded_item = puncher and puncher:is_player() and puncher:get_wielded_item()
+	if wielded_item == nil then return end -- puncher is not a player
+	if wielded_item:is_empty() then return end -- player has not a tool
+	tool_def = minetest.registered_items[wielded_item:get_name()]
+	if tool_def == nil then return end -- wielded tool is undefined
+	tool_capabilities = tool_def.tool_capabilities
+	is_diggable = (tool_capabilities ~= nil and minetest.get_dig_params(node_groups, tool_capabilities).diggable) or minetest.get_dig_params(node_groups, minetest.registered_items[""].tool_capabilities).diggable
+	if not is_diggable then return end -- the node is not diggable by this tool
+
+	if generates_particles(node.name).on_punch then
+		particle_node(pos, node)
+	end
+end
+
+local function on_placenode(pos, newnode, placer, oldnode, itemstack, pointed_thing)
+	if pointed_thing == nil then
+		return -- probably automated placing of nodes
+	end
+	if pointed_thing.type == "node" then
+		local node = minetest.get_node(pos)
+		if generates_particles(node.name).on_placenode then
+			particle_node(pos, node)
+		end
+	end
+	if generates_particles(newnode.name).on_placenode then
+		particle_node(pos, newnode)
+	end
+end
+
+local function on_dignode(pos, oldnode, digger)
+	if generates_particles(oldnode.name).on_dignode then
 		particle_node(pos, oldnode, true)
 	end
-end)
+end
+
+minetest.register_on_punchnode(on_punchnode)
+minetest.register_on_placenode(on_placenode)
+minetest.register_on_dignode(on_dignode)
