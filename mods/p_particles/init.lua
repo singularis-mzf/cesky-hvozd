@@ -12,7 +12,7 @@ local dug_particles = minetest.settings:get_bool("dug_particles", true)
 
 
 local function get_node_side_particles(pos, i)
-	sides = {
+	local sides = {
 		vector.new(pos.x+(math.random(-50, 50)/100), pos.y+math.random(0.51, 0.51), pos.z+(math.random(-50, 50)/100)),
 		vector.new(pos.x+(math.random(-50, 50)/100), pos.y+math.random(-0.51, -0.51), pos.z+(math.random(-50, 50)/100)),
 

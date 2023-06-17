@@ -545,6 +545,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPL 2.1 pro kód, CC-BY-SA-4.0 pro textury
 * [ContentDB](https://content.minetest.net/packages/runs/fireworkz/)
 
+## Fumo Plushies (fumoplushies)
+
+* Zdroj: [https://git.minetest.land/aSliceOfCake/Plushfumos](https://git.minetest.land/aSliceOfCake/Plushfumos), revize daf783e473637868e48fa416f9e2b76902d2da38
+* Původní licence: AGPLv3
+* Licence úprav: AGPLv3
+* [ContentDB](https://content.minetest.net/packages/aSliceOfCake/fumoplushies/)
+
 ## Funny Shadows (shadows)
 
 * Zdroj: [https://github.com/x2048/shadows](https://github.com/x2048/shadows), revize d001680bb8af00ba0c78ee74c6dcc3b31d02cd25
