@@ -656,6 +656,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: GPLv3
 * Licence úprav: GPLv3
 
+## Leads (leads)
+
+* Zdroj: [https://content.minetest.net/packages/SilverSandstone/leads/](https://content.minetest.net/packages/SilverSandstone/leads/), verze 0.1.0
+* Původní licence: kód MIT, ostatní různé (CC BY-SA, CC BY, CC0)
+* Licence úprav: kód MIT; ostatní: stejná jako u původního souboru, nové soubory CC0
+* [ContentDB](https://content.minetest.net/packages/SilverSandstone/leads/)
+
 ## Letters (letters)
 
 * Zdroj: [https://github.com/minetest-mods/letters](https://github.com/minetest-mods/letters), revize d44b88fa908682d5f68a27b491f6d0e57e66fa4c
