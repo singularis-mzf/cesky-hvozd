@@ -1097,6 +1097,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: CC0
 * [ContentDB](https://content.minetest.net/packages/sirrobzeroone/dungeonsoup/)
 
+## Ephesus (ephesus)
+
+* Zdroj: [https://content.minetest.net/packages/Clemstriangular/ephesus/](https://content.minetest.net/packages/Clemstriangular/ephesus/), 2023-06-13
+* Původní licence: EUPL 1.2
+* [ContentDB](https://content.minetest.net/packages/Clemstriangular/ephesus/)
+
 ## Ethereal NG (ethereal)
 
 * Zdroj: [https://notabug.org/tenplus1/ethereal](https://notabug.org/tenplus1/ethereal), revize 769fb8111edd0a895514db3a2df316c0b49b0252

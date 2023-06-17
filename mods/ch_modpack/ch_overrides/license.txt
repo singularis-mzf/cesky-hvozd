@@ -958,3 +958,9 @@ moretrees_palm_wood.png
 	License: CC0
 	Source:
 		https://github.com/sirrobzeroone/DungeonSoup
+
+darkage_marble.png
+	Author: Clemstriangular
+	License: EUPLv1.2
+	Source:
+		https://content.minetest.net/packages/Clemstriangular/ephesus/

@@ -77,7 +77,7 @@ local function generates_particles(node_name)
 	if ((ndef.sounds or {}).dug or {}).name == "default_dug_metal" then
 		result.on_punchnode = false
 	end
-	if result.on_punchnode then
+	if result.on_punchnode and (minetest.get_item_group(node_name, "snappy") > 0 or minetest.get_item_group(node_name, "crumbly") > 0) then
 		result.on_placenode = true
 	end
 	if result.on_punchnode or (ndef.liquidtype or "none") == "none" and (ndef.drawtype or "normal") == "normal" then

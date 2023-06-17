@@ -30,6 +30,10 @@ digistuff.lua
 	Modified and adapted by: Singularis
 	License: LGPLv3+ (may contain some code from mesecons and digilines)
 
+ephesus.lua
+	Author: Singularis
+	License: EUPLv1.2
+
 ethereal.lua
 petz.lua
 	Author: Singularis
@@ -70,6 +74,12 @@ digistuff_camera_top.png
 	Author: cheapie (from cheapiesystems.com)
 	Source: Digistuff Mod
 	License: CC BY-SA 3.0 Generic (according to the mod contains modified versions of textures from mesecons and digilines)
+
+ephesus_ivoire.png
+	Author: Clemstriangular
+	Source:
+		https://content.minetest.net/packages/Clemstriangular/ephesus/
+	License: EUPLv1.2
 
 petz_grey_gables.png
 petz_red_gables.png
