@@ -178,9 +178,12 @@ end;
 
 --- Handles the lead being punched.
 function leads.LeadEntity:on_punch(puncher, time_from_last_punch, tool_capabilities, dir, damage)
+    local name = puncher and puncher:get_player_name();
+	if name == nil or minetest.is_protected(vector.round(self.object:get_pos()), name) then
+		return
+	end
     self:break_lead(puncher);
 
-    local name = puncher and puncher:get_player_name();
     if name and name ~= '' then
         leads.util.block_player_interaction(name, 0.25);
     end;

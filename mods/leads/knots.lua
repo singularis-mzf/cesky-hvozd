@@ -75,6 +75,11 @@ end;
 
 --- Handles the knot being punched.
 function leads.KnotEntity:on_punch(puncher, time_from_last_punch, tool_capabilities, dir, damage)
+	-- Check the protection
+	local puncher_name = puncher and puncher:get_player_name()
+	if not puncher_name or minetest.is_protected(vector.round(self.object:get_pos()), puncher_name) then
+		return
+	end
     -- Check if the puncher is holding Shift, and get a list of leads if necessary:
     local break_leads = puncher and puncher:get_player_control().sneak;
     local connected_leads;
@@ -124,6 +129,10 @@ end;
 
 --- Handles the knot being right-clicked.
 function leads.KnotEntity:on_rightclick(clicker)
+	local clicker_name = clicker and clicker:get_player_name()
+	if clicker_name == nil or minetest.is_protected(vector.round(self.object:get_pos()), clicker_name) then
+		return
+	end
     leads.knot(clicker, self.object:get_pos());
 end;
 

@@ -41,7 +41,8 @@ function leads._after_register_node(name, def)
     if leads.is_knottable(name) then
         local old_on_rightclick = def.on_rightclick or _default_on_rightclick;
         local function on_rightclick(pos, node, clicker, itemstack, pointed_thing, ...)
-            if leads.knot(clicker, pos) then
+			local clicker_name = clicker and clicker:get_player_name()
+            if clicker_name ~= nil and not minetest.is_protected(pos, clicker_name) and leads.knot(clicker, pos) then
                 return nil;
             end;
             return old_on_rightclick(pos, node, clicker, itemstack, pointed_thing, ...);
