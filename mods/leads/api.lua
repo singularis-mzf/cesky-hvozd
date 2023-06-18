@@ -95,6 +95,7 @@ function leads.connect_objects(leader, follower, item)
     entity:notify_connector_added(leader,   true);
     entity:notify_connector_added(follower, false);
     minetest.sound_play(leads.sounds.attach, {pos = centre}, true);
+	minetest.log("action", "[leads] Objects connected: leader = "..leads.util.describe_object(leader).." (at "..minetest.pos_to_string(vector.round(entity.leader_id.pos)).."), follower = "..leads.util.describe_object(follower).." (at "..minetest.pos_to_string(vector.round(entity.follower_id.pos))..").")
     return object;
 end;
 

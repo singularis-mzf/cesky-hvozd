@@ -211,8 +211,9 @@ end;
 -- @param snap    [boolean|nil]   true if the lead is breaking due to tension.
 function leads.LeadEntity:break_lead(breaker, snap)
     if leads.settings.debug then
-        minetest.debug(debug.traceback(('[Leads] Breaking lead %s at %s.'):format(self, self.object:get_pos())));
+        minetest.debug(debug.traceback(('[Leads] Breaking lead %s at %s.'):format(self, minetest.pos_to_string(self.object:get_pos()))));
     end;
+	minetest.log("action", "[leads] Objects disconnected: leader = "..leads.util.describe_object(self.leader).." (at "..minetest.pos_to_string(vector.round(self.leader_id.pos)).."), follower = "..leads.util.describe_object(self.follower).." (at "..minetest.pos_to_string(vector.round(self.follower_id.pos))..").")
 
     -- Notify leader and follower:
     self:notify_connector_removed(self.leader,   true);
@@ -295,12 +296,18 @@ function leads.LeadEntity:set_connector(object, is_leader)
         return false;
     end;
 
-    local key = is_leader and 'leader' or 'follower';
+	local key, other_key
+	if is_leader then
+		key, other_key = "leader", "follower"
+	else
+		key, other_key = "follower", "leader"
+	end
     local old_object = self[key];
     self:notify_connector_removed(old_object, is_leader);
     self[key] = object;
     self:notify_connector_added(object, is_leader);
     self:update_objref_ids();
+	minetest.log("action", "[leads] set_connector(): key = "..key..", old_object = "..leads.util.describe_object(old_object)..", new_object = "..leads.util.describe_object(object).." (at "..minetest.pos_to_string(vector.round(self[key.."_id"].pos)).."), other_object = "..leads.util.describe_object(self[other_key])..".")
     self.age = 0.0;
     return true;
 end;
