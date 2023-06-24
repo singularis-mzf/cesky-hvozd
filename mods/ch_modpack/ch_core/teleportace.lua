@@ -91,11 +91,11 @@ local function start_teleport(online_charinfo, pos)
 				return false
 			end
 			if ch_core.teleport_player(player, pos) then
-				ch_core.systemovy_kanal(player_name, "Teleport úspěšný")
+				ch_core.systemovy_kanal(player_name, "Přemístění úspěšné")
 				minetest.log("action", player_name.." teleported to "..minetest.pos_to_string(pos)..".")
 				minetest.sound_play("teleport", { to_player = player_name, gain = 1.0 })
 			else
-				ch_core.systemovy_kanal(player_name, "Teleport selhal")
+				ch_core.systemovy_kanal(player_name, "Přemístění selhalo")
 				minetest.log("action", player_name.." was not teleported to "..minetest.pos_to_string(pos)..".")
 			end
 		end
@@ -105,7 +105,7 @@ local function start_teleport(online_charinfo, pos)
 	if timer_def then
 		ch_core.cancel_ch_timer(online_charinfo, "teleportace")
 	end
-	timer_def = {label = "teleportace", func = func, start_pos = player and player:get_pos()}
+	timer_def = {label = "přemístění", func = func, start_pos = player and player:get_pos()}
 	local energy_crystal = minetest.registered_items["basic_materials:energy_crystal_simple"]
 	if energy_crystal then
 		timer_def.hudbar_icon = energy_crystal.inventory_image

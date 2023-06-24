@@ -355,7 +355,7 @@ local function teleporter_on_use(itemstack, player, pointed_thing)
 	-- check velocity
 	local old_velocity = entity_root:get_velocity()
 	if vector.length(old_velocity) > 3 then
-		ch_core.systemovy_kanal(player_name, "Teleportace selhala, protože se pohybujete příliš rychle.")
+		ch_core.systemovy_kanal(player_name, "Přemístění selhalo, protože se pohybujete příliš rychle.")
 		minetest.log("action", "Teleporter failed for "..player_name.." at "..minetest.pos_to_string(old_pos).." due to velocity "..minetest.pos_to_string(old_velocity))
 	else
 		-- compute the destination
@@ -410,10 +410,10 @@ local function teleporter_on_use(itemstack, player, pointed_thing)
 					minetest.after(0.1, function() minetest.sound_play("mobs_spell", {pos = destination, max_hear_distance = 5, gain = 0.2}, true) end)
 				end
 			else
-				ch_core.systemovy_kanal(player_name, "Chyba: teleportace selhala z neznámých důvodů.")
+				ch_core.systemovy_kanal(player_name, "Chyba: přemístění selhalo z neznámých důvodů.")
 			end
 		else
-			ch_core.systemovy_kanal(player_name, "Chyba: teleportace selhala z prostorových důvodů.")
+			ch_core.systemovy_kanal(player_name, "Chyba: přemístění selhalo z prostorových důvodů.")
 			minetest.log("action", "Teleporter failed for "..player_name.." at "..minetest.pos_to_string(old_pos)..", because no valid destination was found for pointed_pos = "..minetest.pos_to_string(pointed_pos)..", surface_pos = "..minetest.pos_to_string(surface_pos))
 		end
 	end
@@ -424,8 +424,8 @@ local function teleporter_on_use(itemstack, player, pointed_thing)
 end
 
 def = {
-	description = "teleportér",
-	_ch_help = "Nástroj sloužící k okamžitému přesunu na malou vzdálenost.\nLevý klik na blok vás přenese přibližně na daný blok. Přenos může selhat v těsných prostorách nebo když se rychle pohybujete.\nTento nástroj je určen především pro kouzelnické postavy.\nTeleportér je jednorázový, ledaže máte právo usnadnění hry.",
+	description = "teleportér / přemísťovač",
+	_ch_help = "Nástroj sloužící k okamžitému přemístění na malou vzdálenost.\nLevý klik na blok vás přemístí přibližně na daný blok. Přemístění může selhat v těsných prostorách nebo když se rychle pohybujete.\nTento nástroj je určen především pro kouzelnické postavy.\nTeleportér je jednorázový, ledaže máte právo usnadnění hry.",
 	_ch_help_group = "teleporter2",
 	inventory_image = "translocator.png",
 	range = 128,
@@ -434,7 +434,7 @@ def = {
 }
 
 minetest.register_craftitem("ch_extras:teleporter", table.copy(def))
-def.description = "teleportér (neprodejný v OSA)"
+def.description = "teleportér / přemísťovač (neprodejný v OSA)"
 minetest.register_craftitem("ch_extras:teleporter_unsellable", def)
 minetest.register_craft({
 	output = "ch_extras:teleporter",

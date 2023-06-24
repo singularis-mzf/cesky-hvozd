@@ -39,6 +39,7 @@ dofile(modpath .. "/formspecs.lua") -- : data, lib
 dofile(modpath .. "/areas.lua") -- : lib
 dofile(modpath .. "/nametag.lua") -- : data, lib
 dofile(modpath .. "/chat.lua") -- : data, lib, privs, nametag
+dofile(modpath .. "/podnebi.lua") -- : privs, chat
 dofile(modpath .. "/dennoc.lua") -- : privs, chat
 dofile(modpath .. "/hud.lua") -- : data, lib, chat
 dofile(modpath .. "/ap.lua") -- : data, chat, hud, lib
@@ -247,7 +248,7 @@ local function globalstep(dtime)
 				end
 				if disrupt_teleport_flag then
 					ch_core.cancel_ch_timer(online_charinfo, "teleportace")
-					ch_core.systemovy_kanal(player_name, "Teleportace zrušena v důsledku akce hráče/ky nebo postavy.")
+					ch_core.systemovy_kanal(player_name, "Přemístění zrušeno v důsledku akce hráče/ky nebo postavy.")
 				end
 			end
 

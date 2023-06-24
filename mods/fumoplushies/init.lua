@@ -68,7 +68,7 @@ for id, props in pairs(panenky) do
 		drawtype = "mesh",
 		mesh = "fumo" .. id .. ".obj",
 		tiles = {{name = "fumo" .. id .. ".png", backface_culling = true}},
-		use_texture_alpha = "opaque",
+		use_texture_alpha = "clip",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		sunlight_propagates = true,

@@ -154,7 +154,6 @@ local m_path = minetest.get_modpath(m_name)
 			end
 
 			local output = "comboblock:"..first_node_name:split(":")[2].."_onc_"..second_node_name:split(":")[2]
-
 			return output
 		else
 			minetest.chat_send_player(placer:get_player_name(), pla_tar.err)
@@ -620,7 +619,7 @@ for _,v1 in pairs(slab_index) do
 				local pot_short_axis = point[comboblock_param_side_offset[nor_string][1]]                   -- When == 0 large flat side is inside node
 				local node_ax_pos     = vector.add(pos,normal)
 				local node_along_axis = minetest.get_node(node_ax_pos)                        				-- retrieve the node along +- axis for xyz
-				local node_ax_is_slab = minetest.registered_nodes[node_along_axis.name].groups.slab    		-- is node along axis in slab group
+				local node_ax_is_slab = minetest.get_item_group(node_along_axis.name, "slab") == 8		-- node along axis is a 8/16 slab
 				local node_ax_is_build = minetest.registered_nodes[node_along_axis.name].buildable_to       -- true/false
 				local node_ax_is_glass = string.find(string.lower(tostring(node_along_axis.name)), "glass") -- is node glass
 				local is_prot = minetest.is_protected(pos,placer:get_player_name())
