@@ -170,7 +170,7 @@ local function updatemeta(pos)
 end
 
 local door_dropdown = {L=1, R=2, C=3}
-local door_dropdown_rev = {Right="R", Left="L", Closed="C"}
+local door_dropdown_rev = {["vpravo"]="R", ["vlevo"]="L", ["neotvírat"]="C"}
 
 local function show_stoprailform(pos, player)
 	local pe = advtrains.encode_pos(pos)
@@ -206,7 +206,7 @@ local function show_stoprailform(pos, player)
 	form = form.."field[4.30,2.0;1.75,1;track;"..attrans("Track")..";"..minetest.formspec_escape(stdata.track).."]"
 	form = form.."field[6.05,2.0;1.75,1;wait;"..attrans("Stop Time")..";"..stdata.wait.."]"
 	form = form.."label[0.5,2.6;"..attrans("Door Side").."]"
-	form = form.."dropdown[0.51,3.0;2;doors;Left,Right,Closed;"..door_dropdown[stdata.doors].."]"
+	form = form.."dropdown[0.51,3.0;2;doors;vlevo,vpravo,neotvírat;"..door_dropdown[stdata.doors].."]"
 	form = form.."checkbox[3.00,2.7;reverse;"..attrans("Reverse train")..";"..(stdata.reverse and "true" or "false").."]"
 	form = form.."checkbox[3.00,3.1;kick;"..attrans("Kick out passengers")..";"..(stdata.kick and "true" or "false").."]"
 	form = form.."textarea[0.8,4.2;7,2;ars;"..attrans("Trains stopping here (ARS rules)")..";"..advtrains.interlocking.ars_to_text(stdata.ars).."]"
