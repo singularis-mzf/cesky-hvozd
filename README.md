@@ -705,6 +705,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/entuland/matrix/)
 
+## Metrosigns
+
+* Zdroj: [https://github.com/axcore/metrosigns](https://github.com/axcore/metrosigns), revize 0402258e41852c25e54bde09a02889731bd7af36
+* Původní licence: AGPL pro vše kromě sign writeru a ink cartridges; CC BY-SA 3.0 Unported pro sign writer a ink cartridges.
+* Licence úprav: AGPL pro vše; pro úpravy v sign writeru a ink cartridges navíc CC BY-SA 3.0 Unported.
+
 ## Minor Redefinitions (redef)
 
 * Zdroj: [https://gitlab.com/4w/redef](https://gitlab.com/4w/redef), revize 20b57de8f7b649ed142ee92ae876c15e65e182cc
