@@ -549,18 +549,27 @@ end
 
 minetest.register_tool("metrosigns:cartridge_red", {
     description = "červená náplň do tiskárny",
-    inventory_image = "streets_cartridge_red.png"
+    inventory_image = "streets_cartridge_red.png",
+	groups = {not_repairable = 1},
 })
 
 minetest.register_tool("metrosigns:cartridge_green", {
     description = "zelená náplň do tiskárny",
-    inventory_image = "streets_cartridge_green.png"
+    inventory_image = "streets_cartridge_green.png",
+	groups = {not_repairable = 1},
 })
 
 minetest.register_tool("metrosigns:cartridge_blue", {
     description = "modrá náplň do tiskárny",
-    inventory_image = "streets_cartridge_blue.png"
+    inventory_image = "streets_cartridge_blue.png",
+	groups = {not_repairable = 1},
 })
+
+if minetest.get_modpath("anvil") then
+	anvil.make_unrepairable("metrosigns:cartridge_red")
+	anvil.make_unrepairable("metrosigns:cartridge_green")
+	anvil.make_unrepairable("metrosigns:cartridge_blue")
+end
 
 if HAVE_DEFAULT_FLAG and HAVE_BASIC_MATERIALS_FLAG then
 
