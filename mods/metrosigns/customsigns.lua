@@ -11,7 +11,7 @@
 
 if HAVE_SIGNS_API_FLAG and (metrosigns.create_all_flag or metrosigns.create_text_flag) then
 
-    local category = "Signs with text"
+    local category = "cedule do metra"
     metrosigns.register_category(category)
 
     local width_table = {
@@ -37,7 +37,7 @@ if HAVE_SIGNS_API_FLAG and (metrosigns.create_all_flag or metrosigns.create_text
                     color = "#000",
                 },
                 node_fields = {
-                    description = "Metrosigns Text Sign (" .. width_descrip .. ")",
+                    description = "cedule do metra (šířka " .. width .. " m)",
                     tiles = {
                         "metrosigns_text_side.png",
                         "metrosigns_text_side.png",
@@ -73,7 +73,7 @@ if HAVE_SIGNS_API_FLAG and (metrosigns.create_all_flag or metrosigns.create_text
                     color = "#000",
                 },
                 node_fields = {
-                    description = "Metrosigns \"You Are Here\" Sign (" .. width_descrip .. ")",
+                    description = "zvýrazněná cedule do metra (šířka " .. width .. " m)",
                     tiles = {
                         "metrosigns_text_side.png",
                         "metrosigns_text_side.png",
@@ -96,7 +96,27 @@ if HAVE_SIGNS_API_FLAG and (metrosigns.create_all_flag or metrosigns.create_text
             "signs_road:metrosigns_here_" .. width_descrip,
             {light_source = 5}
         )
-
     end
 
+	for _, prefix in pairs({"signs_road:metrosigns_here_", "signs_road:metrosigns_text_"}) do
+		minetest.register_craft({
+			output = prefix.."medium",
+			recipe = {
+				{prefix.."short", prefix.."short"},
+				{"", ""}
+			},
+		})
+		minetest.register_craft({
+			output = prefix.."long",
+			recipe = {{prefix.."short", prefix.."short", prefix.."short"}, {"", "", ""}, {"", "" , ""}},
+		})
+		minetest.register_craft({
+			output = prefix.."short 2",
+			recipe = {{prefix.."medium"}},
+		})
+		minetest.register_craft({
+			output = prefix.."short 3",
+			recipe = {{prefix.."long"}},
+		})
+	end
 end

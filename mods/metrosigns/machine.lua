@@ -134,20 +134,20 @@ function metrosigns.writer.populate_output(pos)
 
     meta:set_string("formspec", "size[11,10]" ..
         -- Cartridges
-        "label[0,0;Red\nCartridge]" ..
+        "label[0,0;červená\nnáplň]" ..
         "list[current_name;redcart;1.5,0;1,1;]" ..
-        "label[0,1;Green\nCartridge]" ..
+        "label[0,1;zelená\nnáplň]" ..
         "list[current_name;greencart;1.5,1;1,1;]" ..
-        "label[0,2;Blue\nCartridge]" ..
+        "label[0,2;modrá\nnáplň]" ..
         "list[current_name;bluecart;1.5,2;1,1;]" ..
         -- Plastic
-        "label[0,3;Plastic\nSheet]" ..
+        "label[0,3;listy\nplastu]" ..
         "list[current_name;plastic;1.5,3;1,1;]" ..
         -- Recycling
-        "label[0,4;Recycling\nSlot]" ..
+        "label[0,4;recyklace]" ..
         "list[current_name;recycle;1.5,4;1,1;]" ..
         -- Sign categories
-        "label[0,5;Sign\nCategory]" ..
+        "label[0,5;kategorie:]" ..
         "dropdown[1.5,5;3.75,1;category;" .. dropdown_string .. ";" .. tostring(dropdown_index) ..
                 "]" ..
         -- List of signs
@@ -163,7 +163,7 @@ function metrosigns.writer.populate_output(pos)
         -- Page buttons
         "button[5.5,5;1,1;prevpage;<<<]" ..
         "button[8.5,5;1,1;nextpage;>>>]" ..
-        "label[6.75,5.25;Page " .. page .. " of " .. maxpage .. "]" ..
+        "label[6.75,5.25;Stránka " .. page .. " z " .. maxpage .. "]" ..
         -- List rings
         "listring[current_player;main]" ..
         "listring[current_name;redcart]" ..
@@ -548,17 +548,17 @@ end
 ---------------------------------------------------------------------------------------------------
 
 minetest.register_tool("metrosigns:cartridge_red", {
-    description = "Red Ink Cartridge",
+    description = "červená náplň do tiskárny",
     inventory_image = "streets_cartridge_red.png"
 })
 
 minetest.register_tool("metrosigns:cartridge_green", {
-    description = "Green Ink Cartridge",
+    description = "zelená náplň do tiskárny",
     inventory_image = "streets_cartridge_green.png"
 })
 
 minetest.register_tool("metrosigns:cartridge_blue", {
-    description = "Blue Ink Cartridge",
+    description = "modrá náplň do tiskárny",
     inventory_image = "streets_cartridge_blue.png"
 })
 
@@ -628,7 +628,7 @@ end
 ---------------------------------------------------------------------------------------------------
 
 minetest.register_node("metrosigns:sign_writer", {
-    description = "Sign Writer Machine",
+    description = "tiskárna na cedule",
     tiles = {
         "metrosigns_writer_top.png",
         "metrosigns_writer_side.png",

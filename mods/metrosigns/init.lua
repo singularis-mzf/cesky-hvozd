@@ -23,19 +23,7 @@
 --
 -- Includes various fixes/additions by Guill4um
 ---------------------------------------------------------------------------------------------------
--- Do you want to add signs for a a new city/server? This is how to do it:
---
---  1. Add a new flag in the "Load Settings" section below, e.g.
---          metrosigns.create_barcelona_flag
---  2. Edit settingtypes.txt to add the same flag there
---  3. Edit settings.lua to add the same flag there
---  4. Add a new section to citysigns.lua or serversigns.lua, using the existing code as a template
---  5. Add new textures to the /textures folder
---  6. If a city's name contains more than one word (e.g. "San Francisco", you'll need to edit the
---          capitalise() function below
---  7. That's it!
---
--- If you're not sure what to do, the authors will be happy to help!
+-- This is a modified version of the mod for the server Cesky Hvozd.
 ---------------------------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------------------
@@ -47,7 +35,7 @@ metrosigns = {}
 metrosigns.name = "metrosigns"
 metrosigns.ver_max = 1
 metrosigns.ver_min = 36
-metrosigns.ver_rev = 0
+metrosigns.ver_rev = 1
 
 metrosigns.writer = {}
 
@@ -104,8 +92,8 @@ metrosigns.writer.map_units = 10
 metrosigns.writer.text_units = 10
 
 -- Used in material copied from advtrains_subwayblocks and trainblocks
-box_groups = {cracky = 3}
-box_light_source = 10
+-- box_groups = {cracky = 3}
+-- box_light_source = 10
 
 ---------------------------------------------------------------------------------------------------
 -- Variables
@@ -158,28 +146,28 @@ metrosigns.ext_platform_max = minetest.settings:get("metrosigns_ext_platform_min
 
 metrosigns.create_text_flag = minetest.settings:get_bool("metrosigns_create_text", true)
 
-metrosigns.create_athens_flag = minetest.settings:get_bool("metrosigns_create_athens", false)
-metrosigns.create_bangkok_flag = minetest.settings:get_bool("metrosigns_create_bangkok", false)
-metrosigns.create_berlin_flag = minetest.settings:get_bool("metrosigns_create_berlin", false)
-metrosigns.create_bucharest_flag = minetest.settings:get_bool("metrosigns_create_bucharest", false)
-metrosigns.create_budapest_flag = minetest.settings:get_bool("metrosigns_create_budapest", false)
-metrosigns.create_glasgow_flag = minetest.settings:get_bool("metrosigns_create_glasgow", false)
-metrosigns.create_hcmc_flag = minetest.settings:get_bool("metrosigns_create_hcmc", false)
-metrosigns.create_london_flag = minetest.settings:get_bool("metrosigns_create_london", true)
-metrosigns.create_luton_flag = minetest.settings:get_bool("metrosigns_create_luton", false)
-metrosigns.create_madrid_flag = minetest.settings:get_bool("metrosigns_create_madrid", false)
-metrosigns.create_moscow_flag = minetest.settings:get_bool("metrosigns_create_moscow", false)
-metrosigns.create_newyork_flag = minetest.settings:get_bool("metrosigns_create_newyork", false)
-metrosigns.create_paris_flag = minetest.settings:get_bool("metrosigns_create_paris", false)
-metrosigns.create_prague_flag = minetest.settings:get_bool("metrosigns_create_prague", false)
-metrosigns.create_rome_flag = minetest.settings:get_bool("metrosigns_create_rome", false)
-metrosigns.create_stockholm_flag = minetest.settings:get_bool("metrosigns_create_stockholm", false)
-metrosigns.create_taipei_flag = minetest.settings:get_bool("metrosigns_create_taipei", false)
-metrosigns.create_tokyo_flag = minetest.settings:get_bool("metrosigns_create_tokyo", false)
-metrosigns.create_toronto_flag = minetest.settings:get_bool("metrosigns_create_toronto", false)
-metrosigns.create_vienna_flag = minetest.settings:get_bool("metrosigns_create_vienna", false)
+metrosigns.create_athens_flag = false -- minetest.settings:get_bool("metrosigns_create_athens", false)
+metrosigns.create_bangkok_flag = false -- minetest.settings:get_bool("metrosigns_create_bangkok", false)
+metrosigns.create_berlin_flag = false -- minetest.settings:get_bool("metrosigns_create_berlin", false)
+metrosigns.create_bucharest_flag = false -- minetest.settings:get_bool("metrosigns_create_bucharest", false)
+metrosigns.create_budapest_flag = false -- minetest.settings:get_bool("metrosigns_create_budapest", false)
+metrosigns.create_glasgow_flag = false -- minetest.settings:get_bool("metrosigns_create_glasgow", false)
+metrosigns.create_hcmc_flag = false -- minetest.settings:get_bool("metrosigns_create_hcmc", false)
+metrosigns.create_london_flag = false -- minetest.settings:get_bool("metrosigns_create_london", true)
+metrosigns.create_luton_flag = false -- minetest.settings:get_bool("metrosigns_create_luton", false)
+metrosigns.create_madrid_flag = false -- minetest.settings:get_bool("metrosigns_create_madrid", false)
+metrosigns.create_moscow_flag = false -- minetest.settings:get_bool("metrosigns_create_moscow", false)
+metrosigns.create_newyork_flag = false -- minetest.settings:get_bool("metrosigns_create_newyork", false)
+metrosigns.create_paris_flag = false -- minetest.settings:get_bool("metrosigns_create_paris", false)
+metrosigns.create_prague_flag = false -- minetest.settings:get_bool("metrosigns_create_prague", false)
+metrosigns.create_rome_flag = false -- minetest.settings:get_bool("metrosigns_create_rome", false)
+metrosigns.create_stockholm_flag = false -- minetest.settings:get_bool("metrosigns_create_stockholm", false)
+metrosigns.create_taipei_flag = false -- minetest.settings:get_bool("metrosigns_create_taipei", false)
+metrosigns.create_tokyo_flag = false -- minetest.settings:get_bool("metrosigns_create_tokyo", false)
+metrosigns.create_toronto_flag = false -- minetest.settings:get_bool("metrosigns_create_toronto", false)
+metrosigns.create_vienna_flag = false -- minetest.settings:get_bool("metrosigns_create_vienna", false)
 
-metrosigns.create_tabyss_flag = minetest.settings:get_bool("metrosigns_create_tabyss", false)
+metrosigns.create_tabyss_flag = false -- minetest.settings:get_bool("metrosigns_create_tabyss", false)
 
 -- Override one or more of these settings by uncommenting the lines in this file
 dofile(metrosigns.path_mod.."/override.lua")
@@ -188,7 +176,7 @@ dofile(metrosigns.path_mod.."/override.lua")
 -- General functions
 ---------------------------------------------------------------------------------------------------
 
-function capitalise(str)
+--[[ function capitalise(str)
 
     -- Returns a capitalised city name. At the moment, only one city name contains more than one
     --      word, so we create an exception for that
@@ -214,6 +202,7 @@ function isint(n)
   return n == math.floor(n)
 
 end
+]]
 
 function metrosigns.register_category(category)
 
@@ -253,51 +242,6 @@ function metrosigns.register_sign(category, node, ink_needed)
 
 end
 
----------------------------------------------------------------------------------------------------
--- Original material from advtrains_subwayblocks by gpcf/orwell
----------------------------------------------------------------------------------------------------
-
-dofile(metrosigns.path_mod.."/subwayblocks.lua")
-
----------------------------------------------------------------------------------------------------
--- Original material from trainblocks by Maxx
----------------------------------------------------------------------------------------------------
-
-dofile(metrosigns.path_mod.."/trainblocks.lua")
-
----------------------------------------------------------------------------------------------------
--- Extended line and platform signs
----------------------------------------------------------------------------------------------------
-
-dofile(metrosigns.path_mod.."/extsigns.lua")
-
----------------------------------------------------------------------------------------------------
--- Signs with customisable text (designed to be used alongside the map nodes). Requires signs_api
---      from display_modpack
----------------------------------------------------------------------------------------------------
-
-dofile(metrosigns.path_mod.."/customsigns.lua")
-
----------------------------------------------------------------------------------------------------
--- Generic functions used by city-specific and server-specific signs
----------------------------------------------------------------------------------------------------
-
-dofile(metrosigns.path_mod.."/generic.lua")
-
----------------------------------------------------------------------------------------------------
--- City-specific signs
----------------------------------------------------------------------------------------------------
-
-dofile(metrosigns.path_mod.."/citysigns.lua")
-
----------------------------------------------------------------------------------------------------
--- Server-specific signs
----------------------------------------------------------------------------------------------------
-
-dofile(metrosigns.path_mod.."/serversigns.lua")
-
----------------------------------------------------------------------------------------------------
--- Sign-writing machines and ink cartridges
----------------------------------------------------------------------------------------------------
-
-dofile(metrosigns.path_mod.."/machine.lua")
+dofile(metrosigns.path_mod.."/trainblocks.lua") -- Original material from trainblocks by Maxx
+dofile(metrosigns.path_mod.."/customsigns.lua") -- Signs with customisable text (designed to be used alongside the map nodes). Requires signs_api from display_modpack
+dofile(metrosigns.path_mod.."/machine.lua") -- Sign-writing machines and ink cartridges
