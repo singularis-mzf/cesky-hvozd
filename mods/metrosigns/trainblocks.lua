@@ -22,6 +22,9 @@ if not HAVE_TRAINBLOCKS_FLAG and
     local category = "tramvajové cedule"
     metrosigns.register_category(category)
 
+	local _ch_help = "Tyto směrovky jsou barvitelné barvicí pistolí.\nPro výběr barvy je nutno Shift+pravý klik, protože jen pravý klik otevře okno s textem."
+	local _ch_help_group = "mtsgns"
+
 	local box_groups = {cracky = 3}
 	local box_light_source = 10
 
@@ -224,6 +227,8 @@ if not HAVE_TRAINBLOCKS_FLAG and
 				on_display_update = font_api.on_display_update,
 			},
 		},
+		_ch_help = _ch_help,
+		_ch_help_group = _ch_help_group,
 	}
 	minetest.register_node("metrosigns:sign_exit_left", table.copy(def))
 	metrosigns.register_sign(category, "metrosigns:sign_exit_left", metrosigns.writer.sign_units)

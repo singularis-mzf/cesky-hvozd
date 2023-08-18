@@ -211,14 +211,16 @@ end;
 -- @param object [ObjectRef] An object reference.
 -- @return       [string]    A string describing the object.
 function leads.util.describe_object(object)
-    if minetest.is_player(object) then
-        return ('[Player %q]'):format(object:get_player_name());
-    end;
+	if object ~= nil then
+		if minetest.is_player(object) then
+			return ('[Player %q]'):format(object:get_player_name());
+		end;
 
-    local entity = object:get_luaentity();
-    if entity then
-        return ('[LuaEntity %q]'):format(entity.name);
-    end;
+		local entity = object:get_luaentity();
+		if entity then
+			return ('[LuaEntity %q]'):format(entity.name);
+		end;
+	end
 
     return '[Unknown object]';
 end;
