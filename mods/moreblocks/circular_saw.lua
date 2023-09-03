@@ -395,7 +395,10 @@ function circular_saw.on_metadata_inventory_put(
 		end
 		-- print("TEST 13: "..rcost..", "..count)
 		if rcost > 0 and count > 0 then
-			circular_saw:update_inventory(pos, (rcost - 1) * count, craftitem)
+			if rcost > 1 then
+				rcost = rcost - 1
+			end
+			circular_saw:update_inventory(pos, rcost * count, craftitem)
 		end
 	end
 end
