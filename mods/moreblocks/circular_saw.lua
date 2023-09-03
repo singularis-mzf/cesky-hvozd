@@ -1,7 +1,7 @@
 --[[
 More Blocks: circular saw
 
-Copyright © 2011-2020 Hugo Locurcio, Sokomine and contributors.
+Copyright © 2011-2023 Hugo Locurcio, Sokomine and contributors.
 Licensed under the zlib license. See LICENSE.md for more information.
 --]]
 
@@ -95,10 +95,16 @@ circular_saw.names = {
 }
 
 function circular_saw:get_cost(inv, stackname)
+	-- returns: cost, craftitem
+	-- or:      nil, nil
 	local name = minetest.registered_aliases[stackname] or stackname
-	for i, item in pairs(inv:get_list("output")) do
-		if item:get_name() == name then
-			return circular_saw.cost_in_microblocks[i]
+	local craftitem, category, alternate = stairsplus:analyze_shape(name)
+	-- print("TEST: analyze_shape("..name..") => "..(craftitem or "nil")..", "..(category or "nil")..", "..(alternate or "nil"))
+	if craftitem ~= nil then
+		for i, item in ipairs(circular_saw.names) do
+			if item[1] == category and item[2] == alternate then
+				return circular_saw.cost_in_microblocks[i], craftitem
+			end
 		end
 	end
 end
@@ -171,56 +177,71 @@ function circular_saw:reset(pos)
 	update_infotext(meta)
 end
 
+function circular_saw:get_input(pos)
+	-- returns craftitem, amount (in microblocks)
+	-- or:     "", 0
+	local meta = minetest.get_meta(pos)
+	local inv  = meta:get_inventory()
+	local stack = inv:get_stack("input", 1)
+	local craftitem = ""
+	if not stack:is_empty() then
+		-- print("TEST 31: <"..stack:get_name()..">")
+		craftitem = stack:get_name()
+	else
+		stack = inv:get_stack("micro", 1)
+		if not stack:is_empty() then
+			local stackname = stack:get_name()
+			-- print("TEST 32: <"..stackname..">")
+			local amount, craftitem2 = self:get_cost(inv, stackname)
+			-- print("TEST 33: "..(amount or "nil").." "..(craftitem2 or "nil"))
+			if craftitem2 ~= nil then
+				-- print("TEST 34")
+				craftitem = craftitem2
+			end
+		end
+	end
+	-- print("TEST35: "..craftitem..", "..meta:get_int("anz"))
+	return craftitem, meta:get_int("anz")
+end
 
 -- Player has taken something out of the box or placed something inside
 -- that amounts to count microblocks:
-function circular_saw:update_inventory(pos, amount)
+function circular_saw:update_inventory(pos, amount, craftitem_hint)
 	local meta          = minetest.get_meta(pos)
 	local inv           = meta:get_inventory()
+	local craftitem, current_amount = self:get_input(pos)
 
-	amount = meta:get_int("anz") + amount
+	-- print("TEST: update_inventory(*, "..amount..", "..(craftitem_hint and ("\""..craftitem_hint.."\"") or "nil").."): "..current_amount.." => "..(current_amount + amount))
+	-- print("TEST - current_state = <"..craftitem.."> "..current_amount)
+	amount = current_amount + amount
 
 	-- The material is recycled automatically.
 	inv:set_list("recycle",  {})
 
+	-- print("TEST 21")
+	if craftitem == "" then
+		if craftitem_hint ~= nil then
+			-- print("TEST 22")
+			craftitem = craftitem_hint
+		else
+			-- print("TEST 23")
+			amount = 0 -- material not known
+		end
+	end
 	if amount < 1 then -- If the last block is taken out.
+		-- print("TEST 24: "..amount)
 		self:reset(pos)
 		return
 	end
-
-	local node_name, node_def, stack
-	-- Determine the kind of stairs.
-	stack = inv:get_stack("input",  1)
-	if not stack:is_empty() then
-		node_name = stack:get_name()
-		node_def = minetest.registered_nodes[node_name]
-	else
-		stack = inv:get_stack("micro", 1)
-		if stack:is_empty() then
-			-- No input blocks and no microblocks
-			self:reset(pos)
-			return
-		end
-		node_name = stack:get_name()
-		node_name = stairsplus:analyze_shape(node_name)
-		if node_name == nil then
-			self:reset(pos)
-			return
-		end
-		node_def = minetest.registered_nodes[node_name]
-	end
-	local name_parts = circular_saw.known_nodes[node_name] or ""
+	-- print("TEST 25: "..amount)
+	local name_parts = circular_saw.known_nodes[craftitem] or ""
 	local modname  = name_parts[1] or ""
 	local material = name_parts[2] or ""
 
 	inv:set_list("input", { -- Display as many full blocks as possible:
-		node_name.. " " .. math.floor(amount / 8)
+		craftitem.. " " .. math.floor(amount / 8)
 	})
 
-	-- The stairnodes made of default nodes use moreblocks namespace, other mods keep own:
-	if modname == "default" then
-		modname = "moreblocks"
-	end
 	-- print("circular_saw set to " .. modname .. " : "
 	--	.. material .. " with " .. (amount) .. " microblocks.")
 
@@ -235,6 +256,7 @@ function circular_saw:update_inventory(pos, amount)
 	-- Store how many microblocks are available:
 	meta:set_int("anz", amount)
 
+	local node_def = minetest.registered_nodes[craftitem]
 	update_infotext(meta, node_def and node_def.description or material)
 end
 
@@ -273,10 +295,31 @@ function circular_saw.allow_metadata_inventory_put(
 	local stackname = stack:get_name()
 	local count = stack:get_count()
 
-	-- Only allow those items that are offered in the output inventory to be recycled:
 	if listname == "recycle" then
-		if not inv:contains_item("output", stackname) then
-			return 0
+		local craftitem, amount = circular_saw:get_input(pos) -- items currently in the saw (may be "", 0)
+		local rcost, rcraftitem = circular_saw:get_cost(inv, stackname) -- items to be recycled
+		-- print("TEST 1")
+		if rcraftitem == nil then
+			-- print("TEST 2")
+			return 0 -- item not recyclable
+		end
+		if craftitem == "" then
+			craftitem = rcraftitem
+		elseif rcraftitem ~= craftitem then
+			-- print("TEST 3 (craftitem == <"..craftitem..">, rcraftitem == <"..rcraftitem..">)")
+			return 0 -- cannot recycle different material
+		end
+		local rcost_max = ItemStack(craftitem):get_stack_max() * 8 + 7 - amount
+		-- print("TEST 4: "..rcost_max..", "..rcost)
+		if rcost > rcost_max then
+			-- print("TEST 5")
+			return 0 -- overflow
+		end
+		-- print("TEST 6: "..count)
+		return count
+		--[[
+		if amount + rcost > ItemStack(craftitem):get_stack_max() * 8 then
+			return 0 -- too many items
 		end
 		local stackmax = stack:get_stack_max()
 		local instack = inv:get_stack("input", 1)
@@ -289,6 +332,7 @@ function circular_saw.allow_metadata_inventory_put(
 			return math.max((maxcost - incost) / cost, 0)
 		end
 		return count
+		]]
 	end
 
 	-- Only accept certain blocks as input which are known to be craftable into stairs:
@@ -332,12 +376,26 @@ function circular_saw.on_metadata_inventory_put(
 		-- Each new block is worth 8 microblocks:
 		circular_saw:update_inventory(pos, 8 * count)
 	elseif listname == "recycle" then
-		-- Lets look which shape this represents:
-		local cost = circular_saw:get_cost(inv, stackname)
-		local input_stack = inv:get_stack("input", 1)
-		-- check if this would not exceed input itemstack max_stacks
-		if input_stack:get_count() + ((cost * count) / 8) <= input_stack:get_stack_max() then
-			circular_saw:update_inventory(pos, cost * count)
+		local craftitem, amount = circular_saw:get_input(pos) -- items currently in the saw (may be nil)
+		local rcost, rcraftitem = circular_saw:get_cost(inv, stackname) -- items to be recycled
+		-- print("TEST 10")
+		if rcraftitem == nil then
+			-- print("TEST 11")
+			return -- item not recyclable
+		end
+		if craftitem == "" then
+			craftitem = rcraftitem
+		elseif rcraftitem ~= craftitem then
+			return -- cannot recycle different material
+		end
+		local rcost_max = ItemStack(craftitem):get_stack_max() * 8 + 7 - amount
+		-- print("TEST 12: "..rcost..", "..rcost_max)
+		if rcost > rcost_max then
+			return -- overflow
+		end
+		-- print("TEST 13: "..rcost..", "..count)
+		if rcost > 0 and count > 0 then
+			circular_saw:update_inventory(pos, (rcost - 1) * count, craftitem)
 		end
 	end
 end
@@ -349,7 +407,8 @@ function circular_saw.allow_metadata_inventory_take(pos, listname, index, stack,
 	local player_inv = player:get_inventory()
 	if not player_inv:room_for_item("main", input_stack) then
 		return 0
-	else return stack:get_count()
+	else
+		return stack:get_count()
 	end
 end
 
