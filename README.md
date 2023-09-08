@@ -594,12 +594,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: CC0
 * [ContentDB](https://content.minetest.net/packages/cheapie/handdryer/)
 
-## Hang-Gliders (minetest-hangglider)
+## Hang-Gliders (hangglider)
 
-* Zdroj: [https://notabug.org/Piezo\_/minetest-hangglider](https://notabug.org/Piezo\_/minetest-hangglider), revize 206704ffabcdddc61150ed798c88add9965a110d
-* Původní licence: GPLv3 pro kód, CC-BY-SA-3.0 nebo CC-BY-SA-4.0 pro ostatní
+* Zdroj: [https://github.com/mt-mods/hangglider](https://github.com/mt-mods/hangglider), revize 2c708abd8816b08679b61068446259101f66abbc
+* Původní licence: GPLv3 pro kód (část LGPLv2.1+), CC-BY-SA-3.0 nebo CC-BY-SA-4.0 pro ostatní
 * Licence úprav: GPLv3 pro kód, CC-BY-SA-4.0 pro ostatní
-* [ContentDB](https://content.minetest.net/packages/Piezo\_/hangglider/)
+* [ContentDB](https://content.minetest.net/packages/mt-mods/hangglider/)
 
 ## Headlamp (headlamp)
 
