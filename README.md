@@ -629,6 +629,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: GPLv3
 * [ContentDB](https://content.minetest.net/packages/Can202/icecream/)
 
+## Inventory Manager (inv\_manager)
+
+* Zdroj: [https://github.com/Acronymmk/inv\_manager](https://github.com/Acronymmk/inv\_manager), revize 54e6fe276355597a152b49289af274a74cd42c36
+* Původní licence: kód MIT, textury CC-BY-SA-4.0
+* Licence úprav: kód MIT, textury CC-BY-SA-4.0
+* [ContentDB](https://content.minetest.net/packages/Acronymmk/inv\_manager/)
+
 ## Itemshelf (itemshelf)
 
 * Zdroj: [https://github.com/hkzorman/itemshelf](https://github.com/hkzorman/itemshelf), revize 8d4e24717cc1392cd370bc700dae56dae29afb42
