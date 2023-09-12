@@ -40,6 +40,11 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 	-- Backwards compatibility to keep existing node names same
 	if material_name ~= "" then material_name = material_name.."_" end
 
+	local slab = stairsplus:get_shape(item_name, "slab", "_1")
+	if slab == nil then
+		slab = material_name
+	end
+
 	itemshelf.register_shelf(material_name.."small_shelf", {
 		description = "hluboká výkladní skříňka na 4 věci (" .. display_prefix..")",
 		textures = {
@@ -59,7 +64,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		output = "itemshelf:"..material_name.."small_shelf",
 		recipe = {
 			{item_name, item_name, item_name},
-			{"", "", ""},
+			{"", slab, ""},
 			{item_name, item_name, item_name},
 		}
 	})
@@ -83,7 +88,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		output = "itemshelf:"..material_name.."large_shelf",
 		recipe = {
 			{item_name, item_name, item_name},
-			{item_name, "", item_name},
+			{item_name, slab, item_name},
 			{item_name, item_name, item_name},
 		}
 	})
@@ -108,7 +113,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		output = "itemshelf:"..material_name.."half_depth_shelf_small",
 		recipe = {
 			{item_name, item_name, ""},
-			{"", "", ""},
+			{"", slab, ""},
 			{item_name, item_name, ""},
 		}
 	})
@@ -133,7 +138,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		output = "itemshelf:"..material_name.."half_depth_shelf_large",
 		recipe = {
 			{item_name, item_name, ""},
-			{item_name, "", ""},
+			{item_name, slab, ""},
 			{item_name, item_name, ""},
 		}
 	})
@@ -159,7 +164,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		output = "itemshelf:"..material_name.."half_depth_open_shelf",
 		recipe = {
 			{item_name, "", item_name},
-			{"", "", ""},
+			{"", slab, ""},
 			{item_name, "", item_name},
 		}
 	})
@@ -185,7 +190,7 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		output = "itemshelf:"..material_name.."half_depth_open_shelf_large",
 		recipe = {
 			{item_name, "", item_name},
-			{"", item_name, ""},
+			{slab, item_name, ""},
 			{item_name, "", item_name},
 		}
 	})
