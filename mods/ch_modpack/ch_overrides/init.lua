@@ -4,6 +4,7 @@ local modpath = minetest.get_modpath("ch_overrides")
 
 local mods = {
 	"cavestuff",
+	"darkage",
 	"default",
 	"farming",
 	"homedecor_kitchen",
