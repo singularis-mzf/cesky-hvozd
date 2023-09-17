@@ -25,10 +25,39 @@ local register_surface_nodes = function(friendlyname, name, tiles, groups, sound
 	end
 end
 
-local register_sign_node = function(friendlyname, name, tiles, type, inventory_image, light_source)
+local mesh_types = {
+	normal = {
+		normal_mesh = "sign.obj",
+		center_mesh = "sign_center.obj",
+		polemount_mesh = "sign_polemount.obj",
+	},
+	larger = {
+		normal_mesh = "sign_larger.obj",
+		center_mesh = "sign_center_larger.obj",
+		polemount_mesh = "sign_polemount_larger.obj",
+	},
+	big = {
+		normal_mesh = "sign_big.obj",
+		center_mesh = "sign_center_big.obj",
+		polemount_mesh = "sign_polemount_big.obj",
+	},
+	wide = {
+		normal_mesh = "sign_wide.obj",
+		center_mesh = "sign_center_wide.obj",
+		polemount_mesh = "sign_polemount_wide.obj",
+	},
+	small = {
+		normal_mesh = "sign_small.obj",
+		center_mesh = "sign_center_small.obj",
+		polemount_mesh = "sign_polemount_small.obj",
+	},
+}
+
+local function register_sign_node(friendlyname, name, tiles, type, inventory_image, light_source)
+	local meshes = mesh_types[type]
 	if type == "minetest" then
 		tiles[5] = tiles[6] .. "^[colorize:#fff^[mask:(" .. tiles[6] .. "^" .. tiles[5] .. ")"
-	elseif type == "normal" or type == "big" then
+	elseif meshes ~= nil then
 		tiles[2] = tiles[1] .. "^[colorize:#fff^[mask:(" .. tiles[1] .. "^" .. tiles[2] .. ")^[transformFX"
 	end
 	local def = {}
@@ -43,7 +72,7 @@ local register_sign_node = function(friendlyname, name, tiles, type, inventory_i
 	if type == "minetest" then
 		def.drawtype = "nodebox"
 		def.inventory_image = tiles[6]
-	elseif type == "normal" or type == "big" then
+	elseif meshes ~= nil then
 		def.drawtype = "mesh"
 		def.inventory_image = tiles[1]
 	end
@@ -52,14 +81,14 @@ local register_sign_node = function(friendlyname, name, tiles, type, inventory_i
 		def.inventory_image = inventory_image
 	end
 
-	local normal_def = table.copy(def)
+	local normal_def = def
 	local center_def = table.copy(def)
 	local polemount_def = table.copy(def)
 
 	normal_def.groups = table.copy(normal_def.groups)
 	normal_def.groups.not_in_creative_inventory = nil
 
-	if type == "minetest" then
+	if meshes == nil then
 		normal_def.node_box = {
 			type = "fixed",
 			fixed = { -1 / 2, -1 / 2, 0.5, 1 / 2, 1 / 2, 0.45 }
@@ -72,14 +101,10 @@ local register_sign_node = function(friendlyname, name, tiles, type, inventory_i
 			type = "fixed",
 			fixed = { -1 / 2, -1 / 2, 0.8, 1 / 2, 1 / 2, 0.85 }
 		}
-	elseif type == "normal" then
-		normal_def.mesh = "sign.obj"
-		center_def.mesh = "sign_center.obj"
-		polemount_def.mesh = "sign_polemount.obj"
-	elseif type == "big" then
-		normal_def.mesh = "sign_big.obj"
-		center_def.mesh = "sign_center_big.obj"
-		polemount_def.mesh = "sign_polemount_big.obj"
+	else
+		normal_def.mesh = meshes.normal_mesh
+		center_def.mesh = meshes.center_mesh
+		polemount_def.mesh = meshes.polemount_mesh
 	end
 
 	normal_def.selection_box = {
