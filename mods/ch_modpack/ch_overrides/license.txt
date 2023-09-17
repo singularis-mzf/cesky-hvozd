@@ -964,3 +964,48 @@ darkage_marble.png
 	License: EUPLv1.2
 	Source:
 		https://content.minetest.net/packages/Clemstriangular/ephesus/
+
+darkage_mud.png
+	Authors: Singularis, Oven Fresh
+	License: CC BY-SA 3.0
+	Used source:
+		https://commons.wikimedia.org/wiki/File:Mud_closeup.jpg (CC BY-SA 3.0)
+
+darkage_mud_footstep.ogg
+darkage_mud_footstep.2.ogg
+darkage_mud_footstep.3.ogg
+darkage_mud_footstep.4.ogg
+	Copyright (C) 2010-2018:
+		celeron55, Perttu Ahola <celeron55@gmail.com>
+		Cisoun
+		G4JC
+		VanessaE
+		RealBadAngel
+		Calinou
+		MirceaKitsune
+		Jordach
+		PilzAdam
+		jojoa1997
+		InfinityProject
+		Splizard
+		Zeg9
+		paramat
+		BlockMen
+		sofar
+		Neuromancer
+		Gambit
+		asl97
+		KevDoy
+		Mito551
+		GreenXenith
+		kaeza
+		kilbith
+		tobyplowy
+		CloudyProton
+		TumeniNodes
+		Mossmanikin
+		random-geek
+		Extex101
+		An0n3m0us
+	Source: Minetest Game
+	License: CC BY-SA 3.0

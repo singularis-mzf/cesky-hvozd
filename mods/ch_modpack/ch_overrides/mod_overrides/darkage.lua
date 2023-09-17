@@ -53,3 +53,12 @@ def = {
 }
 
 minetest.register_abm(def)
+
+def = {
+	tiles = {"darkage_mud.png"},
+	sounds = default.node_sound_dirt_defaults({
+		footstep = {name = "darkage_mud_footstep", gain = 0.3},
+	})
+}
+
+minetest.override_item("darkage:mud", def)
