@@ -22,17 +22,25 @@ function doors.trapdoor_toggle(pos, node, clicker)
 	end
 
 	local def = minetest.registered_nodes[node.name]
+	local meta = minetest.get_meta(pos)
+	local timer = minetest.get_node_timer(pos)
 
 	if string.sub(node.name, -5) == "_open" then
 		minetest.sound_play(def.sound_close,
 			{pos = pos, gain = def.gain_close, max_hear_distance = 10}, true)
 		minetest.swap_node(pos, {name = string.sub(node.name, 1,
 			string.len(node.name) - 5), param1 = node.param1, param2 = node.param2})
+		if meta:get_int("zavirasamo") > 0 then
+			timer:stop()
+		end
 	else
 		minetest.sound_play(def.sound_open,
 			{pos = pos, gain = def.gain_open, max_hear_distance = 10}, true)
 		minetest.swap_node(pos, {name = node.name .. "_open",
 			param1 = node.param1, param2 = node.param2})
+		if meta:get_int("zavirasamo") > 0 then
+			timer:start(1)
+		end
 	end
 end
 
@@ -44,10 +52,11 @@ function doors.register_trapdoor(name, def)
 	local name_closed = name
 	local name_opened = name.."_open"
 
-	def.on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+	def.on_rightclick = doors.door_rightclick
+			--[[ function(pos, node, clicker, itemstack, pointed_thing)
 		doors.trapdoor_toggle(pos, node, clicker)
 		return itemstack
-	end
+	end ]]
 
 	-- Common trapdoor configuration
 	def.drawtype = "nodebox"
@@ -62,8 +71,7 @@ function doors.register_trapdoor(name, def)
 			local pn = placer:get_player_name()
 			local meta = minetest.get_meta(pos)
 			meta:set_string("owner", pn)
-			meta:set_string("infotext", def.description .. "\n" .. S("Owned by @1", pn))
-
+			doors.update_infotext(pos, nil, meta)
 			return minetest.is_creative_enabled(pn)
 		end
 
@@ -99,6 +107,13 @@ function doors.register_trapdoor(name, def)
 			minetest.remove_node(pos)
 			return {name}
 		end
+		def.after_place_node = function(pos, placer, itemstack, pointed_thing)
+			local pn = placer:get_player_name()
+			local meta = minetest.get_meta(pos)
+			meta:set_string("placer", pn)
+			doors.update_infotext(pos, nil, meta)
+			return minetest.is_creative_enabled(pn)
+		end
 	end
 
 	if not def.sounds then
@@ -119,6 +134,10 @@ function doors.register_trapdoor(name, def)
 
 	if not def.gain_close then
 		def.gain_close = 0.3
+	end
+
+	if not def.on_timer then
+		def.on_timer = doors.on_timer
 	end
 
 	local def_opened = table.copy(def)

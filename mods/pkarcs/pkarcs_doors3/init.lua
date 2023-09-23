@@ -120,22 +120,82 @@ pkarcs_doors3.door = {
 
 -- open and close actions as generalized functions
 pkarcs_doors3.open = function (pos, node, name, side, door_sound)
+	local meta = minetest.get_meta(pos)
+	local timer = minetest.get_node_timer(pos)
 	if not side or side == "L" then
 		minetest.swap_node(pos, {name = "pkarcs_doors3:" ..name.. "_Ldoor_open", param2 = node.param2})
 	elseif side == "R" or side then
 		minetest.swap_node(pos, {name = "pkarcs_doors3:" ..name.. "_Rdoor_open", param2 = node.param2})
 	end
 	minetest.sound_play(door_sound.."_open", {pos = pos, gain = 0.20, max_hear_distance = 10})
+	if meta:get_int("zavirasamo") > 0 then
+		timer:start(1)
+	end
 end
 
 pkarcs_doors3.close = function (pos, node, name, side, door_sound)
+	local meta = minetest.get_meta(pos)
+	local timer = minetest.get_node_timer(pos)
 	if not side or side == "L" then
 		minetest.swap_node(pos, {name = "pkarcs_doors3:" ..name.. "_Ldoor", param2 = node.param2})
 	elseif side == "R" or side then
 		minetest.swap_node(pos, {name = "pkarcs_doors3:" ..name.. "_Rdoor", param2 = node.param2})
 	end
 	minetest.sound_play(door_sound.."_close", {pos = pos, gain = 0.15, max_hear_distance = 10})
+	if meta:get_int("zavirasamo") > 0 then
+		timer:stop()
+	end
 end
+
+local function pkarcs_state(self)
+	local ndef = minetest.registered_nodes[minetest.get_node(self.pos).name]
+	return ndef and ndef._pkarcs_is_open
+end
+
+local function pkarcs_toggle(self, player)
+	local meta = minetest.get_meta(self.pos)
+	if player and not doors.check_player_privs(self.pos, meta, player) then
+		return false
+	end
+	local node = minetest.get_node(self.pos)
+	local ndef = minetest.registered_nodes[node.name]
+	if ndef._pkarcs_on_open then
+		return ndef._pkarcs_on_open(self.pos, node, player)
+	elseif ndef._pkarcs_on_close then
+		return ndef._pkarcs_on_close(self.pos, node, player)
+	end
+end
+
+local function pkarcs_open(self, player)
+	local meta = minetest.get_meta(self.pos)
+	if player and not doors.check_player_privs(self.pos, meta, player) then
+		return false
+	end
+	local node = minetest.get_node(self.pos)
+	local ndef = minetest.registered_nodes[node.name]
+	if ndef._pkarcs_on_open then
+		return ndef._pkarcs_on_open(self.pos, node, player)
+	end
+end
+
+local function pkarcs_close(self, player)
+	local meta = minetest.get_meta(self.pos)
+	if player and not doors.check_player_privs(self.pos, meta, player) then
+		return false
+	end
+	local node = minetest.get_node(self.pos)
+	local ndef = minetest.registered_nodes[node.name]
+	if ndef._pkarcs_on_close then
+		return ndef._pkarcs_on_close(self.pos, node, player)
+	end
+end
+
+local pkarcs_class = {
+	open = pkarcs_open,
+	close = pkarcs_close,
+	toggle = pkarcs_toggle,
+	state = pkarcs_state,
+}
 
 for _, row in ipairs(pkarcs_doors3.door) do
 	local name = row[1]
@@ -176,7 +236,17 @@ for _, row in ipairs(pkarcs_doors3.door) do
 				{-0.5, -0.5, -0.5, 0.5, 2.4375, -0.375},
 			},
 		},
-		on_rightclick = function(pos, node, puncher)
+		on_rightclick = doors.door_rightclick,
+		on_timer = doors.on_timer,
+		after_place_node = function(pos, placer, itemstack, pointed_thing)
+			local player_name = placer:get_player_name()
+			local meta = minetest.get_meta(pos)
+			meta:set_string("placer", player_name)
+			doors.update_infotext(pos, nil, meta)
+			return minetest.is_creative_enabled(player_name)
+		end,
+		_pkarcs_is_open = false,
+		_pkarcs_on_open = function(pos, node, puncher)
 			pkarcs_doors3.open(pos, node, name, "L", door_sound)
 		end,
 	}
@@ -193,6 +263,7 @@ for _, row in ipairs(pkarcs_doors3.door) do
 	end
 	
 	minetest.register_node(":pkarcs_doors3:" ..name.. "_Ldoor", Ldoor_def)
+	doors.register_custom_door("pkarcs_doors3:"..name.."_Ldoor", pkarcs_class)
 
 	local Ldoor_open_def = {
 		drawtype = "mesh",
@@ -220,9 +291,19 @@ for _, row in ipairs(pkarcs_doors3.door) do
 				{-0.5, -0.5, -1.4375, -0.375, 2.4375, -0.4375},
 			},
 		},
-		on_rightclick = function(pos, node, puncher)
+		on_rightclick = doors.door_rightclick,
+		on_timer = doors.on_timer,
+		after_place_node = function(pos, placer, itemstack, pointed_thing)
+			local player_name = placer:get_player_name()
+			local meta = minetest.get_meta(pos)
+			meta:set_string("placer", player_name)
+			doors.update_infotext(pos, nil, meta)
+			return minetest.is_creative_enabled(player_name)
+		end,
+		_pkarcs_on_close = function(pos, node, puncher)
 			pkarcs_doors3.close(pos, node, name, "L", door_sound)
 		end,
+		_pkarcs_is_open = true,
 	}
 	
 		if minetest.get_modpath("mesecons") then
@@ -235,8 +316,9 @@ for _, row in ipairs(pkarcs_doors3.door) do
 			}
 		}
 	end
-	
+
 	minetest.register_node(":pkarcs_doors3:" ..name.. "_Ldoor_open", Ldoor_open_def)
+	doors.register_custom_door("pkarcs_doors3:"..name.."_Ldoor_open", pkarcs_class)
 
 	local Rdoor_def = {
 		description = "zaoblené dveře pravé (výška 3 m) " .. desc,
@@ -265,9 +347,19 @@ for _, row in ipairs(pkarcs_doors3.door) do
 				{-0.5, -0.5, -0.5, 0.5, 2.4375, -0.375},
 			},
 		},
-		on_rightclick = function(pos, node, puncher)
+		on_rightclick = doors.door_rightclick,
+		on_timer = doors.on_timer,
+		after_place_node = function(pos, placer, itemstack, pointed_thing)
+			local player_name = placer:get_player_name()
+			local meta = minetest.get_meta(pos)
+			meta:set_string("placer", player_name)
+			doors.update_infotext(pos, nil, meta)
+			return minetest.is_creative_enabled(player_name)
+		end,
+		_pkarcs_on_open = function(pos, node, puncher)
 			pkarcs_doors3.open(pos, node, name, "R", door_sound)
 		end,
+		_pkarcs_is_open = false,
 	}
 
 	if minetest.get_modpath("mesecons") then
@@ -280,9 +372,9 @@ for _, row in ipairs(pkarcs_doors3.door) do
 			}
 		}
 	end
-	
-	minetest.register_node(":pkarcs_doors3:" ..name.. "_Rdoor", Rdoor_def)
 
+	minetest.register_node(":pkarcs_doors3:" ..name.. "_Rdoor", Rdoor_def)
+	doors.register_custom_door("pkarcs_doors3:"..name.."_Rdoor", pkarcs_class)
 
 	local Rdoor_open_def = {
 		drawtype = "mesh",
@@ -310,11 +402,21 @@ for _, row in ipairs(pkarcs_doors3.door) do
 				{0.375, -0.5, -1.4375, 0.5, 2.4375, -0.4375},
 			},
 		},
-		on_rightclick = function(pos, node, puncher)
+		on_rightclick = doors.door_rightclick,
+		on_timer = doors.on_timer,
+		after_place_node = function(pos, placer, itemstack, pointed_thing)
+			local player_name = placer:get_player_name()
+			local meta = minetest.get_meta(pos)
+			meta:set_string("placer", player_name)
+			doors.update_infotext(pos, nil, meta)
+			return minetest.is_creative_enabled(player_name)
+		end,
+		_pkarcs_on_close = function(pos, node, puncher)
 			pkarcs_doors3.close(pos, node, name, "R", door_sound)
 		end,
+		_pkarcs_is_open = true,
 	}
-	
+
 		if minetest.get_modpath("mesecons") then
 		Rdoor_open_def.mesecons = {
 			effector = {
@@ -325,9 +427,9 @@ for _, row in ipairs(pkarcs_doors3.door) do
 			}
 		}
 	end
-	
-	minetest.register_node(":pkarcs_doors3:" ..name.. "_Rdoor_open", Rdoor_open_def)
 
+	minetest.register_node(":pkarcs_doors3:" ..name.. "_Rdoor_open", Rdoor_open_def)
+	doors.register_custom_door("pkarcs_doors3:"..name.."_Rdoor_open", pkarcs_class)
 
 --
 -- Crafting

@@ -16,7 +16,7 @@ local function gllstep(dtime)
 	dtime_acc = dtime_acc + dtime
 	if dtime_acc > 1 or dtime > 1 or ustime > 1 then
 		dtime_acc = dtime_acc % 1
-		if #dtimes < 10 and #ustimes < 10 then
+		if #dtimes < 5 and #ustimes < 5 then
 			minetest.log("action", "[glstep_ll] C = "..counter.."; dtimes: "..table.concat(dtimes, ";").." ["..#dtimes.."], ustimes: "..table.concat(ustimes, ";").." ["..#ustimes.."]")
 		end
 		dtimes = {}

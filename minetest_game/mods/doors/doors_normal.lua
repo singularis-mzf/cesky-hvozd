@@ -66,27 +66,8 @@ function doors.door_toggle(pos, node, clicker)
 
 	replace_old_owner_information(pos)
 
-	if clicker then
-		-- check permissions
-		local clicker_name = clicker:get_player_name()
-		local owner = meta:get_string("owner")..meta:get_string("placer")
-		local hes = meta:get_int("hes")
-		if hes ~= 0 and clicker_name ~= "" and owner ~= "" and (clicker_name ~= owner and not minetest.check_player_privs(clicker, "protection_bypass")) then
-			-- key to the hotel-door required
-			local key = clicker:get_wielded_item()
-			if key:get_name() ~= "doors:key" then
-				return false
-			end
-			local key_meta = key:get_meta()
-			local key_hes = key_meta:get_int("hes")
-			if key_hes ~= hes then
-				-- access denied
-				minetest.chat_send_player(clicker_name, "*** Tento klíč nepatří k těmto dveřím!")
-				return false
-			end
-		elseif not default.can_interact_with_node(clicker, pos) then
-			return false
-		end
+	if clicker and not doors.check_player_privs(pos, meta, clicker) then
+		return false
 	end
 
 	-- until Lua-5.2 we have no bitwise operators :(
@@ -128,75 +109,6 @@ function doors.door_toggle(pos, node, clicker)
 	meta:set_int("state", state)
 
 	return true
-end
-
-function doors.door_rightclick(pos, node, clicker, itemstack, pointed_thing)
-	if not clicker then
-		return false
-	end
-	-- Aux1 => show control panel
-	local controls = clicker:get_player_control()
-	if controls.aux1 then
-		-- Show control panel
-		doors.show_control_panel(clicker, pos)
-		return itemstack
-	end
-
-	-- Empty key used by owner (special case)
-	if default.can_interact_with_node(clicker, pos) then
-		local clicker_name = clicker:get_player_name()
-		local key = clicker:get_wielded_item()
-		local meta = minetest.get_meta(pos)
-		local owner = meta:get_string("owner")..meta:get_string("placer")
-		-- local door_hes = meta:get_int("hes")
-		if key:get_name() == "doors:key" and clicker_name ~= "" and owner ~= "" and (clicker_name == owner or minetest.check_player_privs(clicker, "server")) then
-			local key_meta = key:get_meta()
-			local key_hes = key_meta:get_int("hes")
-			if key_hes == 0 then
-				-- a new key to be set up to be used with this door
-				local new_hes = math.random(2147483647)
-				local door_name = meta:get_string("nazev")
-				if door_name == "" then
-					door_name = S("Door")
-				end
-				meta:set_int("hes", new_hes)
-				key_meta:set_int("hes", new_hes)
-				key_meta:set_string("description", S("Key for: @1 (hash @2)", door_name, new_hes))
-				minetest.chat_send_player(clicker_name, "*** Dveře a klíč úspěšně spárovány (kód = "..new_hes..")")
-				doors.update_infotext(pos, node, minetest.get_meta(pos))
-				return key
-			end
-		end
-	end
-
-	doors.door_toggle(pos, node, clicker)
-	return nil
-end
-
-function doors.update_infotext(pos, node, meta)
-	local result = {}
-	local nazev = meta:get_string("nazev")
-	local owner = meta:get_string("owner")
-	if owner ~= "" then
-		table.insert(result, "<zamykatelné dveře>")
-	elseif meta:get_int("hes") ~= 0 then
-		table.insert(result, "<hotelové dveře>")
-	end
-	if nazev ~= "" then
-		table.insert(result, "["..nazev.."]")
-	end
-	if owner ~= "" then
-		table.insert(result, "Dveře vlastní: "..doors.login_to_viewname(owner))
-	else
-		local placer = meta:get_string("placer")
-		table.insert(result, "Dveře postavil/a: "..doors.login_to_viewname(placer))
-	end
-	if meta:get_int("zavirasamo") > 0 then
-		table.insert(result, "Zavírá samo")
-	end
-	result = table.concat(result, "\n")
-	meta:set_string("infotext", result)
-	return result
 end
 
 local function on_place_node(place_to, newnode,
@@ -439,23 +351,7 @@ function doors.register(name, def)
 		return false
 	end
 	if not def.on_timer then
-		def.on_timer = function(pos, elapsed)
-			local obj = doors.get(pos)
-			if not obj then
-				return
-			end
-			-- don't close until no player is in 3-meter radius
-			local player_radius = 3
-			local player_radius2 = player_radius * player_radius
-			for _, player in pairs(minetest.get_connected_players()) do
-				local player_pos = player:get_pos()
-				local x, y, z = player_pos.x - pos.x, player_pos.y - pos.y, player_pos.z - pos.z
-				if x * x + y * y + z * z <= player_radius2 then
-					return true -- wait again
-				end
-			end
-			obj:close()
-		end
+		def.on_timer = doors.on_timer
 	end
 
 	def.can_dig = can_dig_door

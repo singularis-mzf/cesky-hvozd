@@ -2,9 +2,9 @@ local player_to_door_pos = {}
 
 function doors.show_control_panel(player, door_pos)
 	local node = minetest.get_node(door_pos)
-	if not doors.registered_doors[node.name] then
+	--[[ if not doors.registered_doors[node.name] and not doors.registered_trapdoors[node.name] then
 		return false -- not a door
-	end
+	end ]]
 	local obj = doors.get(door_pos)
 	if not obj then
 		return false -- not a door
@@ -93,9 +93,9 @@ local function on_player_receive_fields(player, formname, fields)
 		minetest.log("warning", "Door position for player "..player_name.." has not been saved!")
 		return false
 	end
-	local door_obj = doors.get(door_pos)
 	local door_node = minetest.get_node(door_pos)
-	if not doors.registered_doors[door_node.name] or not door_obj then
+	local door_obj = doors.get(door_pos)
+	if not door_obj then
 		minetest.log("warning", door_node.name.." is not a registered door!")
 		return false
 	end
@@ -107,7 +107,7 @@ local function on_player_receive_fields(player, formname, fields)
 	local meta = minetest.get_meta(door_pos)
 
 	if (not is_openned and fields.opendoor) or (is_openned and fields.closedoor) then
-		doors.door_toggle(door_pos, door_node, player)
+		door_obj:toggle(player)
 		door_node = minetest.get_node(door_pos)
 	end
 
