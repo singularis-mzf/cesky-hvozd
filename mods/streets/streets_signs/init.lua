@@ -207,7 +207,6 @@ for k, v in ipairs(all_signs) do
 		-- def.inventory_image = "streets_"..v[1].."_inv.png"
 	end
 	streets.register_road_sign(def)
-	print("LADĚNÍ: registered streets:"..v[2]..": "..(minetest.registered_nodes["streets:"..v[2]] and "true" or "false"))
 end
 
 minetest.register_alias("streets:sign_eu_guideboard", "streets:sign_eu_guideboard_right")
