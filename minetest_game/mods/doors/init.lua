@@ -148,7 +148,7 @@ minetest.register_craft({
 
 function doors.can_dig_door(pos, digger)
 	-- minetest.log("warning", "can_dig_door() called at "..minetest.pos_to_string(pos))
-	replace_old_owner_information(pos)
+	-- replace_old_owner_information(pos)
 	if not default.can_interact_with_node(digger, pos) then
 		return false
 	end

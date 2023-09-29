@@ -99,6 +99,17 @@ minetest.register_craft({
 })
 minetest.register_alias("ch_core:sickle_mese", "ch_extras:sickle_mese")
 
+local function is_cast_result_nonwalkable(cast_result)
+	if cast_result ~= nil and cast_result.above ~= nil and cast_result.under ~= nil then
+		local node_name = minetest.get_node(cast_result.under).name
+		local ndef = minetest.registered_nodes[node_name]
+		if ndef == nil or (ndef.walkable == false and ndef.climbable ~= true) then
+			return true
+		end
+	end
+	return false
+end
+
 -- skákadlo
 local function skakadlo(itemstack, player, new_speed, wear_to_add)
 	if not player or not player:is_player() then
@@ -115,7 +126,11 @@ local function skakadlo(itemstack, player, new_speed, wear_to_add)
 
 	local node_at_player, node_under_player
 	if reason == nil then
-		local cast_result = Raycast(pos, vector.offset(pos, 0, -0.5, 0), false, true):next()
+		local cast = Raycast(pos, vector.offset(pos, 0, -0.5, 0), false, true)
+		local cast_result = cast:next()
+		while is_cast_result_nonwalkable(cast_result) do
+			cast_result = cast:next()
+		end
 		if cast_result ~= nil and cast_result.above ~= nil and cast_result.under ~= nil then
 			node_at_player = minetest.get_node(cast_result.above)
 			node_under_player = minetest.get_node(cast_result.under)

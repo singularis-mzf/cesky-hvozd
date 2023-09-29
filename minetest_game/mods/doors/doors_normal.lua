@@ -36,15 +36,6 @@ local transform = {
 local can_dig_door = doors.can_dig_door
 local screwdriver_rightclick_override_list = doors.screwdriver_rightclick_override_list
 
-local function replace_old_owner_information(pos)
-	local meta = minetest.get_meta(pos)
-	local owner = meta:get_string("doors_owner")
-	if owner and owner ~= "" then
-		meta:set_string("owner", owner)
-		meta:set_string("doors_owner", "")
-	end
-end
-
 function doors.door_toggle(pos, node, clicker)
 	local meta = minetest.get_meta(pos)
 	node = node or minetest.get_node(pos)
@@ -63,8 +54,6 @@ function doors.door_toggle(pos, node, clicker)
 	else
 		state = tonumber(state)
 	end
-
-	replace_old_owner_information(pos)
 
 	if clicker and not doors.check_player_privs(pos, meta, clicker) then
 		return false
@@ -362,7 +351,7 @@ function doors.register(name, def)
 			door:toggle(player)
 		end
 		def.on_skeleton_key_use = function(pos, player, newsecret)
-			replace_old_owner_information(pos)
+			-- replace_old_owner_information(pos)
 			local meta = minetest.get_meta(pos)
 			local owner = meta:get_string("owner")
 			local pname = player:get_player_name()
