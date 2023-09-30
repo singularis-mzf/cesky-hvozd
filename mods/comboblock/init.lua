@@ -32,6 +32,9 @@ local allowed_combos = {
 	[15] = "solidcolor:slab_plaster_white+solidcolor:slab_plaster_red",
 	[16] = "solidcolor:slab_plaster_white+solidcolor:slab_plaster_green",
 	[17] = "solidcolor:slab_plaster_white+solidcolor:slab_plaster_yellow",
+	[18] = "technic:slab_concrete+building_blocks:slab_Tar",
+	[19] = "technic:slab_concrete+streets:slab_asphalt_red",
+	[20] = "technic:slab_concrete+streets:slab_asphalt_blue",
 }
 local allowed_combos_tmp = {}
 for i, v in ipairs(allowed_combos) do
