@@ -20,79 +20,82 @@ circular_saw.known_stairs = setmetatable({}, {
 -- This is populated by stairsplus:register_all:
 circular_saw.known_nodes = {}
 
+circular_saw.names = {
+	{"micro", "_1", 1},
+	{"panel", "_1", 1},
+	{"micro", "_2", 1},
+	{"panel", "_2", 1},
+	{"micro", "_4", 1},
+	{"panel", "_4", 1},
+	{"micro", "", 1},
+	{"panel", "", 2},
+
+	{"micro", "_12", 2},
+	{"panel", "_12", 3},
+	-- {"micro", "_14", 2},
+	-- {"panel", "_14", 4},
+	{"micro", "_15", 2},
+	{"panel", "_15", 4},
+	{"panel", "_l1", 2},
+	{"slab", "_two_sides", 1},
+	{"slab", "_three_sides", 2},
+	{"slab", "_three_sides_u", 2},
+
+	{"slab", "_1", 1},
+	{"slab", "_2", 1},
+	{"slab", "_quarter", 2},
+	{"slab", "", 4},
+	{"slab", "_three_quarter", 6},
+	{"slab", "_14", 7},
+	{"slab", "_15", 8},
+	{"slope", "_slab", 1},
+
+	{"stair", "", 6},
+	{"stair", "_triple", 6},
+	{"stair", "_outer", 5},
+	{"stair", "_inner", 7},
+	{"stair", "_alt_1", 1},
+	{"stair", "_alt_2", 1},
+	{"stair", "_alt_4", 2},
+	{"stair", "_alt", 4},
+
+	{"slope", "", 4},
+	{"slope", "_half", 2},
+	{"slope", "_half_raised", 6},
+	{"slope", "_inner", 7},
+	{"slope", "_inner_half", 3},
+	{"slope", "_inner_half_raised", 7},
+	{"slope", "_inner_cut", 7},
+	{"slope", "_inner_cut_half", 4},
+
+	{"slope", "_inner_cut_half_raised", 8},
+	{"slope", "_outer", 3},
+	{"slope", "_outer_half", 2},
+	{"slope", "_outer_half_raised", 6},
+	{"slope", "_outer_cut", 2},
+	{"slope", "_outer_cut_half", 1},
+	{"slope", "_outer_cut_half_raised", 3},
+	{"slope", "_cut", 4},
+
+	{"panel", "_special", 1},
+	{"panel", "_l", 1},
+
+	-- {"slope", "_slab_half", 2},
+	-- {"slope", "_slab_half_raised", 6},
+}
+
+local function extract_cost_in_microblocks(names)
+	local result = {}
+	for i, v in ipairs(names) do
+		result[i] = v[3]
+		v[3] = nil
+	end
+	return result
+end
+
 -- How many microblocks does this shape at the output inventory cost:
 -- It may cause slight loss, but no gain.
-circular_saw.cost_in_microblocks = {
-	1, 1, 1, 1, 1, 1, 1, 2,
-	2, 3, 2, 4, 2, 4, 5, 6,
-	7, 1, 1, 2, 4, 6, 7, 8,
-	1, 2, 2, 6, 1, 1, 2, 4,
-	4, 2, 6, 7, 3, 7, 7, 4,
-	8, 3, 2, 6, 2, 1, 3, 4,
-	1, 1, 1
-}
-
-circular_saw.names = {
-	{"micro", "_1"},
-	{"panel", "_1"},
-	{"micro", "_2"},
-	{"panel", "_2"},
-	{"micro", "_4"},
-	{"panel", "_4"},
-	{"micro", ""},
-	{"panel", ""},
-
-	{"micro", "_12"},
-	{"panel", "_12"},
-	{"micro", "_14"},
-	{"panel", "_14"},
-	{"micro", "_15"},
-	{"panel", "_15"},
-	{"stair", "_outer"},
-	{"stair", ""},
-
-	{"stair", "_inner"},
-	{"slab", "_1"},
-	{"slab", "_2"},
-	{"slab", "_quarter"},
-	{"slab", ""},
-	{"slab", "_three_quarter"},
-	{"slab", "_14"},
-	{"slab", "_15"},
-
-	{"slab", "_two_sides"},
-	{"slab", "_three_sides"},
-	{"slab", "_three_sides_u"},
-	{"stair", "_triple"},
-	{"stair", "_alt_1"},
-	{"stair", "_alt_2"},
-	{"stair", "_alt_4"},
-	{"stair", "_alt"},
-
-	{"slope", ""},
-	{"slope", "_half"},
-	{"slope", "_half_raised"},
-	{"slope", "_inner"},
-	{"slope", "_inner_half"},
-	{"slope", "_inner_half_raised"},
-	{"slope", "_inner_cut"},
-	{"slope", "_inner_cut_half"},
-
-	{"slope", "_inner_cut_half_raised"},
-	{"slope", "_outer"},
-	{"slope", "_outer_half"},
-	{"slope", "_outer_half_raised"},
-	{"slope", "_outer_cut"},
-	{"slope", "_outer_cut_half"},
-	{"slope", "_outer_cut_half_raised"},
-	{"slope", "_cut"},
-
-	{"slope", "_slab"},
-	-- {"slope", "_slab_half"},
-	-- {"slope", "_slab_half_raised"},
-	{"panel", "_special"},
-	{"panel", "_l"},
-}
+circular_saw.cost_in_microblocks = extract_cost_in_microblocks(circular_saw.names)
 
 function circular_saw:get_cost(inv, stackname)
 	-- returns: cost, craftitem

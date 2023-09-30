@@ -258,7 +258,7 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 	end
 
 	-- world-aligned textures
-	if category == "stair" or (category == "panel" and (alternate == "_special" or alternate == "_l")) then
+	if category == "stair" or (category == "panel" and (alternate == "_special" or alternate == "_l" or alternate == "_l1")) then
 		local new_tiles = {}
 		for i, v in ipairs(def.tiles) do
 			if type(v) == "table" then
