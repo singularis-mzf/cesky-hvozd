@@ -79,6 +79,8 @@ circular_saw.names = {
 
 	{"panel", "_special", 1},
 	{"panel", "_l", 1},
+	{"panel", "_wide_1", 1},
+	{"panel", "_wide", 4},
 
 	-- {"slope", "_slab_half", 2},
 	-- {"slope", "_slab_half_raised", 6},
@@ -267,11 +269,20 @@ end
 -- The amount of items offered per shape can be configured:
 function circular_saw.on_receive_fields(pos, formname, fields, sender)
 	local meta = minetest.get_meta(pos)
-	local max = tonumber(fields.max_offered)
-	if max and max > 0 then
-		meta:set_string("max_offered",  max)
-		-- Update to show the correct number of items:
-		circular_saw:update_inventory(pos, 0)
+	if fields.Set then
+		local max = tonumber(fields.max_offered)
+		if max and max > 0 then
+			meta:set_string("max_offered",  max)
+			-- Update to show the correct number of items:
+			circular_saw:update_inventory(pos, 0)
+		end
+	elseif fields.Clear then
+		local inv = meta:get_inventory()
+		local no_content = inv:is_empty("input") and inv:is_empty("micro")
+		circular_saw:reset(pos)
+		if not no_content and sender ~= nil and minetest.get_modpath("unified_inventory") ~= nil then
+			minetest.sound_play("trash_all", { to_player = sender:get_player_name(), gain = 0.8 })
+		end
 	end
 end
 
@@ -291,6 +302,9 @@ function circular_saw.allow_metadata_inventory_put(
 	-- The player is not allowed to put something in there:
 	if listname == "output" or listname == "micro" then
 		return 0
+	end
+	if listname == "trash" then
+		return stack:get_count()
 	end
 
 	local meta = minetest.get_meta(pos)
@@ -403,6 +417,11 @@ function circular_saw.on_metadata_inventory_put(
 			end
 			circular_saw:update_inventory(pos, rcost * count, craftitem)
 		end
+	elseif listname == "trash" then
+		inv:set_stack("trash", 1, ItemStack())
+		if player ~= nil and minetest.get_modpath("unified_inventory") ~= nil then
+			minetest.sound_play("trash_all", { to_player = player:get_player_name(), gain = 0.8 })
+		end
 	end
 end
 
@@ -476,6 +495,9 @@ local function get_formspec()
 		"list[current_name;recycle;1.7,2;1,1;]" ..
 		"field[0.3,3.5;1,1;max_offered;" ..F(S("Max")).. ":;${max_offered}]" ..
 		"button[1,3.2;1.7,1;Set;" ..F(S("Set")).. "]" ..
+		"button[0.5,3.75;2,2;Clear;" .. F(S("Discard All")) .. "]" ..
+		"label[0,6;" .. F(S("Trash")).. "]" ..
+		"list[current_name;trash;1.5,6;1,1;]" ..
 		"list[current_name;output;2.8,0;8,7;]" ..
 		"list[current_player;main;1.5,7.25;8,4;]" ..
 		"listring[current_name;output]" ..
@@ -503,6 +525,7 @@ function circular_saw.on_construct(pos)
 	inv:set_size("micro", 1)    -- Storage for 1-7 surplus microblocks.
 	inv:set_size("recycle", 1)  -- Surplus partial blocks can be placed here.
 	inv:set_size("output", 7*8) -- 7x8 versions of stair-parts of material x.
+	inv:set_size("trash", 1)    -- Trash list
 
 	circular_saw:reset(pos)
 end
@@ -516,6 +539,7 @@ minetest.register_lbm({
 		local meta = minetest.get_meta(pos)
 		if meta:get_string("formspec") ~= circular_saw_formspec then
 			meta:set_string("formspec", circular_saw_formspec)
+			meta:get_inventory():set_size("trash", 1)
 			minetest.log("action", "Circular Saw formspec updated at "..minetest.pos_to_string(pos))
 		end
 	end

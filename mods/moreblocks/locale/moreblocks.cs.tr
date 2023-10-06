@@ -17,6 +17,8 @@ Circular Saw is empty=Kotoučová pila je prázdná
 Circular Saw is working on @1=Kotoučová pila obsahuje: @1
 Circular Saw that was placed by @1 is working on @2=Kotoučová pila postavená postavou „@1“ obsahuje: @2
 Circular Saw that was placed by @1 is empty=Kotoučová pila postavená postavou „@1“ je prázdná
+Trash=Koš
+Discard All=Zahodit vše
 
 # init.lua
 
@@ -137,3 +139,5 @@ tripleslope=trojitý
 (all faces)=(všestranný kmen)
 l=vychýlená tyč L
 l1=do tvaru L
+wide 1=široký ultratenký
+wide=kvádr
