@@ -306,8 +306,8 @@ register_boat("jungle_boat", {
 	name = "jungle",
 	boat_name = "jungle_boat",
 	description = S("Jungle Boat"),
-	textures = {"default_jungle_wood.png"},
-	wood_item = "default:jungle_wood",
+	textures = {"default_junglewood.png"},
+	wood_item = "default:junglewood",
 })
 
 register_boat("pine_boat", {
