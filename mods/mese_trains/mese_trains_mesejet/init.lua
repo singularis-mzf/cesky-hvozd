@@ -1,16 +1,11 @@
 local S = attrans
 
-local lines = {
-	"#ff1111",
-	"#1111ff",
-	"#ff9900",
-	"#11ff11",
-	"#9900ff",
-	"#00ffff",
-	"#ff9999",
-	"#ff00ff",
-	"#99ff00",
-}
+local lines = {}
+
+for i, def in ipairs(ch_core.barvy_linek)
+do
+	lines[i] = def.bgcolor or "#ffffff"
+end
 
 advtrains.register_wagon("mese_trains_mesejet:mese_trains_mesejet_wagon", {
 	mesh = "mese_trains_mesejet_wagon.b3d",
@@ -89,7 +84,7 @@ advtrains.register_wagon("mese_trains_mesejet:mese_trains_mesejet_wagon", {
 		if train.line and self.line_cache ~= train.line then
 			self.line_cache = train.line
 			local line = tonumber(train.line)
-			if type(line) == "number" and line < 10 and line > 0 then
+			if type(line) == "number" and 0 < line and line < 10 then
 				local new_line_tex = "mese_trains_mesejet_wagon.png^((mese_trains_mesejet_wagon_lines.png^mese_trains_mesejet_wagon_line_" .. line .. ".png)^[colorize:" .. lines[line] .. ":255)"
 				self.object:set_properties({
 					textures = {new_line_tex}

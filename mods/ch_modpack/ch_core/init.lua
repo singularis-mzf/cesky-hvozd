@@ -32,6 +32,7 @@ end
 
 dofile(modpath .. "/privs.lua")
 dofile(modpath .. "/data.lua")
+dofile(modpath .. "/barvy_linek.lua")
 dofile(modpath .. "/lib.lua") -- : data
 dofile(modpath .. "/ch_wm_nodes.lua") -- : lib
 dofile(modpath .. "/localize_chatcommands.lua") -- : privs, data, lib
