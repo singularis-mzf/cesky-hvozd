@@ -331,7 +331,7 @@ for _,mode in ipairs({"on", "off"}) do
             local motorhash = meta:get_string("motor")
             if on and elevator.motors[motorhash] then
                 if vector.distance(sender:get_pos(), pos) > 1 or minetest.get_node(sender:get_pos()).name ~= nodename then
-                    minetest.chat_send_player(sender:get_player_name(), "You are not inside the booth.")
+                    ch_core.systemovy_kanal(sender:get_player_name(), "Nestojíte uvnitř kabiny!")
                     return
                 end
                 -- Build the formspec from the motor table.

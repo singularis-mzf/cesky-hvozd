@@ -72,6 +72,30 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
+	output = "darkage:ors 4",
+	recipe = {
+		{"default:silver_sandstone","default:silver_sandstone"},
+		{"default:iron_lump","default:silver_sandstone"},
+	}
+})
+
+minetest.register_craft({
+	output = "darkage:ors 4",
+	recipe = {
+		{"default:desert_sandstone","default:desert_sandstone"},
+		{"default:iron_lump","default:desert_sandstone"},
+	}
+})
+
+minetest.register_craft({
+	output = "darkage:ors_brick 4",
+	recipe = {
+		{"darkage:ors","darkage:ors"},
+		{"darkage:ors","darkage:ors"},
+	}
+})
+
+minetest.register_craft({
 	type = "cooking",
 	output = "darkage:ors",
 	recipe = "darkage:ors_cobble",
@@ -87,6 +111,30 @@ minetest.register_craft({
 	type = "cooking",
 	output = "darkage:basalt",
 	recipe = "darkage:basalt_cobble",
+})
+
+minetest.register_craft({
+	output = "darkage:gneiss_brick 4",
+	recipe = {
+		{"darkage:gneiss","darkage:gneiss"},
+		{"darkage:gneiss","darkage:gneiss"},
+	}
+})
+
+minetest.register_craft({
+	output = "darkage:basalt_brick 4",
+	recipe = {
+		{"darkage:basalt","darkage:basalt"},
+		{"darkage:basalt","darkage:basalt"},
+	}
+})
+
+minetest.register_craft({
+	output = "darkage:slate_brick 4",
+	recipe = {
+		{"darkage:slate","darkage:slate"},
+		{"darkage:slate","darkage:slate"},
+	}
 })
 
 --

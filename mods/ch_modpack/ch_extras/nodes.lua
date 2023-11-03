@@ -906,7 +906,7 @@ def = {
 	description = "univerzální stavební modul (experimentální)",
 	tiles = {"ch_core_white_pixel.png"},
 	paramtype = "light",
-	paramtype2 = "none",
+	paramtype2 = "facedir",
 	groups = {dig_immediate = 2},
 	sounds = default.node_sound_stone_defaults(),
 	after_place_node = function(pos, placer, itemstack, pointed_thing)
@@ -952,4 +952,99 @@ def.weild_image = "ch_core_plakat_yf2.png"
 minetest.register_node("ch_core:plakat_yf_right", table.copy(def))
 ]]
 
+-- ch_extras:snow
+---------------------------------------------------------------
+-- tiles = {{name = "[combine:64x64:0,0=default_snow.png\\^[resize\\:32x32:0,32=default_snow.png\\^[resize\\:32x32:32,0=default_snow.png\\^[resize\\:32x32:32,32=default_snow.png\\^[resize\\:32x32^[mask:ch_extras_snow_mask.png", backface_culling = false }},
+local epsilon = 0.001
+local nbox = {
+	type = "fixed",
+	fixed = {-0.5, -0.5, -0.5, 0.5, -0.5 + epsilon, 0.5},
+}
+local sbox = {
+	type = "fixed",
+	fixed = {0.0, -0.5, -0.5, 0.5, -0.5 + 1/16, 0.0},
+}
 
+def = {
+	description = "sněhová pokrývka: roh",
+	tiles = {
+		{name = "default_snow.png^[mask:ch_extras_snow_corner.png", backface_culling = false },
+		{name = "ch_core_empty.png", backface_culling = true},
+		{name = "ch_core_empty.png", backface_culling = true},
+		{name = "ch_core_empty.png", backface_culling = true},
+		{name = "ch_core_empty.png", backface_culling = true},
+		{name = "ch_core_empty.png", backface_culling = true},
+	},
+	use_texture_alpha = "clip",
+	drawtype = "nodebox",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	node_box = {
+		type = "fixed",
+		fixed = {-0.5, -0.5, -0.5, 0.5, -0.5 + epsilon, 0.5},
+	},
+	selection_box = {
+		type = "fixed",
+		fixed = {0.0, -0.5, -0.5, 0.5, -0.5 + 1/32, 0.0},
+	},
+	collision_box = {
+		type = "fixed",
+		fixed = {0.0, -0.5, -0.5, 0.5, -0.5 + 1/32, 0.0},
+	},
+	buildable_to = true,
+	floodable = true,
+	walkable = false,
+	sunlight_propagates = false,
+	groups = {crumbly = 3, falling_node = 1, snowy = 1, ch_snow = 1, not_blocking_trains = 1},
+	sounds = default.node_sound_snow_defaults(),
+}
+minetest.register_node("ch_extras:snow_corner", table.copy(def))
+minetest.register_craft({
+	output = "ch_extras:snow_corner 3",
+	recipe = {{"default:snow", "default:snow"},
+              {"default:snow", ""}},
+})
+minetest.register_craft({
+	output = "ch_extras:snow_corner 3",
+	recipe = {{"group:ch_snow", "group:ch_snow"},
+              {"group:ch_snow", ""}},
+})
+
+-- ch_extras:snow_edge:
+def.description = "sněhová pokrývka: okraj"
+def.tiles = {
+	{name = "default_snow.png^[mask:ch_extras_snow_edge.png\\^[transformR270", backface_culling = false },
+	{name = "ch_core_empty.png", backface_culling = true},
+	{name = "ch_core_empty.png", backface_culling = true},
+	{name = "default_snow.png", backface_culling = true},
+	{name = "ch_core_empty.png", backface_culling = true},
+	{name = "ch_core_empty.png", backface_culling = true},
+}
+-- def.node_box = nbox
+def.selection_box = {
+	type = "fixed",
+	fixed = {-0.5, -0.5, -0.5, 0.5, -0.5 + 1/32, 0.0},
+}
+def.collision_box = def.selection_box
+minetest.register_node("ch_extras:snow_edge", def)
+minetest.register_craft({
+	output = "ch_extras:snow_edge 2",
+	recipe = {{"default:snow", "default:snow"},
+              {"", ""}},
+})
+minetest.register_craft({
+	output = "ch_extras:snow_edge 2",
+	recipe = {{"group:ch_snow", "group:ch_snow"},
+              {"", ""}},
+})
+minetest.register_craft({
+	output = "default:snow",
+	recipe = {{"group:ch_snow"}},
+})
+minetest.register_craft({
+	output = "default:dirt",
+	recipe = {{"default:dirt_with_snow"}},
+	replacements = {
+		{"default:dirt_with_snow", "default:snow"},
+	},
+})

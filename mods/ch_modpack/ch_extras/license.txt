@@ -39,6 +39,8 @@ ch_extras_parekvrohliku.png
 ch_extras_parekvrohliku_h.png
 ch_extras_parekvrohliku_k.png
 ch_extras_skakadlo.png
+ch_extras_snow_corner.png
+ch_extras_snow_edge.png
 ch_extras_switch_arrow.png
 ch_extras_switch_off.png
 ch_extras_switch_straight.png

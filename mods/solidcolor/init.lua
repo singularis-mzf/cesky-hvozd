@@ -33,7 +33,7 @@ local tile_groups = {
 		description = "barvitelné kamenné cihly",
 		tiles = {"default_stone_brick.png^[brighten"},
 		material_groups = {cracky = 2, stone = 1},
-		input_material = "default:stone_brick",
+		input_material = "default:stonebrick",
 	},
 	noise = {
 		description = "barvitelný texturovaný blok",
@@ -72,8 +72,26 @@ for tile_id, tile_def in pairs(tile_groups) do
 				{"", "", ""},
 				{"", "", ""},
 				},
-				replacements = {{"unifieddyes:airbrush", "unifieddyes:airbrush"}},
-			})
+			replacements = {{"unifieddyes:airbrush", "unifieddyes:airbrush"}},
+		})
+		minetest.register_craft({
+			output = tile_def.input_material,
+			recipe = {
+				{"solidcolor:"..tile_id.."_block", "bucket:bucket_water", ""},
+				{"", "", ""},
+				{"", "", ""},
+			},
+			replacements = {{"bucket:bucket_water", "bucket:bucket_water"}},
+		})
+		minetest.register_craft({
+			output = tile_def.input_material,
+			recipe = {
+				{"solidcolor:"..tile_id.."_block", "bucket:bucket_river_water", ""},
+				{"", "", ""},
+				{"", "", ""},
+			},
+			replacements = {{"bucket:bucket_river_water", "bucket:bucket_river_water"}},
+		})
 	end
 end
 print(string.format("[solidcolor] generated %d node types", node_count))
