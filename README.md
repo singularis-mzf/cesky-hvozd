@@ -774,6 +774,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: zlib license
 * [ContentDB](https://content.minetest.net/packages/Calinou/moreblocks/)
 
+## More Boats (more\_boats)
+
+* Zdroj: [https://content.minetest.net/packages/SkyBuilder1717/more\_boats/](https://content.minetest.net/packages/SkyBuilder1717/more\_boats/), verze z 2023-10-23
+* Původní licence: MIT pro kód, CC BY-SA 3.0 pro ostatní
+* Licence úprav: MIT pro kód, CC BY-SA 3.0 pro ostatní
+* [ContentDB](https://content.minetest.net/packages/SkyBuilder1717/more\_boats/)
+
 ## More Ores (moreores)
 
 * Zdroj: [https://github.com/minetest-mods/moreores](https://github.com/minetest-mods/moreores), revize fb2d58d8c843aa9512f37b12436a2bb5166585f4
