@@ -317,8 +317,8 @@ if not HAVE_TRAINBLOCKS_FLAG and
             light_source = 12,
             node_box = {
                 type = "wallmounted",
-                wall_top = {-8/16, -4/16, -4/16, -7/16, 4/16, 4/16},
-                wall_bottom = {-8/16, -4/16, -4/16, -7/16, 4/16, 4/16},
+                wall_top = {-4/16, 7/16, -4/16, 4/16, 8/16, 4/16},
+                wall_bottom = {-4/16, -8/16, -4/16, 4/16, -7/16, 4/16},
                 wall_side = {-8/16, -4/16, -4/16, -7/16, 4/16, 4/16},
             },
             paramtype = "light",
