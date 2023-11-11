@@ -15,9 +15,12 @@ if minetest.get_modpath("dye") then
 	-- register recipes with the same crafting ratios as `dye` provides
 	local dye_recipes = {
 		{"technic:coal_dust",                 "dye:black 2"},
-		{"default:blueberries",               "dye:violet 2"},
+		{"default:blueberries",               "dye:blue 2"},
+		{"farming:blueberries",               "dye:blue 2"},
+		{"flowers:mushroom_brown",            "dye:brown 1"},
+		{"flowers:mushroom_red",              "dye:red 1"},
 		{"default:grass_1",                   "dye:green 1"},
-		{"default:dry_shrub",                 "dye:brown 1"},
+		{"default:dry_shrub",                 "dye:brown 4"},
 		{"default:junglegrass",               "dye:green 2"},
 		{"default:cactus",                    "dye:green 4"},
 		{"flowers:geranium",                  "dye:blue 4"},
@@ -26,8 +29,15 @@ if minetest.get_modpath("dye") then
 		{"flowers:tulip",                     "dye:orange 4"},
 		{"flowers:rose",                      "dye:red 4"},
 		{"flowers:viola",                     "dye:violet 4"},
+		{"farming:raspberries",               "dye:magenta 2"},
+		{"farming:onion",                     "dye:yellow 4"},
+		{"farming:rhubarb",                   "dye:yellow 4"},
 		{"bushes:blackberry",                 unifieddyes and "unifieddyes:magenta_s50 4" or "dye:violet 4"},
 		{"bushes:blueberry",                  unifieddyes and "unifieddyes:magenta_s50 4" or "dye:magenta 4"},
+		{"wine:bottle_brandy",                "farming:bottle_ethanol 2"},
+		{"wine:bottle_tequila",               "farming:bottle_ethanol 2"},
+		{"wine:bottle_vodka",                 "farming:bottle_ethanol 2"},
+		{"wine:bottle_slivovice",             "farming:bottle_ethanol 4"},
 	}
 
 	for _, data in ipairs(dye_recipes) do
@@ -52,10 +62,17 @@ if minetest.get_modpath("dye") then
 		})
 	end
 
-	ch_core.clear_crafts("extractor_recipes2", {{
-		type = "shapeless",
-		recipe = {"group:coal"},
-	}})
+	crafts_to_clear = {
+		{
+			type = "shapeless",
+			recipe = {"group:coal"},
+		},
+		{
+			output = "farming:bottle_ethanol"
+		},
+	}
+
+	ch_core.clear_crafts("extractor_recipes2", crafts_to_clear)
 	minetest.register_craft({
 		type = "shapeless",
 		output = "dye:black 1",

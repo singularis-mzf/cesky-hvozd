@@ -117,3 +117,18 @@ minetest.register_craft({
 		{"ch_extras:parekvrohliku", ""},
 	},
 })
+
+-- ice -> water_source
+---------------------------------------------------------------
+minetest.register_craft({
+	output = "default:water_source",
+	type = "cooking",
+	cooktime = 6,
+	recipe = "default:ice",
+})
+minetest.register_craft({
+	output = "default:water_source",
+	type = "cooking",
+	cooktime = 3,
+	recipe = "default:snowblock",
+})

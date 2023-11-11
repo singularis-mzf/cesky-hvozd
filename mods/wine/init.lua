@@ -204,7 +204,9 @@ local bucket_list = {
 	{"bucket_wooden:bucket_water", "bucket_wooden:bucket_empty", 20},
 	{"bucket_wooden:bucket_river_water", "bucket_wooden:bucket_empty", 20},
 	-- {"mcl_buckets:bucket_water", "mcl_buckets:bucket_empty", 20},
-	{"farming:glass_water", "vessels:drinking_glass", 5}
+	{"farming:glass_water", "vessels:drinking_glass", 5},
+	{"default:water_source", "", 20},
+	{"default:river_water_source", "", 20},
 }
 
 
