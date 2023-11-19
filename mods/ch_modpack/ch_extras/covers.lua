@@ -129,7 +129,7 @@ local function register_cover(name, cover_def) --  texture, description, groups,
 
 	ctex, ftex = generate_textures(cover_def.texture, cover_def.texture_size, "ch_extras_cover_inner_corner.png")
 	def = table.copy(template)
-	def.description = "pokrývka "..cover_def.description..": vnitřní roh"
+	def.description = "pokrývka: "..cover_def.description..": vnitřní roh"
 	def.tiles = {ctex, etex, ftex, etex, etex, ftex}
 	def.inventory_image = ctex.name
 	def.wield_image = ctex.name
@@ -242,7 +242,7 @@ register_cover("desert_sand", {
 	texture_size = 64,
 	groups = {crumbly = 3, sand = 1, falling_node = 1, attached_node = 1, not_blocking_trains = 1, ch_cover = 1},
 	sounds = default.node_sound_sand_defaults(),
-	item = "default:silver_sand",
+	item = "default:desert_sand",
 })
 
 if minetest.get_modpath("summer") then
