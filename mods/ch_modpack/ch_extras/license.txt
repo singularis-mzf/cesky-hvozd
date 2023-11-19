@@ -27,6 +27,10 @@ ch_extras_geocaching.png
 	Author: brdad (Leatherman)
 	Unmodified, but downscaled
 
+ch_extras_cover_corner.png
+ch_extras_cover_diag.png
+ch_extras_cover_edge.png
+ch_extras_cover_inner_corner.png
 ch_extras_cracks.obj
 ch_extras_creative_inv.png
 ch_extras_crvb_pruhy.png
@@ -39,8 +43,6 @@ ch_extras_parekvrohliku.png
 ch_extras_parekvrohliku_h.png
 ch_extras_parekvrohliku_k.png
 ch_extras_skakadlo.png
-ch_extras_snow_corner.png
-ch_extras_snow_edge.png
 ch_extras_switch_arrow.png
 ch_extras_switch_off.png
 ch_extras_switch_straight.png
