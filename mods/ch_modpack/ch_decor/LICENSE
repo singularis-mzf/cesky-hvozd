@@ -35,6 +35,11 @@ ephesus.lua
 	License: EUPLv1.2
 
 ethereal.lua
+	Author: TenPlus1
+	Adapted by: Singularis
+	License: MIT
+
+ethereal.lua
 petz.lua
 	Author: Singularis
 	License: MIT
@@ -80,6 +85,21 @@ ephesus_ivoire.png
 	Source:
 		https://content.minetest.net/packages/Clemstriangular/ephesus/
 	License: EUPLv1.2
+
+ethereal_paper_wall.png
+ethereal_sakura_door.png
+ethereal_sakura_door_inv.png
+	Author: TenPlus1
+	Source:
+		Ethereal NG Mod (https://notabug.org/tenplus1/ethereal)
+	License: MIT
+
+ethereal_stone_ladder.png
+	Original author: TenPlus1
+	Modified by: Singularis
+	Source:
+		Ethereal NG Mod (https://notabug.org/tenplus1/ethereal)
+	License: MIT
 
 petz_grey_gables.png
 petz_red_gables.png
