@@ -1,10 +1,13 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_extras.recipes3dprint = {}
 
--- local S = minetest.get_translator("ch_3dprint")
+if minetest.get_modpath("home_workshop_machines") and minetest.get_modpath("technic") then
 
-ch_3dprint = {
-	recipes = {},
-}
+local has_streets = minetest.get_modpath("streets")
+
+-- depends = ch_core, home_workshop_machines, technic, unified_inventory
+-- optional_depends = streets
+
+local recipes = ch_extras.recipes3dprint
 
 -- CONFIGURATION:
 local printers = {
@@ -46,7 +49,6 @@ unified_inventory.register_craft_type("3dprint", {
 })
 
 local function get_page_max()
-	local recipes = ch_3dprint.recipes
 	local result = math.ceil(#recipes / (page_width * page_height))
 	if result < 1 then
 		return 1
@@ -118,7 +120,7 @@ local function dye_points_to_ceil(points)
 	return math.ceil(points / points_per_dye)
 end
 
-function ch_3dprint.register_recipe(recipe)
+function ch_extras.register_3dprint_recipe(recipe)
 	if type(recipe) ~= "table" or not recipe.output then
 		error("Invalid 3D printer recipe!")
 	end
@@ -133,7 +135,7 @@ function ch_3dprint.register_recipe(recipe)
 	new_recipe.yellow = recipe.yellow or 0
 	new_recipe.black = recipe.black or 0
 	new_recipe.input = recipe.input or 0
-	table.insert(ch_3dprint.recipes, new_recipe)
+	table.insert(recipes, new_recipe)
 
 	local items = {
 		default_item.cyan.." "..math.ceil(new_recipe.cyan / points_per_dye),
@@ -218,9 +220,7 @@ local function get_output_inventory(pos, meta, inv)
 	local empty_stack = ItemStack()
 	local result = {}
 
-	-- print("DEBUG: cyan = "..current_state.cyan..", magenta = "..current_state.magenta..", yellow = "..current_state.yellow..", black = "..current_state.black..", input = "..current_state.input)
-
-	for i, recipe in ipairs(ch_3dprint.recipes) do
+	for i, recipe in ipairs(recipes) do
 		if i > output_size then
 			minetest.log("warning", "Too many recipes for 3d printer at "..minetest.pos_to_string(pos).." with output_size == "..output_size.."!")
 			break
@@ -323,7 +323,7 @@ local function allow_metadata_inventory_take(pos, listname, index, stack, player
 	end
 	if listname == "output" then
 		local wanted_count = stack:get_count()
-		local recipe = ch_3dprint.recipes[index]
+		local recipe = recipes[index]
 		local new_state, allowed_count = simulate_crafting(pos, nil, nil, recipe, wanted_count)
 		if allowed_count ~= wanted_count then
 			minetest.log("error", "3D printer crafting of "..recipe.output:to_string().." at "..minetest.pos_to_string(pos).." failed! Can craft only "..count.." items instead of "..orig_count.."!")
@@ -382,7 +382,7 @@ local function on_metadata_inventory_take(pos, listname, index, stack, player)
 		local player_name = player and player:get_player_name()
 		minetest.log("action", "3D printer at "..minetest.pos_to_string(pos).." crafted "..stack:to_string().." for "..(player_name or "???"))
 		if player_name ~= nil then
-			ch_core.update_shown_formspec(player_name, "ch_3dprint:formspec", function(custom_state)
+			ch_core.update_shown_formspec(player_name, "ch_extras:formspec_3dprint", function(custom_state)
 					return get_formspec(custom_state.pos, nil, nil, minetest.get_player_by_name(player_name), custom_state.page)
 				end)
 		end
@@ -420,7 +420,7 @@ local function on_rightclick(pos, node, clicker, itemstack, pointed_thing)
 	if clicker and clicker:is_player() then
 		local computer = minetest.find_node_near(pos, 10, computers)
 		if computer then
-			ch_core.show_formspec(clicker, "ch_3dprint:formspec", get_formspec(pos, nil, nil, clicker, 1), formspec_callback, {pos = pos, page = 1, page_max = get_page_max(pos)}, {})
+			ch_core.show_formspec(clicker, "ch_extras:formspec_3dprint", get_formspec(pos, nil, nil, clicker, 1), formspec_callback, {pos = pos, page = 1, page_max = get_page_max(pos)}, {})
 		else
 			ch_core.systemovy_kanal(clicker:get_player_name(), "K použití 3D tiskárny musí být v blízkosti (do 10 metrů) zapnutý počítač!")
 		end
@@ -488,7 +488,7 @@ if minetest.get_modpath("streets") then
 	local function rr(name, input, cyan, magenta, yellow, black)
 		local ndef = minetest.registered_nodes[name]
 		if ndef ~= nil then
-			ch_3dprint.register_recipe({output = name, input = input or input_default, cyan = cyan or cyan_default, magenta = magenta or magenta_default, yellow = yellow or yellow_default, black = black or black_default})
+			ch_extras.register_3dprint_recipe({output = name, input = input or input_default, cyan = cyan or cyan_default, magenta = magenta or magenta_default, yellow = yellow or yellow_default, black = black or black_default})
 		end
 	end
 
@@ -603,4 +603,4 @@ if minetest.get_modpath("streets") then
 	rr("streets:sign_eu_guideboard_left")
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+end -- if

@@ -1,4 +1,4 @@
-epsilon = 0.001
+local epsilon = 0.001
 
 local corner_nbox = {
 	type = "fixed",
@@ -141,7 +141,7 @@ local function register_cover(name, cover_def) --  texture, description, groups,
 	ctex, ftex = generate_textures(cover_def.texture, cover_def.texture_size, "ch_extras_cover_edge.png")
 	def = table.copy(template)
 	def.description = "pokrývka: "..cover_def.description..": okraj"
-	def.tiles = {ctex, etex, etex, ftex, etex, etex}
+	def.tiles = {ctex, etex, etex, etex, etex, ftex}
 	def.inventory_image = ctex.name
 	def.wield_image = ctex.name
 	def.node_box = edge_nbox
@@ -152,7 +152,7 @@ local function register_cover(name, cover_def) --  texture, description, groups,
 	ctex, ftex = generate_textures(cover_def.texture, cover_def.texture_size, "ch_extras_cover_diag.png")
 	def = table.copy(template)
 	def.description = "pokrývka: "..cover_def.description..": úhlopříčný díl"
-	def.tiles = {ctex, etex, ftex, etex, ftex, etex}
+	def.tiles = {ctex, etex, ftex, etex, etex, ftex}
 	def.inventory_image = ctex.name
 	def.wield_image = ctex.name
 	def.node_box = diag_nbox
