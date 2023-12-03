@@ -47,13 +47,36 @@ minetest.register_craftitem("farming:potato_salad", {
 	on_use = minetest.item_eat(10, "farming:bowl")
 })
 
+minetest.register_craftitem("farming:cucumber_zalivka", {
+	description = "okurková zálivka",
+	inventory_image = "farming_cactus_juice.png^[brighten^[brighten",
+})
+
+local replacements = {{"farming:cucumber_zalivka", "vessels:drinking_glass"}}
+minetest.register_craft({
+	output = "farming:cucumber_zalivka",
+	type = "shapeless",
+	recipe = {"group:food_cucumber", "farming:glass_water"},
+})
+
 minetest.register_craft({
 	output = "farming:potato_salad",
 	recipe = {
-		{"group:food_cucumber"},
-		{"farming:baked_potato"},
-		{"group:food_bowl"}
-	}
+		{"farming:cucumber_zalivka", "", ""},
+		{"farming:baked_potato", "group:food_cucumber", ""},
+		{"farming:bowl", "", ""},
+	},
+	replacements = replacements,
+})
+
+minetest.register_craft({
+	output = "farming:potato_salad",
+	recipe = {
+		{"farming:cucumber_zalivka", "", ""},
+		{"group:food_cucumber", "farming:baked_potato", ""},
+		{"farming:bowl", "", ""},
+	},
+	replacements = replacements,
 })
 
 -- potato definition

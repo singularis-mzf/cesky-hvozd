@@ -1,4 +1,6 @@
 -- extra recipes
+local def
+
 minetest.register_craft({
 	output = "default:permafrost",
 	recipe = {
@@ -153,3 +155,11 @@ if minetest.get_modpath("technic") then
 	technic.register_alloy_recipe({input = {"technic:carbon_steel_block 4", "technic:chromium_block"}, output = "technic:stainless_steel_block 5", time = 75})
 	technic.register_alloy_recipe({input = {"default:copperblock 2", "technic:zinc_block"}, output = "basic_materials:brass_block 3", time = 10})
 end
+
+def = {"technic:common_tree_grindings", "technic:common_tree_grindings", "technic:common_tree_grindings"}
+minetest.register_craft({
+	output = "default:paper 16",
+	recipe = {
+		def, {"", "mesecons_materials:glue", ""}, def
+	},
+})

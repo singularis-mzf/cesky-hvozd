@@ -132,3 +132,111 @@ minetest.register_craft({
 	cooktime = 3,
 	recipe = "default:snowblock",
 })
+
+-- ch_extras:carp_...
+---------------------------------------------------------------
+def = {
+	description = "kapří hlava",
+	inventory_image = "ch_extras_kapr_hlava.png",
+	wield_image = "ch_extras_kapr_hlava.png",
+	groups = {food = 1},
+	on_use = minetest.item_eat(1),
+}
+minetest.register_craftitem("ch_extras:carp_head", def)
+
+def = {
+	description = "kapří maso (syrové)",
+	inventory_image = "ch_extras_kapr_telo.png",
+	wield_image = "ch_extras_kapr_telo.png",
+	-- groups = {food = 1},
+	-- on_use = minetest.item_eat(1),
+}
+minetest.register_craftitem("ch_extras:carp_meat", def)
+
+def = {
+	description = "pečený kapr",
+	inventory_image = "ch_extras_kapr_peceny.png",
+	wield_image = "ch_extras_kapr_peceny.png",
+	groups = {food = 12},
+	on_use = minetest.item_eat(12),
+}
+minetest.register_craftitem("ch_extras:carp_cooked", def)
+
+def = {
+	description = "kapří polévka",
+	inventory_image = "ch_extras_kapr_polevka.png",
+	wield_image = "ch_extras_kapr_polevka.png",
+	groups = {food = 4},
+	on_use = minetest.item_eat(4),
+}
+minetest.register_craftitem("ch_extras:carp_soup", def)
+
+minetest.register_craft({
+	output = "ch_extras:carp_meat",
+	recipe = {
+		{"animalworld:carp", ""},
+		{"farming:cutting_board", ""},
+	},
+	replacements = {
+		{"animalworld:carp", "ch_extras:carp_head"},
+		{"farming:cutting_board", "farming:cutting_board"},
+	},
+})
+
+minetest.register_craft({
+	output = "ch_extras:carp_cooked",
+	type = "cooking",
+	cooktime = 20,
+	recipe = "ch_extras:carp_meat",
+})
+
+minetest.register_craft({
+	output = "ch_extras:carp_soup",
+	type = "cooking",
+	cooktime = 6,
+	recipe = "ch_extras:carp_head",
+})
+
+def = {
+	description = "pramen těsta na vánočku",
+	inventory_image = "ch_extras_vanocka_pramen.png",
+	wield_image = "ch_extras_vanocka_pramen.png",
+}
+minetest.register_craftitem("ch_extras:vanocka_pramen", def)
+def = {
+	description = "těsto na vánočku",
+	inventory_image = "ch_extras_vanocka_syrova.png",
+	wield_image = "ch_extras_vanocka_syrova.png",
+}
+minetest.register_craftitem("ch_extras:vanocka_testo", def)
+def = {
+	description = "vánočka",
+	inventory_image = "ch_extras_vanocka.png",
+	wield_image = "ch_extras_vanocka.png",
+	groups = {food = 6},
+	on_use = minetest.item_eat(6),
+}
+minetest.register_craftitem("ch_extras:vanocka", def)
+
+minetest.register_craft({
+	output = "ch_extras:vanocka",
+	type = "cooking",
+	cooktime = 6,
+	recipe = "ch_extras:vanocka_testo",
+})
+minetest.register_craft({
+	output = "ch_extras:vanocka_testo",
+	recipe = {
+		{"ch_extras:vanocka_pramen", "", "ch_extras:vanocka_pramen"},
+		{"", "ch_extras:vanocka_pramen", ""},
+		{"ch_extras:vanocka_pramen", "", "ch_extras:vanocka_pramen"},
+	},
+})
+minetest.register_craft({
+	output = "ch_extras:vanocka_pramen 5",
+	recipe = {
+		{"mobs:egg", "farming:grapes", "mobs:egg"},
+		{"farming:sugar", "drinks:jbo_milk", "farming:salt"},
+		{"farming:flour", "farming:flour", "farming:flour"},
+	},
+})

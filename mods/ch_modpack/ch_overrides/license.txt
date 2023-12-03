@@ -1014,3 +1014,8 @@ darkage_mud_footstep.4.ogg
 ch_overrides_snow.obj
 	Author: Singularis
 	License: CC BY-SA 4.0
+
+acarp.png
+	Author: Singularis
+	Used source: https://commons.wikimedia.org/wiki/File:Cyprinus_carpio.jpeg (Author: Dezidor, License: CC BY-SA 3.0)
+	License: CC BY-SA 3.0

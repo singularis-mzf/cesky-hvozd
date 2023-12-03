@@ -27,6 +27,13 @@ ch_extras_geocaching.png
 	Author: brdad (Leatherman)
 	Unmodified, but downscaled
 
+ch_extras_kapr_hlava.png
+ch_extras_kapr_telo.png
+	License: CC BY-SA 3.0
+	Author: Singularis
+	Used sources:
+	* https://commons.wikimedia.org/wiki/File:Cyprinus_carpio.jpeg (Author: Dezidor; License: CC BY-SA 3.0)
+
 ch_extras_cover_corner.png
 ch_extras_cover_diag.png
 ch_extras_cover_edge.png
@@ -37,6 +44,7 @@ ch_extras_crvb_pruhy.png
 ch_extras_czl_pruhy.png
 ch_extras_glass.png
 ch_extras_geocache.obj
+ch_extras_kapr_polevka.png
 ch_extras_rohlik.png
 ch_extras_rohlik_testo.png
 ch_extras_parekvrohliku.png
@@ -98,6 +106,17 @@ ch_extras_wood_door_item.png
 		Matt Rumble, Calinou, 7Soul1, Glitch, Rubberduck, ScratchIO
 	Source:
 		https://github.com/sirrobzeroone/DungeonSoup
+
+ch_extras_vanocka.png
+	License: CC BY-SA 3.0
+	Authors: Singularis, Ludek
+	Based on source: https://cs.wikipedia.org/wiki/Soubor:Vanocka.jpg (Author: Ludek, License: CC BY-SA 3.0)
+
+ch_extras_vanocka_syrova.png
+ch_extras_vanocka_pramen.png
+	License: CC BY-SA 3.0
+	Authors: Singularis, Chmee2
+	Based on source: https://cs.wikipedia.org/wiki/Soubor:Postup_p%C5%99%C3%ADpravy_v%C3%A1no%C4%8Dky_(1).JPG (Author: Chmee2, License: CC BY-SA 3.0)
 
 translocator.png
 	Author: Zemtzov7
