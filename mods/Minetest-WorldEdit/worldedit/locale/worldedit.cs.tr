@@ -120,7 +120,7 @@ Width=Šířka
 WorldEdit Brush=štětec Editoru světa
 WorldEdit GUI=Editor světa
 WorldEdit GUI >=Editor světa >
-WorldEdit Wand tool@nLeft-click to set 1st position, right-click to set 2nd=Hůlka Editoru světa@nLevým tlačítkem nastavíte pozici 1, pravým pozici 2
+WorldEdit Wand tool@nLeft-click to set 1st position, right-click to set 2nd=hůlka Editoru světa@nLevým tlačítkem nastavíte pozici 1, pravým pozici 2
 You are not allowed to use any WorldEdit commands.=Nemáte práco používat žádné příkazy Editoru světa.
 
 Assign command to WorldEdit brush item=Přiřadí příkaz štětci Editoru světa.

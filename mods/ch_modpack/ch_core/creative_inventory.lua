@@ -4,64 +4,77 @@ local none = {}
 local partition_defs = {
 	{
 		name = "empty_buckets",
-		in_creative_inventory = true,
 		groups = none,
 		items = {"bucket:bucket_empty", "bucket_wooden:bucket_empty"},
 		mods = none,
 	},
 	{
+		name = "caste_nastroje",
+		groups = none,
+		items = {"moreblocks:circular_saw", "unifieddyes:airbrush", "bike:painter",
+                 "advtrains:trackworker", "wrench:wrench", "replacer:replacer",
+                 "ch_extras:total_station", "ch_extras:jumptool", "ch_extras:teleporter_unsellable", "wine:wine_barrel",
+                 "technic:mining_drill", "technic:mining_drill_mk2", "technic:mining_drill_mk3",
+                 "bridger:scaffolding"},
+		mods = none,
+	},
+	{
 		name = "kladivo_kovadlina",
-		in_creative_inventory = true,
 		groups = none,
 		items = none,
 		mods = {"anvil"},
 	},
 	{
 		name = "krumpace",
-		in_creative_inventory = true,
 		groups = {"pickaxe"},
 		items = none,
 		mods = none,
 	},
 	{
 		name = "lopaty",
-		in_creative_inventory = true,
 		groups = {"shovel"},
 		items = none,
 		mods = none,
 	},
 	{
 		name = "motyky",
-		in_creative_inventory = true,
 		groups = {"hoe"},
 		items = none,
 		mods = none,
 	},
 	{
 		name = "sekery",
-		in_creative_inventory = true,
 		groups = {"axe"},
 		items = none,
 		mods = none,
 	},
 	{
 		name = "srpy",
-		in_creative_inventory = true,
 		groups = {"sickle"},
 		items = none,
 		mods = none,
 	},
 	{
+		name = "mitrkosa",
+		groups = none,
+		items = {"farming:scythe_mithril"},
+		mods = none,
+	},
+	{
 		name = "trojnástroje",
-		in_creative_inventory = true,
 		groups = {"multitool"},
 		items = none,
 		mods = none,
 	},
+	{
+		name = "klice",
+		groups = none,
+		items = none,
+		mods = {"rotate"},
+	},
 
 	{
 		name = "cestbudky",
-		in_creative_inventory = true,
 		groups = {"travelnet"},
 		items = none,
 		mods = none,
@@ -69,7 +82,6 @@ local partition_defs = {
 
 	{
 		name = "drevo",
-		in_creative_inventory = true,
 		groups = {"wood"},
 		items = none,
 		mods = none,
@@ -98,15 +110,19 @@ local partition_defs = {
 	},
 	{
 		name = "drevokmeny",
-		in_creative_inventory = true,
 		groups = {"tree"},
 		items = none,
 		mods = none,
 		exclude_items = {"cottages:water_gen", "bamboo:trunk"},
 	},
 	{
+		name = "barvy",
+		groups = {"basic_dye"},
+		items = none,
+		mods = none,
+	},
+	{
 		name = "ploty",
-		in_creative_inventory = true,
 		groups = {"fence"},
 		items = none,
 		mods = none,
@@ -114,35 +130,30 @@ local partition_defs = {
 	},
 	{
 		name = "mesesloupky",
-		in_creative_inventory = true,
 		groups = {"mesepost_light"},
 		items = none,
 		mods = none,
 	},
 	{
 		name = "jil",
-		in_creative_inventory = true,
 		groups = {"bakedclay"},
 		items = none,
 		mods = none,
 	},
 	{
 		name = "kvetiny",
-		in_creative_inventory = true,
 		groups = {"flower"},
 		items = none,
 		mods = none,
 	},
 	{
 		name = "vlaky",
-		in_creative_inventory = true,
 		groups = {"at_wagon"},
 		items = none,
 		mods = none,
 	},
 	{
 		name = "elektrickestroje",
-		in_creative_inventory = true,
 		groups = {"technic_machine"},
 		items = none,
 		mods = none,
@@ -150,49 +161,42 @@ local partition_defs = {
 	},
 	--[[ {
 		name = "obleceni",
-		in_creative_inventory = true,
 		groups = {"clothing"},
 		items = none,
 		mods = none,
 	},
 	{
 		name = "pláště",
-		in_creative_inventory = true,
 		groups = {"cape"},
 		items = none,
 		mods = none,
 	},
 	{
 		name = "technic_nn",
-		in_creative_inventory = true,
 		groups = {"technic_lv"},
 		items = none,
 		mods = none,
 	},
 	{
 		name = "technic_sn",
-		in_creative_inventory = true,
 		groups = {"technic_mv"},
 		items = none,
 		mods = none,
 	},
 	{
 		name = "technic_vn",
-		in_creative_inventory = true,
 		groups = {"technic_hv"},
 		items = none,
 		mods = none,
 	}, ]]
 	{
 		name = "listy",
-		in_creative_inventory = true,
 		groups = {"leaves"},
 		items = none,
 		mods = none,
 	},
 	{
 		name = "ingoty",
-		in_creative_inventory = true,
 		groups = none,
 		items = {"basic_materials:brass_ingot", "default:bronze_ingot", "default:tin_ingot", "default:copper_ingot", "default:gold_ingot", "default:steel_ingot",
                  "moreores:mithril_ingot", "moreores:silver_ingot", "technic:chromium_ingot", "technic:cast_iron_ingot", "technic:stainless_steel_ingot",
@@ -202,7 +206,6 @@ local partition_defs = {
 	},
 	{
 		name = "loziska",
-		in_creative_inventory = true,
 		groups = none,
 		items = {"default:stone_with_tin", "default:stone_with_diamond", "default:stone_with_mese", "default:stone_with_copper", "default:stone_with_coal",
                  "default:stone_with_gold", "default:stone_with_iron", "denseores:large_tin_ore", "denseores:large_diamond_ore", "denseores:large_mese_ore",
@@ -213,7 +216,6 @@ local partition_defs = {
 	},
 	{
 		name = "sklo",
-		in_creative_inventory = true,
 		groups = none,
 		items = {"building_blocks:woodglass", "building_blocks:smoothglass", "cucina_vegana:mushroomlight_glass", "darkage:glow_glass",
                  "darkage:glass", "default:obsidian_glass", "default:glass", "moreblocks:clean_glass", "moreblocks:clean_super_glow_glass",
@@ -222,21 +224,18 @@ local partition_defs = {
 	},
 	{
 		name = "kombinace",
-		in_creative_inventory = true,
 		groups = none,
 		items = none,
 		mods = {"comboblock"},
 	},
 	{
 		name = "trojdesky",
-		in_creative_inventory = true,
 		groups = {"slab"},
 		items = none,
 		mods = none,
 	},
 	{
 		name = "trojsvahy",
-		in_creative_inventory = true,
 		groups = {"slope"},
 		items = none,
 		mods = none,
@@ -248,7 +247,6 @@ ch_core.creative_inventory = {
 	partitions_by_name = {
 		others = {
 			name = "others",
-			in_creative_inventory = true,
 			items_by_order = {},
 		},
 	},
@@ -399,7 +397,7 @@ function ch_core.update_creative_inventory(force_update)
 	for order, part_def in ipairs(partition_defs) do
 		local partition_list = existing_partitions[part_def.name]
 		if partition_list then
-			table.insert(partitions_in_order, { name = part_def.name, in_creative_inventory = part_def.in_creative_inventory, items_by_order = partition_list })
+			table.insert(partitions_in_order, { name = part_def.name, items_by_order = partition_list })
 			existing_partitions[part_def.name] = nil
 		end
 	end
@@ -409,10 +407,10 @@ function ch_core.update_creative_inventory(force_update)
 	end
 	table.sort(remaining_partitions)
 	for _, part_name in ipairs(remaining_partitions) do
-		table.insert(partitions_in_order, { name = part_name, in_creative_inventory = partition_defs[part_name].in_creative_inventory, items_by_order = existing_partitions[part_name]})
+		table.insert(partitions_in_order, { name = part_name, items_by_order = existing_partitions[part_name]})
 	end
 	if partition_others_list then
-		table.insert(partitions_in_order, { name = "others", in_creative_inventory = true, items_by_order = partition_others_list})
+		table.insert(partitions_in_order, { name = "others", items_by_order = partition_others_list})
 	end
 
 	-- 6. sestav z nich partitions_by_name a items_by_order

@@ -156,10 +156,71 @@ if minetest.get_modpath("technic") then
 	technic.register_alloy_recipe({input = {"default:copperblock 2", "technic:zinc_block"}, output = "basic_materials:brass_block 3", time = 10})
 end
 
-def = {"technic:common_tree_grindings", "technic:common_tree_grindings", "technic:common_tree_grindings"}
+def = {"technic:sawdust", "technic:sawdust", "technic:sawdust"}
 minetest.register_craft({
 	output = "default:paper 16",
 	recipe = {
 		def, {"", "mesecons_materials:glue", ""}, def
 	},
 })
+
+if minetest.get_modpath("moretrees") and minetest.get_modpath("technic") then
+	local trunks = {
+		"default:jungletree",
+		"default:aspen_tree",
+		"moretrees:birch_trunk",
+		"moretrees:beech_trunk",
+		"moretrees:cedar_trunk",
+		"moretrees:date_palm_trunk",
+		"moretrees:fir_trunk",
+		"moretrees:oak_trunk",
+		"chestnuttree:trunk",
+		"moretrees:rubber_tree_trunk",
+		"moretrees:rubber_tree_trunk_empty",
+		"moretrees:palm_trunk",
+		"moretrees:apple_tree_trunk",
+		"moretrees:sequoia_trunk",
+		"moretrees:spruce_trunk",
+		"plumtree:trunk",
+		"ebony:trunk",
+		"moretrees:poplar_trunk",
+		"cherrytree:trunk",
+		"willow:trunk",
+	}
+	local woods = {
+		"default:junglewood",
+		"default:aspen_wood",
+		"moretrees:birch_planks",
+		"moretrees:beech_planks",
+		"moretrees:cedar_planks",
+		"moretrees:date_palm_planks",
+		"moretrees:fir_planks",
+		"moretrees:oak_planks",
+		"chestnuttree:wood",
+		"moretrees:rubber_tree_planks",
+		"moretrees:rubber_tree_planks_empty",
+		"moretrees:palm_planks",
+		"moretrees:apple_tree_planks",
+		"moretrees:sequoia_planks",
+		"moretrees:spruce_planks",
+		"plumtree:wood",
+		"ebony:wood",
+		"moretrees:poplar_planks",
+		"cherrytree:wood",
+		"willow:wood",
+	}
+	local suffixes = {
+		"", "_allfaces", "_noface"
+	}
+	for _, wood in ipairs(woods) do
+		technic.register_grinder_recipe({input = {wood}, output = "technic:common_tree_grindings"})
+	end
+	for _, trunk in ipairs(trunks) do
+		for _, suffix in ipairs(suffixes) do
+			local n = trunk .. suffix
+			if minetest.registered_items[n] then
+				technic.register_grinder_recipe({input = {n}, output = "technic:common_tree_grindings 4"})
+			end
+		end
+	end
+end

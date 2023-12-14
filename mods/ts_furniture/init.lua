@@ -6,6 +6,11 @@ ts_furniture.enable_sitting = minetest.settings:get_bool("ts_furniture.enable_si
 ts_furniture.globalstep = minetest.settings:get_bool("ts_furniture.globalstep", true)
 ts_furniture.kneeling_bench = minetest.settings:get_bool("ts_furniture.kneeling_bench", true)
 
+-- restrict, which kneeling benches will be registered
+ts_furniture.kneeling_benches = {
+	["default:wood"] = 1,
+}
+
 -- Used for localization
 local S = minetest.get_translator("ts_furniture")
 
@@ -207,36 +212,38 @@ function ts_furniture.register_furniture(recipe, description, tiles)
 	end
 
 	for furniture, def in pairs(furnitures) do
-		local node_name = "ts_furniture:" .. recipe:gsub(":", "_") .. "_" .. furniture
+		if furniture ~= "kneeling_bench" or ts_furniture.kneeling_benches[recipe] then
+			local node_name = "ts_furniture:" .. recipe:gsub(":", "_") .. "_" .. furniture
 
-		if def.sitting and ts_furniture.enable_sitting then
-			def.on_rightclick = ts_furniture.sit
-			def.on_punch = ts_furniture.up
+			if def.sitting and ts_furniture.enable_sitting then
+				def.on_rightclick = ts_furniture.sit
+				def.on_punch = ts_furniture.up
+			end
+
+			local current_groups = table.copy(groups)
+			current_groups["ts_" ..furniture] = 1
+
+			minetest.register_node(":" .. node_name, {
+				description = S(description .. " " .. def.description),
+				drawtype = "nodebox",
+				paramtype = "light",
+				paramtype2 = "facedir",
+				sunlight_propagates = true,
+				tiles = { tiles },
+				groups = current_groups,
+				node_box = {
+					type = "fixed",
+					fixed = def.nodebox
+				},
+				on_rightclick = def.on_rightclick,
+				on_punch = def.on_punch
+			})
+
+			minetest.register_craft({
+				output = node_name,
+				recipe = def.craft(recipe)
+			})
 		end
-
-		local current_groups = table.copy(groups)
-		current_groups["ts_" ..furniture] = 1
-
-		minetest.register_node(":" .. node_name, {
-			description = S(description .. " " .. def.description),
-			drawtype = "nodebox",
-			paramtype = "light",
-			paramtype2 = "facedir",
-			sunlight_propagates = true,
-			tiles = { tiles },
-			groups = current_groups,
-			node_box = {
-				type = "fixed",
-				fixed = def.nodebox
-			},
-			on_rightclick = def.on_rightclick,
-			on_punch = def.on_punch
-		})
-
-		minetest.register_craft({
-			output = node_name,
-			recipe = def.craft(recipe)
-		})
 	end
 end
 

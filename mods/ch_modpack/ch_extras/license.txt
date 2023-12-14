@@ -71,6 +71,12 @@ ch_extras_lupa.png
 	Source: https://commons.wikimedia.org/wiki/File:Magnifying_glass_icon_mgx2.svg
 	Modified by Singularis
 
+ch_extras_particle_board.png
+	License: CC BY-SA 3.0 Austria
+	Author: D-Kuru/Wikimedia Commons <https://commons.wikimedia.org/wiki/User:D-Kuru>
+	Modified and adapted by: Singularis
+	Source: https://commons.wikimedia.org/wiki/File:Particle_board_close_up-big-plane_face_PNr%C2%B00099.jpg
+
 ch_extras_sk_flag.png
 ch_extras_sk_flag_inv.png
 	License: public domain by the Slovak law
