@@ -21,7 +21,7 @@ Offsets the start of periodicity counting by this amount.@nFor example, a builde
 Save &@nShow=Uložit &@nukázat
 Saves settings=Uloží nastavení
 Facing=Natočení
-Value from 0-23. Not all block types make use of this.@nUse the 'Read & Save' button to copy the facing of the block@ncurrently in the builder output location.=Hodnota v rozmezí 0..23. Ne všechny typy bloků ji použijí.@nPoužijte tlačítko „Přečíst & uložit“ k přečtení natočení bloku na současné výstupní pozici.
+Value from 0-255. Not all block types make use of this.@nUse the 'Read & Save' button to copy the facing of the block@ncurrently in the builder output location.=Hodnota v rozmezí 0..255. Ne všechny typy bloků ji použijí.@nPoužijte tlačítko „Přečíst & uložit“ k přečtení natočení bloku na současné výstupní pozici.
 Read &@nSave=Přečíst &@nuložit
 Reads the facing of the block currently in the build location,@nthen saves all settings.=Přečte natočení bloku na výstupní pozici@na uloží všechna nastavení.
 Help=Pomoc

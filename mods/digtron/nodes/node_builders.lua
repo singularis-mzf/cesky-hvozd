@@ -27,7 +27,7 @@ local builder_formspec_string =
 	"button_exit[" .. tostring(displace_due_to_help_button + 4.0) ..",0.5;1,0.1;set;" .. S("Save &\nShow") .. "]" ..
 	"tooltip[set;" .. S("Saves settings") .. "]" ..
 	"field[" .. tostring(displace_due_to_help_button + 5.3) .. ",0.8;1,0.1;build_facing;" .. S("Facing") .. ";${build_facing}]" ..
-	"tooltip[build_facing;" .. S("Value from 0-23. Not all block types make use of this.\nUse the 'Read & Save' button to copy the facing of the block\ncurrently in the builder output location.") .. "]" ..
+	"tooltip[build_facing;" .. S("Value from 0-255. Not all block types make use of this.\nUse the 'Read & Save' button to copy the facing of the block\ncurrently in the builder output location.") .. "]" ..
 	"button_exit[" .. tostring(displace_due_to_help_button + 6.0) ..",0.5;1,0.1;read;" .. S("Read &\nSave") .. "]" ..
 	"tooltip[read;" .. S("Reads the facing of the block currently in the build location,\nthen saves all settings.") .. "]" ..
 	"list[current_player;main;0,1.3;8,1;]" ..
@@ -90,13 +90,29 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 	else
 		offset = meta:get_int("offset")
 	end
-	if build_facing and build_facing >= 0 and build_facing < 24 then
+	if build_facing and build_facing >= 0 and build_facing < 256 then
 		local inv = meta:get_inventory()
 		local target_item = inv:get_stack("main",1)
-		if target_item:get_definition().paramtype2 == "wallmounted" then
+		local paramtype2 = target_item:get_definition().paramtype2
+		if paramtype2 == "wallmounted" then
 			if build_facing < 6 then
 				meta:set_int("build_facing", math.floor(build_facing))
-				-- wallmounted facings only run from 0-5
+			end
+		elseif paramtype2 == "facedir" then
+			if build_facing < 24 then
+				meta:set_int("build_facing", math.floor(build_facing))
+			end
+		elseif paramtype2 == "4dir" then
+			if build_facing < 4 then
+				meta:set_int("build_facing", math.floor(build_facing))
+			end
+		elseif paramtype2 == "degrotate" then
+			if build_facing < 240 then
+				meta:set_int("build_facing", math.floor(build_facing))
+			end
+		elseif paramtype2 == "facedir" then
+			if build_facing < 24 then
+				meta:set_int("build_facing", math.floor(build_facing))
 			end
 		else
 			meta:set_int("build_facing", math.floor(build_facing))

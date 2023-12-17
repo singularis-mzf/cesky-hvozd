@@ -75,13 +75,27 @@ digtron.mark_diggable = function(pos, nodes_dug, player)
 					material_cost = digtron.config.dig_cost_default
 				end
 			end
-	
-			return material_cost, minetest.get_node_drops(target.name, "")
+
+			local drops = minetest.get_node_drops(target.name, "")
+			if targetdef.preserve_metadata ~= nil then
+				-- (pos, oldnode, oldmeta, drops)
+				targetdef.preserve_metadata(pos, target, minetest.get_meta(pos):to_table() or {}, drops)
+			else
+				local color = minetest.strip_param2_color(target.param2, targetdef.paramtype2 or "none")
+				if color ~= nil and #drops == 1 then
+					local stack = ItemStack(drops[1])
+					if stack:get_name() == target.name then
+						stack:get_meta():set_int("palette_index", color)
+						drops[1] = stack:to_string()
+					end
+				end
+			end
+			return material_cost, drops
 		end
 	end
 	return 0
 end
-	
+
 digtron.can_build_to = function(pos, protected_nodes, dug_nodes)
 	-- Returns whether a space is clear to have something put into it
 
@@ -389,7 +403,7 @@ end
 
 digtron.show_offset_markers = function(pos, offset, period)
 	local buildpos = digtron.find_new_pos(pos, minetest.get_node(pos).param2)
-	local x_pos = math.floor((buildpos.x+offset)/period)*period - offset
+	local x_pos = math.floor((buildpos.x+offset)/period)*period - (offset or 0)
 	safe_add_entity({x=x_pos, y=buildpos.y, z=buildpos.z}, "digtron:marker")
 	if x_pos >= buildpos.x then
 		safe_add_entity({x=x_pos - period, y=buildpos.y, z=buildpos.z}, "digtron:marker")
