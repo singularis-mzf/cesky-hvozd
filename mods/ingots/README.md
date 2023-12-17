@@ -2,15 +2,8 @@ Ingots
 ======
 A small mod that makes it possible to place ore ingots in the world.
 
-Options
-=======
-Toggle 'is_big' in conf.lua to make ingots apear bigger.
-You can make an individual per ingot type choice in init.lua
-
-API
+How to add your own ingots:
 ===
-You can ragister your own ingots.
-Call "ingots.register_ingots(ingot_item, texture, is_big)"
-ingot_item 	- The item which will be consumed to place an ingot. ex.: "default:steel_ingot"
-texture 	- Name of texture used on ingot mesh. ex.: "ingot_steel.png"
-is_big 		- Boolean which determines which ingot variant will be used.
+* Append your ingot-item to the list color_to_ingot in init.lua.
+* Set the pixel in the palette ingots_palette.png that corresponds to
+  the position of your ingot-item in the list to the appropriate color.
