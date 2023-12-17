@@ -1,25 +1,36 @@
 local F = minetest.formspec_escape
 local S = minetest.get_translator("ch_npc")
 
+local i_to_model, model_to_i, model_list
+
+minetest.register_on_mods_loaded(function()
+	i_to_model = {""}
+	for model, _ in pairs(ch_npc.registered_npcs) do
+		if model ~= "default" then
+			table.insert(i_to_model, model)
+		end
+	end
+	table.sort(i_to_model)
+	i_to_model[1] = "default"
+	model_to_i = table.key_value_swap(i_to_model)
+	model_list = table.concat(i_to_model, ",")
+end)
+
 -- NODE FORMSPEC (for admin)
 function ch_npc.internal.get_node_formspec(meta)
 	-- local enabled = meta:get_string("enabled")
-	local model = meta:get_string("model")
-	local texture = meta:get_string("texture")
+	local npc_model = meta:get_string("npc_model")
 	local npc_name = meta:get_string("npc_name")
-	local npc_text = meta:get_string("npc_text")
-	local npc_program = meta:get_string("npc_program")
+	local npc_dialog = meta:get_string("npc_dialog")
 
 	local parts = {
 		"formspec_version[5]",
 		"size[10,10]",
-		"field[1,1;8,0.5;model;", S("Model"), ";", F(model), "]",
-		"field[1,2;8,0.5;texture;", S("Textures"), ";", F(texture), "]",
-		"field[1,3;8,0.5;npc_name;", S("NPC name"), ";", F(npc_name), "]",
-		"field[1,4;8,0.5;npc_program;", S("NPC program"), ";", F(npc_program), "]",
-		"textarea[1,5;8,2;npc_text;", S("NPC text") .. ";", F(npc_text), "]",
-		"button[1,7.5;2,0.5;zobrazit;", S("Show NPC"), "]",
-		"button[5,7.5;2,0.5;skryt;", S("Hide NPC"), "]",
+		"textlist[1,0.5;6,6;npc_model;", model_list, ";", model_to_i[npc_model] or "1", ";false]",
+		"field[1,7;8,0.5;npc_name;Jméno postavy;", F(npc_name), "]",
+		"field[1,8;8,0.5;npc_dialog;Dialog postavy;", F(npc_dialog), "]",
+		"button_exit[1,9;2,0.5;zobrazit;Zobrazit postavu]",
+		"button_exit[5,9;2,0.5;skryt;Skrýt postavu]",
 	}
 	return table.concat(parts)
 end
@@ -31,10 +42,9 @@ function ch_npc.internal.on_player_receive_fields_node_formspec(pos, player, fie
 		return false
 	end
 
-	if not (fields.zobrazit or fields.skryt) then
-		return true -- do not process, unless clicked the button
-	end
-	ch_npc.internal.show_formspec(pos, player_name, "ch_npc:node_formspec", "") -- close formspec
+	--[[ if fields.zobrazit or fields.skryt then
+		ch_npc.internal.show_formspec(pos, player_name, "ch_npc:node_formspec", "") -- close formspec
+	end ]]
 	local node = minetest.get_node(pos)
 	local meta = minetest.get_meta(pos)
 
@@ -44,17 +54,23 @@ function ch_npc.internal.on_player_receive_fields_node_formspec(pos, player, fie
 	if fields.skryt then
 		meta:set_string("enabled", "false")
 	end
-	meta:set_string("model", fields.model)
-	meta:set_string("texture", fields.texture)
-	meta:set_string("npc_name", fields.npc_name)
-	meta:set_string("npc_text", fields.npc_text)
-	meta:set_string("npc_program", fields.npc_program)
+	if fields.npc_model then
+		local new_model = fields.npc_model:sub(5, -1)
+		-- print("DEBUG: Will set npc_model to ("..new_model..") => ("..tonumber(new_model)..") => ("..(i_to_model[tonumber(new_model)] or "nil=default")..")")
+		meta:set_string("npc_model", i_to_model[tonumber(new_model)] or "default")
+	end
+	if fields.npc_name then
+		meta:set_string("npc_name", fields.npc_name)
+	end
+	if fields.npc_dialog then
+		meta:set_string("npc_dialog", fields.npc_dialog)
+	end
 
 	ch_npc.update_npc(pos, node, meta)
 	return true
 end
 
--- ENTITY FORMSPEC
+--[[ ENTITY FORMSPEC
 function ch_npc.internal.get_entity_formspec(meta)
 	-- local enabled = meta:get_string("enabled")
 	-- local model = meta:get_string("model")
@@ -81,3 +97,4 @@ end
 function ch_npc.internal.on_player_receive_fields_entity_formspec(pos, player, fields)
 	return true
 end
+]]

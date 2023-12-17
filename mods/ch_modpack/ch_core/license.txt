@@ -32,6 +32,7 @@ ch_core_12.png
 ch_core_13.png
 ch_core_14.png
 ch_core_15.png
+ch_core_dialog_bg.png
 ch_core_pryc.png
 ch_core_empty.png
 ch_core_white_pixel.png

@@ -912,6 +912,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPL 3 pro kód, CC-BY-SA 4.0 pro ostatní
 * [ContentDB](https://content.minetest.net/packages/VanessaE/signs\_lib/)
 
+## Simple Dialogs (simple\_dialogs)
+
+* Zdroj: [https://github.com/Kilarin/simple\_dialogs](https://github.com/Kilarin/simple\_dialogs), revize 9c4ab1d3c2911378fa57771c381bc40179eb2d8b
+* Původní licence: MIT
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/Kilarin/simple\_dialogs/)
+
 ## Skins DB (skinsdb)
 
 * Zdroj: [https://github.com/minetest-mods/skinsdb](https://github.com/minetest-mods/skinsdb), revize b769824d249b432a4f4f6a659aa6dae1a09071a8

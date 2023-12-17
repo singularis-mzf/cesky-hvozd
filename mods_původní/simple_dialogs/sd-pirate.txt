@@ -1,0 +1,177 @@
+ this is an example of a more advanced dialog that makes use of commands, variables, and functions.
+ (everything above start are just comments and are ignored)
+
+===Start
+this dialog will never be shown
+start (in this example) is just used to set some variables
+:set myname=Calico Jack
+:if (isset(npcname)) then set myname=@[npcname]@
+:goto intro
+
+===intro(3)
+Shiver me timbers, but you caught me by surprise matey!
+What be ye doin here @[playername]@?  Arrrgh!  This be no fit place for land lubbers!
+myname=@[myname]@ npcname=@[npcname]@
+>name:What is your name
+>arrg:Why do pirates always say Arrrgh?
+>treasureask:I'm looking for treasure.  Can you tell me where the treasure is?
+>rude:What's got you so cranky?  Did a beaver chew on your wooden leg?
+>end:Good bye.
+
+===intro
+Arrrgh!  Blow me down and pick me up!
+You snuck up on me lad.  What be ye doin here landlubber?
+myname=@[myname]@ npcname=@[npcname]@
+>name:What is your name
+>arrg:Why do pirates always say Arrrgh?
+>treasureask:I'm looking for treasure.  Can you tell me where the treasure is?
+>rude:What's got you so cranky?  Did a beaver chew on your wooden leg?
+>end:Good bye.
+
+===intro(5)
+Batten down the hatches, if it ain't a landlubber come to call.  What be you doin here @[playername]@?
+myname=@[myname]@ npcname=@[npcname]@
+>name:What is your name
+>arrg:Why do pirates always say Arrrgh?
+>treasureask:I'm looking for treasure.  Can you tell me where the treasure is?
+>rude:What's got you so cranky?  Did a beaver chew on your leg?
+>end:Good bye.
+
+===name
+My name be @[myname]@.  @[friendstr]@
+:set friendstr=Not that it be any business of a bildge rat like you!
+:if (isInList(friendlist,@[playername]@)) then set friendstr=Why would you be forgetting my name @[SinglePlayer]@, you and I have been mates from way back!
+>bildge rat:What's a bildge rat?
+>arrg:Why do pirates always say Arrrgh?
+>treasureask:I'm looking for treasure.  Can you tell me where the treasure is?
+>rude:What's got you so cranky?  Did a beaver chew on your leg?
+>story:Can you tell me a pirate story?  One with blood and guts and walking the plank and treasure stolen and buried and rum and... oh, everything!
+>rude:I am the very model of a modern major general
+>end:Good bye
+
+===arrg
+It's how we know we are pirates!
+We think, therefore we Arrrgh!
+>name:What is your name
+>treasureask:I'm looking for treasure.  Can you tell me where the treasure is?
+>story:Can you tell me a pirate story?  One with blood and guts and walking the plank and treasure stolen and buried and rum and... oh, everything!
+>rude:I hate pirate jokes.
+>end:Good bye
+
+==bildge rat
+Look in the mirror lad.  This be no place for a landlubber what don't even know a bildge rat from a hornpipe.  Get you gone!
+>end:Good Bye
+
+===treasureask
+this dialog will never show, it just sets a variable
+here we are just keeping track of how many times the player has asked about treasure
+if the player asks more than 8 times, we always show them the hint.
+:if (isInList(friendlist,@[playername]@)) then goto treasureclue
+:if (notset(@[playername]@.treasureask)) then set @[playername]@.treasureask=0
+:set @[playername]@.treasureask=calc(@[@[playername]@.treasureask]@+1)
+:if (@[playername]@.treasureask>8) then goto treasurehint
+
+===treasure(2)
+Oh?  You be searching for X marks the spot be you?  Well let me tell you, you won't get nuthin outta me!  That treasure is buried deep and secret, and it should STAY that way.  It certainly won't be Davey Jones who has leaky lips and tell you otherwise.  Get you gone!
+playername.treasureask=@[@[playername]@.treasureask]@
+>end:Good Bye
+
+===treasure(2)
+You be hungerin for buried doubloons do ye?  Well, that be a dangerous business, it does.  I think ye should go lookin for a more respectable line of work matey!
+playername.treasureask=@[@[playername]@.treasureask]@
+>end:Good Bye
+
+===treasure(2)
+Treasure?  Ye be lookin for treasure?  The place where pirates buried their ill begotten gains?  A treasure chest so full of gems and jewels that ye'll not be able to count them?  A chest buried in the dead of night, beneath the bodies of the men what dug the hole?
+Aye, yeah, well...
+I be knowing NOTHING about that, I tell ye.  Nothing.  Best you just move along.
+playername.treasureask=@[@[playername]@.treasureask]@
+>end:Good Bye
+
+===treasure(1)
+so only one time out of seven will this display treasurehint
+:goto treasurehint
+
+===treasurehint
+Fifteen men on a dead man's chest protect that treasure matey.  Thats the kind of secret a clever tar only shares with his mates.  And you ain't my mate.  Well, not yet anyway!
+playername.treasureask=@[@[playername]@.treasureask]@
+>end:Good Bye
+
+===treasureclue
+Well mate, I shouldn't be tellin ye this, but since you ARE such a good mate, I'll give ye a hint.
+If ye be seeking treasure, ye should be first looking for the map that is hidden in the left eye of skull mountain!
+Now, down't be tellin anyone you heard it from old @[myname]@.
+>end:Thank you!
+
+===rude
+This be no place for a landlubber what don't even know a bildge rat from a hornpipe.  Get you gone!
+>end:Good Bye
+
+===rude
+You be nothing but a scurvey dog.  Get you gone!
+>end:Good Bye
+
+===rude
+I wont have a picaroon like you hanging out on my deck.  Get you gone!
+>end:Good Bye
+
+===story
+I remember him as if it were yesterday, as he came plodding to the inn door, his sea-chest following behind him in a hand-barrow — a tall, strong, heavy, nut-brown man, his tarry pigtail falling over the shoulder of his soiled blue coat, his hands ragged and scarred, with black, broken nails, and the sabre cut across one cheek, a dirty, livid white. I remember him looking round the cover and whistling to himself as he did so, and then breaking out in that old sea-song that he sang so often afterwards:
+
+Fifteen men on the dead man's chest —
+Yo-ho-ho, and a bottle of rum!
+in the high, old tottering voice that seemed to have been tuned and broken at the capstan bars. Then he rapped on the door with a bit of stick like a handspike that he carried, and when my father appeared, called roughly for a glass of rum. This, when it was brought to him, he drank slowly, like a connoisseur, lingering on the taste and still looking about him at the cliffs and up at our signboard.
+
+"This is a handy cove," says he at length; "and a pleasant sittyated grog-shop. Much company, mate?"
+
+My father told him no, very little company, the more was the pity.
+
+"Well, then," said he, "this is the berth for me. Here you, matey," he cried to the man who trundled the barrow; "bring up alongside and help up my chest. I'll stay here a bit," he continued. "I'm a plain man; rum and bacon and eggs is what I want, and that head up there for to watch ships off. What you mought call me? You mought call me captain. Oh, I see what you're at — there"; and he threw down three or four gold pieces on the threshold. "You can tell me when I've worked through that," says he, looking as fierce as a commander.
+
+And indeed bad as his clothes were and coarsely as he spoke, he had none of the appearance of a man who sailed before the mast, but seemed like a mate or skipper accustomed to be obeyed or to strike. The man who came with the barrow told us the mail had set him down the morning before at the Royal George, that he had inquired what inns there were along the coast, and hearing ours well spoken of, I suppose, and described as lonely, had chosen it from the others for his place of residence. And that was all we could learn of our guest.
+
+He was a very silent man by custom. All day he hung round the cove or upon the cliffs with a brass telescope; all evening he sat in a corner of the parlour next the fire and drank rum and water very strong. Mostly he would not speak when spoken to, only look up sudden and fierce and blow through his nose like a fog-horn; and we and the people who came about our house soon learned to let him be. Every day when he came back from his stroll he would ask if any seafaring men had gone by along the road.
+
+At first we thought it was the want of company of his own kind that made him ask this question, but at last we began to see he was desirous to avoid them. When a seaman did put up at the Admiral Benbow (as now and then some did, making by the coast road for Bristol) he would look in at him through the curtained door before he entered the parlour; and he was always sure to be as silent as a mouse when any such was present. For me, at least, there was no secret about the matter, for I was, in a way, a sharer in his alarms. He had taken me aside one day and promised me a silver fourpenny on the first of every month if I would only keep my "weather-eye open for a seafaring man with one leg" and let him know the moment he appeared.
+
+Often enough when the first of the month came round and I applied to him for my wage, he would only blow through his nose at me and stare me down, but before the week was out he was sure to think better of it, bring me my four-penny piece, and repeat his orders to look out for "the seafaring man with one leg."
+
+How that personage haunted my dreams, I need scarcely tell you. On stormy nights, when the wind shook the four corners of the house and the surf roared along the cove and up the cliffs, I would see him in a thousand forms, and with a thousand diabolical expressions. Now the leg would be cut off at the knee, now at the hip; now he was a monstrous kind of a creature who had never had but the one leg, and that in the middle of his body. To see him leap and run and pursue me over hedge and ditch was the worst of nightmares. And altogether I paid pretty dear for my monthly fourpenny piece, in the shape of these abominable fancies.
+
+But though I was so terrified by the idea of the seafaring man with one leg, I was far less afraid of the captain himself than anybody else who knew him. There were nights when he took a deal more rum and water than his head would carry; and then he would sometimes sit and sing his wicked, old, wild sea-songs, minding nobody; but sometimes he would call for glasses round and force all the trembling company to listen to his stories or bear a chorus to his singing.
+
+Soon after, Dr. Livesey's horse came to the door and he rode away, but the captain held his peace that evening, and for many evenings to come.
+...
+>name:What is your name
+>treasureask:Tell me where the treasure is buried!
+>rude:That is just treasure island, you didn't make it up!
+>betterstory:Well, that was nice, but I was kind of hoping for a story about YOUR adventures as a pirate.
+
+===betterstory
+Oh, really?  A story about meself?  Well, let me think...
+Once, when I were a lad, not much older then ye, I signed up aboard the airship Waltzing Matilda.
+Now, she wernt no merchant ship.  Nor was she exactly a pirate ship.  She were a privateer.  That means her captain had papers, all right and official.  Papers that gave the Waltzing Matilda legal, LEGAL mind ye, permission to plunder any ships flyin the Dolgrathy flag which dared to travel in the rainbow straits.
+We were at war with the Dolgrath, mind you.  And our queen need volunteers who would stop their ships from encroaching up on our airspace while the navy was busy defending the coastlands.
+And so, I, bein a right hardy and patriotic young lad.  And also bein a lad with a hankerin for adventure and a pocket full of doubloons, I signed up on the Waltzing Matilda.  The best privateer in the air.  And she was the best because she were captained by the best captain in all the islands.  Captain Red Beard.  An educated man.  A good man.  But his family had been murdered by Dolgrathy raiders, and Captain Red Beard, he had no mercy where the Dolgrathy were concerned.
+For the first two weeks I were on that ship, everything was quiet.  And I started to think that perhaps the life of a privateer were too boring for a lad of my talents.
+And then, oh, I remember quite clearly.  It were in the wee hours of the morning.  The dull grey time of the day when there was just barely enough light to tell it twarnt dark no more, but not enough to really see.  But Captain Red Beard didn't NEED to see to find a Dolgrathy man-o-war.  He had ears like a rabbit.  He were sitting at the prow of the Matilda.  Leaning over the front of the boat like he wanted to whisper secrets in the ear of the buxom figurehead carved there.  He would just sit there, with his eyes closed, for hours at a time, not speakin, not movin.
+But this morning, he moved.  He lifted one hand into the air.
+Captain Red Beard didn't have to shout his orders.  It took but a moment for everyone on the ship to see that signal, and to drop to dead quiet.  The cook stopped rattlin pans.  The first mate froze in his tracks so as not to make a sound with his feet on the deck.  And I, I was up in the crows nest at the time.  But even there, I held my breath so as not to make the slightest noise.
+It stayed like that, eerily silent, for more then a minute.  And then, Captain Red Beard moved again.  The hand in the air pointed, forward, and to port.  His head came up and he looked where his hand were pointing.  And I tell ye lad, I were starin to.  Starin as hard as I could, but there weren't nothing but grey fog there to my eyes.
+Captain Red Beard whispered, but in that silence it sounded like a shout and made me jump it did.  He whispered, "15 degrees port rudder, and 10 degrees down steersman.  And hold steady there.  ROCK steady.  I hear the beats of a Dolgrathy man-o-war's propeller.  It's right there.  Take us to her."  Then the captain stood up and turned to us and, still whisperin ordered, "What are the rest of you lads waiting for?  Man your battle stations.  We will engage that ship in less than 10 minutes!"
+And then, well, I tell you, the ship came alive.  There still was little noise, the creak of cannons being positioned, the pad of bare feet.  But not a word spoken out loud.  Everyone communicated by sign and in the quietest of whispers."
+But me, I stayed put I did.  And I stared.  My job was to see that ship.  And so I stared until I thought me eyes would burst out of me skull and bounce down onto the deck below.
+The dull gray of the morning fog grew gradually brighter, and took on a very faint golden tinge.  And then, ahead... At first, well, at first I thought it was just our own shadow.  But two seconds longer and I was certain.  The captain had led us right.  And directly ahead, there was the Dolgrathy man-o-war, hiding in the fog, and completely unaware of us comin up behind her.
+I couldn't scream, we were too close and I didn't dare break the silence.  Instead, I had a long streamer of red silk in the crows nest with me.  With one end tied to a hook, and the other all rolled up into a ball.  I took that ball of silk, lifted it over the edge of the crows nest, and dropped it.  There were a lead weight on the free end of the streamer, and it fell, ALMOST, to the deck in a heart beat.  Everyone on deck saw it, and they stopped moving and stared forward where I was pointing.
+The shadow was becoming clearer now.  And closer.  And then, the sun broke over the horizon and it's golden beams lit up that Dolgrathy man-o-war like it were on fire.  Everyone stared at it for a moment.  The ship were easily three times our size.  Its guns were poking out of the decking.  So MANY guns.  And the huge propeller at the back was turning at a tremendous rate.  But from the top of its main mast flew the Dolgrathy flag.  Captain Red Beard looked at that flag and his face grew grim.  We swept up to that man-o-war in a matter of moments.  Up to her, and then we were passing her.  I saw the startled look on the face of a deck hand as he looked out and saw the Waltzing Matilda going by not 10 yards off of his starboard hull.
+And then the voice of Captain Red Beard shattered that unatural silence shouting "Port side cannons, FIRE!"  Followed seconds later by the thunder of the cannons themselves.  And the world went from all quiet to all noise in a moment.
+>friend:Wow! What a tale!  Don't stop there, tell me more, what happened, who won the battle?
+>rude:Right, I'm sure.  This is just another lie you are making up.  Pull my other leg, will you?
+>end:Good Bye.
+
+===Friend
+Ah mate, you are a good lad after all.  But I don't have time to finish this story today.  There be work to do.  But your smile has warmed an old tars heart and I'm happy to call ye me mate!
+:set friendlist=add(friendlist,@[playername]@)
+>name:tell me your name
+>treasureask:I'm looking for treasure.  Can you tell me where the treasure is?
+>end:Good bye.

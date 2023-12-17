@@ -14,22 +14,30 @@ ch_npc = {
 			return minetest.show_formspec(player_name, formname, formspec)
 		end,
 	},
+	registered_npcs = {
+		default = {
+			mesh = "npc.b3d",
+			textures = {"folks_default.png"},
+			offset = vector.new(0, -0.5, 0),
+			collisionbox = nil,
+		},
+	},
 }
 
-local modpath = minetest.get_modpath(minetest.get_current_modname())
-
-if minetest.get_modpath("ch_npc_data") then
-	ch_npc.registered_npcs = ch_npc_data.registered_npcs
-else
-	ch_npc.registered_npcs = {}
+function ch_npc.register_npc(id, model, textures, offset, collisionbox)
+	if ch_npc.registered_npcs[id] then
+		minetest.log("warning", "ch_npc: registered NPC "..id.." redefined!")
+	end
+	ch_npc.registered_npcs[id] = {
+		mesh = model,
+		textures = textures,
+		offset = offset or vector.zero,
+		collisionbox = collisionbox,
+	}
+	return id
 end
 
-ch_npc.registered_npcs.default = {
-	mesh = "npc.b3d",
-	textures = {"folks_default.png"},
-	offset = vector.new(0, -0.5, 0),
-	collisionbox = nil,
-}
+local modpath = minetest.get_modpath(minetest.get_current_modname())
 
 dofile(modpath.."/privs.lua")
 dofile(modpath.."/entities.lua")
@@ -59,8 +67,8 @@ local function on_player_receive_fields(player, formname, fields)
 
 	if formname == "ch_npc:node_formspec" then
 		return ch_npc.internal.on_player_receive_fields_node_formspec(pos, player, fields)
-	elseif formname == "ch_npc:entity_formspec" then
-		return ch_npc.internal.on_player_receive_fields_entity_formspec(pos, player, fields)
+	-- elseif formname == "ch_npc:entity_formspec" then
+		-- return ch_npc.internal.on_player_receive_fields_entity_formspec(pos, player, fields)
 	end
 	return false
 end

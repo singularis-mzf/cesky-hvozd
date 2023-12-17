@@ -1,7 +1,6 @@
 -- NODE DEFINITION
-local function after_place_node(pos, placer, itemstack)
-	local meta = minetest.get_meta(pos)
-	meta:set_string("infotext", "pozice pro nehráčskou postavu")
+local function on_construct(pos)
+	minetest.get_meta(pos):set_string("infotext", "pozice pro nehráčskou postavu")
 end
 
 local function on_punch(pos, node, clicker, itemstack)
@@ -32,7 +31,7 @@ local def = {
 	pointable = true,
 	light_source = 1,
 
-	after_place_node = after_place_node,
+	on_construct = on_construct,
 	on_punch = on_punch,
 	on_rightclick = on_rightclick,
 }

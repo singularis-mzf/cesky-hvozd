@@ -28,8 +28,31 @@ local function entity_on_rightclick(self, player)
 		return
 	end
 	local meta = minetest.get_meta(pos)
-	local formspec = ch_npc.internal.get_entity_formspec(meta)
-	ch_npc.internal.show_formspec(pos, player:get_player_name(), "ch_npc:entity_formspec", formspec)
+	local dialog = meta:get_string("npc_dialog")
+	if dialog == "" then
+		minetest.log("info", "No dialog for NPC at position "..minetest.pos_to_string(pos)..".")
+		return -- no dialog for this NPC
+	end
+	if dialog ~= self._dialog_file then
+		local file_path = minetest.get_worldpath().."/dialogs/"..dialog..".txt"
+		minetest.log("info", "Will load dialog for NPC at position "..minetest.pos_to_string(pos).." from file: "..file_path)
+		local file = io.open(file_path)
+		local dialog_text
+		if file then
+			dialog_text = file:read("*a")
+			file:close()
+		end
+		if dialog_text == nil or dialog_text == "" then
+			minetest.log("warning", "No text loaded from "..file_path.."!")
+			return -- no text available
+		end
+		minetest.log("info", file_path..": "..#dialog_text.." chars.")
+		simple_dialogs.load_dialog_from_string(self, dialog_text)
+		self._dialog_file = dialog
+	end
+	simple_dialogs.show_dialog_formspec(player:get_player_name(), self)
+	-- local formspec = ch_npc.internal.get_entity_formspec(meta)
+	-- ch_npc.internal.show_formspec(pos, player:get_player_name(), "ch_npc:entity_formspec", formspec)
 end
 
 local function entity_on_punch(self, puncher, time_from_last_punch, tool_capabilities, dir, damage)
