@@ -18,7 +18,7 @@ local barvy_text
 local barvy_color_to_index
 local cisla = {1, 2, 3, 4, 5, 6, 7, 8, 9}
 local xy_00 = {x = 0, y = 0}
-local default_player_form = {name = "", number = 1, color_index = 1}
+local default_player_form = {number = 1, pos = vector.zero()}
 local item_description = "Builder Compass (unset)"
 local item_description_N = "Builder Compass @1"
 local ch_help = "Je-li na výběrové liště, ukazuje směr do jednoho nebo více uložených cílů.\nLevým kliknutím vyvoláte formulář pro změnu názvu či pozice cíle."
@@ -126,39 +126,26 @@ local function show_bc_formspec(player_name, options)
 	local form_data = player_forms[player_name] or default_player_form
 	local formspec = {
 		"formspec_version[4]",
-		"size[8,7]",
-		"label[0.375,0.5;", F("Stavitelský kompas"), "]",
-		"field[0.375,1.5;7.0,0.5;name;", F("Titulek:"), ";", F(form_data.name), "]",
-		"label[0.375,2.35;", F("Číslo:"), "]",
-		"dropdown[0.375,2.5;1.0,0.5;number;1,2,3,4,5,6,7,8,9;", form_data.number, "]",
-		"label[1.5,2.35;", F("Barva:"), "]",
-		"dropdown[1.5,2.5;3.0,0.5;color;", barvy_text, ";", form_data.color_index, ";true]",
-		"button_exit[0.375,4.9;3.5,0.75;save;Uložit nastavení]",
-		"button_exit[4.125,4.9;3.5,0.75;close;Zavřít]",
-		"button[0.375,5.9;3.5,0.75;sethere;Nastavit cíl sem]",
-		"button[4.125,5.9;3.5,0.75;coords;Souřadnice do titulku]",
+		"size[10,9.25]",
+		"label[0.375,0.5;Stavitelský kompas]",
+		"item_image_button[8.625,0.375;1,1;orienteering:builder_compass_", form_data.number, ";img;]",
+		"dropdown[8.625,1.5;1.0,0.5;number;1,2,3,4,5,6,7,8,9;", form_data.number, "]",
+		"field[0.375,1.5;3.25,0.5;poloha;Vaše poloha:;",
+		form_data.pos.x, ",", form_data.pos.y, ",", form_data.pos.z, "]",
+		"label[0.375,2.75;Cíl]",
+		"label[3.75,2.75;Titulek]",
+		"label[7.1,2.75;Barva]",
+		"label[0.375,8.75;Tip: Pro smazání cíle mu nechte prázdný titulek.]",
 	}
 
-	if options then
-		if options.has_more_targets then
-			table.insert(formspec, "label[0.375,3.5;")
-			table.insert(formspec, F("Varování: tento kompas je nastaven na více cílů;"))
-			table.insert(formspec, "]")
-			table.insert(formspec, "label[0.375,3.9;")
-			table.insert(formspec, F("pokud nyní uložíte nastavení, bude zachován"))
-			table.insert(formspec, "]")
-			table.insert(formspec, "label[0.375,4.3;")
-			table.insert(formspec, F("jen první z nich!"))
-			table.insert(formspec, "]")
-		elseif options.target_set then
-			table.insert(formspec, "label[0.375,3.5;")
-			table.insert(formspec, F("Cíl nastaven na:"))
-			table.insert(formspec, "]")
-			table.insert(formspec, "label[0.375,3.9;")
-			table.insert(formspec, F(minetest.pos_to_string(options.target_set)))
-			table.insert(formspec, "]")
-		end
+	for i = 1,6 do
+		local y = 2.25 + i * 0.75
+		table.insert(formspec, "field[0.375,"..y.. ";3.25,0.5;cil"..i..";;"..(form_data["cil"..i] or "0,0,0").."]")
+		table.insert(formspec, "field[3.75,"..y..";3.25,0.5;titulek"..i..";;"..(form_data["titulek"..i] or "").."]")
+		table.insert(formspec, "dropdown[7.1,"..y..";2,0.5;barva"..i..";"..barvy_text..";"..(form_data["barva"..i] or 1)..";true]")
 	end
+
+	table.insert(formspec, "button_exit[0.375,7.5;9.25,0.75;ulozit;uložit]")
 	return minetest.show_formspec(player_name, "orienteering:builder_compass", table.concat(formspec))
 end
 
@@ -167,6 +154,7 @@ local function bc_on_use(itemstack, player, pointed_thing)
 	if not player_name then
 		return
 	end
+	local pos = vector.round(player:get_pos())
 	local inv = player:get_inventory()
 	if not inv then
 		return
@@ -177,15 +165,19 @@ local function bc_on_use(itemstack, player, pointed_thing)
 		minetest.log("warning", "bc_on_use() called on itemstack of "..(witem:get_name()))
 		return
 	end
-	if not targets[1] then
-		targets[1] = new_target("", 1, get_current_pos(player))
-	end
-	player_forms[player_name] = {
-		name = targets[1].name,
+	local pf = {
 		number = number,
-		color_index = barvy_color_to_index[tonumber(targets[1].color) or ""] or 1,
+		pos = pos,
 	}
-	show_bc_formspec(player_name, { has_more_targets = targets[2] })
+	for i = 1, math.min(#targets, 6) do
+		local tpos = vector.round(targets[i].pos)
+		pf["cil"..i] = tpos.x..","..tpos.y..","..tpos.z
+		pf["titulek"..i] = targets[i].name
+		pf["barva"..i] = barvy_color_to_index[targets[i].color] or 1
+	end
+	-- print("DEBUG: pf = "..dump2(pf))
+	player_forms[player_name] = pf
+	show_bc_formspec(player_name, {})
 end
 
 local function on_player_receive_fields(player, formname, fields)
@@ -195,8 +187,9 @@ local function on_player_receive_fields(player, formname, fields)
 	local player_name = player:get_player_name()
 	if fields.close then
 		player_forms[player_name] = nil
+		return true
 	end
-	if fields.close or not (fields.coords or fields.sethere or fields.save) then
+	if not fields.ulozit then
 		return true
 	end
 	-- print("DEBUG: on_player_receive_fields(): "..dump2(fields))
@@ -208,10 +201,6 @@ local function on_player_receive_fields(player, formname, fields)
 	end
 
 	-- update current_form from fields
-	if fields.name then
-		current_form.name = ch_core.utf8_truncate_right(fields.name, 40)
-	end
-
 	if fields.number then
 		local new_number = tonumber(fields.number)
 		if new_number then
@@ -221,14 +210,32 @@ local function on_player_receive_fields(player, formname, fields)
 			end
 		end
 	end
+	local new_targets = {}
+	for i = 1, 6 do
+		local x, y, z = (fields["cil"..i] or "0,0,0"):match("^ *(-?%d+), *(-?%d+), *(-?%d+) *$")
+		local titulek = ch_core.utf8_truncate_right(fields["titulek"..i] or "", 40)
+		local barva = tonumber(fields["barva"..i] or "1")
 
-	if fields.color then
-		local new_color_index = tonumber(fields.color)
-		if new_color_index then
-			new_color_index = math.floor(new_color_index)
-			if 1 <= new_color_index and new_color_index <= #barvy then
-				current_form.color_index = new_color_index
+		if titulek == "" then
+			-- delete the target
+			current_form["cil"..i] = nil
+			current_form["titulek"..i] = nil
+			current_form["barva"..i] = nil
+		else
+			x, y, z = tonumber(x), tonumber(y), tonumber(z)
+			if x ~= nil and -30000 <= x and x <= 30000 and y ~= nil and -30000 <= y and y <= 30000 and z ~= nil and -30000 <= z and z <= 30000 then
+				current_form["cil"..i] = x..","..y..","..z
+			else
+				current_form["cil"..i] = "0,0,0"
+				x, y, z = 0, 0, 0
 			end
+			current_form["titulek"..i] = titulek
+			if 1 <= barva and barva <= #barvy then
+				current_form["barva"..i] = barva
+			else
+				current_form["barva"..i] = 1
+			end
+			table.insert(new_targets, new_target(titulek, barva, vector.new(x, y, z)))
 		end
 	end
 
@@ -238,41 +245,7 @@ local function on_player_receive_fields(player, formname, fields)
 		return false
 	end
 	local windex = player:get_wield_index()
-	local witem = inv:get_stack("main", windex) or ItemStack()
-	local number, targets = deserialize_compass(witem)
-	if number == 0 then
-		minetest.log("warning", "on_player_receive_fields for orienteering:bcompass called on itemstack of "..witem:get_name().." for player "..player_name)
-		return true
-	end
-
-	-- serve the buttons (except for "close")
-	if fields.coords then
-		local pos_string = minetest.pos_to_string((targets[1] and targets[1].pos) or get_current_pos(player))
-		if current_form.name == "" then
-			current_form.name = pos_string
-		else
-			current_form.name = current_form.name.." "..pos_string
-		end
-		show_bc_formspec(player_name, { has_more_targets = targets[2] })
-	elseif fields.sethere then
-		if targets[1] then
-			targets[1].pos = get_current_pos(player)
-			if targets[2] then
-				targets = {targets[1]}
-			end
-		else
-			targets[1] = new_target("", 1, get_current_pos(player))
-		end
-		inv:set_stack("main", windex, serialize_compass(number, targets))
-		show_bc_formspec(player_name, { target_set = targets[1].pos })
-	elseif fields.save then
-		-- print("DEBUG: "..dump(current_form))
-		targets[1] = new_target(current_form.name, current_form.color_index, (targets[1] and targets[1].pos) or get_current_pos(player))
-		if targets[2] then
-			targets = {targets[1]}
-		end
-		inv:set_stack("main", windex, serialize_compass(current_form.number, targets))
-	end
+	inv:set_stack("main", windex, serialize_compass(current_form.number, new_targets))
 	return true
 end
 minetest.register_on_player_receive_fields(on_player_receive_fields)
@@ -391,6 +364,10 @@ for i = 1, 9 do
 		stack_max = 1,
 		on_use = bc_on_use,
 		groups = groups,
+	})
+	minetest.register_craft({
+		output = "orienteering:builder_compass_1",
+		recipe = {{"orienteering:builder_compass_"..i}},
 	})
 end
 
