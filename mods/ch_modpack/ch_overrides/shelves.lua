@@ -205,7 +205,7 @@ local function find_empty_book_in_inventory(inv, list, book_level)
 		local stack = contents[i]
 		if not stack:is_empty() and minetest.get_item_group(stack:get_name(), "book") == book_level then
 			local meta = stack:get_meta()
-			if meta:get_string("text") == "" then
+			if meta:get_string("text") == "" and meta:get_string("ick") == "" then
 				return i
 			end
 		end
@@ -421,3 +421,21 @@ minetest.register_craft{
 		{"group:wood", "group:wood", "group:wood"},
 	},
 }
+
+-- Register for wrench
+if minetest.get_modpath("wrench") then
+	local def = {
+		lists = {"items"},
+		metas = {
+			owner = wrench.META_TYPE_STRING,
+			infotext = wrench.META_TYPE_STRING,
+			formspec = wrench.META_TYPE_STRING,
+			locked = wrench.META_TYPE_INT,
+			library = wrench.META_TYPE_INT,
+		},
+		owned = true,
+	}
+	for item, _ in pairs(shelves_to_types) do
+		wrench.register_node(item, def)
+	end
+end
