@@ -39,6 +39,8 @@ local S = minetest.get_translator("books")
 local F = minetest.formspec_escape
 
 local lpp = 30 -- Lines per book's page
+local author_color = "#00FF00"
+local title_color = "#FFFF00"
 
 local function ifthenelse(condition, true_result, false_result)
 	if condition then
@@ -185,9 +187,9 @@ local function get_book_read_formspec(player_name)
 		default.gui_bg_img,
 		"tableoptions[background=#00000000;highlight=#00000000;border=false]",
 		"tablecolumns[color;text;color;text]",
-		"table[0.375,0.5;12.5,0.5;;#00FF00,",
+		"table[0.375,0.5;12.5,0.5;;", author_color, ",",
 		F(ifthenelse(book.author ~= "", book.author, "<Bez autora/ky>")),
-		":,#FFFF00,",
+		":,", title_color, ",",
 		F(ifthenelse(book.title ~= "", book.title, "<Bez názvu>")),
 		";]",
 		"box[0.375,1.0;12.5,0.025;#FFFFFF]",
@@ -242,7 +244,7 @@ local function get_book_edit_formspec(player_name)
 		"label[0.375,4.5;Poslední úprava knihy: ",
 		F(ifthenelse(book.lastedit ~= "", book.lastedit, "nikdy")),
 		"]",
-		"style_type[textarea;font=mono]",
+		-- "style_type[textarea;font=mono]",
 		"textarea[0.375,5.25;13,6.25;text;Text knihy:;",
 		F(book.text),
 		"]",
@@ -271,27 +273,33 @@ local function compute_infotext(book_meta, infotext_type)
 		title = "<Bez názvu>"
 	end
 	if infotext_type == "item" then
-		result[1] = author
-		result[2] = ":\n"
-		result[3] = title
+		result[1] = minetest.get_color_escape_sequence(author_color)
+		result[2]  = author
+		result[3] = ":\n"
+		result[4] = minetest.get_color_escape_sequence(title_color)
+		result[5] = title
+		result[6] = minetest.get_color_escape_sequence("#FFFFFF")
 		if ick ~= "" then
-			result[4] = "\n(IČK "
-			result[5] = ick
-			result[6] = ifthenelse(edition ~= "", ", "..edition, "")
-			result[7] = ")"
+			result[7] = "\n(IČK "
+			result[8] = ick
+			result[9] = ifthenelse(edition ~= "", ", "..edition, "")
+			result[10] = ")"
 		end
 	elseif infotext_type == "openned" then
 		local book = load_book(meta, nil, false)
 		result[1] = book["page"..(book.page or 1)]
 	elseif infotext_type == "closed" then
-		result[1] = author or "<Bez autora>"
-		result[2] = ": "
-		result[3] = title or "<Bez názvu>"
+		result[1] = minetest.get_color_escape_sequence(author_color)
+		result[2] = author or "<Bez autora>"
+		result[3] = ":\n"
+		result[4] = minetest.get_color_escape_sequence(title_color)
+		result[5] = title or "<Bez názvu>"
+		result[6] = minetest.get_color_escape_sequence("#FFFFFF")
 		if ick ~= "" then
-			result[4] = " (IČK "
-			result[5] = ick
-			result[6] = ifthenelse(edition ~= "", ", "..edition, "")
-			result[7] = ")"
+			result[7] = " (IČK "
+			result[8] = ick
+			result[9] = ifthenelse(edition ~= "", ", "..edition, "")
+			result[10] = ")"
 		end
 		table.insert(result, "\nprávo upravovat má: "..ch_core.prihlasovaci_na_zobrazovaci(owner))
 	else
@@ -431,7 +439,7 @@ local function formspec_callback(custom_state, player, formname, fields)
 				"Copyright: <"..meta:get_string("copyright")..">\n",
 				string.format("Čas vydání: %04d-%02d-%02dT%02d:%02d:%02d%s\n", cas.rok, cas.mesic, cas.den, cas.hodina, cas.minuta, cas.sekunda, cas.posun_text),
 			}
-			local text = meta:get_string("text").. "\n----\n"..table.concat(metadata)
+			local text = meta:get_string("text").. "\n\n\n----\n"..table.concat(metadata)
 			table.insert(metadata, "Délka textu v bajtech: "..#text.."\n")
 			metadata = table.concat(metadata)
 			ch_core.save_global_data("pristi_ick")
