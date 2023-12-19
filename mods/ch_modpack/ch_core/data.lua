@@ -35,11 +35,13 @@ local zero_by_type = {
 -- ===========================================================================
 local global_data_data_types = {
 	posun_casu = "int",
+	pristi_ick = "int",
 	registered_spawn = "vector",
 	unregistered_spawn = "vector",
 }
 
 local initial_global_data = {
+	pristi_ick = 10000,
 	registered_spawn = vector.new(-70,9.5,40),
 	unregistered_spawn = vector.new(-70,9.5,40),
 }
