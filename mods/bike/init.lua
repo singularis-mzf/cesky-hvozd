@@ -205,13 +205,15 @@ end
 
 -- Entity
 local bike = {
-	physical = true,
-	-- Warning: Do not change the position of the collisionbox top surface,
-	-- lowering it causes the bike to fall through the world if underwater
-	collisionbox = {-0.5, -0.4, -0.5, 0.5, 0.8, 0.5},
+	initial_properties = {
+		physical = true,
+		-- Warning: Do not change the position of the collisionbox top surface,
+		-- lowering it causes the bike to fall through the world if underwater
+		collisionbox = {-0.5, -0.4, -0.5, 0.5, 0.8, 0.5},
+		visual = "mesh",
+		mesh = "bike.b3d",
+	},
 	collide_with_objects = false,
-	visual = "mesh",
-	mesh = "bike.b3d",
 	textures = default_tex("#FFFFFF", 150),
 	use_texture_alpha = true,
 	stepheight = setting_stepheight,

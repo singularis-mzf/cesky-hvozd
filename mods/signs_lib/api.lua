@@ -160,12 +160,14 @@ local ctexcache_wide = {}
 -- entity handling
 
 minetest.register_entity("signs_lib:text", {
-	collisionbox = { 0, 0, 0, 0, 0, 0 },
-	visual = "mesh",
-	mesh = "signs_lib_standard_sign_entity_wall.obj",
-	textures = {},
-	static_save = true,
-	backface_culling = false,
+	initial_properties = {
+		collisionbox = { 0, 0, 0, 0, 0, 0 },
+		visual = "mesh",
+		mesh = "signs_lib_standard_sign_entity_wall.obj",
+		textures = {},
+		backface_culling = false,
+		static_save = true,
+	},
 	on_activate = function(self)
 		local node = minetest.get_node(self.object:get_pos())
 		if minetest.get_item_group(node.name, "sign") == 0 then

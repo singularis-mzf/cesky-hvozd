@@ -264,11 +264,13 @@ end
 
 -- Entity for item displayed on shelf
 minetest.register_entity("itemshelf:item", {
-	hp_max = 1,
-	visual = "wielditem",
-	visual_size = {x = 0.20, y = 0.20},
-	collisionbox = {0,0,0, 0,0,0},
-	physical = false,
+	initial_properties = {
+		hp_max = 1,
+		visual = "wielditem",
+		visual_size = {x = 0.20, y = 0.20},
+		collisionbox = {0,0,0, 0,0,0},
+		physical = false,
+	},
 	on_activate = function(self, staticdata)
 		-- Staticdata
 		local data = {}

@@ -82,7 +82,7 @@ function default.chest.register_chest(prefixed_name, d)
 	def.drawtype = "mesh"
 	def.visual = "mesh"
 	def.paramtype = "light"
-	def.paramtype2 = "facedir"
+	def.paramtype2 = "4dir"
 	def.legacy_facedir_simple = true
 	def.is_ground_content = false
 

@@ -719,11 +719,10 @@ def = {
 		"[combine:64x64:0,0=default_chest_front.png\\^[resize\\:64x64:16,32=ch_extras_geocaching.png\\^[resize\\:32x32",
 	},
 	paramtype = "light",
-	paramtype2 = "facedir",
+	paramtype2 = "4dir",
 	groups = {dig_immediate = 2},
 	selection_box = box,
 	collision_box = box,
-	legacy_facedir_simple = true,
 	sounds = default.node_sound_wood_defaults(),
 }
 

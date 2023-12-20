@@ -81,7 +81,9 @@ end
 -- Detect rotation restriction
 local rotation_restricted = nil
 minetest.register_entity('display_api:dummy_entity', {
-	collisionbox = { 0, 0, 0, 0, 0, 0 },
+	initial_properties = {
+		collisionbox = { 0, 0, 0, 0, 0, 0 },
+	},
 	visual = "upright_sprite",
 	textures = {} })
 
@@ -304,9 +306,11 @@ end
 function display_api.register_display_entity(entity_name)
 	if not minetest.registered_entities[entity_name] then
 		minetest.register_entity(':'..entity_name, {
-			collisionbox = { 0, 0, 0, 0, 0, 0 },
-			visual = "upright_sprite",
-			textures = {},
+			initial_properties = {
+				collisionbox = { 0, 0, 0, 0, 0, 0 },
+				visual = "upright_sprite",
+				textures = {},
+			},
 			on_activate = display_api.on_activate,
 			get_staticdata = function(self)
 				return minetest.serialize({ nodepos = self.nodepos })

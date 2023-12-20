@@ -372,7 +372,7 @@ end
 
 local def = {
 	description = "skříňka na knihy a nádoby",
-	paramtype2 = "facedir",
+	paramtype2 = "4dir",
 	is_ground_content = false,
 	groups = {choppy = 3, oddly_breakable_by_hand = 2, flammable = 3, shelf = 1, not_in_creative_inventory = 1},
 	drop = "", -- preserve_metadata will fill the drops
@@ -410,7 +410,7 @@ end
 
 local groups_in_ci = table.copy(def.groups)
 groups_in_ci.not_in_creative_inventory = nil
-minetest.override_item(types_to_shelf[""][""], {groups = groups_in_ci})
+minetest.override_item(types_to_shelf[""][""], {groups = groups_in_ci, paramtype2 = "4dir"})
 
 -- Crafts
 minetest.register_craft{
