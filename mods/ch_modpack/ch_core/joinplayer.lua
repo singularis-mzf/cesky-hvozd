@@ -65,6 +65,25 @@ local function after_joinplayer(player_name)
 			player:set_properties({stepheight = 0.3})
 		end
 		player:set_clouds({density = 0}) -- disable clouds
+		--[[
+			5.5.0 => formspec_version = 5, protocol_version = 40
+			5.6.0 => formspec_version = 6, protocol_version = 41
+			5.6.1 => formspec_version = 6, protocol_version = 41
+			5.7.0 => formspec_version = 6, protocol_version = 42
+			5.8.0 => formspec_version = 7, protocol_version = 43
+		]]
+		local online_charinfo = ch_core.online_charinfo[player_name]
+		if online_charinfo.protocol_version < 42 and online_charinfo.protocol_version ~= 0 then
+			local client_version
+			if online_charinfo.protocol_version == 40 then
+				client_version = "5.5.x"
+			elseif online_charinfo.protocol_version == 41 then
+				client_version = "5.6.x"
+			else
+				client_version = "?.?.?"
+			end
+			ch_core.systemovy_kanal(player_name, minetest.get_color_escape_sequence("#cc5257").."VAROVÁNÍ: Váš klient je zastaralý! Zdá se, že používáte klienta Minetest "..client_version..", který nepodporuje některé moderní vlastnosti hry využívané na Českém hvozdu. Hra vám bude fungovat, ale některé bloky se nemusejí zobrazit správně. Pro správné zobrazení doporučujeme přejít na Minetest 5.7.0 nebo novější, máte-li tu možnost.")
+		end
 	end
 end
 
@@ -73,8 +92,8 @@ local function on_joinplayer(player, last_login)
 	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
 	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
 
-	if online_charinfo.formspec_version < 4 then
-		minetest.disconnect_player(player_name, "Váš klient je příliš starý. Pro připojení k tomuto serveru prosím použijte Minetest 5.5.0 nebo novější.")
+	if online_charinfo.formspec_version < 6 then
+		minetest.disconnect_player(player_name, "Váš klient je příliš starý. Pro připojení k tomuto serveru prosím použijte Minetest 5.7.0 nebo novější. Verze 5.6.0 a 5.6.1 budou fungovat s omezeními.")
 		return true
 	end
 	local lang_code = online_charinfo.lang_code

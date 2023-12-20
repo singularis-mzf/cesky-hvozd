@@ -1,0 +1,27 @@
+License of source code
+----------------------
+
+GNU Lesser General Public License, version 2.1
+Copyright (C) 2022-2023 Singularis <singularis@volny.cz>
+
+This program is free software; you can redistribute it and/or modify it under the terms
+of the GNU Lesser General Public License as published by the Free Software Foundation;
+either version 2.1 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details:
+https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+
+
+Licenses of media (sounds, textures)
+------------------------------------
+ch_test_color4dir.png
+ch_test_4dir_1.png
+ch_test_4dir_2.png
+ch_test_4dir_3.png
+ch_test_4dir_4.png
+ch_test_4dir_5.png
+ch_test_4dir_6.png
+	Author: Singularis
+	License: CC-BY-SA 4.0

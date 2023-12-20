@@ -509,70 +509,6 @@ local function repeated_rotation(player, node, pos)
 		and new_history.node_pos.z == old_history.node_pos.z
 end
 
-local function get_node_absolute_orientation_mode(pointed_thing)
-	if pointed_thing.type ~= "node" then
-		return
-	end
-
-	local pos = pointed_thing.under
-
-	local node = minetest.get_node(pos)
-	local ndef = minetest.registered_nodes[node.name]
-	if minetest.get_item_group(node.name, "walldir") > 0 then
-		local param2 = ndef._facedir
-		local axis = mt_axis_code(param2)
-		local rot = mt_rot_code(param2)
-		return string.format("a%d%d",axis,rot)
-	elseif not ndef or ndef.paramtype2 ~= "facedir" or
-			(ndef.drawtype == "nodebox" and
-			ndef.node_box.type ~= "fixed") or
-			node.param2 == nil then
-		return "a00"
-	else
-		local param2 = node.param2
-		local axis = mt_axis_code(param2)
-		local rot = mt_rot_code(param2)
-		return string.format("a%d%d",axis,rot)
-	end
-end
-
-local function get_node_relative_orientation_mode(player, pointed_thing)
-	if pointed_thing.type ~= "node" then
-		return
-	end
-
-	local pos = pointed_thing.under
-
-	local node = minetest.get_node(pos)
-	local ndef = minetest.registered_nodes[node.name]
-	if minetest.get_item_group(node.name, "walldir") > 0 then
-		local param2 = ndef._facedir
-		local state = player_node_state(player, pointed_thing)
-		if not state then
-			return
-		end
-		local relative = mt_to_relative_orientation(state, param2)
-		local axis = mt_axis_code(relative)
-		local rot = mt_rot_code(relative)
-		return string.format("r%d%d",axis,rot)
-	elseif not ndef or ndef.paramtype2 ~= "facedir" or
-			(ndef.drawtype == "nodebox" and
-			ndef.node_box.type ~= "fixed") or
-			node.param2 == nil then
-		return "r00"
-	else
-		local param2 = node.param2
-		local state = player_node_state(player, pointed_thing)
-		if not state then
-			return
-		end
-		local relative = mt_to_relative_orientation(state, param2)
-		local axis = mt_axis_code(relative)
-		local rot = mt_rot_code(relative)
-		return string.format("r%d%d",axis,rot)
-	end
-end
-
 local facedir_to_wallmounted = {
 	[0] = 4, [1] = 2, [2] = 5, [3] = 3,
 	[4] = 1, [5] = 2, [6] = 0, [7] = 3,
@@ -596,81 +532,79 @@ local function facedir_to_param2(paramtype2, facedir, extra_data)
 	end
 
 	local result
-	if paramtype2 == "facedir" then
-		result = facedir
-	elseif paramtype2 == "colorfacedir" then
+	if paramtype2 == "facedir" or paramtype2 == "colorfacedir" then
 		result = facedir + extra_data
-	elseif paramtype2 == "wallmounted" then
-		result = facedir_to_wallmounted[facedir] -- minetest.dir_to_wallmounted(minetest.facedir_to_dir(facedir)) -- ?
-	elseif paramtype2 == "colorwallmounted" then
+	elseif paramtype2 == "wallmounted" or paramtype2 == "colorwallmounted" then
 		result = facedir_to_wallmounted[facedir] + extra_data
-	--[[ elseif paramtype2 == "4dir" then
-		result = facedir_to_4dir[facedir]
-	elseif paramtype2 == "color4dir" then
-		result = facedir_to_4dir[facedir] + extra_data ]]
+	elseif (paramtype2 == "4dir" or paramtype2 == "color4dir") and (0 <= facedir and facedir <= 3) then
+		result = facedir + extra_data
+	elseif paramtype2 == "degrotate" then
+		if facedir == 0 then
+			-- no change
+			result = extra_data
+		elseif facedir == 1 then
+			-- - 1
+			result = (extra_data + 239) % 240
+		elseif facedir == 2 then
+			-- 180°
+			result = (extra_data + 120) % 240
+		elseif facedir == 3 then
+			-- + 1
+			result = (extra_data + 1) % 240
+		end
 	end
 
 	return result
 end
 
+--[[
 local function param2_to_facedir(paramtype2, param2)
 	-- returns new_param2, extra_data or nil, nil if the paramtype2 is not supported
 	-- print("DEBUG: paramtype2 == "..(paramtype2 or "nil"))
 	-- print("DEBUG: param2 == "..(param2 or "nil"))
 	local result, extra_data, back
 
-	local color = minetest.strip_param2_color(param2, paramtype2)
-	if paramtype2 == "facedir" then
-		result = param2
-		extra_data = 0
-	elseif paramtype2 == "colorfacedir" then
-		result = param2 - color
-		extra_data = color
-	elseif paramtype2 == "wallmounted" then
-		result = wallmounted_to_facedir[param2]
-		extra_data = 0
-	elseif paramtype2 == "colorwallmounted" then
-		result = wallmounted_to_facedir[param2 - color]
-		extra_data = color
-	--[[elseif paramtype2 == "4dir" then
+	-- local color = minetest.strip_param2_color(param2, paramtype2)
+	if paramtype2 == "facedir" or paramtype2 == "colorfacedir" then
+		result = param2 % 32
+		extra_data = param2 - result
+	elseif paramtype2 == "wallmounted" or paramtype2 == "colorwallmounted" then
+		result = param2 % 8
+		extra_data = param2 - result
+		result = wallmounted_to_facedir[result]
+	elseif paramtype2 == "4dir" or paramtype2 == "color4dir" then
 		result = param2 % 4
-		extra_data = 0
-	elseif paramtype2 == "color4dir" then
-		result = param2 - color
-		extra_data = color ]]
+		extra_data = param2 - result
+	elseif paramtype2 == "degrotate" then
+		result = 0
+		extra_data = param2
 	end
-	if not result then
-		extra_data = nil
-	--[[ else
+	if result ~= nil then
 		back = facedir_to_param2(paramtype2, result, extra_data)
-		print("DEBUG: ["..(paramtype2 or "nil").."] ("..param2..") => ("..result..", "..extra_data..") => ("..(back or "nil")..")")
-		]]
+		if back ~= param2 then
+			print("DEBUG ERROR: ["..(paramtype2 or "nil").."] ("..param2..") => ("..result..", "..extra_data..") => ("..(back or "nil")..")")
+		end
 	end
 	return result, extra_data
 end
+]]
 
 local function node_to_facedir(ndef, param2) -- returns new_param2, extra_data or nil, nil if not supported
-	local result, extra_data, back, color
+	local result, extra_data, back
 	local paramtype2 = ndef.paramtype2 or "none"
-	color = minetest.strip_param2_color(param2, paramtype2)
-	if paramtype2 == "facedir" then
-		result = param2
-		extra_data = 0
-	elseif paramtype2 == "colorfacedir" then
-		result = param2 - color
-		extra_data = color
-	elseif paramtype2 == "wallmounted" then
-		result = wallmounted_to_facedir[param2]
-		extra_data = 0
-	elseif paramtype2 == "colorwallmounted" then
-		result = wallmounted_to_facedir[param2 - color]
-		extra_data = color
-	--[[elseif paramtype2 == "4dir" then
+	if paramtype2 == "facedir" or paramtype2 == "colorfacedir" then
+		result = param2 % 32
+		extra_data = param2 - result
+	elseif paramtype2 == "wallmounted" or paramtype2 == "colorwallmounted" then
+		result = param2 % 8
+		extra_data = param2 - result
+		result = wallmounted_to_facedir[result]
+	elseif paramtype2 == "4dir" or paramtype2 == "color4dir" then
 		result = param2 % 4
-		extra_data = 0
-	elseif paramtype2 == "color4dir" then
-		result = param2 - color
-		extra_data = color ]]
+		extra_data = param2 - result
+	elseif paramtype2 == "degrotate" or paramtype2 == "colordegrotate" then
+		result = 0
+		extra_data = param2
 	elseif ndef.groups ~= nil and (ndef.groups.walldir or 0) > 0 then
 		-- walldir node
 		result = ndef._facedir
@@ -679,15 +613,77 @@ local function node_to_facedir(ndef, param2) -- returns new_param2, extra_data o
 		end
 		extra_data = param2
 	end
-	if not result then
-		extra_data = nil
-	--[[ else
+	if result ~= nil then
 		back = facedir_to_param2(paramtype2, result, extra_data)
-		print("DEBUG: ["..(paramtype2 or "nil").."] ("..param2..") => ("..result..", "..extra_data..") => ("..(back or "nil")..")")
-		]]
+		if back ~= param2 then
+			print("DEBUG ERROR 2: ["..(paramtype2 or "nil").."] ("..param2..") => ("..result..", "..extra_data..") => ("..(back or "nil")..")")
+		end
 	end
 	return result, extra_data
 end
+
+local function get_node_absolute_orientation_mode(pointed_thing)
+	if pointed_thing.type ~= "node" then
+		return
+	end
+
+	local pos = pointed_thing.under
+	local node = minetest.get_node(pos)
+	local ndef = minetest.registered_nodes[node.name]
+	if minetest.get_item_group(node.name, "walldir") > 0 then
+		local param2 = ndef._facedir
+		local axis = mt_axis_code(param2)
+		local rot = mt_rot_code(param2)
+		return string.format("a%d%d",axis,rot)
+	elseif ndef and node.param2 ~= nil and not (ndef.drawtype == "nodebox" and ndef.node_box.type ~= "fixed") and ndef.paramtype2 ~= "degrotate" and ndef.paramtype2 ~= "colordegrotate" then
+		local facedir, extra_data = node_to_facedir(ndef, node.param2)
+		if facedir == nil then
+			return "a00"
+		end
+		local axis = mt_axis_code(facedir)
+		local rot = mt_rot_code(facedir)
+		return string.format("a%d%d",axis,rot)
+	else
+		return "a00"
+	end
+end
+
+local function get_node_relative_orientation_mode(player, pointed_thing)
+	if pointed_thing.type ~= "node" then
+		return
+	end
+
+	local pos = pointed_thing.under
+	local node = minetest.get_node(pos)
+	local ndef = minetest.registered_nodes[node.name]
+	if minetest.get_item_group(node.name, "walldir") > 0 then
+		local param2 = ndef._facedir
+		local state = player_node_state(player, pointed_thing)
+		if not state then
+			return
+		end
+		local relative = mt_to_relative_orientation(state, param2)
+		local axis = mt_axis_code(relative)
+		local rot = mt_rot_code(relative)
+		return string.format("r%d%d",axis,rot)
+	elseif ndef and node.param2 ~= nil and not (ndef.drawtype == "nodebox" and ndef.node_box.type ~= "fixed") and ndef.paramtype2 ~= "degrotate" and ndef.paramtype2 ~= "colordegrotate" then
+		local facedir, extra_data = node_to_facedir(ndef, node.param2)
+		if facedir == nil then
+			return "r00"
+		end
+		local state = player_node_state(player, pointed_thing)
+		if not state then
+			return
+		end
+		local relative = mt_to_relative_orientation(state, facedir)
+		local axis = mt_axis_code(relative)
+		local rot = mt_rot_code(relative)
+		return string.format("r%d%d",axis,rot)
+	else
+		return "r00"
+	end
+end
+
 
 -- Main rotation function
 local function wrench_handler(itemstack, player, pointed_thing, mode, material, max_uses)
@@ -703,7 +699,7 @@ local function wrench_handler(itemstack, player, pointed_thing, mode, material, 
 		return
 	end
 	if not has_rotation_privilege(player) then
-		minetest.chat_send_player(player:get_player_name(),"You are not allowed to rotate nodes")
+		ch_core.systemovy_kanal(player:get_player_name(), "Nemáte oprávnění používat rotační klíče!")
 		return
 	end
 
@@ -711,7 +707,9 @@ local function wrench_handler(itemstack, player, pointed_thing, mode, material, 
 
 	node = minetest.get_node(pos)
 	ndef = minetest.registered_nodes[node.name]
-	if not ndef or not ndef.paramtype2 or node.param2 == nil then
+	if not ndef or not ndef.paramtype2 or node.param2 == nil or
+			((node.paramtype2 == "degrotate" or node.paramtype2 == "colordegrotate") and string.match(mode, "^[ar]")) -- *degrotate not allowed in relative/absolute mode
+	then
 		return
 	end
 	old_param2 = node.param2

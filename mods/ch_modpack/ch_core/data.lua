@@ -145,6 +145,8 @@ function ch_core.get_joining_online_charinfo(player_name)
 			light_level = 0,
 			-- časová známka pro úroveň osvětlení postavy
 			light_level_timestamp = now,
+			-- verze protokolu
+			protocol_version = player_info.protocol_version or 0,
 			-- tabulka již zobrazených nápověd (bude deserializována níže)
 			navody = {},
 			-- přihlašovací jméno
@@ -152,7 +154,7 @@ function ch_core.get_joining_online_charinfo(player_name)
 		}
 		ch_core.online_charinfo[player_name] = result
 		old_online_charinfo[player_name] = nil
-		minetest.log("action", "JOIN PLAYER(" .. player_name ..") at "..now.." with lang_code \""..result.lang_code.."\" and formspec_version = "..result.formspec_version)
+		minetest.log("action", "JOIN PLAYER(" .. player_name ..") at "..now.." with lang_code \""..result.lang_code.."\", formspec_version = "..result.formspec_version.." and protocol_version = "..result.protocol_version)
 
 		-- local player = minetest.get_player_by_name(player_name)
 		if player then

@@ -88,6 +88,40 @@ end
 
 screwdriver.rotate.colorwallmounted = screwdriver.rotate.wallmounted
 
+screwdriver.rotate["4dir"] = function(pos, node, mode)
+	local rotation = node.param2 % 4 -- get first 2 bits
+	local other = node.param2 - rotation
+	if mode == screwdriver.ROTATE_AXIS then
+		return (rotation + 3) % 4 + other
+	else
+		return (rotation + 1) % 4 + other
+	end
+end
+
+screwdriver.rotate.color4dir = screwdriver.rotate["4dir"]
+
+screwdriver.rotate.degrotate = function(pos, node, mode)
+	if node.param2 >= 240 then
+		return 0
+	end
+	if mode == screwdriver.ROTATE_AXIS then
+		return (node.param2 + 1) % 240
+	else
+		return (node.param2 + 239) % 240
+	end
+end
+
+screwdriver.rotate.colordegrotate = function(pos, node, mode)
+	local rotation = node.param2 % 32 -- get first 5 bits
+	local other = node.param2 - rotation
+	if mode == screwdriver.ROTATE_AXIS then
+		rotation = (node.param2 + 1) % 24
+	else
+		rotation = (node.param2 + 23) % 24
+	end
+	return rotation + other
+end
+
 -- Handles rotation
 screwdriver.handler = function(itemstack, user, pointed_thing, mode, uses)
 	if pointed_thing.type ~= "node" then
