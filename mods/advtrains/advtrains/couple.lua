@@ -397,14 +397,16 @@ end
 local couple_max_dist=3
 
 minetest.register_entity("advtrains:discouple", {
-	visual="sprite",
-	textures = {"advtrains_discouple.png"},
-	collisionbox = {-0.3,-0.3,-0.3, 0.3,0.3,0.3},
-	visual_size = {x=0.7, y=0.7},
-	initial_sprite_basepos = {x=0, y=0},
-	
+	initial_properties = {
+		visual="sprite",
+		textures = {"advtrains_discouple.png"},
+		collisionbox = {-0.3,-0.3,-0.3, 0.3,0.3,0.3},
+		visual_size = {x=0.7, y=0.7},
+		initial_sprite_basepos = {x=0, y=0},
+		static_save = false,
+	},
+
 	is_discouple=true,
-	static_save = false,
 	on_activate=function(self, staticdata) 
 		if staticdata=="DISCOUPLE" then
 			--couple entities have no right to exist further...
@@ -444,14 +446,16 @@ minetest.register_entity("advtrains:discouple", {
 -- Couple entity 
 
 minetest.register_entity("advtrains:couple", {
-	visual="sprite",
-	textures = {"advtrains_couple.png"},
-	collisionbox = {-0.3,-0.3,-0.3, 0.3,0.3,0.3},
-	visual_size = {x=0.7, y=0.7},
-	initial_sprite_basepos = {x=0, y=0},
+	initial_properties = {
+		visual="sprite",
+		textures = {"advtrains_couple.png"},
+		collisionbox = {-0.3,-0.3,-0.3, 0.3,0.3,0.3},
+		visual_size = {x=0.7, y=0.7},
+		initial_sprite_basepos = {x=0, y=0},
+		static_save = false,
+	},
 	
 	is_couple=true,
-	static_save = false,
 	on_activate=function(self, staticdata)
 		if staticdata=="COUPLE" then
 			--couple entities have no right to exist further...

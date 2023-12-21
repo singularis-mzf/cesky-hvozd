@@ -72,6 +72,7 @@ local def = {
 		visual_size = {x = 1, y = 1},
 		mesh = model.mesh,
 		textures = model.textures,
+		static_save = false,
 		-- nametag = "",
 		-- nametag_color = "#ffffff",
 	},

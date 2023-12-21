@@ -226,6 +226,7 @@ minetest.register_node("clothing:mannequin_stand", {
 })
 
 minetest.register_entity("clothing:mannequin_entity", {
+	initial_properties = {
   physical = true,
   visual = "mesh",
   --mesh = "skinsdb_3d_armor_character_5.b3d",
@@ -234,6 +235,7 @@ minetest.register_entity("clothing:mannequin_entity", {
   collisionbox = {0,0,0,0,0,0},
   textures = {"clothing_mannequin.png", "clothing_transparent.png", "clothing_transparent.png", "clothing_transparent.png"},
   use_texture_alpha = true,
+	},
   pos = nil,
   timer = 0,
   on_activate = function(self)

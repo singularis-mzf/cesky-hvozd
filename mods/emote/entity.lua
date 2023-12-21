@@ -2,13 +2,15 @@
 -- entity for locked emotes (attached to nodes, etc)
 local attacher = {
 	description = "Attachment entity for emotes",
-	physical = false,
-	visual = "upright_sprite",
-	visual_size = {x = 1/16, y = 1/16},
-	spritediv = {x = 1/16, y = 1/16},
-	collisionbox = {-1/16, -1/16, -1/16, 1/16, 1/16, 1/16},
-	textures = {"emote_blank.png"},
-	static_save = false,
+	initial_properties = {
+		physical = false,
+		visual = "upright_sprite",
+		visual_size = {x = 1/16, y = 1/16},
+		spritediv = {x = 1/16, y = 1/16},
+		collisionbox = {-1/16, -1/16, -1/16, 1/16, 1/16, 1/16},
+		textures = {"emote_blank.png"},
+		static_save = false,
+	},
 	init = function(self, player)
 		self.player = player
 	end,

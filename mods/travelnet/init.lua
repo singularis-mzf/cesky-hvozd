@@ -94,18 +94,20 @@ minetest.register_node("travelnet:hidden_top", {
 
 if travelnet.travelnet_effect_enabled then
 	minetest.register_entity("travelnet:effect", {
-		hp_max = 1,
-		physical = false,
-		weight = 5,
-		collisionbox = { -0.4, -0.5, -0.4, 0.4, 1.5, 0.4 },
-		visual = "upright_sprite",
-		visual_size = { x=1, y=2 },
-		textures = { "travelnet_flash.png" }, -- number of required textures depends on visual
-		spritediv = { x=1, y=1 },
-		initial_sprite_basepos = { x=0, y=0 },
-		is_visible = true,
-		makes_footstep_sound = false,
-		automatic_rotate = 6,
+		initial_properties = {
+			hp_max = 1,
+			physical = false,
+			weight = 5,
+			collisionbox = { -0.4, -0.5, -0.4, 0.4, 1.5, 0.4 },
+			visual = "upright_sprite",
+			visual_size = { x=1, y=2 },
+			textures = { "travelnet_flash.png" }, -- number of required textures depends on visual
+			spritediv = { x=1, y=1 },
+			initial_sprite_basepos = { x=0, y=0 },
+			is_visible = true,
+			makes_footstep_sound = false,
+			automatic_rotate = 6,
+		},
 
 		anz_rotations = 0,
 

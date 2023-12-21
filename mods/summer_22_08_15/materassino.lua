@@ -33,11 +33,13 @@ local function reg_materassino(color, popis)
 --
 
 local materassino = {
-	physical = true,
-	collisionbox = {-0.5, -0.35, -0.5, 0.5, 0.3, 0.5},
-	visual = "mesh",
-	mesh = "materassino.obj",
-	textures = { "materassino_"..color..".png" },
+	initial_properties = {
+		physical = true,
+		collisionbox = {-0.5, -0.35, -0.5, 0.5, 0.3, 0.5},
+		visual = "mesh",
+		mesh = "materassino.obj",
+		textures = { "materassino_"..color..".png" },
+	},
 
 	driver = nil,
 	v = 0,

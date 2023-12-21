@@ -7,15 +7,17 @@ local function reg_ball(color, popis)
 	local ball_ent_name = "summer:ball_"..color.."_entity"
 
 	minetest.register_entity(ball_ent_name, {
-		physical = true,
-		visual = "mesh",
-		mesh = "ball.obj",
-		hp_max = 1000,
-        liquids_pointable = true,
-		groups = { immortal = true },
-		textures = { "ball_"..color..".png" },
-		use_texture_alpha = "opaque",
-		collisionbox = { -0.2, -0.2, -0.2, 0.2, 0.2, 0.2 }, --{ -1, -1, -1, 1, 1, 1 },
+		initial_properties = {
+			physical = true,
+			visual = "mesh",
+			mesh = "ball.obj",
+			hp_max = 1000,
+			liquids_pointable = true,
+			groups = { immortal = true },
+			textures = { "ball_"..color..".png" },
+			use_texture_alpha = "opaque",
+			collisionbox = { -0.2, -0.2, -0.2, 0.2, 0.2, 0.2 }, --{ -1, -1, -1, 1, 1, 1 },
+		},
 
 		timer = 0,
 

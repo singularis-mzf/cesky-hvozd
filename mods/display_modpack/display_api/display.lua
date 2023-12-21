@@ -83,9 +83,10 @@ local rotation_restricted = nil
 minetest.register_entity('display_api:dummy_entity', {
 	initial_properties = {
 		collisionbox = { 0, 0, 0, 0, 0, 0 },
+		visual = "upright_sprite",
+		textures = {}
 	},
-	visual = "upright_sprite",
-	textures = {} })
+})
 
 function display_api.is_rotation_restricted()
 	if rotation_restricted == nil then

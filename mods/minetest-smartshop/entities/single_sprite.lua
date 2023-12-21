@@ -37,14 +37,16 @@ for i = 4, 23, 1 do
 end
 
 minetest.register_entity("smartshop:single_sprite", {
-	hp_max = 1,
-	visual = "sprite",
-	visual_size = {x = .40, y = .40},
-	collisionbox = {0, 0, 0, 0, 0, 0},
-	physical = false,
-	textures = {"air"},
+	initial_properties = {
+		hp_max = 1,
+		visual = "sprite",
+		visual_size = {x = .40, y = .40},
+		collisionbox = {0, 0, 0, 0, 0, 0},
+		physical = false,
+		textures = {"air"},
+		static_save = false,
+	},
 	smartshop2 = true,
-	static_save = false,
 })
 
 function smartshop.entities.add_single_sprite(shop, index)

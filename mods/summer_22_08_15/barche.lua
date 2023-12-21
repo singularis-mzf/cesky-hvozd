@@ -33,11 +33,13 @@ local function reg_barca(color, popis)
 --
 
 local barca = {
-	physical = true,
-	collisionbox = {-2.5, -0.5, -2.5, 2.5, 0.3, 2.5},
-	visual = "mesh",
-	mesh = "barca.x",--"barcal.obj",
-	textures = {"barca_"..color..".png" },
+	initial_properties = {
+		physical = true,
+		collisionbox = {-2.5, -0.5, -2.5, 2.5, 0.3, 2.5},
+		visual = "mesh",
+		mesh = "barca.x",--"barcal.obj",
+		textures = {"barca_"..color..".png" },
+	},
 
 	driver = nil,
 	v = 0,

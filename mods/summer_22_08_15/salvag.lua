@@ -33,11 +33,13 @@ local function reg_salvag(color, popis)
 --
 
 local salvag = {
-	physical = true,
-	collisionbox = {-0.5, -0.35, -0.5, 0.5, 0.3, 0.5},
-	visual = "mesh",
-	mesh = "salvagl.obj",
-	textures = {"summer_salvag_"..color..".png" },
+	initial_properties = {
+		physical = true,
+		collisionbox = {-0.5, -0.35, -0.5, 0.5, 0.3, 0.5},
+		visual = "mesh",
+		mesh = "salvagl.obj",
+		textures = {"summer_salvag_"..color..".png" },
+	},
 
 	driver = nil,
 	v = 0,

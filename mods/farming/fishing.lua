@@ -74,12 +74,14 @@ end
 -- fishing bob entity
 minetest.register_entity("farming:bob_entity", {
 
-	textures = {"ethereal_fishing_bob.png"},
-	visual_size = {x = 0.5, y = 0.5},
-	collisionbox = {-0.1, -0.1, -0.1, 0.1, 0.1, 0.1},
-	physical = false,
-	pointable = false,
-	static_save = false,
+	initial_properties = {
+		textures = {"ethereal_fishing_bob.png"},
+		visual_size = {x = 0.5, y = 0.5},
+		collisionbox = {-0.1, -0.1, -0.1, 0.1, 0.1, 0.1},
+		physical = false,
+		pointable = false,
+		static_save = false,
+	},
 	timer = 0,
 
 	on_step = function(self, dtime)

@@ -145,11 +145,13 @@ end
 
 -- Entity Definition
 local rocket = {
-	physical = true, --collides with things
-	wield_image = "rocket_default.png",
-	collisionbox = {0, -0.5 ,0 ,0 ,0.5 ,0},
-	visual = "sprite",
-	textures = {"rocket_default.png"},
+	initial_properties = {
+		physical = true, --collides with things
+		wield_image = "rocket_default.png",
+		collisionbox = {0, -0.5 ,0 ,0 ,0.5 ,0},
+		visual = "sprite",
+		textures = {"rocket_default.png"},
+	},
 	timer = 0,
 	rocket_firetime = 0,
 	rocket_flytime = 0,

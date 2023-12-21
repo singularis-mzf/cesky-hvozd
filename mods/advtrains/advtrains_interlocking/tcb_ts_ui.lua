@@ -532,11 +532,14 @@ end)
 local markerent = {}
 
 minetest.register_entity("advtrains_interlocking:tcbmarker", {
-	visual = "mesh",
-	mesh = "trackplane.b3d",
-	textures = {"at_il_tcb_marker.png"},
-	collisionbox = {-1,-0.5,-1, 1,-0.4,1},
-	visual_size = {x=10, y=10},
+	initial_properties = {
+		visual = "mesh",
+		mesh = "trackplane.b3d",
+		textures = {"at_il_tcb_marker.png"},
+		collisionbox = {-1,-0.5,-1, 1,-0.4,1},
+		visual_size = {x=10, y=10},
+		static_save = false,
+	},
 	on_punch = function(self)
 		self.object:remove()
 	end,
@@ -547,7 +550,6 @@ minetest.register_entity("advtrains_interlocking:tcbmarker", {
 	end,
 	get_staticdata = function() return "STATIC" end,
 	on_activate = function(self, sdata) if sdata=="STATIC" then self.object:remove() end end,
-	static_save = false,
 })
 
 function advtrains.interlocking.show_tcb_marker(pos)

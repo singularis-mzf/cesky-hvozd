@@ -306,6 +306,42 @@ local dny_v_tydnu = {
 	"neděle",
 }
 
+local entity_properties_list = {
+	"hp_max",
+	"breath_max",
+	"zoom_fov",
+	"eye_height",
+	"physical = false",
+	"collide_with_objects",
+	"collisionbox",
+	"selectionbox",
+	"pointable",
+	"visual",
+	"visual_size",
+	"mesh",
+	"textures",
+	"colors",
+	"use_texture_alpha",
+	"spritediv",
+	"initial_sprite_basepos",
+	"is_visible",
+	"makes_footstep_sound",
+	"automatic_rotate",
+	"stepheight",
+	"automatic_face_movement_dir",
+	"automatic_face_movement_max_rotation_per_sec",
+	"backface_culling",
+	"glow",
+	"nametag",
+	"nametag_color",
+	"nametag_bgcolor",
+	"infotext",
+	"static_save",
+	"damage_texture_modifier",
+	"shaded",
+	"show_on_minimap",
+}
+
 -- KEŠ
 -- ===========================================================================
 local utf8_sort_cache = {
@@ -638,6 +674,47 @@ function ch_core.set_immortal(player, true_or_false)
 		player:set_armor_groups({immortal = 0})
 	end
 	return true
+end
+
+--[[
+Přesune klíče definující vlastnosti entity do podtabulky
+initial_properties.
+]]
+function ch_core.upgrade_entity_properties(entity_def, options)
+	if options == nil then
+		options = {}
+	end
+	local base_properties = options.base_properties -- základ pro doplnění zcela chybějících vlastností
+	local in_place = options.in_place ~= false -- provádět změny v původní tabulce initial_properties, je-li dostupná; výchozí: true
+	local keep_fields = options.keep_fields == true -- ponechat původní pole v původní tabulce; výchozí: false
+
+	local initial_properties
+	if entity_def.initial_properties == nil then
+		initial_properties = {}
+	elseif in_place then
+		initial_properties = entity_def.initial_properties
+	else
+		initial_properties = table.copy(entity_def.initial_properties)
+	end
+	for _, k in ipairs(entity_properties_list) do
+		if entity_def[k] ~= nil then
+			if initial_properties[k] == nil then
+				initial_properties[k] = entity_def[k]
+			end
+			if not keep_fields then
+				entity_def[k] = nil
+			end
+		end
+	end
+	if base_properties ~= nil then
+		for k, v in pairs(base_properties) do
+			if initial_properties[k] == nil then
+				initial_properties[k] = v
+			end
+		end
+	end
+	entity_def.initial_properties = initial_properties
+	return entity_def
 end
 
 --[[

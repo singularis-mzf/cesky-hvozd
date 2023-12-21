@@ -23,14 +23,16 @@ for i, dir in ipairs(element_dir) do
 end
 
 minetest.register_entity("smartshop:quad_upright_sprite", {
-	hp_max = 1,
-	visual = "upright_sprite",
-	visual_size = {x = 1.0, y = 1.0},
-	collisionbox = {0, 0, 0, 0, 0, 0},
-	physical = false,
-	textures = {"air"},
+	initial_properties = {
+		hp_max = 1,
+		visual = "upright_sprite",
+		visual_size = {x = 1.0, y = 1.0},
+		collisionbox = {0, 0, 0, 0, 0, 0},
+		physical = false,
+		textures = {"air"},
+		static_save = false,
+	},
 	smartshop2 = true,
-	static_save = false,
 })
 
 

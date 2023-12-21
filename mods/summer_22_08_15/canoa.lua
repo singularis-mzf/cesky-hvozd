@@ -33,11 +33,13 @@ local function reg_canoa_(color, popis)
 --
 
 local canoa_ = {
-	physical = true,
-	collisionbox = {-0.5, -0.35, -0.5, 0.5, 0.3, 0.5},
-	visual = "mesh",
-	mesh = "canoa.x",
-	textures = {"canoa_"..color..".png" },
+	initial_properties = {
+		physical = true,
+		collisionbox = {-0.5, -0.35, -0.5, 0.5, 0.3, 0.5},
+		visual = "mesh",
+		mesh = "canoa.x",
+		textures = {"canoa_"..color..".png" },
+	},
 
 	driver = nil,
 	v = 0,

@@ -256,11 +256,13 @@ local function detach(self, pos)
 end
 
 local box_entity = {
-    physical = false,
-    collisionbox = {0,0,0,0,0,0},
-    visual = "wielditem",
-    visual_size = {x=1, y=1},
-    textures = {"elevator:elevator_box"},
+    initial_properties = {
+        physical = false,
+        collisionbox = {0,0,0,0,0,0},
+        visual = "wielditem",
+        visual_size = {x=1, y=1},
+        textures = {"elevator:elevator_box"},
+    },
 
     attached = "",
     motor = false,

@@ -199,13 +199,15 @@ end
 
 local step_v
 minetest.register_entity("hangglider:glider", {
-	visual = "mesh",
-	visual_size = {x = 12, y = 12},
-	collisionbox = {0,0,0,0,0,0},
-	mesh = "glider.obj",
-	immortal = true,
-	static_save = false,
-	textures = {"wool_white.png","default_wood.png"},
+	initial_properties = {
+		visual = "mesh",
+		visual_size = {x = 12, y = 12},
+		collisionbox = {0,0,0,0,0,0},
+		mesh = "glider.obj",
+		immortal = true,
+		static_save = false,
+		textures = {"wool_white.png","default_wood.png"},
+	},
 	on_step = function(self, dtime)
 		local canExist = false
 		if self.object:get_attach() then
