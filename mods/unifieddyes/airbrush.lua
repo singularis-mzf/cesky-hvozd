@@ -223,6 +223,7 @@ function unifieddyes.show_airbrush_form(player)
 	local inv = player:get_inventory()
 	local nodepalette = "extended"
 	local showall = unifieddyes.player_showall[player_name]
+	local palette_data = unifieddyes.palette_data_extended
 
 	t[1] = "size[14.5,8.5]label[7,-0.3;"..S("Select a color:").."]"
 	local selindic = "unifieddyes_select_overlay.png^unifieddyes_question.png]"
@@ -256,6 +257,7 @@ function unifieddyes.show_airbrush_form(player)
 	end
 
 	local explist = last_right_click.def.explist
+	local color_data_index = 1
 
 	for v = 0, 6 do
 		local val = unifieddyes.VALS_EXTENDED[v+1]
@@ -282,6 +284,9 @@ function unifieddyes.show_airbrush_form(player)
 			local b2 = math.max(math.min(b + (4-v)*factor, 255), 0)
 
 			local hexcolor = string.format("%02x", r2)..string.format("%02x", g2)..string.format("%02x", b2)
+			local color_data = palette_data[color_data_index]
+			color_data_index = color_data_index + 1
+			hexcolor = string.format("%02x%02x%02x", color_data[1], color_data[2], color_data[3])
 			local f
 			f, selindic = unifieddyes.make_colored_square(hexcolor, val..hue..sat, showall, creative, painting_with, nodepalette,
 			hp, v2, selindic, inv, explist)
@@ -316,6 +321,9 @@ function unifieddyes.show_airbrush_form(player)
 				local b3 = math.floor(p+(b2-p)*0.5)
 
 				local hexcolor = string.format("%02x", r3)..string.format("%02x", g3)..string.format("%02x", b3)
+				local color_data = palette_data[color_data_index]
+				color_data_index = color_data_index + 1
+				hexcolor = string.format("%02x%02x%02x", color_data[1], color_data[2], color_data[3])
 				local f
 				f, selindic = unifieddyes.make_colored_square(hexcolor, val..hue..sat, showall, creative, painting_with,
 				nodepalette, hp, v2, selindic, inv, explist)
@@ -330,6 +338,8 @@ function unifieddyes.show_airbrush_form(player)
 		local hp=15-y
 
 		local hexgrey = string.format("%02x", y*17)..string.format("%02x", y*17)..string.format("%02x", y*17)
+		local color_data = palette_data[256 - y]
+		hexgrey = string.format("%02x%02x%02x", color_data[1], color_data[2], color_data[3])
 		local grey = "grey_"..y
 
 		if y == 0 then grey = "black"

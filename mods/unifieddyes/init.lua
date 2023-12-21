@@ -35,6 +35,8 @@ unifieddyes = {}
 
 local modpath=minetest.get_modpath(minetest.get_current_modname())
 
+unifieddyes.palette_data_extended = dofile(modpath.."/palette_data_extended.lua")
+
 dofile(modpath.."/color-tables.lua")
 dofile(modpath.."/api.lua")
 dofile(modpath.."/airbrush.lua")

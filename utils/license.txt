@@ -1,0 +1,10 @@
+Licenses of media (sounds, textures)
+------------------------------------
+hsx.obj
+	Author: Ilya Kolbin (iskolbin@gmail.com)
+	Source: https://github.com/iskolbin/lhsx
+	License: MIT or public domain
+
+palette_generator.lua
+	Author: Singularis
+	License: MIT
