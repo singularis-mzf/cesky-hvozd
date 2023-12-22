@@ -105,11 +105,11 @@ local rows = {
 	{ 0.300, 242 }, -- 3 -- světle
 	{ 0.650, 240 }, -- 4 -- polosvětle => křiklavě
 	{ 0.500, 229 }, -- 5 -- normální
-	{ 0.350, 190 }, -- 6 -- nízká sytost
-	{ 0.400, 120 }, -- 7 -- středně
-	{ 0.200, 120 }, -- 8 -- středně (nízká sytost)
-	{ 0.400, 70 }, -- 9 -- tmavě
-	{ 0.300, 60 }, -- 10 -- tmavě (nízká sytost)
+	{ 0.350, 200 }, -- 6 -- nízká sytost
+	{ 0.500, 120 }, -- 7 -- středně
+	{ 0.300, 120 }, -- 8 -- středně (nízká sytost)
+	{ 0.450, 70 }, -- 9 -- tmavě
+	{ 0.200, 50 }, -- 10 -- tmavě (nízká sytost)
 }
 
 local function round(x)
