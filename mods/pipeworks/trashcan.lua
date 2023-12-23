@@ -44,7 +44,12 @@ minetest.register_node("pipeworks:trashcan", {
 	after_place_node = pipeworks.after_place,
 	after_dig_node = pipeworks.after_dig,
 	on_metadata_inventory_put = function(pos, listname, index, stack, player)
-		minetest.get_meta(pos):get_inventory():set_stack(listname, index, ItemStack(""))
+		if player and player:get_player_name() then
+			-- don't check privs here
+			ch_core.vyhodit_inventar(player and player:get_player_name(), minetest.get_meta(pos):get_inventory(), listname, "pipeworks:trashcan")
+		else
+			minetest.get_meta(pos):get_inventory():set_stack(listname, index, ItemStack(""))
+		end
 	end,
 })
 pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:trashcan"

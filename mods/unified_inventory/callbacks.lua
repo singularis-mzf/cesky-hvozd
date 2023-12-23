@@ -236,19 +236,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 
 	if fields.trash_craft then
-		local inv = player:get_inventory()
-		local empty_stack = ItemStack(nil)
-		local items = {}
-		for i = 1, 9, 1 do
-			local stack = inv:get_stack("craft", i)
-			if not stack:is_empty() then
-				table.insert(items, stack:to_string():sub(1,1024))
-				inv:set_stack("craft", i, empty_stack)
-			end
-		end
-		if items ~= "" then
-			minetest.log("action", "Player "..player_name.." trashed in the craft grid: "..table.concat(items, ", "))
-			minetest.sound_play("trash_all", {to_player=player_name, gain = 1.0})
+		local player_name = player:get_player_name()
+		if ch_core.vyhodit_inventar(player_name, player:get_inventory(), "craft", "craft grid") then
 			local online_charinfo = ch_core.online_charinfo[player_name]
 			local ap = online_charinfo and online_charinfo.ap
 			if ap then

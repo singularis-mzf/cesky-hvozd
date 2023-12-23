@@ -7,8 +7,8 @@ moditems.iron_item = "default:steel_ingot" -- MTG iron ingot
 moditems.coal_item = "default:coalblock"   -- MTG coal block
 moditems.green_dye = "dye:dark_green"      -- MTG version of green dye
 moditems.sounds = default.node_sound_defaults
-moditems.trashcan_infotext = "Odpadkový koš"
-moditems.dumpster_infotext = "Odpadkový kontejner"
+moditems.trashcan_infotext = "odpadkový koš"
+moditems.dumpster_infotext = "odpadkový kontejner"
 moditems.boxart = ""
 moditems.trashbin_groups = {snappy=1,choppy=2,oddly_breakable_by_hand=2,flammable=3}
 moditems.dumpster_groups = {cracky=3,oddly_breakable_by_hand=1}
@@ -130,12 +130,19 @@ local trash_can_def = {
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
 		if fields.empty then
+			if ch_core.check_player_role(sender, {"survival", "admin"}) then
+				ch_core.vyhodit_inventar(sender and sender:get_player_name(), minetest.get_meta(pos):get_inventory(), "trashlist", "trash can @ "..minetest.pos_to_string(pos))
+			--[[
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
 			inv:set_list("trashlist", {})
 			minetest.sound_play("trash", {to_player=sender:get_player_name(), gain = 1.0})
 			minetest.log("action", sender:get_player_name() ..
 				" empties trash can at " .. minetest.pos_to_string(pos))
+			]]
+			else
+				ch_core.systemovy_kanal(sender:get_player_name(), "Jen dělnické postavy mohou využívat odpadkové koše!")
+			end
 		end
 	end,
 }
@@ -218,10 +225,17 @@ minetest.register_node("trash_can:dumpster", {
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
 		if fields.empty then
+			if ch_core.check_player_role(sender, {"survival", "admin"}) then
+				ch_core.vyprazdnit_inventar(sender and sender:get_player_name(), minetest.get_meta(pos):get_inventory(), "main", "dumpster @ "..minetest.pos_to_string(pos))
+			--[[
 			local meta = minetest.get_meta(pos)
 			local inv = meta:get_inventory()
 			inv:set_list("main", {})
 			minetest.sound_play("trash", {to_player=sender:get_player_name(), gain = 2.0})
+			]]
+			else
+				ch_core.systemovy_kanal(sender:get_player_name(), "Jen dělnické postavy mohou využívat odpadkové koše!")
+			end
 		end
 	end,
 })

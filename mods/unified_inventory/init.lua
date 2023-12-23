@@ -204,6 +204,9 @@ dofile(modpath.."/item_names.lua")
 -- dofile(modpath.."/waypoints.lua")
 dofile(modpath.."/legacy.lua") -- mod compatibility
 
+ch_core.trash_one_sound = "trash"
+ch_core.trash_all_sound = "trash_all"
+
 minetest.register_on_mods_loaded(function()
 	local pipeworks = ch_core.get_shared_vgroup("pipeworks")
 	for name, def in pairs(minetest.registered_items) do

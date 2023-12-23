@@ -418,6 +418,8 @@ function circular_saw.on_metadata_inventory_put(
 			circular_saw:update_inventory(pos, rcost * count, craftitem)
 		end
 	elseif listname == "trash" then
+		ch_core.vyhodit_inventar(player and player:get_player_name(), inv, "trash", "circular saw")
+		--[[
 		inv:set_stack("trash", 1, ItemStack())
 		local player_name = player and player:get_player_name()
 		if player_name ~= nil then
@@ -426,6 +428,7 @@ function circular_saw.on_metadata_inventory_put(
 				minetest.sound_play("trash_all", { to_player = player_name, gain = 0.8 })
 			end
 		end
+		]]
 	end
 end
 

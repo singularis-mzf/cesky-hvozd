@@ -373,6 +373,28 @@ function ch_core.add_wear(player, itemstack, wear_to_add)
 end
 
 --[[
+Určí typ postavy (admin|creative|new|survival) a zkontroluje,
+zda je to jeden z akceptovaných.
+player_or_player_name může být PlayerRef nebo přihlašovací jméno postavy.
+accepted_roles může být buď řetězec nebo seznam řetězců.
+]]
+function ch_core.check_player_role(player_or_player_name, accepted_roles)
+	local role = ch_core.get_player_role(player_or_player_name)
+	if role == nil then
+		return nil
+	end
+	if type(accepted_roles) == "string" then
+		return role == accepted_roles
+	end
+	for i, r in ipairs(accepted_roles) do
+		if role == r then
+			return true
+		end
+	end
+	return false
+end
+
+--[[
 Smaže recepty jako minetest.clear_craft(), ale s lepším logováním.
 ]]
 function ch_core.clear_crafts(log_prefix, crafts)
@@ -424,6 +446,36 @@ function ch_core.get_nearest_player(pos, player_name_to_ignore)
 		end
 	end
 	return result_player, result_pos
+end
+
+--[[
+Určí podle práv typ postavy (admin|creative|new|survival).
+Pokud player_or_player_name není PlayerRef nebo jméno postavy, vrátí nil.
+]]
+function ch_core.get_player_role(player_or_player_name)
+	local player_name
+	if type(player_or_player_name) == "string" then
+		if player_name == "" then
+			return nil -- neplatná hodnota
+		end
+		player_name = player_or_player_name
+	else
+		print("DEBUG: type is <"..type(player_or_player_name)..">")
+		player_name = player_or_player_name:get_player_name()
+		if player_name == nil or player_name == "" then
+			return nil
+		end
+	end
+	local privs = minetest.get_player_privs(player_name)
+	if privs.protection_bypass then
+		return "admin"
+	elseif not privs.ch_registered_player then
+		return "new"
+	elseif privs.give then
+		return "creative"
+	else
+		return "survival"
+	end
 end
 
 --[[
@@ -955,6 +1007,69 @@ function ch_core.utf8_mensi_nez(a, b, store_to_cache)
 	a = ch_core.utf8_radici_klic(a, store_to_cache)
 	b = ch_core.utf8_radici_klic(b, store_to_cache)
 	return a < b
+end
+
+--[[
+	Smaže obsah zadaného inventáře a zaznamená to jako příkaz daného
+	hráče/ky.
+	player_name -- přihlašovací jméno hráče/ky
+	inv -- odkaz na inventář
+	listname -- listname ke smazání
+	description -- heslovitý popis kontextu mazání
+]]
+function ch_core.vyhodit_inventar(player_name, inv, listname, description)
+	if not player_name then
+		player_name = "???"
+	end
+	if not description then
+		description = "???"
+	end
+	local t = inv:get_list(listname)
+	if t == nil then
+		return false
+	end
+	local items = {}
+	for i, stack in ipairs(t) do
+		if not stack:is_empty() then
+			table.insert(items, stack:to_string():sub(1, 1024))
+		end
+	end
+	if #items > 0 then
+		minetest.log("action", "Player "..player_name.." trashed "..#items.." items ("..description.."): "..table.concat(items, ", "))
+		inv:set_list(listname, {})
+		local trash_sound
+		if #items == 1 then
+			trash_sound = ch_core.trash_one_sound
+		else
+			trash_sound = ch_core.trash_all_sound
+		end
+		if trash_sound ~= nil and trash_sound ~= "" then
+			minetest.sound_play(trash_sound, { to_player = player_name, gain = 1.0 })
+		else
+			minetest.chat_send_all("Will not play the sound, because: "..dump2({trash_one_sound = ch_core.trash_one_sound, trash_all_sound = ch_core.trash_all_sound, trash_sound = trash_sound or "nil"}))
+		end
+	end
+	return true
+end
+
+function ch_core.vyhodit_predmet(player_name, stack, description)
+	if not player_name then
+		player_name = "???"
+	end
+	if not description then
+		description = "???"
+	end
+	if stack == nil or stack:is_empty() then
+		return false
+	end
+	minetest.log("action", "Player "..player_name.." trashed an item ("..description.."): "..stack:to_string():sub(1, 1024))
+	local trash_sound = ch_core.trash_one_sound
+	if trash_sound ~= nil and trash_sound ~= "" then
+		minetest.sound_play(trash_sound, { to_player = player_name, gain = 1.0 })
+	else
+		minetest.chat_send_all("Will not play the sound, because: "..dump2({trash_one_sound = ch_core.trash_one_sound, trash_all_sound = ch_core.trash_all_sound, trash_sound = trash_sound or "nil"}))
+	end
+	return true
 end
 
 function ch_core.aktualni_cas()

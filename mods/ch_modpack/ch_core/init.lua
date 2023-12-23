@@ -15,6 +15,8 @@ ch_core = {
 		-- dvere = nil,
 		stred = vector.new(0, 0, 0),
 	},
+	trash_one_sound = "", -- zvuk k přehrání při mazání jednoho předmětu
+	trash_all_sound = "", -- zvuk k přehrání při mazání více předmětů
 }
 
 function ch_core.open_submod(submod, required_submods)

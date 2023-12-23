@@ -54,9 +54,16 @@ homedecor.register("trash_can_green_open", {
 	},
 	on_receive_fields = function(pos, formname, fields, sender)
 		if fields.empty then
+			if ch_core.check_player_role(sender, {"survival", "admin"}) then
+				ch_core.vyhodit_inventar(sender and sender:get_player_name(), minetest.get_meta(pos):get_inventory(), "main", "trash can @ "..minetest.pos_to_string(pos))
+                                           --[[
 			local meta = minetest.get_meta(pos)
 			meta:get_inventory():set_list("main", {})
 			minetest.sound_play("homedecor_trash_all", {to_player=sender:get_player_name(), gain = 1.0})
+                                           ]]
+			else
+				ch_core.systemovy_kanal(sender:get_player_name(), "Jen dělnické postavy mohou využívat odpadkové koše!")
+			end
 		end
 	end
 })
