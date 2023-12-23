@@ -419,8 +419,12 @@ function circular_saw.on_metadata_inventory_put(
 		end
 	elseif listname == "trash" then
 		inv:set_stack("trash", 1, ItemStack())
-		if player ~= nil and minetest.get_modpath("unified_inventory") ~= nil then
-			minetest.sound_play("trash_all", { to_player = player:get_player_name(), gain = 0.8 })
+		local player_name = player and player:get_player_name()
+		if player_name ~= nil then
+			minetest.log("action", "Player "..player_name.." trashed in the circular saw: "..stack:to_string():sub(1, 1024))
+			if minetest.get_modpath("unified_inventory") ~= nil then
+				minetest.sound_play("trash_all", { to_player = player_name, gain = 0.8 })
+			end
 		end
 	end
 end

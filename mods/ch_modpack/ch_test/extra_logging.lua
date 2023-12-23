@@ -1,3 +1,4 @@
+--[[
 local function on_player_inventory_action(player, action, inventory, inventory_info)
 	local message = "player_inventory_action("..player:get_player_name().." @ "..minetest.pos_to_string(vector.round(player:get_pos())).."): "
 	if action == "move" then
@@ -19,6 +20,7 @@ local function on_player_inventory_action(player, action, inventory, inventory_i
 end
 
 minetest.register_on_player_inventory_action(on_player_inventory_action)
+]]
 
 local function on_cheat(player, cheat)
 	local player_name = (player and player:get_player_name()) or "nil"

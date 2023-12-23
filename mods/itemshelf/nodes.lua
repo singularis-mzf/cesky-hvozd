@@ -199,6 +199,9 @@ end
 -- Register nodes and recipes on all minetest_game wood types
 register_node_and_recipe("default:wood", "", "jabloňové dřevo", "default_wood.png")
 register_node_and_recipe("default:pine_wood", "pine", "borové dřevo", "default_pine_wood.png")
-register_node_and_recipe("default:aspen_wood", "aspen", "osikové dřevo", "default_aspen_wood.png")
+-- register_node_and_recipe("default:aspen_wood", "aspen", "osikové dřevo", "default_aspen_wood.png")
 register_node_and_recipe("default:acacia_wood", "acacia", "akáciové dřevo", "default_acacia_wood.png")
 register_node_and_recipe("default:junglewood", "jungle", "džunglovníkové dřevo", "default_junglewood.png")
+if minetest.get_modpath("moretrees") then
+	register_node_and_recipe("moretrees:rubber_tree_planks", "rubbertree", "kaučukovníkové dřevo", "moretrees_rubber_tree_wood.png")
+end

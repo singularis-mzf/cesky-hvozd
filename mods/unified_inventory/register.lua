@@ -22,8 +22,9 @@ local trash = minetest.create_detached_inventory("trash", {
 	--	end
 	--end,
 	on_put = function(inv, listname, index, stack, player)
-		inv:set_stack(listname, index, nil)
 		local player_name = player:get_player_name()
+		minetest.log("action", "Player "..player_name.." trashed in the trash slot: "..stack:to_string():sub(1,1024))
+		inv:set_stack(listname, index, nil)
 		minetest.sound_play("trash", {to_player=player_name, gain = 1.0})
 	end,
 })

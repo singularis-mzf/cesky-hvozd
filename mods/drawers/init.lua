@@ -32,7 +32,7 @@ local NS = S
 drawers = {}
 drawers.drawer_visuals = {}
 
-drawers.WOOD_ITEMSTRING = "group:wood"
+drawers.WOOD_ITEMSTRING = "default:wood"
 if core.get_modpath("default") and default then
 	drawers.WOOD_SOUNDS = default.node_sound_wood_defaults()
 	drawers.CHEST_ITEMSTRING = "default:chest"
@@ -90,7 +90,7 @@ if core.get_modpath("default") and default then
 		groups = {choppy = 3, oddly_breakable_by_hand = 2},
 		sounds = drawers.WOOD_SOUNDS,
 		drawer_stack_max_factor = 100, -- 4 * 8 normal chest size
-		material = drawers.WOOD_ITEMSTRING
+		material = "default:wood"
 	})
 	drawers.register_drawer("drawers:acacia_wood", {
 		description = S("Acacia Wood"),
@@ -105,6 +105,7 @@ if core.get_modpath("default") and default then
 		drawer_stack_max_factor = 100, -- 4 * 8 normal mcl chest size
 		material = "default:acacia_wood"
 	})
+	--[[
 	drawers.register_drawer("drawers:aspen_wood", {
 		description = S("Aspen Wood"),
 		tiles1 = drawers.node_tiles_front_other("drawers_aspen_wood_front_1.png",
@@ -117,7 +118,7 @@ if core.get_modpath("default") and default then
 		sounds = drawers.WOOD_SOUNDS,
 		drawer_stack_max_factor = 100, -- 4 * 8 normal chest size
 		material = "default:aspen_wood"
-	})
+	}) ]]
 	drawers.register_drawer("drawers:junglewood", {
 		description = S("Junglewood"),
 		tiles1 = drawers.node_tiles_front_other("drawers_junglewood_front_1.png",
@@ -145,7 +146,7 @@ if core.get_modpath("default") and default then
 		material = "default:pine_wood"
 	})
 	if core.get_modpath("moretrees") then
-		drawers.register_drawer("drawers:oakwood", {
+		--[[ drawers.register_drawer("drawers:oakwood", {
 			description = S("Oak Wood"),
 			tiles1 = drawers.node_tiles_front_other("drawers_oak_wood_front_1.png", "drawers_oak_wood.png"),
 			tiles2 = drawers.node_tiles_front_other("drawers_oak_wood_front_2.png", "drawers_oak_wood.png"),
@@ -154,7 +155,7 @@ if core.get_modpath("default") and default then
 			sounds = drawers.WOOD_SOUNDS,
 			drawer_stack_max_factor = 100,
 			material = "moretrees:oak_planks",
-		})
+		}) ]]
 		drawers.register_drawer("drawers:birchwood", {
 			description = S("Birch Wood"),
 			tiles1 = drawers.node_tiles_front_other("drawers_birch_wood_front_1.png", "drawers_birch_wood.png"),
