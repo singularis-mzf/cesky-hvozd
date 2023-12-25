@@ -3,6 +3,7 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 local modpath = minetest.get_modpath("ch_overrides")
 
 local mods = {
+	"books",
 	"cavestuff",
 	"darkage",
 	"default",
