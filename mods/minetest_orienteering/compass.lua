@@ -16,11 +16,10 @@ local barvy = {
 }
 local barvy_text
 local barvy_color_to_index
-local cisla = {1, 2, 3, 4, 5, 6, 7, 8, 9}
 local xy_00 = {x = 0, y = 0}
-local default_player_form = {number = 1, pos = vector.zero()}
-local item_description = "Builder Compass (unset)"
-local item_description_N = "Builder Compass @1"
+local default_player_form = {abbr = "", pos = vector.zero()}
+local item_description_unset = "Builder Compass (unset)"
+local item_description_set = "Builder Compass"
 local ch_help = "Je-li na výběrové liště, ukazuje směr do jednoho nebo více uložených cílů.\nLevým kliknutím vyvoláte formulář pro změnu názvu či pozice cíle."
 local ch_help_group = "o:bc"
 
@@ -35,7 +34,7 @@ barvy_text = table.concat(barvy_text, ",")
 
 -- VARIABLE DATA
 local player_huds = {} -- player_name = {compass_hash = {hud_id, ...}}
-local player_forms = {} -- player_name = {name = string, number = 1..9, color_index = 1..N}
+local player_forms = {} -- player_name = {abbr = string, pos = vector, owner = string?, cil[1-6], titulek[1-6], barva[1-6]}
 
 -- JOIN/LEAVE PLAYER
 minetest.register_on_joinplayer(function(player, last_login)
@@ -65,26 +64,33 @@ local function new_target(name, color_index, pos)
 	return {name = name, color = barvy[color_index].color, pos = pos}
 end
 
--- number = compass number (1..9)
+-- abbr = compass abbreviation (0 to 4 chars)
 -- data = list of compass targets
-local function serialize_compass(number, targets)
-	if number < 1 or number > 9 or number ~= math.floor(number) or type(targets) ~= "table" then
-		minetest.log("error", "serialize_compass() called with invalid arguments: "..dump2({number, targets}))
+-- owner = name of the owner of a locked compass; nil if the compass is not locked
+local function serialize_compass(abbr, targets, owner)
+	if type(targets) ~= "table" then
+		minetest.log("error", "serialize_compass() called with invalid arguments: "..dump2({abbr, targets, owner}))
 		return ItemStack()
 	end
-	local result = ItemStack("orienteering:builder_compass_"..number)
-	local meta = result:get_meta()
-	-- print("DEBUG: Will serialize compass with these targets: "..dump2(targets))
+	local result, meta
+	if owner == nil or owner == "" then
+		owner = nil
+		result = ItemStack("orienteering:builder_compass_1")
+		meta = result:get_meta()
+	else
+		result = ItemStack("orienteering:builder_compass_locked")
+		meta = result:get_meta()
+		meta:set_string("owner", owner)
+	end
 	local bc_data = minetest.serialize(targets)
 	local bc_data_hash = minetest.sha1(bc_data, true)
 	local bc_data_hash_int = string.byte(bc_data_hash, 1)
 	bc_data_hash_int = 256 * bc_data_hash_int + string.byte(bc_data_hash, 2)
 	bc_data_hash_int = 256 * bc_data_hash_int + string.byte(bc_data_hash, 3)
 	bc_data_hash_int = 128 * bc_data_hash_int + math.floor(string.byte(bc_data_hash, 4) / 2)
-	meta:set_string("bc_data", bc_data)
-	meta:set_int("bc_hash", bc_data_hash_int)
 
 	-- description
+	local description
 	local target_names = {}
 	for i, position in ipairs(targets) do
 		if targets[i].name ~= "" then
@@ -93,11 +99,16 @@ local function serialize_compass(number, targets)
 	end
 	if #target_names == 0 then
 		-- no targets
-		meta:set_string("description", S(item_description_N, tostring(number)))
+		description = S(item_description_set)
 	else
-		local new_description = ch_core.utf8_truncate_right(table.concat(target_names, ", "), 80).." ["..S(item_description_N, tostring(number)).."]"
-		meta:set_string("description", new_description)
+		description = ch_core.utf8_truncate_right(table.concat(target_names, ", "), 80).." ["..S(item_description_set).."]"
 	end
+
+	meta:set_string("bc_data", bc_data)
+	meta:set_int("bc_hash", bc_data_hash_int)
+	meta:set_int("count_alignment", 10)
+	meta:set_string("count_meta", ch_core.utf8_truncate_right(abbr or "", 4, ""))
+	meta:set_string("description", description)
 
 	minetest.log("info", "Builder compass targets serialized with hash "..bc_data_hash_int)
 	-- print("Builder compass targets serialized with hash "..bc_data_hash_int)
@@ -105,21 +116,28 @@ local function serialize_compass(number, targets)
 end
 
 local function deserialize_compass(itemstack)
-	-- => 0, nil or number, {{name, color, pos}...}
+	-- RESULT:
+	-- a) "", nil, nil (not a compass)
+	-- b) string abbr, {{name, color, pos}..., owner or nil
 	if not itemstack or itemstack:is_empty() then
-		return 0, nil
+		return "", nil, nil
 	end
-	local number = get_item_group(itemstack:get_name(), "builder_compass")
-	if number == 0 then
-		return 0, nil
+	local name = itemstack:get_name()
+	if get_item_group(name, "builder_compass") == 0 then
+		return "", nil, nil -- not a compass
 	end
 	local meta = itemstack:get_meta()
 	local data = meta:get_string("bc_data")
 	if data ~= "" then
-		return number, minetest.deserialize(data)
+		data= minetest.deserialize(data)
 	else
-		return number, {}
+		data = {}
 	end
+	local owner = meta:get_string("owner")
+	if owner == "" then
+		owner = nil
+	end
+	return meta:get_string("count_meta"), data, owner
 end
 
 local function show_bc_formspec(player_name, options)
@@ -128,16 +146,15 @@ local function show_bc_formspec(player_name, options)
 		"formspec_version[4]",
 		"size[10,9.25]",
 		"label[0.375,0.5;Stavitelský kompas]",
-		"item_image_button[8.625,0.375;1,1;orienteering:builder_compass_", form_data.number, ";img;]",
-		"dropdown[8.625,1.5;1.0,0.5;number;1,2,3,4,5,6,7,8,9;", form_data.number, "]",
+		"field[3,0.25;1.25,0.5;abbr;;", F(form_data.abbr), "]",
 		"field[0.375,1.5;3.25,0.5;poloha;Vaše poloha:;",
-		form_data.pos.x, ",", form_data.pos.y, ",", form_data.pos.z, "]",
+		form_data.pos.x, "\\,", form_data.pos.y, "\\,", form_data.pos.z, "]",
 		"label[0.375,2.75;Cíl]",
 		"label[3.75,2.75;Titulek]",
 		"label[7.1,2.75;Barva]",
-		"label[0.375,8.75;Tip: Pro smazání cíle mu nechte prázdný titulek.]",
 	}
 
+	-- targets 1 to 6:
 	for i = 1,6 do
 		local y = 2.25 + i * 0.75
 		table.insert(formspec, "field[0.375,"..y.. ";3.25,0.5;cil"..i..";;"..(form_data["cil"..i] or "0,0,0").."]")
@@ -145,8 +162,44 @@ local function show_bc_formspec(player_name, options)
 		table.insert(formspec, "dropdown[7.1,"..y..";2,0.5;barva"..i..";"..barvy_text..";"..(form_data["barva"..i] or 1)..";true]")
 	end
 
-	table.insert(formspec, "button_exit[0.375,7.5;9.25,0.75;ulozit;uložit]")
-	return minetest.show_formspec(player_name, "orienteering:builder_compass", table.concat(formspec))
+	local formspec_variant
+	local owner = form_data.owner
+	local player_role = ch_core.get_player_role(player_name)
+	if player_role == "new" then
+		formspec_variant = "new"
+	elseif owner == nil then
+		formspec_variant = "open_compass"
+	elseif player_role == "admin" then
+		formspec_variant = "admin"
+	elseif owner == player_name then
+		formspec_variant = "owner"
+	else
+		formspec_variant = "other_player"
+	end
+
+	-- lock/unlock compass button
+	if formspec_variant == "other_player" or (formspec_variant == "new" and formspec_variant ~= nil) then
+		table.insert(formspec, "label[4.0,1.25;Kompas zamknut od:]"..
+			"label[4.0,1.75;"..F(ch_core.prihlasovaci_na_zobrazovaci(owner)).."]")
+	elseif formspec_variant == "open_compass" then
+		table.insert(formspec, "button[4.0,1.0;4,1;lock;zamknout kompas]")
+	elseif formspec_variant == "admin" then
+		table.insert(formspec, "button[4.0,1.0;4,1;unlock;odemknout kompas ("..F(ch_core.prihlasovaci_na_zobrazovaci(owner))..")]")
+	elseif formspec_variant == "owner" then
+		table.insert(formspec, "button[4.0,1.0;4,1;unlock;odemknout kompas]")
+	end
+
+	-- save/close button
+	table.insert(formspec, "button_exit[0.375,7.5;9.25,0.75;")
+	if formspec_variant == "new" or formspec_variant == "other_player" then
+		table.insert(formspec, "zavrit;zavřít bez uložení]")
+	else
+		table.insert(formspec, "ulozit;uložit]"..
+			"label[0.375,8.75;Tip: Pro smazání cíle mu nechte prázdný titulek.]")
+	end
+	formspec = table.concat(formspec)
+	-- print("DEBUG: dump = "..dump2({formspec = formspec, player_role = player_role, formspec_variant = formspec_variant}))
+	return minetest.show_formspec(player_name, "orienteering:builder_compass", formspec)
 end
 
 local function bc_on_use(itemstack, player, pointed_thing)
@@ -160,14 +213,15 @@ local function bc_on_use(itemstack, player, pointed_thing)
 		return
 	end
 	local witem = inv:get_stack("main", player:get_wield_index()) or ItemStack()
-	local number, targets = deserialize_compass(witem)
-	if number == 0 then
+	local abbr, targets, owner = deserialize_compass(witem)
+	if targets == nil then
 		minetest.log("warning", "bc_on_use() called on itemstack of "..(witem:get_name()))
 		return
 	end
 	local pf = {
-		number = number,
+		abbr = abbr,
 		pos = pos,
+		owner = owner,
 	}
 	for i = 1, math.min(#targets, 6) do
 		local tpos = vector.round(targets[i].pos)
@@ -185,9 +239,48 @@ local function on_player_receive_fields(player, formname, fields)
 		return false
 	end
 	local player_name = player:get_player_name()
-	if fields.close then
+	if fields.zavrit then
 		player_forms[player_name] = nil
 		return true
+	end
+	if fields.lock then
+		local inv = player:get_inventory()
+		if not inv then
+			return false
+		end
+		local windex = player:get_wield_index()
+		local stack = inv:get_stack("main", windex)
+		local name = stack:get_name()
+		if minetest.get_item_group(name, "builder_compass") == 0 then
+			return false -- not a compass
+		end
+		if name ~= "orienteering:builder_compass_locked" then
+			stack:get_meta():set_string("owner", player_name)
+			player_forms[player_name].owner = player_name
+			stack:set_name("orienteering:builder_compass_locked")
+			inv:set_stack("main", windex, stack)
+		end
+		show_bc_formspec(player_name, {})
+		return
+	elseif fields.unlock then
+		local inv = player:get_inventory()
+		if not inv then
+			return false
+		end
+		local windex = player:get_wield_index()
+		local stack = inv:get_stack("main", windex)
+		local name = stack:get_name()
+		if minetest.get_item_group(name, "builder_compass") == 0 then
+			return false -- not a compass
+		end
+		if name == "orienteering:builder_compass_locked" then
+			stack:get_meta():set_string("owner", "")
+			player_forms[player_name].owner = nil
+			stack:set_name("orienteering:builder_compass_1")
+			inv:set_stack("main", windex, stack)
+		end
+		show_bc_formspec(player_name, {})
+		return
 	end
 	if not fields.ulozit then
 		return true
@@ -201,14 +294,8 @@ local function on_player_receive_fields(player, formname, fields)
 	end
 
 	-- update current_form from fields
-	if fields.number then
-		local new_number = tonumber(fields.number)
-		if new_number then
-			new_number = math.floor(new_number)
-			if 1 <= new_number and new_number <= 9 then
-				current_form.number = new_number
-			end
-		end
+	if fields.abbr then
+		current_form.abbr = ch_core.utf8_truncate_right(fields.abbr, 4, "")
 	end
 	local new_targets = {}
 	for i = 1, 6 do
@@ -245,7 +332,7 @@ local function on_player_receive_fields(player, formname, fields)
 		return false
 	end
 	local windex = player:get_wield_index()
-	inv:set_stack("main", windex, serialize_compass(current_form.number, new_targets))
+	inv:set_stack("main", windex, serialize_compass(current_form.abbr, new_targets, current_form.owner))
 	return true
 end
 minetest.register_on_player_receive_fields(on_player_receive_fields)
@@ -290,9 +377,9 @@ local function update_bc_player_huds(player)
 					huds_to_remove_by_hash[hash] = nil -- HUDs for this compass still exist
 				else
 					local huds_to_add = {}
-					local number, data = deserialize_compass(hotbar[i])
-					minetest.log("verbose", "deserialize_compass() results: "..number..", "..type(data))
-					if number > 0 then
+					local abbr, data, owner = deserialize_compass(hotbar[i])
+					minetest.log("verbose", "deserialize_compass() results: "..(abbr or "nil")..", "..type(data))
+					if data ~= nil then
 						for _, position in ipairs(data) do
 							local hud_def = {
 								-- constant fields:
@@ -349,27 +436,29 @@ local function update_bc_player_huds(player)
 end
 
 -- ITEMS REGISTRATION
+local def = {
+	description = S(item_description_unset),
+	_ch_help = ch_help,
+	_ch_help_group = ch_help_group,
+	wield_image = "orienteering_bcompass.png",
+	inventory_image = "orienteering_bcompass.png",
+	on_use = bc_on_use,
+	groups = {builder_compass = 1},
+}
 
 for i = 1, 9 do
-	local groups = {builder_compass = i}
-	if i > 1 then
-		groups.not_in_creative_inventory = 1
+	minetest.register_tool("orienteering:builder_compass_"..i, table.copy(def))
+	if i == 1 then
+		def.groups = table.copy(def.groups)
+		def.groups.not_in_creative_inventory = 1
 	end
-	minetest.register_tool("orienteering:builder_compass_"..i, {
-		description = S(item_description),
-		_ch_help = ch_help,
-		_ch_help_group = ch_help_group,
-		wield_image = "orienteering_compass_wield.png^ch_core_"..i..".png",
-		inventory_image = "orienteering_compass_inv.png^ch_core_"..i..".png",
-		stack_max = 1,
-		on_use = bc_on_use,
-		groups = groups,
-	})
 	minetest.register_craft({
 		output = "orienteering:builder_compass_1",
 		recipe = {{"orienteering:builder_compass_"..i}},
 	})
 end
+def.description = S(item_description_set)
+minetest.register_tool("orienteering:builder_compass_locked", def)
 
 -- CRAFT
 
