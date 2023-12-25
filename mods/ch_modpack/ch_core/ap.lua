@@ -5,7 +5,8 @@ ch_core.open_submod("ap", {chat = true, data = true, hud = true, lib = true})
 local ap_increase = 2
 local ap_decrease = 1
 local ap_min = 0
-local ap_max = 26
+local ap_max_default = 26
+local ap_max_book = 10
 local min, max = math.min, math.max
 local def
 
@@ -152,17 +153,11 @@ add_level(126, 3975300)
 add_level(127, 4038600)
 add_level(128, 4102400)
 
---[[ local function clip_coef(coef)
-	if coef > ap_max then
-		return ap_max
-	elseif coef < ap_min then
-		return ap_min
-	else
-		return coef
-	end
-end ]]
-
 local function adjust_coef(t, key, amount)
+	local ap_max = ap_max_default
+	if key == "book_coef" then
+		ap_max = ap_max_book
+	end
 	local value = t[key] + amount
 	if value > ap_max then
 		value = ap_max
@@ -322,6 +317,7 @@ function ch_core.ap_add(player_name, offline_charinfo, points_to_add, debug_coef
 
 	if debug_coef_changes then
 		minetest.log("info", player_name..": level_op="..(new_level > old_level and ">" or new_level < old_level and "<" or "=")..", level="..old_level.."=>"..new_level..", xp="..old_xp.."=>"..new_xp..", coefs = "..table.concat(debug_coef_changes))
+		print("DEBUG: "..player_name..": level_op="..(new_level > old_level and ">" or new_level < old_level and "<" or "=")..", level="..old_level.."=>"..new_level..", xp="..old_xp.."=>"..new_xp..", coefs = "..table.concat(debug_coef_changes))
 	end
 
 	-- oznámit

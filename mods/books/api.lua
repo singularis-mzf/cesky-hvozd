@@ -44,6 +44,7 @@ local lpp = 30 -- Lines per book's page
 local author_color = "#00FF00"
 local title_color = "#FFFF00"
 local append_limit = 2048
+local ap_increase_counter = 8 -- (8 * 15 seconds = 2 minutes)
 
 -- Access levels:
 local READ_ONLY = 0 -- player can only read the book
@@ -114,14 +115,43 @@ end
 
 local function increase_ap(player_name)
 	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
-	if online_charinfo then
+	if online_charinfo ~= nil then
 		local ap = online_charinfo.ap
-		if ap then
+		if ap ~= nil then
 			ap.book_gen = ap.book_gen + 1
 			return true
 		end
 	end
 	return false
+end
+
+local function ap_increase_tick(player_name, counter, expected_book_gen)
+	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
+	if counter > 0 and online_charinfo ~= nil then
+		local ap = online_charinfo.ap
+		if ap ~= nil and ap.book_gen == expected_book_gen then
+			local new_book_gen = expected_book_gen + 1
+			ap.book_gen = new_book_gen
+			if counter > 1 then
+				minetest.after(15, ap_increase_tick, player_name, counter - 1, new_book_gen)
+			end
+		end
+	end
+end
+
+local function start_ap_increase(player_name, counter)
+	if counter <= 0 then
+		return
+	end
+	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
+	if online_charinfo == nil then
+		return
+	end
+	local ap = online_charinfo.ap
+	if ap == nil then
+		return
+	end
+	return ap_increase_tick(player_name, counter, ap.book_gen)
 end
 
 local function get_text_by_ick(ick)
@@ -256,6 +286,7 @@ local function player_close_book(player_name)
 	if current_book ~= nil then
 		minetest.log("action", "[books] Player "..player_name..": closing book '"..(current_book.title or "nil").."'"..ifthenelse(current_book.pos ~= nil, " @ "..minetest.pos_to_string(current_book.pos or vector.zero()), "")..".")
 		player_to_book[player_name] = nil
+		increase_ap(player_name)
 	end
 end
 
@@ -264,6 +295,7 @@ local function player_open_book(player_name, meta, pos)
 	local new_book = load_book(meta, pos, player_name)
 	minetest.log("action", "[books] Player "..player_name..": opening book '"..(new_book.title or "nil").."'"..ifthenelse(new_book.pos ~= nil, " @ "..minetest.pos_to_string(new_book.pos or vector.zero()), "").." with access level "..new_book.access_level..".")
 	player_to_book[player_name] = new_book
+	increase_ap(player_name)
 	return new_book
 end
 
@@ -619,7 +651,7 @@ local function formspec_callback(custom_state, player, formname, fields)
 		end
 		meta:set_int("page", book.page)
 		if book.page ~= current_page then
-			increase_ap(player_name)
+			start_ap_increase(player_name, ap_increase_counter)
 		end
 		if pos == nil then
 			player:set_wielded_item(item)
@@ -752,6 +784,7 @@ function books.open_on_rightclick(pos, node, clicker, itemstack, pointed_thing)
 			owner = owner,
 			access_level = player_to_book[player_name].access_level,
 		}, {})
+		start_ap_increase(player_name, ap_increase_counter)
 	end
 end
 
@@ -809,6 +842,7 @@ function books.on_use(itemstack, user, pointed_thing)
 				type = "item",
 				owner = owner,
 			}, {})
+			start_ap_increase(player_name, ap_increase_counter)
 			return itemstack
 		end
 	end
