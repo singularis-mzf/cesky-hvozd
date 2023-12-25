@@ -1,5 +1,8 @@
 -- mods/default/crafting.lua
 
+local expect_compactor = minetest.settings:get_bool("ch_expect_compactor", false)
+local expect_technic = minetest.settings:get_bool("ch_expect_technic", false)
+
 minetest.register_craft({
 	output = "default:wood 4",
 	recipe = {
@@ -74,6 +77,8 @@ minetest.register_craft({
 	}
 })
 
+if not expect_compactor then
+
 minetest.register_craft({
 	output = "default:coalblock",
 	recipe = {
@@ -143,7 +148,9 @@ minetest.register_craft({
 		{"default:diamond", "default:diamond", "default:diamond"},
 	}
 })
+end -- not expect_compactor
 
+if not expect_technic then
 minetest.register_craft({
 	output = "default:sandstone",
 	recipe = {
@@ -158,6 +165,7 @@ minetest.register_craft({
 		{"default:sandstone"},
 	}
 })
+end
 
 minetest.register_craft({
 	output = "default:sandstonebrick 4",
@@ -256,6 +264,7 @@ minetest.register_craft({
 	}
 })
 
+--[[
 minetest.register_craft({
 	output = "default:bookshelf",
 	recipe = {
@@ -264,6 +273,7 @@ minetest.register_craft({
 		{"group:wood", "group:wood", "group:wood"},
 	}
 })
+]]
 
 minetest.register_craft({
 	output = "default:ladder_wood 5",
