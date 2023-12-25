@@ -13,5 +13,9 @@ dofile(modpath.."/4dirtest.lua")
 ----
 dofile(modpath.."/array_stats.lua")
 
+local expect_compactor = minetest.settings:get_bool("ch_expect_compactor", false)
+
+print("expect_compactor is "..(expect_compactor and "true" or "false"))
+
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 

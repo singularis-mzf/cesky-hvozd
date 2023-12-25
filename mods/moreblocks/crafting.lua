@@ -12,6 +12,8 @@ minetest.register_craft({
 })
 ]]
 
+local expect_compactor = minetest.settings:get_bool("ch_expect_compactor", false)
+
 minetest.register_craft({
 	output = "default:stick",
 	recipe = {{"group:sapling"},}
@@ -217,11 +219,13 @@ minetest.register_craft({
 	replacements = {{"vessels:shelf", "vessels:glass_bottle 3"}},
 })
 
+--[[
 minetest.register_craft({
 	type = "shapeless",
 	output = "default:bookshelf",
 	recipe = {"moreblocks:empty_shelf", "default:book", "default:book", "default:book"},
 })
+]]
 
 minetest.register_craft({
 	output = "moreblocks:empty_shelf",
@@ -572,6 +576,7 @@ minetest.register_craft({
 	}
 })
 
+if not expect_compactor then
 minetest.register_craft({
 	output = "moreblocks:dirt_compressed",
 	recipe = {
@@ -617,6 +622,7 @@ minetest.register_craft({
 		{"moreblocks:desert_cobble_compressed"},
 	}
 })
+end
 
 minetest.register_craft({
 	type = "cooking", output = "moreblocks:tar", recipe = "default:pine_tree",
@@ -631,12 +637,14 @@ minetest.register_craft({
 	}
 })
 
+if not expect_compactor then
 minetest.register_craft({
 	output = "default:copper_ingot 9",
 	recipe = {
 		{"moreblocks:copperpatina"},
 	}
 })
+end
 
 if minetest.settings:get_bool("moreblocks.circular_saw_crafting") ~= false then -- “If nil or true then”
 	minetest.register_craft({

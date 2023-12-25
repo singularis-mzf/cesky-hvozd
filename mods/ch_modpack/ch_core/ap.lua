@@ -258,8 +258,10 @@ function ch_core.ap_init(player, online_charinfo, offline_charinfo)
 		chat_sepot_gen = 0,
 		chat_soukromy_gen = 0,
 		craft_gen = 0,
+		book_gen = 0,
 
 		-- koeficienty
+		book_coef = default_coef,
 		craft_coef = default_coef,
 		chat_coef = default_coef,
 		dig_coef = default_coef,
@@ -342,6 +344,7 @@ function ch_core.ap_update(player, online_charinfo, offline_charinfo)
 	online_charinfo.ap = ap_new
 
 	-- aktivity
+	local act_book = ap.book_gen > ap1.book_gen
 	local act_chat = ap.chat_mistni_gen > ap1.chat_mistni_gen or ap.chat_celoserverovy_gen > ap1.chat_celoserverovy_gen or ap.chat_sepot_gen > ap1.chat_sepot_gen or ap.chat_soukromy_gen > ap1.chat_soukromy_gen
 	local act_craft = ap.craft_gen > ap1.craft_gen
 	local act_dig = ap.dig_gen > ap1.dig_gen and (not ap.dig_pos or not ap1.dig_pos or not ap2.dig_pos or vector.angle(vector.subtract(ap2.dig_pos, ap1.dig_pos), vector.subtract(ap1.dig_pos, ap.dig_pos)) ~= 0)
@@ -351,7 +354,7 @@ function ch_core.ap_update(player, online_charinfo, offline_charinfo)
 	local act_any = act_chat or act_craft or act_dig or act_place or act_walk
 	local debug_coef_changes = {}
 
-	for coef_key, active in pairs({chat_coef = act_chat, craft_coef = act_craft, dig_coef = act_dig, place_coef = act_place, walk_coef = act_walk}) do
+	for coef_key, active in pairs({book_coef = act_book, chat_coef = act_chat, craft_coef = act_craft, dig_coef = act_dig, place_coef = act_place, walk_coef = act_walk}) do
 		local adjustment
 		if not active then
 			adjustment = -ap_decrease

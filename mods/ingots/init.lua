@@ -53,6 +53,7 @@ local color_to_ingot = {
 	"default:gold_ingot", -- 14
 	"default:steel_ingot", -- 15
 	"technic:uranium0_ingot", -- 16
+	"aloz:aluminum_ingot", -- 17
 }
 
 local ingot_to_color = table.key_value_swap(color_to_ingot)

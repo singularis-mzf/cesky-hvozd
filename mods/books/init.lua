@@ -12,8 +12,8 @@ Book metadata for all books:
 	string title -- display title of the book
 	string lastedit -- the latest timestamp when the book was saved
 	string copyright -- license info for the book (if available)
-	int page -- stránka, na které je kniha otevřená, nebo 0, pokud je otevřená na titulní stránce (nekopíruje se)
-	int page_max -- počet stránek v knize (nekopíruje se)
+	string style -- appearance style of the book
+	int page -- page where the book is currently openned; 0 means the title page
 
 Book metadata for books with IČK:
 	string ick -- IČK of the book
@@ -21,17 +21,27 @@ Book metadata for books with IČK:
 
 Book metadata for books without IČK:
 	string text -- text of the book
+	int public -- access level for registered players who are not owner of the book or admin
 ]]
 
-books = {}
+books = {
+	styles = {
+		default = {
+			description = "výchozí styl"
+		},
+	},
+}
 
-local metadata_keys = {
-	"author", "owner", "title", "lastedit", "copyright", "ick", "edition", "text"
+local metadata_keys_int = {
+	"public"
+}
+local metadata_keys_string = {
+	"author", "owner", "title", "lastedit", "copyright", "ick", "edition", "style", "text"
 }
 
 local player_to_book = {
 	-- each player may have one openned book
-	-- [player_name] = {pos?, bool can_edit, author, owner, title, lastedit, copyright, ick, edition, text, page0, page1, ..., page_max}
+	-- [player_name] = {pos?, access_level, author, owner, title, lastedit, copyright, ick, edition, public, style, text, page0, page1, ..., page_max}
 }
 
 -- Translation support
@@ -41,6 +51,14 @@ local F = minetest.formspec_escape
 local lpp = 30 -- Lines per book's page
 local author_color = "#00FF00"
 local title_color = "#FFFF00"
+local append_limit = 2048
+
+-- Access levels:
+local READ_ONLY = 0 -- player can only read the book
+local APPEND_ONLY = 1 -- player can read the book and append a short signed texts
+local PREPEND_ONLY = 2 -- player can read the book and prepend a short signed texts
+local READ_WRITE = 3 -- player can edit the text of the book only
+local FULL_ACCESS = 4 -- player can edit the book fully
 
 local function ifthenelse(condition, true_result, false_result)
 	if condition then
@@ -50,6 +68,49 @@ local function ifthenelse(condition, true_result, false_result)
 	end
 end
 
+local description_to_style = {
+	[books.styles.default.description] = "default",
+}
+
+function books.register_book_style(name, def)
+	if name == nil or name == "" or name == "default" then
+		error("[books] Invalid book style name \""..(name or "nil").."\"!")
+	end
+	local description = def.description
+	if description == nil or description == "" then
+		error("[books] Invalid book style description!")
+	end
+	if description_to_style[description] ~= nil then
+		error("[books] Duplicit book style description \""..description.."\"!")
+	end
+	description_to_style[description] = name
+	books.styles[name] = def
+	return true
+end
+
+local style_description_list -- a list of descriptions for a formspec
+local style_to_index -- style name to index in the list
+local function on_mods_loaded()
+	local list = {""}
+	for desc, style in pairs(description_to_style) do
+		if style ~= "default" then
+			table.insert(list, description)
+		end
+	end
+	table.sort(list)
+	if list[1] ~= "" then
+		error("[books] Internal error: bad description sorting!")
+	end
+	list[1] = books.styles.default.description
+	style_to_index = {}
+	for i = 1, #list do
+		style_to_index[description_to_style[list[i]]] = i
+		list[i] = F(list[i])
+	end
+	style_description_list = table.concat(list, ",")
+end
+minetest.register_on_mods_loaded(on_mods_loaded)
+
 --[[
 local function copy_book_metadata(frommeta, tometa)
 	for _, k in ipairs(metadata_keys) do
@@ -57,6 +118,18 @@ local function copy_book_metadata(frommeta, tometa)
 	end
 end
 ]]
+
+local function increase_ap(player_name)
+	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
+	if online_charinfo then
+		local ap = online_charinfo.ap
+		if ap then
+			ap.book_gen = ap.book_gen + 1
+			return true
+		end
+	end
+	return false
+end
 
 local function get_text_by_ick(ick)
 	if ick == nil then
@@ -106,10 +179,12 @@ local function read_book_page(lines, start_index, allow_empty_lines_on_start) --
 	return table.concat(buffer, "\n"), i
 end
 
-local function load_book(meta, pos, can_edit)
+--[[
+	NOTE: both pos and player_name may be nil! (meta must not be nil)
+]]
+local function load_book(meta, pos, player_name)
 	local result = {
 		pos = pos,
-		can_edit = can_edit,
 		author = meta:get_string("author"),
 		owner = meta:get_string("owner"),
 		title = meta:get_string("title"),
@@ -117,8 +192,13 @@ local function load_book(meta, pos, can_edit)
 		lastedit = meta:get_string("lastedit"),
 		copyright = meta:get_string("copyright"),
 		ick = meta:get_string("ick"),
-		page = meta:get_int("page")
+		page = meta:get_int("page"),
+		public = meta:get_int("public"),
+		style = meta:get_string("style"),
 	}
+	if books.styles[result.style] == nil then
+		result.style = "default"
+	end
 	if result.ick == "" then
 		result.text = meta:get_string("text")
 	else
@@ -152,10 +232,28 @@ local function load_book(meta, pos, can_edit)
 	else
 		result.page_max = page
 	end
-	if result.page < 0 or result.page > result.page_max then
-		result.page = 1
-		meta:set_int("page", 1)
+	result.page = math.max(0, math.min(result.page_max, result.page))
+
+	-- Access level:
+	if player_name == nil then
+		-- no player => read-only access
+		result.access_level = READ_ONLY
+	elseif minetest.check_player_privs(player_name, "protection_bypass") then
+		-- admin => full access
+		result.access_level = FULL_ACCESS
+	elseif not minetest.check_player_privs(player_name, "ch_registered_player") then
+		-- a new player => read-only access
+		result.access_level = READ_ONLY
+	elseif player_name == result.owner then
+		-- owner => full access
+		result.access_level = FULL_ACCESS
+	elseif result.public == READ_WRITE or result.public == PREPEND_ONLY or result.public == APPEND_ONLY then
+		-- access acording to the "public" setting
+		result.access_level = result.public
+	else
+		result.access_level = READ_ONLY
 	end
+
 	return result
 end
 
@@ -167,10 +265,10 @@ local function player_close_book(player_name)
 	end
 end
 
-local function player_open_book(player_name, meta, pos, can_edit)
+local function player_open_book(player_name, meta, pos)
 	player_close_book(player_name)
-	local new_book = load_book(meta, pos, can_edit)
-	minetest.log("action", "[books] Player "..player_name..": opening book '"..(new_book.title or "nil").."'"..ifthenelse(new_book.pos ~= nil, " @ "..minetest.pos_to_string(new_book.pos or vector.zero()), "")..".")
+	local new_book = load_book(meta, pos, player_name)
+	minetest.log("action", "[books] Player "..player_name..": opening book '"..(new_book.title or "nil").."'"..ifthenelse(new_book.pos ~= nil, " @ "..minetest.pos_to_string(new_book.pos or vector.zero()), "").." with access level "..new_book.access_level..".")
 	player_to_book[player_name] = new_book
 	return new_book
 end
@@ -206,9 +304,15 @@ local function get_book_read_formspec(player_name)
 		"label[4.9,13.15;z "..book.page_max.."]",
 		ifthenelse(book.page ~= book.page_max, "button[5.75,12.75;0.8,0.8;book_next;>]", ""),
 		ifthenelse(book.page ~= book.page_max, "button[6.75,12.75;0.8,0.8;book_last;>>]", ""),
-		ifthenelse(book.can_edit, "button[8,12.75;3,0.8;book_edit;upravit knihu]", ""),
 		ifthenelse(book.ick ~= "", "label[11.25,13.15;IČK: "..book.ick.."]", ""),
 	}
+	if book.access_level == FULL_ACCESS then
+		table.insert(formspec, "button[8,12.75;3,0.8;book_edit;upravit knihu]")
+	elseif book.access_level == READ_WRITE then
+		table.insert(formspec, "button[8,12.75;3,0.8;book_edit;upravit text]")
+	elseif book.access_level == APPEND_ONLY or book.access_level == PREPEND_ONLY then
+		table.insert(formspec, "button[8,12.75;3,0.8;book_edit;připojit úryvek]")
+	end
 	return table.concat(formspec)
 end
 
@@ -223,47 +327,109 @@ local function get_book_edit_formspec(player_name)
 		default.gui_bg,
 		default.gui_bg_img,
 		"button_exit[13,0.25;0.8,0.8;close;X]",
-		"textarea[0.375,11.6;12.75,3;;;Texty knih nejsou soukromé. Uložením či vydáním knihy souhlasíte, že vložený obsah může být s kopií herního světa předán kterémukoliv hráči/ce, který na Českém hvozdu hrál, hraje či bude hrát. Nevkládejte prosím obsah, k němuž nemůžete takové oprávnění poskytnout.]",
-		"label[0.375,0.5;Úprava knihy]",
-		"field[0.375,1.25;9.75,0.5;author;Autor/ka (jak má být uveden/a):;",
-		F(ifthenelse(book.author ~= "", book.author, ch_core.prihlasovaci_na_zobrazovaci(player_name))),
-		"]",
-		ifthenelse(
-			minetest.check_player_privs(player_name, "protection_bypass"),
-			"field[10.375,1.25;3,0.5;owner;Vlastní:;"..F(book.owner).."]",
-			""),
-		"field[0.375,2.25;9.75,0.5;title;Titul (popř. podtitul) knihy:;",
-		F(book.title),
-		"]",
-		"field[10.375,2.25;3,0.5;edition;Vydání:;",
-		F(ifthenelse(book.edition ~= "", book.edition, "1. vyd.")),
-		"]",
-		"textarea[0.375,3.25;13,1;copyright;Copyright (jen je-li potřeba uvést):;",
-		F(book.copyright),
-		"]",
-		"label[0.375,4.5;Poslední úprava knihy: ",
+		"textarea[0.375,11.6;12.75,3;;;Texty knih nejsou soukromé. Uložením či vydáním knihy souhlasíte, že vložený obsah může být s kopií herního světa předán kterémukoliv hráči/ce, který na Českém hvozdu hrál, hraje či bude hrát. Nevkládejte prosím obsah, k němuž nemůžete takové oprávnění poskytnout.]"
+	}
+	local s
+	local access_level = book.access_level
+	if access_level == FULL_ACCESS then
+		s = "Úprava knihy"
+	elseif access_level == READ_WRITE then
+		s = "Úprava textu"
+	elseif access_level == APPEND_ONLY or access_level == PREPEND_ONLY then
+		s = "Připojení úryvku"
+	else
+		s = "Připojení úryvku"
+		access_level = APPEND_ONLY
+	end
+	table.insert(formspec, "label[0.375,0.5;"..s.."]")
+	if access_level == APPEND_ONLY or access_level == PREPEND_ONLY then
+		table.insert_all(formspec, {
+			"textarea[1,1;12,3;;;Upozornění: Správce/yně této knihy vám umožňuje do této knihy připsat krátký příspěvek (max. ",
+			append_limit,
+			" znaků). Vámi vložený příspěvek se označí jménem postavy a časem vložení a po vložení ho již nebudete moci upravit ani smazat. Bude-li to potřeba\\, obraťte se na správce/yni knihy, což je ",
+			F(ch_core.prihlasovaci_na_zobrazovaci(book.owner)),
+			"].",
+		})
+	elseif access_level == FULL_ACCESS then
+		table.insert_all(formspec, {
+			"field[0.375,1.25;9.75,0.5;author;Autor/ka (jak má být uveden/a):;",
+			F(ifthenelse(book.author ~= "", book.author, ch_core.prihlasovaci_na_zobrazovaci(player_name))),
+			"]"
+		})
+	end
+	if minetest.check_player_privs(player_name, "protection_bypass") then
+		table.insert_all(formspec, {
+			"field[10.375,1.25;3,0.5;owner;Správce/yně knihy:;",
+			F(book.owner),
+			"]"
+		})
+	else
+		table.insert_all(formspec, {
+			"textarea[10.375,1.25;3,0.5;;Správce/yně knihy:;",
+			F(ch_core.prihlasovaci_na_zobrazovaci(book.owner)),
+			"]"
+		})
+	end
+	if access_level == FULL_ACCESS then
+		table.insert_all(formspec, {
+			"field[0.375,2.25;9.75,0.5;title;Titul (popř. podtitul) knihy:;",
+			F(book.title),
+			"]",
+			"field[10.375,2.25;3,0.5;edition;Vydání:;",
+			F(ifthenelse(book.edition ~= "", book.edition, "1. vyd.")),
+			"]",
+			"textarea[0.375,3.25;13,0.6666;copyright;Copyright (jen je-li potřeba uvést):;",
+			F(book.copyright),
+			"]",
+			"label[0.375,4.25;Styl knihy:]",
+			"dropdown[2,4.0;5.4,0.5;style;",
+			style_description_list,
+			";", style_to_index[book.style] or 1, ";false]",
+			"label[7.5,4.25;Ostatní mohou text]",
+			"dropdown[10.15,4.0;3.25,0.5;public;jen číst,připisovat na začátek,připisovat na konec,upravovat;"
+		})
+		if book.public == READ_WRITE then
+			table.insert(formspec, "4")
+		elseif book.public == APPEND_ONLY then
+			table.insert(formspec, "3")
+		elseif book.public == PREPEND_ONLY then
+			table.insert(formspec, "2")
+		else
+			table.insert(formspec, "1")
+		end
+		table.insert(formspec, ";true]")
+	end
+	table.insert_all(formspec, {
+		"label[0.375,4.7;Poslední úprava knihy: ",
 		F(ifthenelse(book.lastedit ~= "", book.lastedit, "nikdy")),
 		"]",
-		-- "style_type[textarea;font=mono]",
-		"textarea[0.375,5.25;13,6.25;text;Text knihy:;",
-		F(book.text),
-		"]",
-		ifthenelse(book.ick == "",
-			"button_exit[0.5,13;6.25,0.75;publish;vydat knihu (přidělí IČK)]",
-			"label[2.5,13.35;IČK knihy: "..F(book.ick).."]"),
-		"button_exit[7.0,13;6.25,0.75;save;uložit změny]",
-	}
+		"textarea[0.375,5.25;13,6.25;text;"})
+	if access_level == APPEND_ONLY or access_level == PREPEND_ONLY then
+		table.insert(formspec, "Text k připojení:;]")
+	else
+		table.insert_all(formspec, {"Text knihy:;", F(book.text), "]"})
+	end
+	if book.ick ~= "" then
+		table.insert(formspec, "label[2.5,13.35;IČK knihy: "..F(book.ick).."]")
+	elseif access_level == FULL_ACCESS then
+		table.insert(formspec, "button_exit[0.5,13;6.25,0.75;publish;vydat knihu (přidělí IČK)]")
+	end
+	table.insert(formspec, "button_exit[7.0,13;6.25,0.75;save;uložit změny]")
 	return table.concat(formspec)
 end
 
 -- infotext_type in {openned, closed, item}
-local function compute_infotext(book_meta, infotext_type)
+local function compute_infotext(book_meta, infotext_type, book_data_hint)
+	if book_data_hint == nil then
+		book_data_hint = {}
+	end
 	local meta = book_meta
-	local owner = meta:get_string("owner")
-	local author = meta:get_string("author")
-	local title = meta:get_string("title")
-	local ick = meta:get_string("ick")
-	local edition = meta:get_string("edition")
+	local owner = book_data_hint.owner or meta:get_string("owner")
+	local author = book_data_hint.author or meta:get_string("author")
+	local title = book_data_hint.title or meta:get_string("title")
+	local ick = book_data_hint.ick or meta:get_string("ick")
+	local edition = book_data_hint.edition or meta:get_string("edition")
+	local public = book_data_hint.public or meta:get_int("public")
 	local result = {}
 
 	if author == "" then
@@ -286,8 +452,16 @@ local function compute_infotext(book_meta, infotext_type)
 			result[10] = ")"
 		end
 	elseif infotext_type == "openned" then
-		local book = load_book(meta, nil, false)
-		result[1] = book["page"..(book.page or 1)]
+		local book_data = book_data_hint
+		if book_data.page1 == nil then
+			book_data = load_book(meta, nil, nil)
+		end
+		local page_text = book_data["page"..(book_data.page or 1)]
+		if page_text ~= nil then
+			result[1] = page_text:gsub("\n", " ")
+		else
+			result[1] = ""
+		end
 	elseif infotext_type == "closed" then
 		result[1] = minetest.get_color_escape_sequence(author_color)
 		result[2] = author or "<Bez autora>"
@@ -301,18 +475,25 @@ local function compute_infotext(book_meta, infotext_type)
 			result[9] = ifthenelse(edition ~= "", ", "..edition, "")
 			result[10] = ")"
 		end
-		table.insert(result, "\nprávo upravovat má: "..ch_core.prihlasovaci_na_zobrazovaci(owner))
+		table.insert(result, "\nknihu spravuje: "..ch_core.prihlasovaci_na_zobrazovaci(owner))
 	else
 		return ""
+	end
+	if infotext_type == "item" or infotext_type == "closed" then
+		if public == READ_WRITE then
+			table.insert(result, "\n(otevřená kniha - reg. postavy mohou upravovat text)")
+		elseif public == APPEND_ONLY or public == PREPEND_ONLY then
+			table.insert(result, "\n(otevřená kniha - reg. postavy mohou připisovat)")
+		end
 	end
 	return table.concat(result)
 end
 
-local function update_infotext(book_meta, infotext_type)
+local function update_infotext(book_meta, infotext_type, book_data_hint)
 	if infotext_type ~= "item" then
-		book_meta:set_string("infotext", compute_infotext(book_meta, infotext_type))
+		book_meta:set_string("infotext", compute_infotext(book_meta, infotext_type, book_data_hint))
 	else
-		book_meta:set_string("description", compute_infotext(book_meta, "item"))
+		book_meta:set_string("description", compute_infotext(book_meta, "item", book_data_hint))
 	end
 end
 
@@ -348,18 +529,13 @@ end
 
 local function formspec_callback(custom_state, player, formname, fields)
 	local player_name = player:get_player_name()
-	local cas = ch_core.aktualni_cas()
-	local owner = custom_state.owner
-	local pos = custom_state.pos
-	local item
-	local meta
-
 	if fields.text and #fields.text > 1048576 then
 		minetest.log("warning", "Book formspec_callback(): fields.text of length "..#fields.text.." bytes!")
 		ch_core.systemovy_kanal(player_name, minetest.get_color_escape_sequence("#ff0000").."Text knihy je příliš dlouhý! Limit je 1 MB. Použijte kratší text.")
 		return
 	end
-
+	local pos = custom_state.pos
+	local item, meta
 	if pos == nil then
 		item = player:get_wielded_item()
 		meta = item:get_meta()
@@ -371,8 +547,10 @@ local function formspec_callback(custom_state, player, formname, fields)
 		minetest.log("warning", "Unexpected callback from form "..formname.."! (dump = "..dump2(fields)..")")
 		return
 	end
+	local owner = custom_state.owner
 
 	if (fields.key_enter and fields.key_enter_field == "page" and fields.page) or fields.book_titlepage or fields.book_pageone or fields.book_prev or fields.book_next or fields.book_last then
+		local current_page = book.page
 		if fields.key_enter and fields.key_enter_field == "page" and fields.page then
 			local new_page = tonumber(fields.page)
 			if 0 <= new_page and new_page <= book.page_max then
@@ -390,37 +568,87 @@ local function formspec_callback(custom_state, player, formname, fields)
 			book.page = book.page_max
 		end
 		meta:set_int("page", book.page)
+		if book.page ~= current_page then
+			increase_ap(player_name)
+		end
 		if pos == nil then
 			player:set_wielded_item(item)
 		elseif minetest.get_item_group(minetest.get_node(pos).name, "book_open") ~= 0 then
-			update_infotext(meta, "openned")
+			update_infotext(meta, "openned", book)
 		end
 		return get_book_read_formspec(player_name)
-	elseif fields.book_edit and book.can_edit then
+	elseif fields.book_edit and book.access_level ~= READ_ONLY then
 		return get_book_edit_formspec(player_name)
 	elseif fields.save or fields.publish then
-		-- author, owner, title, edition, copyright, text
-		if fields.owner and fields.owner ~= owner and minetest.check_player_privs(player:get_player_name(), "protection_bypass") then
-			meta:set_string("owner", fields.owner)
-			owner = fields.owner
+		-- author, owner, title, edition, copyright, style, public, text
+		local access_level = book.access_level
+		if access_level == READ_ONLY then
+			return -- access violation
 		end
-		if fields.author then
-			meta:set_string("author", ch_core.utf8_truncate_right(fields.author, 256))
-		end
-		if fields.title then
-			meta:set_string("title", ch_core.utf8_truncate_right(fields.title, 256))
-		end
-		if fields.copyright then
-			meta:set_string("copyright", fields.copyright)
+		if access_level == FULL_ACCESS then
+			if fields.owner and fields.owner ~= owner and minetest.check_player_privs(player_name, "protection_bypass") then
+				meta:set_string("owner", fields.owner)
+				owner = fields.owner
+			end
+			if fields.author then
+				meta:set_string("author", ch_core.utf8_truncate_right(fields.author, 256))
+			end
+			if fields.title then
+				meta:set_string("title", ch_core.utf8_truncate_right(fields.title, 256))
+			end
+			if fields.copyright then
+				meta:set_string("copyright", fields.copyright)
+			end
+			if fields.style then
+				if books.styles[fields.style] == nil then
+					fields.style = "default"
+				end
+				meta:set_string("style", fields.style)
+			end
+			if fields.public then
+				local new_public_value = tonumber(fields.public) or 0
+				if new_public_value == 1 then
+					meta:set_int("public", READ_ONLY)
+				elseif new_public_value == 2 then
+					meta:set_int("public", PREPEND_ONLY)
+				elseif new_public_value == 3 then
+					meta:set_int("public", APPEND_ONLY)
+				elseif new_public_value == 4 then
+					meta:set_int("public", READ_WRITE)
+				end
+			end
 		end
 		if meta:get_string("ick") ~= "" then
 			-- strip ICK and edition
 			meta:set_string("ick", "")
 			meta:set_string("edition", "")
 		end
-		meta:set_string("lastedit", string.format("%d. %s %d (%s)", cas.den, cas.nazev_mesice_2, cas.rok, cas.den_v_tydnu_nazev))
-		meta:set_string("text", fields.text or "")
-		if fields.publish then
+		local cas = ch_core.aktualni_cas()
+		local last_edit = string.format("%d. %s %d (%s)", cas.den, cas.nazev_mesice_2, cas.rok, cas.den_v_tydnu_nazev)
+		if player_name == owner then
+			meta:set_string("lastedit", last_edit)
+		else
+			meta:set_string("lastedit", last_edit.." ("..ch_core.prihlasovaci_na_zobrazovaci(player_name)..")")
+		end
+		meta:set_string("lastedit", last_edit)
+		if access_level == APPEND_ONLY or access_level == PREPEND_ONLY then
+			local old_text = book.text
+			local new_text = string.format("%s\n-- %s / %d. %s %d %02d:%02d:%02d %s",
+				ch_core.utf8_truncate_right(fields.text or "", 2048), -- limit for appending
+				ch_core.prihlasovaci_na_zobrazovaci(player_name),
+				cas.den, cas.nazev_mesice_2, cas.rok, cas.hodina, cas.minuta, cas.sekunda,
+				cas.posun_text)
+			if #old_text == 0 then
+				meta:set_string("text", new_text) -- no old text
+			elseif access_level == APPEND_ONLY then
+				meta:set_string("text", old_text.."\n\n"..new_text)
+			else -- PREPEND_ONLY
+				meta:set_string("text", new_text.."\n\n"..old_text)
+			end
+		else
+			meta:set_string("text", fields.text or "")
+		end
+		if access_level == FULL_ACCESS and fields.publish then
 			-- PUBLISH THE BOOK
 			local worldpath = minetest.get_worldpath()
 			local global_data = ch_core.global_data
@@ -446,19 +674,29 @@ local function formspec_callback(custom_state, player, formname, fields)
 			minetest.safe_file_write(worldpath.."/knihy/"..ick..".txt", text)
 			minetest.safe_file_write(worldpath.."/knihy/"..ick..".meta", metadata)
 			meta:set_string("ick", ick)
+
+			-- Strip text and public
+			meta:set_int("public", 0)
 			meta:set_string("text", "")
+		end
+		book = player_to_book[player_name]
+		if book == nil then
+			error("Unknown error when reopenning the book after save/publish!")
 		end
 		if pos == nil then
 			-- item
-			update_infotext(meta, "item")
+			update_infotext(meta, "item", book)
 			player:set_wielded_item(item)
 		elseif minetest.get_item_group(minetest.get_node(pos).name, "book_open") ~= 0 then
 			-- node (open book)
-			update_infotext(meta, "openned")
+			player_open_book(player_name, meta, pos)
+			book = player_to_book[player_name] or book
+			update_infotext(meta, "openned", book)
 		else
 			-- node (closed book)
-			update_infotext(meta, "closed")
+			update_infotext(meta, "closed", book)
 		end
+		player_close_book(player_name)
 	elseif fields.close or fields.quit then
 		player_close_book(player_name)
 	end
@@ -475,6 +713,7 @@ function books.open_on_rightclick(pos, node, clicker, itemstack, pointed_thing)
 		local owner = meta:get_string("owner")
 		if owner == "" then
 			owner = clicker:get_player_name()
+			minetest.log("warning", "books.open_on_rightclick(): openning a book with no owner at "..minetest.pos_to_string(pos)..", will set owner to "..owner.." and page to 1")
 			meta:set_string("owner", owner)
 			meta:set_int("page", 1)
 		end
@@ -511,7 +750,10 @@ function books.preserve_metadata(pos, oldnode, oldmeta, drops)
 	end
 
 	local itemmeta = item:get_meta()
-	for _, k in ipairs(metadata_keys) do
+	for _, k in ipairs(metadata_keys_int) do
+		itemmeta:set_int(k, oldmeta[k] or 0)
+	end
+	for _, k in ipairs(metadata_keys_string) do
 		itemmeta:set_string(k, oldmeta[k] or "")
 	end
 	update_infotext(itemmeta, "item")
@@ -535,7 +777,7 @@ function books.on_use(itemstack, user, pointed_thing)
 			owner = player_name
 			meta:set_string("owner", player_name)
 		end
-		player_to_book[player_name] = load_book(meta, nil, player_name == owner or minetest.check_player_privs(player_name, "protection_bypass"))
+		player_to_book[player_name] = load_book(meta, nil, player_name)
 		local formspec = get_book_read_formspec(player_name)
 		if formspec ~= nil then
 			ch_core.show_formspec(user, "books:book", formspec, formspec_callback, {
@@ -551,4 +793,10 @@ local modpath = minetest.get_modpath("books")
 dofile(modpath.."/nodes.lua")
 dofile(modpath.."/crafts.lua")
 
-books = {}
+-- unexport functions:
+books.after_place_node = nil
+books.preserve_metadata = nil
+books.on_punch = nil
+books.on_use = nil
+books.closed_on_rightclick = nil
+books.open_on_rightclick = nil

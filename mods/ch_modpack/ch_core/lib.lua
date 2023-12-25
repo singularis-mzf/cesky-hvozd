@@ -403,13 +403,26 @@ function ch_core.clear_crafts(log_prefix, crafts)
 	else
 		log_prefix = log_prefix.."/"
 	end
+	local get_us_time = minetest.get_us_time
 	local count = 0
 	for k, v in pairs(crafts) do
-		minetest.log("action", "Will clear craft "..log_prefix..k)
-		if minetest.clear_craft(v) then
-			count = count + 1
+		-- minetest.log("action", "Will clear craft "..log_prefix..k)
+		-- print("CLEAR_CRAFTS("..log_prefix.."): "..dump2(crafts))
+		if v.output ~= nil or v.type == "fuel" then
+			if minetest.clear_craft(v) then
+				count = count + 1
+			else
+				minetest.log("warning", "Craft "..log_prefix..k.." not cleared! Dump = "..dump2(v))
+			end
 		else
-			minetest.log("warning", "Craft "..log_prefix..k.." not cleared! Dump = "..dump2(v))
+			local start = get_us_time()
+			if minetest.clear_craft(v) then
+				count = count + 1
+				local stop = get_us_time()
+				minetest.log("action", "Craft "..log_prefix..k.." cleared in "..((stop - start) / 1000.0).." ms. Dump = "..dump2(v))
+			else
+				minetest.log("warning", "Craft "..log_prefix..k.." not cleared! Dump = "..dump2(v))
+			end
 		end
 	end
 	return count
@@ -453,18 +466,24 @@ Určí podle práv typ postavy (admin|creative|new|survival).
 Pokud player_or_player_name není PlayerRef nebo jméno postavy, vrátí nil.
 ]]
 function ch_core.get_player_role(player_or_player_name)
+	if player_or_player_name == nil then
+		return nil
+	end
+	local value_type = type(player_or_player_name)
 	local player_name
-	if type(player_or_player_name) == "string" then
-		if player_name == "" then
+	if value_type == "string" then
+		player_name = player_or_player_name
+	elseif value_type == "userdata" then
+		player_name = player_or_player_name:get_player_name()
+		if player_name == nil then
 			return nil -- neplatná hodnota
 		end
-		player_name = player_or_player_name
 	else
-		print("DEBUG: type is <"..type(player_or_player_name)..">")
-		player_name = player_or_player_name:get_player_name()
-		if player_name == nil or player_name == "" then
-			return nil
-		end
+		minetest.log("warning", "ch_core.get_player_role() called with an invalid value type "..value_type.."!")
+		return nil
+	end
+	if player_name == "" then
+		return nil -- neplatná hodnota
 	end
 	local privs = minetest.get_player_privs(player_name)
 	if privs.protection_bypass then

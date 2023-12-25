@@ -1,3 +1,9 @@
+local expect_compactor = minetest.settings:get_bool("ch_expect_compactor", false)
+
+if not expect_compactor then
+	minetest.log("warning", "expect_compactor is false in [basic_materials]")
+end
+
 minetest.register_craft({
 	type = "cooking",
 	output = "basic_materials:plastic_sheet",
@@ -284,17 +290,19 @@ if not minetest.get_modpath("moreores") then
     })
 end
 
-minetest.register_craft( {
-	type = "shapeless",
-	output = "basic_materials:brass_ingot 9",
-	recipe = { "basic_materials:brass_block" },
-})
+if not expect_compactor then
+	minetest.register_craft( {
+		type = "shapeless",
+		output = "basic_materials:brass_ingot 9",
+		recipe = { "basic_materials:brass_block" },
+	})
 
-minetest.register_craft( {
-	output = "basic_materials:brass_block",
-	recipe = {
-		{ "basic_materials:brass_ingot", "basic_materials:brass_ingot", "basic_materials:brass_ingot" },
-		{ "basic_materials:brass_ingot", "basic_materials:brass_ingot", "basic_materials:brass_ingot" },
-		{ "basic_materials:brass_ingot", "basic_materials:brass_ingot", "basic_materials:brass_ingot" },
-	},
-})
+	minetest.register_craft( {
+		output = "basic_materials:brass_block",
+		recipe = {
+			{ "basic_materials:brass_ingot", "basic_materials:brass_ingot", "basic_materials:brass_ingot" },
+			{ "basic_materials:brass_ingot", "basic_materials:brass_ingot", "basic_materials:brass_ingot" },
+			{ "basic_materials:brass_ingot", "basic_materials:brass_ingot", "basic_materials:brass_ingot" },
+		},
+	})
+end
