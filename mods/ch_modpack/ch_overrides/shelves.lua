@@ -401,7 +401,7 @@ for type1, tab in pairs(types_to_shelf) do
 		}
 		if minetest.registered_nodes[name] then
 			minetest.override_item(name, ndef)
-			ch_core.clear_crafts("ch_overrides:shelves", {{output = name}})
+			-- ch_core.clear_crafts("ch_overrides:shelves", {{output = name}})
 		else
 			minetest.register_node(name, ndef)
 		end

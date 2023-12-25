@@ -1019,3 +1019,23 @@ acarp.png
 	Author: Singularis
 	Used source: https://commons.wikimedia.org/wiki/File:Cyprinus_carpio.jpeg (Author: Dezidor, License: CC BY-SA 3.0)
 	License: CC BY-SA 3.0
+
+default_glass_footstep.1.ogg
+default_glass_footstep.2.ogg
+default_sand_footstep.1.ogg
+default_sand_footstep.2.ogg
+default_sand_footstep.3.ogg
+	Author: PolySaken
+	Source: https://content.minetest.net/packages/mt-mods/vision_lib/ (version 1.8)
+	License: CC BY-SA 4.0
+
+underch_crystal.mtl
+underch_crystal.obj
+	Author: Hume2
+	Source: https://github.com/FaceDeer/dfcaverns (Taken from [underch] (Underground Challenge) mod by Hume2 under WTFPL)
+	License: MIT
+
+dfcaverns_glow_mese.png
+	Author: FaceDeer
+	Source: https://github.com/FaceDeer/dfcaverns
+	License: MIT

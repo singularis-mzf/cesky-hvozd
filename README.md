@@ -262,6 +262,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/FaceDeer/airtanks/)
 
+## Aloz (aloz)
+
+* Zdroj: [https://github.com/runsy/aloz](https://github.com/runsy/aloz), revize 5a02b2316bc2e4775cfeb57d9d74805756b77eda
+* Původní licence: GPLv3 pro kód, CC BY-SA 4.0 pro textury (k projektu je přiložena také CC0, ale údaje v README ji nezmiňují)
+* Licence úprav: GPLv3
+
 ## Ambience Lite (minetest-mod-ambience)
 
 * Zdroj: [https://notabug.org/minenux/minetest-mod-ambience](https://notabug.org/minenux/minetest-mod-ambience), revize e6ed64b1e518ba6bdd33c306895634b2c9622413 (odnož původního repozitáře)
@@ -1138,6 +1144,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: CC0
 * [ContentDB](https://content.minetest.net/packages/sirrobzeroone/dungeonsoup/)
 
+## Dwarf Fortress Caverns (dfcaverns)
+
+* Zdroj: [https://github.com/FaceDeer/dfcaverns](https://github.com/FaceDeer/dfcaverns), revize de08a9d481167c0520eae05dc172f12a8c6d40fe
+* Původní licence: kód MIT, ostatní různé
+* [ContentDB](https://content.minetest.net/packages/FaceDeer/dfcaverns/)
+
 ## Ephesus (ephesus)
 
 * Zdroj: [https://content.minetest.net/packages/Clemstriangular/ephesus/](https://content.minetest.net/packages/Clemstriangular/ephesus/), 2023-06-13
@@ -1250,6 +1262,12 @@ Prohlášení autora/ky na [fóru](https://forum.minetest.net/viewtopic.php?f=4&
 * Zdroj: [https://github.com/wsor4035/tool\_tweaks](https://github.com/wsor4035/tool\_tweaks), revize 72e180102e84879bee9f00e5f0b47fb1691b0723
 * Původní licence:CC-BY-SA-3.0
 * [ContentDB](https://content.minetest.net/packages/wsor4035/tool\_tweaks/)
+
+## Vision Lib (vision\_lib)
+
+* Zdroj: [https://content.minetest.net/packages/mt-mods/vision\_lib/](https://content.minetest.net/packages/mt-mods/vision\_lib/), verze 1.8
+* Původní licence: CC BY-SA 4.0
+* [ContentDB](https://content.minetest.net/packages/mt-mods/vision\_lib/)
 
 ## Wardrobe Outfits (wardrobe\_outfits)
 
