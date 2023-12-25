@@ -17,27 +17,23 @@ function compactor.register_compactor(data)
     technic.register_base_machine(data)
 end
 
-function compactor.register_block_recipes_override(ingot_name, ingot_count, block_name, clear_ingots_to_block, clear_block_to_ingots)
+function compactor.register_block_recipes_override(ingot_name, ingot_count, block_name, options)
+	if options == nil then
+		options = {}
+	end
 	local crafts = {}
-	if clear_ingots_to_block then
+	if options.clear_ingots_to_block then
 		crafts["i-to-"..block_name] = {output = block_name}
 	end
-	if clear_block_to_ingots then
+	if options.clear_block_to_ingots then
 		crafts[block_name.."-to-i"] = {recipe = {{block_name}}}
 	end
 	ch_core.clear_crafts("compactor", crafts)
-	--[[
-	craft_result = minetest.get_craft_result({method = "normal", width = 1, items = {block_stack}})
-	if not craft_result.item:is_empty() then
-		craft_result = ch_core.clear_crafts("compactor", {{type = "shapeless", recipe = {block_name}}}) > 0
-	end ]]
-	--[[ craft_result = minetest.get_craft_result({method = "shapeless", width = 1, items = {block_stack}})
-	if not craft_result.item:is_empty() then
-		craft_result = minetest.clear_craft({type = "shapeless", recipe = {block_name}})
-	end ]]
 
 	compactor.register_compactor_recipe({input = {ingot_name.." "..ingot_count}, output = block_name})
-	minetest.register_craft({output = ingot_name.." "..ingot_count, recipe = {{block_name}}})
+	if not options.not_craft_block_to_ingots then
+		minetest.register_craft({output = ingot_name.." "..ingot_count, recipe = {{block_name}}})
+	end
 end
 
 compactor.register_compactor({tier = "LV", demand = {100}, speed = 1})

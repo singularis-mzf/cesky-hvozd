@@ -1,5 +1,7 @@
 
 local S = farming.intllib
+local expect_clothing = minetest.settings:get_bool("ch_expect_clothing", false)
+local expect_compactor = minetest.settings:get_bool("ch_expect_compactor", false)
 
 -- hemp seeds
 minetest.register_node("farming:seed_hemp", {
@@ -105,14 +107,16 @@ minetest.register_node("farming:hemp_block", {
 	sounds =  default.node_sound_leaves_defaults()
 })
 
-minetest.register_craft( {
-	output = "farming:hemp_block",
-	recipe = {
-		{"farming:hemp_fibre", "farming:hemp_fibre", "farming:hemp_fibre"},
-		{"farming:hemp_fibre", "farming:hemp_fibre", "farming:hemp_fibre"},
-		{"farming:hemp_fibre", "farming:hemp_fibre", "farming:hemp_fibre"}
-	}
-})
+if not expect_compactor then
+	minetest.register_craft( {
+		output = "farming:hemp_block",
+		recipe = {
+			{"farming:hemp_fibre", "farming:hemp_fibre", "farming:hemp_fibre"},
+			{"farming:hemp_fibre", "farming:hemp_fibre", "farming:hemp_fibre"},
+			{"farming:hemp_fibre", "farming:hemp_fibre", "farming:hemp_fibre"}
+		}
+	})
+end
 
 -- check and register stairs
 if minetest.global_exists("stairs") then
@@ -144,6 +148,7 @@ minetest.register_craft( {
 })
 
 -- string
+if not expect_clothing then
 minetest.register_craft( {
 	output = "farming:cotton 3",
 	recipe = {
@@ -152,6 +157,7 @@ minetest.register_craft( {
 		{"farming:hemp_fibre"}
 	}
 })
+end
 
 -- hemp rope
 minetest.register_node("farming:hemp_rope", {

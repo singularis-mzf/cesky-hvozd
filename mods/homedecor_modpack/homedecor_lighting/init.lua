@@ -1870,7 +1870,7 @@ for name, level in pairs(word_to_bright) do
 	minetest.register_alias("homedecor:rope_light_on_floor_"..name,   "homedecor:rope_light_on_floor_"..level)
 	minetest.register_alias("homedecor:rope_light_on_ceiling_"..name, "homedecor:rope_light_on_ceiling_"..level)
 	minetest.register_alias("homedecor:plasma_lamp_"..name,           "homedecor:plasma_lamp_"..level)
-	minetest.register_alias("homedecor:plasma_ball_"..name,           "homedecor:plasma_ball_"..level)
+	-- minetest.register_alias("homedecor:plasma_ball_"..name,           "homedecor:plasma_ball_"..level)
 	minetest.register_alias("homedecor:ground_lantern_"..name,        "homedecor:ground_lantern_"..level)
 	minetest.register_alias("homedecor:hanging_lantern_"..name,       "homedecor:hanging_lantern_"..level)
 	minetest.register_alias("homedecor:ceiling_lantern_"..name,       "homedecor:ceiling_lantern_"..level)
@@ -1880,7 +1880,7 @@ for name, level in pairs(word_to_bright) do
 	minetest.register_alias("homedecor:ceiling_lamp_"..name,          "homedecor:ceiling_lamp_"..level)
 	minetest.register_alias("homedecor:table_lamp_"..name,            "homedecor:table_lamp_"..level)
 	minetest.register_alias("homedecor:standing_lamp_"..name,         "homedecor:standing_lamp_"..level)
-	minetest.register_alias("3dforniture:table_lamp_"..name,          "homedecor:table_lamp_"..level)
+	-- minetest.register_alias("3dforniture:table_lamp_"..name,          "homedecor:table_lamp_"..level)
 end
 
 if minetest.get_modpath("darkage") then

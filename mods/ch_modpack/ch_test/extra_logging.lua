@@ -29,3 +29,20 @@ local function on_cheat(player, cheat)
 end
 minetest.register_on_cheat(on_cheat)
 
+local function ifthenelse(condition, true_result, false_result)
+	if condition then
+		return true_result
+	else
+		return false_result
+	end
+end
+
+local expected_mods = {
+	"clothing",
+	"compactor",
+	"technic",
+}
+local settings = minetest.settings
+for _, mod in ipairs(expected_mods) do
+	print("[ch_test] expected mod: "..mod.." = "..ifthenelse(settings:get_bool("ch_expect_"..mod, false), "true", "false"))
+end

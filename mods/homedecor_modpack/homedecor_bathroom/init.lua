@@ -626,7 +626,7 @@ minetest.register_alias("3dforniture:sink", "homedecor:sink")
 minetest.register_alias("3dforniture:taps", "homedecor:taps")
 minetest.register_alias("3dforniture:shower_tray", "homedecor:shower_tray")
 minetest.register_alias("3dforniture:shower_head", "homedecor:shower_head")
-minetest.register_alias("3dforniture:table_lamp", "homedecor:table_lamp_off")
+-- minetest.register_alias("3dforniture:table_lamp", "homedecor:table_lamp_off")
 
 minetest.register_alias("toilet", "homedecor:toilet")
 minetest.register_alias("sink", "homedecor:sink")

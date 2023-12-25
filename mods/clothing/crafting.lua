@@ -1,4 +1,6 @@
 
+local expect_clothing = minetest.settings:get_bool("ch_expect_clothing", false)
+
 minetest.register_craft({
 	output = 'clothing:yarn_spool_empty',
 	recipe = {
@@ -52,37 +54,38 @@ minetest.register_craft({
 })
 
 if clothing.have_farming then
-  ch_core.clear_crafts("clothing1", {{
-    --output = "farming:string 2"
-    recipe = {
-      {"farming:cotton"},
-      {"farming:cotton"},
-    },
-  }})
-  minetest.register_craft({
-    output = "farming:string",
-    recipe = {
-      {"clothing:yarn_spool_white"},
-      {"clothing:yarn_spool_white"},
-    },
-    replacements = {
-      {"clothing:yarn_spool_white", "clothing:yarn_spool_empty"},
-      {"clothing:yarn_spool_white", "clothing:yarn_spool_empty"},
-    },
-  })
+	if not expect_clothing then
+		ch_core.clear_crafts("clothing1", {{
+			--output = "farming:string 2"
+			recipe = {
+			{"farming:cotton"},
+			{"farming:cotton"},
+			},
+		}})
+	end
+	minetest.register_craft({
+		output = "farming:string",
+		recipe = {
+		{"clothing:yarn_spool_white"},
+		{"clothing:yarn_spool_white"},
+		},
+		replacements = {
+		{"clothing:yarn_spool_white", "clothing:yarn_spool_empty"},
+		{"clothing:yarn_spool_white", "clothing:yarn_spool_empty"},
+		},
+	})
 end
 
-if minetest.registered_items["farming:hemp_fibre"] then
-  ch_core.clear_crafts("clothing2", {{
-    --output = "farming:cotton 3"
-    recipe = {
-      {"farming:hemp_fibre"},
-      {"farming:hemp_fibre"},
-      {"farming:hemp_fibre"},
-    },
-  }})
+if not expect_clothing and minetest.registered_items["farming:hemp_fibre"] then
+	ch_core.clear_crafts("clothing2", {{
+		--output = "farming:cotton 3"
+		recipe = {
+		{"farming:hemp_fibre"},
+		{"farming:hemp_fibre"},
+		{"farming:hemp_fibre"},
+		},
+	}})
 end
-
 
 for color, data in pairs(clothing.colors) do
 	minetest.register_craft({

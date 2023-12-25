@@ -15,6 +15,7 @@ local modpath = minetest.get_modpath("moreores")
 
 local S = minetest.get_translator("moreores")
 moreores.S = S
+local expect_compactor = minetest.settings:get_bool("ch_expect_compactor", false)
 
 dofile(modpath .. "/_config.txt")
 
@@ -114,7 +115,7 @@ local function add_ore(modname, description, mineral_name, oredef)
 			sounds = default_metal_sounds,
 		})
 		minetest.register_alias(mineral_name.."_block", block_item)
-		if oredef.makes.ingot then
+		if not expect_compactor and oredef.makes.ingot then
 			minetest.register_craft( {
 				output = block_item,
 				recipe = get_recipe(ingot, "block")

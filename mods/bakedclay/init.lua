@@ -24,6 +24,7 @@ local clay = {
 	{"dark_green", S("Dark Green")}
 }
 
+local expect_technic = minetest.settings:get_bool("ch_expect_technic", false)
 local techcnc_mod = minetest.get_modpath("technic_cnc")
 local stairs_mod = minetest.get_modpath("stairs")
 local stairsplus_mod = minetest.get_modpath("moreblocks")
@@ -120,6 +121,7 @@ minetest.register_craft( {
 	recipe = {"dye:black", "dye:black", "dye:white"}
 })
 
+if not expect_technic then
 minetest.register_craft( {
 	type = "shapeless",
 	output = "dye:green 4",
@@ -131,6 +133,7 @@ minetest.register_craft( {
 	output = "dye:brown 4",
 	recipe = {"default:dry_shrub"}
 })
+end
 
 -- only add light grey recipe if unifieddye mod isnt present (conflict)
 if not minetest.get_modpath("unifieddyes") then

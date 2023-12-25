@@ -24,10 +24,6 @@ if minetest.get_modpath("farming") then
     dofile(modpath.."/farming.lua")
 end
 
-if minetest.get_modpath("flowers") and minetest.get_modpath("dye") then
-    dofile(modpath.."/farming.lua")
-end
-
 if minetest.get_modpath("terumet") then
     dofile(modpath.."/terumet.lua")
 end
@@ -36,7 +32,7 @@ if minetest.get_modpath("xpanes") then
     dofile(modpath.."/xpanes.lua")
 end
 
-technic.register_compressor_recipe({input = {"default:papyrus 2"}, output = "default:paper"})
+-- technic.register_compressor_recipe({input = {"default:papyrus 2"}, output = "default:paper"})
 
 technic.register_grinder_recipe({input = {"basic_materials:chainlink_brass 2"}, output = "technic:brass_dust"})
 technic.register_grinder_recipe({input = {"basic_materials:chainlink_steel 2"}, output = "technic:wrought_iron_dust"})

@@ -1,5 +1,6 @@
 
 local S = farming.intllib
+local expect_clothing = minetest.settings:get_bool("ch_expect_clothing", false)
 
 -- wild cotton as a source of cotton seed and a chance of cotton itself
 minetest.register_node("farming:cotton_wild", {
@@ -69,6 +70,7 @@ minetest.register_craft({
 })
 
 -- cotton to string
+if not expect_clothing then
 minetest.register_craft({
 	output = "farming:string 2",
 	recipe = {
@@ -76,6 +78,7 @@ minetest.register_craft({
 		{"farming:cotton"}
 	}
 })
+end
 
 -- can be used as fuel
 minetest.register_craft({

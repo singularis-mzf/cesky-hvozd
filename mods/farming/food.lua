@@ -1,5 +1,7 @@
 
 local S = farming.intllib
+local expect_compactor = minetest.settings:get_bool("ch_expect_compactor", false)
+local expect_technic = minetest.settings:get_bool("ch_expect_technic", false)
 
 --= filter sea water into river water
 minetest.register_craft({
@@ -149,6 +151,13 @@ minetest.register_craft({
 	replacements = {{"bucket:bucket_water", "bucket:bucket_empty"}}
 })
 
+minetest.register_craft({
+	type = "cooking",
+	cooktime = 15,
+	output = "farming:salt",
+	recipe = "default:water_source",
+})
+
 --= Salt Crystal
 
 minetest.register_node("farming:salt_crystal", {
@@ -168,13 +177,13 @@ minetest.register_node("farming:salt_crystal", {
 	},
 })
 minetest.register_craft({
-	output = "farming:salt 9",
+	output = "farming:salt 10",
 	recipe = {
 		{"farming:salt_crystal", "farming:mortar_pestle"}
 	},
 	replacements = {{"farming:mortar_pestle", "farming:mortar_pestle"}}
 })
-
+if not expect_compactor then
 minetest.register_craft({
 	output = "farming:salt_crystal",
 	recipe = {
@@ -183,6 +192,7 @@ minetest.register_craft({
 		{"farming:salt", "farming:salt", "farming:salt"}
 	}
 })
+end
 
 --= Rose Water
 

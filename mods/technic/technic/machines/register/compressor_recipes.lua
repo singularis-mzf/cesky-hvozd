@@ -22,7 +22,7 @@ local recipes = {
 }
 
 -- defuse the default sandstone recipe, since we have the compressor to take over in a more realistic manner
-ch_core.clear_crafts("technic", {
+--[[ ch_core.clear_crafts("technic_compressor", {
 {
 	recipe = {
 		{"default:sand", "default:sand"},
@@ -39,7 +39,7 @@ ch_core.clear_crafts("technic", {
 		{"default:silver_sand", "default:silver_sand"},
 	},
 }
-})
+}) ]]
 
 for _, data in pairs(recipes) do
 	technic.register_compressor_recipe({input = {data[1]}, output = data[2]})

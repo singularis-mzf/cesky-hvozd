@@ -29,6 +29,7 @@ charcoal = {}
 local S = minetest.get_translator("charcoal")
 charcoal.get_translator = S
 local S = charcoal.get_translator
+local expect_compactor = minetest.settings:get_bool("ch_expect_compactor", false)
 
 -- Basic Charcoal
 minetest.register_craftitem("charcoal:charcoal", {
@@ -69,6 +70,7 @@ minetest.register_craft({
   cooktime = 8,
 })
 
+if not expect_compactor then
 minetest.register_craft({
   type = "shaped",
   output = "charcoal:charcoal_block",
@@ -84,6 +86,7 @@ minetest.register_craft({
   output = "charcoal:charcoal 9",
   recipe = {"charcoal:charcoal_block"}
 })
+end
 
 -- Make torch from charcoal
 minetest.register_craft({

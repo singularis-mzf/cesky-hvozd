@@ -184,6 +184,7 @@ minetest.register_craft({
 	}
 })
 
+if not expect_technic then
 minetest.register_craft({
 	output = "default:desert_sandstone",
 	recipe = {
@@ -198,6 +199,7 @@ minetest.register_craft({
 		{"default:desert_sandstone"},
 	}
 })
+end
 
 minetest.register_craft({
 	output = "default:desert_sandstone_brick 4",
@@ -216,6 +218,7 @@ minetest.register_craft({
 	}
 })
 
+if not expect_technic then
 minetest.register_craft({
 	output = "default:silver_sandstone",
 	recipe = {
@@ -230,6 +233,7 @@ minetest.register_craft({
 		{"default:silver_sandstone"},
 	}
 })
+end
 
 minetest.register_craft({
 	output = "default:silver_sandstone_brick 4",

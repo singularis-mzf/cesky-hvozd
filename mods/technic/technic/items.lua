@@ -1,5 +1,6 @@
 
 local S = technic.getter
+local expect_compactor = minetest.settings:get_bool("ch_expect_compactor", false)
 
 minetest.register_craftitem("technic:silicon_wafer", {
 	description = S("Silicon Wafer"),
@@ -170,7 +171,7 @@ for p = 0, 35 do
 	-- (Actually the U-234 gets separated from U-238 slightly more
 	-- than the U-235 is, so the U-234:U-235 ratio is slightly
 	-- higher in enriched uranium.)  A typical massic composition
-	-- for 3.5%-fissile uranium is 96.47116% U-238, 3.5% U-235, and
+	-- for 3.5%-fissile uranium is 96.47116% U-23ov8, 3.5% U-235, and
 	-- 0.02884% U-234.  This gives 3.5%-fissile uranium about 6.55
 	-- times the activity of fully-depleted uranium.  The values we
 	-- compute here for the "radioactive" group value are based on
@@ -190,7 +191,7 @@ for p = 0, 35 do
 			cracky=1, level=2, radioactive=radioactivity},
 		sounds = default.node_sound_stone_defaults(),
 	});
-	if not ov then
+	if not ov and not expect_compactor then
 		minetest.register_craft({
 			output = block,
 			recipe = {

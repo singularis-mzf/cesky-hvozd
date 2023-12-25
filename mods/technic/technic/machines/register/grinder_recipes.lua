@@ -34,12 +34,12 @@ local recipes = {
 	{"default:ice",              "default:snowblock"},
 }
 
--- defuse the sandstone -> 4 sand recipe to avoid infinite sand bugs (also consult the inverse compressor recipe)
+--[[ defuse the sandstone -> 4 sand recipe to avoid infinite sand bugs (also consult the inverse compressor recipe)
 ch_core.clear_crafts("grinder_recipes", {
 	{recipe = {{"default:sandstone"}}},
 	{recipe = {{"default:desert_sandstone"}}},
 	{recipe = {{"default:silver_sandstone"}}},
-})
+}) ]]
 
 if minetest.get_modpath("farming") then
 	table.insert(recipes, {"farming:seed_wheat",   "farming:flour 1"})

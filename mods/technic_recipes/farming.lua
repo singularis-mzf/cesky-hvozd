@@ -8,8 +8,8 @@ if farming and farming.mod and farming.mod == "redo" then
     technic.register_grinder_recipe({input = {"farming:seed_rye"}, output = "farming:flour"})
     technic.register_grinder_recipe({input = {"farming:rye 4"}, output = "farming:flour"})
     technic.register_grinder_recipe({input = {"farming:rice 4"}, output = "farming:rice_flour"})
-    technic.register_grinder_recipe({input = {"farming:salt_crystal"}, output = "farming:salt 9"})
-    
+    technic.register_grinder_recipe({input = {"farming:salt_crystal"}, output = "farming:salt 10"})
+
     if minetest.get_modpath("dye") then
         technic.register_extractor_recipe({input = {"farming:beans"}, output = "dye:green 4"})
         technic.register_extractor_recipe({input = {"farming:beetroot"}, output = "dye:red 4"})

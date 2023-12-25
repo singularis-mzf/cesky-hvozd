@@ -6,7 +6,7 @@
 
 ch_core.clear_crafts("books", {
 	{output = "default:book"},
-	{output = "default:bookshelf"},
+	-- {output = "default:bookshelf"},
 })
 -- minetest.unregister_item("default:book")
 -- minetest.unregister_item("default:book_written")

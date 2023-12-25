@@ -1,5 +1,6 @@
 
 local S = technic.worldgen.gettext
+local expect_compactor = minetest.settings:get_bool("ch_expect_compactor", false)
 
 minetest.register_craftitem(":technic:uranium_lump", {
 	description = S("Uranium Lump"),
@@ -70,6 +71,7 @@ minetest.register_craftitem(":technic:stainless_steel_ingot", {
 	inventory_image = "technic_stainless_steel_ingot.png",
 })
 
+if not expect_compactor then
 local function register_block(block, ingot)
 	minetest.register_craft({
 		output = block,
@@ -95,6 +97,7 @@ register_block("technic:lead_block", "technic:lead_ingot")
 register_block("technic:cast_iron_block", "technic:cast_iron_ingot")
 register_block("technic:carbon_steel_block", "technic:carbon_steel_ingot")
 register_block("technic:stainless_steel_block", "technic:stainless_steel_ingot")
+end
 
 minetest.register_craft({
 	type = 'cooking',
