@@ -257,7 +257,7 @@ local def = {
 		empty_tile, empty_tile,
 		empty_tile, front_tile,
 	},
-	param2 = "facedir",
+	paramtype2 = "facedir",
 	is_ground_content = false,
 	stack_max = 1,
 	groups = {cracky = 1},

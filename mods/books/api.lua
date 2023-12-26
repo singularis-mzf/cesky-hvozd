@@ -719,7 +719,6 @@ local function formspec_callback(custom_state, player, formname, fields)
 		else
 			meta:set_string("lastedit", last_edit.." ("..ch_core.prihlasovaci_na_zobrazovaci(player_name)..")")
 		end
-		meta:set_string("lastedit", last_edit)
 		if access_level == APPEND_ONLY or access_level == PREPEND_ONLY then
 			local old_text = book.text
 			local new_text = string.format("%s\n-- %s / %d. %s %d %02d:%02d:%02d %s",
