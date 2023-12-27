@@ -2,6 +2,7 @@
 -- (name, desc, has bottle, hunger, thirst, alcoholic)
 wine:add_drink("wine", "Wine", true, 2, 5, 1)
 wine:add_drink("beer", "Beer", true, 2, 8, 1)
+wine:add_drink("rum", "Rum", true, 2, 5, 1)
 wine:add_drink("tequila", "Tequila", true, 2, 3, 1)
 wine:add_drink("wheat_beer", "Wheat Beer", true, 2, 8, 1)
 wine:add_drink("sake", "Sake", true, 2, 3, 1)

@@ -688,6 +688,15 @@ if minetest.get_modpath("wine") then
 		[glass_bottle] = "wine:bottle_slivovice",
 		override_glass_tiles = true,
 	})
+
+	drinks.add_drink("rum", "rum", "#d5a052", {
+		drink_desc2 = "rumu",
+		drink_desc4 = "rum",
+		[glass] = "wine:glass_rum",
+		[glass_bottle] = "wine:bottle_rum",
+		[bucket] = false,
+		override_glass_tiles = true,
+	})
 end
 
 drinks.add_drink("vajliker", "vaječný likér", "#fed585", {
