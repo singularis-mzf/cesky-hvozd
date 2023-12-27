@@ -9,6 +9,7 @@ dofile(modpath.."/landscape_generation.lua")
 dofile(modpath.."/path_generation.lua")
 dofile(modpath.."/ui_page.lua")
 dofile(modpath.."/globalstep_lag_logging.lua")
+dofile(modpath.."/testcommand.lua")
 dofile(modpath.."/4dirtest.lua")
 ----
 dofile(modpath.."/array_stats.lua")

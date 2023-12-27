@@ -224,3 +224,24 @@ if minetest.get_modpath("moretrees") and minetest.get_modpath("technic") then
 		end
 	end
 end
+
+if minetest.get_modpath("drinks") and minetest.get_modpath("farming") and minetest.get_modpath("mobs_animal") and minetest.get_modpath("wine") then
+	local alcohol_items = {
+		"wine:glass_brandy",
+		-- "wine:glass_rum", -- TODO!
+		"wine:glass_vodka",
+	}
+	for _, extra_item in ipairs({"", "farming:vanilla_extract"}) do
+		for _, alcohol_item in ipairs(alcohol_items) do
+			def = {
+				output = "drinks:jcu_vajliker",
+				recipe = {
+					{"", extra_item, ""},
+					{"farming:sugar", alcohol_item, "farming:sugar"},
+					{"mobs:egg", "mobs:glass_milk", "mobs:egg"},
+				},
+			}
+			minetest.register_craft(def)
+		end
+	end
+end

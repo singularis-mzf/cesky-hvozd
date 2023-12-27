@@ -124,6 +124,17 @@ function drinks.add_drink(drink_id, drink_desc1, color, def)
 				end
 				if template then
 					full_vessel_item = "drinks:"..vessel_def.abbr3.."_"..drink_id
+					local alcohol = def[empty_vessel_item..":alcohol"]
+					if alcohol ~= nil then
+						local new_groups = template.groups
+						if new_groups == nil then
+							new_groups = {}
+						else
+							new_groups = table.copy(new_groups)
+						end
+						new_groups.alcohol = alcohol
+						template.groups = new_groups
+					end
 					if template_type == "node" then
 						-- node definition (like a bucket)
 						minetest.register_node(full_vessel_item, template)
@@ -233,6 +244,7 @@ local function get_glass_template(drink_id, drink_desc2, color, health)
 		description = "sklenice "..drink_desc2,
 		juice_type = drink_id,
 		inventory_image = "drinks_glass_contents.png^[colorize:"..color..":200^drinks_drinking_glass.png",
+		groups = {drink = 1},
 		on_use = eat_func,
 	}, "plantlike"
 end
@@ -247,6 +259,7 @@ local function get_large_glass_template(drink_id, drink_desc2, color, health)
 		description = "půllitr "..drink_desc2,
 		juice_type = drink_id,
 		inventory_image = "drinks_glass_contents.png^[colorize:"..color..":200^drinks_drinking_glass.png",
+		groups = {drink = 1},
 		on_use = eat_func,
 	}, "plantlike"
 end
@@ -261,6 +274,7 @@ local function get_glass_bottle_template(drink_id, drink_desc2, color, health)
 		description = "láhev "..drink_desc2,
 		juice_type = drink_id,
 		inventory_image = "drinks_bottle_contents.png^[colorize:"..color..":200^drinks_glass_bottle.png",
+		groups = {drink = 1},
 		on_use = eat_func,
 	}, "plantlike"
 end
@@ -675,6 +689,14 @@ if minetest.get_modpath("wine") then
 		override_glass_tiles = true,
 	})
 end
+
+drinks.add_drink("vajliker", "vaječný likér", "#fed585", {
+	drink_desc2 = "vaječného likéru",
+	drink_desc4 = "vaječný likér",
+	[bucket] = false,
+	[glass..":alcohol"] = 1,
+	[glass_bottle..":alcohol"] = 1,
+})
 
 -- Generate recipes for drinks and bottles
 

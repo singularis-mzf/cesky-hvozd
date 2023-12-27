@@ -498,6 +498,50 @@ function ch_core.get_player_role(player_or_player_name)
 end
 
 --[[
+	Vytvoří pomocnou strukturu pro položku dropdown[] ve formspecu.
+	Pomocná struktura obsahuje položky:
+	- function get_index_from_value(value, default_index)
+	- function get_value_from_index(index, default_index)
+	- table index_to_value // původní předaná tabulka (musí být sekvence)
+	- string formspec_list // již odzvláštněný seznam k použití ve formspecu
+	- table value_to_index // mapuje text položky na první odpovídající index
+]]
+function ch_core.make_dropdown(index_to_value)
+	local F = minetest.formspec_escape
+	local escaped_values = {}
+	local value_to_index = {}
+	for i, value in ipairs(index_to_value) do
+		escaped_values[i] = F(value)
+	end
+	for i = #index_to_value, 1, -1 do
+		value_to_index[index_to_value[i]] = i
+	end
+	return {
+		get_index_from_value = function(value, default_index)
+			if value ~= nil then
+				return value_to_index[value] or tonumber(default_index)
+			else
+				return tonumber(default_index)
+			end
+		end,
+		get_value_from_index = function(index, default_index)
+			index = tonumber(index)
+			print("DEBUG: "..dump2({index = index or "nil", default_index = default_index or "nil", index_to_value = index_to_value[index ~= nil and index_to_value[index] ~= nil] or index_to_value[default_index], index_to_value_array = index_to_value}))
+			if index ~= nil and index_to_value[index] ~= nil then
+				print("DEBUG: will return index "..index)
+				return index_to_value[index]
+			else
+				print("DEBUG: will return default_index "..index.." ("..(index ~= nil and "true" or "false")..", "..(index ~= nil and index_to_value[index] ~= nil and "true" or "false")..")")
+				return index_to_value[default_index]
+			end
+		end,
+		index_to_value = index_to_value,
+		formspec_list = table.concat(escaped_values, ","),
+		value_to_index = value_to_index,
+	}
+end
+
+--[[
 Vytvoří kopii vstupu (input) a zapíše do ní nové hodnoty skupin podle
 parametru override. Skupiny s hodnotou 0 v override z tabulky odstraní.
 Je-li některý z parametrů nil, je interpretován jako prázdná tabulka.
