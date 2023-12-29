@@ -11,6 +11,5 @@ dofile(modpath.."/nodes.lua")
 dofile(modpath.."/switch.lua")
 dofile(modpath.."/tools.lua")
 dofile(modpath.."/totalst.lua")
-dofile(modpath.."/vyhlazeni.lua")
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

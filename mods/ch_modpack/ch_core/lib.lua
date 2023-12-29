@@ -531,7 +531,7 @@ function ch_core.make_dropdown(index_to_value)
 				print("DEBUG: will return index "..index)
 				return index_to_value[index]
 			else
-				print("DEBUG: will return default_index "..index.." ("..(index ~= nil and "true" or "false")..", "..(index ~= nil and index_to_value[index] ~= nil and "true" or "false")..")")
+				print("DEBUG: will return default_index "..(index or "nil").." ("..(index ~= nil and "true" or "false")..", "..(index ~= nil and index_to_value[index] ~= nil and "true" or "false")..")")
 				return index_to_value[default_index]
 			end
 		end,

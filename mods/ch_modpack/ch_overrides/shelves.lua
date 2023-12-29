@@ -5,6 +5,14 @@ SHELVES
 local F = minetest.formspec_escape
 
 local empty_shelf_texture = "moreblocks_empty_shelf.png" -- 32x32
+local shelf_width = 10
+local MODE_NORMAL = 0
+local MODE_LIBRARY = 1
+local MODE_PRIVATE = 2
+local title_color = "#00FF00"
+local mode_dropdown = ch_core.make_dropdown({"normální", "knihovní", "soukromý"})
+local dropdown_index_to_mode_number = {MODE_NORMAL, MODE_LIBRARY, MODE_PRIVATE}
+local dropdown_index_from_mode_number = table.key_value_swap(dropdown_index_to_mode_number)
 
 local shelf_types = {
 	[""] = {
@@ -49,11 +57,13 @@ local types_to_shelf = {
 	},
 }
 
+local shelves_names = {}
 local shelves_to_types = {}
 
 for type1, tab in pairs(types_to_shelf) do
 	for type2, name in pairs(tab) do
 		shelves_to_types[name] = {type1, type2}
+		table.insert(shelves_names, name)
 	end
 end
 
@@ -74,7 +84,7 @@ local function get_shelf_type_by_list_index(node, index)
 		minetest.log("warning", "get_shelf_type_by_list_index() called for "..node.name.." and index "..index..", but the shelf is not known!")
 		return ""
 	end
-	if index <= 8 then
+	if index <= shelf_width then
 		return types[1]
 	else
 		return types[2]
@@ -102,15 +112,19 @@ local function get_infotext(pos, node, meta)
 	end
 	local inv = meta:get_inventory():get_list("items")
 	local count1, count2 = 0, 0
-	for i = 1, 8 do
+	for i = 1, shelf_width do
 		if not inv[i]:is_empty() then
 			count1 = count1 + 1
 		end
 	end
-	for i = 9, 16 do
+	for i = shelf_width + 1, 2 * shelf_width do
 		if not inv[i]:is_empty() then
 			count2 = count2 + 1
 		end
+	end
+	local title = meta:get_string("title")
+	if title ~= "" then
+		title = title.."\n"
 	end
 	local desc1 = shelf_types[types[1]].description
 	if types[1] ~= "" then
@@ -120,7 +134,7 @@ local function get_infotext(pos, node, meta)
 	if types[2] ~= "" then
 		desc2 = "("..count2..") "..desc2
 	end
-	return desc1.."\n"..desc2
+	return title..desc1.."\n"..desc2
 end
 
 local function meta_get_bool_string(meta, name)
@@ -131,41 +145,98 @@ local function meta_get_bool_string(meta, name)
 	end
 end
 
-local function get_formspec(pos, node, meta)
+local function get_formspec(player_name, pos, node, meta, do_edit)
 	local types = shelves_to_types[node.name]
 	if types == nil then
 		return ""
 	end
+	local player_role = ch_core.get_player_role(player_name)
 	local invlist = meta:get_inventory():get_list("items")
+	local mode = meta:get_int("mode")
+	local owner = meta:get_string("owner")
+	local has_owner_rights = owner == player_name or player_role == "admin"
+	local title = meta:get_string("title")
+	if title == "" then
+		title = "Skříňka na knihy a nádoby"
+	end
 	local formspec = {
-		"size[8,8]",
-		"label[0,0;Vlastník/ice skříňky: ",
-			F(ch_core.prihlasovaci_na_zobrazovaci(meta:get_string("owner"))), "]",
-		"checkbox[0,0.5;locked;zamykatelná;", meta_get_bool_string(meta, "locked"), "]",
-		"checkbox[3,0.5;library;knihovní;", meta_get_bool_string(meta, "library"), "]",
-		"list[context;items;0,1.5;8,2;]",
-		"list[current_player;main;0,3.90;8,1;]",
-		"list[current_player;main;0,5.00;8,3;8]",
-		"listring[context;items]",
-		"listring[current_player;main]",
-		default.get_hotbar_bg(0, 3.90),
+		"formspec_version[5]",
+		"size[13,10.25]",
 	}
-	local x, y = 0, 1.5
-	local current_type = shelf_types[types[1]]
-	local current_slot_image = current_type.slot_image
 
-	for i = 1, 16 do
-		if (not invlist[i] or invlist[i]:is_empty()) and current_slot_image ~= nil then
-			table.insert(formspec, "image["..x..","..y..";1,1;"..current_slot_image.."]")
+	-- shelf title
+	if do_edit then
+		table.insert(formspec,
+			"field[0.375,0.3;10,0.5;title;;"..F(title).."]"..
+			"button[10.5,0.3;2.25,0.5;ulozit;uložit titulek]")
+	else
+		table.insert(formspec,
+			"tableoptions[background=#00000000;highlight=#00000000;border=false]"..
+			"tablecolumns[color;text]"..
+			"table[0.25,0.25;12.5,0.5;;#00FF00,"..F(title)..";]")
+		if has_owner_rights then
+			table.insert(formspec,
+				"button[10.5,0.3;2.25,0.5;upravit;upravit titulek]")
 		end
-		if i == 8 then
-			-- switch to the second line
-			x = 0
-			y = y + 1
-			current_type = shelf_types[types[2]]
-			current_slot_image = current_type.slot_image
-		else
-			x = x + 1
+	end
+
+	-- shelf owner
+	if do_edit and player_role == "admin" then
+		table.insert(formspec,
+			"label[0.375,1;vlastník/ice skříňky:]"..
+			"field[3.15,0.75;3,0.5;owner;;"..ch_core.prihlasovaci_na_zobrazovaci(F(meta:get_string("owner"))).."]")
+	else
+		table.insert(formspec,
+			"label[0.375,1;vlastník/ice skříňky: "..ch_core.prihlasovaci_na_zobrazovaci(F(meta:get_string("owner"))).."]")
+	end
+
+	-- shelf mode
+	if do_edit then
+		table.insert(formspec,
+			"label[6.5,1;režim: "..mode_dropdown:get_value_from_index(dropdown_index_from_mode_number[mode], 1) .."]")
+	elseif has_owner_rights then
+		table.insert(formspec,
+			"label[6.5,1;režim:]"..
+			"dropdown[7.5,0.75;3,0.5;rezim;"..
+			mode_dropdown.formspec_list..";"..
+			(dropdown_index_from_mode_number[mode] or 1)..
+			";true]")
+	elseif mode == MODE_PRIVATE then
+		table.insert(formspec,
+			"label[0.375,1.5;Tato skříňka je v soukromém režimu. Obsah je přístupný jen vlastníkovi/ici skříňky či Administraci.]")
+	elseif mode == MODE_LIBRARY then
+		table.insert(formspec,
+			"label[0.375,1.5;Tato skříňka je v knihovním režimu. Knihy z ní si mohou brát všechny postavy včetně nových, dostanou kopii.]")
+	end
+
+	-- player inventory:
+	table.insert(formspec,
+		"list[current_player;main;1.625,5;8,1;]" ..
+		"list[current_player;main;1.625,6.25;8,3;8]"..
+		default.get_hotbar_bg(1.625 * 5 / 4, 5 * 5 / 4))
+	-- shelf inventory:
+	if mode ~= MODE_PRIVATE or has_owner_rights then
+		local context = "nodemeta:"..pos.x..","..pos.y..","..pos.z
+		table.insert(formspec, "list["..context..";items;0.375,2;10,2;]"..
+			"listring["..context..";items]"..
+			"listring[current_player;main]")
+		-- shelf icons:
+		local x, y = 0.375, 2.0
+		local current_type = shelf_types[types[1]]
+		local current_slot_image = current_type.slot_image
+		for i = 1, 2 * shelf_width do
+			if (not invlist[i] or invlist[i]:is_empty()) and current_slot_image ~= nil then
+				table.insert(formspec, "image["..x..","..y..";1,1;"..current_slot_image.."]")
+			end
+			if i == shelf_width then
+				-- switch to the second line
+				x = 0.375
+				y = y + 1.25
+				current_type = shelf_types[types[2]]
+				current_slot_image = current_type.slot_image
+			else
+				x = x + 1.25
+			end
 		end
 	end
 
@@ -176,11 +247,9 @@ local function on_construct(pos)
 	local node = minetest.get_node(pos)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
-	inv:set_size("items", 8 * 2)
+	inv:set_size("items", 10 * 2)
 	local infotext = get_infotext(pos, node, meta)
 	meta:set_string("infotext", infotext)
-	local formspec = get_formspec(pos, node, meta)
-	meta:set_string("formspec", formspec)
 end
 
 local function after_place_node(pos, placer, itemstack, pointed_thing)
@@ -192,7 +261,7 @@ local function after_place_node(pos, placer, itemstack, pointed_thing)
 end
 
 local function get_correct_nodename(inv)
-	local type1, type2 = get_shelf_type_from_inventory(inv, 1, 8), get_shelf_type_from_inventory(inv, 9, 16)
+	local type1, type2 = get_shelf_type_from_inventory(inv, 1, shelf_width), get_shelf_type_from_inventory(inv, shelf_width + 1, 2 * shelf_width)
 	return types_to_shelf[type1][type2]
 end
 
@@ -213,6 +282,7 @@ local function find_empty_book_in_inventory(inv, list, book_level)
 end
 
 local function allow_metadata_inventory_put(pos, listname, index, stack, player)
+	-- print("DEBUG: allow_metadata_inventory_put")
 	local player_name = player and player:get_player_name()
 	if not player_name or listname ~= "items" or not minetest.check_player_privs(player_name, "ch_registered_player") then
 		return 0 -- invalid or new player (no right to put)
@@ -220,64 +290,90 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 	local node = minetest.get_node(pos)
 	local shelf_type = get_shelf_type_by_list_index(node, index)
 	local meta = minetest.get_meta(pos)
+	local mode = meta:get_int("mode")
 	local owner = meta:get_string("owner")
-
-	if player_name ~= owner and not minetest.check_player_privs(player_name, "protection_bypass") then
-		if meta:get_int("locked") ~= 0 then
-			return 0 -- no right to put anything there
-		elseif meta:get_int("library") ~= 0 and (shelf_type == "books" or (shelf_type == "" and get_shelf_type_by_item_name(stack:get_name()) == "books")) then
-			return 0 -- no right to put books to the library shelf
-		end
-	end
+	local has_owner_rights = player_name == owner or minetest.check_player_privs(player_name, "protection_bypass")
 	local item_shelf_type = get_shelf_type_by_item_name(stack:get_name())
+
+	if mode == MODE_PRIVATE and not has_owner_rights then
+		return 0
+	end
+	if mode == MODE_LIBRARY and (shelf_type == "books" or (shelf_type == "" and item_shelf_type == "books")) then
+		return 0  -- no right to put books to the library shelf
+	end
 	if item_shelf_type == nil or (shelf_type ~= "" and item_shelf_type ~= shelf_type) then
+		return 0
+	end
+	return stack:get_count()
+end
+
+local function allow_metadata_inventory_take(pos, listname, index, stack, player)
+	-- print("DEBUG: allow_metadata_inventory_take")
+	local player_name = player and player:get_player_name()
+	if not player_name or listname ~= "items" then
+		return 0 -- invalid player or list
+	end
+	local player_role = ch_core.get_player_role(player_name)
+	local node = minetest.get_node(pos)
+	local shelf_type = get_shelf_type_by_list_index(node, index)
+	local meta = minetest.get_meta(pos)
+	local mode = meta:get_int("mode")
+	local owner = meta:get_string("owner")
+	local has_owner_rights = player_name == owner or minetest.check_player_privs(player_name, "protection_bypass")
+	local book_level = minetest.get_item_group(stack:get_name(), "book")
+
+	-- special exception:
+	if mode == MODE_LIBRARY and shelf_type == "books" and book_level ~= 0 then
+		-- activate library functionality
+		local has_creative = minetest.check_player_privs(player_name, "creative")
+		if player_role ~= "new" and not has_creative then
+			local inv = player:get_inventory()
+			local i = find_empty_book_in_inventory(inv, "main", book_level)
+			if i == nil then
+				ch_core.systemovy_kanal(player_name, "Abyste dostali výtisk této knihy, musíte mít v inventáři alespoň jednu prázdnou knihu stejného formátu!")
+				return 0
+			else
+				-- take an empty book
+				local player_stack = inv:get_stack("main", i)
+				player_stack:set_count(player_stack:get_count() - 1)
+				inv:set_stack("main", i, player_stack)
+			end
+		end
+		return stack:get_count()
+	end
+
+	if player_role == "new" then
+		return 0
+	end
+
+	if mode == MODE_PRIVATE and not has_owner_rights then
 		return 0
 	end
 
 	return stack:get_count()
 end
 
-local function allow_metadata_inventory_take(pos, listname, index, stack, player)
+local function allow_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
+	-- print("DEBUG: allow_metadata_inventory_move(): "..dump2({pos = pos, from_list = from_list, from_index = from_index, to_list = to_list, to_index = to_index, count = count, player_name = player:get_player_name()}))
 	local player_name = player and player:get_player_name()
-	if not player_name or listname ~= "items" then
+	if not player_name or from_list ~= "items" or to_list ~= "items" then
 		return 0 -- invalid player or list
 	end
-	local node = minetest.get_node(pos)
-	local shelf_type = get_shelf_type_by_list_index(node, index)
-	local meta = minetest.get_meta(pos)
-	local owner = meta:get_string("owner")
-
-	if player_name ~= owner and not minetest.check_player_privs(player_name, "protection_bypass") then
-		if shelf_type == "books" and meta:get_int("library") ~= 0 then
-			local book_level = minetest.get_item_group(stack:get_name(), "book")
-			if book_level ~= 0 then
-				-- activate library-functionality
-				local is_new_player = not minetest.check_player_privs(player_name, "ch_registered_player")
-				local has_give = minetest.check_player_privs(player_name, "give")
-				local has_creative = minetest.check_player_privs(player_name, "creative")
-				if not (is_new_player or has_give or has_creative) then
-					local inv = player:get_inventory()
-					local i = find_empty_book_in_inventory(inv, "main", book_level)
-					if i == nil then
-						-- an empty book in the inventory is required!
-						ch_core.systemovy_kanal(player_name, "Abyste dostali výtisk této knihy, musíte mít v inventáři alespoň jednu prázdnou knihu stejného formátu!")
-						return 0
-					end
-				end
-			end
-		elseif meta:get_int("locked") ~= 0 then
-			return 0 -- locked, no right to access
-		end
+	if ch_core.get_player_role(player_name) == "new" then
+		return 0 -- no moving for new players
 	end
+	local meta = minetest.get_meta(pos)
+	local mode = meta:get_int("mode")
+	local owner = meta:get_string("owner")
+	local has_owner_rights = player_name == owner or minetest.check_player_privs(player_name, "protection_bypass")
 
-	return stack:get_count()
-end
-
-local function allow_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
-	if from_list ~= "items" or to_list ~= "items" then return 0 end -- invalid list
+	if not has_owner_rights and (mode == MODE_LIBRARY or mode == MODE_PRIVATE) then
+		return 0
+	end
 	local node = minetest.get_node(pos)
 	local shelf_type_from = get_shelf_type_by_list_index(node, from_index)
 	local shelf_type_to = get_shelf_type_by_list_index(node, to_index)
+	-- only move to an empty shelf or shelf of the same type
 	if shelf_type_to == "" or shelf_type_to == shelf_type_from then
 		return count
 	else
@@ -285,7 +381,46 @@ local function allow_metadata_inventory_move(pos, from_list, from_index, to_list
 	end
 end
 
-local function update_after_metadata_inventory_action(pos)
+local function formspec_callback(custom_state, player, formname, fields)
+	if fields.quit then
+		return
+	end
+	local meta = minetest.get_meta(custom_state.pos)
+	local has_owner_rights = custom_state.has_owner_rights
+	if not has_owner_rights then
+		return
+	end
+	local mode = custom_state.mode
+	local do_edit = false
+	if fields.upravit then
+		do_edit = true
+	elseif fields.ulozit then
+		if fields.title then
+			meta:set_string("title", ch_core.utf8_truncate_right(fields.title, 80))
+		end
+		if fields.owner and ch_core.get_player_role(player) == "admin" then
+			meta:set_string("owner", ch_core.jmeno_na_prihlasovaci(fields.owner))
+		end
+		meta:set_string("infotext", get_infotext(custom_state.pos, minetest.get_node(custom_state.pos), meta))
+	elseif fields.rezim then
+		-- change mode
+		local new_mode = dropdown_index_to_mode_number[tonumber(fields.rezim) or 0]
+		if new_mode ~= nil then
+			if new_mode ~= mode then
+				local meta = minetest.get_meta(custom_state.pos)
+				meta:set_int("mode", new_mode)
+				mode = new_mode
+			end
+		else
+			minetest.log("warning", "Unknown fields.rezim '"..(fields.rezim or "nil").."' in formspec_callback for a shelf!")
+		end
+	else
+		return
+	end
+	return get_formspec(player:get_player_name(), custom_state.pos, minetest.get_node(custom_state.pos), meta, do_edit)
+end
+
+local function update_after_metadata_inventory_action(pos, player)
 	local node = minetest.get_node(pos)
 	local meta = minetest.get_meta(pos)
 	local correct_nodename = get_correct_nodename(meta:get_inventory())
@@ -293,39 +428,49 @@ local function update_after_metadata_inventory_action(pos)
 		node.name = correct_nodename
 		minetest.swap_node(pos, node)
 	end
-	meta:set_string("formspec", get_formspec(pos, node, meta))
 	meta:set_string("infotext", get_infotext(pos, node, meta))
-end
-
-local function on_receive_fields(pos, formname, fields, sender)
-	local player_name = sender and sender:get_player_name()
-	if not player_name then
-		return
-	end
-	local meta = minetest.get_meta(pos)
-	local owner = meta:get_string("owner")
-	if player_name ~= owner and not minetest.check_player_privs(player_name, "protection_bypass") then
-		return
-	end
-	local changed = false
-	if fields.locked ~= nil then
-		meta:set_int("locked", fields.locked == "true" and 1 or 0)
-		changed = true
-	end
-	if fields.library ~= nil then
-		meta:set_int("library", fields.library == "true" and 1 or 0)
-		changed = true
-	end
-	if changed then
-		meta:set_string("formspec", get_formspec(pos, minetest.get_node(pos), minetest.get_meta(pos)))
+	local player_name = player and player:get_player_name()
+	if player_name ~= nil and player_name ~= "" then
+		local custom_state = {
+			pos = pos,
+			mode = meta:get_int("mode"),
+			has_owner_rights = player_name == meta:get_string("owner") or minetest.check_player_privs(player_name, "protection_bypass"),
+		}
+		local formspec = get_formspec(player_name, pos, node, meta)
+		ch_core.show_formspec(player, "ch_overrides:shelf", formspec, formspec_callback, custom_state, {})
 	end
 end
 
--- local function on_metadata_inventory_put(pos, listname, index, stack, player)
--- local function on_metadata_inventory_take(pos, listname, index, stack, player)
--- local function on_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
-local on_metadata_inventory_move = update_after_metadata_inventory_action
-local on_metadata_inventory_put = update_after_metadata_inventory_action
+local function on_rightclick(pos, node, clicker, itemstack, pointed_thing)
+	local player_name = clicker and clicker:get_player_name()
+	if player_name ~= nil and player_name ~= "" then
+		-- function ch_core.show_formspec(player_name_or_player, formname, formspec, callback, custom_state, options)
+		local meta = minetest.get_meta(pos)
+		local owner = meta:get_string("owner")
+		if owner == "" then
+			minetest.log("warning", "A shelf "..node.name.." with no owner at "..minetest.pos_to_string(pos).."! Will set to "..player_name..".")
+			meta:set_string("owner", player_name)
+			owner = player_name
+		end
+		local custom_state = {
+			pos = pos,
+			mode = meta:get_int("mode"),
+			has_owner_rights = player_name == owner or minetest.check_player_privs(player_name, "protection_bypass"),
+		}
+		local formspec = get_formspec(player_name, pos, node, meta)
+		ch_core.show_formspec(clicker, "ch_overrides:shelf", formspec, formspec_callback, custom_state, {})
+	end
+	return itemstack
+end
+
+local function on_metadata_inventory_put(pos, listname, index, stack, player)
+	local inv = minetest.get_meta(pos):get_inventory()
+	local new_stack = inv:get_stack(listname, index)
+	if stack:get_count() == new_stack:get_count() then
+		-- new stack
+		return update_after_metadata_inventory_action(pos, player)
+	end
+end
 
 local function on_metadata_inventory_take(pos, listname, index, stack, player)
 	local player_name = player and player:get_player_name()
@@ -335,35 +480,37 @@ local function on_metadata_inventory_take(pos, listname, index, stack, player)
 	local node = minetest.get_node(pos)
 	local shelf_type = get_shelf_type_by_list_index(node, index)
 	local meta = minetest.get_meta(pos)
+	local inv = meta:get_inventory()
+	local mode = meta:get_int("mode")
 	local owner = meta:get_string("owner")
-
-	if player_name ~= owner and not minetest.check_player_privs(player_name, "protection_bypass") and shelf_type == "books" and meta:get_int("library") ~= 0 then
-		local book_level = minetest.get_item_group(stack:get_name(), "book")
-		if book_level ~= 0 then
-			-- activate library-functionality
-			meta:get_inventory():set_stack(listname, index, stack)
-
-			-- take an empty book...
-			local is_new_player = not minetest.check_player_privs(player_name, "ch_registered_player")
-			local has_give = minetest.check_player_privs(player_name, "give")
-			local has_creative = minetest.check_player_privs(player_name, "creative")
-			if not (is_new_player or has_give or has_creative) then
-				local inv = player:get_inventory()
-				local i = find_empty_book_in_inventory(inv, "main", book_level)
-				if i ~= nil then
-					local stack = inv:get_stack("main", i)
-					stack:set_count(stack:get_count() - 1)
-					inv:set_stack("main", i, stack)
-				end
-			end
-		end
+	local book_level = minetest.get_item_group(stack:get_name(), "book")
+	if mode == MODE_LIBRARY and shelf_type == "books" and book_level ~= 0 then
+		-- activate library-functionality
+		inv:set_stack(listname, index, stack)
+		return
 	end
+	if inv:get_stack(listname, index):is_empty() then
+		return update_after_metadata_inventory_action(pos, player)
+	end
+end
 
-	update_after_metadata_inventory_action(pos)
+local function on_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
+	local inv = minetest.get_meta(pos):get_inventory()
+	if inv:get_stack(from_list, from_index):is_empty() or inv:get_stack(to_list, to_index):get_count() == count then
+		return update_after_metadata_inventory_action(pos, player)
+	end
 end
 
 local function can_dig(pos, player)
-	return minetest.get_meta(pos):get_inventory():is_empty("items")
+	local meta = minetest.get_meta(pos)
+	if not meta:get_inventory():is_empty("items") then
+		return false
+	end
+	local mode = meta:get_int("mode")
+	local owner = meta:get_string("owner")
+	local player_name = (player and player:get_player_name()) or ""
+	local has_owner_rights = player_name ~= "" and (player_name == owner or minetest.check_player_privs(player_name, "protection_bypass"))
+	return mode == MODE_NORMAL or has_owner_rights
 end
 
 local function preserve_metadata(oldpos, oldnode, oldmeta, drops)
@@ -382,13 +529,13 @@ local def = {
 	after_place_node = after_place_node,
 	can_dig = can_dig,
 	preserve_metadata = preserve_metadata,
+	on_rightclick = on_rightclick,
 	allow_metadata_inventory_move = allow_metadata_inventory_move,
 	allow_metadata_inventory_put = allow_metadata_inventory_put,
 	allow_metadata_inventory_take = allow_metadata_inventory_take,
 	on_metadata_inventory_move = on_metadata_inventory_move,
 	on_metadata_inventory_put = on_metadata_inventory_put,
 	on_metadata_inventory_take = on_metadata_inventory_take,
-	on_receive_fields = on_receive_fields,
 }
 
 for type1, tab in pairs(types_to_shelf) do
@@ -429,9 +576,8 @@ if minetest.get_modpath("wrench") then
 		metas = {
 			owner = wrench.META_TYPE_STRING,
 			infotext = wrench.META_TYPE_STRING,
-			formspec = wrench.META_TYPE_STRING,
-			locked = wrench.META_TYPE_INT,
-			library = wrench.META_TYPE_INT,
+			mode = wrench.META_TYPE_INT,
+			title = wrench.META_TYPE_STRING,
 		},
 		owned = true,
 	}
@@ -439,3 +585,39 @@ if minetest.get_modpath("wrench") then
 		wrench.register_node(item, def)
 	end
 end
+
+-- LBM
+local function on_lbm(pos, node, dtime_s)
+	local meta = minetest.get_meta(pos)
+	local inv = meta:get_inventory()
+	if inv:get_size("items") == 8 * 2 then
+		-- perform upgrade
+		meta:set_string("formspec", "")
+		inv:set_size("items", 20)
+		local list = inv:get_list("items")
+		for i = 20, 11, -1 do
+			list[i] = list[i - 2]
+		end
+		list[9] = ItemStack()
+		list[10] = ItemStack()
+		inv:set_list("items", list)
+		if meta:get_int("locked") ~= 0 then
+			meta:set_int("mode", MODE_PRIVATE)
+		elseif meta:get_int("library") ~= 0 then
+			meta:set_int("mode", MODE_LIBRARY)
+		else
+			meta:set_int("mode", MODE_NORMAL)
+		end
+		meta:set_int("locked", 0)
+		meta:set_int("library", 0)
+		minetest.log("action", "A shelf "..node.name.." at "..minetest.pos_to_string(pos).." upgraded.")
+	end
+end
+
+minetest.register_lbm({
+	label = "Upgrade shelves",
+	name = "ch_overrides:shelves_upgrade_2",
+	nodenames = shelves_names,
+	run_at_every_load = false,
+	action = on_lbm,
+})
