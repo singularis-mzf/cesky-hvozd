@@ -659,17 +659,19 @@ function books.publish_book(book_item, edition) -- => IČK, error_message
 	if ick ~= "" then
 		return nil, "Kniha již byla vydána pod IČK "..ick.."!"
 	end
+	local author = meta:get_string("author")
+	local title = meta:get_string("title")
+	edition = ch_core.utf8_truncate_right(edition or "", 256)
 	local worldpath = minetest.get_worldpath()
 	local global_data = ch_core.global_data
 	local ick = global_data.pristi_ick
 	global_data.pristi_ick = ick + 1
-	meta:set_string("edition", ch_core.utf8_truncate_right(edition or "", 256))
 	local cas = ch_core.aktualni_cas()
 	local metadata = {
 		"IČK: <"..ick..">\n",
-		"Titul: <"..meta:get_string("title")..">\n",
-		"Vydání: <"..meta:get_string("edition")..">\n",
-		"Autor/ka: <"..meta:get_string("author")..">\n",
+		"Titul: <"..title..">\n",
+		"Vydání: <"..edition..">\n",
+		"Autor/ka: <"..author..">\n",
 		"Knihu vydal/a: <"..ch_core.prihlasovaci_na_zobrazovaci(owner).."> ("..owner..")\n",
 		"Copyright: <"..meta:get_string("copyright")..">\n",
 		string.format("Čas vydání: %04d-%02d-%02dT%02d:%02d:%02d%s\n", cas.rok, cas.mesic, cas.den, cas.hodina, cas.minuta, cas.sekunda, cas.posun_text),
@@ -681,9 +683,10 @@ function books.publish_book(book_item, edition) -- => IČK, error_message
 	minetest.mkdir(worldpath.."/knihy")
 	minetest.safe_file_write(worldpath.."/knihy/"..ick..".txt", text)
 	minetest.safe_file_write(worldpath.."/knihy/"..ick..".meta", metadata)
-	meta:set_string("ick", ick)
 
-	-- Strip text and public
+	-- update metadata: add edition, add ICK, strip public, strip text
+	meta:set_string("edition", edition)
+	meta:set_string("ick", ick)
 	meta:set_int("public", 0)
 	meta:set_string("text", "")
 	update_infotext(meta, "item")
@@ -702,7 +705,9 @@ function books.publish_book(book_item, edition) -- => IČK, error_message
 				minetest.log("error", "Povinne vytisky failed, because the node "..node.name.." doesn't have a list "..listname.."!")
 			end
 			local leftover = node_inv:add_item(listname, book_item)
-			if not leftover:is_empty() then
+			if leftover:is_empty() then
+				minetest.log("action", "Povinne vytisky: book with ICK "..ick.." stored to the chest "..node.name.." at "..minetest.pos_to_string(pos))
+			else
 				local chests = minetest.find_nodes_in_area(vector.offset(pos, -2, -2, -2), vector.offset(pos, 2, 2, 2), {node.name}, false)
 				local chests_positions = {}
 				local pos2_used
@@ -723,6 +728,10 @@ function books.publish_book(book_item, edition) -- => IČK, error_message
 			end
 		end
 	end
+
+	-- Oznámit:
+	minetest.log("action", "[books] "..owner.." published a book '"..title.."' (edition="..edition..") under ICK "..ick)
+	ch_core.systemovy_kanal("", "Oznámení Knihovny Českého hvozdu: "..ch_core.prihlasovaci_na_zobrazovaci(owner).." vydal/a knihu '"..title.."' ("..edition..", autorství: "..author..") pod IČK "..ick..".")
 	return ick, nil
 end
 
