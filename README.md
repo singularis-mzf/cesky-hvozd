@@ -417,7 +417,14 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: WTFPL
 * Licence úprav: LGPLv2.1
 
-## Christmass Tree (christmastree)
+## Christmas Decor (christmas\_decor)
+
+* Zdroj: [https://github.com/GreenXenith/christmas\_decor](https://github.com/GreenXenith/christmas\_decor), revize b5aa1f0ad4d8ce4944ece8f6ec47b4442d312a46
+* Původní licence: MIT
+* Licence úprav: MIT
+* [ContentDB](https://content.minetest.net/packages/GreenXenith/christmas\_decor/)
+
+## Christmas Tree (christmastree)
 
 * Zdroj: [https://forum.minetest.net/viewtopic.php?t=10701](https://forum.minetest.net/viewtopic.php?t=10701), verze 1.0.2
 * Původní licence: WTFPL
