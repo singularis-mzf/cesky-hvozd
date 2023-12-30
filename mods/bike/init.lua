@@ -838,12 +838,12 @@ end
 -- Need to convert between 1000 units and 256
 local function from_slider_rgb(value)
 	value = tonumber(value)
-	return math.floor((255/1000*value)+0.5)
+	return math.floor(value+0.5)
 end
 
 -- ...and back
 local function to_slider_rgb(value)
-	return 1000/255*value
+	return value
 end
 
 -- Painter formspec
@@ -858,24 +858,26 @@ local function show_painter_form(itemstack, player)
 	rgba.a = alpha
 	minetest.show_formspec(player:get_player_name(), "bike:painter",
 		-- Init formspec
-		"size[6,6;true]"..
+		"formspec_version[4]"..
+		"size[10,10;true]"..
 		"position[0.5, 0.45]"..
 		-- Hex/Alpha fields
-		"button[1.6,5.5;2,1;set;" .. S("Set paint color") .. "]"..
-		"field[0.9,5;2,0.8;hex;" .. S("Hex Color") .. ";"..color.."]"..
-		"field[2.9,5;2,0.8;alpha;" .. S("Alpha (0-255)") .. ";"..tostring(alpha).."]"..
+		"button[6.75,7.5;2.5,0.75;set;" .. S("Set paint color") .. "]"..
+		"field[1,7.5;2.5,0.75;hex;" .. S("Hex Color") .. ";"..color.."]"..
+		"field[4,7.5;2.5,0.75;alpha;" .. S("Alpha (0-255)") .. ";"..tostring(alpha).."]"..
 		-- RGBA sliders
-		"scrollbar[0,2;5,0.3;horizontal;r;"..tostring(to_slider_rgb(rgba.r)).."]"..
-		"label[5.1,1.9;R: "..tostring(rgba.r).."]"..
-		"scrollbar[0,2.6;5,0.3;horizontal;g;"..tostring(to_slider_rgb(rgba.g)).."]"..
-		"label[5.1,2.5;G: "..tostring(rgba.g).."]"..
-		"scrollbar[0,3.2;5,0.3;horizontal;b;"..tostring(to_slider_rgb(rgba.b)).."]"..
-		"label[5.1,3.1;B: "..tostring(rgba.b).."]"..
-		"scrollbar[0,3.8;5,0.3;horizontal;a;"..tostring(to_slider_rgb(rgba.a)).."]"..
-		"label[5.1,3.7;A: "..tostring(rgba.a).."]"..
+		"scrollbaroptions[min=0;max=255;smallstep=1;largestep=16;arrows=show]"..
+		"scrollbar[0.5,4;7.75,0.375;horizontal;r;"..tostring(to_slider_rgb(rgba.r)).."]"..
+		"label[8.5,4.2;R: "..tostring(rgba.r).."]"..
+		"scrollbar[0.5,4.75;7.75,0.375;horizontal;g;"..tostring(to_slider_rgb(rgba.g)).."]"..
+		"label[8.5,4.95;G: "..tostring(rgba.g).."]"..
+		"scrollbar[0.5,5.5;7.75,0.375;horizontal;b;"..tostring(to_slider_rgb(rgba.b)).."]"..
+		"label[8.5,5.65;B: "..tostring(rgba.b).."]"..
+		"scrollbar[0.5,6.25;7.75,0.375;horizontal;a;"..tostring(to_slider_rgb(rgba.a)).."]"..
+		"label[8.5,6.45;A: "..tostring(rgba.a).."]"..
 		-- Preview
-		"label[1,0;" .. S("Preview:") .. "]"..
-		"image[2,0;2,2;bike_metal_base.png^[colorize:"..color..":"..tostring(rgba.a).."]"
+		"label[2.5,1.9;" .. S("Preview:") .. "]"..
+		"image[4,0.625;2.5,2.5;bike_metal_base.png^[colorize:"..color..":"..tostring(rgba.a).."]"
 	)
 end
 
