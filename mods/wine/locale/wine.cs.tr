@@ -1,7 +1,7 @@
 # Translation of wine mod
 # textdomain: wine
 # author: Singularis
-# last update: 2022/November/26
+# last update: 2023/December/29
 
 Glass of Wine=sklenice vína
 Bottle of Wine=láhev vína
@@ -11,8 +11,8 @@ Glass of Brandy=sklenice brandy
 Bottle of Brandy=láhev brandy
 Glass of Coffee Liquor=sklenice kávového likéru
 Bottle of Coffee Liquor=láhev kávového likéru
-Glass of Rum=sklenice rumu
-Bottle of Rum=láhev rumu
+Glass of Rum=sklenice tuzemského rumu (tuzemáku)
+Bottle of Rum=láhev tuzemského rumu (tuzemáku)
 Glass of Tequila=sklenice tekily
 Bottle of Tequila=láhev tekily
 Glass of Wheat Beer=půllitr světlého piva

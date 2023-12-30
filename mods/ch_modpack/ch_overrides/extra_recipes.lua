@@ -228,7 +228,7 @@ end
 if minetest.get_modpath("drinks") and minetest.get_modpath("farming") and minetest.get_modpath("mobs_animal") and minetest.get_modpath("wine") then
 	local alcohol_items = {
 		"wine:glass_brandy",
-		-- "wine:glass_rum", -- TODO!
+		"wine:glass_rum",
 		"wine:glass_vodka",
 	}
 	for _, extra_item in ipairs({"", "farming:vanilla_extract"}) do
@@ -243,5 +243,22 @@ if minetest.get_modpath("drinks") and minetest.get_modpath("farming") and minete
 			}
 			minetest.register_craft(def)
 		end
+	end
+end
+
+if minetest.get_modpath("farming") and minetest.get_modpath("wine") then
+	for _, extra_item in ipairs({"", "farming:vanilla_extract"}) do
+		def = {
+			output = "wine:glass_rum 4",
+			recipe = {
+				{"farming:glass_water", extra_item, "farming:glass_water"},
+				{"farming:glass_water", "farming:bottle_ethanol", "farming:glass_water"},
+				{"farming:caramel", "farming:caramel", "farming:caramel"},
+			},
+			replacements = {
+				{"farming:bottle_ethanol", "vessels:glass_bottle"},
+			},
+		}
+		minetest.register_craft(def)
 	end
 end

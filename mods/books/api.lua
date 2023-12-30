@@ -14,6 +14,8 @@ Book metadata for all books:
 	string copyright -- license info for the book (if available)
 	string style -- appearance style of the book
 	int page -- page where the book is currently openned; 0 means the title page
+	int paper_price -- count of paper items needed to copy the book
+	int ink_price -- count of dye items needed to copy the book
 
 Book metadata for books with IČK:
 	string ick -- IČK of the book
@@ -41,6 +43,7 @@ local S = minetest.get_translator("books")
 local F = minetest.formspec_escape
 
 local lpp = 30 -- Lines per book's page
+local cpl = 80 -- maximal characters per book's line
 local author_color = "#00FF00"
 local title_color = "#FFFF00"
 local append_limit = 2048
@@ -209,6 +212,25 @@ local function read_book_page(lines, start_index, allow_empty_lines_on_start) --
 	return table.concat(buffer, "\n"), i
 end
 
+local function get_minimal_paper_count_by_name(name)
+	local kind = minetest.get_item_group(name, "book")
+	if kind == 5 then
+		-- B5
+		return 6
+	elseif kind == 6 then
+		-- B6
+		return 4
+	else
+		return 9
+	end
+end
+
+-- public
+function books.get_book_price(name, meta)
+	local paper_minimum = get_minimal_paper_count_by_name(name)
+	return math.max(paper_minimum, meta:get_int("paper_price")), math.max(1, meta:get_int("ink_price"))
+end
+
 --[[
 	NOTE: both pos and player_name may be nil! (meta must not be nil)
 ]]
@@ -225,6 +247,8 @@ function books.load_book(meta, pos, player_name)
 		page = meta:get_int("page"),
 		public = meta:get_int("public"),
 		style = meta:get_string("style"),
+		paper_price = meta:get_int("paper_price"),
+		ink_price = meta:get_int("ink_price"),
 	}
 	if books.styles[result.style] == nil then
 		result.style = "default"
@@ -249,7 +273,7 @@ function books.load_book(meta, pos, player_name)
 	}
 	result.page0 = table.concat(lines)
 
-	lines = ch_core.utf8_wrap(result.text, 80, {allow_empty_lines = true})
+	lines = ch_core.utf8_wrap(result.text, cpl, {allow_empty_lines = true})
 	local page = 0
 	local i = 1
 	while i ~= nil do
@@ -654,6 +678,7 @@ function books.publish_book(book_item, edition) -- => IČK, error_message
 	table.insert(metadata, "Délka textu v bajtech: "..#text.."\n")
 	metadata = table.concat(metadata)
 	ch_core.save_global_data("pristi_ick")
+	minetest.mkdir(worldpath.."/knihy")
 	minetest.safe_file_write(worldpath.."/knihy/"..ick..".txt", text)
 	minetest.safe_file_write(worldpath.."/knihy/"..ick..".meta", metadata)
 	meta:set_string("ick", ick)
@@ -830,8 +855,28 @@ local function formspec_callback(custom_state, player, formname, fields)
 		else
 			meta:set_string("text", fields.text or "")
 		end
-		book = player_to_book[player_name]
-		if book == nil then
+
+		-- compute the amount of paper and ink
+		local lines = ch_core.utf8_wrap(meta:get_string("text"), cpl, {allow_empty_lines = true})
+		local i = 1
+		local pages = 0
+		while i ~= nil do
+			pages = pages + 1
+			local x
+			x, i = read_book_page(lines, i, pages == 1)
+		end
+		local kind, paper_price, ink_price
+		local item_name
+		if pos ~= nil then
+			item_name = minetest.get_node(pos).name
+		else
+			item_name = item:get_name()
+		end
+		book.paper_price = math.max(get_minimal_paper_count_by_name(item_name), 1 + math.ceil(pages / 2))
+		book.ink_price = 1 + pages
+		meta:set_int("paper_price", book.paper_price)
+		meta:set_int("ink_price", book.ink_price)
+		if player_to_book[player_name] == nil then
 			error("Unknown error when saving a book (book == nil)!")
 		end
 		if pos == nil then

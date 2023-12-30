@@ -7,6 +7,7 @@
 local F = minetest.formspec_escape
 local S = minetest.get_translator("books")
 
+local get_book_price = books.get_book_price
 local load_book = books.load_book
 local publish_book = books.publish_book
 local update_infotext = books.update_infotext
@@ -62,25 +63,6 @@ local function get_formspec(pos, message)
 	-- button[7.75,4.7;5.5,0.75;test;test]
 	-- label[2.5,7.5;Chyba: Nastala neznámá chyba.]
 	return table.concat(formspec)
-end
-
-local function get_book_price(book_item) -- => paper, ink, book_data
-	local kind = minetest.get_item_group(book_item:get_name(), "book")
-	local meta = book_item:get_meta()
-	local book = load_book(meta, nil, nil)
-	local paper, ink
-	if kind == 0 then
-		return 0, 0, nil
-	elseif kind == 5 then
-		paper = 6
-	elseif kind == 6 then
-		paper = 4
-	else
-		paper = 9
-	end
-	ink = 1 + book.page_max
-	paper = math.max(paper, 1 + math.ceil(book.page_max / 2))
-	return paper, ink, book
 end
 
 local function allow_metadata_inventory_player(player)
@@ -187,7 +169,7 @@ local function formspec_callback(custom_state, player, formname, fields)
 			return get_formspec(custom_state.pos, "Chyba: Ve výstupním inventáři není dost místa!")
 		end
 		if not minetest.is_creative_enabled(player:get_player_name()) then
-			paper, ink = get_book_price(input)
+			paper, ink = get_book_price(input_name, input:get_meta())
 			local paper_stack = ItemStack("default:paper "..paper)
 			local ink_stack = ItemStack("dye:black "..ink)
 			if not inv:contains_item("paper", paper_stack) or not inv:contains_item("dye", ink_stack) then
@@ -216,9 +198,9 @@ local function formspec_callback(custom_state, player, formname, fields)
 				return get_formspec(custom_state.pos, "Chyba: Knihu musíte spravovat, tuto knihu spravuje "..ch_core.prihlasovaci_na_zobrazovaci(owner).."!")
 			end
 		end
-		local paper, ink, book
+		local paper, ink
 		if not minetest.is_creative_enabled(player:get_player_name()) then
-			paper, ink, book = get_book_price(input)
+			paper, ink = books.get_book_price(input_name, meta)
 			local paper_stack = ItemStack("default:paper "..paper)
 			local ink_stack = ItemStack("dye:black "..ink)
 			if not inv:contains_item("paper", paper_stack) or not inv:contains_item("dye", ink_stack) then
@@ -227,6 +209,7 @@ local function formspec_callback(custom_state, player, formname, fields)
 			inv:remove_item("paper", paper_stack)
 			inv:remove_item("dye", ink_stack)
 		end
+		local book = load_book(meta, nil, nil)
 		meta:set_string("text", book.text)
 		meta:set_string("ick", "")
 		meta:set_string("edition", "")
