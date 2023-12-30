@@ -687,6 +687,42 @@ function books.publish_book(book_item, edition) -- => IČK, error_message
 	meta:set_int("public", 0)
 	meta:set_string("text", "")
 	update_infotext(meta, "item")
+
+	-- Povinné výtisky:
+	local pos = global_data.povinne_vytisky
+	local listname = global_data.povinne_vytisky_listname
+	if listname ~= nil and listname ~= "" then
+		minetest.load_area(pos)
+		local node = minetest.get_node(pos)
+		if node.name:match(":") == nil then
+			minetest.log("error", "Povinne vytisky failed, because the node is "..node.name.."!")
+		else
+			local node_inv = minetest.get_meta(pos):get_inventory()
+			if node_inv:get_size(listname) == 0 then
+				minetest.log("error", "Povinne vytisky failed, because the node "..node.name.." doesn't have a list "..listname.."!")
+			end
+			local leftover = node_inv:add_item(listname, book_item)
+			if not leftover:is_empty() then
+				local chests = minetest.find_nodes_in_area(vector.offset(pos, -2, -2, -2), vector.offset(pos, 2, 2, 2), {node.name}, false)
+				local chests_positions = {}
+				local pos2_used
+				for _, pos2 in ipairs(chests) do
+					table.insert(chests_positions, minetest.pos_to_string(pos2))
+					node_inv = minetest.get_meta(pos2):get_inventory()
+					leftover = node_inv:add_item(listname, book_item)
+					if leftover:is_empty() then
+						pos2_used = pos2
+						break
+					end
+				end
+				if pos2_used ~= nil then
+					minetest.log("warning", "Povinne vytisky: book ICK "..ick.." placed to the chest at "..minetest.pos_to_string(pos2_used)..", because the main chest "..node.name.." at "..minetest.pos_to_string(pos).." is full.")
+				else
+					minetest.log("error", "Povinne vytisky failed, because "..#chests.." chests of type "..node.name.." near "..minetest.pos_to_string(pos).." are full! Book with ICK "..ick.." is lost! ("..table.concat(chests_positions, ", ")..")")
+				end
+			end
+		end
+	end
 	return ick, nil
 end
 
@@ -993,3 +1029,50 @@ function books.on_use(itemstack, user, pointed_thing)
 		end
 	end
 end
+
+local function nastavit_povinne_vytisky(player_name, param)
+	local x, y, z, listname = param:match("^(-?%d+),(-?%d+),(-?%d+) (.+)$")
+	x, y, z = tonumber(x), tonumber(y), tonumber(z)
+	if type(x) ~= "number" or type(y) ~= "number" or type(z) ~= "number" or
+			x < -30000 or x > 30000 or y < -30000 or y > 30000 or z < -30000 or
+			z > 30000 or listname == nil or listname == "" then
+		return false, "Chybné zadání!"
+	end
+	local pos = vector.new(x, y, z)
+	minetest.load_area(pos)
+	local node = minetest.get_node_or_nil(pos)
+	if node == nil or node.name == "ignore" or node.name == "air" then
+		return false, "Nemohu načíst blok na pozici "..minetest.pos_to_string(pos).."!"
+	end
+	local meta = minetest.get_meta(pos)
+	local inv = meta:get_inventory()
+	local lists = inv:get_lists()
+	local count = 0
+	local has_list = false
+	local list_names = {}
+	for k, v in pairs(lists) do
+		count = count + 1
+		table.insert(list_names, k)
+		if k == listname then
+			has_list = true
+		end
+	end
+	if count == 0 then
+		return false, "Blok "..node.name.." na pozici "..minetest.pos_to_string(pos).." neobsahuje žádné inventáře!"
+	elseif not has_list then
+		return false, "Blok "..node.name.." na pozici "..minetest.pos_to_string(pos).." neobsahuje inventář "..listname.."! Obsahuje "..count.." inventářů: "..table.concat(list_names, ",")
+	end
+	ch_core.global_data.povinne_vytisky = pos
+	ch_core.global_data.povinne_vytisky_listname = listname
+	ch_core.save_global_data({"povinne_vytisky", "povinne_vytisky_listname"})
+	return true, "Úspěšně nastaven cíl povinných výtisků."
+end
+
+local def = {
+	params = "<x>,<y>,<z> <listname>",
+	description = "nastaví truhlu, kam se budou ukládat povinné výtisky nově vydaných knih",
+	privs = {server = true},
+	func = nastavit_povinne_vytisky,
+}
+minetest.register_chatcommand("povinne_vytisky", def)
+minetest.register_chatcommand("povinné_výtisky", def)

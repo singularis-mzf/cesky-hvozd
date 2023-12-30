@@ -35,6 +35,8 @@ local zero_by_type = {
 -- ===========================================================================
 local global_data_data_types = {
 	posun_casu = "int",
+	povinne_vytisky = "vector",
+	povinne_vytisky_listname = "string",
 	pristi_ick = "int",
 	registered_spawn = "vector",
 	unregistered_spawn = "vector",
@@ -329,7 +331,7 @@ local function restore_value_by_type(data_type, value, value_description)
 		return value
 	elseif data_type == "vector" then
 		local result = minetest.string_to_pos(value)
-		if restore == nil then
+		if result == nil then
 			minetest.log("warning", "Invalid value ignored on restore! (description = "..(value_description or "nil")..")")
 			return zero_by_type["vector"]
 		end
