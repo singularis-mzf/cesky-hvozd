@@ -26,6 +26,6 @@ end
 
 include("food.lua")
 include("lights.lua")
-include("mobs.lua")
-include("stocking.lua")
+-- include("mobs.lua")
+-- include("stocking.lua")
 include("misc.lua")

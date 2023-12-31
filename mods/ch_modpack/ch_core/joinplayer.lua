@@ -2,19 +2,40 @@ ch_core.open_submod("joinplayer", {data = true, formspecs = true, lib = true, na
 
 local F = minetest.formspec_escape
 
-local function get_invalid_locale_formspec(invalid_locale)
+local function get_invalid_locale_formspec(invalid_locale, protocol_version)
 	if invalid_locale == nil or invalid_locale == "" then
 		invalid_locale = "en"
 	end
 
+	local krok1_cs, krok1_sk, krok1_en
+	local krok2_cs, krok2_sk, krok2_en
+	if protocol_version < 43 then
+		krok1_cs = F("1. Odpojte se ze hry a v hlavním menu na kartě Settings (Nastavení) klikněte na All Settings (Všechna nastavení).\n\n")
+		krok1_sk = F("1. Odpojte sa zo hry a v hlavnom menu na karte Settings (Nastavenia) kliknite na All Settings (Všetky nastavenia).\n\n")
+		krok1_en = F("1. Disconnect the client and in the main menu on the Settings tab click to \"All Settings\" button.\n\n")
+
+		krok2_cs = F("2. Ve skupině „Client and Server“ (Klient a server) nastavite „Language“ („Jazyk“) na hodnotu „cs“ nebo „sk“.\n\n")
+		krok2_sk = F("2. V skupine „Client and Server“ (Klient a server) nastavte „Language“ („Jazyk“) na hodnotu „sk“ alebo „cs“.\n\n")
+		krok2_en = F("2. In the group \"Client and Server\" set \"Language\" to one of the values \"cs\" or \"sk\".\n\n")
+	else
+		-- Minetest >= 5.8.0
+		krok1_cs = F("1. Odpojte se ze hry a klikněte na ozubené kolo v pravém horním rohu menu (Nastavení).\n\n")
+		krok1_sk = F("1. Odpojte sa zo hry a kliknite kliknite na ozubené koleso v pravom hornom rohu rozhrania (Nastavenia).\n\n")
+		krok1_en = F("1. Disconnect the client and click the gear in the top right corner of the interface (Settings).\n\n")
+
+		krok2_cs = F("2. Ve skupině „User Interfaces“ (Užívateľské rozhranie) nebo „Accessibility“ nastavite „Language“ („Jazyk“) na hodnotu „Česky [cs]“ nebo „Slovenčina [sk]“.\n\n")
+		krok2_sk = F("2. V skupine „User Interfaces“ (Uživatelská rozhraní) lebo „Accessibility“ nastavte „Language“ („Jazyk“) na hodnotu „Slovenčina [sk]“ lebo „Česky [cs]“.\n\n")
+		krok2_en = F("2. In the group \"User Interfaces\" or \"Accessibility\" set \"Language\" to one of the values \"Česky [cs]\" or \"Slovenčina [sk]\".\n\n")
+	end
+	
 	local result = {
 		"formspec_version[4]",
 		"size[12,14]",
 		"label[0.375,0.5;česky:]",
 		"textarea[0.375,0.7;11,4;cz;;",
 		F("Připojili jste se na server Český hvozd. Server detekoval, že váš klient je nastaven na lokalizaci „"..invalid_locale.."“, která není na tomto serveru podporována. Abyste mohli pokračovat ve hře, musíte nastavit svého klienta na lokalizaci „cs“ nebo „sk“. Postup je následující:\n\n"),
-		F("1. Odpojte se ze hry a v hlavním menu na kartě Settings (Nastavení) klikněte na All Settings (Všechna nastavení).\n\n"),
-		F("2. Ve skupině „Client and Server“ (Klient a server) nastavite „Language“ („Jazyk“) na hodnotu „cs“ nebo „sk“.\n\n"),
+		krok1_cs,
+		krok2_cs,
 		F("3. Úplně restartujte klienta (vypněte ho a znovu zapněte).\n\n"),
 		F("4. Znovu se pokuste připojit na Český hvozd.\n\n"),
 		F("Pokud se vám tato zpráva zobrazuje, přestože máte uvedené nastavení správně, je to pravděpodobně chyba na straně serveru. Kontakt pro nahlášení takové chyby najdete na stránkách http://ceskyhvozd.svita.cz\n"),
@@ -22,8 +43,8 @@ local function get_invalid_locale_formspec(invalid_locale)
 		"label[0.375,5.0;slovensky:]",
 		"textarea[0.375,5.2;11,4;sk;;",
 		F("Pripojili ste sa na server Český hvozd. Server detekoval, že váš klient je nastavený na lokalizáciu „"..invalid_locale.."“, ktorá nie je na tomto serveri podporovaná. Aby ste mohli pokračovať v hre, musíte nastaviť svojho klienta na lokalizáciu „sk“ alebo „cs“. Postup je nasledujúci:\n\n"),
-		F("1. Odpojte sa zo hry a v hlavnom menu na karte Settings (Nastavenia) kliknite na All Settings (Všetky nastavenia).\n\n"),
-		F("2. V skupine „Client and Server“ (Klient a server) nastavte „Language“ („Jazyk“) na hodnotu „sk“ alebo „cs“.\n\n"),
+		krok1_sk,
+		krok2_sk,
 		F("3. Úplne reštartujte klienta (vypnite ho a znovu zapnite).\n\n"),
 		F("4. Znova sa pokúste pripojiť na Český hvozd.\n\n"),
 		F("Ak sa vám táto správa zobrazuje, hoci máte uvedené nastavenie správne, je to pravdepodobne chyba na strane servera. Kontakt pre nahlásenie takejto chyby nájdete na stránkach http://ceskyhvozd.svita.cz\n"),
@@ -32,10 +53,10 @@ local function get_invalid_locale_formspec(invalid_locale)
 		"textarea[0.375,9.7;11,3;en;;",
 		F("You have connected to the Český Hvozd Server. The server detected that your client is set to localization \""..invalid_locale.."\" that is not supported on this server. To continue playing you must set up your client to one of the localizations \"cs\" or \"sk\". Please, bear in mind that playing on this server requires at least basic ability to read and write in Czech or Slovak language.\n\n"),
 		F("The way to set up the client localization is as follows:\n\n"),
-		F("1. Disconnect the client and in the main menu on the Settings tab click to \"All Settings\" button.\n\n"),
-		F("2. In the group \"Client and Server\" set \"Language\" to one of the values \"cs\" or \"sk\".\n\n"),
+		krok1_en,
+		krok2_en,
 		F("3. Completely restart your client (close it and start it again).\n\n"),
-		F("4. Try to connect to Český hvozd again.\n\n"),
+		F("4. Try to connect to Český Hvozd again.\n\n"),
 		F("If you have the Language setting set correctly, but this message still appears, it is probably a server-side bug. The contact information needed to report such bug is available in Czech on the website https://ceskyhvozd.svita.cz\n"),
 		"]",
 		"button_exit[1,13;10,0.75;zavrit;Odpojit / Odpojiť / Disconnect]",
@@ -98,13 +119,14 @@ local function on_joinplayer(player, last_login)
 	end
 	local lang_code = online_charinfo.lang_code
 	if not ch_core.supported_lang_codes[lang_code] then
+		local protocol_version = online_charinfo.protocol_version
 		if minetest.check_player_privs(player_name, "server") then
 			minetest.after(0.2, function()
 				minetest.chat_send_player(player_name, "VAROVÁNÍ: U vašeho klienta byla detekována nepodporovaná lokalizace '"..lang_code.."'!")
 			end)
 		else
 			minetest.after(0.2, function()
-				ch_core.show_formspec(player_name, "ch_core:invalid_locale", get_invalid_locale_formspec(lang_code), invalid_locale_formspec_callback, {}, {})
+				ch_core.show_formspec(player_name, "ch_core:invalid_locale", get_invalid_locale_formspec(lang_code, protocol_version), invalid_locale_formspec_callback, {}, {})
 			end)
 			return true
 		end

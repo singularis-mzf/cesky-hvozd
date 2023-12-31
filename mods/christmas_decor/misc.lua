@@ -1,76 +1,12 @@
 local depends, default_sounds = ...
-
-if depends.armor then
-	armor:register_armor("christmas_decor:hat_santa", {
-		description = "Santa Hat",
-		inventory_image = "christmas_decor_hat_santa_inv.png",
-		groups = {armor_head = 1, armor_use = 0},
-	})
-
-	armor:register_armor("christmas_decor:hat_elf", {
-		description = "Elf Hat",
-		inventory_image = "christmas_decor_hat_elf_inv.png",
-		groups = {armor_head = 1, armor_use = 0},
-	})
-
-	minetest.register_alias("christmas_decor:helmet_santa_hat", "christmas_decor:hat_santa")
-	minetest.register_alias("christmas_decor:helmet_elf_hat", "christmas_decor:hat_elf")
-
-	if depends.wool then
-		minetest.register_craft({
-			output = "christmas_decor:helmet_santa_hat",
-			recipe = {
-				{"", "wool:white", ""},
-				{"", "wool:red", ""},
-				{"wool:red", "wool:red", "wool:red"},
-			},
-		})
-
-		if depends.default then
-			minetest.register_craft({
-				output = "christmas_decor:helmet_elf_hat",
-				recipe = {
-					{"", "default:bronze_ingot", ""},
-					{"", "wool:green", ""},
-					{"wool:red", "wool:green", "wool:red"},
-				},
-			})
-		end
-	end
-end
-
-minetest.register_node("christmas_decor:mistletoe", {
-	description = "Mistletoe",
-	tiles = {"christmas_decor_mistletoe.png"},
-	drawtype = "plantlike",
-	walkable = false,
-	sunlight_propagates = true,
-	paramtype = "light",
-	use_texture_alpha = "blend",
-	groups = {snappy = 3},
-	sounds = default_sounds("node_sound_leaves_defaults"),
-})
-
-if depends.default and depends.dye then
-	minetest.register_craft({
-		output = "christmas_decor:mistletoe",
-		type = "shapeless",
-		recipe = {"default:leaves", "default:leaves", "dye:red"},
-	})
-end
+local S = minetest.get_translator("christmas_decor")
 
 minetest.register_node("christmas_decor:icicles_wall", {
-	description = "Icicles (wall)",
+	description = S("Icicles (wall)"),
 	tiles = {
 		{
 			image = "christmas_decor_icicles.png",
 			backface_culling = false,
-			animation = {
-				type = "vertical_frames",
-				aspect_w = 32,
-				aspect_h = 32,
-				length = 2
-			},
 		}
 	},
 	inventory_image = "christmas_decor_icicles_inv.png",
@@ -82,7 +18,7 @@ minetest.register_node("christmas_decor:icicles_wall", {
 		type = "wallmounted",
 	},
 	legacy_wallmounted = true,
-	use_texture_alpha = "blend",
+	use_texture_alpha = "clip",
 	drawtype = "signlike",
 	paramtype = "light",
 	light_source = 3,
@@ -91,35 +27,9 @@ minetest.register_node("christmas_decor:icicles_wall", {
 	sounds = default_sounds("node_sound_glass_defaults"),
 })
 
-minetest.register_node("christmas_decor:icicles_hanging", {
-	description = "Icicles (hanging)",
-	tiles = {
-		{
-			image = "christmas_decor_icicles.png",
-			backface_culling = false,
-			animation = {
-				type = "vertical_frames",
-				aspect_w = 32,
-				aspect_h = 32,
-				length = 2
-			},
-		}
-	},
-	use_texture_alpha = "blend",
-	inventory_image = "christmas_decor_icicles_hanging_inv.png",
-	wield_image = "christmas_decor_icicles_hanging_inv.png",
-	drawtype = "plantlike",
-	paramtype = "light",
-	light_source = 3,
-	paramtype2 = "degrotate",
-	walkable = false,
-	groups = {snappy = 3},
-	sounds = default_sounds("node_sound_glass_defaults"),
-})
-
 if depends.default then
 	minetest.register_craft({
-		output = "christmas_decor:icicles_hanging 4",
+		output = "christmas_decor:icicles_wall 4",
 		recipe = {
 			{"default:ice", "", "default:ice"},
 			{"default:ice", "", "default:ice"},
@@ -127,18 +37,7 @@ if depends.default then
 	})
 end
 
-minetest.register_craft({
-	output = "christmas_decor:icicles_wall",
-	type = "shapeless",
-	recipe = {"christmas_decor:icicles_hanging"},
-})
-
-minetest.register_craft({
-	output = "christmas_decor:icicles_hanging",
-	type = "shapeless",
-	recipe = {"christmas_decor:icicles_wall"},
-})
-
+--[[
 if depends.homedecor_exterior then
 	minetest.register_node("christmas_decor:christmas_shrubbery_large", {
 		description = "Christmas Shrubbery (large)",
@@ -215,13 +114,14 @@ if depends.homedecor_exterior then
 	})
 
 end
+]]
 
 minetest.register_node("christmas_decor:nutcracker", {
-	description = "Nutcracker",
+	description = S("Nutcracker"),
 	drawtype = "mesh",
 	mesh = "christmas_decor_nutcracker.obj",
 	tiles = {"christmas_decor_nutcracker.png"},
-	use_texture_alpha = "blend",
+	use_texture_alpha = "clip",
 	inventory_image = "christmas_decor_nutcracker_inv.png",
 	walkable = true,
 	selection_box = {
@@ -251,7 +151,7 @@ if depends.dye and depends.default then
 end
 
 minetest.register_node("christmas_decor:snowman", {
-	description = "Snowman",
+	description = S("Snowman"),
 	drawtype = "mesh",
 	mesh = "christmas_decor_snowman.obj",
 	tiles = {"christmas_decor_snowman.png"},
@@ -268,7 +168,7 @@ minetest.register_node("christmas_decor:snowman", {
 	},
 	paramtype = "light",
 	sunlight_propagates = true,
-	paramtype2 = "facedir",
+	paramtype2 = "4dir",
 	groups = {snappy = 3},
 	sounds = default_sounds("node_sound_leaves_defaults"),
 })

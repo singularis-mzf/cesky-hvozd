@@ -1,36 +1,49 @@
 local depends, default_sounds =  ...
+local S = minetest.get_translator("christmas_decor")
 
-minetest.register_craftitem("christmas_decor:led_rgb", {
-	description = "RGB Led Light",
-	inventory_image = "christmas_decor_led_rgb.png",
+minetest.register_craftitem("christmas_decor:led_red", {
+	description = S("Red Led Light"),
+	inventory_image = "christmas_decor_led_red.png",
+	groups = {led_light_red = 1, led_light = 1, led_light_rgb = 1},
+})
+
+minetest.register_craftitem("christmas_decor:led_green", {
+	description = S("Green Led Light"),
+	inventory_image = "christmas_decor_led_green.png",
+	groups = {led_light = 1, led_light_green = 1, led_light_rgb = 1},
+})
+
+minetest.register_craftitem("christmas_decor:led_blue", {
+	description = S("Blue Led Light"),
+	inventory_image = "christmas_decor_led_blue.png",
+	groups = {led_light = 1, led_light_blue = 1, led_light_rgb = 1},
 })
 
 minetest.register_craftitem("christmas_decor:led_white", {
-	description = "White Led Light",
+	description = S("White Led Light"),
 	inventory_image = "christmas_decor_led_white.png",
+	groups = {led_light = 1, led_light_white = 1},
+})
+
+minetest.register_craft({
+	output = "christmas_decor:led_white",
+	type = "shapeless",
+	recipe = {"christmas_decor:led_red", "christmas_decor:led_green", "christmas_decor:led_blue"},
 })
 
 minetest.register_craftitem("christmas_decor:wire", {
-	description = "Wire",
+	description = S("Wire"),
 	inventory_image = "christmas_decor_wire.png",
 })
 
-if depends.dye then
-	minetest.register_craft({
-		output = "christmas_decor:led_rgb",
-		type = "shapeless",
-		recipe = {"christmas_decor:led_white", "dye:green", "dye:blue", "dye:red"},
-	})
-end
-
-if depends.basic_materials then
-	if depends.default then
+if depends.basic_materials and depends.dye and depends.default then
+	for i, color in ipairs({"red", "green", "blue"}) do
 		minetest.register_craft({
-			output = "christmas_decor:led_white 8",
+			output = "christmas_decor:led_"..color.." 8",
 			recipe = {
-				{"default:glass"},
-				{"basic_materials:energy_crystal_simple"},
-				{"basic_materials:plastic_sheet"},
+				{"default:glass", "dye:"..color, ""},
+				{"basic_materials:energy_crystal_simple", "", ""},
+				{"basic_materials:plastic_sheet", "", ""},
 			},
 		})
 	end
@@ -47,17 +60,11 @@ end
 
 local function register_lights(desc, nodename, aspect, length)
 	minetest.register_node("christmas_decor:lights_" .. nodename, {
-		description = desc .. " Christmas Lights",
+		description = S(desc .. " Christmas Lights"),
 		tiles = {
 			{
-				image = "christmas_decor_lights_" .. nodename .. ".png",
+				image = "christmas_decor_lights_" .. nodename .. "_inv.png",
 				backface_culling = false,
-				animation = {
-					type = "vertical_frames",
-					aspect_w = aspect,
-					aspect_h = aspect,
-					length = length
-				},
 			}
 		},
 		inventory_image = "christmas_decor_lights_" .. nodename .. "_inv.png",
@@ -82,36 +89,25 @@ local function register_lights(desc, nodename, aspect, length)
 
 	if not depends.xpanes then return end
 	local tileFX = {
-		name = "christmas_decor_lights_" .. nodename .. ".png^[transformFX",
+		name = "christmas_decor_lights_" .. nodename .. "_inv.png^[transformFX",
 		backface_culling = false,
-		animation = {
-			type = "vertical_frames",
-			aspect_w = aspect,
-			aspect_h = aspect,
-			length = length
-		}
 	}
 
 	local tile = {
-		name = "christmas_decor_lights_" .. nodename .. ".png",
+		name = "christmas_decor_lights_" .. nodename .. "_inv.png",
 		backface_culling = false,
-		animation = {
-			type = "vertical_frames",
-			aspect_w = aspect,
-			aspect_h = aspect,
-			length = length
-		}
 	}
 
 	xpanes.register_pane("lights_" .. nodename .. "_pane", {
-		description = desc .. " Christmas Lights (pane)",
+		description = S(desc .. " Christmas Lights (pane)"),
 		textures = {},
 		use_texture_alpha = "blend",
 		groups = {snappy = 3},
 		sounds = default_sounds("node_sound_leaves_defaults"),
 		recipe = {
 			{"christmas_decor:lights_" .. nodename, "christmas_decor:lights_" .. nodename, "christmas_decor:lights_" .. nodename},
-			{"christmas_decor:lights_" .. nodename, "christmas_decor:lights_" .. nodename, "christmas_decor:lights_" .. nodename}
+			{"christmas_decor:lights_" .. nodename, "christmas_decor:lights_" .. nodename, "christmas_decor:lights_" .. nodename},
+			{"christmas_decor:lights_" .. nodename, "christmas_decor:lights_" .. nodename, "christmas_decor:lights_" .. nodename},
 		}
 	})
 
@@ -127,13 +123,14 @@ local function register_lights(desc, nodename, aspect, length)
 		light_source = 10,
 	})
 
+	--[[
 	minetest.register_craft({
 		output = "xpanes:lights_" .. nodename .. "_pane_flat 6",
 		recipe = {
 			{"christmas_decor:lights_" .. nodename, "christmas_decor:lights_" .. nodename, "christmas_decor:lights_" .. nodename},
 			{"christmas_decor:lights_" .. nodename, "christmas_decor:lights_" .. nodename, "christmas_decor:lights_" .. nodename}
 		}
-	})
+	}) ]]
 end
 
 register_lights("White", "white", 16, 6)
@@ -155,30 +152,30 @@ minetest.register_craft({
 	recipe = {
 		{"christmas_decor:wire", "christmas_decor:wire", "christmas_decor:wire"},
 		{"christmas_decor:led_white", "christmas_decor:led_white", "christmas_decor:led_white"},
-		{"christmas_decor:led_white", "christmas_decor:led_white", "christmas_decor:led_white"},
+		{"", "", ""},
 	},
 })
 
 minetest.register_craft({
 	output = "christmas_decor:lights_multicolor 6",
 	recipe = {
-		{"christmas_decor:led_rgb", "christmas_decor:led_rgb", "christmas_decor:led_rgb"},
+		{"christmas_decor:led_red", "christmas_decor:led_green", "christmas_decor:led_blue"},
 		{"christmas_decor:wire", "christmas_decor:wire", "christmas_decor:wire"},
-		{"christmas_decor:led_rgb", "christmas_decor:led_rgb", "christmas_decor:led_rgb"},
+		{"christmas_decor:led_blue", "christmas_decor:led_green", "christmas_decor:led_red"},
 	},
 })
 
 minetest.register_craft({
 	output = "christmas_decor:lights_multicolor_bulb 6",
 	recipe = {
-		{"christmas_decor:led_rgb", "default:glass", "christmas_decor:led_rgb"},
+		{"group:led_light_rgb", "default:glass", "group:led_light_rgb"},
 		{"christmas_decor:wire", "christmas_decor:wire", "christmas_decor:wire"},
-		{"christmas_decor:led_rgb", "default:glass", "christmas_decor:led_rgb"},
+		{"group:led_light_rgb", "default:glass", "group:led_light_rgb"},
 	},
 })
 
 minetest.register_node("christmas_decor:garland", {
-	description = "Garland",
+	description = S("Garland"),
 	tiles = {"christmas_decor_garland.png"},
 	inventory_image = "christmas_decor_garland.png",
 	wield_image = "christmas_decor_garland.png",
@@ -199,17 +196,11 @@ minetest.register_node("christmas_decor:garland", {
 })
 
 minetest.register_node("christmas_decor:garland_lights", {
-	description = "Garland with Lights",
+	description = S("Garland with Lights"),
 	tiles = {
 		{
 			image = "christmas_decor_garland_lights.png",
 			backface_culling = false,
-			animation = {
-				type = "vertical_frames",
-				aspect_w = 64,
-				aspect_h = 64,
-				length = 16
-			},
 		}
 	},
 	inventory_image = "christmas_decor_garland_lights_inv.png",

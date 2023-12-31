@@ -1,7 +1,12 @@
 local depends, default_sounds =  ...
+local S = minetest.get_translator("christmas_decor")
+
+local dye_item = "dye:faint_amber"
+
+--[[
 
 minetest.register_node("christmas_decor:candycane", {
-	description = "Candycane",
+	description = S("Candycane"),
 	drawtype = "mesh",
 	mesh = "christmas_decor_candycane.obj",
 	tiles = {"christmas_decor_candycane.png"},
@@ -194,19 +199,21 @@ if depends.default and depends.dye then
 		},
 	})
 end
+]]
 
 minetest.register_node("christmas_decor:candycane_block", {
-	description = "Candycane Block",
+	description = S("Candycane Block"),
 	tiles = {
 		"christmas_decor_candycane_block.png", "christmas_decor_candycane_block.png",
 		"christmas_decor_candycane_block.png", "christmas_decor_candycane_block.png",
 		"christmas_decor_candycane_block.png^[transformFX", "christmas_decor_candycane_block.png^[transformFX",
 	},
-	paramtype2 = "facedir",
+	paramtype2 = "4dir", -- TODO: => color4dir
 	groups = {snappy = 3},
 	sounds = default_sounds("node_sound_stone_defaults"),
 })
 
+--[[
 minetest.register_node("christmas_decor:peppermint_block", {
 	description = "Peppermint Block",
 	tiles = {"christmas_decor_peppermint.png"},
@@ -214,11 +221,12 @@ minetest.register_node("christmas_decor:peppermint_block", {
 	groups = {snappy = 3},
 	sounds = default_sounds("node_sound_stone_defaults"),
 })
+]]
 
 minetest.register_node("christmas_decor:frosting_block", {
-	description = "Frosting Block",
+	description = S("Frosting Block"),
 	tiles = {"christmas_decor_frosting.png"},
-	paramtype2 = "facedir",
+	paramtype2 = "4dir", -- TODO: => color4dir
 	groups = {snappy = 3},
 	sounds = default_sounds("node_sound_leaves_defaults"),
 })
@@ -226,14 +234,14 @@ minetest.register_node("christmas_decor:frosting_block", {
 if depends.farming_redo then
 	if depends.dye then
 		minetest.register_craft({
-			output = "christmas_decor:candycane_block 8",
+			output = "christmas_decor:candycane_block",
 			recipe = {
-				{"farming:sugar", "dye:red", "farming:sugar"},
-				{"dye:red", "farming:sugar", "dye:red"},
-				{"farming:sugar", "dye:red", "farming:sugar"},
+				{"solidcolor:solid_block", ""},
+				{"", "dye:red"},
 			},
 		})
 
+		--[[
 		minetest.register_craft({
 			output = "christmas_decor:peppermint_block 8",
 			recipe = {
@@ -241,22 +249,19 @@ if depends.farming_redo then
 				{"farming:sugar", "dye:red", "farming:sugar"},
 				{"dye:red", "farming:sugar", "dye:red"},
 			},
-		})
-	end
-
-	if depends.bucket then
-		minetest.register_craft({
-			output = "christmas_decor:frosting_block 8",
-			recipe = {
-				{"farming:sugar", "farming:sugar", "farming:sugar"},
-				{"farming:sugar", "bucket:bucket_water", "farming:sugar"},
-				{"farming:sugar", "farming:sugar", "farming:sugar"},
-			},
-			replacements = {{"bucket:bucket_water", "bucket:bucket_empty"}},
-		})
+		}) ]]
 	end
 end
 
+minetest.register_craft({
+	output = "christmas_decor:frosting_block 2",
+	recipe = {
+		{dye_item, ""},
+		{"xdecor:wood_tile", "xdecor:wood_tile"},
+	},
+})
+
+--[[
 if depends.stairs then
 	local candycane_def = minetest.registered_nodes["christmas_decor:candycane_block"]
 	stairs.register_stair_and_slab("candycane_block", "christmas_decor:candycane_block",
@@ -279,9 +284,10 @@ if depends.stairs then
 		frosting_def.sounds, false
 	)
 end
+]]
 
 minetest.register_node("christmas_decor:frosting_trim", {
-	description = "Frosting Trim",
+	description = S("Frosting Trim"),
 	tiles = {"christmas_decor_frosting_trim.png"},
 	inventory_image = "christmas_decor_frosting_trim.png",
 	wield_image = "christmas_decor_frosting_trim.png",
@@ -296,13 +302,19 @@ minetest.register_node("christmas_decor:frosting_trim", {
 	use_texture_alpha = "blend",
 	drawtype = "signlike",
 	paramtype = "light",
-	paramtype2 = "wallmounted",
-	groups = {snappy = 3},
+	paramtype2 = "colorwallmounted",
+	palette = "unifieddyes_palette_colorwallmounted.png",
+	after_place_node = function(pos, placer, itemstack, pointed_thing)
+		unifieddyes.fix_rotation_nsew(pos, placer, itemstack, pointed_thing)
+	end,
+	on_dig = unifieddyes.on_dig,
+	on_rotate = unifieddyes.fix_after_screwdriver_nsew,
+	groups = {snappy = 3, ud_param2_colorable = 1},
 	sounds = default_sounds("node_sound_leaves_defaults"),
 })
 
 minetest.register_node("christmas_decor:frosting_line", {
-	description = "Frosting Line",
+	description = S("Frosting Line"),
 	tiles = {"christmas_decor_frosting_line.png"},
 	inventory_image = "christmas_decor_frosting_line.png",
 	wield_image = "christmas_decor_frosting_line.png",
@@ -317,23 +329,31 @@ minetest.register_node("christmas_decor:frosting_line", {
 	use_texture_alpha = "blend",
 	drawtype = "signlike",
 	paramtype = "light",
-	paramtype2 = "wallmounted",
-	groups = {snappy = 3},
+	paramtype2 = "colorwallmounted",
+	palette = "unifieddyes_palette_colorwallmounted.png",
+	after_place_node = function(pos, placer, itemstack, pointed_thing)
+		unifieddyes.fix_rotation_nsew(pos, placer, itemstack, pointed_thing)
+	end,
+	on_dig = unifieddyes.on_dig,
+	on_rotate = unifieddyes.fix_after_screwdriver_nsew,
+	groups = {snappy = 3, ud_param2_colorable = 1},
 	sounds = default_sounds("node_sound_leaves_defaults"),
 })
 
 minetest.register_craft({
 	output = "christmas_decor:frosting_trim 6",
 	recipe = {
-		{"christmas_decor:frosting_block", "christmas_decor:frosting_block", "christmas_decor:frosting_block"},
-		{"", "christmas_decor:frosting_block", ""},
+		{dye_item, dye_item, dye_item},
+		{"", dye_item, ""},
 	}
 })
 
 minetest.register_craft({
 	output = "christmas_decor:frosting_line 6",
 	recipe = {
-		{"christmas_decor:frosting_block", "christmas_decor:frosting_block", "christmas_decor:frosting_block"},
+		{dye_item, "", dye_item},
+		{"", dye_item, ""},
+		{"", "", ""},
 	}
 })
 
@@ -345,12 +365,15 @@ for color, hex in pairs({
 	blue = "#0096FF",
 	purple = "#ae4eff",
 }) do
-	minetest.register_node("christmas_decor:gumdrop_" .. color, {
-		description = color:gsub("^%l", string.upper) .. " Gumdrop",
-		drawtype = "mesh",
-		mesh = "christmas_decor_gumdrop.obj",
-		tiles = {"christmas_decor_gumdrop.png^[colorize:" .. hex .. ":150"},
-		walkable = true,
+	minetest.register_craftitem("christmas_decor:gumdrop_" .. color, {
+		description = S(color:gsub("^%l", string.upper) .. " Gumdrop"),
+		-- drawtype = "mesh",
+		-- mesh = "christmas_decor_gumdrop.obj",
+		-- tiles = {"christmas_decor_gumdrop.png^[colorize:" .. hex .. ":150"},
+		inventory_image = "christmas_decor_gumdrop_inv.png^[colorize:" .. hex .. ":150",
+		wield_image = "christmas_decor_gumdrop_inv.png^[colorize:" .. hex .. ":150",
+		wield_scale = {x = 0.5, y = 0.5, z = 0.5},
+		--[[ walkable = true,
 		selection_box = {
 			type = "fixed",
 			fixed = {-0.4, -0.5, -0.4, 0.4, 0.1, 0.4},
@@ -361,9 +384,9 @@ for color, hex in pairs({
 		},
 		paramtype = "light",
 		sunlight_propagates = true,
-		paramtype2 = "facedir",
+		paramtype2 = "facedir", ]]
 		groups = {snappy = 3},
-		sounds = default_sounds("node_sound_leaves_defaults"),
+		-- sounds = default_sounds("node_sound_leaves_defaults"),
 		on_use = minetest.item_eat(2),
 	})
 
