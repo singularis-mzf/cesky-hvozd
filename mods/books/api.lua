@@ -48,6 +48,8 @@ local author_color = "#00FF00"
 local title_color = "#FFFF00"
 local append_limit = 2048
 local ap_increase_counter = 8 -- (8 * 15 seconds = 2 minutes)
+local paper_minimum_B5 = 6
+local paper_minimum_B6 = 4
 
 -- Access levels:
 local READ_ONLY = 0 -- player can only read the book
@@ -122,6 +124,29 @@ local function copy_book_metadata(frommeta, tometa)
 	end
 end
 ]]
+
+-- public
+function books.analyze_book(name, meta)
+	local kind = minetest.get_item_group(name, "book")
+	local result = {}
+	local paper_minimum
+	if kind == 5 then
+		result.format = "B5"
+		paper_minimum = paper_minimum_B5
+	elseif kind == 6 then
+		result.format = "B6"
+		paper_minimum = paper_minimum_B6
+	else
+		return nil -- not a book or unknown book
+	end
+	result.ick = meta:get_string("ick")
+	result.owner = meta:get_string("owner")
+	result.raw_paper_price = meta:get_int("paper_price")
+	result.raw_ink_price = meta:get_int("ink_price")
+	result.paper_price = math.max(paper_minimum, result.raw_paper_price)
+	result.ink_price = math.max(1, result.raw_ink_price)
+	return result
+end
 
 local function increase_ap(player_name)
 	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
@@ -212,25 +237,6 @@ local function read_book_page(lines, start_index, allow_empty_lines_on_start) --
 	return table.concat(buffer, "\n"), i
 end
 
-local function get_minimal_paper_count_by_name(name)
-	local kind = minetest.get_item_group(name, "book")
-	if kind == 5 then
-		-- B5
-		return 6
-	elseif kind == 6 then
-		-- B6
-		return 4
-	else
-		return 9
-	end
-end
-
--- public
-function books.get_book_price(name, meta)
-	local paper_minimum = get_minimal_paper_count_by_name(name)
-	return math.max(paper_minimum, meta:get_int("paper_price")), math.max(1, meta:get_int("ink_price"))
-end
-
 --[[
 	NOTE: both pos and player_name may be nil! (meta must not be nil)
 ]]
@@ -308,6 +314,13 @@ function books.load_book(meta, pos, player_name)
 		result.access_level = READ_ONLY
 	end
 
+	minetest.log("action", "load_book()"..
+		ifthenelse(player_name ~= nil, " for player "..(player_name or ""), "")..
+		ifthenelse(pos ~= nil, pos and (" at "..minetest.pos_to_string(pos)), "")..
+		ifthenelse(result.ick ~= "", " with ICK "..result.ick, "")..
+		" finished. owner = "..result.owner..", title = "..result.title..", paper_price = "..result.paper_price..", ink_price = "..result.ink_price..", page = "..result.page..", lines_count = "..#lines..", page_max = "..result.page_max..", access_level = "..result.access_level..", public = "..result.public..", style = "..result.style.."."
+	)
+
 	return result
 end
 local load_book = books.load_book
@@ -335,6 +348,7 @@ local function get_book_read_formspec(player_name)
 	if book == nil then
 		error("get_book_edit_formspec() called for "..player_name.." without any book openned!")
 	end
+	local style = assert_not_nil(books.styles[book.style] or books.styles["default"])
 	local formspec = {
 		"formspec_version[4]",
 		"size[14,14]",
@@ -541,14 +555,18 @@ local function initialize_book_item(itemstack, itemstack_meta, player_name)
 		return false
 	end
 	itemstack_meta:set_string("owner", player_name)
-	local name, palette_index = generate_random_book_color(itemstack:get_name(), itemstack_meta:get_int("palette_index"))
-	if name ~= nil then
-		itemstack:set_name(name)
-		itemstack_meta:set_int("palette_index", palette_index)
-		return true
-	else
-		return false
+	local name, palette_index = itemstack:get_name(), itemstack_meta:get_int("palette_index")
+	if name:match("_grey$") and palette_index == 0 then
+		name, palette_index = generate_random_book_color(name, palette_index)
+		if name ~= nil then
+			itemstack:set_name(name)
+			itemstack_meta:set_int("palette_index", palette_index)
+			return true
+		else
+			return false
+		end
 	end
+	return true
 end
 
 local function initialize_book_node(pos, node, node_meta, player_name)
@@ -556,14 +574,18 @@ local function initialize_book_node(pos, node, node_meta, player_name)
 		return false
 	end
 	node_meta:set_string("owner", player_name)
-	local name, param2 = generate_random_book_color(node.name, node.param2)
-	if name ~= nil then
-		node.name = name
-		node.param2 = param2
-		minetest.swap_node(pos, node)
-	else
-		return false
+	local name, param2 = node.name, node.param2
+	if name:match("_grey$") and (param2 - param2 % 32) == 0 then
+		name, param2 = generate_random_book_color(name, param2)
+		if name ~= nil then
+			node.name = name
+			node.param2 = param2
+			minetest.swap_node(pos, node)
+		else
+			return false
+		end
 	end
+	return true
 end
 
 -- infotext_type in {openned, closed, item}
@@ -891,18 +913,19 @@ local function formspec_callback(custom_state, player, formname, fields)
 				cas.den, cas.nazev_mesice_2, cas.rok, cas.hodina, cas.minuta, cas.sekunda,
 				cas.posun_text)
 			if #old_text == 0 then
-				meta:set_string("text", new_text) -- no old text
+				book.text = new_text -- no old text
 			elseif access_level == APPEND_ONLY then
-				meta:set_string("text", old_text.."\n\n"..new_text)
+				book.text = old_text.."\n\n"..new_text
 			else -- PREPEND_ONLY
-				meta:set_string("text", new_text.."\n\n"..old_text)
+				book.text = new_text.."\n\n"..old_text
 			end
 		else
-			meta:set_string("text", fields.text or "")
+			book.text = fields.text or ""
 		end
+		meta:set_string("text", book.text)
 
 		-- compute the amount of paper and ink
-		local lines = ch_core.utf8_wrap(meta:get_string("text"), cpl, {allow_empty_lines = true})
+		local lines = ch_core.utf8_wrap(book.text, cpl, {allow_empty_lines = true})
 		local i = 1
 		local pages = 0
 		while i ~= nil do
@@ -910,14 +933,22 @@ local function formspec_callback(custom_state, player, formname, fields)
 			local x
 			x, i = read_book_page(lines, i, pages == 1)
 		end
-		local kind, paper_price, ink_price
 		local item_name
 		if pos ~= nil then
 			item_name = minetest.get_node(pos).name
 		else
 			item_name = item:get_name()
 		end
-		book.paper_price = math.max(get_minimal_paper_count_by_name(item_name), 1 + math.ceil(pages / 2))
+		local book_kind = minetest.get_item_group(item_name, "book")
+		local paper_minimum
+		if book_kind == 5 then
+			paper_minimum = paper_minimum_B5
+		elseif book_kind == 6 then
+			paper_minimum = paper_minimum_B6
+		else
+			error("A book with unknown item kind ("..item_name..", book_lind = "..book_kind..")!")
+		end
+		book.paper_price = math.max(paper_minimum, 1 + math.ceil(pages / 2))
 		book.ink_price = 1 + pages
 		meta:set_int("paper_price", book.paper_price)
 		meta:set_int("ink_price", book.ink_price)
@@ -938,7 +969,13 @@ local function formspec_callback(custom_state, player, formname, fields)
 			minetest.log("warning", "Book save called for a closed book "..minetest.get_node(pos).name.." at "..minetest.pos_to_string(pos).."!")
 			update_infotext(meta, "closed", book)
 		end
-		minetest.log("action", "Player "..player_name.." saved book with author '"..meta:get_string("author").."' and title '"..meta:get_string("title").."'"..(pos == nil and "" or (" at "..minetest.pos_to_string(pos))).." with access_level == "..access_level..".")
+		local message = {
+			"Player ", player_name, " saved book with author '", meta:get_string("author"), "' and title '", meta:get_string("title"), "'",
+			ifthenelse(pos ~= nil, " at "..minetest.pos_to_string(pos or vector.zero()), ""), " with access_level == "..access_level.." and price = ",
+			book.paper_price, " papers and ", book.ink_price, " ink. Text length is ", #book.text,
+		}
+		message = table.concat(message)
+		minetest.log("action", message)
 		player_close_book(player_name)
 	elseif fields.close or fields.quit then
 		player_close_book(player_name)

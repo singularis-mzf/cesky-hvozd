@@ -12,6 +12,15 @@ local load_book = books.load_book
 local publish_book = books.publish_book
 local update_infotext = books.update_infotext
 
+local player_name_to_custom_state = {}
+
+local function assert_not_nil(x)
+	if x == nil then
+		error("Assertion failed: the value is nil!")
+	end
+	return x
+end
+
 local function on_constuct(pos)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
@@ -19,55 +28,386 @@ local function on_constuct(pos)
 	inv:set_size("paper", 4)
 	inv:set_size("dye", 4)
 	inv:set_size("output", 8)
+	inv:set_size("recycle", 2)
 	meta:set_string("infotext", S("Library Machine"))
 end
 
-local function get_formspec(pos, message)
-	local spos = pos.x.."\\,"..pos.y.."\\,"..pos.z
+local formspec_common =
+		"formspec_version[5]"..
+		"size[14,14]"..
+		default.gui_bg..
+		default.gui_bg_img..
+		"item_image[0.375,0.375;1,1;books:machine]"..
+		"label[1.6,0.9;Knihovní stroj]"..
+		"button_exit[13,0.25;0.75,0.75;zavrit;X]"..
+		"label[0.5,9;Inventář:]"..
+		"list[current_player;main;2.5,8.5;8,4;]"
+
+--[[
+custom_state = {
+	message = "",
+	player_name,
+	pos,
+	recycle_type = 1,
+	tabname = "copying",
+	paper_price = 0,
+	ink_price = 0,
+}
+]]
+
+local function get_formspec(custom_state)
+	local player_name = assert_not_nil(custom_state.player_name)
+	local pos = assert_not_nil(custom_state.pos)
+	local node_inventory = "nodemeta:"..pos.x.."\\,"..pos.y.."\\,"..pos.z
+	local inv = minetest.get_meta(pos):get_inventory()
+	local is_admin = minetest.check_player_privs(player_name, "protection_bypass")
+	local message = custom_state.message or ""
+
 	local formspec = {
-		"formspec_version[5]",
-		"size[14,13.5]",
-		default.gui_bg,
-		default.gui_bg_img,
-		"item_image[0.375,0.375;1,1;books:machine]",
-		"label[1.6,0.9;Knihovní stroj]",
-		"button_exit[13,0.25;0.75,0.75;zavrit;X]",
-		"label[0.5,2.5;Vstup (kniha):]",
-		"list[nodemeta:", spos, ";input;2.5,2;1,1;]",
-		"label[0.5,3.75;Papír:]",
-		"list[nodemeta:", spos, ";paper;2.5,3.25;4,1;]",
-		"label[0.5,5;Černá barva:]",
-		"list[nodemeta:", spos, ";dye;2.5,4.5;4,1;]",
-		"label[0.5,6.25;Výstup:]",
-		"list[nodemeta:", spos, ";output;2.5,5.75;8,1;]",
-		"label[0.5,7.5;Inventář:]",
-		"list[current_player;main;2.5,8;8,4;]",
-		"box[3.625,2.0;9.825,1;#006600FF]", -- pozadí pod vydání
-		"label[3.75,2.5;Vydání:]",
-		"field[5,2.25;2.5,0.5;edition;;1. vyd.]",
-		"button[7.75,2.15;5.5,0.75;vydat;permanentně vydat knihu]",
-		"button[7.75,3.85;5.5,0.75;kopie;kopírovat knihu, jak je]",
-		"button[7.75,4.7;5.5,0.75;upravit;získat upravitelnou kopii vydané knihy]",
-		"listring[nodemeta:", spos, ";output]",
-		"listring[current_player;main]",
-		"listring[nodemeta:", spos, ";input]",
-		"listring[current_player;main]",
-		"listring[nodemeta:", spos, ";paper]",
-		"listring[current_player;main]",
-		"listring[nodemeta:", spos, ";dye]",
-		"listring[current_player;main]",
+		formspec_common,
+		"tabheader[0.25,2.5;13,0.75;tab;kopírování,vydávání,recyklace",
 	}
-	if message ~= nil then
-		formspec[#formspec + 1] = "label[2.5,7.5;"..F(message).."]"
+	if is_admin then
+		table.insert(formspec, ",pro Administraci")
 	end
-	-- button[7.75,4.7;5.5,0.75;test;test]
-	-- label[2.5,7.5;Chyba: Nastala neznámá chyba.]
+	table.insert(formspec, ";")
+
+	if custom_state.tabname == "publishing" then
+		table.insert(formspec, "2;false;true]"..
+			"label[0.5,3.25;Vstup (kniha):]"..
+			"list["..node_inventory..";input;2.5,2.75;1,1;]"..
+			"field[0.5,4.25;2.5,0.5;edition;Vydání:;1. vyd.]"..
+			"textarea[3.75,2.75;9.5,2.25;;;Před vydáním si knihu důkladně zkontrolujte\\, po vydání ji již nebudete moci upravovat! Vydáváte-li nové vydání již dříve vydané knihy\\, vyplňte prosím pole „Vydání“\\, aby šlo snadno rozlišit jednotlivá vydání.]"..
+			"textarea[6.25,5.25;7.5,1;;;"..F(message).."]"..
+			"label[0.5,7;Výstup:]"..
+			"list["..node_inventory..";output;2.5,6.5;8,1;]"..
+			"button[0.5,5.25;5.5,1;vydat;permanentně vydat knihu]"..
+			"listring["..node_inventory..";output]"..
+			"listring[current_player;main]"..
+			"listring["..node_inventory..";input]")
+
+	elseif custom_state.tabname == "recyclation" then
+		table.insert(formspec, "3;false;true]"..
+			"label[0.5,3.25;Vstup:]"..
+			"list["..node_inventory..";recycle;2.5,2.75;2,1;]"..
+			"textarea[5,2.75;8.5,2.25;;;Recyklace umožňuje z dvou libovolných knih stejného formátu získat jednu čistou\\, nepopsanou\\ nebo z 1-2 libovolných knih odpovídající množství papíru.]"..
+			"label[0.5,4.5;Recyklovat na:]"..
+			"textlist[2.75,4.35;6,2;recyklna;knihu (barvu podle první knihy),knihu (barvu podle druhé knihy),knihu (bílou),papír;"..custom_state.recycle_type..";false]"..
+			"label[0.5,7;Výstup:]"..
+			"list["..node_inventory..";output;2.5,6.5;8,1;]"..
+			"button[9,4.35;3.25,1;recyklovat;recyklovat]"..
+			"label[0.5,8;"..F(message).."]"..
+			"listring["..node_inventory..";output]"..
+			"listring[current_player;main]"..
+			"listring["..node_inventory..";recycle]")
+
+	elseif custom_state.tabname == "admin" and is_admin then
+		local paper_price, ink_price
+		local input = inv:get_stack("input", 1)
+		local book_info
+		if not input:is_empty() then
+			book_info = books.analyze_book(input:get_name(), input:get_meta())
+		end
+		if book_info ~= nil then
+			paper_price, ink_price = book_info.paper_price, book_info.ink_price
+		else
+			paper_price, ink_price = 0, 0
+		end
+		table.insert(formspec, "4;false;true]"..
+			"label[0.5,3.25;Vstup (kniha):]"..
+			"list["..node_inventory..";input;2.5,2.75;1,1;]"..
+			"button[4,2.75;2,1;analyzovat;Analyzovat]"..
+			"textarea[0.5,4;13,4;analyza;;"..F(message).."]"..
+			"field[6.5,3;1.25,0.5;paper_price;papírů:;"..paper_price.."]"..
+			"field[8,3;1.25,0.5;ink_price;inkoustu:;"..ink_price.."]"..
+			"button[9.5,2.75;2,1;zmenit;Změnit]"..
+			"listring["..node_inventory..";input]"..
+			"listring[current_player;main]"..
+			"listring["..node_inventory..";input]")
+	else
+		custom_state.tabname = "copying"
+		table.insert(formspec, "1;false;true]"..
+			"label[0.5,3.25;Vstup (kniha):]"..
+			"list["..node_inventory..";input;2.5,2.75;1,1;]"..
+			"label[0.5,4.5;Papír:]"..
+			"list["..node_inventory..";paper;2.5,4;4,1;]"..
+			"label[0.5,5.75;Černá barva:]"..
+			"list["..node_inventory..";dye;2.5,5.25;4,1;]"..
+			"label[0.5,7;Výstup:]"..
+			"list["..node_inventory..";output;2.5,6.5;8,1;]"..
+			"button[7.75,4;5.5,1;kopie;kopírovat knihu, jak je]"..
+			"listring["..node_inventory..";output]"..
+			"listring[current_player;main]"..
+			"listring["..node_inventory..";input]"..
+			"listring[current_player;main]"..
+			"listring["..node_inventory..";paper]"..
+			"listring[current_player;main]"..
+			"listring["..node_inventory..";dye]"..
+			"listring[current_player;main]")
+		-- conditional elements:
+		local input = inv:get_stack("input", 1)
+		local book_info = books.analyze_book(input:get_name(), input:get_meta())
+		local message
+		if book_info ~= nil then
+			if book_info.ick ~= "" and (book_info.owner == player_name or is_admin) then
+				table.insert(formspec, "button[7.75,5.25;5.5,1;ukopie;získat upravitelnou kopii vydané knihy\n(jen vaše knihy)]")
+			end
+			if minetest.is_creative_enabled(player_name) then
+				message = "Máte právo usnadnění hry (kopírování zdarma)"
+			else
+				message = "Kopírování bude vyžadovat: papír ("..book_info.paper_price.." ks), černá barva ("..book_info.ink_price.." ks)"
+			end
+		end
+		if custom_state.message ~= "" then
+			message = custom_state.message
+		end
+		if message ~= nil then
+			table.insert(formspec, "label[3.75,3.25;"..F(message).."]")
+		end
+	end
 	return table.concat(formspec)
 end
 
 local function allow_metadata_inventory_player(player)
 	local role = ch_core.get_player_role(player)
 	return role ~= nil and role ~= "new"
+end
+
+local function formspec_callback(custom_state, player, formname, fields)
+	local player_role = ch_core.get_player_role(custom_state.player_name)
+	if fields.quit then
+		player_name_to_custom_state[custom_state.player_name] = nil
+		return
+	end
+	if player_role == nil then
+		return -- unknown player
+	end
+	-- allow switching tabs even for new players
+	if fields.tab then
+		local change = custom_state.message ~= ""
+		if fields.tab == "1" and custom_state.tabname ~= "copying" then
+			change = true
+			custom_state.tabname = "copying"
+		elseif fields.tab == "2" and custom_state.tabname ~= "publishing" then
+			change = true
+			custom_state.tabname = "publishing"
+		elseif fields.tab == "3" and custom_state.tabname ~= "recyclation" then
+			change = true
+			custom_state.tabname = "recyclation"
+		elseif fields.tab == "4" and player_role == "admin" then
+			change = true
+			custom_state.tabname = "admin"
+		end
+		if change then
+			custom_state.message = ""
+			return get_formspec(custom_state)
+		else
+			return true
+		end
+	end
+	if player_role == "new" then
+		return
+	end
+	if fields.recyklna and fields.recyklna:sub(1, 4) == "CHG:" then
+		local new_number = tonumber(fields.recyklna:sub(5,-1))
+		if new_number ~= nil then
+			custom_state.recycle_type = math.max(1, math.min(4, new_number))
+		end
+		return
+	end
+	local inv = minetest.get_meta(custom_state.pos):get_inventory()
+	local input = inv:get_stack("input", 1)
+	local input_name = input:get_name()
+	local input_book
+	if not input:is_empty() then
+		input_book = books.analyze_book(input_name, input:get_meta())
+	end
+	if fields.vydat then
+		-- publish the book
+		if input_book == nil then
+			return true
+		end
+		if not inv:room_for_item("output", input) then
+			custom_state.message = "Chyba: Ve výstupním inventáři není dost místa!"
+			return get_formspec(custom_state)
+		end
+		local ick = input_book.ick
+		if ick ~= "" then
+			custom_state.message = "Chyba: Tato kniha již byla vydána pod IČK "..ick.."!"
+			return get_formspec(custom_state)
+		end
+		local owner = input_book.owner
+		if owner ~= custom_state.player_name then
+			if owner == "" then
+				custom_state.message = "Chyba: Vydat můžete pouze knihu, kterou spravujete. Tuto knihu nespravuje nikdo!"
+			else
+				custom_state.message = "Chyba: Vydat můžete pouze knihu, kterou spravujete. Tuto knihu spravuje "..ch_core.prihlasovaci_na_zobrazovaci(owner).."!"
+			end
+			return get_formspec(custom_state)
+		end
+		local message
+		ick, message = publish_book(input, fields.edition or "")
+		if message ~= nil then
+			custom_state.message = "Chyba: "..message
+			return get_formspec(custom_state)
+		end
+		if ick == nil or ick == "" then
+			error("books.publish_book() returned nil or empty ICK, but no error message!")
+		end
+		if inv:add_item("output", input):is_empty() then
+			inv:set_stack("input", 1, ItemStack())
+			custom_state.message = "Kniha byla úspěšně vydána pod IČK "..ick.."."
+		else
+			custom_state.message = "Chyba: Kniha se zasekla ve stroji!"
+		end
+		return get_formspec(custom_state)
+	elseif fields.recyklovat then
+		local input1, input2 = inv:get_stack("recycle", 1), inv:get_stack("recycle", 2)
+		local book1, book2
+		if not input1:is_empty() then
+			book1 = books.analyze_book(input1:get_name(), input1:get_meta())
+		end
+		if not input2:is_empty() then
+			book2 = books.analyze_book(input2:get_name(), input2:get_meta())
+		end
+		if book1 == nil then
+			if book2 == nil then
+				custom_state.message = "Chyba: není co recyklovat"
+				return get_formspec(custom_state)
+			end
+			book1, input1 = book2, input2
+			book2, input2 = nil, nil
+		end
+		-- assert_not_nil(book1)
+		if custom_state.recycle_type ~= 4 then
+			if book2 == nil or book1.format ~= book2.format then
+				custom_state.message = "Chyba: recyklace na knihu vyžaduje dvě knihy stejného formátu (na barvě nezáleží!"
+				return get_formspec(custom_state)
+			end
+			if not inv:room_for_item("output", input1) then
+				custom_state.message = "Chyba: Ve výstupním inventáři není dost místa!"
+				return get_formspec(custom_state)
+			end
+		end
+
+		local new_stack
+		if custom_state.recycle_type == 1 then
+			-- empty book, color according to the first book
+			new_stack = ItemStack(input1:get_name())
+			new_stack:get_meta():set_int("palette_index", input1:get_meta():get_int("palette_index"))
+		elseif custom_state.recycle_type == 2 then
+			-- empty book, color according to the second book
+			new_stack = ItemStack(input2:get_name())
+			new_stack:get_meta():set_int("palette_index", input2:get_meta():get_int("palette_index"))
+		elseif custom_state.recycle_type == 3 then
+			-- white book
+			if book1.format == "B5" then
+				new_stack = ItemStack("books:book_b5_closed_grey")
+			else
+				new_stack = ItemStack("books:book_b6_closed_grey")
+			end
+		else
+			-- papers
+			local output_count = book1.paper_price
+			if book2 ~= nil then
+				output_count = math.floor((output_count + book2.paper_price) / 2)
+			end
+			if output_count == 0 then
+				inv:set_list("recycle", {})
+				custom_state.message = "Vstup byl spotřebován, ale nevyprodukoval žádný papír."
+				return get_formspec(custom_state)
+			end
+			if output_count > 65535 then
+				output_count = 65535
+			end
+			new_stack = ItemStack("default:paper "..output_count)
+			if not inv:room_for_item("output", new_stack) then
+				custom_state.message = "Chyba: Ve výstupním inventáři není dost místa pro "..output_count.." papírů!"
+				return get_formspec(custom_state)
+			end
+		end
+		inv:set_list("recycle", {})
+		inv:add_item("output", new_stack)
+		custom_state.message = ""
+		return get_formspec(custom_state)
+
+	elseif fields.kopie or fields.ukopie then
+		-- make a copy of the book
+		if input_book == nil then
+			return true
+		end
+		if fields.ukopie then
+			if input_book.ick == "" then
+				custom_state.message = "Chyba: Kniha nemá IČK!"
+				return get_formspec(custom_state)
+			end
+			if input_book.owner == "" then
+				custom_state.message = "Chyba: Knihu musíte spravovat, tuto knihu nespravuje nikdo!"
+				return get_formspec(custom_state)
+			end
+			if input_book.owner ~= custom_state.player_name then
+				custom_state.message = "Chyba: Knihu musíte spravovat, tuto knihu spravuje "..ch_core.prihlasovaci_na_zobrazovaci(input_book.owner).."!"
+				return get_formspec(custom_state)
+			end
+		end
+		if not inv:room_for_item("output", input) then
+			custom_state.message = "Chyba: Ve výstupním inventáři není dost místa!"
+			return get_formspec(custom_state)
+		end
+		local paper, ink
+		if not minetest.is_creative_enabled(custom_state.player_name) then
+			local paper_stack = ItemStack("default:paper "..input_book.paper_price)
+			local ink_stack = ItemStack("dye:black "..input_book.ink_price)
+			if not inv:contains_item("paper", paper_stack) or not inv:contains_item("dye", ink_stack) then
+				custom_state.message = "Chyba: Kopírování této knihy vyžaduje "..input_book.paper_price.." listů papíru a "..input_book.ink_price.." ks černé barvy!"
+				return get_formspec(custom_state)
+			end
+			inv:remove_item("paper", paper_stack)
+			inv:remove_item("dye", ink_stack)
+		end
+		local new_stack
+		if fields.ukopie then
+			new_stack = ItemStack(input)
+			local new_meta = new_stack:get_meta()
+			local book = load_book(new_meta, nil, nil)
+			new_meta:set_string("text", book.text)
+			new_meta:set_string("ick", "")
+			new_meta:set_string("edition", "")
+			book.ick = ""
+			book.edition = ""
+			update_infotext(new_meta, "item", book)
+		else
+			new_stack = input
+		end
+		inv:add_item("output", new_stack)
+		custom_state.message = "Kniha byla úspěšně zkopírována."
+		return get_formspec(custom_state)
+	elseif fields.analyzovat and player_role == "admin" then
+		if input_book == nil then
+			custom_state.message = ""
+		end
+		custom_state.message = dump2(input:get_meta():to_table())
+		return get_formspec(custom_state)
+	elseif fields.zmenit and player_role == "admin" then
+		if input_book == nil then
+			custom_state.message = ""
+			return true
+		end
+		local paper_price, ink_price = input_book.paper_price, input_book.ink_price
+		if fields.paper_price and tonumber(fields.paper_price) ~= nil then
+			paper_price = math.max(1, tonumber(fields.paper_price))
+		end
+		if fields.ink_price and tonumber(fields.ink_price) ~= nil then
+			ink_price = math.max(1, tonumber(fields.ink_price))
+		end
+		custom_state.paper_price = paper_price
+		custom_state.ink_price = ink_price
+		local meta = input:get_meta()
+		meta:set_int("paper_price", paper_price)
+		meta:set_int("ink_price", ink_price)
+		inv:set_stack("input", 1, input)
+		return get_formspec(custom_state)
+	end
 end
 
 local function allow_metadata_inventory_put(pos, listname, index, stack, player)
@@ -77,7 +417,7 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 	local name = stack:get_name()
 	if listname == "input" then
 		-- only books are allowed
-		if minetest.get_item_group(name, "book") == 0 then
+		if books.analyze_book(name, stack:get_meta()) == nil then
 			return 0
 		end
 	elseif listname == "dye" then
@@ -96,11 +436,31 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 	return stack:get_count()
 end
 
+local function on_metadata_inventory_put(pos, listname, index, stack, player)
+	local player_name = player and player:get_player_name()
+	local custom_state = player_name and player_name_to_custom_state[player_name]
+	if not custom_state then
+		return
+	end
+	if listname == "input" then
+		-- a book inserted to the input, update formspec
+		assert_not_nil(custom_state.player_name)
+		ch_core.show_formspec(player, "books:machine", get_formspec(custom_state), formspec_callback, custom_state, {})
+	end
+end
+
 local function allow_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
 	local inv = minetest.get_meta(pos):get_inventory()
 	local stack = inv:get_stack(from_list, from_index)
 	stack:set_count(count)
 	return allow_metadata_inventory_put(pos, to_list, to_index, stack, player)
+end
+
+local function on_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
+	local inv = minetest.get_meta(pos):get_inventory()
+	local stack = inv:get_stack(to_list, to_index)
+	stack:set_count(count)
+	return on_metadata_inventory_put(pos, to_list, to_index, stack, player)
 end
 
 local function allow_metadata_inventory_take(pos, listname, index, stack, player)
@@ -110,114 +470,16 @@ local function allow_metadata_inventory_take(pos, listname, index, stack, player
 	return stack:get_count()
 end
 
-local function formspec_callback(custom_state, player, formname, fields)
-	if not allow_metadata_inventory_player(player) or fields.quit then
+local function on_metadata_inventory_take(pos, listname, index, stack, player)
+	local player_name = player and player:get_player_name()
+	local custom_state = player_name and player_name_to_custom_state[player_name]
+	if not custom_state then
 		return
 	end
-	local player_role = ch_core.get_player_role(player)
-	if player_role == "new" then
-		return
-	end
-	local inv = minetest.get_meta(custom_state.pos):get_inventory()
-	local input = inv:get_stack("input", 1)
-	if input:is_empty() then
-		return -- no input book
-	end
-	local formspec
-	local input_name = input:get_name()
-	local book_kind = minetest.get_item_group(input_name, "book")
-	if book_kind == 0 then
-		-- no book
-		return
-	end
-	if fields.vydat then
-		-- publish the book
-		if not inv:room_for_item("output", input) then
-			return get_formspec(custom_state.pos, "Chyba: Ve výstupním inventáři není dost místa!")
-		end
-		local meta = input:get_meta()
-		local ick = meta:get_string("ick")
-		if ick ~= "" then
-			return get_formspec(custom_state.pos, "Chyba: Tato kniha již byla vydána pod IČK "..ick.."!")
-		end
-		local owner = meta:get_string("owner")
-		if owner ~= player:get_player_name() then
-			if owner == "" then
-				return get_formspec(custom_state.pos, "Chyba: Vydat můžete pouze knihu, kterou spravujete. Tuto knihu nespravuje nikdo!")
-			else
-				return get_formspec(custom_state.pos, "Chyba: Vydat můžete pouze knihu, kterou spravujete. Tuto knihu spravuje "..ch_core.prihlasovaci_na_zobrazovaci(owner).."!")
-			end
-		end
-		local message
-		ick, message = publish_book(input, fields.edition or "")
-		if message ~= nil then
-			return get_formspec(custom_state.pos, "Chyba: "..message)
-		end
-		if ick == nil or ick == "" then
-			error("books.publish_book() returned nil or empty ICK, but no error message!")
-		end
-		if inv:add_item("output", input):is_empty() then
-			inv:set_stack("input", 1, ItemStack())
-			return get_formspec(custom_state.pos, "Kniha byla úspěšně vydána pod IČK "..ick..".")
-		else
-			return get_formspec(custom_state.pos, "Chyba: Kniha se zasekla ve stroji!")
-		end
-	elseif fields.kopie then
-		-- make an exact copy of the book
-		local paper, ink
-		if not inv:room_for_item("output", input) then
-			return get_formspec(custom_state.pos, "Chyba: Ve výstupním inventáři není dost místa!")
-		end
-		if not minetest.is_creative_enabled(player:get_player_name()) then
-			paper, ink = get_book_price(input_name, input:get_meta())
-			local paper_stack = ItemStack("default:paper "..paper)
-			local ink_stack = ItemStack("dye:black "..ink)
-			if not inv:contains_item("paper", paper_stack) or not inv:contains_item("dye", ink_stack) then
-				return get_formspec(custom_state.pos, "Chyba: Kopírování této knihy vyžaduje "..paper.." listů papíru a "..ink.." ks černé barvy!")
-			end
-			inv:remove_item("paper", paper_stack)
-			inv:remove_item("dye", ink_stack)
-		end
-		inv:add_item("output", input)
-		return get_formspec(custom_state.pos, "Kniha byla úspěšně zkopírována.")
-	elseif fields.upravit then
-		-- make an editable copy of the published book
-		if not inv:room_for_item("output", input) then
-			return get_formspec(custom_state.pos, "Chyba: Ve výstupním inventáři není dost místa!")
-		end
-		local meta = input:get_meta()
-		local ick = meta:get_string("ick")
-		if ick == "" then
-			return get_formspec(custom_state.pos, "Chyba: Kniha nemá IČK!")
-		end
-		local owner = meta:get_string("owner")
-		if owner ~= player:get_player_name() then
-			if owner == "" then
-				return get_formspec(custom_state.pos, "Chyba: Knihu musíte spravovat, tuto knihu nespravuje nikdo!")
-			else
-				return get_formspec(custom_state.pos, "Chyba: Knihu musíte spravovat, tuto knihu spravuje "..ch_core.prihlasovaci_na_zobrazovaci(owner).."!")
-			end
-		end
-		local paper, ink
-		if not minetest.is_creative_enabled(player:get_player_name()) then
-			paper, ink = books.get_book_price(input_name, meta)
-			local paper_stack = ItemStack("default:paper "..paper)
-			local ink_stack = ItemStack("dye:black "..ink)
-			if not inv:contains_item("paper", paper_stack) or not inv:contains_item("dye", ink_stack) then
-				return get_formspec(custom_state.pos, "Chyba: Kopírování této knihy vyžaduje "..paper.." listů papíru a "..ink.." ks černé barvy!")
-			end
-			inv:remove_item("paper", paper_stack)
-			inv:remove_item("dye", ink_stack)
-		end
-		local book = load_book(meta, nil, nil)
-		meta:set_string("text", book.text)
-		meta:set_string("ick", "")
-		meta:set_string("edition", "")
-		book.ick = ""
-		book.edition = ""
-		update_infotext(meta, "item", book)
-		inv:add_item("output", input)
-		return get_formspec(custom_state.pos, "Kniha byla úspěšně zkopírována.")
+	if listname == "input" then
+		-- a book removed from the input, update formspec
+		assert_not_nil(custom_state.player_name)
+		ch_core.show_formspec(player, "books:machine", get_formspec(custom_state), formspec_callback, custom_state, {})
 	end
 end
 
@@ -226,8 +488,18 @@ local function on_rightclick(pos, node, clicker, itemstack, pointed_thing)
 	if not player_name then
 		return itemstack
 	end
-	local formspec = get_formspec(pos)
-	ch_core.show_formspec(clicker, "books:machine", formspec, formspec_callback, {pos = pos}, {})
+	local custom_state = {
+		message = "",
+		player_name = assert_not_nil(player_name),
+		pos = pos,
+		recycle_type = 1,
+		tabname = "copying",
+		paper_price = 0,
+		ink_price = 0,
+	}
+	player_name_to_custom_state[player_name] = custom_state
+	local formspec = get_formspec(custom_state)
+	ch_core.show_formspec(clicker, "books:machine", formspec, formspec_callback, custom_state, {})
 	return itemstack
 end
 
@@ -245,11 +517,15 @@ local def = {
 	stack_max = 1,
 	groups = {cracky = 1},
 	sounds = default.node_sound_defaults(),
+
+	on_construct = on_constuct,
+	on_rightclick = on_rightclick,
 	allow_metadata_inventory_move = allow_metadata_inventory_move,
 	allow_metadata_inventory_put = allow_metadata_inventory_put,
 	allow_metadata_inventory_take = allow_metadata_inventory_take,
-	on_construct = on_constuct,
-	on_rightclick = on_rightclick,
+	on_metadata_inventory_move = on_metadata_inventory_move,
+	on_metadata_inventory_put = on_metadata_inventory_put,
+	on_metadata_inventory_take = on_metadata_inventory_take,
 }
 
 minetest.register_node("books:machine", def)

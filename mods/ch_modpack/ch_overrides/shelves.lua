@@ -107,8 +107,15 @@ end
 
 local function get_infotext(pos, node, meta)
 	local types = shelves_to_types[node.name]
-	if types == nil or (types[1] == "" and types[2] == "") then
+	if types == nil then
 		return ""
+	end
+	local title = meta:get_string("title")
+	if types[1] == "" and types[2] == "" then
+		return title
+	end
+	if title ~= "" then
+		title = title.."\n"
 	end
 	local inv = meta:get_inventory():get_list("items")
 	local count1, count2 = 0, 0
@@ -121,10 +128,6 @@ local function get_infotext(pos, node, meta)
 		if not inv[i]:is_empty() then
 			count2 = count2 + 1
 		end
-	end
-	local title = meta:get_string("title")
-	if title ~= "" then
-		title = title.."\n"
 	end
 	local desc1 = shelf_types[types[1]].description
 	if types[1] ~= "" then
@@ -212,11 +215,10 @@ local function get_formspec(player_name, pos, node, meta, do_edit)
 	-- player inventory:
 	table.insert(formspec,
 		"list[current_player;main;1.625,5;8,1;]" ..
-		"list[current_player;main;1.625,6.25;8,3;8]"..
-		default.get_hotbar_bg(1.625 * 5 / 4, 5 * 5 / 4))
+		"list[current_player;main;1.625,6.25;8,3;8]")
 	-- shelf inventory:
 	if mode ~= MODE_PRIVATE or has_owner_rights then
-		local context = "nodemeta:"..pos.x..","..pos.y..","..pos.z
+		local context = "nodemeta:"..pos.x.."\\,"..pos.y.."\\,"..pos.z
 		table.insert(formspec, "list["..context..";items;0.375,2;10,2;]"..
 			"listring["..context..";items]"..
 			"listring[current_player;main]")
@@ -238,6 +240,14 @@ local function get_formspec(player_name, pos, node, meta, do_edit)
 				x = x + 1.25
 			end
 		end
+
+		if mode == MODE_LIBRARY and (types[1] == "books" or types[2] == "books") then
+			table.insert(formspec,
+				"tooltip[0.3,4.6;1.2,1.2;vracení knih (jen knihy s IČK);#000000;#ffffff]"..
+				"box[0.3,4.6;1.2,1.2;#339933]"..
+				"list["..context..";returns;0.4,4.7;1,1;0]"..
+				"listring["..context..";returns]")
+		end
 	end
 
 	return table.concat(formspec)
@@ -248,6 +258,7 @@ local function on_construct(pos)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	inv:set_size("items", 10 * 2)
+	inv:set_size("returns", 1)
 	local infotext = get_infotext(pos, node, meta)
 	meta:set_string("infotext", infotext)
 end
@@ -284,31 +295,74 @@ end
 local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 	-- print("DEBUG: allow_metadata_inventory_put")
 	local player_name = player and player:get_player_name()
-	if not player_name or listname ~= "items" or not minetest.check_player_privs(player_name, "ch_registered_player") then
+	if not player_name or not minetest.check_player_privs(player_name, "ch_registered_player") then
 		return 0 -- invalid or new player (no right to put)
 	end
 	local node = minetest.get_node(pos)
-	local shelf_type = get_shelf_type_by_list_index(node, index)
 	local meta = minetest.get_meta(pos)
 	local mode = meta:get_int("mode")
-	local owner = meta:get_string("owner")
-	local has_owner_rights = player_name == owner or minetest.check_player_privs(player_name, "protection_bypass")
-	local item_shelf_type = get_shelf_type_by_item_name(stack:get_name())
+	local types = shelves_to_types[node.name]
+	if types == nil then
+		return 0
+	end
+	if listname == "returns" then
+		if mode ~= MODE_LIBRARY then
+			return 0
+		end
+		local book_info = books.analyze_book(stack:get_name(), stack:get_meta())
+		if book_info == nil or book_info.ick == "" then
+			return 0
+		end
+		local from, to
+		if types[1] == "books" then
+			if types[2] == "books" then
+				from, to = 1, 2 * shelf_width
+			else
+				from, to = 1, shelf_width
+			end
+		elseif types[2] == "books" then
+			from, to = shelf_width + 1, 2 * shelf_width
+		else
+			return 0
+		end
+		local inv = meta:get_inventory():get_list("items")
+		for i = from, to do
+			local istack = inv[i]
+			if not istack:is_empty() and minetest.get_item_group(istack:get_name(), "book") ~= 0 and istack:get_meta():get_string("ick") == book_info.ick then
+				-- a book found
+				return stack:get_count()
+			end
+		end
+		ch_core.systemovy_kanal(player_name, "Knihy lze vrátit jen do skříňky, kam patří. Kniha s IČK "..book_info.ick.." nepatří do této skříňky.")
+		return 0
+	elseif listname == "items" then
+		local shelf_type = get_shelf_type_by_list_index(node, index)
+		local owner = meta:get_string("owner")
+		local has_owner_rights = player_name == owner or minetest.check_player_privs(player_name, "protection_bypass")
+		local item_shelf_type = get_shelf_type_by_item_name(stack:get_name())
 
-	if mode == MODE_PRIVATE and not has_owner_rights then
+		if mode == MODE_PRIVATE and not has_owner_rights then
+			return 0
+		end
+		if mode == MODE_LIBRARY and (shelf_type == "books" or (shelf_type == "" and item_shelf_type == "books")) then
+			return 0  -- no right to put books to the library shelf
+		end
+		if item_shelf_type == nil or (shelf_type ~= "" and item_shelf_type ~= shelf_type) then
+			return 0
+		end
+		return stack:get_count()
+	else
+		minetest.log("warning", "Unknown list "..listname.." for a node "..minetest.get_node(pos).name.." at "..minetest.pos_to_string(pos).."!")
 		return 0
 	end
-	if mode == MODE_LIBRARY and (shelf_type == "books" or (shelf_type == "" and item_shelf_type == "books")) then
-		return 0  -- no right to put books to the library shelf
-	end
-	if item_shelf_type == nil or (shelf_type ~= "" and item_shelf_type ~= shelf_type) then
-		return 0
-	end
-	return stack:get_count()
 end
 
 local function allow_metadata_inventory_take(pos, listname, index, stack, player)
 	-- print("DEBUG: allow_metadata_inventory_take")
+	if listname == "returns" then
+		minetest.get_meta(pos):get_inventory():set_stack("returns", index, ItemStack())
+		return 0
+	end
 	local player_name = player and player:get_player_name()
 	if not player_name or listname ~= "items" then
 		return 0 -- invalid player or list
@@ -355,6 +409,9 @@ end
 
 local function allow_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
 	-- print("DEBUG: allow_metadata_inventory_move(): "..dump2({pos = pos, from_list = from_list, from_index = from_index, to_list = to_list, to_index = to_index, count = count, player_name = player:get_player_name()}))
+	if to_list == "returns" then
+		return 0
+	end
 	local player_name = player and player:get_player_name()
 	if not player_name or from_list ~= "items" or to_list ~= "items" then
 		return 0 -- invalid player or list
@@ -465,10 +522,27 @@ end
 
 local function on_metadata_inventory_put(pos, listname, index, stack, player)
 	local inv = minetest.get_meta(pos):get_inventory()
-	local new_stack = inv:get_stack(listname, index)
-	if stack:get_count() == new_stack:get_count() then
-		-- new stack
-		return update_after_metadata_inventory_action(pos, player)
+	if listname == "items" then
+		local new_stack = inv:get_stack(listname, index)
+		if stack:get_count() == new_stack:get_count() then
+			-- new stack
+			return update_after_metadata_inventory_action(pos, player)
+		end
+	elseif listname == "returns" then
+		local book_info
+		if not minetest.is_creative_enabled(player:get_player_name()) then
+			book_info = books.analyze_book(stack:get_name(), stack:get_meta())
+			if book_info ~= nil then
+				local new_stack
+				if book_info.format == "B5" then
+					new_stack = ItemStack("books:book_b5_closed_grey")
+				else -- B6
+					new_stack = ItemStack("books:book_b6_closed_grey")
+				end
+				player:get_inventory():add_item("main", new_stack)
+			end
+		end
+		inv:set_stack("returns", 1, ItemStack())
 	end
 end
 
@@ -610,13 +684,17 @@ local function on_lbm(pos, node, dtime_s)
 		end
 		meta:set_int("locked", 0)
 		meta:set_int("library", 0)
-		minetest.log("action", "A shelf "..node.name.." at "..minetest.pos_to_string(pos).." upgraded.")
+	end
+	if inv:get_size("returns") == 0 then
+		-- perform upgrade
+		inv:set_size("returns", 1)
+		minetest.log("action", "A shelf "..node.name.." at "..minetest.pos_to_string(pos).." upgraded to version 3.")
 	end
 end
 
 minetest.register_lbm({
-	label = "Upgrade shelves",
-	name = "ch_overrides:shelves_upgrade_2",
+	label = "Upgrade shelves 3",
+	name = "ch_overrides:shelves_upgrade_3",
 	nodenames = shelves_names,
 	run_at_every_load = false,
 	action = on_lbm,
