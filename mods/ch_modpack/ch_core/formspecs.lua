@@ -1,5 +1,104 @@
 ch_core.open_submod("formspecs", {data = true, lib = true})
 
+local formspec_header_cache = {}
+local formspec_header_template = {"", "", "", "", "", ""}
+
+local function def_to_string(label, defitem, separator)
+	if defitem == nil then
+		return ""
+	end
+	local t = type(defitem)
+	if t == "string" then
+		return label.."["..defitem.."]"
+	elseif t == "number" or t == "bool" then
+		return label.."["..tostring(defitem).."]"
+	elseif t == "table" then
+		return label.."["..table.concat(defitem, separator).."]"
+	else
+		return ""
+	end
+end
+
+local ifthenelse = ch_core.ifthenelse
+
+--[[
+	Sestaví záhlaví formspecu. Dovolené klíče jsou:
+	-- cache_key (speciální)
+	-- formspec_version
+	-- size
+	-- position
+	-- anchor
+	-- padding
+	-- no_prepend (bool)
+	-- listcolors
+	-- bgcolor
+	-- background
+	-- background9
+	-- set_focus
+	cache_key je volitelný textový klíč použitý k kešování výsledku;
+	není-li nil, měl by to být jedinečný řetězec, který lze vygenerovat
+	např. příkazem:
+	tr -cd A-Za-z0-9 < /dev/urandom | head -c 16; echo
+]]
+function ch_core.formspec_header(def)
+	local cache_key = def.cache_key
+	local result
+	if cache_key ~= nil then
+		result = formspec_header_cache[cache_key]
+		if result ~= nil then
+			return result
+		end
+	end
+
+	local fsw, fsh, size_element
+
+	if def.size ~= nil then
+		if type(def.size) ~= "table" then
+			error("def.size must be a table or nil!")
+		end
+		local s = def.size
+		fsw, fsh = s[1], s[2]
+		size_element = {"size["..tostring(s[1])}
+		for i = 2, #s - 1, 1 do
+			size_element[i] = tostring(s[i])
+		end
+		size_element[#s] = tostring(s[#s]).."]"
+		size_element = table.concat(size_element, ",")
+	else
+		fsw, fsh = 10, 10
+		size_element = ""
+	end
+
+	result = {
+		def_to_string("formspec_version", def.formspec_version, ""), -- 1
+		size_element, -- 2
+		def_to_string("position", def.position, ","), -- 3
+		def_to_string("anchor", def.anchor, ","), -- 4
+		def_to_string("padding", def.padding, ","), -- 5
+		ifthenelse(def.no_prepend == true, "no_prepend[]", ""), -- 6
+		def_to_string("listcolors", def.listcolors, ";"), -- 7
+		def_to_string("bgcolor", def.bgcolor, ";"), -- 8
+		def_to_string("background", def.background, ";"), -- 9
+		def_to_string("background9", def.background9, ";"), -- 10
+		def_to_string("set_focus", def.set_focus, ";"), -- 11
+	}
+	if not def.background and not def.background9 and def.formspec_version ~= nil and def.formspec_version > 1 then
+		if def.auto_background == true then
+			if result[7] == "" then
+				-- colors according to Technic Chests:
+				result[7] = "listcolors[#7b7b7b;#909090;#000000;#6e823c;#ffffff]"
+			end
+			result[10] = "background9[0,0;1,1;ch_core_formspec_bg.png;true;16]"
+			-- result[9] = "background[0,0;"..fsw..","..fsh..";ch_core_formspec_bg.png]"
+		end
+	end
+	result = table.concat(result)
+	if cache_key ~= nil then
+		formspec_header_cache[cache_key] = result
+	end
+	return result
+end
+
 --[[
 	Vrátí jméno (formname) aktuálně zobrazeného formuláře
 	nebo nil, pokud není žádný formulář právě zobrazen pomocí funkce

@@ -148,7 +148,13 @@ local function meta_get_bool_string(meta, name)
 	end
 end
 
-local function get_formspec(player_name, pos, node, meta, do_edit)
+local formspec_header = ch_core.formspec_header({
+	formspec_version = 5,
+	size = {13, 10.25},
+	auto_background = true,
+})
+
+local function get_formspec(player_name, pos, node, meta, do_edit, message)
 	local types = shelves_to_types[node.name]
 	if types == nil then
 		return ""
@@ -160,11 +166,10 @@ local function get_formspec(player_name, pos, node, meta, do_edit)
 	local has_owner_rights = owner == player_name or player_role == "admin"
 	local title = meta:get_string("title")
 	if title == "" then
-		title = "Skříňka na knihy a nádoby"
+		title = "skříňka na knihy a nádoby"
 	end
 	local formspec = {
-		"formspec_version[5]",
-		"size[13,10.25]",
+		formspec_header,
 	}
 
 	-- shelf title
@@ -250,8 +255,15 @@ local function get_formspec(player_name, pos, node, meta, do_edit)
 		end
 	end
 
+	if message ~= nil then
+		table.insert(formspec, "label[1.75,4.65;"..F(message).."]")
+	end
+
 	return table.concat(formspec)
 end
+
+local show_formspec -- will be assign as a function below
+	-- = function(player_name, pos, node, meta, do_edit, message)
 
 local function on_construct(pos)
 	local node = minetest.get_node(pos)
@@ -333,7 +345,7 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 				return stack:get_count()
 			end
 		end
-		ch_core.systemovy_kanal(player_name, "Knihy lze vrátit jen do skříňky, kam patří. Kniha s IČK "..book_info.ick.." nepatří do této skříňky.")
+		show_formspec(player_name, pos, node, meta, false, "Chyba: Kniha s IČK "..book_info.ick.." nepatří do této skříňky!")
 		return 0
 	elseif listname == "items" then
 		local shelf_type = get_shelf_type_by_list_index(node, index)
@@ -384,7 +396,7 @@ local function allow_metadata_inventory_take(pos, listname, index, stack, player
 			local inv = player:get_inventory()
 			local i = find_empty_book_in_inventory(inv, "main", book_level)
 			if i == nil then
-				ch_core.systemovy_kanal(player_name, "Abyste dostali výtisk této knihy, musíte mít v inventáři alespoň jednu prázdnou knihu stejného formátu!")
+				show_formspec(player_name, pos, node, meta, false, "K půjčení knihy potřebujete v inventáři alespoň jednu prázdnou knihu stejného formátu!")
 				return 0
 			else
 				-- take an empty book
@@ -488,34 +500,34 @@ local function update_after_metadata_inventory_action(pos, player)
 	meta:set_string("infotext", get_infotext(pos, node, meta))
 	local player_name = player and player:get_player_name()
 	if player_name ~= nil and player_name ~= "" then
-		local custom_state = {
-			pos = pos,
-			mode = meta:get_int("mode"),
-			has_owner_rights = player_name == meta:get_string("owner") or minetest.check_player_privs(player_name, "protection_bypass"),
-		}
-		local formspec = get_formspec(player_name, pos, node, meta)
-		ch_core.show_formspec(player, "ch_overrides:shelf", formspec, formspec_callback, custom_state, {})
+		show_formspec(player_name, pos, node, meta, false, nil)
 	end
+end
+
+show_formspec = function(player_name, pos, node, meta, do_edit, message)
+	local player = minetest.get_player_by_name(player_name)
+	if player == nil then
+		return false
+	end
+	local owner = meta:get_string("owner")
+	if owner == "" then
+		minetest.log("warning", "A shelf "..node.name.." with no owner at "..minetest.pos_to_string(pos).."! Will set to "..player_name..".")
+		meta:set_string("owner", player_name)
+		owner = player_name
+	end
+	local custom_state = {
+		pos = pos,
+		mode = meta:get_int("mode"),
+		has_owner_rights = player_name == owner or minetest.check_player_privs(player_name, "protection_bypass"),
+	}
+	local formspec = get_formspec(player_name, pos, node, meta, do_edit, message)
+	return ch_core.show_formspec(player, "ch_overrides:shelf", formspec, formspec_callback, custom_state, {})
 end
 
 local function on_rightclick(pos, node, clicker, itemstack, pointed_thing)
 	local player_name = clicker and clicker:get_player_name()
 	if player_name ~= nil and player_name ~= "" then
-		-- function ch_core.show_formspec(player_name_or_player, formname, formspec, callback, custom_state, options)
-		local meta = minetest.get_meta(pos)
-		local owner = meta:get_string("owner")
-		if owner == "" then
-			minetest.log("warning", "A shelf "..node.name.." with no owner at "..minetest.pos_to_string(pos).."! Will set to "..player_name..".")
-			meta:set_string("owner", player_name)
-			owner = player_name
-		end
-		local custom_state = {
-			pos = pos,
-			mode = meta:get_int("mode"),
-			has_owner_rights = player_name == owner or minetest.check_player_privs(player_name, "protection_bypass"),
-		}
-		local formspec = get_formspec(player_name, pos, node, meta)
-		ch_core.show_formspec(clicker, "ch_overrides:shelf", formspec, formspec_callback, custom_state, {})
+		show_formspec(player_name, pos, node, minetest.get_meta(pos), false, nil)
 	end
 	return itemstack
 end

@@ -32,16 +32,15 @@ local function on_constuct(pos)
 	meta:set_string("infotext", S("Library Machine"))
 end
 
-local formspec_common =
-		"formspec_version[5]"..
-		"size[14,14]"..
-		default.gui_bg..
-		default.gui_bg_img..
-		"item_image[0.375,0.375;1,1;books:machine]"..
-		"label[1.6,0.9;Knihovní stroj]"..
-		"button_exit[13,0.25;0.75,0.75;zavrit;X]"..
-		"label[0.5,9;Inventář:]"..
-		"list[current_player;main;2.5,8.5;8,4;]"
+local formspec_header = ch_core.formspec_header({
+	formspec_version = 5,
+	size = {14, 14},
+	auto_background = true,
+}).."item_image[0.375,0.375;1,1;books:machine]"..
+	"label[1.6,0.9;Knihovní stroj]"..
+	"button_exit[13,0.25;0.75,0.75;zavrit;X]"..
+	"label[0.5,9;Inventář:]"..
+	"list[current_player;main;2.5,8.5;8,4;]"
 
 --[[
 custom_state = {
@@ -64,7 +63,7 @@ local function get_formspec(custom_state)
 	local message = custom_state.message or ""
 
 	local formspec = {
-		formspec_common,
+		formspec_header,
 		"tabheader[0.25,2.5;13,0.75;tab;kopírování,vydávání,recyklace",
 	}
 	if is_admin then

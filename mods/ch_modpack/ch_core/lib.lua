@@ -498,6 +498,18 @@ function ch_core.get_player_role(player_or_player_name)
 end
 
 --[[
+Jednoduchá funkce, která vyhodnotí condition jako podmínku
+a podle výsledku vrátí buď true_result, nebo false_result.
+]]
+function ch_core.ifthenelse(condition, true_result, false_result)
+	if condition then
+		return true_result
+	else
+		return false_result
+	end
+end
+
+--[[
 	Vytvoří pomocnou strukturu pro položku dropdown[] ve formspecu.
 	Pomocná struktura obsahuje položky:
 	- function get_index_from_value(value, default_index)

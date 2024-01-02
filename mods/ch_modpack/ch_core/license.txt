@@ -63,3 +63,10 @@ flag_sk.png
 	License: public domain due to Czech and Slovak copyright law
 	Source: https://raw.githubusercontent.com/snowyu/minetest-country_flags
 	Derived from: https://github.com/lipis/flag-icons
+
+ch_core_formspec_bg.png
+	Author: Singularis
+	License: CC BY-SA 4.0
+	Used source:
+		technic_chest_form_bg.png by RealBadAngel, used under licence WTFPL
+		(https://github.com/minetest-mods/technic)
