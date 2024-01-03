@@ -307,14 +307,11 @@ end
 local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 	-- print("DEBUG: allow_metadata_inventory_put")
 	local player_name = player and player:get_player_name()
-	if not player_name or not minetest.check_player_privs(player_name, "ch_registered_player") then
-		return 0 -- invalid or new player (no right to put)
-	end
 	local node = minetest.get_node(pos)
 	local meta = minetest.get_meta(pos)
 	local mode = meta:get_int("mode")
 	local types = shelves_to_types[node.name]
-	if types == nil then
+	if player_name == nil or player_name == "" or types == nil then
 		return 0
 	end
 	if listname == "returns" then
@@ -347,6 +344,8 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 		end
 		show_formspec(player_name, pos, node, meta, false, "Chyba: Kniha s IČK "..book_info.ick.." nepatří do této skříňky!")
 		return 0
+	elseif not minetest.check_player_privs(player_name, "ch_registered_player") then
+		return 0 -- invalid or new player (no right to put to the items)
 	elseif listname == "items" then
 		local shelf_type = get_shelf_type_by_list_index(node, index)
 		local owner = meta:get_string("owner")

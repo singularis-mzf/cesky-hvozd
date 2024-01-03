@@ -29,6 +29,13 @@ SPRINT_SPEED = 0.3			-- how much faster player can run if satiated
 SPRINT_JUMP = 0.1			-- how much higher player can jump if satiated
 SPRINT_DRAIN = 0.35			-- how fast to drain satation while sprinting (0-1)
 
+local stamina_privs = {ch_registered_player = true, interact = true}
+
+local function is_stamina_enabled(player_name)
+	local result = minetest.check_player_privs(player_name, stamina_privs)
+	return result
+end
+
 local function should_hide(hud_name, level)
 	if hud_name == "damage" then
 		return level == 0
@@ -71,8 +78,9 @@ local function get_int_attribute(player)
 end
 
 local function stamina_update_hud(player, stamina_level)
+	local player_name = player:get_player_name()
 	local player_data, hud_status, is_hunger, hud_maxvalue, hud_value
-	local player_data = stamina.players[player:get_player_name()]
+	local player_data = stamina.players[player_name]
 	local is_hunger
 	-- hud_status: "normal", "poisoned", "drunk"
 	-- is_hunger: true, false
@@ -150,7 +158,9 @@ local function stamina_update_hud(player, stamina_level)
 	else
 		result = false
 	end
-	if hud_status ~= "normal" or hud_value > 5 then
+	if not is_stamina_enabled(player_name) then
+		hb.hide_hudbar(player, "hlad")
+	elseif hud_status ~= "normal" or hud_value > 5 then
 		hb.unhide_hudbar(player, "hlad")
 		hb.change_hudbar(player, "hlad", player_data.hud_value, nil, nil, nil, nil, player_data.hud_label)
 	elseif hud_value < 4 then
@@ -176,8 +186,8 @@ local function stamina_update_level(player, level)
 		return
 	end
 
-	-- players without interact priv cannot eat
-	if not minetest.check_player_privs(player, {interact = true}) then
+	-- don't update stamina for player with no interact or ch_registered_player priv
+	if not is_stamina_enabled(player:get_player_name()) then
 		return
 	end
 
