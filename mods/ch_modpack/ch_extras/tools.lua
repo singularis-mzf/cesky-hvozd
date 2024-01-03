@@ -174,7 +174,7 @@ local function skakadlo(itemstack, player, new_speed, wear_to_add)
 	else
 		player:add_velocity(vector.new(0, new_speed, 0))
 		minetest.log("action", player_name.." jumped using a jump tool at "..minetest.pos_to_string(pos)..", nodes: "..node_at_player.name..", "..node_under_player.name)
-		minetest.sound_play("toaster", {pos = pos, max_hear_distance = 5, gain = 0.2}, true)
+		minetest.sound_play("toaster", {pos = pos, max_hear_distance = 32, gain = 0.2}, true)
 
 		if not minetest.is_creative_enabled(player_name) then
 			local new_wear = math.ceil(itemstack:get_wear() + wear_to_add)
