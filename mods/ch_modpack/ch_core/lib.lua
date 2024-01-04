@@ -1087,7 +1087,7 @@ end
 --[[
 	Smaže obsah zadaného inventáře a zaznamená to jako příkaz daného
 	hráče/ky.
-	player_name -- přihlašovací jméno hráče/ky
+	player_name -- přihlašovací jméno hráče/ky nebo nil
 	inv -- odkaz na inventář
 	listname -- listname ke smazání
 	description -- heslovitý popis kontextu mazání
@@ -1112,16 +1112,18 @@ function ch_core.vyhodit_inventar(player_name, inv, listname, description)
 	if #items > 0 then
 		minetest.log("action", "Player "..player_name.." trashed "..#items.." items ("..description.."): "..table.concat(items, ", "))
 		inv:set_list(listname, {})
-		local trash_sound
-		if #items == 1 then
-			trash_sound = ch_core.trash_one_sound
-		else
-			trash_sound = ch_core.trash_all_sound
-		end
-		if trash_sound ~= nil and trash_sound ~= "" then
-			minetest.sound_play(trash_sound, { to_player = player_name, gain = 1.0 })
-		else
-			minetest.chat_send_all("Will not play the sound, because: "..dump2({trash_one_sound = ch_core.trash_one_sound, trash_all_sound = ch_core.trash_all_sound, trash_sound = trash_sound or "nil"}))
+		if player_name ~= "???" then
+			local trash_sound
+			if #items == 1 then
+				trash_sound = ch_core.trash_one_sound
+			else
+				trash_sound = ch_core.trash_all_sound
+			end
+			if trash_sound ~= nil and trash_sound ~= "" then
+				minetest.sound_play(trash_sound, { to_player = player_name, gain = 1.0 })
+			else
+				minetest.chat_send_all("Will not play the sound, because: "..dump2({trash_one_sound = ch_core.trash_one_sound, trash_all_sound = ch_core.trash_all_sound, trash_sound = trash_sound or "nil"}))
+			end
 		end
 	end
 	return true
