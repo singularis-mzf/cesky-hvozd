@@ -13,50 +13,96 @@ local on_use = books.on_use
 local closed_on_rightclick = books.closed_on_rightclick
 local open_on_rightclick = books.open_on_rightclick
 
-local groups_common = {
-	snappy = 3, ud_param2_colorable = 1, not_in_creative_inventory = 1
-}
-local groups_open_b5 = table.copy(groups_common)
-local groups_closed_b5 = table.copy(groups_common)
-groups_open_b5.book = 5
-groups_open_b5.book_open = 1
-groups_closed_b5.book = 5
-groups_closed_b5.book_closed = 1
-groups_closed_b5.oddly_breakable_by_hand = 3
-local groups_open_b6 = table.copy(groups_open_b5)
-local groups_closed_b6 = table.copy(groups_closed_b5)
-groups_open_b6.book = 6
-groups_closed_b6.book = 6
+local function union(a, b, c, d, e)
+	local result = {}
+	if a ~= nil then
+		for k, v in pairs(a) do
+			result[k] = v
+		end
+	end
+	if b ~= nil then
+		for k, v in pairs(b) do
+			result[k] = v
+		end
+	end
+	if c ~= nil then
+		for k, v in pairs(c) do
+			result[k] = v
+		end
+	end
+	if d ~= nil then
+		for k, v in pairs(d) do
+			result[k] = v
+		end
+	end
+	if e ~= nil then
+		error("So many arguments not supported!")
+	end
+	return result
+end
 
-local node_box_open = {
-	type = "fixed",
-		fixed = {
-			{-0.375, -0.47, -0.282, 0.375, -0.4125, 0.282}, -- Top
-			{-0.4375, -0.5, -0.3125, 0.4375, -0.47, 0.3125},
-		}
+-- Groups:
+local groups_common = {
+	not_in_creative_inventory = 1,
+	snappy = 3,
+	ud_param2_colorable = 1,
 }
-local node_box_closed = {
-	type = "fixed",
-	fixed = {
-		{-0.25, -0.5, -0.3125, 0.25, -0.35, 0.3125},
-	}
+local groups_open = {
+	book_open = 1,
+}
+local groups_closed = {
+	book_closed = 1,
+	oddly_breakable_by_hand = 3,
+}
+local groups_b5 = {
+	book = 5
+}
+local groups_b6 = {
+	book = 6
 }
 
 local def_common = {
 	use_texture_alpha = "opaque",
-	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "colorfacedir",
 	-- palette = "unifieddyes_palette_greys.png",
 	sunlight_propagates = true,
 	stack_max = 1,
 	preserve_metadata = preserve_metadata,
+	on_dig = unifieddyes.on_dig,
 	on_use = on_use,
 	sounds = default.node_sound_leaves_defaults(),
 }
-
 local def_open = {
+	on_punch = on_punch, -- close the book
+	on_rightclick = open_on_rightclick, -- edit the book
+}
+local def_closed = {
+	after_place_node = after_place_node,
+	on_rightclick = closed_on_rightclick,
+}
+local def_b5 = {
 	description = "kniha B5",
+	drawtype = "nodebox",
+	inventory_image = "books_book_b5_inv.png",
+	inventory_overlay = "books_book_b5_inv_overlay.png",
+	wield_image = "books_book_b5_inv.png",
+	wield_overlay = "books_book_b5_inv_overlay.png",
+}
+local def_b6 = {
+	description = "kniha B6",
+	drawtype = "mesh",
+	inventory_image = "books_book_b6_inv.png",
+	inventory_overlay = "books_book_b6_inv_overlay.png",
+	wield_image = "books_book_b6_inv.png",
+	wield_overlay = "books_book_b6_inv_overlay.png",
+}
+
+
+
+-- B5 open books:
+-- ======================================================
+local def_b5_open = {
 	tiles = {
 		"books_book_open_top.png",	-- Top
 		"books_book_open_bottom.png",	-- Bottom
@@ -73,16 +119,21 @@ local def_open = {
 		{name = "books_book_open_front_overlay.png", color = "white"},	-- Back
 		{name = "books_book_open_front_overlay.png", color = "white"},	-- Front
 	},
-	airbrush_replacement_node = "books:book_open_grey",
-	node_box = node_box_open,
-	groups = groups_open_b5,
-	on_dig = unifieddyes.on_dig,
-	on_punch = on_punch, -- close the book
-	on_rightclick = open_on_rightclick, -- edit the book
+	-- ? airbrush_replacement_node = "books:book_open_grey",
+	node_box = {
+		type = "fixed",
+		fixed = {
+			{-0.375, -0.47, -0.282, 0.375, -0.4125, 0.282}, -- Top
+			{-0.4375, -0.5, -0.3125, 0.4375, -0.47, 0.3125},
+		},
+	},
+	groups = union(groups_common, groups_open, groups_b5),
 }
+def_b5_open = union(def_common, def_open, def_b5, def_b5_open)
 
-local def_closed = {
-	description = "kniha B5",
+-- B5 closed books:
+-- ======================================================
+local def_b5_closed = {
 	tiles = {
 		"books_book_closed_topbottom.png",	-- Top
 		"books_book_closed_topbottom.png",	-- Bottom
@@ -99,64 +150,69 @@ local def_closed = {
 		{name = "books_book_closed_front_overlay.png^[transformFX", color = "white"}, -- Back
 		{name = "books_book_closed_front_overlay.png", color = "white"}, -- Front
 	},
-	node_box = node_box_closed,
-	groups = groups_closed_b5,
-	on_rightclick = closed_on_rightclick,
-	after_place_node = after_place_node,
+	node_box = {
+		type = "fixed",
+		fixed = {
+			{-0.25, -0.5, -0.3125, 0.25, -0.35, 0.3125},
+		},
+	},
+	groups = union(groups_common, groups_closed, groups_b5),
 }
+def_b5_closed = union(def_common, def_closed, def_b5, def_b5_closed)
 
-for k, v in pairs(def_common) do
-	def_open[k] = def_open[k] or v
-	def_closed[k] = def_closed[k] or v
-end
-
--- minetest.register_node("books:book_open_grey", def)
-unifieddyes.generate_split_palette_nodes("books:book_b5_open", table.copy(def_open))
-unifieddyes.generate_split_palette_nodes("books:book_b5_closed", table.copy(def_closed))
-local groups2 = table.copy(groups_closed_b5)
-groups2.not_in_creative_inventory = nil
-minetest.override_item("books:book_b5_closed_grey", {groups = groups2})
-
-def_open.node_box = nil
-def_open.drawtype = "mesh"
-def_open.mesh = "homedecor_book_open.obj"
-def_open.selection_box = {
+-- B6 open books:
+-- ======================================================
+local box = {
 	type = "fixed",
 	fixed = {-0.35, -0.5, -0.25, 0.35, -0.4, 0.25}
 }
-def_open.tiles = {
-	{name = "homedecor_book_cover.png", backface_culling = true},
-	{name = "homedecor_book_edges.png", color = "white", backface_culling = true},
-	{name = "homedecor_book_pages.png", color = "white", backface_culling = true}
+local def_b6_open = {
+	mesh = "homedecor_book_open.obj",
+	tiles = {
+		{name = "homedecor_book_cover.png", backface_culling = true},
+		{name = "homedecor_book_edges.png", color = "white", backface_culling = true},
+		{name = "homedecor_book_pages.png", color = "white", backface_culling = true},
+	},
+	selection_box = box,
+	collision_box = box,
+	groups = union(groups_common, groups_open, groups_b6),
 }
-def_open.overlay_tiles = nil
-def_open.groups = groups_open_b6
-def_open.description = "kniha B6"
+def_b6_open = union(def_common, def_open, def_b6, def_b6_open)
 
-def_closed.node_box = nil
-def_closed.drawtype = "mesh"
-def_closed.mesh = "homedecor_book.obj"
-def_closed.selection_box = {
+-- B6 closed books:
+-- ======================================================
+box = {
 	type = "fixed",
 	fixed = {-0.2, -0.5, -0.25, 0.2, -0.35, 0.25}
 }
-def_closed.tiles = {
-	{name = "homedecor_book_cover.png", backface_culling = true},
-	{name = "homedecor_book_edges.png", color = "white", backface_culling = true},
+local def_b6_closed = {
+	mesh = "homedecor_book.obj",
+	tiles = {
+		{name = "homedecor_book_cover.png", backface_culling = true},
+		{name = "homedecor_book_edges.png", color = "white", backface_culling = true},
+	},
+	overlay_tiles = {
+		{name = "homedecor_book_cover_trim.png", color = "white", backface_culling = true},
+		"",
+	},
+	selection_box = box,
+	collision_box = box,
+	groups = union(groups_common, groups_closed, groups_b6),
 }
-def_closed.overlay_tiles = {
-	{name = "homedecor_book_cover_trim.png", color = "white", backface_culling = true},
-	"",
+def_b6_closed = union(def_common, def_closed, def_b6, def_b6_closed)
+
+unifieddyes.generate_split_palette_nodes("books:book_b5_open", def_b5_open)
+unifieddyes.generate_split_palette_nodes("books:book_b5_closed", def_b5_closed)
+unifieddyes.generate_split_palette_nodes("books:book_b6_open", def_b6_open)
+unifieddyes.generate_split_palette_nodes("books:book_b6_closed", def_b6_closed)
+
+local items_to_creative_inventory = {
+	["books:book_b5_closed_grey"] = true,
+	["books:book_b6_closed_grey"] = true,
 }
-def_closed.groups = groups_closed_b6
-def_closed.description = "kniha B6"
 
-unifieddyes.generate_split_palette_nodes("books:book_b6_open", def_open)
-unifieddyes.generate_split_palette_nodes("books:book_b6_closed", def_closed)
-groups2 = table.copy(groups_closed_b6)
-groups2.not_in_creative_inventory = nil
-minetest.override_item("books:book_b6_closed_grey", {groups = groups2})
-
+-- Overrides (palette, not_in_creative_inventory):
+-- ======================================================
 for _, prefix in ipairs({"books:book_"}) do
 	local hue_names = {
 		"red",
@@ -183,7 +239,7 @@ for _, prefix in ipairs({"books:book_"}) do
 		"fuchsia",
 		"rose",
 		"crimson",
-		-- "grey",
+		"grey",
 	}
 	local palette_to_override = {}
 	for _, infix in ipairs({"b5_open", "b5_closed", "b6_open", "b6_closed"}) do
@@ -204,6 +260,11 @@ for _, prefix in ipairs({"books:book_"}) do
 					palette = "unifieddyes_palette_bright_"..hue.."s.png"
 				}
 				palette_to_override[current_palette] = override
+			end
+			if items_to_creative_inventory[name] then
+				override = table.copy(override)
+				override.groups = table.copy(ndef.groups)
+				override.groups.not_in_creative_inventory = nil
 			end
 			minetest.override_item(name, override)
 		end
