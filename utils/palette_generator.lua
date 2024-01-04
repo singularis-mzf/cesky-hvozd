@@ -112,6 +112,19 @@ local rows = {
 	{ 0.200, 50 }, -- 10 -- tmavě (nízká sytost)
 }
 
+local brows = { -- křiklavá paleta
+	{ 0.300, 248 }, -- 1 -- mdle
+	{ 0.400, 244 }, -- 2 -- pastelově
+	{ 0.500, 242 }, -- 3 -- světle
+	{ 0.980, 240 }, -- 4 -- křiklavě
+	{ 0.800, 229 }, -- 5 -- normální
+	{ 0.600, 200 }, -- 6 -- nízká sytost
+	{ 0.850, 100 }, -- 7 -- středně
+	{ 0.500, 100 }, -- 8 -- středně (nízká sytost)
+	{ 0.850, 60 }, -- 9 -- tmavě
+	{ 0.500, 40 }, -- 10 -- tmavě (nízká sytost)
+}
+
 local function round(x)
 	if x < 0 then
 		return math.ceil(x - 0.5)
@@ -120,27 +133,21 @@ local function round(x)
 	end
 end
 
-local function interpolate(w, a, b)
-	local c = 1.0 - w
-	return {
-		round(w * a[1] + c * b[1]),
-		round(w * a[2] + c * b[2]),
-		round(w * a[3] + c * b[3]),
-	}
-end
-
 local black = {0, 0, 0}
 local white = {255, 255, 255}
 
 local palette = {}
+local bpalette = {}
 
 -- colors palette
 for i_row = 1, 10 do
-	local row = rows[i_row]
+	local row, brow = rows[i_row], brows[i_row]
 	for i_hue = 1, 24 do
 		local hue = hues[i_hue]
 		local r, g, b = Hsx.hsv2rgb(hue, row[1], row[2])
 		palette[24 * (i_row - 1) + (i_hue - 1)] = round(r).." "..round(g).." "..round(b)
+		r, g, b = Hsx.hsv2rgb(hue, brow[1], brow[2])
+		bpalette[24 * (i_row - 1) + (i_hue - 1)] = round(r).." "..round(g).." "..round(b)
 	end
 end
 
@@ -148,7 +155,11 @@ end
 for i = 0, 15 do
 	local v = round((255 - 20) * (1.0 - i / 15.0) + 20)
 	palette[240 + i] = v.." "..v.." "..v
+	v = round((255 - 5) * (1.0 - i / 15.0) + 5)
+	bpalette[240 + i] = v.." "..v.." "..v
 end
+
+
 
 local function seq(sequences)
 	local result = {}
@@ -164,7 +175,7 @@ local function seq(sequences)
 	return result
 end
 
-local function emit_palette(filename, width, height, colors)
+local function emit_palette(filename, width, height, colors, palette_table)
 	local ppm = io.open("out/"..filename..".ppm", "w")
 	local lua = io.open("out/"..filename..".lua", "w")
 	local limit = width * height
@@ -173,7 +184,7 @@ local function emit_palette(filename, width, height, colors)
 
 	for i = 1, limit do
 		local color_index = colors[i] or -1
-		local color = palette[color_index] or "255 255 255"
+		local color = palette_table[color_index] or "255 255 255"
 		local lua_color = "{"..color:gsub(" ", ",")..","..color_index.."},"
 		ppm:write(color.."\n")
 		lua:write(lua_color.."\n")
@@ -185,17 +196,18 @@ local function emit_palette(filename, width, height, colors)
 	print("convert out/"..filename..".ppm out/unifieddyes_palette_"..filename..".png")
 end
 
-emit_palette("extended", 24, 11, seq({0, 255}))
+emit_palette("extended", 24, 11, seq({0, 255}), palette)
+emit_palette("bright_extended", 24, 11, seq({0, 255}), bpalette)
 emit_palette("colorwallmounted", 8, 4, {
 	240, 244, 247, 251, 255, 64, 56, 48,
 	96, 96 + 2, 96 + 4, 96 + 8, 96 + 12, 96 + 16, 96 + 18, 96 + 20,
 	144, 144 + 2, 144 + 4, 144 + 8, 144 + 12, 144 + 16, 144 + 18, 144 + 20,
 	192, 192 + 2, 192 + 4, 192 + 8, 192 + 12, 192 + 16, 192 + 18, 192 + 20,
-})
+}, palette)
 for i = 1, 24 do
 	local hue_name = hue_names[i]
 	local hue_base_index = i - 1
-	emit_palette(hue_name.."s", 8, 1, {
+	local indices = {
 		hue_base_index + 24 * 0,
 		hue_base_index + 24 * 4,
 		hue_base_index + 24 * 5,
@@ -204,6 +216,9 @@ for i = 1, 24 do
 		hue_base_index + 24 * 7,
 		hue_base_index + 24 * 8,
 		hue_base_index + 24 * 9,
-	})
+	}
+	emit_palette(hue_name.."s", 8, 1, indices, palette)
+	emit_palette("bright_"..hue_name.."s", 8, 1, indices, bpalette)
 end
-emit_palette("greys", 8, 1, {-1, 240, 244, 247, 251, 255, -1, -1})
+emit_palette("greys", 8, 1, {-1, 240, 244, 247, 251, 255, -1, -1}, palette)
+emit_palette("bright_greys", 8, 1, {-1, 240, 244, 247, 251, 255, -1, -1}, bpalette)

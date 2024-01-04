@@ -25,16 +25,17 @@ minetest.register_on_placenode(
 			local param2
 			local color = 0
 
-			if def.palette == "unifieddyes_palette_extended.png"
-			  and def.paramtype2 == "color" then
-				param2 = 240
-				color = 240
-			elseif def.palette == "unifieddyes_palette_colorwallmounted.png"
-			  and def.paramtype2 == "colorwallmounted" then
-				param2 = newnode.param2 % 8
-			elseif string.find(def.palette, "unifieddyes_palette_")
-			  and def.paramtype2 == "colorfacedir" then -- it's a split palette
-				param2 = newnode.param2 % 32
+			local palette_info = unifieddyes.get_node_palette(newnode.name)
+
+			if palette_info ~= nil then
+				if palette_info.palette_type == "extended" and def.paramtype2 == "color" then
+					param2 = 240
+					color = 240
+				elseif palette_info.palette_type == "wallmounted" and def.paramtype2 == "colorwallmounted" then
+					param2 = newnode.param2 % 8
+				elseif palette_info.palette_type == "split" and def.paramtype2 == "colorfacedir" then
+					param2 = newnode.param2 % 32
+				end
 			end
 
 			if param2 then
@@ -69,16 +70,17 @@ function unifieddyes.on_dig(pos, node, digger)
 
 	local oldparam2 = minetest.get_node(pos).param2
 	local def = minetest.registered_items[node.name]
+	local palette_info = unifieddyes.get_node_palette(node.name)
 	local del_color
 
-	if def.paramtype2 == "color" and oldparam2 == 240 and def.palette == "unifieddyes_palette_extended.png" then
-		del_color = true
-	elseif def.paramtype2 == "colorwallmounted" and math.floor(oldparam2 / 8) == 0
-			and def.palette == "unifieddyes_palette_colorwallmounted.png" then
-		del_color = true
-	elseif def.paramtype2 == "colorfacedir" and math.floor(oldparam2 / 32) == 0
-			and string.find(def.palette, "unifieddyes_palette_") then
-		del_color = true
+	if palette_info ~= nil then
+		if def.paramtype2 == "color" and oldparam2 == 240 and palette_info.palette_type == "extended" then
+			del_color = true
+		elseif def.paramtype2 == "colorwallmounted" and math.floor(oldparam2 / 8) == 0 and palette_info.palette_type == "wallmounted" then
+			del_color = true
+		elseif def.paramtype2 == "colorfacedir" and math.floor(oldparam2 / 32) == 0 and palette_info.palette_type == "split" then
+			del_color = true
+		end
 	end
 
 	local inv = digger:get_inventory()
@@ -418,9 +420,11 @@ end
 -- get a node's dye color based on its palette and param2
 
 function unifieddyes.color_to_name(param2, def)
-	if not param2 or not def or not def.palette then return end
+	if not param2 then return end
+	local palette_info = unifieddyes.get_node_palette_by_def(def)
+	if palette_info == nil then return end
 
-	if def.palette == "unifieddyes_palette_extended.png" then
+	if palette_info.palette_type == "extended" then
 		local color = param2
 
 		local v = 0
@@ -450,7 +454,7 @@ function unifieddyes.color_to_name(param2, def)
 			return unifieddyes.VALS_EXTENDED[v]..unifieddyes.HUES_EXTENDED[h+1][1]..unifieddyes.SATS[s]
 		end
 
-	elseif def.palette == "unifieddyes_palette_colorwallmounted.png" then
+	elseif palette_info.palette_type == "wallmounted" then
 		local color = math.floor(param2 / 8)
 		if color == 0 then return "white"
 		elseif color == 1 then return "light_grey"
@@ -465,11 +469,10 @@ function unifieddyes.color_to_name(param2, def)
 		local h = color - v * 8
 		return unifieddyes.VALS[v]..unifieddyes.HUES_WALLMOUNTED[h+1]
 
-	elseif string.find(def.palette, "unifieddyes_palette") then -- it's the split palette
+	elseif palette_info.palette_type == "split" then -- it's the split palette
 		-- palette names in this mode are always "unifieddyes_palette_COLORs.png"
 
-		local s = string.sub(def.palette, 21)
-		local color = string.sub(s, 1, string.find(s, "s.png")-1)
+		local color = palette_info.hue
 
 		local v = math.floor(param2/32)
 		if color ~= "grey" then

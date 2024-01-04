@@ -2,6 +2,16 @@
 
 local S = minetest.get_translator("unifieddyes")
 
+local function get_palette(ndef)
+	if ndef == nil then
+		return nil
+	elseif ndef._ch_ud_palette ~= nil then
+		return ndef._ch_ud_palette
+	else
+		return ndef.palette
+	end
+end
+
 function unifieddyes.on_airbrush(itemstack, player, pointed_thing)
 	local player_name = player:get_player_name()
 	local painting_with = nil
@@ -49,19 +59,19 @@ function unifieddyes.on_airbrush(itemstack, player, pointed_thing)
 		return
 	end
 
-	local palette
+	local palette = get_palette(def)
 	local fdir = 0
-	if not def or not def.palette then
+	if not palette then
 		minetest.chat_send_player(player_name, S("*** That node can't be colored -- it's either undefined or has no palette."))
 		return
-	elseif def.palette == "unifieddyes_palette_extended.png" then
+	elseif palette == "unifieddyes_palette_extended.png" then
 		palette = "extended"
-	elseif def.palette == "unifieddyes_palette_colorwallmounted.png" then
+	elseif palette == "unifieddyes_palette_colorwallmounted.png" then
 		palette = "wallmounted"
 		fdir = node.param2 % 8
-	elseif def.palette ~= "unifieddyes_palette_extended.png"
-	  and def.palette ~= "unifieddyes_palette_colorwallmounted.png"
-	  and string.find(def.palette, "unifieddyes_palette_") then
+	elseif palette ~= "unifieddyes_palette_extended.png"
+	  and palette ~= "unifieddyes_palette_colorwallmounted.png"
+	  and string.find(palette, "unifieddyes_palette_") then
 		palette = "split"
 		fdir = node.param2 % 32
 	else
@@ -110,7 +120,7 @@ function unifieddyes.on_airbrush(itemstack, player, pointed_thing)
 			if def.airbrush_replacement_node then
 				oldcolor = "grey"
 			else
-				local s = string.sub(def.palette, 21)
+				local s = string.sub(get_palette(def), 21)
 				oldcolor = string.sub(s, 1, string.find(s, "s.png")-1)
 			end
 		end
@@ -230,19 +240,18 @@ function unifieddyes.show_airbrush_form(player)
 
 	local last_right_click = unifieddyes.player_last_right_clicked[player_name]
 	if last_right_click then
-		if not last_right_click.def then
+		local palette_info = unifieddyes.get_node_palette_by_def(last_right_click.def)
+		if palette_info == nil then
 			last_right_click.def = {}
 			last_right_click.undef = true
-		elseif last_right_click.def.palette then
-			if last_right_click.def.palette == "unifieddyes_palette_colorwallmounted.png" then
-				nodepalette = "wallmounted"
-			elseif last_right_click.def.palette == "unifieddyes_palette_extended.png" then
+		else
+			nodepalette = palette_info.palette_type
+			if nodepalette == "extended" then
 				t[#t+1] = "label[0.5,8.25;"..S("(Right-clicked a node that supports all 256 colors, showing them all)").."]"
 				showall = true
-			elseif last_right_click.def.palette ~= "unifieddyes_palette_extended.png"
-			  and last_right_click.def.palette ~= "unifieddyes_palette_colorwallmounted.png"
-			  and string.find(last_right_click.def.palette, "unifieddyes_palette_") then
-				nodepalette = "split"
+			end
+			if palette_info.real_palette:sub(1, 27) == "unifieddyes_palette_bright_" then
+				palette_data = unifieddyes.palette_data_bright_extended
 			end
 		end
 	end
@@ -251,8 +260,8 @@ function unifieddyes.show_airbrush_form(player)
 		t[#t+1] = "label[0.5,8.25;"..S("(Right-clicked an undefined node, showing all colors)").."]"
 	elseif not last_right_click.def.groups
 	  or not last_right_click.def.groups.ud_param2_colorable
-	  or not last_right_click.def.palette
-	  or not string.find(last_right_click.def.palette, "unifieddyes_palette_") then
+	  or not get_palette(last_right_click.def)
+	  or not string.find(get_palette(last_right_click.def), "unifieddyes_palette_") then
 		t[#t+1] = "label[0.5,8.25;"..S("(Right-clicked a node not supported by the Airbrush, showing all colors)").."]"
 	end
 
@@ -419,10 +428,10 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 		local last_right_click = unifieddyes.player_last_right_clicked[player_name]
 		if last_right_click and last_right_click.def then
-			if last_right_click.def.palette then
-				if last_right_click.def.palette == "unifieddyes_palette_colorwallmounted.png" then
+			if get_palette(last_right_click.def) then
+				if get_palette(last_right_click.def) == "unifieddyes_palette_colorwallmounted.png" then
 					nodepalette = "wallmounted"
-				elseif last_right_click.def.palette ~= "unifieddyes_palette_extended.png" then
+				elseif get_palette(last_right_click.def) ~= "unifieddyes_palette_extended.png" then
 					nodepalette = "split"
 				end
 			end

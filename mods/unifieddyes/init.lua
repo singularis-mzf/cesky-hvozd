@@ -35,7 +35,48 @@ unifieddyes = {}
 
 local modpath=minetest.get_modpath(minetest.get_current_modname())
 
+unifieddyes.palette_data_bright_extended = dofile(modpath.."/palette_data_bright_extended.lua")
 unifieddyes.palette_data_extended = dofile(modpath.."/palette_data_extended.lua")
+
+function unifieddyes.get_node_palette_by_def(ndef)
+	if ndef == nil then
+		return nil
+	end
+	local real_palette = ndef.palette
+	local ud_palette = ndef._ch_ud_palette or real_palette
+	if ud_palette == nil then
+		return nil
+	end
+	local palette_type, hue
+	if ud_palette == "unifieddyes_palette_extended.png" then
+		palette_type = "extended"
+	elseif ud_palette == "unifieddyes_palette_colorwallmounted.png" then
+		palette_type = "wallmounted"
+	elseif ud_palette == "unifieddyes_palette_fourdir.png" then
+		palette_type = "fourdir"
+	elseif ud_palette:sub(1, 20) == "unifieddyes_palette_" and ud_palette:sub(-5, -1) == "s.png" then
+		return {
+			real_palette = real_palette,
+			ud_palette = ud_palette,
+			palette_type = "split",
+			hue = ud_palette:sub(21, -6),
+		}
+	else
+		return nil -- unrecognized palette
+	end
+	return {
+		real_palette = real_palette,
+		ud_palette = ud_palette,
+		palette_type = palette_type,
+	}
+end
+
+function unifieddyes.get_node_palette(node_name)
+	if node_name == nil then
+		return nil
+	end
+	return unifieddyes.get_node_palette_by_def(minetest.registered_nodes[node_name])
+end
 
 dofile(modpath.."/color-tables.lua")
 dofile(modpath.."/api.lua")

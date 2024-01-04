@@ -156,3 +156,56 @@ unifieddyes.generate_split_palette_nodes("books:book_b6_closed", def_closed)
 groups2 = table.copy(groups_closed_b6)
 groups2.not_in_creative_inventory = nil
 minetest.override_item("books:book_b6_closed_grey", {groups = groups2})
+
+for _, prefix in ipairs({"books:book_"}) do
+	local hue_names = {
+		"red",
+		"vermilion",
+		"orange",
+		"amber",
+		"yellow",
+		"lime",
+		"chartreuse",
+		"harlequin",
+		"green",
+		"malachite",
+		"spring",
+		"turquoise",
+		"cyan",
+		"cerulean",
+		"azure",
+		"sapphire",
+		"blue",
+		"indigo",
+		"violet",
+		"mulberry",
+		"magenta",
+		"fuchsia",
+		"rose",
+		"crimson",
+		-- "grey",
+	}
+	local palette_to_override = {}
+	for _, infix in ipairs({"b5_open", "b5_closed", "b6_open", "b6_closed"}) do
+		for _, hue in ipairs(hue_names) do
+			local name = prefix..infix.."_"..hue
+			local ndef = minetest.registered_nodes[name]
+			if ndef == nil then
+				error(name.."does not exist!")
+			end
+			local current_palette = ndef.palette
+			if current_palette == nil then
+				error(name.." has no palette!")
+			end
+			local override = palette_to_override[current_palette]
+			if override == nil then
+				override = {
+					_ch_ud_palette = current_palette,
+					palette = "unifieddyes_palette_bright_"..hue.."s.png"
+				}
+				palette_to_override[current_palette] = override
+			end
+			minetest.override_item(name, override)
+		end
+	end
+end
