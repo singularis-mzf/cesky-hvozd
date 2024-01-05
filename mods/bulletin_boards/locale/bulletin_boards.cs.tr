@@ -39,3 +39,5 @@ Public Bulletin Board=veřejná nástěnka
 Title:=Titulek příspěvku:
 
 (posted @1 days ago)=(vyvěšeno před @1 dny)
+
+Validity in days (1-@1):=Bude platit dní (1-@1):
