@@ -2,7 +2,7 @@ License of source code
 ----------------------
 
 GNU Lesser General Public License, version 2.1
-Copyright (C) 2022 Singularis <singularis@volny.cz>
+Copyright (C) 2022-2024 Singularis <singularis@volny.cz>
 
 This program is free software; you can redistribute it and/or modify it under the terms
 of the GNU Lesser General Public License as published by the Free Software Foundation;
@@ -1011,6 +1011,7 @@ darkage_mud_footstep.4.ogg
 	Source: Minetest Game
 	License: CC BY-SA 3.0
 
+ch_overrides_melon_palette.png
 ch_overrides_snow.obj
 	Author: Singularis
 	License: CC BY-SA 4.0

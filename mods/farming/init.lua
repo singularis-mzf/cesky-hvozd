@@ -397,12 +397,17 @@ function farming.plant_growth_timer(pos, elapsed, node_name)
 		end
 	end
 
-	if minetest.registered_nodes[stages.stages_left[growth]] then
+	local new_ndef = minetest.registered_nodes[stages.stages_left[growth]]
+	if new_ndef then
 
-		local p2 = minetest.registered_nodes[stages.stages_left[growth] ].place_param2 or 1
+		local p2 = new_ndef.place_param2 or 1
 
 		minetest.swap_node(pos, {name = stages.stages_left[growth], param2 = p2})
 		farming.trigger_drying_soil(vector.offset(pos, 0, -1, 0), true)
+		local on_growth = new_ndef.on_growth
+		if on_growth ~= nil then
+			on_growth(pos, minetest.get_node(pos), elapsed)
+		end
 	else
 		return true
 	end

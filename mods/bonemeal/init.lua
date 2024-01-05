@@ -226,11 +226,18 @@ local function check_crops(pos, nodename, strength)
 			-- check for place_param setting
 			nod = crops[n][1] .. stage
 			def = minetest.registered_nodes[nod]
-			def = def and def.place_param2 or 0
-
+			local current_node = minetest.get_node(pos)
+			local param2 = current_node.param2
+			if def ~= nil then
+				param2 = def.place_param2 or param2
+			end
 			minetest.set_node(pos, {name = nod, param2 = def})
 
 			particle_effect(pos)
+
+			if def and def.on_growth then
+				def.on_growth(pos, minetest.get_node(pos), 0)
+			end
 
 			return true
 		end
