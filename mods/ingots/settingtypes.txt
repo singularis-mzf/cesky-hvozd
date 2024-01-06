@@ -1,0 +1,8 @@
+#Allow normal ingots (64 ingots per node)
+allow_normal_ingots (Allow normal ingots) bool true
+
+#Allow big ingots (8 ingots per node)
+allow_big_ingots (Allow big ingots) bool true
+
+#Upgrade legacy ingots (disable this to disable LBM and get speed during server startup).
+upgrade_legacy_ingots (Upgrade legacy ingots) bool true

@@ -1,0 +1,5 @@
+# textdomain:ingots
+
+@1 ingot=@1 ingot
+@1 ingots=@1 ingoty
+@1 ingots!=@1 ingotů
