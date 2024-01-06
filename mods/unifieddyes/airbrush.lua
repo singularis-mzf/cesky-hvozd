@@ -69,6 +69,9 @@ function unifieddyes.on_airbrush(itemstack, player, pointed_thing)
 	elseif palette == "unifieddyes_palette_colorwallmounted.png" then
 		palette = "wallmounted"
 		fdir = node.param2 % 8
+	elseif palette == "unifieddyes_palette_color4dir.png" then
+		palette = "4dir"
+		fdir = node.param2 % 4
 	elseif palette ~= "unifieddyes_palette_extended.png"
 	  and palette ~= "unifieddyes_palette_colorwallmounted.png"
 	  and string.find(palette, "unifieddyes_palette_") then
@@ -431,6 +434,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			if get_palette(last_right_click.def) then
 				if get_palette(last_right_click.def) == "unifieddyes_palette_colorwallmounted.png" then
 					nodepalette = "wallmounted"
+				elseif get_palette(last_right_click.def) == "unifieddyes_palette_color4dir.png" then
+					nodepalette = "4dir"
 				elseif get_palette(last_right_click.def) ~= "unifieddyes_palette_extended.png" then
 					nodepalette = "split"
 				end

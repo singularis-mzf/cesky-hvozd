@@ -52,8 +52,8 @@ function unifieddyes.get_node_palette_by_def(ndef)
 		palette_type = "extended"
 	elseif ud_palette == "unifieddyes_palette_colorwallmounted.png" then
 		palette_type = "wallmounted"
-	elseif ud_palette == "unifieddyes_palette_fourdir.png" then
-		palette_type = "fourdir"
+	elseif ud_palette == "unifieddyes_palette_color4dir.png" then
+		palette_type = "4dir"
 	elseif ud_palette:sub(1, 20) == "unifieddyes_palette_" and ud_palette:sub(-5, -1) == "s.png" then
 		return {
 			real_palette = real_palette,

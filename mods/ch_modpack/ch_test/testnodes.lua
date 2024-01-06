@@ -37,7 +37,7 @@ local paramtypes = {
 	},
 	color = {
 		param2_max = 255,
-		palette = "unifieddyes_palette_bright_extended.png",
+		palette = "unifieddyes_palette_extended.png",
 		ud_param2_colorable = 1,
 	},
 	colorfacedir = {
@@ -46,7 +46,8 @@ local paramtypes = {
 	},
 	color4dir = {
 		param2_max = 255,
-		palette = "unifieddyes_palette_bright_extended.png", -- TODO
+		palette = "unifieddyes_palette_color4dir.png",
+		ud_param2_colorable = 1,
 	},
 	colorwallmounted = {
 		param2_max = 255,

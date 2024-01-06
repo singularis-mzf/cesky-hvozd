@@ -107,7 +107,7 @@ end
 -- build a table of color <-> palette associations to reduce the need for
 -- realtime lookups with getpaletteidx()
 
-for _, palette in ipairs({"extended", "split", "wallmounted"}) do
+for _, palette in ipairs({"extended", "split", "wallmounted", "4dir"}) do
 	local palette2 = palette
 
 	for i in ipairs(unifieddyes.SATS) do

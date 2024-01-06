@@ -45,6 +45,7 @@ unifieddyes.HUES_WALLMOUNTED = {
 	"violet",
 	"magenta"
 }
+unifieddyes.HUES_4DIR = unifieddyes.HUES_WALLMOUNTED
 
 unifieddyes.SATS = {
 	"",
@@ -137,6 +138,17 @@ unifieddyes.gpidx_grayscale_wallmounted = {
 	["black"] = 4,
 }
 
+unifieddyes.gpidx_grayscale_4dir = {
+	["white"] = 0,
+	["grey_13"] = 1,
+	["light_grey"] = 2,
+	["grey"] = 3,
+	["grey_6"] = 4,
+	["dark_grey"] = 5,
+	["grey_2"] = 6,
+	["black"] = 7,
+}
+
 unifieddyes.gpidx_hues_extended = {
 	["red"] = 0,
 	["vermilion"] = 1,
@@ -178,6 +190,8 @@ unifieddyes.gpidx_hues_wallmounted = {
 	["magenta"] = 7
 }
 
+unifieddyes.gpidx_hues_4dir = unifieddyes.gpidx_hues_wallmounted
+
 unifieddyes.gpidx_shades = {
 	[""] = 1,
 	["s50"] = 2,
@@ -216,4 +230,14 @@ unifieddyes.gpidx_shades_wallmounted = {
 	[""] = 1,
 	["medium"] = 2,
 	["dark"] = 3
+}
+
+unifieddyes.gpidx_shades_4dir = {
+	["faint"] = 1,
+	["light"] = 2,
+	["bright"] = 3,
+	[""] = 4,
+	["s50"] = 5,
+	["medium"] = 6,
+	["dark"] = 7,
 }

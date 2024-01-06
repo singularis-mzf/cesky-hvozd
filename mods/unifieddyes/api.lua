@@ -33,6 +33,8 @@ minetest.register_on_placenode(
 					color = 240
 				elseif palette_info.palette_type == "wallmounted" and def.paramtype2 == "colorwallmounted" then
 					param2 = newnode.param2 % 8
+				elseif palette_info.palette_type == "4dir" and def.paramtype2 == "color4dir" then
+					param2 = newnode.param2 % 4
 				elseif palette_info.palette_type == "split" and def.paramtype2 == "colorfacedir" then
 					param2 = newnode.param2 % 32
 				end
@@ -79,6 +81,8 @@ function unifieddyes.on_dig(pos, node, digger)
 		elseif def.paramtype2 == "colorwallmounted" and math.floor(oldparam2 / 8) == 0 and palette_info.palette_type == "wallmounted" then
 			del_color = true
 		elseif def.paramtype2 == "colorfacedir" and math.floor(oldparam2 / 32) == 0 and palette_info.palette_type == "split" then
+			del_color = true
+		elseif def.paramtype2 == "color4dir" and math.floor(oldparam2 / 4) == 0 and palette_info.palette_type == "4dir" then
 			del_color = true
 		end
 	end
@@ -324,9 +328,9 @@ end
 -- "extended" = 256 color palette
 -- "split" = 200 color palette split into pieces for colorfacedir
 -- "wallmounted" = 32-color abridged palette
+-- "4dir" = 64-color abridged palette
 
 function unifieddyes.getpaletteidx(color, palette_type)
-
 	if string.sub(color,1,4) == "dye:" then
 		color = string.sub(color,5,-1)
 	elseif string.sub(color,1,12) == "unifieddyes:" then
@@ -338,6 +342,10 @@ function unifieddyes.getpaletteidx(color, palette_type)
 	if palette_type == "wallmounted" then
 		if unifieddyes.gpidx_grayscale_wallmounted[color] then
 			return (unifieddyes.gpidx_grayscale_wallmounted[color] * 8), 0
+		end
+	elseif palette_type == "4dir" then
+		if unifieddyes.gpidx_grayscale_4dir[color] then
+			return (unifieddyes.gpidx_grayscale_4dir[color] * 4), 0
 		end
 	elseif palette_type == "split" then
 		if unifieddyes.gpidx_grayscale[color] then
@@ -393,7 +401,16 @@ function unifieddyes.getpaletteidx(color, palette_type)
 		end
 		if palette_type == "split" then -- it's colorfacedir
 			if unifieddyes.gpidx_hues_extended[color] and unifieddyes.gpidx_shades_split[shade] then
-				return (unifieddyes.gpidx_shades_split[shade] * 32), unifieddyes.gpidx_hues_extended[color]+1
+				return (unifieddyes.gpidx_shades_split[shade] * 32),
+						unifieddyes.gpidx_hues_extended[color]+1
+			end
+		elseif palette_type == "4dir" then
+			if unifieddyes.gpidx_hues_4dir[color] and unifieddyes.gpidx_shades_4dir[shade] then
+				local a, b = (unifieddyes.gpidx_shades_4dir[shade] * 32 + unifieddyes.gpidx_hues_4dir[color] * 4), unifieddyes.gpidx_hues_4dir[color]
+				print("Will return "..a..", "..b.." for shade="..shade..", color="..color)
+
+				return (unifieddyes.gpidx_shades_4dir[shade] * 32 + unifieddyes.gpidx_hues_4dir[color] * 4),
+					unifieddyes.gpidx_hues_4dir[color]
 			end
 		elseif palette_type == "extended" then
 			if unifieddyes.gpidx_hues_extended[color] and unifieddyes.gpidx_shades_extended[shade] then
@@ -453,6 +470,26 @@ function unifieddyes.color_to_name(param2, def)
 			local h = color - math.floor(color/24)*24
 			return unifieddyes.VALS_EXTENDED[v]..unifieddyes.HUES_EXTENDED[h+1][1]..unifieddyes.SATS[s]
 		end
+
+	elseif palette_info.palette_type == "4dir" then
+		local color = math.floor(param2 / 4)
+		local v = math.floor(color/8) -- v = row
+		local hue = color - 8 * v
+		local prefix, suffix
+		if v == 0 then
+			local greys = {"white", "grey_13", "light_grey", "grey", "grey_6", "dark_grey", "grey_2", "black"}
+			return greys[color + 1]
+		else
+			local prefixes = {"faint_", "light_", "bright_", "", "", "medium_", "dark_"}
+			prefix = prefixes[v]
+			if v == 5 then
+				suffix = "_s50"
+			else
+				suffix = ""
+			end
+		end
+		-- local h = color - v * 8
+		return prefix..unifieddyes.HUES_4DIR[hue+1]..suffix
 
 	elseif palette_info.palette_type == "wallmounted" then
 		local color = math.floor(param2 / 8)
