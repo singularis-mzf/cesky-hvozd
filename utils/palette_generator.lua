@@ -1,5 +1,5 @@
 --[[
-Copyright (c) 2023 Singularis
+Copyright (c) 2023-2024 Singularis
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -175,6 +175,19 @@ local function seq(sequences)
 	return result
 end
 
+local function generate_color4dir_map()
+	local result = {240, 242, 244, 247, 249, 251, 253, 255}
+	for _, irow in ipairs({0, 2, 3, 4, 5, 6, 8}) do
+		for _, icolumn in ipairs({0, 2, 4, 8, 12, 16, 18, 20}) do
+			table.insert(result, 24 * irow + icolumn)
+		end
+	end
+	if #result ~= 64 then
+	error("Invalid count: "..#result)
+	end
+	return result
+end
+
 local function emit_palette(filename, width, height, colors, palette_table)
 	local ppm = io.open("out/"..filename..".ppm", "w")
 	local lua = io.open("out/"..filename..".lua", "w")
@@ -196,14 +209,20 @@ local function emit_palette(filename, width, height, colors, palette_table)
 	print("convert out/"..filename..".ppm out/unifieddyes_palette_"..filename..".png")
 end
 
-emit_palette("extended", 24, 11, seq({0, 255}), palette)
-emit_palette("bright_extended", 24, 11, seq({0, 255}), bpalette)
-emit_palette("colorwallmounted", 8, 4, {
+local colorwallmounted_map = {
 	240, 244, 247, 251, 255, 64, 56, 48,
 	96, 96 + 2, 96 + 4, 96 + 8, 96 + 12, 96 + 16, 96 + 18, 96 + 20,
 	144, 144 + 2, 144 + 4, 144 + 8, 144 + 12, 144 + 16, 144 + 18, 144 + 20,
 	192, 192 + 2, 192 + 4, 192 + 8, 192 + 12, 192 + 16, 192 + 18, 192 + 20,
-}, palette)
+}
+local color4dir_map = generate_color4dir_map()
+
+emit_palette("extended", 24, 11, seq({0, 255}), palette)
+emit_palette("bright_extended", 24, 11, seq({0, 255}), bpalette)
+emit_palette("colorwallmounted", 8, 4, colorwallmounted_map, palette)
+emit_palette("color4dir", 8, 8, color4dir_map, palette)
+emit_palette("bright_color4dir", 8, 8, color4dir_map, bpalette)
+
 for i = 1, 24 do
 	local hue_name = hue_names[i]
 	local hue_base_index = i - 1
