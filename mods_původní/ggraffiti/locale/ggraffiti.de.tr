@@ -1,0 +1,55 @@
+# textdomain: ggraffiti
+
+Empty Spray Can=Leere Sprühdose
+
+Graffiti Spray Can (White)=Graffiti-Sprühdose (Weiß)
+Graffiti Spray Can (Grey)=Graffiti-Sprühdose (Grau)
+Graffiti Spray Can (Dark Grey)=Graffiti-Sprühdose (Dunkelgrau)
+Graffiti Spray Can (Black)=Graffiti-Sprühdose (Schwarz)
+Graffiti Spray Can (Violet)=Graffiti-Sprühdose (Violett)
+Graffiti Spray Can (Blue)=Graffiti-Sprühdose (Blau)
+Graffiti Spray Can (Cyan)=Graffiti-Sprühdose (Türkis)
+Graffiti Spray Can (Dark Green)=Graffiti-Sprühdose (Dunkelgrün)
+Graffiti Spray Can (Green)=Graffiti-Sprühdose (Grün)
+Graffiti Spray Can (Yellow)=Graffiti-Sprühdose (Gelb)
+Graffiti Spray Can (Brown)=Graffiti-Sprühdose (Braun)
+Graffiti Spray Can (Orange)=Graffiti-Sprühdose (Orange)
+Graffiti Spray Can (Red)=Graffiti-Sprühdose (Rot)
+Graffiti Spray Can (Magenta)=Graffiti-Sprühdose (Magenta)
+Graffiti Spray Can (Pink)=Graffiti-Sprühdose (Rosa)
+
+Graffiti Spray Can (Light Grey)=Graffiti-Sprühdose (Hellgrau)
+Graffiti Spray Can (Purple)=Graffiti-Sprühdose (Violett)
+Graffiti Spray Can (Light Blue)=Graffiti-Sprühdose (Hellblau)
+Graffiti Spray Can (Lime)=Graffiti-Sprühdose (Lindgrün)
+
+RGB Graffiti Spray Can=RGB-Graffiti-Sprühdose
+Red Mushroom Extract=Roter Pilzextrakt
+Graffiti Remover Spray Can=Graffiti-Entferner-Sprühdose
+
+Left-click to spray, right-click to configure.=Linksklick zum Sprühen, Rechtsklick zum Konfigurieren.
+No color set.=Keine Farbe festgelegt.
+Color: =Farbe: 
+ @1, @2, @3= @1, @2, @3
+Size: @1=Größe: @1
+
+Set Color=Farbe festlegen
+Change Color=Farbe ändern
+Change Size=Größe ändern
+[Experimental]=[Experimentell]
+
+Color=Farbe
+R: @1, G: @2, B: @3=R: @1, G: @2, B: @3
+Size=Größe
+1 pixel=1 Pixel
+@1 pixels=@1 Pixel
+Change=Ändern
+
+R (Red)=R (Rot)
+G (Green)=G (Grün)
+B (Blue)=B (Blau)
+Values must be integers between 0 and 255.=Werte müssen ganze Zahlen zwischen 0 und 255 sein.
+Preview=Vorschau
+Update=Aktualisieren
+Cancel=Abbrechen
+Save=Speichern

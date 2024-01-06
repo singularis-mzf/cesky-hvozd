@@ -995,3 +995,39 @@ minetest.register_craft({
 		{"technic:rubber_tree_grindings", "technic:rubber_tree_grindings", "technic:rubber_tree_grindings"},
 	}
 })
+
+--[[ ch_extras:test_world_anchor
+---------------------------------------------------------------
+def = {
+	description = "testovací světová kotva",
+	tiles = {"ch_core_white_pixel.png"},
+	paramtype = "none",
+	paramtype2 = "none",
+	groups = {oddly_breakable_by_hand = 1},
+	is_ground_content = false,
+	place_param2 = 0,
+	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		if ch_core.get_player_role(clicker) ~= "admin" then
+			return
+		end
+		if node.param2 == 0 then
+			node.param2 = 1
+			minetest.swap_node(pos, node)
+			if minetest.forceload_block(pos, false) then
+				local message = "Blok na pozici "..minetest.pos_to_string(pos).." je ukotven."
+				ch_core.systemovy_kanal("", message)
+				minetest.get_meta(pos):set_string("infotext", message)
+			else
+				node.param2 = 0
+				minetest.swap_node(pos, node)
+			end
+		else
+			node.param2 = 0
+			minetest.swap_node(pos, node)
+			minetest.forceload_free_block(pos, false)
+			minetest.get_meta(pos):set_string("infotext", "Blok není ukotven")
+		end
+	end,
+}
+minetest.register_node("ch_extras:test_world_anchor", def)
+]]

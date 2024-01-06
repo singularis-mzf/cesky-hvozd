@@ -1,0 +1,58 @@
+# textdomain: ggraffiti
+
+Empty Spray Can=prázdný sprej
+
+Graffiti Spray Can (White)=bílý sprej
+Graffiti Spray Can (Grey)=šedý sprej
+Graffiti Spray Can (Dark Grey)=tmavě šedý sprej
+Graffiti Spray Can (Black)=černý sprej
+Graffiti Spray Can (Violet)=fialový sprej
+Graffiti Spray Can (Blue)=modrý sprej
+Graffiti Spray Can (Cyan)=azurový sprej
+Graffiti Spray Can (Dark Green)=tmavozelený sprej
+Graffiti Spray Can (Green)=zelený sprej
+Graffiti Spray Can (Yellow)=žlutý sprej
+Graffiti Spray Can (Brown)=hnědý sprej
+Graffiti Spray Can (Orange)=oranžový sprej
+Graffiti Spray Can (Red)=červený sprej
+Graffiti Spray Can (Magenta)=purpurový sprej
+Graffiti Spray Can (Pink)=růžový sprej
+
+Graffiti Spray Can (Light Grey)=světle šedý sprej
+#Graffiti Spray Can (Purple)=
+#Graffiti Spray Can (Light Blue)=Graffiti-Sprühdose (Hellblau)
+#Graffiti Spray Can (Lime)=Graffiti-Sprühdose (Lindgrün)
+
+RGB Graffiti Spray Can=vícebarevný sprej
+Red Mushroom Extract=muchomůrkový extrakt
+Graffiti Remover Spray Can=odstraňovač maleb sprejem
+
+Left-click to spray, right-click to configure.=levým klikem barví, pravý mění velikost stopy
+No color set.=barva není nastavena
+Color: =barva: 
+ @1, @2, @3= @1, @2, @3
+Size: @1=velikost stopy: @1
+
+Set Color=Nastavit barvu
+Change Color=Změnit barvu
+Change Size=Změnit velikost
+[Experimental]=[Experimentální]
+
+Color=Barva
+R: @1, G: @2, B: @3=Č: @1, Z: @2, M: @3
+Size=Velikost stopy
+1 pixel=1 pixel
+@1 pixels=@1 pixelů
+Change=Změnit
+
+R (Red)=Č (červená)
+G (Green)=Z (zelená)
+B (Blue)=M (modrá)
+Values must be integers between 0 and 255.=Hodnoty musejí být celá čísla 0 až 255.
+Preview=Náhled
+Update=Aktualizovat náhled
+Cancel=Zrušit
+Save=Uložit
+
+Hex Color=Barva hex.
+

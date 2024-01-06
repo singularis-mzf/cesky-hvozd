@@ -1,6 +1,8 @@
 -- Localize globals
-local assert, ipairs, math, next, pairs, rawget, rawset, setmetatable, select, string, table, type
-	= assert, ipairs, math, next, pairs, rawget, rawset, setmetatable, select, string, table, type
+local assert, ipairs, math, next, pairs, rawget, rawset, getmetatable, setmetatable, select, string, table, type
+	= assert, ipairs, math, next, pairs, rawget, rawset, getmetatable, setmetatable, select, string, table, type
+
+local lt = modlib.func.lt
 
 -- Set environment
 local _ENV = {}
@@ -292,44 +294,103 @@ function equals_references(table, other_table)
 	return _equals(table, other_table, {})
 end
 
-function shallowcopy(table)
+-- Supports circular tables; does not support table keys
+--> `true` if a mapping of references exists, `false` otherwise
+function same(a, b)
+	local same = {}
+	local function is_same(a, b)
+		if type(a) ~= "table" or type(b) ~= "table" then
+			return a == b
+		end
+		if same[a] or same[b] then
+			return same[a] == b and same[b] == a
+		end
+		if a == b then
+			return true
+		end
+
+		same[a], same[b] = b, a
+		local count = 0
+		for k, v in pairs(a) do
+			count = count + 1
+			assert(type(k) ~= "table", "table keys not supported")
+			if not is_same(v, b[k], same) then
+				return false
+			end
+		end
+		for _ in pairs(b) do
+			count = count - 1
+			if count < 0 then
+				return false
+			end
+		end
+		return true
+	end
+	return is_same(a, b)
+end
+
+function shallowcopy(
+	table -- table to copy
+	, strip_metatables -- whether to strip metatables; falsy by default; metatables are not copied
+)
+	if type(table) ~= "table" then
+		return table
+	end
+
 	local copy = {}
+	if not strip_metatables then
+		setmetatable(copy, getmetatable(table))
+	end
 	for key, value in pairs(table) do
 		copy[key] = value
 	end
 	return copy
 end
 
-function deepcopy_noncircular(table)
-	local function _copy(value)
-		if type(value) == "table" then
-			return deepcopy_noncircular(value)
-		end
-		return value
+function deepcopy_tree(
+	table -- table; may not contain circular references; cross references will be copied multiple times
+	, strip_metatables -- whether to strip metatables; falsy by default; metatables are not copied
+)
+	if type(table) ~= "table" then
+		return table
 	end
+
 	local copy = {}
+	if not strip_metatables then
+		setmetatable(copy, getmetatable(table))
+	end
 	for key, value in pairs(table) do
-		copy[_copy(key)] = _copy(value)
+		copy[deepcopy_tree(key)] = deepcopy_tree(value)
 	end
 	return copy
 end
+deepcopy_noncircular = deepcopy_tree
 
-function deepcopy(table)
+function deepcopy(
+	table -- table to copy; reference equality will be preserved
+	, strip_metatables -- whether to strip metatables; falsy by default; metatables are not copied
+)
 	local copies = {}
 	local function _deepcopy(table)
-		if copies[table] then
-			return copies[table]
+		local copy = copies[table]
+		if copy then
+			return copy
 		end
-		local copy = {}
+		copy = {}
+		if not strip_metatables then
+			setmetatable(copy, getmetatable(table))
+		end
 		copies[table] = copy
 		local function _copy(value)
-			if type(value) == "table" then
-				if copies[value] then
-					return copies[value]
-				end
-				return _deepcopy(value)
+			if type(value) ~= "table" then
+				return value
 			end
-			return value
+
+			if copies[value] then
+				return copies[value]
+			end
+
+			return _deepcopy(value)
 		end
 		for key, value in pairs(table) do
 			copy[_copy(key)] = _copy(value)
@@ -339,7 +400,6 @@ function deepcopy(table)
 	return _deepcopy(table)
 end
 
-tablecopy = deepcopy
 copy = deepcopy
 
 function count(table)
@@ -361,6 +421,12 @@ end
 
 function is_empty(table)
 	return next(table) == nil
+end
+
+function clear(table)
+	for k in pairs(table) do
+		table[k] = nil
+	end
 end
 
 function foreach(table, func)
@@ -452,7 +518,7 @@ end
 function process(tab, func)
 	local results = {}
 	for key, value in pairs(tab) do
-		table.insert(results, func(key,value))
+		table.insert(results, func(key, value))
 	end
 	return results
 end
@@ -652,31 +718,37 @@ function hpairs(table)
 	return hnext
 end
 
-function best_value(table, is_better_func)
-	local best_key = next(table)
-	if best_key == nil then
-		return
+function min_key(table, less_than)
+	less_than = less_than or lt
+	local min_key = next(table)
+	if min_key == nil then
+		return -- empty table
 	end
-	local candidate_key = best_key
-	while true do
-		candidate_key = next(table, candidate_key)
-		if candidate_key == nil then
-			return best_key
-		end
-		if is_better_func(candidate_key, best_key) then
-			best_key = candidate_key
+	for candidate_key in next, table, min_key do
+		if less_than(candidate_key, min_key) then
+			min_key = candidate_key
 		end
 	end
+	return min_key
 end
 
-function min(table)
-	return best_value(table, function(value, other_value) return value < other_value end)
+function min_value(table, less_than)
+	less_than = less_than or lt
+	local min_key, min_value = next(table)
+	if min_key == nil then
+		return -- empty table
+	end
+	for candidate_key, candidate_value in next, table, min_key do
+		if less_than(candidate_value, min_value) then
+			min_key, min_value = candidate_key, candidate_value
+		end
+	end
+	return min_value, min_key
 end
 
-function max(table)
-	return best_value(table, function(value, other_value) return value > other_value end)
-end
+-- TODO move all of the below functions to modlib.list eventually
 
+--! deprecated
 function default_comparator(value, other_value)
 	if value == other_value then
 		return 0
@@ -687,6 +759,7 @@ function default_comparator(value, other_value)
 	return -1
 end
 
+--! deprecated, use `binary_search(list, value, less_than)` instead
 --> index if element found
 --> -index for insertion if not found
 function binary_search_comparator(comparator)
@@ -708,12 +781,32 @@ function binary_search_comparator(comparator)
 	end
 end
 
-binary_search = binary_search_comparator(default_comparator)
+function binary_search(
+	list -- sorted list
+	, value -- value to be be searched for
+	, less_than -- function(a, b) return a < b end
+)
+	less_than = less_than or lt
+	local min, max = 1, #list
+	while min <= max do
+		local mid = math.floor((min + max) / 2)
+		local element = list[mid]
+		if less_than(value, element) then
+			max = mid - 1
+		elseif less_than(element, value) then
+			min = mid + 1
+		else -- neither smaller nor larger => must be equal
+			return mid -- index if found
+		end
+	end
+	return nil, min -- nil, insertion index if not found
+end
 
 --> whether the list is sorted in ascending order
-function is_sorted(list, comparator)
+function is_sorted(list, less_than --[[function(a, b) return a < b end]])
+	less_than = less_than or function(a, b) return a < b end
 	for index = 2, #list do
-		if comparator(list[index - 1], list[index]) >= 0 then
+		if less_than(list[index], list[index - 1]) then
 			return false
 		end
 	end
@@ -722,7 +815,7 @@ end
 
 function reverse(table)
 	local len = #table
-	for index = 1, math.floor(len / 2) do
+	for index = 1, len / 2 do
 		local index_from_end = len + 1 - index
 		table[index_from_end], table[index] = table[index], table[index_from_end]
 	end
@@ -735,6 +828,61 @@ function repetition(value, count)
 		table[index] = value
 	end
 	return table
+end
+
+function slice(list, from, to)
+	from, to = from or 1, to or #list
+	local res = {}
+	for i = from, to do
+		res[#res + 1] = list[i]
+	end
+	return res
+end
+
+-- JS-ish array splice
+function splice(
+	list, -- to modify
+	start, -- index (inclusive) for where to start modifying the array (defaults to after the last element)
+	delete_count, -- how many elements to remove (defaults to `0`)
+	... -- elements to insert after `start`
+)
+	start, delete_count = start or (#list + 1), delete_count or 0
+	if start < 0 then
+		start = start + #list + 1
+	end
+
+	local add_count = select("#", ...)
+	local shift = add_count - delete_count
+	if shift > 0 then -- shift up
+		for i = #list, start + delete_count, -1 do
+			list[i + shift] = list[i]
+		end
+	elseif shift < 0 then -- shift down
+		for i = start, #list do
+			list[i] = list[i - shift]
+		end
+	end
+
+	-- Add elements
+	for i = 1, add_count do
+		list[start + i - 1] = select(i, ...)
+	end
+
+	return list
+end
+
+-- Equivalent to to_list[to], ..., to_list[to + count] = from_list[from], ..., from_list[from + count]
+function move(from_list, from, to, count, to_list)
+	from, to, count, to_list = from or 1, to or 1, count or #from_list, to_list or from_list
+	if to_list ~= from_list or to < from then
+		for i = 0, count do
+			to_list[to + i] = from_list[from + i]
+		end
+	else -- iterate in reverse order
+		for i = count, 0, -1 do
+			to_list[to + i] = from_list[from + i]
+		end
+	end
 end
 
 -- Export environment

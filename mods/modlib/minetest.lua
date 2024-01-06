@@ -3,14 +3,13 @@ local _ENV = {}
 local components = {}
 for _, value in pairs{
 	"mod",
-	"log",
-	"player",
-	"conf", -- deprecated
 	"luon",
 	"raycast",
 	"schematic",
 	"colorspec",
 	"media",
+	"obj",
+	"texmod",
 } do
 	components[value] = value
 end

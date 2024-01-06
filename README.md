@@ -561,8 +561,8 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 ## Fumo Plushies (fumoplushies)
 
 * Zdroj: [https://git.minetest.land/aSliceOfCake/Plushfumos](https://git.minetest.land/aSliceOfCake/Plushfumos), revize daf783e473637868e48fa416f9e2b76902d2da38
-* Původní licence: AGPLv3
-* Licence úprav: AGPLv3
+* Původní licence: GNU Affero GPLv3
+* Licence úprav: GNU Affero GPLv3
 * [ContentDB](https://content.minetest.net/packages/aSliceOfCake/fumoplushies/)
 
 ## Funny Shadows (shadows)
@@ -585,6 +585,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: LGPLv3 pro kód, CC BY-SA 3.0 pro média
 * Licence úprav: LGPLv3 pro kód, CC BY-SA 3.0 pro média
 * [ContentDB](https://content.minetest.net/packages/AwesomeDragon97/generic\_flags/)
+
+## GGraffiti (ggraffiti)
+
+* Zdroj: [https://github.com/grorp/ggraffiti](https://github.com/grorp/ggraffiti), revize 6821a2fcb181b840ca2b180aac86ebe070923aea
+* Původní licence: GNU Affero GPLv3
+* Licence úprav: GNU Affero GPLv3
+* [ContentDB](https://content.minetest.net/packages/grorp/ggraffiti/)
 
 ## Giftbox2 (minetest\_giftbox2)
 
@@ -775,7 +782,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 ## Modding Library (modlib)
 
-* Zdroj: [https://github.com/appgurueu/modlib](https://github.com/appgurueu/modlib), revize 597666f3e3e36327dd459aebaeb3122b6258127a
+* Zdroj: [https://github.com/appgurueu/modlib](https://github.com/appgurueu/modlib), revize 5f0dea2780b88d44d85b9704e0e81348c459404d
 * Původní licence: MIT
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/LMD/modlib/)

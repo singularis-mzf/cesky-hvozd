@@ -28,13 +28,13 @@ local function gllstep(dtime)
 		ustimes = {}
 	end
 	if counter ~= 1000 then
-		if dtime > dtime_max then
+		if dtime > 0.5 and dtime > dtime_max then
 			if counter > 1 then
 				minetest.log("action", "[glstep_ll] C = "..counter..": dtime_max increased: "..dtime_max.." => "..dtime)
 			end
 			dtime_max = dtime
 		end
-		if ustime > ustime_max then
+		if ustime > 0.5 and ustime > ustime_max then
 			if counter > 1 then
 				minetest.log("action", "[glstep_ll] C = "..counter..": ustime_max increased: "..ustime_max.." => "..ustime)
 			end

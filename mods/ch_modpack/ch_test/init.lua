@@ -2,6 +2,7 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 local modpath = minetest.get_modpath("ch_test")
 
 -- dofile(modpath.."/dynamic_liquids.lua")
+dofile(modpath.."/area_storages.lua")
 dofile(modpath.."/clothinggen.lua")
 dofile(modpath.."/extra_logging.lua")
 -- dofile(modpath.."/interiors.lua")

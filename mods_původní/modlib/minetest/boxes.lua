@@ -1,6 +1,6 @@
 -- Localize globals
-local assert, ipairs, math, minetest, pairs, table, type, vector
-	= assert, ipairs, math, minetest, pairs, table, type, vector
+local assert, ipairs, math, minetest, table, type, vector
+	= assert, ipairs, math, minetest, table, type, vector
 
 -- Set environment
 local _ENV = ...
@@ -11,11 +11,25 @@ local function get_boxes(box_or_boxes)
 	return type(box_or_boxes[1]) == "number" and {box_or_boxes} or box_or_boxes
 end
 
+local has_boxes_prop = {collision_box = "walkable", selection_box = "pointable"}
+
+-- Required for raycast box IDs to be accurate
+local connect_sides_order = {"top", "bottom", "front", "left", "back", "right"}
+
+local connect_sides_directions = {
+	top = vector.new(0, 1, 0),
+	bottom = vector.new(0, -1, 0),
+	front = vector.new(0, 0, -1),
+	left = vector.new(-1, 0, 0),
+	back = vector.new(0, 0, 1),
+	right = vector.new(1, 0, 0),
+}
+
 --> list of collisionboxes in Minetest format
 local function get_node_boxes(pos, type)
 	local node = minetest.get_node(pos)
 	local node_def = minetest.registered_nodes[node.name]
-	if (not node_def) or node_def.walkable == false then
+	if not node_def or node_def[has_boxes_prop[type]] == false then
 		return {}
 	end
 	local boxes = {{-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}}
@@ -34,19 +48,19 @@ local function get_node_boxes(pos, type)
 	if box_type == "leveled" then
 		boxes = table.copy(boxes)
 		local level = (paramtype2 == "leveled" and node.param2 or node_def.leveled or 0) / 255 - 0.5
-		for _, box in pairs(boxes) do
+		for _, box in ipairs(boxes) do
 			box[5] = level
 		end
 	elseif box_type == "wallmounted" then
-		-- TODO complete if only wall_top is given
 		local dir = minetest.wallmounted_to_dir((paramtype2 == "colorwallmounted" and node.param2 % 8 or node.param2) or 0)
 		local box
+		-- The (undocumented!) node box defaults below are taken from `NodeBox::reset`
 		if dir.y > 0 then
-			box = def_box.wall_top
+			box = def_box.wall_top or {-0.5, 0.5 - 1/16, -0.5, 0.5, 0.5, 0.5}
 		elseif dir.y < 0 then
-			box = def_box.wall_bottom
+			box = def_box.wall_bottom or {-0.5, -0.5, -0.5, 0.5, -0.5 + 1/16, 0.5}
 		else
-			box = def_box.wall_side
+			box = def_box.wall_side or {-0.5, -0.5, -0.5, -0.5 + 1/16, 0.5, 0.5}
 			if dir.z > 0 then
 				box = {box[3], box[2], -box[4], box[6], box[5], -box[1]}
 			elseif dir.z < 0 then
@@ -61,19 +75,11 @@ local function get_node_boxes(pos, type)
 	end
 	if box_type == "connected" then
 		boxes = table.copy(boxes)
-		local connect_sides = {
-			top = {x = 0, y = 1, z = 0},
-			bottom = {x = 0, y = -1, z = 0},
-			front = {x = 0, y = 0, z = -1},
-			left = {x = -1, y = 0, z = 0},
-			back = {x = 0, y = 0, z = 1},
-			right = {x = 1, y = 0, z = 0}
-		}
-		if node_def.connect_sides then
-			for side in pairs(connect_sides) do
-				if not node_def.connect_sides[side] then
-					connect_sides[side] = nil
-				end
+		local connect_sides = connect_sides_directions -- (ab)use directions as a "set" of sides
+		if node_def.connect_sides then -- build set of sides from given list
+			connect_sides = {}
+			for _, side in ipairs(node_def.connect_sides) do
+				connect_sides[side] = true
 			end
 		end
 		local function add_collisionbox(key)
@@ -82,23 +88,26 @@ local function get_node_boxes(pos, type)
 			end
 		end
 		local matchers = {}
-		for _, nodename_or_group in pairs(node_def.connects_to or {}) do
-			table.insert(matchers, nodename_matcher(nodename_or_group))
+		for i, nodename_or_group in ipairs(node_def.connects_to or {}) do
+			matchers[i] = nodename_matcher(nodename_or_group)
 		end
 		local function connects_to(nodename)
-			for _, matcher in pairs(matchers) do
+			for _, matcher in ipairs(matchers) do
 				if matcher(nodename) then
 					return true
 				end
 			end
 		end
 		local connected, connected_sides
-		for side, direction in pairs(connect_sides) do
-			local neighbor = minetest.get_node(vector.add(pos, direction))
-			local connects = connects_to(neighbor.name)
-			connected = connected or connects
-			connected_sides = connected_sides or (side ~= "top" and side ~= "bottom")
-			add_collisionbox((connects and "connect_" or "disconnected_") .. side)
+		for _, side in ipairs(connect_sides_order) do
+			if connect_sides[side] then
+				local direction = connect_sides_directions[side]
+				local neighbor = minetest.get_node(vector.add(pos, direction))
+				local connects = connects_to(neighbor.name)
+				connected = connected or connects
+				connected_sides = connected_sides or (side ~= "top" and side ~= "bottom")
+				add_collisionbox((connects and "connect_" or "disconnected_") .. side)
+			end
 		end
 		if not connected then
 			add_collisionbox("disconnected")
@@ -121,7 +130,7 @@ local function get_node_boxes(pos, type)
 			if axis == 2 then
 				sin = -sin
 			end
-			for _, box in pairs(boxes) do
+			for _, box in ipairs(boxes) do
 				for off = 0, 3, 3 do
 					local axis_1, axis_2 = other_axis_1 + off, other_axis_2 + off
 					local value_1, value_2 = box[axis_1], box[axis_2]
