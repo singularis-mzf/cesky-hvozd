@@ -19,6 +19,14 @@ local stairway_groups = {cracky = 2}
 local function register_node(mode, nodename, def)
 	if mode == "simple" then
 		return minetest.register_node(nodename, def)
+	elseif mode == "4dir" then
+		def.paramtype2 = "color4dir"
+		def.palette = "unifieddyes_palette_color4dir.png"
+		def.groups = def.groups and table.copy(def.groups) or {}
+		def.groups.ud_param2_colorable = 1
+		def.on_dig = unifieddyes.on_dig
+		minetest.register_node(nodename, def)
+		return
 	elseif mode == "split" then
 		def.paramtype2 = "colorfacedir"
 		def.palette = "unifieddyes_palette_greys.png"
@@ -44,7 +52,7 @@ local function register_node(mode, nodename, def)
 	end
 end
 
-register_node("split", "techpack_stairway:grating", {
+register_node("4dir", "techpack_stairway:grating", {
 	description = S("TechPack Grating"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -76,7 +84,7 @@ register_node("split", "techpack_stairway:grating", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
-register_node("split", "techpack_stairway:handrail1", {
+register_node("4dir", "techpack_stairway:handrail1", {
 	description = S("TechPack Handrail 1"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -108,7 +116,7 @@ register_node("split", "techpack_stairway:handrail1", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
-register_node("split", "techpack_stairway:handrail2", {
+register_node("4dir", "techpack_stairway:handrail2", {
 	description = S("TechPack Handrail 2"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -142,7 +150,7 @@ register_node("split", "techpack_stairway:handrail2", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
-register_node("split", "techpack_stairway:handrail3", {
+register_node("4dir", "techpack_stairway:handrail3", {
 	description = S("TechPack Handrail 3"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -176,7 +184,7 @@ register_node("split", "techpack_stairway:handrail3", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
-register_node("split", "techpack_stairway:handrail4", {
+register_node("4dir", "techpack_stairway:handrail4", {
 	description = S("TechPack Handrail 4"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -212,7 +220,7 @@ register_node("split", "techpack_stairway:handrail4", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
-register_node("split", "techpack_stairway:bridge1", {
+register_node("4dir", "techpack_stairway:bridge1", {
 	description = S("TechPack Bridge 1"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -245,7 +253,7 @@ register_node("split", "techpack_stairway:bridge1", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
-register_node("split", "techpack_stairway:bridge2", {
+register_node("4dir", "techpack_stairway:bridge2", {
 	description = S("TechPack Bridge 2"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -279,7 +287,7 @@ register_node("split", "techpack_stairway:bridge2", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
-register_node("split", "techpack_stairway:bridge3", {
+register_node("4dir", "techpack_stairway:bridge3", {
 	description = S("TechPack Bridge 3"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -313,7 +321,7 @@ register_node("split", "techpack_stairway:bridge3", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
-register_node("split", "techpack_stairway:bridge4", {
+register_node("4dir", "techpack_stairway:bridge4", {
 	description = S("TechPack Bridge 4"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -348,7 +356,7 @@ register_node("split", "techpack_stairway:bridge4", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
-register_node("split", "techpack_stairway:stairway", {
+register_node("4dir", "techpack_stairway:stairway", {
 	description = S("TechPack Stairway"),
 	tiles = {
 		'techpack_stairway_steps.png',
@@ -387,7 +395,7 @@ register_node("split", "techpack_stairway:stairway", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
-register_node("split", "techpack_stairway:ladder1", {
+register_node("4dir", "techpack_stairway:ladder1", {
 	description = S("TechPack Ladder 1"),
 	tiles = {
 		'techpack_stairway_steps.png',
@@ -419,7 +427,7 @@ register_node("split", "techpack_stairway:ladder1", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
-register_node("split", "techpack_stairway:ladder2", {
+register_node("4dir", "techpack_stairway:ladder2", {
 	description = S("TechPack Ladder 2"),
 	tiles = {
 		'techpack_stairway_steps.png',
@@ -452,7 +460,7 @@ register_node("split", "techpack_stairway:ladder2", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
-register_node("split", "techpack_stairway:ladder3", {
+register_node("4dir", "techpack_stairway:ladder3", {
     description = S("TechPack Ladder 3"),
     tiles = {
         'techpack_stairway_steps.png',
@@ -485,7 +493,7 @@ register_node("split", "techpack_stairway:ladder3", {
     sounds = default.node_sound_metal_defaults(),
 })
 
-register_node("split", "techpack_stairway:ladder4", {
+register_node("4dir", "techpack_stairway:ladder4", {
 	description = S("TechPack Ladder 4"),
 	tiles = {
 		'techpack_stairway_ladder.png',
@@ -716,3 +724,5 @@ minetest.register_craft({
 	output = "techpack_stairway:ladder2",
 	recipe = {{"techpack_stairway:ladder1"}},
 })
+
+dofile(minetest.get_modpath("techpack_stairway").."/upgrade_lbm.lua")

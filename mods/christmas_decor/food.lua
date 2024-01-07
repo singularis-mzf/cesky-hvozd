@@ -286,6 +286,11 @@ if depends.stairs then
 end
 ]]
 
+local box = {
+	type = "fixed",
+	fixed = {-0.5, -0.5, 0.5 - 1/32, 0.5, 0.5, 0.5},
+}
+
 minetest.register_node("christmas_decor:frosting_trim", {
 	description = S("Frosting Trim"),
 	tiles = {"christmas_decor_frosting_trim.png"},
@@ -295,20 +300,21 @@ minetest.register_node("christmas_decor:frosting_trim", {
 	walkable = false,
 	climbable = false,
 	is_ground_content = false,
-	selection_box = {
+	--[[ selection_box = {
 		type = "wallmounted",
 	},
-	legacy_wallmounted = true,
+	legacy_wallmounted = true, ]]
 	use_texture_alpha = "blend",
-	drawtype = "signlike",
+	drawtype = "nodebox",
+	node_box = box,
 	paramtype = "light",
-	paramtype2 = "colorwallmounted",
-	palette = "unifieddyes_palette_colorwallmounted.png",
-	after_place_node = function(pos, placer, itemstack, pointed_thing)
-		unifieddyes.fix_rotation_nsew(pos, placer, itemstack, pointed_thing)
-	end,
+	paramtype2 = "color4dir",
+	palette = "unifieddyes_palette_color4dir.png",
+	--[[ after_place_node = function(pos, placer, itemstack, pointed_thing)
+		unifieddyes.fix_rotation(pos, placer, itemstack, pointed_thing)
+	end, ]]
 	on_dig = unifieddyes.on_dig,
-	on_rotate = unifieddyes.fix_after_screwdriver_nsew,
+	-- on_rotate = unifieddyes.fix_after_screwdriver_nsew,
 	groups = {snappy = 3, ud_param2_colorable = 1},
 	sounds = default_sounds("node_sound_leaves_defaults"),
 })
@@ -322,20 +328,21 @@ minetest.register_node("christmas_decor:frosting_line", {
 	walkable = false,
 	climbable = false,
 	is_ground_content = false,
-	selection_box = {
+	--[[selection_box = {
 		type = "wallmounted",
 	},
-	legacy_wallmounted = true,
+	legacy_wallmounted = true, ]]
 	use_texture_alpha = "blend",
-	drawtype = "signlike",
+	drawtype = "nodebox",
+	node_box = box,
 	paramtype = "light",
-	paramtype2 = "colorwallmounted",
-	palette = "unifieddyes_palette_colorwallmounted.png",
-	after_place_node = function(pos, placer, itemstack, pointed_thing)
-		unifieddyes.fix_rotation_nsew(pos, placer, itemstack, pointed_thing)
-	end,
+	paramtype2 = "color4dir",
+	palette = "unifieddyes_palette_color4dir.png",
+	--[[after_place_node = function(pos, placer, itemstack, pointed_thing)
+		unifieddyes.fix_rotation(pos, placer, itemstack, pointed_thing)
+	end, ]]
 	on_dig = unifieddyes.on_dig,
-	on_rotate = unifieddyes.fix_after_screwdriver_nsew,
+	-- on_rotate = unifieddyes.fix_after_screwdriver_nsew,
 	groups = {snappy = 3, ud_param2_colorable = 1},
 	sounds = default_sounds("node_sound_leaves_defaults"),
 })

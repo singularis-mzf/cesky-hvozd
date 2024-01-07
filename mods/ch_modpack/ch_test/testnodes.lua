@@ -57,7 +57,18 @@ local paramtypes = {
 	glasslikeliquidlevel = {
 		param2_max = 255,
 		drawtype = "glasslike_framed",
-		special_tiles = {"ch_core_white_pixel.png"},
+		tiles = {
+			{name = "ch_core_white_pixel.png^[opacity:10", backface_culling = true},
+		},
+		use_texture_alpha = "blend",
+		special_tiles = {
+			{name = "ch_test_4dir_1.png^[opacity:200", color = "#ff3333", backface_culling = true},
+			{name = "ch_test_4dir_2.png^[opacity:200", color = "#ff3333", backface_culling = true},
+			{name = "ch_test_4dir_3.png^[opacity:200", color = "#ff3333", backface_culling = true},
+			{name = "ch_test_4dir_4.png^[opacity:200", color = "#ff3333", backface_culling = true},
+			{name = "ch_test_4dir_5.png^[opacity:200", color = "#ff3333", backface_culling = true},
+			{name = "ch_test_4dir_6.png^[opacity:200", color = "#ff3333", backface_culling = true},
+		},
 	},
 	colordegrotate = {
 		param2_max = 255,
@@ -134,6 +145,8 @@ local optional_fields = {
 	"palette",
 	"selection_box",
 	"special_tiles",
+	"tiles",
+	"use_texture_alpha",
 }
 
 for paramtype2, ptdef in pairs(paramtypes) do

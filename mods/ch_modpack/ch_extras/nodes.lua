@@ -967,9 +967,9 @@ def = {
 local def2 = table.copy(def)
 def2.paramtype2 = "colorfacedir"
 def2.palette = "unifieddyes_palette_greys.png"
-def2.airbrush_replacement_node = "ch_extras:particle_board_grey"
+-- def2.airbrush_replacement_node = "ch_extras:particle_board_grey"
 def2.groups = table.copy(def.groups)
-def2.groups.ud_param2_colorable = 1
+def2.groups.ud_param2_colorable = nil
 def2.groups.not_in_creative_inventory = 1
 def2.on_dig = unifieddyes.on_dig
 

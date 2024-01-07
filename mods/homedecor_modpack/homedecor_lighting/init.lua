@@ -1744,19 +1744,19 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
-	output = "homedecor:standing_lamp_hi",
+	output = "homedecor:standing_lamp_14",
 	recipe = {
-		{"homedecor:table_lamp_hi"},
+		{"homedecor:table_lamp_14"},
 		{"group:stick"},
 		{"group:stick"},
 	},
 })
 
 unifieddyes.register_color_craft({
-	output = "homedecor:standing_lamp_hi",
+	output = "homedecor:standing_lamp_14",
 	palette = "extended",
 	type = "shapeless",
-	neutral_node = "homedecor:standing_lamp_hi",
+	neutral_node = "homedecor:standing_lamp_14",
 	recipe = {
 		"NEUTRAL_NODE",
 		"MAIN_DYE"
@@ -1765,12 +1765,12 @@ unifieddyes.register_color_craft({
 
 minetest.register_craft({
 	type = "fuel",
-	recipe = "homedecor:table_lamp_hi",
+	recipe = "homedecor:table_lamp_14",
 	burntime = 10,
 })
 
 minetest.register_craft({
-	output = "homedecor:table_lamp_hi",
+	output = "homedecor:table_lamp_14",
 	recipe = {
 		{ "wool:white", "default:torch", "wool:white"},
 		{ "", "group:stick", ""},
@@ -1779,7 +1779,7 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
-	output = "homedecor:table_lamp_hi",
+	output = "homedecor:table_lamp_14",
 	recipe = {
 		{ "cottages:wool", "default:torch", "cottages:wool"},
 		{ "", "group:stick", ""},
@@ -1788,7 +1788,7 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
-	output = "homedecor:table_lamp_hi",
+	output = "homedecor:table_lamp_14",
 	recipe = {
 		{ "wool:white", "default:torch", "wool:white"},
 		{ "", "group:stick", ""},
@@ -1797,7 +1797,7 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
-	output = "homedecor:table_lamp_hi",
+	output = "homedecor:table_lamp_14",
 	recipe = {
 		{ "cottages:wool", "default:torch", "cottages:wool"},
 		{ "", "group:stick", ""},
@@ -1806,10 +1806,10 @@ minetest.register_craft({
 })
 
 unifieddyes.register_color_craft({
-	output = "homedecor:table_lamp_hi",
+	output = "homedecor:table_lamp_14",
 	palette = "extended",
 	type = "shapeless",
-	neutral_node = "homedecor:table_lamp_hi",
+	neutral_node = "homedecor:table_lamp_14",
 	recipe = {
 		"NEUTRAL_NODE",
 		"MAIN_DYE"
