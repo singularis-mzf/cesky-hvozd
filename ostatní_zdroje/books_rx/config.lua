@@ -1,0 +1,13 @@
+max_book_title_length = 50
+max_book_message_length = 800
+max_book_content_length = 5000
+max_paper_subject_length = 50
+max_paper_message_length = 800
+default_book_title = "Untitled"
+default_book_scale = "small"
+default_book_style = "plain"
+default_book_color = "white"
+default_paper_subject = "Untitled"
+default_paper_scale = "small"
+default_paper_style = "plain"
+default_paper_color = "white"

@@ -44,7 +44,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 ## Minetest Game
 
-* Zdroj: [https://github.com/minetest/minetest\_game](https://github.com/minetest/minetest\_game), revize 08057e8e0f01b443515ff81423215e4367f84872
+* Zdroj: [https://github.com/minetest/minetest\_game](https://github.com/minetest/minetest\_game), revize 08057e8e0f01b443515ff81423215e4367f84872 (mód default z revize 9875ef62403b3f0113633fc5c88186c983030b34)
 * Původní licence: LGPLv2.1 pro kód, různé pro média
 * Licence úprav: LGPLv2.1 (není-li uvedeno jinak)
 * [ContentDB](https://content.minetest.net/packages/Minetest/minetest\_game/)
@@ -1129,6 +1129,11 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Zdroj: [https://github.com/Grizzly-Adam/BBQ](https://github.com/Grizzly-Adam/BBQ), revize 1a72f7c2baacc6798033a7973545ab74cc52341e
 * Původní licence: LGPLv2.1+ (kód), CC-BY-SA-3.0 (textury), CC-BY-3.0 (zvuky)
 * [ContentDB](https://content.minetest.net/packages/Grizzly%20Adam/bbq/)
+
+## Books Redux (books\_rx)
+
+* Zdroj: [https://bitbucket.org/sorcerykid/books\_rx](https://bitbucket.org/sorcerykid/books\_rx), revize 66f64f90c992dc06493f253237325700281f4e55
+* Původní licence: LGPL-3.0 (kód), CC-BY-SA-3.0 (textury, zvuky a modely)
 
 ## Chess from Tunneler's Abyss (chess)
 
