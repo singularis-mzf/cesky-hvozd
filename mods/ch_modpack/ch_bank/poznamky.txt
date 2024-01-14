@@ -1,0 +1,27 @@
+Jak má probíhat obchod mezi postavami A a B:
+
+1. Postava A pravým tlačítkem klikne na B (nebo zadá příkaz „/obchod B“).
+2. Postavě B se až na 20 sekund zobrazí časovač a zpráva v četu, že postava A jí nabízí obchod.
+3A. Postava B může obchod odmítnout tím, že na postavu A klikne levým tlačítkem, nebo tím, že se od ní vzdálí na 50 metrů či víc.
+3B. Postava B může obchod přijmout tím, že na postavu A klikne pravým tlačítkem, nebo zadá do četu "/obchod" bez parametru nebo "/obchod A".
+4. Postavám A a B se zobrazí formuláře se synchronizovanými inventáři, které jsou oba otevřené.
+   + Postavy si mohou dopisovat a naskládat do inventářů, co chtějí směnit.
+5. Postava A uzavře svoji nabídku.
+6. Postava B uzavře svoji nabídku.
+7. Postava A schválí směnu.
+8. Postava B schválí směnu. Umožňuje-li to stav inventářů, směna proběhne.
+
+Obchod se přeruší v těchto případech:
+
+1) Některá z postav uzavře formulář.
+2) Některá z postav se od druhé vzdálí na víc než 50 metrů.
+3) Některá z postav se odpojí ze hry.
+4) Server se vypíná.
+
+* Přerušení obchodu je možné od počáteční výzvy až do skončení úspěšné směny.
+* Během výzvy i během obchodování jsou postavy označeny tituly:
+	*nabízí obchod*
+	*obchoduje*
+* Jedna postava může nabízet obchod v jedné chvíli jen jedné druhé postavě.
+* Jedné postavě může nabízet obchod v jedné chvíli jen jedna jiné postava.
+* Nabídka postavy A postavě B se zruší, pokud postava B nabídne obchod postavě C.

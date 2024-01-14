@@ -620,21 +620,16 @@ core.register_entity(":__builtin:item", {
 	end,
 
 	on_punch = function(self, hitter)
-
-		local inv = hitter:get_inventory()
-
-		if inv and self.itemstring ~= "" then
-
-			local left = inv:add_item("main", self.itemstring)
-
+		if not minetest.is_player(hitter) then
+			return
+		end
+		if self.itemstring ~= "" then
+			local left = minetest.item_pickup(ItemStack(self.itemstring), hitter, {type = "object", ref = self.object}, 1)
 			if left and not left:is_empty() then
-
 				self:set_item(left)
-
 				return
 			end
 		end
-
 		self.itemstring = ""
 		self.object:remove()
 	end

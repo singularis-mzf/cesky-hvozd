@@ -27,7 +27,7 @@ local function get_invalid_locale_formspec(invalid_locale, protocol_version)
 		krok2_sk = F("2. V skupine „User Interfaces“ (Uživatelská rozhraní) lebo „Accessibility“ nastavte „Language“ („Jazyk“) na hodnotu „Slovenčina [sk]“ lebo „Česky [cs]“.\n\n")
 		krok2_en = F("2. In the group \"User Interfaces\" or \"Accessibility\" set \"Language\" to one of the values \"Česky [cs]\" or \"Slovenčina [sk]\".\n\n")
 	end
-	
+
 	local result = {
 		"formspec_version[4]",
 		"size[12,14]",

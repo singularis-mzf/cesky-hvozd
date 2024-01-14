@@ -303,9 +303,8 @@ function ch_core.update_creative_inventory(force_update)
 	local name_to_partition = {}
 	local group_to_partition = {}
 	local mod_to_partition = {}
-	local not_in_mods = {} -- [partition.."/"..mod]
 	local partition_to_exclude_items = {others = none}
-	for order, part_def in ipairs(partition_defs) do
+	for _ --[[order]], part_def in ipairs(partition_defs) do
 		if (part_def.exclude_items or none)[1] then
 			local set = {}
 			partition_to_exclude_items[part_def.name] = set
@@ -351,7 +350,7 @@ function ch_core.update_creative_inventory(force_update)
 			elseif name_to_partition[name] then
 				partition = name_to_partition[name]
 			else
-				local mod, subname = name:match("^([^:]*):([^:]*)$")
+				local mod --[[, subname]] = name:match("^([^:]*):([^:]*)$")
 				local success = false
 				for group, rank in pairs(groups) do
 					if rank > 0 and group_to_partition[group] and not partition_to_exclude_items[group_to_partition[group]][name] then
@@ -394,7 +393,7 @@ function ch_core.update_creative_inventory(force_update)
 
 	-- 5. seřaď oddíly
 	local partitions_in_order = {}
-	for order, part_def in ipairs(partition_defs) do
+	for _, part_def in ipairs(partition_defs) do
 		local partition_list = existing_partitions[part_def.name]
 		if partition_list then
 			table.insert(partitions_in_order, { name = part_def.name, items_by_order = partition_list })
@@ -402,7 +401,7 @@ function ch_core.update_creative_inventory(force_update)
 		end
 	end
 	local remaining_partitions = {}
-	for part_name, item_list in pairs(existing_partitions) do
+	for part_name, _ in pairs(existing_partitions) do
 		table.insert(remaining_partitions, part_name)
 	end
 	table.sort(remaining_partitions)
@@ -418,7 +417,7 @@ function ch_core.update_creative_inventory(force_update)
 	local items_by_order = {}
 	local partitions_by_name_count = 0
 
-	for order, part_info in pairs(partitions_in_order) do
+	for _, part_info in pairs(partitions_in_order) do
 		partitions_by_name[part_info.name] = part_info.items_by_order
 		table.insert_all(items_by_order, part_info.items_by_order)
 		partitions_by_name_count = partitions_by_name_count + 1

@@ -32,6 +32,10 @@ local disrupt_pryc = function(player, online_charinfo)
 	end
 end
 
+function ch_core.je_pryc(player_name)
+	return ch_core.ifthenelse((ch_core.online_charinfo[player_name] or empty_table).pryc ~= nil, true, false)
+end
+
 function ch_core.set_pryc(player_name, options)
 	local cod = ch_core.online_charinfo[player_name]
 	if not cod then

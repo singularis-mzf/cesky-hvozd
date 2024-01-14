@@ -14,7 +14,6 @@ end)
 local color_celoserverovy = minetest.get_color_escape_sequence("#ff8700")
 local color_mistni = minetest.get_color_escape_sequence("#fff297")
 local color_mistni_zblizka = minetest.get_color_escape_sequence("#64f231") -- 54cc29
-local color_rp = color_mistni
 local color_soukromy = minetest.get_color_escape_sequence("#ff4cf3")
 local color_sepot = minetest.get_color_escape_sequence("#fff297cc")
 local color_systemovy = minetest.get_color_escape_sequence("#cccccc")
@@ -56,7 +55,7 @@ function ch_core.chat(rezim, odkoho, zprava, pozice)
 	local odkoho_info = ch_core.online_charinfo[odkoho] or {}
 	local odkoho_doslech = odkoho_info.doslech or 65535
 	local odkoho_s_diakritikou = ch_core.prihlasovaci_na_zobrazovaci(odkoho)
-	local barva_zpravy, barva_zpravy_zblizka, posl_adresat, min_vzdal_ignorujici, min_vzdal_adresat
+	local barva_zpravy, barva_zpravy_zblizka, min_vzdal_ignorujici, min_vzdal_adresat
 
 	if rezim == "celoserverovy" then
 		barva_zpravy = color_celoserverovy
@@ -386,63 +385,6 @@ function ch_core.unset_ignorovat(player_name, name_to_unignore)
 	return true
 end
 
---[[
-	Vezme tabulku s údaji pro hráčský štítek a vygeneruje tabulku
-	s atributy pro metodu player:set_nametag_attributes().
-	Předaná tabulka musí obsahovat přinejmenším položku ["jmeno"]
-	obsahující barevné jméno.
-]]
-function ch_core.process_player_nametag(data)
-	local result = {color = nametag_color_normal_table} -- text, color, bgcolor
-	-- data:
-	--		- docasne_tituly = { [titul] = ?, [titul] = ? }
-	--		- titul
-	--		- jmeno -- musí být a musí obsahovat barvu
-	--		- cet = { [1], [2], [3] } -- je-li, musí obsahovat barvu
-	local parts = {}
-	local priznak = false
-
-	-- dočasné tituly
-	for titul, _ in pairs(data.docasne_tituly or {}) do
-		if not priznak then
-			table.insert(parts, nametag_color_green)
-			priznak = true
-		end
-		table.insert(parts, "*")
-		table.insert(parts, titul)
-		table.insert(parts, "*\n")
-	end
-	if not priznak and data.titul then
-		-- stálý titul
-		table.insert(parts, nametag_color_green)
-		table.insert(parts, "*")
-		table.insert(parts, titul)
-		table.insert(parts, "*\n")
-	end
-
-	-- jméno (barevné)
-	table.insert(parts, data.jmeno or "")
-
-	-- čet
-	if data.cet and data.cet[1] then
-		table.insert(parts, ":\n")
-		table.insert(parts, data.cet[1])
-		if data.cet[2] then
-			table.insert(parts, "\n")
-			table.insert(parts, data.cet[2])
-			if data.cet[3] then
-				table.insert(parts, "\n")
-				table.insert(data.cet[3])
-			end
-		end
-		result.bgcolor = nametag_chat_bgcolor_table
-	else
-		result.bgcolor = nametag_nochat_bgcolor_table
-	end
-	result.text = table.concat(parts)
-	return result
-end
-
 minetest.register_on_chat_message(on_chat_message)
 
 minetest.override_chatcommand("me", {
@@ -539,50 +481,69 @@ minetest.send_leave_message = function(player_name, is_timedout)
 	return ch_core.systemovy_kanal("", "Odpojila se postava: "..ch_core.prihlasovaci_na_zobrazovaci(player_name))
 end
 
--- /info_o
-local function info_o(player_name, param, non_privileged)
-	local admin_name = player_name
-	player_name = ch_core.jmeno_na_prihlasovaci(param)
+local typy_postavy = {
+	admin = "správa serveru",
+	creative = "kouzelnická",
+	survival = "dělnická",
+	new = "nová",
+}
+
+local function get_info_o(player_name, is_privileged)
+	player_name = ch_core.jmeno_na_prihlasovaci(player_name)
+	local player_role = ch_core.get_player_role(player_name)
+	if player_role == "none" then
+		return "*** Postava "..player_name.." neexistuje!"
+	end
 	local view_name = ch_core.prihlasovaci_na_zobrazovaci(player_name)
 	local offline_charinfo = ch_core.offline_charinfo[player_name]
-	if not offline_charinfo then
-		minetest.chat_send_player(admin_name, "*** Nejsou uloženy žádné informace o "..view_name..".")
-		return true
+	if offline_charinfo == nil then
+		return "*** Nejsou uloženy žádné informace o "..view_name.."."
 	end
+	local result = {
+		"*** Informace o "..view_name..":"..
+		"\n* Druh postavy: "..(typy_postavy[player_role] or "neznámý typ postavy"),
+	}
 	local online_charinfo = ch_core.online_charinfo[player_name] -- may be nil!
-	local result = {"*** Informace o "..view_name..":"}
 	local past_playtime = offline_charinfo.past_playtime or 0
 	local past_ap_playtime = offline_charinfo.past_ap_playtime or 0
-	if online_charinfo then
-		local current_playtime = 1.0e-6 * (minetest.get_us_time() - online_charinfo.join_timestamp)
+	local current_playtime
+	if online_charinfo ~= nil then
+		current_playtime = 1.0e-6 * (minetest.get_us_time() - online_charinfo.join_timestamp)
+	else
+		current_playtime = 0
+	end
+	if not is_privileged then
+		past_playtime = math.floor(past_playtime)
+		past_ap_playtime = math.floor(past_ap_playtime)
+		current_playtime = math.floor(current_playtime)
+	end
+	if online_charinfo ~= nil then
 		table.insert(result, "\n* Odehraná doba [s]: "..current_playtime.." nyní + "..past_playtime.." dříve")
 	else
-		table.insert(result, "\n* Odehraná doba [s]: "..past_playtime)
+		table.insert(result, "\n* Odehraná doba [s]: "..past_playtime.." (postava není ve hře)")
 	end
 	table.insert(result, "\n* Aktivní odehraná doba: "..past_ap_playtime.." s = "..(past_ap_playtime / 3600).." hod.")
-	table.insert(result, "\n* Úroveň "..offline_charinfo.ap_level..", "..offline_charinfo.ap_xp.." bodů")
-	if ch_core.ap_get_level then
-		local level_def = ch_core.ap_get_level(offline_charinfo.ap_level)
-		table.insert(result, " z "..level_def.count..", "..(level_def.base + offline_charinfo.ap_xp).." celkem")
-	end
+	local level_def = ch_core.ap_get_level(offline_charinfo.ap_level)
+	table.insert(result, "\n* Úroveň "..offline_charinfo.ap_level..". "..offline_charinfo.ap_xp.." bodů z "..level_def.count..", "..(level_def.base + offline_charinfo.ap_xp).." celkem")
 	table.insert(result, "\n* Doslech: aktuální "..(online_charinfo and online_charinfo.doslech and online_charinfo.doslech.." m" or "neznámý")..", výchozí "..(offline_charinfo.doslech and offline_charinfo.doslech.." m" or "neznámý"))
-
-	minetest.chat_send_player(admin_name, table.concat(result))
-	return true
+	return table.concat(result)
 end
-
 
 minetest.register_chatcommand("info_o", {
 	params = "<Jméno postavy>",
 	description = "Vypíše systémové informace o postavě",
 	privs = { server = true },
-	func = info_o,
+	func = function(admin_name, param)
+		minetest.chat_send_player(admin_name, get_info_o(param, true))
+		return true
+	end,
 })
 
 minetest.register_chatcommand("info", {
-	description = "Vypíše systémové informace o Vaší postavě",
+	description = "Vypíše systémové informace o vaší postavě",
 	func = function(player_name, param)
-		return info_o(player_name, player_name, true)
+		minetest.chat_send_player(player_name, get_info_o(player_name, false))
+		return true
 	end,
 })
 

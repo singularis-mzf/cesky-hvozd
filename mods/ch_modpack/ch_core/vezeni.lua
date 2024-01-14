@@ -211,9 +211,9 @@ local function do_vezeni(player_name, online_charinfo)
 
 	-- Check for a pickaxe
 	minetest.after(5, function(pname)
-		local player = minetest.get_player_by_name(pname)
-		if player then
-			ch_core.vezeni_kontrola_krumpace(player)
+		local player_2 = minetest.get_player_by_name(pname)
+		if player_2 then
+			ch_core.vezeni_kontrola_krumpace(player_2)
 		end
 	end, player_name)
 end
@@ -252,7 +252,7 @@ minetest.register_on_joinplayer(on_joinplayer)
 
 -- volajici = komu vypsat hlášení; "" = provést změnu potichu
 function ch_core.trest(volajici, jmeno, vyse_trestu)
-	local message = nil
+	local message
 	local result = false
 
 	if type(vyse_trestu) ~= "number" then
@@ -261,7 +261,7 @@ function ch_core.trest(volajici, jmeno, vyse_trestu)
 	end
 	jmeno = ch_core.jmeno_na_prihlasovaci(jmeno)
 	if not minetest.player_exists(jmeno) then
-		chyba = "Postava "..jmeno.." neexistuje!"
+		message = "Postava "..jmeno.." neexistuje!"
 	else
 		local offline_charinfo = ch_core.get_offline_charinfo(jmeno)
 		local trest = offline_charinfo.trest
@@ -297,6 +297,19 @@ function ch_core.trest(volajici, jmeno, vyse_trestu)
 		ch_core.systemovy_kanal(volajici, message)
 	end
 	return result
+end
+
+--[[
+	Je-li postava ve výkonu trestu, vrací výši jejího trestu,
+	jinak vrátí nil.
+]]
+function ch_core.je_ve_vykonu_trestu(player_name)
+	local trest = ch_core.safe_get_3(ch_core.offline_charinfo, player_name, "trest")
+	if trest ~= nil and trest > 0 then
+		return trest
+	else
+		return nil
+	end
 end
 
 -- func(player)

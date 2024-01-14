@@ -38,6 +38,10 @@ ch_core_empty.png
 ch_core_white_pixel.png
 ch_core_normal.obj
 ch_core_normal_45.obj
+ch_core_kladivo.png
+ch_core_kouzhul.png
+ch_core_slunce.png
+ch_core_koruna.png
 	Author: Singularis
 	License: CC-BY-SA 4.0
 

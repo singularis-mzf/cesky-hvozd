@@ -342,6 +342,12 @@ local entity_properties_list = {
 	"show_on_minimap",
 }
 
+local penize = {
+	["ch_core:kcs_h"] = 1,
+	["ch_core:kcs_kcs"] = 100,
+	["ch_core:kcs_zcs"] = 10000,
+}
+
 -- KEŠ
 -- ===========================================================================
 local utf8_sort_cache = {
@@ -349,7 +355,17 @@ local utf8_sort_cache = {
 
 -- LOKÁLNÍ FUNKCE
 -- ===========================================================================
-
+local function get_player_role_by_privs(privs)
+	if privs.protection_bypass then
+		return "admin"
+	elseif not privs.ch_registered_player then
+		return "new"
+	elseif privs.give then
+		return "creative"
+	else
+		return "survival"
+	end
+end
 
 -- VEŘEJNÉ FUNKCE
 -- ===========================================================================
@@ -386,7 +402,7 @@ function ch_core.check_player_role(player_or_player_name, accepted_roles)
 	if type(accepted_roles) == "string" then
 		return role == accepted_roles
 	end
-	for i, r in ipairs(accepted_roles) do
+	for _, r in ipairs(accepted_roles) do
 		if role == r then
 			return true
 		end
@@ -429,6 +445,15 @@ function ch_core.clear_crafts(log_prefix, crafts)
 end
 
 --[[
+Spočítá a / b a vrátí celočíselný výsledek a zbytek.
+]]
+function ch_core.divrem(a, b)
+	local div = math.floor(a / b)
+	local rem = a % b
+	return div, rem
+end
+
+--[[
 Pro zadanou hodnotu facedir vrátí rotační vektor symbolizující rotaci
 z výchozího otočení (facedir = 0) do otočení cílového.
 ]]
@@ -462,39 +487,67 @@ function ch_core.get_nearest_player(pos, player_name_to_ignore)
 end
 
 --[[
+Vrátí t[k]. Pokud je to nil, přiřadí tam prázdnou tabulku {} a vrátí tu.
+]]
+function ch_core.get_or_add(t, k)
+	local result = t[k]
+	if result == nil then
+		result = {}
+		t[k] = result
+	end
+	return result
+end
+
+--[[
 Určí podle práv typ postavy (admin|creative|new|survival).
 Pokud player_or_player_name není PlayerRef nebo jméno postavy, vrátí nil.
 ]]
 function ch_core.get_player_role(player_or_player_name)
-	if player_or_player_name == nil then
+	local result = ch_core.normalize_player(player_or_player_name).role
+	if result ~= "none" then
+		return result
+	else
 		return nil
 	end
-	local value_type = type(player_or_player_name)
-	local player_name
-	if value_type == "string" then
-		player_name = player_or_player_name
-	elseif value_type == "userdata" then
-		player_name = player_or_player_name:get_player_name()
-		if player_name == nil then
-			return nil -- neplatná hodnota
-		end
-	else
-		minetest.log("warning", "ch_core.get_player_role() called with an invalid value type "..value_type.."!")
-		return nil
+end
+
+--[[
+	Vrátí tabulku ItemStacků s penězi v dané výši. Částka musí být nezáporná.
+	Případné desetinné číslo se zaokrouhlí dolů. Pro nulu vrací prázdnou tabulku.
+]]
+function ch_core.hotovost(castka)
+	local debug = {"puvodni castka: "..castka}
+	local stacks = {}
+	castka = math.floor(castka)
+	if castka < 0 then
+		return stacks
 	end
-	if player_name == "" then
-		return nil -- neplatná hodnota
+	while castka > 10000 * 10000 do -- 10 000 zlatek
+		table.insert(stacks, ItemStack("ch_core:kcs_zcs 10000"))
+		castka = castka - 10000 * 10000
+		table.insert(debug, "ch_core:kcs_zcs 10000 => "..castka)
 	end
-	local privs = minetest.get_player_privs(player_name)
-	if privs.protection_bypass then
-		return "admin"
-	elseif not privs.ch_registered_player then
-		return "new"
-	elseif privs.give then
-		return "creative"
-	else
-		return "survival"
+	while castka > 10000 * 100 do -- 10 000 korun
+		local n = math.floor(castka / 10000)
+		assert(n >= 1 and n <= 10000)
+		table.insert(stacks, ItemStack("ch_core:kcs_zcs "..n))
+		castka = castka - n * 10000
+		table.insert(debug, "ch_core:kcs_zcs "..n.." => "..castka)
 	end
+	local n = math.floor(castka / 100)
+	assert(n >= 0 and n <= 10000)
+	if n > 0 then
+		table.insert(stacks, ItemStack("ch_core:kcs_kcs "..n))
+		table.insert(debug, "ch_core:kcs_kcs "..n.." => "..castka)
+	end
+	castka = castka - n * 100
+	if castka > 0 then
+		assert(castka >= 1 and castka <= 100)
+		table.insert(stacks, ItemStack("ch_core:kcs_h "..castka))
+		table.insert(debug, "ch_core:kcs_h "..castka.." => 0")
+	end
+	-- print("DEBUG: ch_bank.hotovost(): "..dump2(debug))
+	return stacks
 end
 
 --[[
@@ -538,18 +591,66 @@ function ch_core.make_dropdown(index_to_value)
 		end,
 		get_value_from_index = function(index, default_index)
 			index = tonumber(index)
-			print("DEBUG: "..dump2({index = index or "nil", default_index = default_index or "nil", index_to_value = index_to_value[index ~= nil and index_to_value[index] ~= nil] or index_to_value[default_index], index_to_value_array = index_to_value}))
 			if index ~= nil and index_to_value[index] ~= nil then
-				print("DEBUG: will return index "..index)
 				return index_to_value[index]
 			else
-				print("DEBUG: will return default_index "..(index or "nil").." ("..(index ~= nil and "true" or "false")..", "..(index ~= nil and index_to_value[index] ~= nil and "true" or "false")..")")
 				return index_to_value[default_index]
 			end
 		end,
 		index_to_value = index_to_value,
 		formspec_list = table.concat(escaped_values, ","),
 		value_to_index = value_to_index,
+	}
+end
+
+--[[
+Přijme parametr, kterým může být:
+	a) přihlašovací jméno postavy
+	b) zobrazovací jméno postavy
+	c) objekt postavy
+	d) tabulka s volatelnou funkcí get_player_name()
+Ve všech případech vrátí tabulku s prvky:
+{
+	role, -- role postavy nebo "none", pokud neexistuje
+	player_name, -- přihlašovací jméno existující postavy, nebo "", pokud postava neexistuje; nikdy nebude nil
+	player, -- je-li postava ve hře, PlayerRef, jinak nil
+	privs, -- tabulka práv postavy
+}
+]]
+function ch_core.normalize_player(player_name_or_player)
+	local arg_type = type(player_name_or_player)
+	local player_name, player
+	if arg_type == "string" then
+		player_name = player_name_or_player
+	elseif arg_type == "number" then
+		player_name = tostring(player_name_or_player)
+	elseif (arg_type == "table" or arg_type == "userdata") and type(player_name_or_player.get_player_name) == "function" then
+		player_name = player_name_or_player:get_player_name()
+		if type(player_name) ~= "string" then
+			player_name = ""
+		else
+			if minetest.is_player(player_name_or_player) then
+				player = player_name_or_player
+			end
+		end
+	else
+		player_name = ""
+	end
+	if player_name ~= "" and not minetest.player_exists(player_name) then
+		player_name = ch_core.jmeno_na_prihlasovaci(player_name)
+		if not minetest.player_exists(player_name) then
+			player_name = ""
+		end
+	end
+	if player_name == "" then
+		return {role = "none", player_name = "", privs = {}}
+	end
+	local privs = minetest.get_player_privs(player_name)
+	return {
+		role = get_player_role_by_privs(privs),
+		player_name = player_name,
+		privs = privs,
+		player = player or minetest.get_player_by_name(player_name),
 	}
 end
 
@@ -597,6 +698,7 @@ end
 	jménu až na velikost písmen a diakritiku. Seznam může být i prázdný.
 ]]
 function ch_core.jmeno_na_existujici_prihlasovaci(jmeno)
+	if jmeno == nil then return nil end
 	local result = {}
 	jmeno = string.lower(ch_core.odstranit_diakritiku(jmeno))
 	for k, _ in pairs(ch_core.offline_charinfo) do
@@ -702,6 +804,20 @@ function ch_core.positions_to_area(v1, v2)
 end
 
 --[[
+	Parametr musí být ItemStack nebo nil. Je-li to dávka peněz,
+	vrátí jejich hodnotu (nezáporné celé číslo). Jinak vrací nil.
+]]
+function ch_core.precist_hotovost(stack)
+	if stack ~= nil and not stack:is_empty() then
+		local v = penize[stack:get_name()]
+		-- print("DEBUG: v of "..stack:get_name().." is "..(v or "nil"))
+		if v ~= nil then
+			return v * stack:get_count()
+		end
+	end
+end
+
+--[[
 Pokud dané přihlašovací jméno existuje, převede ho na jméno bez barev (výchozí)
 nebo s barvami. Pro neexistující jména vrací zadaný řetězec.
 ]]
@@ -785,6 +901,232 @@ function ch_core.rotate_aabb(aabb, r)
 		end
 	end
 	return result
+end
+
+--[[
+Provede operaci t[k1][k2]... s tím, že pokud je kterýkoliv z parametrů nil
+nebo na nil po cestě narazí, vrátí nil. Číslo v názvu udává celkový počet
+parametrů (včetně t) a musí být v rozsahu 2 až 7 včetně.
+]]
+function ch_core.safe_get_2(t, k1)
+	if t and k1 ~= nil then return t[k1] end
+	return nil
+end
+function ch_core.safe_get_3(t, k1, k2)
+	local result
+	if t and k1 ~= nil and k2 ~= nil then
+		result = t[k1]
+		if result ~= nil then
+			return result[k2]
+		end
+	end
+	return nil
+end
+function ch_core.safe_get_4(t, k1, k2, k3)
+	local result
+	if t and k1 ~= nil and k2 ~= nil and k3 ~= nil then
+		result = t[k1]
+		if result ~= nil then
+			result = result[k2]
+			if result ~= nil then
+				return result[k3]
+			end
+		end
+	end
+	return nil
+end
+function ch_core.safe_get_5(t, k1, k2, k3, k4)
+	local result
+	if t and k1 ~= nil and k2 ~= nil and k3 ~= nil and k4 ~= nil then
+		result = t[k1]
+		if result ~= nil then
+			result = result[k2]
+			if result ~= nil then
+				result = result[k3]
+				if result ~= nil then
+					return result[k4]
+				end
+			end
+		end
+	end
+	return nil
+end
+function ch_core.safe_get_6(t, k1, k2, k3, k4, k5)
+	local result
+	if t and k1 ~= nil and k2 ~= nil and k3 ~= nil and k4 ~= nil and k5 ~= nil then
+		result = t[k1]
+		if result ~= nil then
+			result = result[k2]
+			if result ~= nil then
+				result = result[k3]
+				if result ~= nil then
+					result = result[k4]
+					if result ~= nil then
+						return result[k5]
+					end
+				end
+			end
+		end
+	end
+	return nil
+end
+function ch_core.safe_get_7(t, k1, k2, k3, k4, k5, k6)
+	local result
+	if t and k1 ~= nil and k2 ~= nil and k3 ~= nil and k4 ~= nil and k5 ~= nil and k6 ~= nil then
+		result = t[k1]
+		if result ~= nil then
+			result = result[k2]
+			if result ~= nil then
+				result = result[k3]
+				if result ~= nil then
+					result = result[k4]
+					if result ~= nil then
+						result = result[k5]
+						if result ~= nil then
+							return result[k6]
+						end
+					end
+				end
+			end
+		end
+	end
+	return nil
+end
+
+--[[
+Provede operaci t[k1][k2]... s tím, že pokud je kterýkoliv z parametrů nil
+nebo na nil po cestě narazí, vrátí nil. Číslo v názvu udává celkový počet
+parametrů (včetně t) a musí být v rozsahu 2 až 7 včetně.
+V této verzi knihovny neprovádí kontrolu, zda je t indexovatelné.
+]]
+function ch_core.safe_get_2(t, k1)
+	if t and k1 ~= nil then return t[k1] end
+	return nil
+end
+function ch_core.safe_get_3(t, k1, k2)
+	local result
+	if t and k1 ~= nil and k2 ~= nil then
+		result = t[k1]
+		if result ~= nil then
+			return result[k2]
+		end
+	end
+	return nil
+end
+function ch_core.safe_get_4(t, k1, k2, k3)
+	local result
+	if t and k1 ~= nil and k2 ~= nil and k3 ~= nil then
+		result = t[k1]
+		if result ~= nil then
+			result = result[k2]
+			if result ~= nil then
+				return result[k3]
+			end
+		end
+	end
+	return nil
+end
+function ch_core.safe_get_5(t, k1, k2, k3, k4)
+	if k4 ~= nil then
+		local result = ch_core.safe_get_4(t, k1, k2, k3)
+		if result ~= nil then
+			return result[k4]
+		end
+	end
+	return nil
+end
+function ch_core.safe_get_6(t, k1, k2, k3, k4, k5)
+	if k4 ~= nil and k5 ~= nil then
+		local result = ch_core.safe_get_4(t, k1, k2, k3)
+		if result ~= nil then
+			result = result[k4]
+			if result ~= nil then
+				return result[k5]
+			end
+		end
+	end
+	return nil
+end
+function ch_core.safe_get_7(t, k1, k2, k3, k4, k5, k6)
+	if k4 ~= nil and k5 ~= nil and k6 ~= nil then
+		local result = ch_core.safe_get_4(t, k1, k2, k3)
+		if result ~= nil then
+			result = result[k4]
+			if result ~= nil then
+				result = result[k5]
+				if result ~= nil then
+					return result[k6]
+				end
+			end
+		end
+	end
+	return nil
+end
+
+--[[
+Provede operaci t[k1][k2]... = v s tím, že pokud je kterýkoliv z parametrů
+kromě „v“ nil nebo na nil po cestě narazí, vrátí false.
+Pokud přiřazení uspěje, vrátí true.
+Číslo v názvu udává celkový počet parametrů (včetně t a v)
+a musí být v rozsahu 3 až 8 včetně.
+V této verzi knihovny neprovádí kontrolu, zda je t indexovatelné.
+]]
+function ch_core.safe_set_3(t, k1, v)
+	if t and k1 ~= nil then
+		t[k1] = v
+		return true
+	end
+	return false
+end
+function ch_core.safe_set_4(t, k1, k2, v)
+	if k2 ~= nil then
+		t = ch_core.safe_get_2(t, k1)
+		if t then
+			t[k2] = v
+			return true
+		end
+	end
+	return false
+end
+function ch_core.safe_set_5(t, k1, k2, k3, v)
+	if k3 ~= nil then
+		t = ch_core.safe_get_3(t, k1, k2)
+		if t then
+			t[k3] = v
+			return true
+		end
+	end
+	return false
+end
+function ch_core.safe_set_6(t, k1, k2, k3, k4, v)
+	if k4 ~= nil then
+		t = ch_core.safe_get_4(t, k1, k2, k3)
+		if t then
+			t[k4] = v
+			return true
+		end
+	end
+	return false
+end
+function ch_core.safe_set_7(t, k1, k2, k3, k4, k5, v)
+	if k5 ~= nil then
+		t = ch_core.safe_get_5(t, k1, k2, k3, k4)
+		if t then
+			t[k5] = v
+			return true
+		end
+	end
+	return false
+end
+function ch_core.safe_set_8(t, k1, k2, k3, k4, k5, k6, v)
+	if k6 ~= nil then
+		t = ch_core.safe_get_6(t, k1, k2, k3, k4, k5)
+		if t then
+			t[k6] = v
+			return true
+		end
+	end
+	return false
 end
 
 --[[
@@ -1104,7 +1446,7 @@ function ch_core.vyhodit_inventar(player_name, inv, listname, description)
 		return false
 	end
 	local items = {}
-	for i, stack in ipairs(t) do
+	for _, stack in ipairs(t) do
 		if not stack:is_empty() then
 			table.insert(items, stack:to_string():sub(1, 1024))
 		end
@@ -1238,7 +1580,6 @@ def = {
 		table.sort(players, cmp_oci)
 		local result = {}
 		for i, other_player_name in ipairs(players) do
-			local s = "- "..other_player_name
 			local offline_charinfo = ch_core.offline_charinfo[other_player_name]
 			local s2 = offline_charinfo.last_login
 			if s2 == 0 then

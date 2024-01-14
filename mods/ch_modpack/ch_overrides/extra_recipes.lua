@@ -71,6 +71,30 @@ minetest.register_craft({
 		{"", "", ""},
 }})
 
+minetest.register_craft{
+	output = "dye:yellow 16",
+	recipe = {
+		{"default:iron_lump", "bucket:bucket_water"},
+		{"", ""},
+	},
+	replacements = {
+		{"bucket:bucket_water", "bucket:bucket_empty"},
+	},
+}
+
+if minetest.get_modpath("bucket_wooden") then
+	minetest.register_craft{
+		output = "dye:yellow 16",
+		recipe = {
+			{"default:iron_lump", "bucket_wooden:bucket_water"},
+			{"", ""},
+		},
+		replacements = {
+			{"bucket_wooden:bucket_water", "bucket_wooden:bucket_empty"},
+		},
+	}
+end
+
 if minetest.get_modpath("fireflies") and minetest.get_modpath("vessels") then
 	minetest.register_craft( {
 		output = "fireflies:firefly",

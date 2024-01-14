@@ -53,7 +53,6 @@ function ch_core.teleport_player(player, pos, priority, delay)
 
 		if priority >= 1 and entity_name == "boats:boat" then
 			-- detach from the boat
-			local boat = entity:get_luaentity()
 			player:set_detach()
 			player_api.player_attached[player_name] = false
 			player_api.set_animation(player, "stand" , 30)
@@ -112,7 +111,6 @@ local function start_teleport(online_charinfo, pos)
 	end
 	if ch_core.start_ch_timer(online_charinfo, "teleportace", teleport_delay, timer_def) then
 		minetest.log("action", "Teleport of "..player_name.." to "..minetest.pos_to_string(pos).." started.")
-	else
 	end
 	return true
 end

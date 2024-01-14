@@ -2,9 +2,8 @@ ch_core.open_submod("timers", {data = true, hud = true, chat = true})
 
 ch_core.count_of_ch_timer_hudbars = 4
 
-local timer_bar_icon = "default_snowball.png"
-local timer_bar_bgicon = nil
-local timer_bar_bar = "hudbars_bar_timer.png"
+local default_timer_bar_icon = "default_snowball.png"
+local default_timer_bar_bar = "hudbars_bar_timer.png"
 
 -- timer_def - podporované klíče:
 --  - label -- textový popis pro HUD, může být prázdný řetězec (volitelná)
@@ -35,7 +34,15 @@ function ch_core.start_ch_timer(online_charinfo, timer_id, delay, timer_def)
 	if hudbar_id then
 		new_timer.hudbar = hudbar_id
 		new_timer.last_hud_value = math.ceil(delay)
-		hb.change_hudbar(player, hudbar_id, new_timer.last_hud_value, new_timer.last_hud_value, new_timer.hudbar_icon or "default_snowball.png", new_timer.hudbar_bgicon, new_timer.hudbar_bar or "hudbars_bar_timer.png", new_timer.label or "časovač", new_timer.hudbar_text_color or 0xFFFFFF)
+		hb.change_hudbar(player,
+			hudbar_id,
+			new_timer.last_hud_value,
+			new_timer.last_hud_value,
+			new_timer.hudbar_icon or default_timer_bar_icon,
+			new_timer.hudbar_bgicon,
+			new_timer.hudbar_bar or default_timer_bar_bar,
+			new_timer.label or "časovač",
+			new_timer.hudbar_text_color or 0xFFFFFF)
 		if delay >= 0.1 then
 			hb.unhide_hudbar(player, hudbar_id)
 		end
@@ -77,6 +84,7 @@ local def = {
 	description = "Odpočítá zadaný počet sekund. Při použití bez parametru jen zruší probíhající odpočet.",
 	privs = {},
 	func = function(player_name, param)
+		local online_charinfo = ch_core.online_charinfo[player_name]
 		if param == "" then
 			ch_core.cancel_ch_timer(online_charinfo, "custom_timer")
 			return true
@@ -86,7 +94,6 @@ local def = {
 		if not sekund or sekund < 0 then
 			return false, "Neplatné zadání!"
 		end
-		local online_charinfo = ch_core.online_charinfo[player_name]
 		if not online_charinfo then
 			return false, "Vnitřní chyba serveru."
 		end

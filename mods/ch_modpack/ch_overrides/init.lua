@@ -5,6 +5,7 @@ local modpath = minetest.get_modpath("ch_overrides")
 local mods = {
 	"books",
 	"cavestuff",
+	"currency",
 	"darkage",
 	"default",
 	"farming",

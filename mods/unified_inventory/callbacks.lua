@@ -1,4 +1,5 @@
 local ui = unified_inventory
+local has_ch_bank = minetest.get_modpath("ch_bank")
 
 local function default_refill(stack)
 	stack:set_count(stack:get_stack_max())
@@ -236,7 +237,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 
 	if fields.trash_craft then
-		local player_name = player:get_player_name()
 		if ch_core.vyhodit_inventar(player_name, player:get_inventory(), "craft", "craft grid") then
 			local online_charinfo = ch_core.online_charinfo[player_name]
 			local ap = online_charinfo and online_charinfo.ap
@@ -244,6 +244,58 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				ap.craft_gen = ap.craft_gen + 1
 			else
 				minetest.log("warning", "AP of player "..player_name.." not found (online_charinfo: "..(online_charinfo and "true" or "false")..")")
+			end
+		end
+	end
+
+	-- ch_bank buttons
+	if has_ch_bank and ch_bank.zustatek(player_name) ~= nil then
+		if fields.vlozit then
+			local inv = player:get_inventory()
+			local craft_list = inv:get_list("craft")
+			local castka = ch_bank.extrahovat_penize(craft_list)
+			if castka > 0 then
+				local success, message = ch_bank.platba{
+					from_player = "",
+					to_player = player_name,
+					amount = castka,
+					label = "vklad v hotovosti",
+					group = "vkladvhotovosti",
+				}
+				if success then
+					inv:set_list("craft", craft_list)
+					ch_core.systemovy_kanal(player_name, "Na účet jste vložil/a "..ch_bank.formatovat_castku(castka).." Kčs.")
+				else
+					ch_core.systemovy_kanal(player_name, "Vkládání na účet selhalo: "..(message or "neznámý důvod"))
+				end
+			end
+		elseif (fields.kcs or fields.zcs or fields.hcs) and fields.penize and fields.penize:match("^%d+$") and tonumber(fields.penize) <= 10000 and tonumber(fields.penize) ~= 0 then
+			local inv = player:get_inventory()
+			local stack
+			if fields.kcs then
+				stack = "ch_core:kcs_kcs"
+			elseif fields.zcs then
+				stack = "ch_core:kcs_zcs"
+			else
+				stack = "ch_core:kcs_h"
+			end
+			stack = ItemStack(stack.." "..tonumber(fields.penize))
+			local castka = ch_core.precist_hotovost(stack)
+			assert(castka)
+			assert(castka > 0)
+			if inv:room_for_item("main", stack) then
+				local success, message = ch_bank.platba{
+					from_player = player_name,
+					to_player = "",
+					amount = castka,
+					label = "výběr v hotovosti",
+					group = "vybervhotovosti",
+				}
+				if success then
+					inv:add_item("main", stack)
+				else
+					ch_core.systemovy_kanal(player_name, "Výběr z účtu selhal: "..(message or "neznámý důvod"))
+				end
 			end
 		end
 	end

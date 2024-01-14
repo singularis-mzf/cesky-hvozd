@@ -2,6 +2,7 @@ local S = minetest.get_translator("unified_inventory")
 local NS = function(s) return s end
 local F = minetest.formspec_escape
 local ui = unified_inventory
+local has_ch_bank = minetest.get_modpath("ch_bank")
 
 minetest.register_privilege("creative", {
 	description = S("Can use the creative inventory"),
@@ -229,7 +230,13 @@ ui.register_page("craft", {
 			formspec[n+1] = string.format("label[%f,%f;%s]", craftx - 2.3, crafty + 2.4,F(S("Refill:")))
 			formspec[n+2] = string.format("list[detached:%srefill;main;%f,%f;1,1;]",
 				F(player_name), craftx - 2.5 + ui.list_img_offset, crafty + 2.5 + ui.list_img_offset)
+			n = n + 3
 		end
+
+		if has_ch_bank and ch_bank.zustatek(player_name) ~= nil then
+			formspec[n] = string.format("button[%f,%f;1.5,0.75;vlozit;vložit\nna účet]".."tooltip[vlozit;Peníze z výrobní mřížky vloží na váš účet.]", craftx + 5.35, crafty + 1.5)
+		end
+
 		return {formspec=table.concat(formspec)}
 	end,
 })

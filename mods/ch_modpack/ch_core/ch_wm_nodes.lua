@@ -40,7 +40,7 @@ local function transfer_value(from_v, from_i, to_v, to_i)
 	-- example:
 	-- transfer_value(from_vector, "+x", to_vector, "-z")
 	if #from_i ~= 2 or #to_i ~= 2 then
-		error("transfer_value(): invalid input: "..dump2({from_v = from_v, from_i = from_i, to_v = to_v, to_i = to_i, value = value}))
+		error("transfer_value(): invalid input: "..dump2({from_v = from_v, from_i = from_i, to_v = to_v, to_i = to_i}))
 	end
 	local n = from_v[from_i:sub(2, 2)]
 	if to_i:sub(1,1) ~= from_i:sub(1,1) then
@@ -117,7 +117,7 @@ function ch_core.rotate_connect_sides_for_walldir(walldir, connect_sides)
 		error("ch_core.rotate_connect_sides_for_walldir(): Invalid walldir value: "..walldir)
 	end
 	local result = {}
-	for i, side in ipairs(connect_sides) do
+	for _, side in ipairs(connect_sides) do
 		local new_side_i = walldirs[0][side]
 		if new_side_i ~= nil then
 			table.insert(result, walldir_def[new_side_i])

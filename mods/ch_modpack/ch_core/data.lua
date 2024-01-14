@@ -1,9 +1,9 @@
 ch_core.open_submod("data")
-local modpath = minetest.get_modpath("ch_core")
 
 -- BARVY
 -- ===========================================================================
 
+--[[
 local nametag_color_red = minetest.get_color_escape_sequence("#cc5257");
 local nametag_color_blue = minetest.get_color_escape_sequence("#6693ff");
 local nametag_color_green = minetest.get_color_escape_sequence("#48cc3d");
@@ -16,6 +16,7 @@ local nametag_color_bgcolor_table = {r = 0, g = 0, b = 0, a = 0}
 local nametag_color_normal_table = {r = 255, g = 255, b = 255, a = 255}
 local nametag_color_unregistered_table = {r = 204, g = 204, b = 204, a = 255} -- 153?
 local nametag_color_unregistered = nametag_color_grey
+]]
 
 -- POZICE A OBLASTI
 -- ===========================================================================
@@ -187,13 +188,11 @@ function ch_core.get_leaving_online_charinfo(player_name)
 	if result then
 		old_online_charinfo[player_name] = result
 		ch_core.online_charinfo[player_name] = nil
-		print("LEAVE PLAYER(" .. player_name ..") at "..ch_core.cas);
+		print("LEAVE PLAYER(" .. player_name ..") at "..ch_core.cas)
 		return result
 	else
 		return old_online_charinfo[player_name] or {}
 	end
-	
-	return ch_core.online_charinfo[player_name] or old_online_charinfo[player_name] or {}
 end
 
 function ch_core.save_global_data(keys)
@@ -259,9 +258,8 @@ function ch_core.delete_offline_charinfo(player_name, keys)
 	local delete_all = not keys
 	if delete_all then
 		-- delete all keys
-		keys = {}
 		for full_key, _ in pairs((storage:to_table() or {}).fields or {}) do
-			local name, key = full_key:match("^([^/]+)/(.+)$")
+			local name --[[, key]] = full_key:match("^([^/]+)/(.+)$")
 			if name and name == player_name then
 				storage:set_string(full_key, "")
 				minetest.log("info", "[ch_core] Key '"..full_key.."' removed from mod storage.")
@@ -270,10 +268,10 @@ function ch_core.delete_offline_charinfo(player_name, keys)
 		ch_core.offline_charinfo[player_name] = nil
 		return true
 	end
+
 	if type(keys) ~= "table" then
 		keys = {keys}
 	end
-
 	local offline_charinfo = ch_core.offline_charinfo[player_name]
 	if not offline_charinfo then
 		return false
@@ -301,13 +299,12 @@ end
 -- ch_core.set_temporary_titul() -- Nastaví či zruší dočasný titul postavy.
 --
 function ch_core.set_temporary_titul(player_name, titul, titul_enabled)
+	if type(player_name) ~= "string" then
+		error("ch_core.set_temporary_titul(): Invalid player_name type: "..type(player_name).."!")
+	end
 	local online_charinfo = ch_core.online_charinfo[player_name]
 	if not online_charinfo or not titul or titul == "" then return false end
-	local dtituly = online_charinfo.docasne_tituly
-	if not dtituly then
-		dtituly = {}
-		online_charinfo.docasne_tituly = dtituly
-	end
+	local dtituly = ch_core.get_or_add(online_charinfo, "docasne_tituly")
 	if titul_enabled then
 		dtituly[titul] = 1
 	else
@@ -378,7 +375,7 @@ print("[ch_core] Restored "..player_field_counter.." data pairs of "..player_cou
 
 -- Check and update keys
 for player_name, offline_charinfo in pairs(ch_core.offline_charinfo) do
-	for key, data_type in pairs(offline_charinfo_data_types) do
+	for key, _ in pairs(offline_charinfo_data_types) do
 		if offline_charinfo[key] == nil then
 			offline_charinfo[key] = initial_offline_charinfo[key]
 			minetest.log("warning", "Missing offline_charinfo key "..player_name.."/"..key.." vivified")
@@ -425,15 +422,16 @@ local function on_leaveplayer(player, timedout)
 
 	if online_info.join_timestamp then
 		local past_playtime, current_playtime, total_playtime = save_playtime(online_info, ch_core.get_offline_charinfo(player_name))
-		print("PLAYER(" .. player_name .."): played seconds: " .. current_playtime .. " / " .. total_playtime);
+		print("PLAYER(" .. player_name .."): played seconds: " .. current_playtime .. " / " .. total_playtime)
 	end
 end
 
 local function on_shutdown()
 	for player_name, online_info in pairs(table.copy(ch_core.online_charinfo)) do
 		if online_info.join_timestamp then
-			local past_playtime, current_playtime, total_playtime = save_playtime(online_info, ch_core.get_offline_charinfo(player_name))
-			print("PLAYER(" .. player_name .."): played seconds: " .. current_playtime .. " / " .. total_playtime);
+			local past_playtime, current_playtime, total_playtime
+			past_playtime, current_playtime, total_playtime = save_playtime(online_info, ch_core.get_offline_charinfo(player_name))
+			print("PLAYER(" .. player_name .."): played seconds: " .. current_playtime .. " / " .. total_playtime)
 		end
 	end
 end

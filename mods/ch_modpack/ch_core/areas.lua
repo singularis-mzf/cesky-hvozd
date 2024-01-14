@@ -6,6 +6,7 @@ local world_path = minetest.get_worldpath()
 local ch_areas_file_path = world_path.."/ch_areas.json"
 local store = AreaStore()
 local area_id_to_store_id = {}
+local store_id_to_area_id = {}
 
 function ch_core.add_area(pos1, pos2, area_name, area_type)
 	local areas = ch_core.areas
@@ -37,6 +38,7 @@ function ch_core.add_area(pos1, pos2, area_name, area_type)
 	local store_id = store:insert_area(def.min, def.max, area_id)
 	if store_id then
 		area_id_to_store_id[area_id] = store_id
+		store_id_to_area_id[store_id] = area_id
 	else
 		minetest.log("warning", "The inserting of area ID "..area_id.." to AreaStore failed!")
 	end
@@ -83,7 +85,7 @@ end
 
 function ch_core.areas_hud_handler(pos, list)
 	local areas_to_add = store:get_areas_for_pos(pos, false, true)
-	for store_id, store_data in pairs(areas_to_add) do
+	for --[[ store_id ]] _, store_data in pairs(areas_to_add) do
 		local area = ch_core.areas[tonumber(store_data.data)]
 		if area and area.type ~= 0 then
 			table.insert(list, {name = area.name, id = -area.id})
@@ -94,8 +96,11 @@ end
 -- Deserialize data
 local f, err = io.open(ch_areas_file_path, "r")
 if f then
-	local s = f:read("*a")
-	local d, err = s and minetest.parse_json(s)
+	local s, d
+	s = f:read("*a")
+	if s then
+		d, err = minetest.parse_json(s)
+	end
 	io.close(f)
 	if not d then
 		minetest.log("warning", "CH areas file cannot be loaded: "..(err or "nil"))

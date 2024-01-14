@@ -1,10 +1,10 @@
 ch_core.open_submod("nametag", {data = true, lib = true})
 
-local nametag_color_red = minetest.get_color_escape_sequence("#cc5257");
-local nametag_color_blue = minetest.get_color_escape_sequence("#6693ff");
+-- local nametag_color_red = minetest.get_color_escape_sequence("#cc5257");
+--local nametag_color_blue = minetest.get_color_escape_sequence("#6693ff");
 local nametag_color_green = minetest.get_color_escape_sequence("#48cc3d");
-local nametag_color_yellow = minetest.get_color_escape_sequence("#fff966");
-local nametag_color_aqua = minetest.get_color_escape_sequence("#66f8ff");
+--local nametag_color_yellow = minetest.get_color_escape_sequence("#fff966");
+-- local nametag_color_aqua = minetest.get_color_escape_sequence("#66f8ff");
 local nametag_color_grey = minetest.get_color_escape_sequence("#cccccc");
 local color_reset = minetest.get_color_escape_sequence("#ffffff")
 
@@ -12,7 +12,7 @@ local nametag_nochat_bgcolor_table = {r = 0, g = 0, b = 0, a = 0}
 local nametag_chat_bgcolor_table = {r = 0, g = 0, b = 0, a = 255}
 
 
-local nametag_color_bgcolor_table = {r = 0, g = 0, b = 0, a = 0}
+-- local nametag_color_bgcolor_table = {r = 0, g = 0, b = 0, a = 0}
 local nametag_color_normal_table = {r = 255, g = 255, b = 255, a = 255}
 local nametag_color_unregistered_table = {r = 204, g = 204, b = 204, a = 255} -- 153?
 local nametag_color_unregistered = nametag_color_grey

@@ -67,15 +67,12 @@ local last_timeofday = 0 -- pravděpodobně se pokusí něco přehrát v prvním
 local abs = math.abs
 local deg = math.deg
 local get_timeofday = minetest.get_timeofday
-local max = math.max
-local min = math.min
 local gain_1 = {gain = 1.0}
 local head_bone_name = "Head"
 local head_bone_position = vector.new(0, 6.35, 0)
 local head_bone_angle = vector.new(0, 0, 0)
 local emoting = (minetest.get_modpath("emote") and emote.emoting) or {}
 local globstep_dtime_accumulated = 0.0
-local ch_timer_hudbars = ch_core.count_of_ch_timer_hudbars
 local get_us_time = minetest.get_us_time
 local has_wielded_light = minetest.get_modpath("wielded_light")
 local custom_globalsteps = {}
@@ -84,7 +81,6 @@ local last_ap_timestamp = 0
 local stepheight_low = {stepheight = 0.3}
 local stepheight_high = {stepheight = 1.1}
 
-local function vector_eq(a, b) return a.x == b.x and a.y == b.y and a.z == b.z end
 local function get_root(o)
 	local r = o:get_attach()
 	while r do

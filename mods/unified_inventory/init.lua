@@ -109,6 +109,9 @@ ui.style_full = {
 	btn_size = 0.75,
 	std_inv_x = 0.3,
 	std_inv_y = 5.75,
+	-- Bank account info position
+	money_x = 0.3,
+	money_y = 5.25,
 }
 
 ui.style_lite = {
@@ -150,6 +153,9 @@ ui.style_lite = {
 	btn_size = 0.7,
 	std_inv_x = 0.1,
 	std_inv_y = 4.6,
+	-- Bank account info position
+	money_x = 0.1,
+	money_y = 4.5,
 }
 
 dofile(modpath.."/api.lua")
@@ -204,8 +210,17 @@ dofile(modpath.."/item_names.lua")
 -- dofile(modpath.."/waypoints.lua")
 dofile(modpath.."/legacy.lua") -- mod compatibility
 
+-- Injections:
 ch_core.trash_one_sound = "trash"
 ch_core.trash_all_sound = "trash_all"
+ch_bank.register_after_transaction(function(transaction_info)
+	for _, player_name in ipairs({transaction_info.from_player or "", transaction_info.to_player or ""}) do
+		local player = player_name ~= "" and minetest.get_player_by_name(player_name)
+		if player ~= nil then
+			ui.set_inventory_formspec(player, unified_inventory.current_page[player_name] or unified_inventory.default)
+		end
+	end
+end)
 
 minetest.register_on_mods_loaded(function()
 	local pipeworks = ch_core.get_shared_vgroup("pipeworks")

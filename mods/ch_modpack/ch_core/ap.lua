@@ -7,7 +7,7 @@ local ap_decrease = 1
 local ap_min = 0
 local ap_max_default = 26
 local ap_max_book = 10
-local min, max = math.min, math.max
+local min = math.min
 local def
 
 local levels = {
@@ -196,7 +196,8 @@ local update_xp_hud
 
 if minetest.get_modpath("hudbars") then
 	update_xp_hud = function(player, player_name, offline_charinfo)
-		local skryt_body = offline_charinfo.skryt_body == 1
+		local player_role = ch_core.get_player_role(player_name)
+		local skryt_body = player_role == "new" or offline_charinfo.skryt_body == 1
 
 		if skryt_body then
 			hb.hide_hudbar(player, "ch_xp")
@@ -274,6 +275,7 @@ function ch_core.ap_add(player_name, offline_charinfo, points_to_add, debug_coef
 	if points_to_add == 0 then
 		return 0
 	end
+	local player_role = ch_core.get_player_role(player_name)
 	local old_level, old_xp = offline_charinfo.ap_level, offline_charinfo.ap_xp
 	local new_level = old_level
 	local level_def = ch_core.ap_get_level(old_level)
@@ -311,7 +313,7 @@ function ch_core.ap_add(player_name, offline_charinfo, points_to_add, debug_coef
 
 	-- je-li postava online, aktualizovat HUD
 	local player = minetest.get_player_by_name(player_name)
-	if player then
+	if player and player_role ~= "new" then
 		update_xp_hud(player, player_name, offline_charinfo)
 	end
 
@@ -321,10 +323,12 @@ function ch_core.ap_add(player_name, offline_charinfo, points_to_add, debug_coef
 	end
 
 	-- oznámit
-	if new_level > old_level then
-		ch_core.systemovy_kanal("", "Postava "..ch_core.prihlasovaci_na_zobrazovaci(player_name).." dosáhla úrovně "..new_level)
-	elseif new_level < old_level then
-		ch_core.systemovy_kanal("", "Postava "..ch_core.prihlasovaci_na_zobrazovaci(player_name).." klesla na úroveň "..new_level)
+	if player_role ~= "new" then
+		if new_level > old_level then
+			ch_core.systemovy_kanal("", "Postava "..ch_core.prihlasovaci_na_zobrazovaci(player_name).." dosáhla úrovně "..new_level)
+		elseif new_level < old_level then
+			ch_core.systemovy_kanal("", "Postava "..ch_core.prihlasovaci_na_zobrazovaci(player_name).." klesla na úroveň "..new_level)
+		end
 	end
 
 	return new_xp, new_level
@@ -426,19 +430,41 @@ local function on_placenode(pos, newnode, placer, oldnode, itemstack, pointed_th
 end
 
 local function on_craft(itemstack, player, old_craft_grid, craft_inv)
-	local player_name = player and player:is_player() and player:get_player_name()
-	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
-	if online_charinfo and craft_inv:get_location().type == "player" then
-		local ap = online_charinfo.ap
+	if craft_inv:get_location().type == "player" then
+		local ap = ch_core.safe_get_3(ch_core.online_charinfo, assert(player:get_player_name()), "ap")
 		if ap then
 			ap.craft_gen = ap.craft_gen + 1
 		end
 	end
 end
 
+local function on_player_inventory_action(player, action, inventory, inventory_info)
+	local ap = ch_core.safe_get_3(ch_core.online_charinfo, assert(player:get_player_name()), "ap")
+	if ap then
+		ap.craft_gen = ap.craft_gen + 1
+	end
+end
+
+local function on_item_eat(hp_change, replace_with_item, itemstack, user, pointed_thing)
+	local ap = ch_core.safe_get_3(ch_core.online_charinfo, assert(user:get_player_name()), "ap")
+	if ap then
+		ap.craft_gen = ap.craft_gen + 1
+	end
+end
+
+local function on_item_pickup(itemstack, picker, pointed_thing, time_from_last_punch,  ...)
+	local ap = ch_core.safe_get_3(ch_core.online_charinfo, assert(picker:get_player_name()), "ap")
+	if ap then
+		ap.craft_gen = ap.craft_gen + 1
+	end
+end
+
 minetest.register_on_craft(on_craft)
 minetest.register_on_dignode(on_dignode)
 minetest.register_on_placenode(on_placenode)
+minetest.register_on_player_inventory_action(on_player_inventory_action)
+minetest.register_on_item_eat(on_item_eat)
+minetest.register_on_item_pickup(on_item_pickup)
 
 local function body(admin_name, param)
 	local player_name, ap_to_add = param:match("^(%S+)%s(%S+)$")

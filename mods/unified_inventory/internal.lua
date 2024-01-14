@@ -2,6 +2,8 @@ local S = minetest.get_translator("unified_inventory")
 local F = minetest.formspec_escape
 local ui = unified_inventory
 
+local has_ch_bank = minetest.get_modpath("ch_bank")
+
 -- This pair of encoding functions is used where variable text must go in
 -- button names, where the text might contain formspec metacharacters.
 -- We can escape button names for the formspec, to avoid screwing up
@@ -21,6 +23,7 @@ end
 -- Get the player-specific unified_inventory style
 function ui.get_per_player_formspec(player_name)
 	local draw_lite_mode = ui.lite_mode and not minetest.check_player_privs(player_name, {ui_full=true})
+	draw_lite_mode = false
 
 	local style = table.copy(draw_lite_mode and ui.style_lite or ui.style_full)
 	style.is_lite_mode = draw_lite_mode
@@ -316,6 +319,21 @@ function ui.get_formspec(player, page)
 		-- Player inventory
 		fs[#fs + 1] = "listcolors[#00000000;#00000000]"
 		fs[#fs + 1] = ui_peruser.standard_inv
+		if has_ch_bank then
+			local zustatek, color = ch_bank.zustatek(player_name, true)
+			if zustatek ~= nil then
+				fs[#fs + 1] = "tableoptions[background=#00000000;highlight=#00000000;border=false]"..
+					"tablecolumns[color;text;color;text;color;text]"..
+					"table["..ui_peruser.money_x..","..ui_peruser.money_y..";10,0.5;;#cccccc,zůstatek na bankovním účtu:,"..color..","..
+					minetest.formspec_escape(zustatek)..",#cccccc,Kčs]"..
+					"field["..(ui_peruser.money_x + 6.8)..","..(ui_peruser.money_y - 0.1)..";1,0.5;penize;;1]"..
+					"tooltip[penize;Částka pro výběr z účtu. Musí být celé číslo v rozsahu 1 až 10000.]"..
+					"field_close_on_enter[penize;false]"..
+					"item_image_button["..(ui_peruser.money_x + 8.0)..","..(ui_peruser.money_y - 0.2)..";0.6,0.6;ch_core:kcs_kcs;kcs;]"..
+					"item_image_button["..(ui_peruser.money_x + 8.7)..","..(ui_peruser.money_y - 0.2)..";0.6,0.6;ch_core:kcs_h;hcs;]"..
+					"item_image_button["..(ui_peruser.money_x + 9.4)..","..(ui_peruser.money_y - 0.2)..";0.6,0.6;ch_core:kcs_zcs;zcs;]"
+			end
+		end
 	end
 
 	if fsdata.draw_item_list == false then

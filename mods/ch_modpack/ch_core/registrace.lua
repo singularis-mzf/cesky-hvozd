@@ -40,42 +40,44 @@ local default_items = {
 	{stack = ItemStack("towercrane:base"), survival = true, creative = true},
 	{stack = ItemStack("bike:bike"), new = true, survival = true, creative = false},
 	{stack = ItemStack("anvil:hammer"), survival = true},
-	{stack = ItemStack("airtanks:empty_bronze_tank"), survival = true, creative = true},
+	{stack = ItemStack("airtanks:bronze_tank"), survival = true, creative = true},
 	{stack = ItemStack("ch_core:kcs_kcs 1000"), survival = true},
 
-	{stack = get_flashlight(), new = true, survival = true, creative = true},
+	{stack = get_flashlight(), min_index = 17, new = true, survival = true, creative = true},
 }
 
+for i, item in ipairs(default_items) do
+	item.i = i
+	if item.min_index == nil then
+		item.min_index = 2
+	end
+end
+table.sort(default_items, function(a, b) return a.min_index < b.min_index or (a.min_index == b.min_index and a.i < b.i) end)
+
 local function compute_initial_inventory(reg_type)
-	local i = 2
+	local empty_stack = ItemStack()
 	local initial_inventory = {}
-	for j, def in ipairs(default_items) do
-		if def[reg_type] then
-			local stack = def.stack
-			if not stack:is_empty() and not minetest.registered_items[stack:get_name()] then
-				minetest.log("warning", "Default item stack not used, because the item "..stack:get_name().." is unknown!")
-			elseif stack:get_name() ~= "technic:flashlight" then
-				initial_inventory[i] = stack
-				i = i + 1
-				while initial_inventory[i] ~= nil do
-					i = i + 1
-				end
-			else
-				local j = 17
-				while initial_inventory[j] ~= nil do
-					j = j + 1
-				end
-				initial_inventory[j] = stack
-				if i >= 17 then
-					i = j + 1
-				end
-			end
+	local i_in = 1
+	local item = default_items[1]
+
+	for i_out = 1, 32 do
+		while item ~= nil and not item[reg_type] do
+			-- skip items not for the current reg_type
+			i_in = i_in + 1
+			item = default_items[i_in]
+		end
+		if item == nil then
+			-- all items were assigned
+			break
+		end
+		if item.min_index > i_out then
+			initial_inventory[i_out] = empty_stack
 		else
-			print("DEBUG: Default item ["..j.."] not used, because it does not support registration type "..(reg_type or "nil"))
+			initial_inventory[i_out] = item.stack
+			i_in = i_in + 1
+			item = default_items[i_in]
 		end
 	end
-	print("DEBUG: initial_inventory = "..dump2(initial_inventory))
-
 	return initial_inventory
 end
 
@@ -114,28 +116,28 @@ function ch_core.registrovat(player_name, reg_type, extra_privs)
 		return false, "the player is offline"
 	end
 	local inv = player:get_inventory()
+	local bags_inv = minetest.get_inventory({type = "detached", name = player_name.."_bags"})
+	local empty_stack = ItemStack()
 	local old_lists = inv:get_lists()
 	minetest.log("action", "Will clear inventories of "..player_name..", old inventories: "..dump2(old_lists))
-	local empty_stack = ItemStack()
-	for inv_name, inv_list in pairs(old_lists) do
-		local list_size = #inv_list
-		if inv_name == "hand" then
-			-- skip this inventory
-		elseif inv_name == "main" then
-			print("DEBUG: List size for the main inventory = "..list_size)
-			for i = 1, list_size do
-				inv_list[i] = initial_inventory[i] or empty_stack
+	old_lists.hand = nil
+	old_lists.main = nil
+	for inv_name, _ in pairs(old_lists) do
+		inv:set_list(inv_name, {})
+	end
+	inv:set_list("main", initial_inventory)
+	local new_lists = inv:get_lists()
+	local bags_count = 0
+	if bags_inv ~= nil then
+		for i = 1, 8 do
+			local bag = bags_inv:get_stack("bag"..i, 1)
+			if bag ~= nil and not bag:is_empty() then
+				bags_inv:set_stack("bag"..i, 1, empty_stack)
+				bags_count = bags_count + 1
 			end
-			inv:set_list(inv_name, inv_list)
-		else
-			for i = 1, list_size do
-				inv_list[i] = empty_stack
-			end
-			inv:set_list(inv_name, inv_list)
 		end
 	end
-	local new_lists = inv:get_lists()
-	minetest.log("action", "Cleared inventories of "..player_name..", new inventories: "..dump2(new_lists))
+	minetest.log("action", "Cleared inventories of "..player_name.." ("..bags_count.." bags), new inventories: "..dump2(new_lists))
 	minetest.set_player_privs(player_name, extra_privs)
 	local new_privs = minetest.privs_to_string(minetest.get_player_privs(player_name))
 	minetest.log("action", "Player "..player_name.." privs set to: "..new_privs)
