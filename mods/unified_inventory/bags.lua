@@ -12,7 +12,9 @@ local ui = unified_inventory
 ui.register_page("bags", {
 	get_formspec = function(player)
 		local player_name = player:get_player_name()
-		return { formspec = table.concat({
+		return {
+			draw_item_list = false,
+			formspec = table.concat({
 			ui.style_full.standard_inv_bg,
 			ui.single_slot(0.100, 1.5),
 			ui.single_slot(1.414, 1.5),
@@ -107,7 +109,10 @@ for bag_i = 1, 8 do
 					n = n + 1
 				end
 			end
-			return { formspec = table.concat(formspec) }
+			return {
+				draw_item_list = false,
+				formspec = table.concat(formspec)
+			}
 		end,
 	})
 end

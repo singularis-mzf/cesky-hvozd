@@ -198,6 +198,7 @@ ui.register_button("clear_inv", {
 ]]
 
 ui.register_page("craft", {
+	
 	get_formspec = function(player, perplayer_formspec)
 
 		local formheaderx = perplayer_formspec.form_header_x
