@@ -100,9 +100,31 @@ local function generates_particles(node_name)
 	return result
 end
 
+local limits_cache = {}
+
+local function should_skip(player)
+	if not minetest.is_player(player) then
+		return true
+	end
+	local player_name = player:get_player_name()
+	if player_name == nil or player_name == "" then
+		return true
+	end
+	local us_time = minetest.get_us_time()
+	local limit = limits_cache[player_name]
+	if limit ~= nil and us_time < limit then
+		return true
+	end
+	limits_cache[player_name] = us_time + 500000
+	return false
+end
+
 local function on_punchnode(pos, node, puncher, pointed_thing)
 	local node_def, node_groups, wielded_item, tool_def, tool_capabilities, is_diggable
 
+	if should_skip(puncher) then
+		return
+	end
 	node_def = minetest.registered_nodes[node.name]
 	if node_def == nil then return end -- unknown node
 	node_groups = node_def.groups or {}
@@ -124,6 +146,9 @@ local function on_placenode(pos, newnode, placer, oldnode, itemstack, pointed_th
 	if pointed_thing == nil then
 		return -- probably automated placing of nodes
 	end
+	if should_skip(placer) then
+		return
+	end
 	if pointed_thing.type == "node" then
 		local node = minetest.get_node(pos)
 		if generates_particles(node.name).on_placenode then
@@ -136,6 +161,9 @@ local function on_placenode(pos, newnode, placer, oldnode, itemstack, pointed_th
 end
 
 local function on_dignode(pos, oldnode, digger)
+	if should_skip(digger) then
+		return
+	end
 	if generates_particles(oldnode.name).on_dignode then
 		particle_node(pos, oldnode, true)
 	end
