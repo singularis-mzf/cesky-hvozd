@@ -252,6 +252,20 @@ function woodcutting_class:woodcut_node(pos, delay)
 	minetest.after(delay, run_woodcut_node, self.playername, pos)
 end
 
+local function search_for_tree(data, area, x_min, y_min, z_min, x_max, y_max, z_max)
+	local i_base = area:index(x_min, y_min, z_min)
+	local ystride, zstride = area.ystride, area.zstride
+	for z = 0, z_max - z_min do
+		for y = 0, y_max - y_min do
+			for x = 0, x_max - x_min do
+				if woodcutting.tree_content_ids[data[i_base + x + y * ystride + z * zstride] ] then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
 
 ----------------------------
 -- Process leaves around the tree node
@@ -263,20 +277,22 @@ function woodcutting_class:process_leaves(pos)
 	local minp, maxp = vm:read_from_map(r_min, r_max)
 	local area = VoxelArea:new({MinEdge = minp, MaxEdge = maxp})
 	local data = vm:get_data(data_buffer)
+	local leaves_distance = self.leaves_distance
 
-	for i in area:iterp(vector.add(r_min, (self.leaves_distance+1)), vector.subtract(r_max, (self.leaves_distance+1))) do
-		if woodcutting.leaves_content_ids[data[i]] then
-			local leavespos = area:position(i)
-			-- search if no other tree node near the leaves
-			local tree_found = false
-			for i2 in area:iterp(vector.subtract(leavespos,self.leaves_distance), vector.add(leavespos,self.leaves_distance)) do
-				if woodcutting.tree_content_ids[data[i2] ] then
-					tree_found = true
-					break
+	for outerz = r_min.z + (self.leaves_distance + 1), r_max.z - (self.leaves_distance + 1) do
+		for outery = r_min.y + (self.leaves_distance + 1), r_max.y - (self.leaves_distance + 1) do
+			for outerx = r_min.x + (self.leaves_distance + 1), r_max.x - (self.leaves_distance + 1) do
+				local i = area:index(outerx, outery, outerz)
+				if woodcutting.leaves_content_ids[data[i]] then
+					local leavespos = area:position(i)
+					-- search if no other tree node near the leaves
+					local tree_found = search_for_tree(data, area,
+						leavespos.x - leaves_distance, leavespos.y - leaves_distance, leavespos.z - leaves_distance,
+						leavespos.x + leaves_distance, leavespos.y + leaves_distance, leavespos.z + leaves_distance)
+					if not tree_found then
+						self:woodcut_node(leavespos, 0)
+					end
 				end
-			end
-			if not tree_found then
-				self:woodcut_node(leavespos, 0)
 			end
 		end
 	end
