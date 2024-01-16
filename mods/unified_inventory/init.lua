@@ -213,14 +213,16 @@ dofile(modpath.."/legacy.lua") -- mod compatibility
 -- Injections:
 ch_core.trash_one_sound = "trash"
 ch_core.trash_all_sound = "trash_all"
-ch_bank.register_after_transaction(function(transaction_info)
-	for _, player_name in ipairs({transaction_info.from_player or "", transaction_info.to_player or ""}) do
-		local player = player_name ~= "" and minetest.get_player_by_name(player_name)
-		if player ~= nil then
-			ui.set_inventory_formspec(player, unified_inventory.current_page[player_name] or unified_inventory.default)
+if minetest.get_modpath("ch_bank") then
+	ch_bank.register_after_transaction(function(transaction_info)
+		for _, player_name in ipairs({transaction_info.from_player or "", transaction_info.to_player or ""}) do
+			local player = player_name ~= "" and minetest.get_player_by_name(player_name)
+			if player ~= nil then
+				ui.set_inventory_formspec(player, unified_inventory.current_page[player_name] or unified_inventory.default)
+			end
 		end
-	end
-end)
+	end)
+end
 
 minetest.register_on_mods_loaded(function()
 	local pipeworks = ch_core.get_shared_vgroup("pipeworks")

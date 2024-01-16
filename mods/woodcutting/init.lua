@@ -3,6 +3,7 @@ woodcutting = {}
 local mod_storage = minetest.get_mod_storage()
 local disabled_by_player = {}
 
+
 woodcutting.settings = {
 	tree_distance = tonumber(minetest.settings:get("woodcutting_tree_distance")) or 1,
 	leaves_distance = tonumber(minetest.settings:get("woodcutting_leaves_distance")) or 2,
@@ -19,6 +20,12 @@ woodcutting.settings = {
 woodcutting.tree_content_ids = {}
 woodcutting.leaves_content_ids = {}
 woodcutting.process_runtime = {}
+
+local data_buffer = {}
+
+for i = 1, 32768 do
+	data_buffer[i] = 0
+end
 
 local woodcutting_class = {}
 woodcutting_class.__index = woodcutting_class
@@ -93,7 +100,7 @@ function woodcutting_class:add_tree_neighbors(pos)
 	local r_max = vector.add(pos, self.tree_distance)
 	local minp, maxp = vm:read_from_map(r_min, r_max)
 	local area = VoxelArea:new({MinEdge = minp, MaxEdge = maxp})
-	local data = vm:get_data()
+	local data = vm:get_data(data_buffer)
 
 	-- collect tree nodes to the lists
 	for i in area:iterp(r_min, r_max) do
@@ -245,6 +252,7 @@ function woodcutting_class:woodcut_node(pos, delay)
 	minetest.after(delay, run_woodcut_node, self.playername, pos)
 end
 
+
 ----------------------------
 -- Process leaves around the tree node
 ----------------------------
@@ -254,7 +262,7 @@ function woodcutting_class:process_leaves(pos)
 	local r_max = vector.add(pos, self.leaves_distance * 2 + 3)
 	local minp, maxp = vm:read_from_map(r_min, r_max)
 	local area = VoxelArea:new({MinEdge = minp, MaxEdge = maxp})
-	local data = vm:get_data()
+	local data = vm:get_data(data_buffer)
 
 	for i in area:iterp(vector.add(r_min, (self.leaves_distance+1)), vector.subtract(r_max, (self.leaves_distance+1))) do
 		if woodcutting.leaves_content_ids[data[i]] then
