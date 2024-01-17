@@ -61,6 +61,7 @@ function utils.give_items_to_player(player, player_inv, stacks)
 	end
 	return count
 end
+ch_bank.give_items_to_player = utils.give_items_to_player
 
 function utils.give_money_to_player(player_name, amount)
 	if amount <= 0 then return end

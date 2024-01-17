@@ -434,4 +434,212 @@ function ch_core.update_creative_inventory(force_update)
 	return new_ci
 end
 
+local ifthenelse = ch_core.ifthenelse
+local function cmp_true_first(a, b)
+	if a then
+		return ifthenelse(b, 0, -1)
+	else
+		return ifthenelse(b, 1, 0)
+	end
+end
+local function cmp_str(a, b)
+	if a < b then
+		return -1
+	elseif a > b then
+		return 1
+	else
+		return 0
+	end
+end
+local function cmp_inv(f)
+	return function(a, b, options)
+		return -f(a, b, options)
+	end
+end
+
+local comparisons = {
+	{
+		name = "empty_last",
+		description_asc = "prázdná pole na konec",
+		description_desc = "prázdná pole první",
+		cmp = function(a, b)
+			local count_a, count_b = a:get_count(), b:get_count()
+			return cmp_true_first(count_a > 0, count_b > 0)
+		end,
+	},
+	{
+		name = "by_description",
+		description_asc = "podle popisku (vzestupně)",
+		description_desc = "podle popisku (sestupně)",
+		cmp = function(a, b, options)
+			local s_a, s_b = a:get_description(), b:get_description()
+			local lang_code = options.lang_code
+			if s_a ~= nil then
+				if lang_code ~= nil then
+					s_a = minetest.get_translated_string(lang_code, s_a)
+				end
+			else
+				s_a = a:get_name()
+			end
+			if s_b ~= nil then
+				if lang_code ~= nil then
+					s_b = minetest.get_translated_string(lang_code, s_b)
+				end
+			else
+				s_b = b:get_name()
+			end
+			return cmp_str(ch_core.utf8_radici_klic(s_a, true), ch_core.utf8_radici_klic(s_b, true))
+		end,
+	},
+	{
+		name = "by_modname",
+		description_asc = "podle módu (vzestupně)",
+		description_desc = "podle módu (sestupně)",
+		cmp = function(a, b)
+			local sa = a:get_name():match("^([^:]*):.*") or ""
+			local sb = b:get_name():match("^([^:]*):.*") or ""
+			return cmp_str(sa, sb)
+		end,
+	},
+	{
+		name = "by_itemname",
+		description_asc = "podle technického názvu (vzestupně)",
+		description_desc = "podle technického názvu (sestupně)",
+		cmp = function(a, b)
+			local sa = a:get_name():match("^[^:]*:(.*)$") or a:get_name()
+			local sb = b:get_name():match("^[^:]*:(.*)$") or b:get_name()
+			return cmp_str(sa, sb)
+		end,
+	},
+	{
+		name = "by_count",
+		description_asc = "podle počtu (od nejmenšího)",
+		description_desc = "podle počtu (od největšího)",
+		cmp = function(a, b)
+			return a:get_count() - b:get_count()
+		end,
+	},
+	{
+		name = "tools_first",
+		description_asc = "nástroje první",
+		description_desc = "nástroje na konec",
+		cmp = function(a, b)
+			return cmp_true_first(minetest.registered_tools[a:get_name()], minetest.registered_tools[b:get_name()])
+		end,
+	},
+	{
+		name = "tools_by_wear",
+		description_asc = "nástroje podle opotřebení (od nejmenšího)",
+		description_desc = "nástroje podle opotřebení (od největšího)",
+		cmp = function(a, b)
+			if minetest.registered_tools[a:get_name()] and minetest.registered_tools[b:get_name()]then
+				return a:get_wear() - b:get_wear()
+			else
+				return 0
+			end
+		end,
+	},
+	{
+		name = "books_by_ick",
+		description_asc = "knihy podle IČK (vzestupně)",
+		description_desc = "knihy podle IČK (sestupně)",
+		cmp = function(a, b)
+			if a:is_empty() or b:is_empty() then
+				return 0
+			end
+			local a_name, b_name = a:get_name(), b:get_name()
+			if minetest.get_item_group(a_name, "book") == 0 or minetest.get_item_group(b_name, "book") == 0 then
+				return 0
+			end
+			local a_meta, b_meta = a:get_meta(), b:get_meta()
+			local a_ick = ("0000000000000000"..a_meta:get_string("ick")):sub(-16, -1)
+			local b_ick = ("0000000000000000"..b_meta:get_string("ick")):sub(-16, -1)
+			return cmp_str(a_ick, b_ick)
+		end,
+	},
+	{
+		name = "books_first",
+		description_asc = "knihy první",
+		description_desc = "knihy na konec",
+		cmp = function(a, b)
+			return cmp_true_first(not a:is_empty() and minetest.get_item_group(a:get_name(), "book") ~= 0, not b:is_empty() and minetest.get_item_group(b:get_name(), "book") ~= 0)
+		end,
+	},
+	{
+		name = "books_by_author",
+		description_asc = "knihy podle autorství (vzestupně)",
+		description_desc = "knihy podle autorství (sestupně)",
+		cmp = function(a, b)
+			if a:is_empty() or minetest.get_item_group(a:get_name(), "book") == 0 or b:is_empty() or minetest.get_item_group(b:get_name(), "book") == 0 then
+				return 0
+			end
+			return cmp_str(ch_core.utf8_radici_klic(a:get_meta():get_string("author"), false), ch_core.utf8_radici_klic(b:get_meta():get_string("author"), false))
+		end,
+	},
+	{
+		name = "books_by_title",
+		description_asc = "knihy podle názvu (vzestupně)",
+		description_desc = "knihy podle názvu (sestupně)",
+		cmp = function(a, b)
+			if a:is_empty() or minetest.get_item_group(a:get_name(), "book") == 0 or b:is_empty() or minetest.get_item_group(b:get_name(), "book") == 0 then
+				return 0
+			end
+			return cmp_str(ch_core.utf8_radici_klic(a:get_meta():get_string("title"), false), ch_core.utf8_radici_klic(b:get_meta():get_string("title"), false))
+		end,
+	},
+}
+
+local name_to_comparison_index = {}
+local choices = {}
+for i, cmp_def in ipairs(comparisons) do
+	name_to_comparison_index[cmp_def.name] = i
+	if cmp_def.description_asc ~= nil then
+		table.insert(choices, {name = cmp_def.name, desc = false, description = cmp_def.description_asc})
+	end
+	if cmp_def.description_desc ~= nil then
+		table.insert(choices, {name = cmp_def.name, desc = true, description = cmp_def.description_desc})
+	end
+end
+
+function ch_core.sort_itemstacks(stacks, order_types, lang_code)
+	local cmps = {}
+	for i, otype in ipairs(order_types) do
+		local cmp_index = name_to_comparison_index[otype.name]
+		if cmp_index == nil then
+			error("Invalid order type '"..otype.name.."'!")
+		end
+		if otype.desc then
+			table.insert(cmps, cmp_inv(comparisons[cmp_index].cmp))
+		else
+			table.insert(cmps, comparisons[cmp_index].cmp)
+		end
+	end
+	local options = {lang_code = lang_code}
+	table.sort(stacks, function(a, b)
+			local result
+			for i = 1, #cmps do
+				result = cmps[i](a, b, options)
+				if result < 0 then
+					return true
+				elseif result > 0 then
+					return false
+				end
+			end
+			return 0
+		end)
+end
+
+--[[
+Příklad:
+	local stacks = inv:get_list("main")
+	ch_core.sort_itemstacks(stacks, {
+		{name = "empty_last"},
+		{name = "tools_first", desc = true},
+		{name = "by_description"},
+		{name = "by_modname"},
+		{name = "by_itemname"},
+		{name = "by_count", desc = true},
+		}, ch_core.online_charinfo[player_name].lang_code)
+]]
+
 ch_core.close_submod("creative_inventory")

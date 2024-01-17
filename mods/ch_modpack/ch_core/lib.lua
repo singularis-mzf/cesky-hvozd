@@ -445,6 +445,20 @@ function ch_core.clear_crafts(log_prefix, crafts)
 end
 
 --[[
+Jako vstup přijímá pole dávek (např. z funkce InvRef:get_list())
+a vrátí počet prázdných dávek v něm (může být 0).
+]]
+function ch_core.count_empty_stacks(stacks)
+	local count = 0
+	for _, stack in ipairs(stacks) do
+		if stack:is_empty() then
+			count = count + 1
+		end
+	end
+	return count
+end
+
+--[[
 Spočítá a / b a vrátí celočíselný výsledek a zbytek.
 ]]
 function ch_core.divrem(a, b)
