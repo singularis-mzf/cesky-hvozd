@@ -304,7 +304,7 @@ function books.load_book(meta, pos, player_name)
 	elseif not minetest.check_player_privs(player_name, "ch_registered_player") then
 		-- a new player => read-only access
 		result.access_level = READ_ONLY
-	elseif player_name == result.owner then
+	elseif result.owner == "" or player_name == result.owner then
 		-- owner => full access
 		result.access_level = FULL_ACCESS
 	elseif result.public == READ_WRITE or result.public == PREPEND_ONLY or result.public == APPEND_ONLY then
@@ -550,11 +550,7 @@ local function generate_random_book_color(old_name, old_param2)
 	return new_name, old_facedir + 32 * new_color_index
 end
 
-local function initialize_book_item(itemstack, itemstack_meta, player_name)
-	if player_name == nil or player_name == "" then
-		return false
-	end
-	itemstack_meta:set_string("owner", player_name)
+local function initialize_book_item(itemstack, itemstack_meta)
 	local name, palette_index = itemstack:get_name(), itemstack_meta:get_int("palette_index")
 	if name:match("_grey$") and palette_index == 0 then
 		name, palette_index = generate_random_book_color(name, palette_index)
@@ -569,11 +565,7 @@ local function initialize_book_item(itemstack, itemstack_meta, player_name)
 	return true
 end
 
-local function initialize_book_node(pos, node, node_meta, player_name)
-	if player_name == nil or player_name == "" then
-		return false
-	end
-	node_meta:set_string("owner", player_name)
+local function initialize_book_node(pos, node, node_meta)
 	local name, param2 = node.name, node.param2
 	if name:match("_grey$") and (param2 - param2 % 32) == 0 then
 		name, param2 = generate_random_book_color(name, param2)
@@ -645,7 +637,11 @@ local function compute_infotext(book_meta, infotext_type, book_data_hint)
 			result[9] = ifthenelse(edition ~= "", ", "..edition, "")
 			result[10] = ")"
 		end
-		table.insert(result, "\nknihu spravuje: "..ch_core.prihlasovaci_na_zobrazovaci(owner))
+		if owner ~= "" then
+			table.insert(result, "\nknihu spravuje: "..ch_core.prihlasovaci_na_zobrazovaci(owner))
+		else
+			table.insert(result, "\nkniha je volná")
+		end
 	else
 		return ""
 	end
@@ -662,7 +658,7 @@ end
 function books.update_infotext(book_meta, infotext_type, book_data_hint)
 	if infotext_type ~= "item" then
 		book_meta:set_string("infotext", compute_infotext(book_meta, infotext_type, book_data_hint))
-	else
+	elseif book_meta:get_string("owner") ~= "" then -- only update infotext for owned books
 		book_meta:set_string("description", compute_infotext(book_meta, "item", book_data_hint))
 	end
 end
@@ -855,8 +851,11 @@ local function formspec_callback(custom_state, player, formname, fields)
 		end
 		if access_level == FULL_ACCESS then
 			if fields.owner and fields.owner ~= owner and minetest.check_player_privs(player_name, "protection_bypass") then
-				meta:set_string("owner", fields.owner)
 				owner = fields.owner
+				meta:set_string("owner", owner)
+			elseif owner == "" then
+				owner = player_name
+				meta:set_string("owner", owner)
 			end
 			if fields.author then
 				book.author = ch_core.utf8_truncate_right(fields.author, 256)
@@ -992,12 +991,10 @@ function books.open_on_rightclick(pos, node, clicker, itemstack, pointed_thing)
 		local meta = minetest.get_meta(pos)
 		local owner = meta:get_string("owner")
 		if owner == "" then
-			owner = clicker:get_player_name()
-			minetest.log("warning", "books.open_on_rightclick(): openning a book with no owner at "..minetest.pos_to_string(pos)..", will set owner to "..owner.." and page to 1")
-			initialize_book_node(pos, node, meta, player_name)
+			initialize_book_node(pos, node, meta)
 			meta:set_int("page", 1)
 		end
-		player_open_book(player_name, meta, pos, owner == player_name or minetest.check_player_privs(player_name, "protection_bypass"))
+		player_open_book(player_name, meta, pos)
 		local formspec = get_book_read_formspec(player_name)
 		ch_core.show_formspec(clicker, "books:book", formspec, formspec_callback, {
 			type = "pos",
@@ -1045,7 +1042,7 @@ function books.after_place_node(pos, placer, itemstack, pointed_thing)
 		local nodemeta = minetest.get_meta(pos)
 		nodemeta:from_table(itemmeta:to_table())
 		if nodemeta:get_string("owner") == "" then
-			initialize_book_node(pos, minetest.get_node(pos), nodemeta, player_name)
+			initialize_book_node(pos, minetest.get_node(pos), nodemeta)
 		end
 		update_infotext(nodemeta, "closed")
 	end
@@ -1057,9 +1054,7 @@ function books.on_use(itemstack, user, pointed_thing)
 		local meta = itemstack:get_meta()
 		local owner = meta:get_string("owner")
 		if owner == "" then
-			if not initialize_book_item(itemstack, meta, player_name) then
-				return
-			end
+			initialize_book_item(itemstack, meta, player_name)
 		end
 		player_to_book[player_name] = load_book(meta, nil, player_name)
 		local formspec = get_book_read_formspec(player_name)
