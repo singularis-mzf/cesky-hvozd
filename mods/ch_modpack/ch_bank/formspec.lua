@@ -22,6 +22,14 @@ local role_descs = {
 	creative = F("kouzelnická postava"),
 }
 
+local player_to_baginfo = {}
+--[[
+	player_name => nil or {
+		height = float,
+		formspec = string,
+	}
+]]
+
 function utils.get_formspec(trade_state)
 	local zprava_name = "zprava"..trade_state.privmsg_index
 
@@ -99,6 +107,7 @@ function utils.get_formspec(trade_state)
 					"item_image_button[7.3,0;0.6,0.6;ch_core:kcs_zcs;zcs;]"..
 					"label[8,0.25;(výběr do nabídky)]")
 	end
+	local ti_location, ti_listname = tiparams.location, tiparams.listname
 	local left_inv_ring = "listring["..tiparams.location..";"..tiparams.listname.."]"
 	table.insert(formspec,
 		"label[0.325,0.75;hlavní inventář:]"..
@@ -106,19 +115,43 @@ function utils.get_formspec(trade_state)
 		if trade_state.left.state == STATE_OPEN then
 			table.insert(formspec, left_inv_ring.."listring[current_player;main]")
 		end
-	local player_inv = player:get_inventory()
-	for i = 1, 8, 1 do
-		local bag_rows = math.ceil(player_inv:get_size("bag"..i.."contents") / 8)
-		if bag_rows > 0 then
-			table.insert(formspec,
-				"label[0.325,"..(4.25 * i + 2.0)..";batoh "..i.."]"..
-				"list[current_player;bag"..i.."contents;0.325,"..(4.25 * i + 2.25)..";8,"..bag_rows..";0]"..
-				left_inv_ring..
-				"listring[current_player;bag"..i.."contents]")
-		end
+	local bags, scroll_max = "", 5
+	local bag_info = player_to_baginfo[player_name]
+	if bag_info ~= nil then
+		bags = bag_info.formspec:gsub("@location", ti_location):gsub("@listname", ti_listname)
+		scroll_max = bag_info.scroll_max
 	end
-	table.insert(formspec, "scroll_container_end[]"..
-		"scrollbaroptions[max=340;arrows=show]"..
+	table.insert(formspec,
+		bags.."scroll_container_end[]"..
+		"scrollbaroptions[max="..scroll_max..";arrows=show]"..
 		"scrollbar[10.75,8;0.4,6;vertical;sbar;]")
 	return table.concat(formspec)
+end
+
+function ch_bank.nahlasit_batohy(player, bags)
+	--[[
+		bags = {
+			{
+				listname = string,
+				title = string,
+				width = int,
+				height = int,
+			}, ...
+		}
+	]]
+	local player_name = player:get_player_name()
+	local formspec = {}
+	local y = 6.5
+	for _, bag in ipairs(bags) do
+		table.insert(formspec,
+			"label[0.325,"..(y - 0.25)..";"..F(bag.title).."]"..
+			"list[current_player;"..bag.listname..";0.325,"..y..";"..bag.width..","..bag.height..";0]"..
+			"listring[@location;@listname]"..
+			"listring[current_player;"..bag.listname.."]")
+		y = y + 1.25 * bag.height + 0.5
+	end
+	player_to_baginfo[player_name] = {
+		scroll_max = math.ceil((y - 6) * 10),
+		formspec = table.concat(formspec),
+	}
 end

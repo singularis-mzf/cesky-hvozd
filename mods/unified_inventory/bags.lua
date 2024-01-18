@@ -192,6 +192,32 @@ local function update_bag_metadata(player_inv, bags_inv, bag_i, change_hint)
 	bags_inv:set_stack("bag"..bag_i, 1, bag_item)
 end
 
+local function nahlasit_batohy(player, bags_inv)
+	if has_ch_bank then
+		local player_inv = player:get_inventory()
+		local player_meta = player:get_meta()
+		local info_for_ch_bank = {}
+
+		for i = 1, 6 do
+			local listname = "bag"..i.."contents"
+			local bag_size = player_inv:get_size(listname)
+			if bag_size > 0 then
+				local title = player_meta:get_string("bag"..i.."_title")
+				if title == "" then
+					title = S("Bag @1", i)
+				end
+				table.insert(info_for_ch_bank, {
+					listname = listname,
+					title = title,
+					width = 5,
+					height = math.ceil(bag_size / 5),
+				})
+			end
+		end
+		ch_bank.nahlasit_batohy(player, info_for_ch_bank)
+	end
+end
+
 local function save_bags_metadata(player, bags_inv)
 	local is_empty = true
 	local bags = {}
@@ -210,6 +236,7 @@ local function save_bags_metadata(player, bags_inv)
 		meta:set_string("unified_inventory:bags",
 			minetest.serialize(bags))
 	end
+	nahlasit_batohy(player, bags_inv)
 end
 
 local function load_bags_metadata(player, bags_inv)
@@ -295,6 +322,8 @@ local function load_bags_metadata(player, bags_inv)
 	if dirty_meta then
 		-- Requires detached inventory to be set up
 		save_bags_metadata(player, bags_inv)
+	else
+		nahlasit_batohy(player, bags_inv)
 	end
 
 	-- Clean up deprecated garbage after saving
