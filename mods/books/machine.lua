@@ -6,10 +6,10 @@
 
 local F = minetest.formspec_escape
 local S = minetest.get_translator("books")
+local shared = ...
 
-local get_book_price = books.get_book_price
 local load_book = books.load_book
-local publish_book = books.publish_book
+local publish_book = shared.publish_book
 local update_infotext = books.update_infotext
 
 local player_name_to_custom_state = {}
@@ -76,11 +76,13 @@ local function get_formspec(custom_state)
 			"label[0.5,3.25;Vstup (kniha):]"..
 			"list["..node_inventory..";input;2.5,2.75;1,1;]"..
 			"field[0.5,4.25;2.5,0.5;edition;Vydání:;1. vyd.]"..
-			"textarea[3.75,2.75;9.5,2.25;;;Před vydáním si knihu důkladně zkontrolujte\\, po vydání ji již nebudete moci upravovat! Vydáváte-li nové vydání již dříve vydané knihy\\, vyplňte prosím pole „Vydání“\\, aby šlo snadno rozlišit jednotlivá vydání.]"..
-			"textarea[6.25,5.25;7.5,1;;;"..F(message).."]"..
+			"textarea[3.75,2.75;9.5,2.25;;;Před vydáním si knihu důkladně zkontrolujte. Vydáváte-li nové vydání již dříve vydané knihy\\, vyplňte prosím pole „Vydání“\\, aby šlo snadno rozlišit jednotlivá vydání.]"..
+			"textarea[6.25,4.25;7.5,1;;;"..F(message).."]"..
 			"label[0.5,7;Výstup:]"..
 			"list["..node_inventory..";output;2.5,6.5;8,1;]"..
 			"button[0.5,5.25;5.5,1;vydat;permanentně vydat knihu]"..
+			"button[7.0,5.25;5.5,1;stahnout;stáhnout knihu\ntěsně po vydání]"..
+			"tooltip[stahnout;Stáhnout můžete pouze knihu\\, kterou jste vydal/a vy\\,\nod jejíhož vydání uplynulo méně než 12 hodin a nebyl restartován server\na z níž nevzniklo víc než 5 výtisků s IČK\\, přičemž povinné výtisky se nepočítají.]"..
 			"listring["..node_inventory..";output]"..
 			"listring[current_player;main]"..
 			"listring["..node_inventory..";input]")
@@ -146,7 +148,6 @@ local function get_formspec(custom_state)
 		-- conditional elements:
 		local input = inv:get_stack("input", 1)
 		local book_info = books.analyze_book(input:get_name(), input:get_meta())
-		local message
 		if book_info ~= nil then
 			if book_info.ick ~= "" and (book_info.owner == player_name or is_admin) then
 				table.insert(formspec, "button[7.75,5.25;5.5,1;ukopie;získat upravitelnou kopii vydané knihy\n(jen vaše knihy)]")
@@ -260,6 +261,46 @@ local function formspec_callback(custom_state, player, formname, fields)
 			custom_state.message = "Chyba: Kniha se zasekla ve stroji!"
 		end
 		return get_formspec(custom_state)
+	elseif fields.stahnout then
+		-- cancel the book
+		if input_book == nil then
+			return true
+		end
+		local ick = input_book.ick
+		if ick == "" then
+			custom_state.message = "Chyba: Tato kniha nemá IČK!"
+			return get_formspec(custom_state)
+		end
+		local owner = input_book.owner
+		if owner ~= custom_state.player_name then
+			custom_state.message = "Chyba: Stáhnout můžete pouze knihu, kterou jste vydal/a!"
+			return get_formspec(custom_state)
+		end
+		if not inv:room_for_item("output", input) then
+			custom_state.message = "Chyba: Ve výstupním inventáři není dost místa!"
+			return get_formspec(custom_state)
+		end
+		local new_stack = ItemStack(input)
+		local new_meta = new_stack:get_meta()
+		local book = load_book(new_meta, nil, nil)
+		new_meta:set_string("text", book.text)
+		new_meta:set_string("ick", "")
+		new_meta:set_string("edition", "")
+		book.ick = ""
+		book.edition = ""
+		update_infotext(new_meta, "item", book)
+		local success, message = shared.cancel_published_book(ick)
+		if not success then
+			custom_state.message = "Chyba: "..(message or "neznámá chyba")
+			return get_formspec(custom_state)
+		end
+		if inv:add_item("output", new_stack):is_empty() then
+			inv:set_stack("input", 1, ItemStack())
+			custom_state.message = "Kniha vydaná pod IČK "..ick.." byla úspěšně stažena."
+		else
+			custom_state.message = "Chyba: Kniha se zasekla ve stroji!"
+		end
+		return get_formspec(custom_state)
 	elseif fields.recyklovat then
 		local input1, input2 = inv:get_stack("recycle", 1), inv:get_stack("recycle", 2)
 		local book1, book2
@@ -353,7 +394,6 @@ local function formspec_callback(custom_state, player, formname, fields)
 			custom_state.message = "Chyba: Ve výstupním inventáři není dost místa!"
 			return get_formspec(custom_state)
 		end
-		local paper, ink
 		if not minetest.is_creative_enabled(custom_state.player_name) then
 			local paper_stack = ItemStack("default:paper "..input_book.paper_price)
 			local ink_stack = ItemStack("dye:black "..input_book.ink_price)
@@ -377,6 +417,7 @@ local function formspec_callback(custom_state, player, formname, fields)
 			update_infotext(new_meta, "item", book)
 		else
 			new_stack = input
+			books.announce_book_copy(new_stack)
 		end
 		inv:add_item("output", new_stack)
 		custom_state.message = "Kniha byla úspěšně zkopírována."

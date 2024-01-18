@@ -26,6 +26,8 @@ Book metadata for books without IČK:
 	int public -- access level for registered players who are not owner of the book or admin
 ]]
 
+local shared = ...
+
 local metadata_keys_int = {
 	"public"
 }
@@ -38,8 +40,20 @@ local player_to_book = {
 	-- [player_name] = {pos?, access_level, author, owner, title, lastedit, copyright, ick, edition, public, style, text, page0, page1, ..., page_max}
 }
 
+local new_books = {
+	--[[
+	IČK => {
+		new_expiration = int,
+		copies = int,
+		pv_pos = vector or nil,
+		pv_listname = string or nil,
+		pv_index = int or nil,
+	}
+	]]
+}
+
 -- Translation support
-local S = minetest.get_translator("books")
+--local S = minetest.get_translator("books")
 local F = minetest.formspec_escape
 
 local lpp = 30 -- Lines per book's page
@@ -77,7 +91,6 @@ local description_to_style = {
 	[books.styles.default.description] = "default",
 }
 
--- public
 function books.register_book_style(name, def)
 	if name == nil or name == "" or name == "default" then
 		error("[books] Invalid book style name \""..(name or "nil").."\"!")
@@ -98,7 +111,7 @@ local style_description_list -- a list of descriptions for a formspec
 local style_to_index -- style name to index in the list
 local function on_mods_loaded()
 	local list = {""}
-	for desc, style in pairs(description_to_style) do
+	for description, style in pairs(description_to_style) do
 		if style ~= "default" then
 			table.insert(list, description)
 		end
@@ -125,7 +138,6 @@ local function copy_book_metadata(frommeta, tometa)
 end
 ]]
 
--- public
 function books.analyze_book(name, meta)
 	local kind = minetest.get_item_group(name, "book")
 	local result = {}
@@ -146,6 +158,61 @@ function books.analyze_book(name, meta)
 	result.paper_price = math.max(paper_minimum, result.raw_paper_price)
 	result.ink_price = math.max(1, result.raw_ink_price)
 	return result
+end
+
+function books.announce_book_copy(itemstack)
+	local meta = itemstack:get_meta()
+	local ick = meta:get_string("ick")
+	if ick ~= "" then
+		local info = new_books[ick]
+		if info ~= nil then
+			info.copies = info.copies + 1
+		end
+	end
+	return true
+end
+
+function shared.can_cancel(ick)
+	if ick == nil then return false end
+	ick = tostring(ick)
+	local info = new_books[ick]
+	if info == nil then return false end
+	return info.copies < 5 and minetest.get_us_time() < info.new_expiration
+end
+
+function shared.cancel_published_book(ick)
+	local info = new_books[tostring(ick)]
+	if info == nil then
+		return false, "od vydání knihy byl restart serveru"
+	elseif info.copies >= 5 then
+		return false, "bylo pořízeno víc než 5 kopií vydané knihy"
+	elseif minetest.get_us_time() >= info.new_expiration then
+		return false, "od vydání již uplynulo víc než 12 hodin"
+	end
+
+	-- 1. Odstranit text z disku (nechat metadata).
+	local worldpath = minetest.get_worldpath()
+	os.remove(worldpath.."/knihy/"..ick..".txt")
+
+	-- 2. Odstranit povinný výtisk
+	if info.pv_pos ~= nil and info.pv_listname ~= nil and info.pv_index ~= nil then
+		minetest.load_area(info.pv_pos)
+		local node_inv = minetest.get_meta(info.pv_pos):get_inventory()
+		if node_inv:get_size(info.pv_listname) >= info.pv_index then
+			local stack = node_inv:get_stack(info.pv_listname, info.pv_index)
+			if not stack:is_empty() and stack:get_meta():get_string("ick") == tostring(ick) then
+				node_inv:set_stack(info.pv_listname, info.pv_index, ItemStack())
+			end
+		end
+	end
+
+	-- 3. Oznámit
+	minetest.log("action", "[books] Publishing a book under ICK "..ick.." was cancelled.")
+	ch_core.systemovy_kanal("", "Oznámení Knihovny Českého hvozdu: kniha vydaná nedávno pod IČK "..ick.." byla stažena.")
+
+	new_books[tostring(ick)] = nil
+
+	return true
 end
 
 local function increase_ap(player_name)
@@ -348,7 +415,7 @@ local function get_book_read_formspec(player_name)
 	if book == nil then
 		error("get_book_edit_formspec() called for "..player_name.." without any book openned!")
 	end
-	local style = assert_not_nil(books.styles[book.style] or books.styles["default"])
+	-- local style = assert_not_nil(books.styles[book.style] or books.styles["default"])
 	local formspec = {
 		"formspec_version[4]",
 		"size[14,14]",
@@ -664,7 +731,22 @@ function books.update_infotext(book_meta, infotext_type, book_data_hint)
 end
 local update_infotext = books.update_infotext
 
-function books.publish_book(book_item, edition) -- => IČK, error_message
+-- returns: index in the inventory list or nil
+local function add_book_to_chest(node_inv, listname, book_item)
+	local list = node_inv:get_list(listname)
+	if list == nil then
+		return nil
+	end
+	for i = 1, #list do
+		if list[i]:is_empty() then
+			node_inv:set_stack(listname, i, book_item)
+			return i
+		end
+	end
+	return nil
+end
+
+function shared.publish_book(book_item, edition) -- => IČK, error_message
 	if minetest.get_item_group(book_item:get_name(), "book") == 0 then
 		return nil, "Zadaný předmět není kniha!"
 	end
@@ -682,7 +764,7 @@ function books.publish_book(book_item, edition) -- => IČK, error_message
 	edition = ch_core.utf8_truncate_right(edition or "", 256)
 	local worldpath = minetest.get_worldpath()
 	local global_data = ch_core.global_data
-	local ick = global_data.pristi_ick
+	ick = global_data.pristi_ick
 	global_data.pristi_ick = ick + 1
 	local cas = ch_core.aktualni_cas()
 	local metadata = {
@@ -693,6 +775,10 @@ function books.publish_book(book_item, edition) -- => IČK, error_message
 		"Knihu vydal/a: <"..ch_core.prihlasovaci_na_zobrazovaci(owner).."> ("..owner..")\n",
 		"Copyright: <"..meta:get_string("copyright")..">\n",
 		string.format("Čas vydání: %04d-%02d-%02dT%02d:%02d:%02d%s\n", cas.rok, cas.mesic, cas.den, cas.hodina, cas.minuta, cas.sekunda, cas.posun_text),
+	}
+	local new_book_info = {
+		new_expiration = minetest.get_us_time() + 43200000000, -- 12 hours
+		copies = 1,
 	}
 	local text = meta:get_string("text").. "\n\n\n----\n"..table.concat(metadata)
 	table.insert(metadata, "Délka textu v bajtech: "..#text.."\n")
@@ -711,7 +797,9 @@ function books.publish_book(book_item, edition) -- => IČK, error_message
 
 	-- Povinné výtisky:
 	local pos = global_data.povinne_vytisky
+	local pos_used
 	local listname = global_data.povinne_vytisky_listname
+	local listindex
 	if listname ~= nil and listname ~= "" then
 		minetest.load_area(pos)
 		local node = minetest.get_node(pos)
@@ -722,30 +810,37 @@ function books.publish_book(book_item, edition) -- => IČK, error_message
 			if node_inv:get_size(listname) == 0 then
 				minetest.log("error", "Povinne vytisky failed, because the node "..node.name.." doesn't have a list "..listname.."!")
 			end
-			local leftover = node_inv:add_item(listname, book_item)
-			if leftover:is_empty() then
+			listindex = add_book_to_chest(node_inv, listname, book_item)
+			if listindex ~= nil then
+				pos_used = pos
 				minetest.log("action", "Povinne vytisky: book with ICK "..ick.." stored to the chest "..node.name.." at "..minetest.pos_to_string(pos))
 			else
 				local chests = minetest.find_nodes_in_area(vector.offset(pos, -2, -2, -2), vector.offset(pos, 2, 2, 2), {node.name}, false)
 				local chests_positions = {}
-				local pos2_used
 				for _, pos2 in ipairs(chests) do
 					table.insert(chests_positions, minetest.pos_to_string(pos2))
 					node_inv = minetest.get_meta(pos2):get_inventory()
-					leftover = node_inv:add_item(listname, book_item)
-					if leftover:is_empty() then
-						pos2_used = pos2
+					listindex = add_book_to_chest(node_inv, listname, book_item)
+					if listindex ~= nil then
+						pos_used = pos2
 						break
 					end
 				end
-				if pos2_used ~= nil then
-					minetest.log("warning", "Povinne vytisky: book ICK "..ick.." placed to the chest at "..minetest.pos_to_string(pos2_used)..", because the main chest "..node.name.." at "..minetest.pos_to_string(pos).." is full.")
+				if pos_used ~= nil then
+					minetest.log("warning", "Povinne vytisky: book ICK "..ick.." placed to the chest at "..minetest.pos_to_string(pos_used)..", because the main chest "..node.name.." at "..minetest.pos_to_string(pos).." is full.")
 				else
 					minetest.log("error", "Povinne vytisky failed, because "..#chests.." chests of type "..node.name.." near "..minetest.pos_to_string(pos).." are full! Book with ICK "..ick.." is lost! ("..table.concat(chests_positions, ", ")..")")
 				end
 			end
 		end
+		if pos_used ~= nil and listindex ~= nil then
+			new_book_info.pv_pos = pos_used
+			new_book_info.pv_listname = listname
+			new_book_info.pv_index = listindex
+		end
 	end
+
+	new_books[tostring(ick)] = new_book_info
 
 	-- Oznámit:
 	minetest.log("action", "[books] "..owner.." published a book '"..title.."' (edition="..edition..") under ICK "..ick)
@@ -760,15 +855,7 @@ local function open_book(pos)
 	end
 	node.name = node.name:gsub("_closed", "_open")
 	minetest.swap_node(pos, node)
-	local meta = minetest.get_meta(pos)
-	local ick = meta:get_string("ick")
-	local text
-	if ick == "" then
-		text = meta:get_string("text")
-	else
-		text = get_text_by_ick(ick) or ""
-	end
-	update_infotext(meta, "openned")
+	update_infotext(minetest.get_meta(pos), "openned")
 	return true
 end
 
@@ -929,8 +1016,8 @@ local function formspec_callback(custom_state, player, formname, fields)
 		local pages = 0
 		while i ~= nil do
 			pages = pages + 1
-			local x
-			x, i = read_book_page(lines, i, pages == 1)
+			local _x
+			_x, i = read_book_page(lines, i, pages == 1)
 		end
 		local item_name
 		if pos ~= nil then
@@ -981,11 +1068,11 @@ local function formspec_callback(custom_state, player, formname, fields)
 	end
 end
 
-function books.closed_on_rightclick(pos, node, clicker, itemstack, pointed_thing)
+function shared.closed_on_rightclick(pos, node, clicker, itemstack, pointed_thing)
 	open_book(pos)
 end
 
-function books.open_on_rightclick(pos, node, clicker, itemstack, pointed_thing)
+function shared.open_on_rightclick(pos, node, clicker, itemstack, pointed_thing)
 	if clicker then
 		local player_name = clicker:get_player_name()
 		local meta = minetest.get_meta(pos)
@@ -1006,11 +1093,11 @@ function books.open_on_rightclick(pos, node, clicker, itemstack, pointed_thing)
 	end
 end
 
-function books.on_punch(pos, node, puncher, pointed_thing)
+function shared.on_punch(pos, node, puncher, pointed_thing)
 	close_book(pos)
 end
 
-function books.preserve_metadata(pos, oldnode, oldmeta, drops)
+function shared.preserve_metadata(pos, oldnode, oldmeta, drops)
 	local item = drops[1]
 	if item == nil then
 		return
@@ -1035,10 +1122,9 @@ function books.preserve_metadata(pos, oldnode, oldmeta, drops)
 	update_infotext(itemmeta, "item")
 end
 
-function books.after_place_node(pos, placer, itemstack, pointed_thing)
+function shared.after_place_node(pos, placer, itemstack, pointed_thing)
 	local itemmeta = itemstack:get_meta()
 	if itemmeta then
-		local player_name = (placer and placer:get_player_name()) or "Administrace"
 		local nodemeta = minetest.get_meta(pos)
 		nodemeta:from_table(itemmeta:to_table())
 		if nodemeta:get_string("owner") == "" then
@@ -1048,7 +1134,7 @@ function books.after_place_node(pos, placer, itemstack, pointed_thing)
 	end
 end
 
-function books.on_use(itemstack, user, pointed_thing)
+function shared.on_use(itemstack, user, pointed_thing)
 	local player_name = user and user:get_player_name()
 	if player_name then
 		local meta = itemstack:get_meta()
@@ -1091,7 +1177,7 @@ local function nastavit_povinne_vytisky(player_name, param)
 	local count = 0
 	local has_list = false
 	local list_names = {}
-	for k, v in pairs(lists) do
+	for k, _ in pairs(lists) do
 		count = count + 1
 		table.insert(list_names, k)
 		if k == listname then

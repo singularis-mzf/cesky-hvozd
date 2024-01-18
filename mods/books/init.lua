@@ -32,15 +32,19 @@ books = {
 	},
 }
 
--- Translation support
-local S = minetest.get_translator("books")
-local F = minetest.formspec_escape
-
+local shared = {}
 local modpath = minetest.get_modpath("books")
-dofile(modpath.."/api.lua")
-dofile(modpath.."/nodes.lua")
-dofile(modpath.."/machine.lua")
-dofile(modpath.."/crafts.lua")
+
+local function run_file(file)
+	local f = loadfile(modpath.."/"..file)
+	assert(f)
+	return f(shared)
+end
+
+run_file("api.lua")
+run_file("nodes.lua")
+run_file("machine.lua")
+run_file("crafts.lua")
 
 -- unexport private functions:
 books.after_place_node = nil

@@ -16,21 +16,21 @@ minetest.override_item("default:book", {
 	description = "[zastaralý předmět!]",
 })
 
-minetest.register_craft({
+minetest.register_craft{
 	output = "books:book_b5_closed_grey",
 	recipe = {
 		{"default:paper", "default:paper", ""},
 		{"default:paper", "default:paper", ""},
 		{"default:paper", "default:paper", ""},
 	},
-})
-minetest.register_craft({
+}
+minetest.register_craft{
 	output = "books:book_b6_closed_grey",
 	recipe = {
 		{"default:paper", "default:paper"},
 		{"default:paper", "default:paper"},
 	},
-})
+}
 
 --[[
 local colors = unifieddyes.HUES_WITH_GREY

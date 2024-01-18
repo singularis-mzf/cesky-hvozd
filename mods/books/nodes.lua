@@ -4,14 +4,16 @@
 	LGPLv2.1+
 	See LICENSE for more information ]]
 
-local S = minetest.get_translator("books")
+local shared = ...
 
-local after_place_node = books.after_place_node
-local preserve_metadata = books.preserve_metadata
-local on_punch = books.on_punch
-local on_use = books.on_use
-local closed_on_rightclick = books.closed_on_rightclick
-local open_on_rightclick = books.open_on_rightclick
+-- local S = minetest.get_translator("books")
+
+local after_place_node = shared.after_place_node
+local preserve_metadata = shared.preserve_metadata
+local on_punch = shared.on_punch
+local on_use = shared.on_use
+local closed_on_rightclick = shared.closed_on_rightclick
+local open_on_rightclick = shared.open_on_rightclick
 
 local function union(a, b, c, d, e)
 	local result = {}

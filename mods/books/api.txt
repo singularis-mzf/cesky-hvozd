@@ -1,0 +1,79 @@
+Veřejné funkce
+=================================
+
+A:
+function books.analyze_book(name, meta)
+-- Je-li `name` id předmětu, který je kniha, vrátí strukturu:
+{
+	ick = string,
+	owner = string,
+	raw_paper_price = int,
+	raw_ink_price = int,
+	paper_price = int,
+	ink_price = int,
+}
+-- Jinak vrátí nil.
+-- meta musí být objekt metadat předmětu či bloku
+
+function books.announce_book_copy(itemstack)
+-- itemstack musí být kniha; oznamuje módu, že bude vytvořena nová kopie této
+knihy; funkce nemodifikuje předaný itemstack
+
+C:
+function books.can_cancel(ick)
+-- Vrátí true, pokud ick je IČK vydané knihy, kterou lze stáhnout.
+Jinak vrátí false.
+
+function books.cancel_published_book(ick)
+-- Pokusí se stáhnout čerstvě vydanou knihu podle IČK.
+Vrátí true, pokud uspěje.
+
+L:
+
+function books.load_book(meta, pos, player_name)
+	// meta = MetaRef
+	// pos = vector || nil
+	// player_name = string || nil
+-- Načte knihu z metadat předmětu nebo bloku a vrátí strukturu:
+{
+	pos = vector || nil,
+	author = string,
+	owner = string,
+	title = string,
+	edition = string,
+	lastedit = string,
+	copyright = string,
+	ick = string,
+	page = int,
+	public = int,
+	style = string,
+	paper_price = int,
+	ink_price = int,
+	text = string, -- může být i docela dlouhý
+	page0 = string,
+	page1..pageN = string,
+	page_max = int,
+	access_level = int (READ_ONLY || FULL_ACCESS || READ_WRITE || PREPEND_ONLY || APPEND_ONLY),
+}
+
+P:
+
+function books.publish_book(book_item, edition)
+	// book_item = ItemStack
+	// edition = string
+	// returns: IČK (int), nil
+	// returns :nil, error_message (string)
+-- Vydá dosud nevydanou knihu.
+
+R:
+
+function books.register_book_style(name, def)
+-- Zaregistruje nový styl knihy.
+
+U:
+
+function books.update_infotext(book_meta, infotext_type, book_data_hint)
+	// book_meta = MetaRef
+	// infotext_type = string ("item" || "node")
+	// book_data_hint = table or nil
+-- Aktualizuje v metadatech infotext bloku nebo předmětu.
