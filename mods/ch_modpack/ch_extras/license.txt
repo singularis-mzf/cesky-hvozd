@@ -128,3 +128,8 @@ translocator.png
 	Author: Zemtzov7
 	Source: https://github.com/zmv7/minetest-mod-translocator
 	License: CC-BY-SA-4.0
+
+ch_extras_kotva.png
+	License: CC BY-SA 4.0
+	Author: Singularis
+	Based on source: technic_admin_anchor.png by RealBadAngel under WTFPL from the mod "technic" from https://github.com/minetest-mods/technic

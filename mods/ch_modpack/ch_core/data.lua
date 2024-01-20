@@ -62,6 +62,7 @@ local offline_charinfo_data_types = {
 	ap_level = "int", -- > 0
 	ap_xp = "int", -- >= 0
 	ap_version = "int", -- >= 0
+	domov = "string",
 	doslech = "int", -- >= 0
 	last_login = "int", -- >= 0, in seconds since 1. 1. 2000 UTC; 0 is invalid value
 	neshybat = "int", -- 0 = shýbat se při stisku Shift, 1 = neshýbat se
@@ -70,6 +71,7 @@ local offline_charinfo_data_types = {
 	pending_registration_privs = "string",
 	pending_registration_type = "string",
 	skryt_body = "int", -- 0 => zobrazit, 1 => skrýt
+	zacatek_kam = "int", -- 1 => Začátek, 2 => Masarykovo náměstí, 3 => Hlavní nádraží
 
 	trest = "int",
 }
@@ -77,7 +79,9 @@ local offline_charinfo_data_types = {
 local initial_offline_charinfo = {
 	ap_level = 1, -- must be > 0
 	ap_version = ch_core.verze_ap,
+	domov = "",
 	doslech = 50,
+	zacatek_kam = 1,
 }
 for k, t in pairs(offline_charinfo_data_types) do
 	if initial_offline_charinfo[k] == nil then

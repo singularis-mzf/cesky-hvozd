@@ -476,6 +476,43 @@ function ch_core.facedir_to_rotation(facedir)
 end
 
 --[[
+Vrátí seznam všech známých hráčských postav (včetně těch, které nejsou ve hře).
+Ke každé postavě vrátí strukturu {prihlasovaci, zobrazovací}.
+Seznam je seřazený podle zobrazovacího jména postavy.
+-- as_map - je-li true, vrátí seznam (neseřazený) jako mapu z přihlašovacího jména postavy
+-- include_privs - je-li true, každý záznam bude navíc obsahovat položky 'role' a 'privs';
+   tuto variantu nelze volat z inicializačního kódu
+]]
+function ch_core.get_all_players(as_map, include_privs)
+	if include_privs and not minetest.get_gametime() then
+		error("ch_core.get_all_players(): include_privs == true is allowed only when the game is running!")
+	end
+	local list, map = {}, {}
+	for prihlasovaci, offline_charinfo in pairs(ch_core.offline_charinfo) do
+		local exists = (not include_privs) or minetest.player_exists(prihlasovaci)
+		if exists then
+			local record = {
+				prihlasovaci = prihlasovaci,
+				zobrazovaci = ch_core.prihlasovaci_na_zobrazovaci(prihlasovaci),
+			}
+			if include_privs then
+				record.privs = minetest.get_player_privs(prihlasovaci)
+				record.role = get_player_role_by_privs(privs)
+			end
+			table.insert(list, record)
+			map[prihlasovaci] = record
+		end
+	end
+	if as_map then
+		return map
+	end
+	table.sort(list, function(a, b)
+		return ch_core.utf8_mensi_nez(a.zobrazovaci, b.zobrazovaci, true)
+	end)
+	return list
+end
+
+--[[
 Najde hráčskou postavu nejbližší k dané pozici. Parametr player_name_to_ignore
 je volitelný; je-li vyplněn, má obsahovat přihlašovací jméno postavy
 k ignorování.
@@ -1505,9 +1542,13 @@ function ch_core.vyhodit_predmet(player_name, stack, description)
 	return true
 end
 
-function ch_core.aktualni_cas()
+--[[
+	Vrátí strukturu popisující zadaný časový okamžik.
+	// raw_timestamp = int -- číslo jako z os.time()
+]]
+function ch_core.cas_na_strukturu(raw_timestamp)
 	local posun = ch_core.global_data.posun_casu
-	local tm = os.time() + posun
+	local tm = (raw_timestamp or os.time()) + posun
 	local t = os.date("!*t", tm)
 	local dst
 
@@ -1560,6 +1601,13 @@ function ch_core.aktualni_cas()
 		posun_cislo = time_offset_hours,
 		posun_text = "+0"..time_offset_hours..":00",
 	}
+end
+
+--[[
+	Vrátí strukturu popisující aktuální časový okamžik.
+]]
+function ch_core.aktualni_cas()
+	return ch_core.cas_na_strukturu(os.time())
 end
 
 -- KÓD INICIALIZACE
