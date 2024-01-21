@@ -12,6 +12,7 @@ local wa_node_name = "ch_extras:world_anchor"
 local wa_anchors_per_player_limit = 20
 local wa_blocks_per_player_limit = 640
 local wa_blocks_per_admin_limit = 720
+local wa_minutes_limit = 2880
 
 local player_name_to_active_anchors = {}
 
@@ -136,7 +137,7 @@ local function wa_enable(player_name, pos, node, rel_timeout)
 			end
 			-- 7. announce to the admin
 			if owner ~= "Administrace" and minetest.get_player_by_name("Administrace") then
-				ch_core.systemovy_kanal(owner, "Soukromá světová kotva na pozici "..posstr.." (vlastní: "..ch_core.prihlasovaci_na_zobrazovaci(owner)..") se zapnula a časovač vypnutí byl nastaven na čas "..timeout_str..". Vlastník/ice má nyní "..aktivnich_kotev(current_app_count + 1)..".")
+				ch_core.systemovy_kanal("Administrace", "Soukromá světová kotva na pozici "..posstr.." (vlastní: "..ch_core.prihlasovaci_na_zobrazovaci(owner)..") se zapnula a časovač vypnutí byl nastaven na čas "..timeout_str..". Vlastník/ice má nyní "..aktivnich_kotev(current_app_count + 1)..".")
 			end
 			return true
 		else
@@ -293,9 +294,10 @@ local function get_formspec(custom_state)
 	}
 	if custom_state.has_rights then
 		table.insert(formspec,
-			"label[0.3,4;Vypršet za:\n(max. 172800 = 48 hodin)]"..
-			"field[1.9,3.75;1.5,0.5;timeout;;172800]"..
-			"label[3.5,4;sekund.]")
+			"label[0.3,4;Vypršet za:\n(max. 2880 = 48 hodin)]"..
+			"field[1.9,3.75;1.5,0.5;timeout;;2880]"..
+			"label[3.5,4;minut.]"..
+			"tooltip[timeout;60 = 1 hodina\\, 120 = 2 hodiny\\, 300 = 5 hodin\\,\n720 = 12 hodn\\, 1440 = 24 hodin\\, 2880 = 48 hodin]")
 		if is_active then
 			table.insert(formspec,
 				"button[0.25,5;3.5,1;set;nastavit]"..
@@ -316,11 +318,12 @@ local function formspec_callback(custom_state, player, formname, fields)
 	if fields.set then
 		local player_role = player_info.role
 		local new_rel_timeout = math.ceil(tonumber(fields.timeout))
-		if new_rel_timeout <= 5 then
-			new_rel_timeout = 5
-		elseif new_rel_timeout > 172800 and player_role ~= "admin" then
-			new_rel_timeout = 172800
+		if new_rel_timeout <= 1 then
+			new_rel_timeout = 1
+		elseif new_rel_timeout > wa_minutes_limit and player_role ~= "admin" then
+			new_rel_timeout = wa_minutes_limit
 		end
+		new_rel_timeout = new_rel_timeout * 60 -- minutes to seconds
 		local node = minetest.get_node(custom_state.pos)
 		if node.param2 == active_param2 then
 			-- update timeout only
@@ -350,7 +353,7 @@ def = {
 	palette = "[combine:16x16:0,0=ch_core_white_pixel.png\\^[resize\\:16x16"..
 		":0,0=ch_core_white_pixel.png\\^[multiply\\:#cc0000"..
 		":4,0=ch_core_white_pixel.png\\^[multiply\\:#00ff00",
-	groups = {oddly_breakable_by_hand = 1, experimental = 1},
+	groups = {oddly_breakable_by_hand = 1},
 	is_ground_content = false,
 	place_param2 = 0,
 	drop = {
@@ -358,6 +361,7 @@ def = {
 			{items = {wa_node_name}, inherit_color = false},
 		},
 	},
+	sounds = default.node_sound_metal_defaults(),
 	_ch_help = "Soukromá světová kotva umožňuje dělnickým i kouzelnickým postavám dočasně ukotvit\n"..
 		"mapový blok (16x16 bloků) v paměti serveru, takže ten zůstane aktivní i poté,\n"..
 		"co z něj odejdou hráčské postavy a všechny stroje v něm poběží normálně.\n"..
@@ -422,3 +426,59 @@ minetest.register_craft{
 		{"technic:lead_block", "technic:lead_ingot", "technic:lead_block"},
 	},
 }
+
+local function cc_moje_kotvy(player_name, param)
+	local player_role = ch_core.get_player_role(player_name)
+	if player_role == nil or player_role == "new" then return false end
+	local result = {}
+	if player_role == "admin" then
+		for subplayer_name, anchors in pairs(player_name_to_active_anchors) do
+			for poshash, _ in pairs(anchors) do
+				local pos = minetest.get_position_from_hash(poshash)
+				local node = minetest.get_node_or_nil(pos)
+				if node ~= nil then
+					local meta = minetest.get_meta(pos)
+					local owner_viewname = ch_core.prihlasovaci_na_zobrazovaci(meta:get_string("owner"))
+					local timeout = meta:get_int("timeout")
+					if node.param2 == active_param2 and timeout > 0 then
+						timeout = wa_time_to_string(timeout)
+					else
+						timeout = "???"
+					end
+					table.insert(result, "- "..minetest.pos_to_string(pos).." ("..owner_viewname..") vyprší = "..timeout)
+				else
+					table.insert(result, "- "..minetest.pos_to_string(pos).." ???")
+				end
+			end
+		end
+	else
+		local anchors = player_name_to_active_anchors[player_name] or {}
+		local count = 0
+		for poshash, _ in pairs(anchors) do
+			local pos = minetest.get_position_from_hash(poshash)
+			local node = minetest.get_node_or_nil(pos)
+			if node ~= nil then
+				local meta = minetest.get_meta(pos)
+				local timeout = meta:get_int("timeout")
+				if node.param2 == active_param2 and timeout > 0 then
+					timeout = wa_time_to_string(timeout)
+				else
+					timeout = "???"
+				end
+				table.insert(result, "- "..minetest.pos_to_string(pos).." vyprší: "..timeout)
+			else
+				table.insert(result, "- "..minetest.pos_to_string(pos).." ???")
+			end
+			count = count + 1
+		end
+		table.insert(result, "Celkem: "..count.." kotev.")
+	end
+	ch_core.systemovy_kanal(player_name, table.concat(result, "\n"))
+end
+
+minetest.register_chatcommand("mojekotvy", {
+	params = "",
+	description = "Vypíše vám seznam vašich aktivních soukromých světových kotev",
+	privs = {ch_registered_player = true},
+	func = cc_moje_kotvy,
+})
