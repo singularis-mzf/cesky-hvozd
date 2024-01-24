@@ -145,21 +145,35 @@ local function domu(player_name)
 	return true
 end
 
+local zacatky
+
 -- /začátek
-local function zacatek(player_name)
+local function zacatek(player_name, _param)
+	local pos
+	if zacatky == nil then
+		-- Inicializovat zacatky:
+		zacatky = {
+			minetest.setting_get_pos("static_spawnpoint") or vector.new(0,0,0),
+		}
+		for j = 2, 128 do
+			pos = minetest.setting_get_pos("ch_zacatek_"..j)
+			if pos == nil then
+				break
+			end
+			zacatky[j] = pos
+		end
+	end
 	local offline_charinfo = ch_core.offline_charinfo[player_name]
 	if not offline_charinfo then
 		return false, "Interní údaje nebyly nalezeny!"
 	end
 	local player = minetest.get_player_by_name(player_name)
 	local player_pos = player and player:get_pos()
-	if player_pos then
-		player_pos = vector.new(player_pos.x, player_pos.y, player_pos.z)
-	else
+	if not player_pos then
 		return false
 	end
-	local is_registered = minetest.check_player_privs(player_name, "ch_registered_player")
-	local zacatek_pos = (is_registered and ch_core.registered_spawn or ch_core.unregistered_spawn) or minetest.setting_get_pos("static_spawnpoint") or vector.new(0,0,0)
+	local i = tonumber(offline_charinfo.zacatek_kam) or 1
+	local zacatek_pos = zacatky[i] or zacatky[1]
 	if vector.distance(player_pos, zacatek_pos) < 5 then
 		return false, "Jste příliš blízko počáteční pozice!"
 	end

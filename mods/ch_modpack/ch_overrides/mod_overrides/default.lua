@@ -7,6 +7,7 @@ if type(dirt_drop) == "table" then
 	if type(drop_items) ~= "table" then
 			error("Table expected as default:dirt drop.drop_items!")
 	end
+	drop_items = table.copy(drop_items)
 	local n = #drop_items
 	local empty_table = {}
 	local last_dirt_i
@@ -27,7 +28,7 @@ if type(dirt_drop) == "table" then
 	n = n + 3
 	if minetest.get_modpath("ch_extras") then
 		drop_items[n] = {items = {"ch_extras:clean_dirt"}, rarity = 5}
-		n = n + 1
+		-- n = n + 1
 	end
 	minetest.override_item("default:dirt", {drop = dirt_drop})
 else

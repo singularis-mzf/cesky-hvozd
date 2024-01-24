@@ -461,6 +461,7 @@ minetest.register_craft({
 })
 
 -- žezlo usnadnění
+--[[
 local function switch_creative(player, target_state)
 	if not player or not player:is_player() then
 		return
@@ -483,23 +484,52 @@ local function switch_creative(player, target_state)
 	end
 	ch_core.systemovy_kanal(player_name, message)
 end
+]]
+
+local function magic_wand_on_use(itemstack, user, pointed_thing)
+	local player_info = ch_core.normalize_player(user)
+	if player_info == nil or player_info.player == nil then
+		return
+	end
+	if player_info.role ~= "admin" and player_info.role ~= "creative" then
+		return
+	end
+	local was_creative = minetest.is_creative_enabled(player_info.player_name)
+	local player_controls = player_info.player:get_player_control()
+	if player_controls.aux1 then
+		-- disable
+		if not player_info.privs.creative then
+			ch_core.systemovy_kanal(player_info.player_name, "Režim usnadnění byl už vypnutý")
+			return
+		end
+		player_info.privs.creative = nil
+		minetest.set_player_privs(player_info.player_name, player_info.privs)
+		ch_core.systemovy_kanal(player_info.player_name, "Režim usnadnění vypnut")
+	else
+		-- enable
+		if player_info.privs.creative then
+			ch_core.systemovy_kanal(player_info.player_name, "Režim usnadnění byl už zapnutý")
+			return
+		end
+		player_info.privs.creative = true
+		minetest.set_player_privs(player_info.player_name, player_info.privs)
+		ch_core.systemovy_kanal(player_info.player_name, "Režim usnadnění zapnut")
+	end
+	if not was_creative then
+		itemstack:add_wear_by_uses(64)
+		return itemstack
+	end
+end
 
 def = {
-	description = "žezlo usnadnění",
-	_ch_help = "Postavám s právem privs nebo ch_switchable_creative umožňuje levým klikem\nsi zapnout či pravý klikem vypnout režim usnadnění hry podle potřeby.\nTento nástroj je určen výhradně pro kouzelnické postavy.",
-	_ch_help_group = "creative_zezlo",
-	inventory_image = "ch_extras_creative_inv.png",
-	on_use = function(itemstack, user, pointed_thing)
-		switch_creative(user, true)
-	end,
-	on_secondary_use = function(itemstack, user, pointed_thing)
-		switch_creative(user, false)
-	end,
-	on_place = function(itemstack, user, pointed_thing)
-		switch_creative(user, false)
-	end,
+	description = "kouzelnická hůlka",
+	_ch_help = "Kouzelnické postavy si mohou touto hůlkou snadno zapnout (levý klik)\n"..
+				"či vypnout (Aux1+levý klik) režim usnadnění. Pro dělnické postavy není ničím užitečná.",
+	inventory_image = "ch_core_kouzhul.png",
+	wield_image = "ch_core_kouzhul.png",
+	on_use = magic_wand_on_use,
 }
-minetest.register_craftitem("ch_extras:staff_of_creativity", def)
+minetest.register_tool("ch_extras:magic_wand", def)
 
 -- trojnástroj
 ch_help = "Trojnástroj v sobě kombinuje schopnosti lopaty, sekery a krumpáče (a také srpu).\nDokáže snadno těžit stejné druhy materiálu jako kterýkoliv z těchto nástrojů,\njeho životnost však není vyšší než životnost jednotlivého samostatného nástroje."

@@ -115,7 +115,6 @@ local function on_placenode(pos, newnode, placer, oldnode, itemstack, pointed_th
 					try_send_message("O", main_area_def.owner, main_area_id, "Postava "..intruder_viewname.." umístila blok typu "..newnode.name.." ve Vaší soukromé oblasti na pozici "..minetest.pos_to_string(pos))
 				elseif main_area_def.type == area_type_reserved and not minetest.check_player_privs(placer, "ch_trustful_player") then
 					-- reserved area
-					local owner_viewname = ch_core.prihlasovaci_na_zobrazovaci(main_area_def.owner)
 					try_send_message("I", player_name, main_area_id, "Tato oblast je rezervovaná. Než zde budete stavět, měl/a byste se domluvit s postavou jménem '"..owner_viewname.."'. Pokud jste se již domluvil/a, je to v pořádku a tuto zprávu můžete ignorovat.")
 					try_send_message("O", main_area_def.owner, main_area_id, "Postava "..intruder_viewname.." umístila blok typu "..newnode.name.." v rezervované oblasti na pozici "..minetest.pos_to_string(pos))
 				end
@@ -143,7 +142,6 @@ local function on_dignode(pos, oldnode, digger)
 					try_send_message("O", main_area_def.owner, main_area_id, "Postava "..intruder_viewname.." vytěžila blok typu "..oldnode.name.." ve Vaší soukromé oblasti na pozici "..minetest.pos_to_string(pos))
 				elseif main_area_def.type == area_type_reserved and not minetest.check_player_privs(digger, "ch_trustful_player") then
 					-- reserved area
-					local owner_viewname = ch_core.prihlasovaci_na_zobrazovaci(main_area_def.owner)
 					try_send_message("I", player_name, main_area_id, "Tato oblast je rezervovaná. Než zde budete těžit, měl/a byste se domluvit s postavou jménem '"..owner_viewname.."'. Pokud jste se již domluvil/a, je to v pořádku a tuto zprávu můžete ignorovat.")
 					try_send_message("O", main_area_def.owner, main_area_id, "Postava "..intruder_viewname.." vytěžila blok typu "..oldnode.name.." v rezervované oblasti na pozici "..minetest.pos_to_string(pos))
 				end

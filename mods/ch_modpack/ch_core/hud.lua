@@ -209,12 +209,22 @@ local function on_step(dtime)
 	end
 end
 
-local function clear_datetime_hud(player_name, param)
-	local hud_id = datetime_huds[player_name]
-	local player = minetest.get_player_by_name(player_name)
-	if hud_id and player then
-		player:hud_remove(hud_id)
+function ch_core.clear_datetime_hud(player)
+	local player_name = player:get_player_name()
+	local hud = datetime_huds[player_name]
+	if hud then
+		player:hud_remove(hud.hud_id)
 		datetime_huds[player_name] = nil
+		return true
+	else
+		return false
+	end
+end
+
+local function clear_datetime_hud(player_name, param)
+	local player = minetest.get_player_by_name(player_name)
+	if player ~= nil and ch_core.clear_datetime_hud(player) then
+		return true
 	else
 		ch_core.systemovy_kanal(player_name, "CHYBA: okno s datem a časem nenalezeno, možná už je skyto.")
 	end

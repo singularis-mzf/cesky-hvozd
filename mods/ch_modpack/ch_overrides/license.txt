@@ -1040,3 +1040,9 @@ dfcaverns_glow_mese.png
 	Author: FaceDeer
 	Source: https://github.com/FaceDeer/dfcaverns
 	License: MIT
+
+ch_overides_ui_settings.png
+	Authors: Breathe Icon Team: Sebastian Porta, Cory Kontros, Andrew Starr-Bochicchio
+	Source: https://commons.wikimedia.org/wiki/File:Breathe-preferences-desktop.svg
+	License: CC BY-SA 3.0
+	Adapted and modified by Singularis (modifications under CC BY-SA 3.0)

@@ -28,10 +28,12 @@ for _, name in ipairs(falling_nodes) do
 	if def then
 		groups = def.groups
 		if groups then
+			groups = table.copy(groups)
 			groups.falling_node = 1
 		else
-			def.groups = {falling_node = 1}
+			groups = {falling_node = 1}
 		end
+		minetest.override_item(name, {groups = groups})
 		counter = counter + 1
 	end
 end

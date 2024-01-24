@@ -1,5 +1,7 @@
 local themename = ""
 
+dreambuilder_hotbar = {}
+
 print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 if minetest.global_exists("dreambuilder_theme") then
@@ -42,6 +44,27 @@ minetest.register_on_joinplayer(function(player)
 		set_hotbar_size(player, tonumber(player_hotbar_settings[player:get_player_name()]) or hotbar_size_default)
 	end)
 end)
+
+function dreambuilder_hotbar.get_hotbar_size(player_name)
+	return tonumber(player_hotbar_settings[player_name])
+end
+
+function dreambuilder_hotbar.set_hotbar_size(player_name, s)
+	local player = minetest.get_player_by_name(player_name)
+	if player ~= nil then
+		s = set_hotbar_size(player, s)
+	else
+		s = validate_size(s)
+	end
+	player_hotbar_settings[player_name] = s
+	f = io.open(minetest.get_worldpath()..DIR_DELIM.."hotbar_settings","w")
+	if not f then
+		minetest.log("error","Failed to save hotbar settings")
+	else
+		f:write(minetest.serialize(player_hotbar_settings))
+		f:close()
+	end
+end
 
 local chatcommand_def = {
 	params = "[délka]",

@@ -26,7 +26,7 @@ local ivy_nodes = {
 	},
 }
 
-for name, info in pairs(ivy_nodes) do
+for name, _info in pairs(ivy_nodes) do
 	if minetest.registered_nodes[name] ~= nil then
 		if minetest.registered_nodes[name].paramtype2 ~= "facedir" then
 			error("Only facedir ivy nodes are currently supported! ("..name..")")

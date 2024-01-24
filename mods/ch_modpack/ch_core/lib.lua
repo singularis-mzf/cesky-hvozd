@@ -497,7 +497,7 @@ function ch_core.get_all_players(as_map, include_privs)
 			}
 			if include_privs then
 				record.privs = minetest.get_player_privs(prihlasovaci)
-				record.role = get_player_role_by_privs(privs)
+				record.role = get_player_role_by_privs(record.privs)
 			end
 			table.insert(list, record)
 			map[prihlasovaci] = record

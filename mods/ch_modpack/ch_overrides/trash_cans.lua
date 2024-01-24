@@ -6,8 +6,6 @@ local trash_cans = {
 	["trash_can:trash_can_wooden"] = 6,
 }
 
-local has_trash_can = minetest.get_modpath("trash_can")
-
 local F = minetest.formspec_escape
 local ifthenelse = ch_core.ifthenelse
 
@@ -72,7 +70,6 @@ local function formspec_callback(custom_state, player, formname, fields)
 		return
 	end
 	local inv = minetest.get_meta(custom_state.pos):get_inventory()
-	local empty_list = {}
 	if player_role == "admin" then
 		if not inv:is_empty("survival") then
 			ch_core.vyhodit_inventar(player_name, inv, "survival", "survival trash can "..minetest.get_node(custom_state.pos).name.." @ "..minetest.pos_to_string(custom_state.pos))
@@ -152,7 +149,7 @@ local override = {
 
 local trash_node_names = {}
 
-for item_name, inv_size in pairs(trash_cans) do
+for item_name, _inv_size in pairs(trash_cans) do
 	if minetest.registered_nodes[item_name] then
 		minetest.override_item(item_name, override)
 		table.insert(trash_node_names, item_name)
@@ -160,10 +157,9 @@ for item_name, inv_size in pairs(trash_cans) do
 end
 
 local function on_lbm(pos, node, dtime_s)
-	local inv_size = trash_cans[node.name] or 6
+	-- local inv_size = trash_cans[node.name] or 6
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
-	local empty_list = {}
 	local context_description = "Trash can LBM @ "..minetest.pos_to_string(pos)
 
 	if inv:get_size("survival") == 0 then

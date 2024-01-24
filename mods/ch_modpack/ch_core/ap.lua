@@ -14,6 +14,8 @@ local levels = {
 	{base = 0, count = 500, next = 500},
 }
 
+local ifthenelse = ch_core.ifthenelse
+
 local function add_level(level, count)
 	local last_level_number = #levels
 	local last_level = levels[last_level_number]
@@ -491,6 +493,32 @@ def = {
 }
 minetest.register_chatcommand("body", def)
 
+--[[
+	Zobrazí či skryje ukazatel úrovní a bodů. Postava nemusí být zrovna
+	ve hře.
+]]
+function ch_core.showhide_ap_hud(player_name, show)
+	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	if not offline_charinfo then
+		return false
+	end
+	local new_value = ifthenelse(show, 0, 1)
+	if offline_charinfo.skryt_body == new_value then
+		return nil
+	end
+	offline_charinfo.skryt_body = new_value
+	ch_core.save_offline_charinfo(player_name, "skryt_body")
+	local player = minetest.get_player_by_name(player_name)
+	if player ~= nil then
+		if show then
+			update_xp_hud(player, player_name, offline_charinfo)
+		else
+			hb.hide_hudbar(player, "ch_xp")
+		end
+	end
+	return true
+end
+
 -- HUD
 if minetest.get_modpath("hudbars") then
 	local hudbar_formatstring = "úr. @1: @2/@3"
@@ -520,17 +548,14 @@ if minetest.get_modpath("hudbars") then
 	def = {
 		description = "Skryje hráči/ce ukazatel úrovní a bodů, je-li zobrazen.",
 		func = function(player_name, param)
-			local offline_charinfo = ch_core.offline_charinfo[player_name]
-			if not offline_charinfo then
+			local result = ch_core.showhide_ap_hud(player_name, false)
+			if result == false then
 				return false, "Vnitřní chyba"
-			end
-			if offline_charinfo.skryt_body == 1 then
+			elseif result == nil then
 				return false, "Ukazatel úrovně a bodů je již skryt."
+			else
+				return true, "Ukazatel úrovně a bodů úspěšně skryt."
 			end
-			offline_charinfo.skryt_body = 1
-			ch_core.save_offline_charinfo(player_name, "skryt_body")
-			hb.hide_hudbar(minetest.get_player_by_name(player_name), "ch_xp")
-			return true, "Ukazatel úrovně a bodů úspěšně skryt."
 		end,
 	}
 
@@ -540,17 +565,14 @@ if minetest.get_modpath("hudbars") then
 	def = {
 		description = "Zobrazí hráči/ce ukazatel úrovní a bodů, je-li skryt.",
 		func = function(player_name, param)
-			local offline_charinfo = ch_core.offline_charinfo[player_name]
-			if not offline_charinfo then
+			local result = ch_core.showhide_ap_hud(player_name, true)
+			if result == false then
 				return false, "Vnitřní chyba"
-			end
-			if offline_charinfo.skryt_body == 0 then
+			elseif result == nil then
 				return false, "Ukazatel úrovně a bodů je již zobrazen."
+			else
+				return true, "Ukazatel úrovně a bodů úspěšně zobrazen."
 			end
-			offline_charinfo.skryt_body = 0
-			ch_core.save_offline_charinfo(player_name, "skryt_body")
-			update_xp_hud(minetest.get_player_by_name(player_name), player_name, offline_charinfo)
-			return true, "Ukazatel úrovně a bodů úspěšně zobrazen."
 		end,
 	}
 

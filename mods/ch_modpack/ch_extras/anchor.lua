@@ -15,6 +15,9 @@ local wa_blocks_per_admin_limit = 720
 local wa_minutes_limit = 2880
 
 local player_name_to_active_anchors = {}
+local player_name_to_formspec_state = {}
+
+local get_formspec
 
 local function log(message, level)
 	return minetest.log(level or "action", log_prefix..message)
@@ -139,6 +142,12 @@ local function wa_enable(player_name, pos, node, rel_timeout)
 			if owner ~= "Administrace" and minetest.get_player_by_name("Administrace") then
 				ch_core.systemovy_kanal("Administrace", "Soukromá světová kotva na pozici "..posstr.." (vlastní: "..ch_core.prihlasovaci_na_zobrazovaci(owner)..") se zapnula a časovač vypnutí byl nastaven na čas "..timeout_str..". Vlastník/ice má nyní "..aktivnich_kotev(current_app_count + 1)..".")
 			end
+			-- 8. update formspecs
+			for _, custom_state in pairs(player_name_to_formspec_state) do
+				if vector.equals(pos, custom_state.pos) then
+					ch_core.update_formspec(custom_state.player_name, "ch_extras:anchor", get_formspec(custom_state))
+				end
+			end
 			return true
 		else
 			minetest.log("warning", "Forceloading at "..minetest.pos_to_string(pos).." failed!")
@@ -185,6 +194,12 @@ local function wa_disable(pos, node, meta)
 	if owner ~= "Administrace" and minetest.get_player_by_name("Administrace") then
 		ch_core.systemovy_kanal(owner, "Soukromá světová kotva na pozici "..posstr.." (vlastní: "..ch_core.prihlasovaci_na_zobrazovaci(owner)..") se vypnula. Vlastník/ice má nově "..aktivnich_kotev(new_app_count)..".")
 	end
+	-- 8. update formspecs
+	for _, custom_state in pairs(player_name_to_formspec_state) do
+		if vector.equals(pos, custom_state.pos) then
+			ch_core.update_formspec(custom_state.player_name, "ch_extras:anchor", get_formspec(custom_state))
+		end
+	end
 	return true
 end
 
@@ -221,6 +236,12 @@ local function on_wa_lbm(pos, node, dtime_s)
 	wa_add_record(meta, "akt", now)
 	wa_update_infotext(node, meta, now)
 	wa_start_watchdog(pos)
+
+	if node.param2 == active_param2 then
+		local poshash = minetest.hash_node_position(pos)
+		local anchors_per_player = ch_core.get_or_add(player_name_to_active_anchors, owner)
+		anchors_per_player[poshash] = pos
+	end
 end
 
 -- ABM:
@@ -251,7 +272,7 @@ custom_state = {
 	has_rights = bool,
 }
 ]]
-local function get_formspec(custom_state)
+function get_formspec(custom_state)
 	local pos, owner = custom_state.pos, custom_state.owner
 	local node = minetest.get_node(pos)
 	local meta = minetest.get_meta(pos)
@@ -263,9 +284,9 @@ local function get_formspec(custom_state)
 	local state_message
 	if is_active then
 		local timeout = meta:get_int("timeout")
-		state_message = "table[0.15,1.8;8.7,2;;#00ff00,Kotva je zapnutá\\,,#ffffff,časovač vyprší: "..F(wa_time_to_string(timeout))..";1]"
+		state_message = "table[0.15,1.8;9,2;;#00ff00,Kotva je zapnutá\\,,#ffffff,časovač vyprší: "..F(wa_time_to_string(timeout))..";1]"
 	else
-		state_message = "table[0.15,1.8;8.7,2;;#cc0000,Kotva je vypnutá.,#ffffff,;1]"
+		state_message = "table[0.15,1.8;9,2;;#cc0000,Kotva je vypnutá.,#ffffff,;1]"
 	end
 	local area_min = vector.offset(pos, -(pos.x % 16), -(pos.y % 16), -(pos.z % 16))
 	local area_max = vector.offset(area_min, 15, 15, 15)
@@ -315,25 +336,34 @@ local function formspec_callback(custom_state, player, formname, fields)
 	if player_info.player_name ~= custom_state.player_name or not custom_state.has_rights then
 		return
 	end
+	local player_name = custom_state.player_name
+	if fields.quit then
+		player_name_to_formspec_state[player_name] = nil
+	end
 	if fields.set then
 		local player_role = player_info.role
-		local new_rel_timeout = math.ceil(tonumber(fields.timeout))
-		if new_rel_timeout <= 1 then
-			new_rel_timeout = 1
-		elseif new_rel_timeout > wa_minutes_limit and player_role ~= "admin" then
-			new_rel_timeout = wa_minutes_limit
+		local wa_time = get_wa_time()
+		local new_rel_timeout
+		if player_info.role == "admin" and fields.timeout == "max" then
+			new_rel_timeout = 2147483640 - wa_time
+		else
+			new_rel_timeout = math.ceil(tonumber(fields.timeout))
+			if new_rel_timeout <= 1 then
+				new_rel_timeout = 1
+			elseif new_rel_timeout > wa_minutes_limit and player_role ~= "admin" then
+				new_rel_timeout = wa_minutes_limit
+			end
+			new_rel_timeout = new_rel_timeout * 60 -- minutes to seconds
 		end
-		new_rel_timeout = new_rel_timeout * 60 -- minutes to seconds
 		local node = minetest.get_node(custom_state.pos)
 		if node.param2 == active_param2 then
 			-- update timeout only
 			local pos = vector.copy(custom_state.pos)
-			local wa_time = get_wa_time()
 			local meta = minetest.get_meta(pos)
 			meta:set_int("timeout", wa_time + new_rel_timeout)
 			wa_update_infotext(node, meta, wa_time)
-		elseif not wa_enable(custom_state.player_name, vector.copy(custom_state.pos), minetest.get_node(custom_state.pos), new_rel_timeout, player_role == "admin") then
-			ch_core.systemovy_kanal(player:get_player_name(), "Pokus o zapnutí soukromé světové kotvy selhal.")
+		elseif not wa_enable(player_name, vector.copy(custom_state.pos), minetest.get_node(custom_state.pos), new_rel_timeout, player_role == "admin") then
+			ch_core.systemovy_kanal(player_name, "Pokus o zapnutí soukromé světové kotvy selhal.")
 			return
 		end
 	elseif fields.vyp then
@@ -394,6 +424,7 @@ def = {
 			player_name = player_info.player_name,
 			has_rights = player_info.player_name == owner or player_info.role == "admin",
 		}
+		player_name_to_formspec_state[player_info.player_name] = custom_state
 		ch_core.show_formspec(clicker, "ch_extras:anchor", get_formspec(custom_state), formspec_callback, custom_state, {})
 		return
 	end,

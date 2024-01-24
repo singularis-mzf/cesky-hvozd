@@ -1,8 +1,8 @@
 local music_cache = {}
 local music_cache_counter = 0
 local music_cache_limit = 256
-local min_delay = 0.1
-local normal_delay = 0.5
+-- local min_delay = 0.1
+-- local normal_delay = 0.5
 local piano_states = {}
 
 -- formát instrukce:

@@ -134,6 +134,14 @@ local function on_joinplayer(player, last_login)
 
 	player:set_nametag_attributes(ch_core.compute_player_nametag(online_charinfo, offline_charinfo))
 	player:hud_set_flags({minimap = false, minimap_radar = false})
+
+	-- Reset the creative priv
+	local privs = minetest.get_player_privs(player_name)
+	if privs.creative then
+		privs.creative = nil
+		minetest.set_player_privs(player_name, privs)
+	end
+
 	minetest.after(0.5, function() ch_core.set_pryc(player_name, {no_hud = true, silently = true}) end)
 	minetest.after(2, after_joinplayer, player_name)
 	return true

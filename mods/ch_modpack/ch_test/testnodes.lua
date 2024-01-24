@@ -175,3 +175,89 @@ for paramtype2, ptdef in pairs(paramtypes) do
 	end
 	minetest.register_node("ch_test:test_"..paramtype2, def)
 end
+
+
+-- Woodpiles:
+
+local function generate_pile_textures()
+	local indices = {0, 32, 64}
+	local indices2 = {0,}
+	local top_pile = {"[combine:96x96"}
+	local side_pile = {"[combine:96x96"}
+
+	for i = 0, 64, 32 do
+		for j = 0, 64, 32 do
+			table.insert(top_pile, ":"..i..","..j.."=@side\\^[resize\\:32x32")
+			table.insert(side_pile, ":"..i..","..j.."=@top\\^[resize\\:32x32") -- \\^(@side\\^[resize\\:32x32\\^[transformR90\\^[mask\\:ch_test_pile_mask.png)
+		end
+	end
+	for i = 0, 64, 32 do
+		table.insert(top_pile, ":"..i..",0=ch_test_pile_overlay.png")
+		table.insert(side_pile, ":"..i..",0=ch_test_pile_overlay.png")
+	end
+	for i = 0, 64, 32 do
+		for j = 0, 64, 32 do
+			table.insert(side_pile, ":"..i..","..j.."=(@side\\^[resize\\:32x32\\^[transformR90\\^[mask\\:ch_test_pile_mask.png)")
+		end
+	end
+	table.insert(side_pile, "^[transformR90^[combine:96x96")
+	for i = 0, 80, 16 do
+		table.insert(side_pile, ":"..i..",0=ch_test_pile_overlay.png")
+	end
+	table.insert(side_pile, "^[transformR270")
+	return table.concat(top_pile), table.concat(side_pile)
+end
+
+local top_pile, side_pile = generate_pile_textures()
+
+top_pile = top_pile:gsub("@top", "default_jungletree_top.png"):gsub("@side", "default_jungletree.png")
+side_pile = side_pile:gsub("@top", "default_jungletree_top.png"):gsub("@side", "default_jungletree.png")
+
+local tile_top = {name = top_pile, backface_culling = true}
+local tile_top_R90 = {name = top_pile.."^[transformR90", backface_culling = true}
+local tile_top_R270 = {name = top_pile.."^[transformR270", backface_culling = true}
+local tile_side = {name = side_pile, backface_culling = true}
+local tile_side_R180 = {name = side_pile.."^[transformR180", backface_culling = true}
+
+local tiles_even = {
+	tile_top, -- top (+Y)
+	tile_top_R90, -- bottom (-Y)
+	tile_side, -- front (+X)
+	tile_side, -- back (-X)
+	tile_side_R180, -- right (+Z)
+	tile_side_R180, -- left (-Z)
+}
+local tiles_odd = {
+	tile_top_R270, -- top (+Y)
+	tile_top_R90, -- bottom (-Y)
+	tile_side, -- front (+X)
+	tile_side, -- back (-X)
+	tile_side_R180, -- right (+Z)
+	tile_side_R180, -- left (-Z)
+}
+local common_def = {
+	drawtype = "nodebox",
+	paramtype = "light",
+	paramtype2 = "4dir", -- => color4dir
+	groups = {oddly_breakable_by_hand = 1, wood_pile = 1},
+	is_ground_content = false,
+	sounds = default.node_sound_wood_defaults(),
+}
+
+for i = 1, 6 do
+	local box = {
+		type = "fixed",
+		fixed =  {-0.5, -0.5, -0.5, 0.5, -0.5 + i / 6, 0.5},
+	}
+	local def = table.copy(common_def)
+	def.description = "testovací hromada dřeva "..i.." [EXPERIMENTÁLNÍ]"
+	if i % 2 == 0 then
+		def.tiles = tiles_even
+	else
+		def.tiles = tiles_odd
+	end
+	def.node_box = box
+	def.selection_box = box
+	def.collision_box = box
+	minetest.register_node("ch_test:test_woodpile_"..i, def)
+end

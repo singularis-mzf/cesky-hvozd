@@ -34,6 +34,7 @@ dofile(modpath.."/security.lua")
 dofile(modpath.."/shelves.lua")
 dofile(modpath.."/trash_cans.lua")
 dofile(modpath.."/tool_breaking.lua")
+dofile(modpath.."/ui_settings.lua")
 
 -- log giveme
 

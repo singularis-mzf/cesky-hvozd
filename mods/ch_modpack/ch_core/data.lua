@@ -70,6 +70,7 @@ local offline_charinfo_data_types = {
 	past_playtime = "float", -- in seconds
 	pending_registration_privs = "string",
 	pending_registration_type = "string",
+	rezim_plateb = "int", -- >= 0, význam podle módu ch_bank
 	skryt_body = "int", -- 0 => zobrazit, 1 => skrýt
 	zacatek_kam = "int", -- 1 => Začátek, 2 => Masarykovo náměstí, 3 => Hlavní nádraží
 
@@ -81,6 +82,7 @@ local initial_offline_charinfo = {
 	ap_version = ch_core.verze_ap,
 	domov = "",
 	doslech = 50,
+	rezim_plateb = 0,
 	zacatek_kam = 1,
 }
 for k, t in pairs(offline_charinfo_data_types) do
@@ -440,6 +442,18 @@ local function on_shutdown()
 	end
 end
 
+function ch_core.clear_help(player)
+	local player_name = player:get_player_name()
+	local online_charinfo = ch_core.online_charinfo[player_name]
+	if online_charinfo then
+		online_charinfo.navody = {}
+		player:get_meta():set_string("navody", minetest.serialize(online_charinfo.navody))
+		return true
+	else
+		return false
+	end
+end
+
 --[[
 	Otestuje, zda podle online_charinfo má dané postavě být zobrazený
 	v četu návod k položce daného názvu. Pokud ano, nastaví příznak, aby se
@@ -468,6 +482,23 @@ function ch_core.should_show_help(player, online_charinfo, item_name)
 	return nil
 end
 
+function ch_core.nastavit_shybani(player_name, shybat)
+	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	if offline_charinfo == nil then
+		minetest.log("error", "ch_core.nastavit_shybani(): Expected offline charinfo for player "..player_name.." not found!")
+		return false
+	end
+	local new_state
+	if shybat then
+		new_state = 0
+	else
+		new_state = 1
+	end
+	offline_charinfo.neshybat = new_state
+	ch_core.save_offline_charinfo(player_name, "neshybat")
+	return true
+end
+
 minetest.register_on_joinplayer(on_joinplayer)
 minetest.register_on_leaveplayer(on_leaveplayer)
 minetest.register_on_shutdown(on_shutdown)
@@ -475,19 +506,10 @@ minetest.register_on_shutdown(on_shutdown)
 local def = {
 	description = "Smaže údaje o tom, ke kterým předmětům již byly postavě zobrazeny nápovědy, takže budou znovu zobrazovány nápovědy ke všem předmětům.",
 	func = function(player_name, param)
-		local online_charinfo = ch_core.online_charinfo[player_name]
-		local player = minetest.get_player_by_name(player_name)
-		if online_charinfo then
-			online_charinfo.navody = {}
-			if player then
-				player:get_meta():set_string("navody", minetest.serialize(online_charinfo.navody))
-			else
-				minetest.log("error", "Příkaz /návodyznovu nenašel objekt postavy "..player_name.."!")
-				return false, "Vnitřní chyba serveru"
-			end
+		if ch_core.clear_help(minetest.get_player_by_name(player_name)) then
 			return true, "Údaje smazány."
 		else
-			minetest.log("error", "Příkaz /návodyznovu nenašel online_charinfo postavy "..player_name.."!")
+			minetest.log("error", "/návodyznovu: vnitřní chyba serveru ("..player_name..")!")
 			return false, "Vnitřní chyba serveru"
 		end
 	end,
@@ -535,23 +557,16 @@ def = {
 	description = "Trvale vypne či zapne shýbání postavy při držení Shiftu.",
 	params = "<ano|ne>",
 	func = function(player_name, param)
-		local new_state
-		if param == "ano" then
-			new_state = 0
-		elseif param == "ne" then
-			new_state = 1
-		else
+		if param ~= "ano" and param ~= "ne" then
 			return false, "Chybná syntaxe."
 		end
-		local offline_charinfo = ch_core.offline_charinfo[player_name]
-		if offline_charinfo == nil then
+		if ch_core.nastavit_shybani(player_name, param == "ano") then
+			minetest.chat_send_player(player_name, "*** Shýbání postavy "..(param == "ne" and "vypnuto" or "zapnuto")..".")
+			return true
+		else
 			minetest.log("error", "/shybat: Expected offline charinfo for player "..player_name.." not found!")
 			return false, "Vnitřní chyba serveru: Data postavy nenalezena."
 		end
-		offline_charinfo.neshybat = new_state
-		ch_core.save_offline_charinfo(player_name, "neshybat")
-		minetest.chat_send_player(player_name, "*** Shýbání postavy "..(new_state == 1 and "vypnuto" or "zapnuto")..".")
-		return true
 	end,
 }
 

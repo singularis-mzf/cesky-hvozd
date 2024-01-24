@@ -15,7 +15,7 @@ local default_chests = {
 	["default:chest_locked_open"] = locked_chest,
 }
 
-local function function_only_for_registered(f, i, forbidden_result)
+local function function_only_for_registered(f, i, inner_function)
 	if not f then
 		error("f is required")
 	end
@@ -23,9 +23,16 @@ local function function_only_for_registered(f, i, forbidden_result)
 		local args = {...}
 		-- minetest.log("warning", "Will test this for player_privs: "..dump2({args[i]}))
 		if not minetest.check_player_privs(args[i], "ch_registered_player") then
-			return forbidden_result
+			return 0
 		else
-			return f(...)
+			local result = f(...)
+			if result == 0 then
+				return 0
+			end
+			if inner_function then
+				result = inner_function(...)
+			end
+			return result
 		end
 	end
 end
@@ -46,9 +53,9 @@ for chest_name, chest_def in pairs(default_chests) do
 		local old_allow_metadata_inventory_put = ndef.allow_metadata_inventory_put
 		local old_allow_metadata_inventory_take = ndef.allow_metadata_inventory_take
 		local override = {
-			allow_metadata_inventory_move = function_only_for_registered(ndef.allow_metadata_inventory_move or default_allow_metadata_inventory_move, 7, 0),
-			allow_metadata_inventory_put = function_only_for_registered(ndef.allow_metadata_inventory_put or default_allow_metadata_inventory_put_or_take, 5, 0),
-			allow_metadata_inventory_take = function_only_for_registered(ndef.allow_metadata_inventory_take or default_allow_metadata_inventory_put_or_take, 5, 0),
+			allow_metadata_inventory_move = function_only_for_registered(ndef.allow_metadata_inventory_move or default_allow_metadata_inventory_move, 7, old_allow_metadata_inventory_move),
+			allow_metadata_inventory_put = function_only_for_registered(ndef.allow_metadata_inventory_put or default_allow_metadata_inventory_put_or_take, 5, old_allow_metadata_inventory_put),
+			allow_metadata_inventory_take = function_only_for_registered(ndef.allow_metadata_inventory_take or default_allow_metadata_inventory_put_or_take, 5, old_allow_metadata_inventory_take),
 		}
 		local old_after_place_node = ndef.after_place_node
 		if chest_def.type == "locked" then

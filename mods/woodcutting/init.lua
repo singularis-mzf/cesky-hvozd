@@ -27,6 +27,39 @@ for i = 1, 32768 do
 	data_buffer[i] = 0
 end
 
+-- New API:
+function woodcutting.is_disabled_by_player(player_name)
+	return mod_storage:get_string(player_name .. "_disabled") == "true"
+end
+
+function woodcutting.disable_for_player(player_name)
+	if woodcutting.is_disabled_by_player(player_name) then
+		return false
+	end
+	local player = minetest.get_player_by_name(player_name)
+	if player ~= nil then
+		disabled_by_player[player_name] = true
+	end
+	mod_storage:set_string(player_name .. "_disabled", "true")
+	if player ~= nil then
+		local process = woodcutting.get_process(player_name)
+		if process then
+			process:stop_process()
+		end
+	end
+	return true
+end
+
+function woodcutting.enable_for_player(player_name)
+	if woodcutting.is_disabled_by_player(player_name) then
+		disabled_by_player[player_name] = nil
+		mod_storage:set_string(player_name .. "_disabled", "")
+		return true
+	else
+		return false
+	end
+end
+
 local woodcutting_class = {}
 woodcutting_class.__index = woodcutting_class
 
@@ -424,16 +457,10 @@ local def = {
 	func = function(player_name)
 		local is_currently_disabled = disabled_by_player[player_name]
 		if is_currently_disabled then
-			disabled_by_player[player_name] = nil
-			mod_storage:set_string(player_name .. "_disabled", "")
+			woodcutting.enable_for_player(player_name)
 			return true, "Dřevorubectví zapnuto."
 		else
-			disabled_by_player[player_name] = true
-			mod_storage:set_string(player_name .. "_disabled", "true")
-			local process = woodcutting.get_process(player_name)
-			if process then
-				process:stop_process()
-			end
+			woodcutting.disable_for_player(player_name)
 			return true, "Dřevorubectví vypnuto."
 		end
 	end

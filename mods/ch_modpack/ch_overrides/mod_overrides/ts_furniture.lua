@@ -57,16 +57,16 @@ end
 -- config {x, y, z, x_max, rotation}
 
 local function sednout(zidle_pos, zidle_node, player, config)
-	if not player or not player:is_player() or not zidle_pos or not zidle_node or not default.player_get_animation then
+	if not player or not player:is_player() or not zidle_pos or not zidle_node or not player_api.player_get_animation then
 		return false
 	end
 	local player_name = player:get_player_name()
-	local current_anim = default.player_get_animation(player) or ""
+	local current_anim = player_api.player_get_animation(player) or ""
 	local zero_vector = vector.zero()
 
 	if current_anim == "sit" or current_anim == "sedni" then
 		-- postava již sedí => zvednout se
-		default.player_attached[player_name] = false
+		player_api.player_attached[player_name] = false
 		emote.stop(player)
 		player:set_eye_offset(zero_vector, zero_vector)
 		return nil
@@ -79,7 +79,7 @@ local function sednout(zidle_pos, zidle_node, player, config)
 
 	local paramtype2 = zidle_def.paramtype2 or "normal"
 	local zidle_dir, rotation
-	if paramtype2 == "facedir" then
+	if paramtype2 == "facedir" or paramtype2 == "4dir" then
 		zidle_dir = minetest.facedir_to_dir(zidle_node.param2)
 		rotation = vector.dir_to_rotation(zidle_dir)
 		rotation.y = rotation.y + math.pi
@@ -95,8 +95,12 @@ local function sednout(zidle_pos, zidle_node, player, config)
 		zidle_dir = minetest.wallmounted_to_dir(zidle_node.param2 - minetest.strip_param2_color(zidle_node.param2, paramtype2))
 		rotation = vector.dir_to_rotation(zidle_dir)
 		rotation.y = rotation.y + math.pi / 2
-	else
-		zidle_dir = vector.new(0, 0, 1)
+	elseif paramtype2 == "color4dir" then
+		zidle_dir = minetest.facedir_to_dir(zidle_node.param2 % 4)
+		rotation = vector.dir_to_rotation(zidle_dir)
+		rotation.y = rotation.y + math.pi
+	-- else
+		-- zidle_dir = vector.new(0, 0, 1)
 	end
 	if config.rotation then
 		rotation.y = rotation.y + config.rotation

@@ -140,14 +140,6 @@ local function get_infotext(pos, node, meta)
 	return title..desc1.."\n"..desc2
 end
 
-local function meta_get_bool_string(meta, name)
-	if meta:get_int(name) ~= 0 then
-		return "true"
-	else
-		return "false"
-	end
-end
-
 local formspec_header = ch_core.formspec_header({
 	formspec_version = 5,
 	size = {13, 10.25},
@@ -181,7 +173,7 @@ local function get_formspec(player_name, pos, node, meta, do_edit, message)
 		table.insert(formspec,
 			"tableoptions[background=#00000000;highlight=#00000000;border=false]"..
 			"tablecolumns[color;text]"..
-			"table[0.25,0.25;12.5,0.5;;#00FF00,"..F(title)..";]")
+			"table[0.25,0.25;12.5,0.5;;"..title_color..","..F(title)..";]")
 		if has_owner_rights then
 			table.insert(formspec,
 				"button[10.5,0.3;2.25,0.5;upravit;upravit titulek]")
@@ -475,9 +467,8 @@ local function formspec_callback(custom_state, player, formname, fields)
 		local new_mode = dropdown_index_to_mode_number[tonumber(fields.rezim) or 0]
 		if new_mode ~= nil then
 			if new_mode ~= mode then
-				local meta = minetest.get_meta(custom_state.pos)
 				meta:set_int("mode", new_mode)
-				mode = new_mode
+				-- mode = new_mode
 			end
 		else
 			minetest.log("warning", "Unknown fields.rezim '"..(fields.rezim or "nil").."' in formspec_callback for a shelf!")
@@ -567,7 +558,6 @@ local function on_metadata_inventory_take(pos, listname, index, stack, player)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	local mode = meta:get_int("mode")
-	local owner = meta:get_string("owner")
 	local book_level = minetest.get_item_group(stack:get_name(), "book")
 	if mode == MODE_LIBRARY and shelf_type == "books" and book_level ~= 0 then
 		-- activate library-functionality
@@ -656,7 +646,7 @@ minetest.register_craft{
 
 -- Register for wrench
 if minetest.get_modpath("wrench") then
-	local def = {
+	def = {
 		lists = {"items"},
 		metas = {
 			owner = wrench.META_TYPE_STRING,
