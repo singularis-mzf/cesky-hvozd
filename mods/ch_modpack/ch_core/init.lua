@@ -17,6 +17,25 @@ ch_core = {
 	},
 	trash_one_sound = "", -- zvuk k přehrání při mazání jednoho předmětu
 	trash_all_sound = "", -- zvuk k přehrání při mazání více předmětů
+	colors = {
+		black = minetest.get_color_escape_sequence("#000000"),
+		blue = minetest.get_color_escape_sequence("#0000AA"),
+		green = minetest.get_color_escape_sequence("#00AA00"),
+		cyan = minetest.get_color_escape_sequence("#00AAAA"),
+		red = minetest.get_color_escape_sequence("#AA0000"),
+		magenta = minetest.get_color_escape_sequence("#AA00AA"),
+		brown = minetest.get_color_escape_sequence("#AA5500"),
+		yellow = minetest.get_color_escape_sequence("#AAAA00"),
+		light_gray = minetest.get_color_escape_sequence("#CCCCCC"),
+		dark_gray = minetest.get_color_escape_sequence("#555555"),
+		light_blue = minetest.get_color_escape_sequence("#5555FF"),
+		light_green = minetest.get_color_escape_sequence("#55FF55"),
+		light_cyan = minetest.get_color_escape_sequence("#55FFFF"),
+		light_red = minetest.get_color_escape_sequence("#FF5555"),
+		light_magenta = minetest.get_color_escape_sequence("#FF55FF"),
+		light_yellow = minetest.get_color_escape_sequence("#FFFF55"),
+		white = minetest.get_color_escape_sequence("#FFFFFF"),
+	},
 }
 
 function ch_core.open_submod(submod, required_submods)
@@ -33,6 +52,7 @@ function ch_core.close_submod(submod)
 end
 
 dofile(modpath .. "/privs.lua")
+dofile(modpath .. "/markers.lua")
 dofile(modpath .. "/data.lua")
 dofile(modpath .. "/barvy_linek.lua")
 dofile(modpath .. "/lib.lua") -- : data

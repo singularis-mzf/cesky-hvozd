@@ -1,5 +1,6 @@
 local F = minetest.formspec_escape
 local ifthenelse = ch_core.ifthenelse
+local green, red, white, light_green, light_red = ch_core.colors.green, ch_core.colors.red, ch_core.colors.white, ch_core.colors.light_green, ch_core.colors.light_red
 
 local inactive_param2 = 0
 local active_param2 = 4
@@ -65,7 +66,7 @@ local function count_anchors(map)
 	return count
 end
 
-local function wa_update_infotext(node, meta, wa_time)
+local function wa_update_infotext(pos, node, meta, wa_time)
 	local owner = meta:get_string("owner")
 	if owner == "" then return end
 	if wa_time == nil then
@@ -82,7 +83,7 @@ local function wa_update_infotext(node, meta, wa_time)
 	else
 		s1, s4 = "světová kotva je vypnutá", ""
 	end
-	meta:set_string("infotext", s1..s2..s3..s4)
+	meta:set_string("infotext", s1..s2..s3..s4.."\n"..minetest.pos_to_string(pos))
 end
 
 local function aktivnich_kotev(n)
@@ -131,7 +132,7 @@ local function wa_enable(player_name, pos, node, rel_timeout)
 			local timeout_str = wa_time_to_string(timeout)
 			-- 4. update metadata
 			wa_add_record(meta, "zap", wa_time)
-			wa_update_infotext(node, meta, wa_time)
+			wa_update_infotext(pos, node, meta, wa_time)
 			-- 5. write to the log
 			log("Private World Anchor at "..posstr.." owned by "..owner.." has been enabled and the block is anchored! Timeout set to "..timeout.." (after "..(timeout - wa_time).." seconds).")
 			-- 6. announce to the owner
@@ -181,7 +182,7 @@ local function wa_disable(pos, node, meta)
 	local new_app_count = count_anchors(anchors_per_player)
 	-- 3. update metadata
 	wa_add_record(meta, "vyp")
-	wa_update_infotext(node, meta, get_wa_time())
+	wa_update_infotext(pos, node, meta, get_wa_time())
 	-- 4. free the block (and don't touch it again)
 	minetest.forceload_free_block(pos, false)
 	-- 5. write to the log
@@ -234,7 +235,7 @@ local function on_wa_lbm(pos, node, dtime_s)
 		wa_add_record(meta, "dkt", last_tick)
 	end
 	wa_add_record(meta, "akt", now)
-	wa_update_infotext(node, meta, now)
+	wa_update_infotext(pos, node, meta, now)
 	wa_start_watchdog(pos)
 
 	if node.param2 == active_param2 then
@@ -260,7 +261,7 @@ local function on_wa_abm(pos, node, active_object_count, active_object_count_wid
 			return
 		end
 	end
-	wa_update_infotext(node, meta, now)
+	wa_update_infotext(pos, node, meta, now)
 end
 
 --[[
@@ -284,9 +285,9 @@ function get_formspec(custom_state)
 	local state_message
 	if is_active then
 		local timeout = meta:get_int("timeout")
-		state_message = "table[0.15,1.8;9,2;;#00ff00,Kotva je zapnutá\\,,#ffffff,časovač vyprší: "..F(wa_time_to_string(timeout))..";1]"
+		state_message = green.."Kotva je zapnutá"..white..", časovač vyprší: "..F(wa_time_to_string(timeout))
 	else
-		state_message = "table[0.15,1.8;9,2;;#cc0000,Kotva je vypnutá.,#ffffff,;1]"
+		state_message = red.."Kotva je vypnutá."..white
 	end
 	local area_min = vector.offset(pos, -(pos.x % 16), -(pos.y % 16), -(pos.z % 16))
 	local area_max = vector.offset(area_min, 15, 15, 15)
@@ -299,10 +300,10 @@ function get_formspec(custom_state)
 		},
 		"item_image[0.375,0.375;1,1;", wa_node_name, "]",
 		"label[1.6,0.9;Soukromá světová kotva]",
-		"tableoptions[background=#00000000;border=false;highlight=#00000000]",
-		"tablecolumns[color;text;color;text]",
-		state_message,
-		"label[0.3,2.5;Kotvu vlastní: ", F(custom_state.owner_viewname), "\nKotva pokrývá oblast: "..F(minetest.pos_to_string(area_min)..".."..minetest.pos_to_string(area_max)).."]",
+		"label[0.3,2;", state_message,
+			"\nKotvu vlastní: ", ch_core.prihlasovaci_na_zobrazovaci(custom_state.owner, true), white,
+			"\nKotva pokrývá oblast: "..F(minetest.pos_to_string(area_min)..".."..minetest.pos_to_string(area_max)).."]",
+		"button_exit[0.25,6.25;7.25,1;show;ukázat pokrytou oblast]",
 		"label[9.5,0.5;záznamy:]",
 		"tableoptions[background=#1e1e1e;border=true;highlight=#467832]",
 		"tablecolumns[text]",
@@ -322,16 +323,15 @@ function get_formspec(custom_state)
 		if is_active then
 			table.insert(formspec,
 				"button[0.25,5;3.5,1;set;nastavit]"..
-				"button[4,5;3.5,1;vyp;vypnout kotvu]")
+				"button[4,5;3.5,1;vyp;"..light_red.."vypnout kotvu]")
 		else
-			table.insert(formspec, "button[0.25,5;3.5,1;set;nastavit\na zapnout]")
+			table.insert(formspec, "button[0.25,5;3.5,1;set;"..light_green.."nastavit\na zapnout]")
 		end
 	end
 	return table.concat(formspec)
 end
 
 local function formspec_callback(custom_state, player, formname, fields)
-	-- print("DEBUG: fields = "..dump2({fields = fields, custom_state = custom_state}))
 	local player_info = ch_core.normalize_player(player)
 	if player_info.player_name ~= custom_state.player_name or not custom_state.has_rights then
 		return
@@ -340,7 +340,12 @@ local function formspec_callback(custom_state, player, formname, fields)
 	if fields.quit then
 		player_name_to_formspec_state[player_name] = nil
 	end
-	if fields.set then
+	if fields.show then
+		local pos = custom_state.pos
+		local x, y, z = pos.x - (pos.x % 16), pos.y - (pos.y % 16), pos.z - (pos.z % 16)
+		ch_core.show_aabb({x, y, z, x + 16, y + 16, z + 16}, 16)
+		return
+	elseif fields.set then
 		local player_role = player_info.role
 		local wa_time = get_wa_time()
 		local new_rel_timeout
@@ -358,10 +363,10 @@ local function formspec_callback(custom_state, player, formname, fields)
 		local node = minetest.get_node(custom_state.pos)
 		if node.param2 == active_param2 then
 			-- update timeout only
-			local pos = vector.copy(custom_state.pos)
+			local pos = custom_state.pos
 			local meta = minetest.get_meta(pos)
 			meta:set_int("timeout", wa_time + new_rel_timeout)
-			wa_update_infotext(node, meta, wa_time)
+			wa_update_infotext(pos, node, meta, wa_time)
 		elseif not wa_enable(player_name, vector.copy(custom_state.pos), minetest.get_node(custom_state.pos), new_rel_timeout, player_role == "admin") then
 			ch_core.systemovy_kanal(player_name, "Pokus o zapnutí soukromé světové kotvy selhal.")
 			return
@@ -403,6 +408,9 @@ def = {
 		if player_name ~= "" then
 			meta:set_string("owner", player_name)
 		end
+		local min = vector.offset(pos,
+			-(pos.x % 16), -(pos.y % 16), -(pos.z % 16))
+		ch_core.show_aabb({min.x, min.y, min.z, min.x + 16, min.y + 16, min.z + 16}, 16)
 	end,
 	can_dig = function(pos, player)
 		local node = minetest.get_node(pos)
@@ -461,8 +469,10 @@ minetest.register_craft{
 local function cc_moje_kotvy(player_name, param)
 	local player_role = ch_core.get_player_role(player_name)
 	if player_role == nil or player_role == "new" then return false end
+	local count = 0
 	local result = {}
 	if player_role == "admin" then
+		local mycount = 0
 		for subplayer_name, anchors in pairs(player_name_to_active_anchors) do
 			for poshash, _ in pairs(anchors) do
 				local pos = minetest.get_position_from_hash(poshash)
@@ -480,11 +490,15 @@ local function cc_moje_kotvy(player_name, param)
 				else
 					table.insert(result, "- "..minetest.pos_to_string(pos).." ???")
 				end
+				if subplayer_name == player_name then
+					mycount = mycount + 1
+				end
+				count = count + 1
 			end
 		end
+		table.insert(result, "Celkem: "..count.." kotev (z toho "..mycount.." vašich).")
 	else
 		local anchors = player_name_to_active_anchors[player_name] or {}
-		local count = 0
 		for poshash, _ in pairs(anchors) do
 			local pos = minetest.get_position_from_hash(poshash)
 			local node = minetest.get_node_or_nil(pos)

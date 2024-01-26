@@ -873,18 +873,18 @@ Pokud dané přihlašovací jméno existuje, převede ho na jméno bez barev (v�
 nebo s barvami. Pro neexistující jména vrací zadaný řetězec.
 ]]
 function ch_core.prihlasovaci_na_zobrazovaci(prihlasovaci, s_barvami)
+	local offline_info, jmeno
 	if not prihlasovaci then
 		error("ch_core.prihlasovaci_na_zobrazovaci() called with bad arguments!")
 	end
 	if minetest.player_exists(prihlasovaci) then
-		local offline_info = ch_core.get_offline_charinfo(prihlasovaci)
-		local jmeno = offline_info.jmeno
-		if jmeno then
-			if s_barvami and offline_info.barevne_jmeno then
-				return offline_info.barevne_jmeno
-			end
-			return jmeno
+		offline_info = ch_core.get_offline_charinfo(prihlasovaci)
+		if s_barvami then
+			jmeno = offline_info.barevne_jmeno
+			if jmeno then return jmeno end
 		end
+		jmeno = offline_info.jmeno
+		if jmeno then return jmeno end
 	end
 	return prihlasovaci
 end
@@ -1630,18 +1630,25 @@ local function cmp_oci(a, b)
 end
 
 def = {
-	description = "Vypíše seznam postav seřazený podle času posledního přihlášení.",
+	description = "Vypíše seznam neregistrovaných postav seřazený podle času posledního přihlášení.",
 	privs = {server = true},
 	func = function(player_name, param)
-		local players = {}
+		local new_players = {} -- new players
+		local reg_players = {} -- registered players
 		local shifted_now = os.time() - 946684800
 
 		for other_player_name, _ in pairs(ch_core.offline_charinfo) do
-			table.insert(players, other_player_name)
+			if minetest.check_player_privs(other_player_name, "ch_registered_player") then
+				table.insert(reg_players, other_player_name)
+			else
+				table.insert(new_players, other_player_name)
+			end
 		end
-		table.sort(players, cmp_oci)
+		table.sort(new_players, cmp_oci)
+		table.sort(reg_players, cmp_oci)
+		table.insert_all(new_players, reg_players)
 		local result = {}
-		for i, other_player_name in ipairs(players) do
+		for i, other_player_name in ipairs(new_players) do
 			local offline_charinfo = ch_core.offline_charinfo[other_player_name]
 			local s2 = offline_charinfo.last_login
 			if s2 == 0 then
@@ -1655,6 +1662,9 @@ def = {
 			end
 			if (offline_charinfo.pending_registration_type or "") ~= "" then
 				s2 = s2.." <plánována registrace: "..(offline_charinfo.pending_registration_type or "")..">"
+			end
+			if minetest.check_player_privs(other_player_name, "ch_registered_player") then
+				s2 = s2.." <registrovaná postava>"
 			end
 			result[i] = "- "..other_player_name..s2
 		end

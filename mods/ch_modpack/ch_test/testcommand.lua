@@ -104,6 +104,106 @@ local function command(player_name, param)
 	}, {})
 end
 
+
+
+--
+
+local color = minetest.get_color_escape_sequence("#FFCC9980")
+local color2 = minetest.get_color_escape_sequence("#FFCC99")
+
+local function escape_hypertext(s)
+	local e = s:find("[][><\\,;]")
+	if e == nil then
+		return s
+	end
+	local result = {}
+	local b = 1
+	while e ~= nil do
+		if b < e then
+			table.insert(result, s:sub(b, e - 1))
+		end
+		local c = s:sub(e, e)
+		if c == "\\" then
+			table.insert(result, "\\\\\\")
+		elseif c == "<" or c == ">" then
+			table.insert(result, "\\\\")
+		else
+			table.insert(result, "\\")
+		end
+		b = e
+		e = s:find("[][><\\,;]", b + 1)
+	end
+	if b < #s then
+		table.insert(result, s:sub(b, -1))
+	end
+	return table.concat(result)
+end
+
+local escape_hypertext_replacements = {
+	["\\"] = "\\\\\\\\",
+	["<"] = "\\\\<",
+	[">"] = "\\\\>",
+	[";"] = "\\;",
+	[","] = "\\,",
+	["["] = "\\[",
+	["]"] = "\\]",
+}
+
+local function escape_hypertext2(s)
+	local result  = s:gsub("[][><\\,;]", escape_hypertext_replacements)
+	return result
+end
+
+-- \\ => \\\\\\\\
+-- < => \\\\<
+-- ; => \\;
+-- , => \\,
+-- ] => \\]
+-- [ => \\[
+
+local function command(player_name, param)
+	local formspec = {
+		"formspec_version[5]",
+		"size[13,15]",
+		"padding[0,0]",
+		"no_prepend[]",
+		"bgcolor[#333333;both;#00000033]",
+		"background[0,0;3,3;air]",
+		"tabheader[0.5,3;12,0.75;theader;Caption 1,Caption 2,Caption 3 is very long;2;false;true]",
+		"tooltip[password;Tooltip ",color,"text;#003300;#ffffff]",
+		"scroll_container[0,5;12,5;scname;vertical]",
+		"listcolors[#333333;#666666;#ff0000;#003300;#ffffff]",
+		"list[current_player;main;0.5,0;8,4;0]",
+		"image[0.5,5;1,1;air]",
+		"item_image[2,5;1,1;air]",
+		"pwdfield[0.5,6.5;4,0.5;password;He",color,"slo:]",
+		"field[0.5,7.5;4,0.5;field;Fie",color,"ld:;...]",
+		"field_close_on_enter[field;false]",
+		"textarea[0.5,8.5;6,4;tarea;Text",color,"area:;Text v ",color,"textarea.]",
+		"label[7,6;Jen ", color, "label..., ale může mít\ndruhý řádek.]",
+		"hypertext[0.5,13;10,4;htext;A",color,"B"..escape_hypertext2("(!)(\")(#)($)(%)(&)(')(*)(+)(,)(-)(.)(/)(:)(;)(<)(=)(>)(?)(@)([)(\\)(])(^)(_)(`)({)(|)(})(~).").."]",
+		"vertlabel[10,8.5;Vertical label...]",
+		"button[0.5,15;3,3;buton;Clicka",color,"ble Button\ndalší?]",
+		"image_button[5.5,15;1,1;air;ibutton;Imag",color,"e Button;Label;true;true]",
+		"textlist[0.5,20;5,5;tlist;elem 1,elem 2,#3300FFelem 3, elem 4,elem 5,elem 6;2;true]",
+		"textarea[0.5,26;6,4;;;Text v ",color,"textarea bez názvu.]",
+		"scroll_container_end[]",
+		"scrollbaroptions[max=1000;arrows=default]",
+		"scrollbar[12,5;0.5,5;vertical;scname;0]",
+	}
+	formspec = table.concat(formspec)
+	minetest.show_formspec(player_name, "ch_test:test", formspec)
+end
+
+
+
+
+
+
+
+
+
+
 def = {
 	params = "[text]",
 	description = "spustí právě testovanou akci pro účely vývoje serveru (jen pro Administraci)",

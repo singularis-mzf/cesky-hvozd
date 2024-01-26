@@ -42,6 +42,7 @@ ch_core_kladivo.png
 ch_core_kouzhul.png
 ch_core_slunce.png
 ch_core_koruna.png
+ch_core_chessboard.png
 	Author: Singularis
 	License: CC-BY-SA 4.0
 

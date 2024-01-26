@@ -1,6 +1,8 @@
 local F = minetest.formspec_escape
 local ifthenelse = ch_core.ifthenelse
 local ui = unified_inventory
+local white, light_gray, light_green = ch_core.colors.white, ch_core.colors.light_gray, ch_core.colors.light_green
+-- minetest.get_color_escape_sequence("#CCCCCC")
 
 local has_ch_bank = minetest.get_modpath("ch_bank")
 local has_woodcutting = minetest.get_modpath("woodcutting")
@@ -10,7 +12,7 @@ local has_woodcutting = minetest.get_modpath("woodcutting")
 local fsgen_class = {}
 
 function fsgen_class:field_with_button(id, label, value, tooltip)
-	local a = "field[0,"..(self.y + 0.4)..";4.75,0.5;chs_"..id..";"..F(label or "")..";"..F(value or "").."]"
+	local a = "field[0,"..(self.y + 0.4)..";4.75,0.5;chs_"..id..";"..light_gray..F(label or "")..";"..F(value or "").."]"
 	local b = ""
 	if tooltip ~= nil then
 		b = "tooltip[chs_"..id..";"..F(tooltip).."]"
@@ -23,7 +25,7 @@ end
 function fsgen_class:button(id, label, text, tooltip)
 	local a, b, c
 	if label ~= nil then
-		a = "label[0,"..(self.y + 0.25)..";"..F(label).."]"
+		a = "label[0,"..(self.y + 0.25)..";"..light_gray..F(label).."]"
 		self.y = self.y + 0.25
 	else
 		a = ""
@@ -39,7 +41,7 @@ function fsgen_class:button(id, label, text, tooltip)
 end
 
 function fsgen_class:checkbox(id, label, value, tooltip)
-	local a = "checkbox[0,"..(self.y + 0.25)..";chs_"..id..";"..F(label or "")..";"
+	local a = "checkbox[0,"..(self.y + 0.25)..";chs_"..id..";"..light_gray..F(label or "")..";"
 	local b = "false]"
 	local c = ""
 	if value == true or value == "true" or value == 1 then
@@ -55,7 +57,7 @@ end
 function fsgen_class:dropdown(id, label, fs_options, current_index, tooltip)
 	local a, c = "", ""
 	if label ~= nil then
-		a = "label[0,"..(self.y + 0.25)..";"..F(label).."]"
+		a = "label[0,"..(self.y + 0.25)..";"..light_gray..F(label).."]"
 		self.y = self.y + 0.25
 	end
 	local b = "dropdown[0.5,"..(self.y + 0.15)..";5.9,0.5;chs_"..id..";"..assert(fs_options)..";"..(current_index or "1")..";true]"
@@ -63,6 +65,23 @@ function fsgen_class:dropdown(id, label, fs_options, current_index, tooltip)
 		c = "tooltip[chs_"..id..";"..F(tooltip).."]"
 	end
 	self.y = self.y + 0.75
+	return a..b..c
+end
+
+function fsgen_class:table(id, label, fs_options, current_index, height, tooltip)
+	local a, c = "", ""
+	if height == nil then
+		height = 2
+	end
+	if label ~= nil then
+		a = "label[0,"..(self.y + 0.25)..";"..light_gray..F(label).."]"
+		self.y = self.y + 0.25
+	end
+	local b = "table[0.5,"..(self.y + 0.15)..";5.9,"..height..";chs_"..id..";"..assert(fs_options)..";"..(current_index or "1").."]"
+	if tooltip ~= nil then
+		c = "tooltip[chs_"..id..";"..F(tooltip).."]"
+	end
+	self.y = self.y + 0.25 + height
 	return a..b..c
 end
 
@@ -278,9 +297,11 @@ local function get_formspec(player, perplayer_formspec)
 
 	local formspec = {
 		fs.standard_inv_bg,
+		"label["..(left_form.x + 0.05)..","..(left_form.y - 0.3)..";"..light_green..ch_core.prihlasovaci_na_zobrazovaci(player_name, true)..white.." — nastavení]",
+		--[[
 		"tableoptions[background=#00000000;highlight=#00000000;border=false]",
 		"tablecolumns[color;text;color;text]",
-		"table["..(left_form.x - 0.1)..","..(left_form.y - 0.5)..";"..left_form.w..",0.5;;#00ff00,"..F(player_viewname)..",#ffffff,— nastavení]",
+		"table["..(left_form.x - 0.1)..","..(left_form.y - 0.5)..";"..left_form.w..",0.5;;#00ff00,"..F(player_viewname)..",#ffffff,— nastavení]", ]]
 	}
 
 	-- LEFT FORM:
@@ -316,8 +337,10 @@ local function get_formspec(player, perplayer_formspec)
 	-- Target player selection [admin only]
 	if player_role == "admin" then
 		local dropdown = get_admin_dropdown(player_name)
+		--[[ table.insert(formspec,
+			fsgen:dropdown("tplayer", "postava", dropdown.formspec_options, tplayer_index)) ]]
 		table.insert(formspec,
-			fsgen:dropdown("tplayer", "postava", dropdown.formspec_options, tplayer_index))
+			fsgen:table("tplayer", "postava", dropdown.formspec_options, tplayer_index, 3.0))
 	end
 
 	-- Režim usnadnění hry [creative players and players with ch_switchable_creative priv]
@@ -531,10 +554,11 @@ local function on_player_receive_fields(player, formname, fields)
 	else
 		tplayer_info = ch_core.normalize_player(tplayer_name)
 	end
-	if player_role == "admin" and fields.chs_tplayer and tostring(fields.chs_tplayer) ~= tostring(tplayer_index) then
+	local tplayer_event = fields.chs_tplayer and minetest.explode_table_event(fields.chs_tplayer)
+	if tplayer_event and player_role == "admin" and tostring(tplayer_event.row) ~= tostring(tplayer_index) then
 		-- tplayer changed!
 		local admin_dropdown = get_admin_dropdown(player_name)
-		admin_targets[player_name] = admin_dropdown.index_to_name[assert(tonumber(fields.chs_tplayer))]
+		admin_targets[player_name] = admin_dropdown.index_to_name[assert(tonumber(tplayer_event.row))]
 		online_charinfo.ui_settings_rscroll = 0
 		ui.set_inventory_formspec(player, "ch_settings")
 		return true
