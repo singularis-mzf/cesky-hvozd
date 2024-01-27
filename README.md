@@ -704,9 +704,9 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/ronoaldo/minenews/)
 
-## Mail Mod (mail\_mod)
+## Mail Mod (mail)
 
-* Zdroj: [https://github.com/minetest-mail/mail\_mod](https://github.com/minetest-mail/mail\_mod), revize d9771ded2a01c8707033760478df482311abe4c6
+* Zdroj: [https://github.com/mt-mods/mail](https://github.com/mt-mods/mail), revize 721d882c26b2d026289c4f9c30f46b8c83511c41
 * Původní licence: MIT
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/mt-mods/mail/)

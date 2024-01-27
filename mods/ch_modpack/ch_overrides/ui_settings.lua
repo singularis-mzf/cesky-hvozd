@@ -245,7 +245,7 @@ local function get_dennoc_choice_and_ratio(tplayer)
 end
 
 local function get_woodcutting_mode(tplayer_name)
-	return ifthenelse(woodcutting.is_disabled_by_player(tplayer_name), 2, 1)
+	return ifthenelse(has_woodcutting and woodcutting.is_disabled_by_player(tplayer_name), 2, 1)
 end
 
 local function get_rezim_plateb(tplayer_name, toffline_charinfo)
@@ -570,7 +570,7 @@ local function on_player_receive_fields(player, formname, fields)
 	local expected = {
 		chs_zacatek = tostring(get_zacatek_kam(toffline_charinfo)),
 		chs_dennoc = tostring(first(get_dennoc_choice_and_ratio(tplayer_info.player))),
-		chs_drevorubectvi = tostring(get_woodcutting_mode(tplayer_info.player_name)),
+		chs_drevorubectvi = has_woodcutting and tostring(get_woodcutting_mode(tplayer_info.player_name)),
 		chs_rezim_plateb = tostring(get_rezim_plateb(tplayer_info.player_name, toffline_charinfo)),
 	}
 
