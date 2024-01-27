@@ -2,14 +2,6 @@
 
 API:
 
-function ch_bank.extrahovat_penize(stacks)
-	-- Odečte z ItemStacků v tabulce peníze a vrátí celkovou částku (může být 0).
-
-function ch_bank.formatovat_castku(n)
-	-- Zformátuje částku do textové podoby, např. "-1 235 123,45".
-		Částka může být záporná. Druhá vrácená hodnota je doporučený
-		hexadecimální colorstring pro hodnotu.
-
 function ch_bank.platba(def)
 	-- Pokusí se provést platbu mezi dvěma postavami nebo mezi systémem
 	a postavou. Jeden z parametrů from_player a to_player může být ""
@@ -30,6 +22,7 @@ local account_max = 1000000000000000 -- 10 bilionů Kčs
 local bank_day_pattern = "%d+[.] *%d+[.] *%d+"
 local change_pattern  = "-?%d+"
 
+local formatovat_castku = ch_core.formatovat_castku
 local ifthenelse = ch_core.ifthenelse
 local storage = minetest.get_mod_storage()
 
@@ -133,61 +126,7 @@ local function serialize_bank_record(record)
 	return result
 end
 
-
-function ch_bank.formatovat_castku(n)
-	-- => text, colorstring
-	-- minus, halere, string, division, remainder
-	local m, h, s, d, r, color
-	if n < 0 then
-		m = "-"
-		n = -n
-	else
-		m = ""
-	end
-	n = math.ceil(n)
-	if m ~= "" then
-		color = "#990000"
-	elseif n < 100 then
-		color = "#ffffff"
-	else
-		color = "#00ff00"
-	end
-	d = math.floor(n / 100.0)
-	r = n - 100.0 * d
-	if r > 0 then
-		h = string.format("%02d", r)
-	else
-		h = "-"
-	end
-	s = string.format("%d", d)
-	if #s > 3 then
-		local t
-		r = #s % 3
-		t = {s:sub(1, r)}
-		s = s:sub(r + 1, -1)
-		while #s >= 3 do
-			table.insert(t, s:sub(1, 3))
-			s = s:sub(4, -1)
-		end
-		s = table.concat(t, " ")
-	end
-	return m..s..","..h, color
-end
-
 local precist_hotovost = ch_core.precist_hotovost
-
-function ch_bank.extrahovat_penize(stacks)
-	-- Odečte ze stacků v tabulce peníze a vrátí celkovou částku.
-	local result = 0
-	for _, stack in ipairs(stacks) do
-		local value = precist_hotovost(stack)
-		if value ~= nil then
-			result = result + value
-			stack:clear()
-		end
-	end
-	return result
-end
 
 local function generate_new_transaction_record(transaction, player_key, new_record)
 	local index_key = player_key.."/last_index"
@@ -370,7 +309,7 @@ local function platba_inner(transaction_id, from_player, to_player, amount, labe
 		minetest.log(log_level, log_prefix.."Give plan: "..give_state_before.." => "..give_state_after.." ("..give_state_key..")")
 		if give_state_after > account_max then
 			if player_role == "survival" then
-				return false, "přetečení účtu (maximální dovolená částka je "..ch_bank.formatovat_castku(account_max)..")"
+				return false, "přetečení účtu (maximální dovolená částka je "..formatovat_castku(account_max)..")"
 			end
 			give_warning = "Account overflow for player "..to_player.." value "..give_state_after.." will be truncated to "..account_max.."."
 			if is_simulation then return
@@ -497,7 +436,7 @@ function ch_bank.zustatek(player_name, as_string)
 	end
 	local result = get_amount_from_storage(player_name..#player_name.."/state")
 	if as_string then
-		return ch_bank.formatovat_castku(result)
+		return formatovat_castku(result)
 	end
 	return result, nil
 end

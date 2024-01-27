@@ -23,5 +23,6 @@ mydofile("bank_accounts.lua")
 mydofile("formspec.lua")
 mydofile("formspec_callback.lua")
 mydofile("trade.lua")
+mydofile("ch_core.lua")
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

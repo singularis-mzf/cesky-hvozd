@@ -202,7 +202,7 @@ minetest.after(0.01, function()
 end)
 
 
--- load_home
+--[[ load_home
 local function load_home()
 	local input = io.open(ui.home_filename, "r")
 	if not input then
@@ -246,6 +246,7 @@ function ui.go_home(player)
 	end
 	return false
 end
+]]
 
 -- register_craft
 function ui.register_craft(options)

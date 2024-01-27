@@ -253,7 +253,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		if fields.vlozit then
 			local inv = player:get_inventory()
 			local craft_list = inv:get_list("craft")
-			local castka = ch_bank.extrahovat_penize(craft_list)
+			local castka = ch_core.vzit_hotovost(craft_list)
 			if castka > 0 then
 				local success, message = ch_bank.platba{
 					from_player = "",

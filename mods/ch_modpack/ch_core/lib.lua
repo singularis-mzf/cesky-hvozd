@@ -342,12 +342,6 @@ local entity_properties_list = {
 	"show_on_minimap",
 }
 
-local penize = {
-	["ch_core:kcs_h"] = 1,
-	["ch_core:kcs_kcs"] = 100,
-	["ch_core:kcs_zcs"] = 10000,
-}
-
 -- KEŠ
 -- ===========================================================================
 local utf8_sort_cache = {
@@ -560,45 +554,6 @@ function ch_core.get_player_role(player_or_player_name)
 	else
 		return nil
 	end
-end
-
---[[
-	Vrátí tabulku ItemStacků s penězi v dané výši. Částka musí být nezáporná.
-	Případné desetinné číslo se zaokrouhlí dolů. Pro nulu vrací prázdnou tabulku.
-]]
-function ch_core.hotovost(castka)
-	local debug = {"puvodni castka: "..castka}
-	local stacks = {}
-	castka = math.floor(castka)
-	if castka < 0 then
-		return stacks
-	end
-	while castka > 10000 * 10000 do -- 10 000 zlatek
-		table.insert(stacks, ItemStack("ch_core:kcs_zcs 10000"))
-		castka = castka - 10000 * 10000
-		table.insert(debug, "ch_core:kcs_zcs 10000 => "..castka)
-	end
-	while castka > 10000 * 100 do -- 10 000 korun
-		local n = math.floor(castka / 10000)
-		assert(n >= 1 and n <= 10000)
-		table.insert(stacks, ItemStack("ch_core:kcs_zcs "..n))
-		castka = castka - n * 10000
-		table.insert(debug, "ch_core:kcs_zcs "..n.." => "..castka)
-	end
-	local n = math.floor(castka / 100)
-	assert(n >= 0 and n <= 10000)
-	if n > 0 then
-		table.insert(stacks, ItemStack("ch_core:kcs_kcs "..n))
-		table.insert(debug, "ch_core:kcs_kcs "..n.." => "..castka)
-	end
-	castka = castka - n * 100
-	if castka > 0 then
-		assert(castka >= 1 and castka <= 100)
-		table.insert(stacks, ItemStack("ch_core:kcs_h "..castka))
-		table.insert(debug, "ch_core:kcs_h "..castka.." => 0")
-	end
-	-- print("DEBUG: ch_bank.hotovost(): "..dump2(debug))
-	return stacks
 end
 
 --[[
@@ -852,20 +807,6 @@ function ch_core.positions_to_area(v1, v2)
 	end
 
 	return vector.round(vector.new(x1, y1, z1)), vector.round(vector.new(x2, y2, z2))
-end
-
---[[
-	Parametr musí být ItemStack nebo nil. Je-li to dávka peněz,
-	vrátí jejich hodnotu (nezáporné celé číslo). Jinak vrací nil.
-]]
-function ch_core.precist_hotovost(stack)
-	if stack ~= nil and not stack:is_empty() then
-		local v = penize[stack:get_name()]
-		-- print("DEBUG: v of "..stack:get_name().." is "..(v or "nil"))
-		if v ~= nil then
-			return v * stack:get_count()
-		end
-	end
 end
 
 --[[

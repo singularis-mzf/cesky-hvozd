@@ -55,7 +55,11 @@ dofile(modpath .. "/privs.lua")
 dofile(modpath .. "/markers.lua")
 dofile(modpath .. "/data.lua")
 dofile(modpath .. "/barvy_linek.lua")
+dofile(modpath .. "/nodes.lua")
+dofile(modpath .. "/hotbar.lua")
+dofile(modpath .. "/vgroups.lua")
 dofile(modpath .. "/lib.lua") -- : data
+dofile(modpath .. "/penize.lua") -- : lib
 dofile(modpath .. "/ch_wm_nodes.lua") -- : lib
 dofile(modpath .. "/localize_chatcommands.lua") -- : privs, data, lib
 dofile(modpath .. "/formspecs.lua") -- : data, lib
@@ -69,12 +73,9 @@ dofile(modpath .. "/ap.lua") -- : data, chat, hud, lib
 dofile(modpath .. "/registrace.lua") -- : chat, data, lib, nametag
 dofile(modpath .. "/pryc.lua") -- : data, lib, chat, privs
 dofile(modpath .. "/joinplayer.lua") -- : data, formspecs, lib, nametag, pryc
-dofile(modpath .. "/nodes.lua")
 dofile(modpath .. "/padlock.lua") -- : data, lib
 dofile(modpath .. "/vezeni.lua") -- : privs, data, lib, chat, hud
 dofile(modpath .. "/timers.lua") -- : data, chat, hud
-dofile(modpath .. "/hotbar.lua")
-dofile(modpath .. "/vgroups.lua")
 dofile(modpath .. "/wielded_light.lua") -- : data, lib, nodes
 dofile(modpath .. "/teleportace.lua") -- : data, lib, chat, privs, timers
 dofile(modpath .. "/creative_inventory.lua") -- : lib

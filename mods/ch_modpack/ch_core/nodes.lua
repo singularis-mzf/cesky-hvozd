@@ -52,22 +52,4 @@ for i = 0, minetest.LIGHT_MAX do
 end
 minetest.register_alias("ch_core:light_max", "ch_core:light_"..minetest.LIGHT_MAX)
 
-
--- ch_core:kcs_{h,kcs,zcs}
-minetest.register_craftitem("ch_core:kcs_h", {
-	description = "haléř československý",
-	inventory_image = "ch_core_kcs_1h.png",
-	stack_max = 10000,
-})
-minetest.register_craftitem("ch_core:kcs_kcs", {
-	description = "koruna československá (Kčs)",
-	inventory_image = "ch_core_kcs_1kcs.png",
-	stack_max = 10000,
-})
-minetest.register_craftitem("ch_core:kcs_zcs", {
-	description = "zlatka československá (Zčs)",
-	inventory_image = "ch_core_kcs_1zcs.png",
-	stack_max = 10000,
-})
-
 ch_core.close_submod("nodes")

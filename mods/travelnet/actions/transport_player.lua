@@ -91,12 +91,12 @@ return function (node_info, fields, player)
 	else
 		-- TEST:
 		local function x2(x) return x * x end
-		local player_pos = player:get_pos()
+		local player_pos = node_info.pos
 		local d2 = x2(player_pos.x - target_pos.x) +
 			x2(player_pos.y - target_pos.y) / 4 +
 			x2(player_pos.z - target_pos.z)
-		c = math.max(0, math.ceil((d2 ^ 0.75) / 50.0 - 75.0))
-		local castka = ch_bank.formatovat_castku(c)
+		local castka = math.max(0, math.ceil((d2 ^ 0.75) / 50.0 - 75.0))
+		castka = ch_core.formatovat_castku(castka)
 		if player_name == "Administrace" then
 			minetest.chat_send_player(player_name, "[TEST] Cena za přesun by byla: "..castka.." Kčs, vzdálenost je "..(math.ceil(math.sqrt(d2))).." metrů.")
 		end
