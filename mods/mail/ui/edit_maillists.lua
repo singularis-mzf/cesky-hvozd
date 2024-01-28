@@ -56,7 +56,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 					return true
 
 				else
-					maillists[mail.selected_idxs.maillists[name]] = nil
 					mail.update_maillist(name, {
 						owner = name,
 						name = ch_core.jmeno_na_prihlasovaci(fields.name),
