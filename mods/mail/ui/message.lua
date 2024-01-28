@@ -70,7 +70,6 @@ function mail.reply(name, message)
 		minetest.log("error", "[mail] current mail-context: " .. dump(mail.selected_idxs))
 		return
 	end
-	mail.selected_idxs.message[name] = nil
 	mail.show_compose(name, mail.player_list_to_viewnames(message.from), "Re: "..message.subject, interleaveMsg(message.body))
 end
 
@@ -81,7 +80,6 @@ function mail.replyall(name, message)
 		minetest.log("error", "[mail] current mail-context: " .. dump(mail.selected_idxs))
 		return
 	end
-	mail.selected_idxs.message[name] = nil
 
 	-- new recipients are the sender plus the original recipients, minus ourselves
 	local recipients = message.to or ""
@@ -111,7 +109,6 @@ function mail.replyall(name, message)
 end
 
 function mail.forward(name, message)
-	mail.selected_idxs.message[name] = nil
 	mail.show_compose(name, "", "Fw: " .. (message.subject or ""), interleaveMsg(message.body))
 end
 

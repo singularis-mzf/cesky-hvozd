@@ -314,7 +314,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
         mail.show_mail_menu(name, sortfieldindex, sortdirection, filter)
 
     elseif fields.new then
-		mail.selected_idxs.message[name] = nil
         mail.show_compose(name)
 
     elseif fields.empty then
