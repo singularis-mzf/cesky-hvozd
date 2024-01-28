@@ -99,15 +99,10 @@ function mail.show_inbox(name, sortfieldindex, sortdirection, filter)
             end
             formspec[#formspec + 1] = "," .. mail.get_color(displayed_color)
             formspec[#formspec + 1] = ","
-            formspec[#formspec + 1] = minetest.formspec_escape(message.from)
+            formspec[#formspec + 1] = minetest.formspec_escape(mail.player_list_to_viewnames(message.from))
             formspec[#formspec + 1] = ","
             if message.subject ~= "" then
-                if string.len(message.subject) > 30 then
-                    formspec[#formspec + 1] = minetest.formspec_escape(string.sub(message.subject, 1, 27))
-                    formspec[#formspec + 1] = "..."
-                else
-                    formspec[#formspec + 1] = minetest.formspec_escape(message.subject)
-                end
+				formspec[#formspec + 1] = minetest.formspec_escape(message.subject)
             else
                 formspec[#formspec + 1] = S("(No subject)")
             end

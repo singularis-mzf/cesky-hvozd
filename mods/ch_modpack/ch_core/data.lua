@@ -24,6 +24,10 @@ local nametag_color_unregistered = nametag_color_grey
 ch_core.unregistered_spawn = vector.new(-70,9.5,40)
 ch_core.registered_spawn = ch_core.unregistered_spawn
 
+-- lower case to login name
+local lc_to_player_name = {}
+ch_core.lc_to_player_name = lc_to_player_name
+
 local zero_by_type = {
 	int = 0,
 	float = 0.0,
@@ -127,9 +131,14 @@ end
 function ch_core.get_offline_charinfo(player_name)
 	local result = ch_core.offline_charinfo[player_name]
 	if not result then
+		local correct_name = lc_to_player_name[string.lower(player_name)]
+		result = correct_name ~= nil and ch_core.offline_charinfo[correct_name]
+	end
+	if not result then
 		minetest.log("action", "Will create offline_charinfo for player '"..verify_valid_player_name(player_name).."'")
 		result = table.copy(initial_offline_charinfo)
 		ch_core.offline_charinfo[player_name] = result
+		lc_to_player_name[string.lower(player_name)] = player_name
 	end
 	return result
 end
@@ -287,6 +296,7 @@ function ch_core.delete_offline_charinfo(player_name, keys)
 		offline_charinfo[key] = initial_offline_charinfo[key]
 		minetest.log("info", "[ch_core] Key '"..key.."' removed from mod storage.")
 	end
+	lc_to_player_name[string.lower(player_name)] = nil
 	return true
 end
 
@@ -370,6 +380,7 @@ for full_key, value in pairs(storage_table) do
 		if player_set[player_name] == nil then
 			player_set[player_name] = true
 			player_counter = player_counter + 1
+			lc_to_player_name[string.lower(player_name)] = player_name
 		end
 	else
 		storage:set_string(full_key, "")
@@ -406,6 +417,7 @@ local function on_joinplayer(player, last_login)
 
 	offline_charinfo.last_login = os.time() - 946684800
 	ch_core.save_offline_charinfo(player_name, "last_login")
+	lc_to_player_name[string.lower(player_name)] = player_name
 
 	return true
 end

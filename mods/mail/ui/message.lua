@@ -44,10 +44,10 @@ function mail.show_message(name, id)
 			tooltip[forward;]] .. S("Transfer message to other people") .. [[]
 		]] .. mail.theme
 
-	local from = minetest.formspec_escape(message.from) or ""
-	local to = minetest.formspec_escape(message.to) or ""
+	local from = minetest.formspec_escape(mail.player_list_to_viewnames(message.from)) or ""
+	local to = minetest.formspec_escape(mail.player_list_to_viewnames(message.to)) or ""
 	if string.len(to) > 70 then to = string.sub(to, 1, 67) .. "..." end
-	local cc = minetest.formspec_escape(message.cc) or ""
+	local cc = minetest.formspec_escape(mail.player_list_to_viewnames(message.cc)) or ""
 	if string.len(cc) > 50 then cc = string.sub(cc, 1, 47) .. "..." end
 	local date = type(message.time) == "number"
 		and minetest.formspec_escape(os.date(mail.get_setting(name, "date_format"), message.time)) or ""
@@ -70,7 +70,8 @@ function mail.reply(name, message)
 		minetest.log("error", "[mail] current mail-context: " .. dump(mail.selected_idxs))
 		return
 	end
-	mail.show_compose(name, message.from, "Re: "..message.subject, interleaveMsg(message.body))
+	mail.selected_idxs.message[name] = nil
+	mail.show_compose(name, mail.player_list_to_viewnames(message.from), "Re: "..message.subject, interleaveMsg(message.body))
 end
 
 function mail.replyall(name, message)
@@ -80,11 +81,12 @@ function mail.replyall(name, message)
 		minetest.log("error", "[mail] current mail-context: " .. dump(mail.selected_idxs))
 		return
 	end
+	mail.selected_idxs.message[name] = nil
 
 	-- new recipients are the sender plus the original recipients, minus ourselves
 	local recipients = message.to or ""
 	if message.from ~= nil then
-		recipients = message.from .. ", " .. recipients
+		recipients = message.from .. "," .. recipients
 	end
 	recipients = mail.parse_player_list(recipients)
 	for k,v in pairs(recipients) do
@@ -105,10 +107,11 @@ function mail.replyall(name, message)
 	end
 	cc = mail.concat_player_list(cc)
 
-	mail.show_compose(name, recipients, "Re: "..message.subject, interleaveMsg(message.body), cc)
+	mail.show_compose(name, mail.player_list_to_viewnames(recipients), "Re: "..message.subject, interleaveMsg(message.body), cc)
 end
 
 function mail.forward(name, message)
+	mail.selected_idxs.message[name] = nil
 	mail.show_compose(name, "", "Fw: " .. (message.subject or ""), interleaveMsg(message.body))
 end
 

@@ -66,27 +66,6 @@ local function on_mods_loaded()
 	print(array_stats("registered_ores", minetest.registered_ores))
 	print(array_stats("registered_decorations", minetest.registered_decorations))
 
-	print("-- times = "..dump2({
-		timeofday = minetest.get_timeofday() or "nil",
-		gametime = minetest.get_gametime() or "nil",
-		day_count = minetest.get_day_count() or "nil",
-		uptime = minetest.get_server_uptime() or "nil",
-		ustime = minetest.get_us_time() or "nil",
-		os_clock = os.clock() or "nil",
-		os_time = os.time() or "nil",
-	}))
-	minetest.after(2, function()
-		print("-- times = "..dump2({
-			timeofday = minetest.get_timeofday() or "nil",
-			gametime = minetest.get_gametime() or "nil",
-			day_count = minetest.get_day_count() or "nil",
-			uptime = minetest.get_server_uptime() or "nil",
-			ustime = minetest.get_us_time() or "nil",
-			os_clock = os.clock() or "nil",
-			os_time = os.time() or "nil",
-		}))
-	end)
-
 	--[[
 	local world_path = minetest.get_worldpath()
 	local f = io.open(world_path.."/export_nodes.txt", "w")

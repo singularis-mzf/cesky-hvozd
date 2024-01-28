@@ -72,6 +72,7 @@ function mail.show_outbox(name, sortfieldindex, sortdirection, filter)
 
 	if #messages > 0 then
         for _, message in ipairs(messages) do
+			local message_to = mail.player_list_to_viewnames(message.to)
             local selected_id = 0
             local displayed_color = {}
             -- check if message is in selection list and return its id
@@ -88,20 +89,10 @@ function mail.show_outbox(name, sortfieldindex, sortdirection, filter)
             end
             formspec[#formspec + 1] = "," .. mail.get_color(displayed_color)
             formspec[#formspec + 1] = ","
-			if string.len(message.to) > 20 then
-				formspec[#formspec + 1] = minetest.formspec_escape(string.sub(message.to, 1, 17))
-				formspec[#formspec + 1] = "..."
-			else
-				formspec[#formspec + 1] = minetest.formspec_escape(message.to)
-			end
+			formspec[#formspec + 1] = minetest.formspec_escape(ch_core.utf8_truncate_right(message_to, 20))
             formspec[#formspec + 1] = ","
             if message.subject ~= "" then
-                if string.len(message.subject) > 30 then
-                    formspec[#formspec + 1] = minetest.formspec_escape(string.sub(message.subject, 1, 27))
-                    formspec[#formspec + 1] = "..."
-                else
-                    formspec[#formspec + 1] = minetest.formspec_escape(message.subject)
-                end
+				formspec[#formspec + 1] = minetest.formspec_escape(message.subject)
             else
                 formspec[#formspec + 1] = S("(No subject)")
             end

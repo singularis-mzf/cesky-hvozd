@@ -62,10 +62,17 @@ local function migrate_v2_to_v3()
 			local player_inbox = read_json_file(maildir .. "/" .. saneplayername .. ".json")
 			print("[mail,v2] + migrating player '" .. playername .. "'")
 			for _, msg in ipairs(player_inbox) do
-				table.insert(entry.inbox, {
+				local where_to = entry.inbox
+				local from, to = msg.sender or msg.from, msg.to or playername
+				from = from:gsub(", ", ",")
+				to = to:gsub(", ", ",")
+				if from == playername then
+					where_to = entry.outbox
+				end
+				table.insert(where_to, {
                                         id = mail.new_uuid(),
-                                        from  = msg.sender or msg.from,
-                                        to      = msg.to or playername,
+                                        from    = from, -- msg.sender or msg.from,
+                                        to      = to, -- msg.to or playername,
                                         cc      = msg.cc,
                                         subject = msg.subject,
                                         body    = msg.body,

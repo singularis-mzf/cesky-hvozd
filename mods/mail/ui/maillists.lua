@@ -4,7 +4,7 @@ local S = minetest.get_translator("mail")
 local FORMNAME = "mail:maillists"
 
 local maillists_formspec = "size[8,9;]" .. mail.theme .. [[
-		button[6,0.10;2,0.5;new;]] .. S("New") .. [[]
+		button[6,0.10;2,0.5;new;]] .. S("New Maillist") .. [[]
 		button[6,0.85;2,0.5;edit;]] .. S("Edit") .. [[]
 		button[6,1.60;2,0.5;delete;]] .. S("Delete") .. [[]
 		button[6,8.25;2,0.5;back;]] .. S("Back") .. [[]
@@ -28,8 +28,6 @@ function mail.show_maillists(name)
 				else
 					formspec[#formspec + 1] = minetest.formspec_escape(maillist.desc)
 				end
-			else
-				formspec[#formspec + 1] = S("(No description)")
 			end
 		end
 		if mail.selected_idxs.maillists[name] then
@@ -67,7 +65,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 	elseif fields.new then
 		mail.selected_idxs.maillists[name] = "#NEW#"
-		mail.show_edit_maillist(name, "", "", "Player1, Player2, Player3")
+		mail.show_edit_maillist(name, "", "", "Postava 1\nPostava 2\nPostava 3")
 
 	elseif fields.edit and maillists[mail.selected_idxs.maillists[name]] then
 		local maillist = mail.get_maillist_by_name(name, maillists[mail.selected_idxs.maillists[name]].name)

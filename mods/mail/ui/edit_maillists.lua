@@ -23,11 +23,12 @@ function mail.show_edit_maillist(playername, maillist_name, desc, players, illeg
 			S("The mailing list name cannot be empty.") .. [[]
 			]]
 	end
+	local players_txt = (mail.player_list_to_viewnames(players) or ""):gsub(",", "\n")
 	formspec = formspec .. mail.theme
 	formspec = string.format(formspec,
 		minetest.formspec_escape(maillist_name or ""),
 		minetest.formspec_escape(desc or ""),
-		minetest.formspec_escape(players or ""))
+		minetest.formspec_escape(players_txt))
 	minetest.show_formspec(playername, FORMNAME, formspec)
 end
 
@@ -40,6 +41,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local maillists = mail.get_maillists(name)
 
 	if fields.save then
+		local players_parsed = fields.players:gsub("\n", ",")
+		players_parsed = mail.parse_player_list(players_parsed)
 		local old_maillist = maillists[mail.selected_idxs.maillists[name]] or {name = ""}
 		if mail.selected_idxs.maillists[name] then
 			if old_maillist.name ~= fields.name or fields.name == "" then
@@ -57,7 +60,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 						owner = name,
 						name = fields.name,
 						desc = fields.desc,
-						players = mail.parse_player_list(fields.players)
+						players = players_parsed
 					}, old_maillist.name)
 					maillists[mail.selected_idxs.maillists[name]] = nil
 				end
@@ -66,7 +69,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 					owner = name,
 					name = fields.name,
 					desc = fields.desc,
-					players = mail.parse_player_list(fields.players)
+					players = players_parsed
 				}, old_maillist.name)
 			end
 		else
@@ -74,7 +77,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				owner = name,
 				name = fields.name,
 				desc = fields.desc,
-				players = mail.parse_player_list(fields.players)
+				players = players_parsed
 			}, old_maillist.name)
 		end
 		mail.show_maillists(name)

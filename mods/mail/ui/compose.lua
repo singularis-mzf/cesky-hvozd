@@ -10,7 +10,7 @@ function mail.show_compose(name, to, subject, body, cc, bcc, id)
 			field[1.1,0.3;3.2,1;to;;%s]
 			button[4,0;1,1;cccontacts;]] .. S("CC") .. [[:]
 			field[5.1,0.3;3.1,1;cc;;%s]
-			button[4,0.75;1,1;bcccontacts;]] .. S("BCC") .. [[:]
+			button[3,0.75;2,1;bcccontacts;]] .. S("BCC") .. [[:]
 			field[5.1,1.05;3.1,1;bcc;;%s]
 			field[0.25,2;8,1;subject;]] .. S("Subject") .. [[:;%s]
 			textarea[0.25,2.5;8,6;body;;%s]

@@ -53,7 +53,7 @@ function mail.hud_update(playername, messages)
 		player:hud_change(data.textid, "text", "")
 	else
 		player:hud_change(data.imageid, "text", "email_mail.png")
-		player:hud_change(data.textid, "text", unreadcount .. " /mail")
+		player:hud_change(data.textid, "text", unreadcount .. " /pošta")
 	end
 
 end

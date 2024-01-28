@@ -347,6 +347,8 @@ local entity_properties_list = {
 local utf8_sort_cache = {
 }
 
+local lc_to_player_name = ch_core.lc_to_player_name
+
 -- LOKÁLNÍ FUNKCE
 -- ===========================================================================
 local function get_player_role_by_privs(privs)
@@ -611,16 +613,17 @@ end
 
 --[[
 Přijme parametr, kterým může být:
-	a) přihlašovací jméno postavy
+	a) přihlašovací jméno postavy (bez ohledu na diakritiku)
 	b) zobrazovací jméno postavy
 	c) objekt postavy
 	d) tabulka s volatelnou funkcí get_player_name()
 Ve všech případech vrátí tabulku s prvky:
 {
 	role, -- role postavy nebo "none", pokud neexistuje
-	player_name, -- přihlašovací jméno existující postavy, nebo "", pokud postava neexistuje; nikdy nebude nil
+	player_name, -- skutečné přihlašovací jméno existující postavy, nebo "", pokud postava neexistuje; nikdy nebude nil
+	viewname, -- zobrazovací jméno postavy (bez barev), nebo "", pokud postava neexistuje; nikdy nebude nil
 	player, -- je-li postava ve hře, PlayerRef, jinak nil
-	privs, -- tabulka práv postavy
+	privs, -- tabulka práv postavy; pokud neexistuje, {}; nikdy nebude nil
 }
 ]]
 function ch_core.normalize_player(player_name_or_player)
@@ -642,6 +645,11 @@ function ch_core.normalize_player(player_name_or_player)
 	else
 		player_name = ""
 	end
+	player_name = ch_core.jmeno_na_prihlasovaci(player_name)
+	local correct_name = lc_to_player_name[string.lower(player_name)]
+	if correct_name ~= nil then
+		player_name = correct_name
+	end
 	if player_name ~= "" and not minetest.player_exists(player_name) then
 		player_name = ch_core.jmeno_na_prihlasovaci(player_name)
 		if not minetest.player_exists(player_name) then
@@ -649,12 +657,13 @@ function ch_core.normalize_player(player_name_or_player)
 		end
 	end
 	if player_name == "" then
-		return {role = "none", player_name = "", privs = {}}
+		return {role = "none", player_name = "", viewname = "", privs = {}}
 	end
 	local privs = minetest.get_player_privs(player_name)
 	return {
 		role = get_player_role_by_privs(privs),
 		player_name = player_name,
+		viewname = ch_core.prihlasovaci_na_zobrazovaci(player_name),
 		privs = privs,
 		player = player or minetest.get_player_by_name(player_name),
 	}
@@ -700,19 +709,18 @@ function ch_core.jmeno_na_prihlasovaci(jmeno)
 end
 
 --[[
-	Vrátí seznam existujících přihlašovacích jmén odpovídajících uvedenému
-	jménu až na velikost písmen a diakritiku. Seznam může být i prázdný.
+	Vrátí existující přihlašovací jméno postavy odpovídající uvedenému
+	jménu až na velikost písmen a diakritiku, nebo nil, pokud
+	taková postava neexistuje.
 ]]
 function ch_core.jmeno_na_existujici_prihlasovaci(jmeno)
 	if jmeno == nil then return nil end
-	local result = {}
-	jmeno = string.lower(ch_core.odstranit_diakritiku(jmeno))
-	for k, _ in pairs(ch_core.offline_charinfo) do
-		if string.lower(k) == jmeno then
-			table.insert(result, k)
-		end
+	local result = lc_to_player_name[string.lower(ch_core.odstranit_diakritiku(jmeno))]
+	if result and ch_core.offline_charinfo[result] then
+		return result
+	else
+		return nil
 	end
-	return result
 end
 
 --[[

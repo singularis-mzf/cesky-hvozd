@@ -112,7 +112,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		mail.selected_idxs[v][name] = nil
 	end
 
-	mail.show_compose(name, draft.to, draft.subject, draft.body, draft.cc, draft.bcc)
+	mail.show_compose(name, mail.player_list_to_viewnames(draft.to), draft.subject, draft.body, mail.player_list_to_viewnames(draft.cc), mail.player_list_to_viewnames(draft.bcc))
 
 	return true
 end)

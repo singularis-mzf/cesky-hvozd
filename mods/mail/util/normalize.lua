@@ -16,12 +16,13 @@ function mail.normalize_players_and_add_recipients(field, recipients, undelivera
     return mail.concat_player_list(order)
 end
 
+-- NOTE: This function will always return login-names of players, not viewnames.
 function mail.parse_player_list(field)
     if not field then
         return {}
     end
 
-    local separator = ", "
+    local separator = ",;"
     local pattern = "([^" .. separator .. "]+)"
 
     -- get individual players
@@ -30,12 +31,9 @@ function mail.parse_player_list(field)
     field:gsub(pattern, function(player_name)
         local lower = string.lower(player_name)
         if not player_set[lower] then
-            if has_canonical_name then
-                player_name = canonical_name.get(player_name) or player_name
-            end
-
-            player_set[lower] = player_name
-            order[#order+1] = player_name
+			player_name = ch_core.jmeno_na_existujici_prihlasovaci(player_name) or ch_core.jmeno_na_prihlasovaci(player_name)
+			player_set[lower] = player_name
+			order[#order+1] = player_name
         end
     end)
 
@@ -44,7 +42,7 @@ end
 
 function mail.concat_player_list(order)
     -- turn list of players back into normalized string
-    return table.concat(order, ", ")
+    return table.concat(order, ",")
 end
 
 function mail.player_in_list(name, list)
@@ -58,4 +56,31 @@ function mail.player_in_list(name, list)
         end
     end
     return false
+end
+
+function mail.player_list_to_loginnames(players)
+	if players == nil then
+		return nil
+	elseif type(players) == "string" then
+		return mail.concat_player_list(mail.player_list_to_loginnames(mail.parse_player_list(players)))
+	end
+	assert(type(players) == "table")
+	local result = {}
+	for i, name in ipairs(players) do
+		result[i] = ch_core.jmeno_na_existujici_prihlasovaci(name) or ch_core.jmeno_na_prihlasovaci(name)
+	end
+	return result
+end
+
+function mail.player_list_to_viewnames(players)
+	if players == nil then
+		return nil
+	elseif type(players) == "string" then
+		return mail.concat_player_list(mail.player_list_to_viewnames(mail.parse_player_list(players)))
+	end
+	local result = {}
+	for i, name in ipairs(players) do
+		result[i] = ch_core.prihlasovaci_na_zobrazovaci(name)
+	end
+	return result
 end

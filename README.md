@@ -707,7 +707,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 ## Mail Mod (mail)
 
 * Zdroj: [https://github.com/mt-mods/mail](https://github.com/mt-mods/mail), revize 721d882c26b2d026289c4f9c30f46b8c83511c41
-* Původní licence: MIT
+* Původní licence: MIT (s výjimkou jednoho souboru, který je WTFPL)
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/mt-mods/mail/)
 

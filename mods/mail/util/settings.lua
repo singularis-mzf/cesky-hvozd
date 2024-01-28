@@ -30,7 +30,7 @@ mail.settings = {
         label = S("Default sorting field"), dataset = { S("From/To"), S("Subject"), S("Date") }
     },
     defaultsortdirection = {
-        type = "index", default = 1, group = "message_list", index = 4,
+        type = "index", default = 2, group = "message_list", index = 4,
         label = S("Default sorting direction"), dataset = { S("Ascending"), S("Descending") }
     },
     trash_move_enable = {

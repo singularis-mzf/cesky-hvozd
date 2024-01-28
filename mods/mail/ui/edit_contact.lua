@@ -24,7 +24,7 @@ function mail.show_edit_contact(name, contact_name, note, illegal_name_hint)
 	end
 	formspec = formspec .. mail.theme
 	formspec = string.format(formspec,
-		minetest.formspec_escape(contact_name or ""),
+		minetest.formspec_escape(ch_core.prihlasovaci_na_zobrazovaci(contact_name or "")),
 		minetest.formspec_escape(note or ""))
 	minetest.show_formspec(name, FORMNAME, formspec)
 end

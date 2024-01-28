@@ -23,11 +23,11 @@ function mail.show_receivers(name, id)
 			table[4,1.5;3.8,4.5;cc;%s]
 		]] .. mail.theme
 
-	local from = minetest.formspec_escape(message.from) or ""
-	local to = mail.parse_player_list(message.to or "")
+	local from = minetest.formspec_escape(mail.player_list_to_viewnames(message.from)) or ""
+	local to = mail.player_list_to_viewnames(mail.parse_player_list(message.to or ""))
 	local to_str = mail.get_color("header") .. "," .. S("To") .. ",,"
 	to_str = to_str .. table.concat(to, ",,")
-	local cc = mail.parse_player_list(message.cc or "")
+	local cc = mail.player_list_to_viewnames(mail.parse_player_list(message.cc or ""))
 	local cc_str = mail.get_color("header") .. "," .. S("CC") .. ",,"
 	cc_str = cc_str .. table.concat(cc, ",,")
 	local date = type(message.time) == "number"

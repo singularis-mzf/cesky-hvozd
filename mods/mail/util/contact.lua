@@ -12,7 +12,7 @@ function mail.compile_contact_list(name, selected, playernames)
 			if i == 1 then length = l end
 			formspec[#formspec + 1] = ","
 			formspec[#formspec + 1] = ","
-			formspec[#formspec + 1] = minetest.formspec_escape(contact.name)
+			formspec[#formspec + 1] = minetest.formspec_escape(ch_core.prihlasovaci_na_zobrazovaci(contact.name))
 			formspec[#formspec + 1] = ","
 			local note = contact.note
 			-- display an ellipsis if the note spans multiple lines
@@ -43,7 +43,7 @@ function mail.compile_contact_list(name, selected, playernames)
 		for i,c in ipairs(playernames) do
 			formspec[#formspec + 1] = ","
 			formspec[#formspec + 1] = ","
-			formspec[#formspec + 1] = minetest.formspec_escape(c)
+			formspec[#formspec + 1] = minetest.formspec_escape(ch_core.prihlasovaci_na_zobrazovaci(c))
 			formspec[#formspec + 1] = ","
 			if contacts[string.lower(c)] == nil then
 				formspec[#formspec + 1] = ""
