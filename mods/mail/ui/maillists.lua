@@ -19,7 +19,7 @@ function mail.show_maillists(name)
 		for _, maillist in ipairs(maillists) do
 			formspec[#formspec + 1] = ","
 			formspec[#formspec + 1] = ","
-			formspec[#formspec + 1] = "@" .. minetest.formspec_escape(maillist.name)
+			formspec[#formspec + 1] = "@" .. minetest.formspec_escape(maillist.viewname or maillist.name)
 			formspec[#formspec + 1] = ","
 			if maillist.desc ~= "" then
 				if string.len(maillist.desc or "") > 30 then
@@ -57,7 +57,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			local players_string = mail.concat_player_list(maillist.players)
 			mail.show_edit_maillist(
 				name,
-				maillists[mail.selected_idxs.maillists[name]].name,
+				maillists[mail.selected_idxs.maillists[name]].viewname or maillists[mail.selected_idxs.maillists[name]].name,
 				maillists[mail.selected_idxs.maillists[name]].desc,
 				players_string
 			)
@@ -72,7 +72,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		local players_string = mail.concat_player_list(maillist.players)
 		mail.show_edit_maillist(
 			name,
-			maillists[mail.selected_idxs.maillists[name]].name,
+			maillists[mail.selected_idxs.maillists[name]].viewname or maillists[mail.selected_idxs.maillists[name]].name,
 			maillists[mail.selected_idxs.maillists[name]].desc,
 			players_string
 		)

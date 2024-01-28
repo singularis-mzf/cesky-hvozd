@@ -19,7 +19,7 @@ function mail.send(m)
 	if type(m.body) ~= "string" then return false, "'body' is not a string" end
 
 	-- defaults
-	m.subject = m.subject or "(No subject)"
+	m.subject = m.subject or "(Bez předmětu)"
 
 	-- normalize to, cc and bcc while compiling a list of all recipients
 	local recipients = {}

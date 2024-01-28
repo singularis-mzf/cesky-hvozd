@@ -336,6 +336,7 @@ end
 -- returns the maillists of a player
 function mail.get_maillist_by_name(playername, listname)
 	local entry = mail.get_storage_entry(playername)
+	listname = ch_core.jmeno_na_prihlasovaci(listname)
 	for _, list in ipairs(entry.lists) do
 		if list.name == listname then
 			return list
@@ -346,6 +347,7 @@ end
 -- updates or creates a maillist
 function mail.update_maillist(playername, list, old_list_name)
 	local entry = mail.get_storage_entry(playername)
+	old_list_name = ch_core.jmeno_na_prihlasovaci(old_list_name)
 	for i, existing_list in ipairs(entry.lists) do
 		if existing_list.name == old_list_name then
 			-- delete
@@ -360,6 +362,7 @@ end
 
 function mail.delete_maillist(playername, listname)
 	local entry = mail.get_storage_entry(playername)
+	listname = ch_core.jmeno_na_prihlasovaci(listname)
 	for i, list in ipairs(entry.lists) do
 		if list.name == listname then
 			-- delete
@@ -371,28 +374,32 @@ function mail.delete_maillist(playername, listname)
 end
 
 function mail.extractMaillists(receivers_string, maillists_owner)
-	local receivers = mail.parse_player_list(receivers_string) -- extracted receivers
-
-	-- extract players from mailing lists
-	while string.find(receivers_string, "@") do
-		local globalReceivers = mail.parse_player_list(receivers_string) -- receivers including maillists
-		receivers = {}
-		for _, receiver in ipairs(globalReceivers) do
-			local receiverInfo = receiver:split("@") -- @maillist
-			if receiverInfo[1] and receiver == "@" .. receiverInfo[1] then
-				local maillist = mail.get_maillist_by_name(maillists_owner, receiverInfo[1])
-				if maillist then
-					for _, playername in ipairs(maillist.players) do
+	if not string.find(receivers_string, "@") then
+		return mail.parse_player_list(receivers_string) -- no maillists
+	end
+	local receivers_in = mail.parse_player_list(receivers_string)
+	local receivers = {}
+	local receivers_set = {}
+	for _, receiver in ipairs(receivers_in) do
+		if receiver:sub(1,1) == "@" then
+			local maillist = mail.get_maillist_by_name(maillists_owner, string.sub(receiver, 2, -1))
+			if maillist then
+				for _, playername in ipairs(maillist.players) do
+					local key = string.lower(ch_core.jmeno_na_prihlasovaci(playername))
+					if receivers_set[key] == nil then
 						table.insert(receivers, playername)
+						receivers_set[key] = true
 					end
 				end
-			else -- in case of player
+			end
+		else
+			local key = string.lower(ch_core.jmeno_na_prihlasovaci(receiver))
+			if receivers_set[key] == nil then
 				table.insert(receivers, receiver)
+				receivers_set[key] = true
 			end
 		end
-		receivers_string = mail.concat_player_list(receivers)
 	end
-
 	return receivers
 end
 

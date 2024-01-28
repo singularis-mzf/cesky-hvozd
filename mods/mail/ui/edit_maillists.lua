@@ -45,29 +45,31 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		players_parsed = mail.parse_player_list(players_parsed)
 		local old_maillist = maillists[mail.selected_idxs.maillists[name]] or {name = ""}
 		if mail.selected_idxs.maillists[name] then
-			if old_maillist.name ~= fields.name or fields.name == "" then
+			if old_maillist.viewname ~= fields.name or fields.name == "" then
 				-- name changed!
 				if #fields.name == 0 then
-					mail.show_edit_maillist(name, old_maillist.name, fields.desc, fields.players, "empty")
+					mail.show_edit_maillist(name, old_maillist.viewname or old_maillist.name, fields.desc, fields.players, "empty")
 					return true
 
 				elseif mail.get_maillist_by_name(name, fields.name) then
-					mail.show_edit_maillist(name, old_maillist.name, fields.desc, fields.players, "collision")
+					mail.show_edit_maillist(name, old_maillist.viewname or old_maillist.name, fields.desc, fields.players, "collision")
 					return true
 
 				else
+					maillists[mail.selected_idxs.maillists[name]] = nil
 					mail.update_maillist(name, {
 						owner = name,
-						name = fields.name,
+						name = ch_core.jmeno_na_prihlasovaci(fields.name),
+						viewname = fields.name,
 						desc = fields.desc,
 						players = players_parsed
 					}, old_maillist.name)
-					maillists[mail.selected_idxs.maillists[name]] = nil
 				end
 			else
 				mail.update_maillist(name, {
 					owner = name,
-					name = fields.name,
+					name = ch_core.jmeno_na_prihlasovaci(fields.name),
+					viewname = fields.name,
 					desc = fields.desc,
 					players = players_parsed
 				}, old_maillist.name)
@@ -75,7 +77,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		else
 			mail.update_maillist(name, {
 				owner = name,
-				name = fields.name,
+				name = ch_core.jmeno_na_prihlasovaci(fields.name),
+				viewname = fields.name,
 				desc = fields.desc,
 				players = players_parsed
 			}, old_maillist.name)
