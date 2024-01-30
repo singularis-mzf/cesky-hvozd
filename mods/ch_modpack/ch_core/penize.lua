@@ -184,6 +184,7 @@ function ch_core.vzit_hotovost(stacks, limit)
 				end
 			end
 		end
+		i = i + 1
 	end
 	if stack_to_return ~= nil then
 		if last_empty_i == nil then
