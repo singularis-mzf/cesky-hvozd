@@ -264,7 +264,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				}
 				if success then
 					inv:set_list("craft", craft_list)
-					ch_core.systemovy_kanal(player_name, "Na účet jste vložil/a "..ch_bank.formatovat_castku(castka).." Kčs.")
+					ch_core.systemovy_kanal(player_name, "Na účet jste vložil/a "..ch_core.formatovat_castku(castka).." Kčs.")
 				else
 					ch_core.systemovy_kanal(player_name, "Vkládání na účet selhalo: "..(message or "neznámý důvod"))
 				end
