@@ -10,12 +10,15 @@ globals = {
 		"formspec_header",
 		"cancel_ch_timer",
 		"close_formspec",
+		"formatovat_castku",
+		"get_or_add",
 		"get_player_role",
 		"hotovost",
 		"ifthenelse",
 		"je_pryc",
 		"je_ve_vykonu_trestu",
 		"jmeno_na_prihlasovaci",
+		"normalize_player",
 		"online_charinfo",
 		"precist_hotovost",
 		"prihlasovaci_na_zobrazovaci",
@@ -25,6 +28,12 @@ globals = {
 		"start_ch_timer",
 		"systemovy_kanal",
 		"update_formspec",
+		"utf8_truncate_right",
+		"zaplatit_od_postavy",
+		"zaplatit_postave",
+		colors = {fields = {
+			"black", "blue", "green", "cyan", "red", "magenta", "brown", "yellow", "light_gray", "dark_gray", "light_blue", "light_green", "light_cyan", "light_red", "light_magenta", "light_yellow", "white"
+		}},
 	}},
 	doors = {fields = {
 		"get", "login_to_viewname"
@@ -125,9 +134,20 @@ read_globals = {
 	string = {fields = {"sub"}},
 	table = {fields = {"copy", "insert_all"}},
 	vector = {fields = {"angle", "copy", "distance", "new", "offset", "rotate", "round", "subtract", "zero"}},
+	unified_inventory = {
+		fields = {
+			ch_bank = {read_only = false},
+			current_page = {other_fields = true},
+			"default", "set_inventory_formspec", "register_button", "register_page",
+		},
+	},
 
 	"AreaStore", "dump2", "emote", "hb", "ItemStack", "player_api", "wielded_light"
 }
 
 files["init.lua"].ignore = {"ch_bank"}
 files["trade.lua"].ignore = {"_trade_state", "_message"}
+files["bank_accounts.lua"].ignore = {"_tfinv"}
+files["bank_archive.lua"].ignore = {"_tfinv"}
+files["formspec_callback.lua"].ignore = {"_trade_state"}
+files["ch_core.lua"].ignore = {"_message"}

@@ -1,3 +1,3 @@
 #!/bin/bash
 luacheck init.lua
-exec luacheck trade_inv.lua bank_accounts.lua formspec.lua formspec_callback.lua trade.lua
+exec luacheck trade_inv.lua bank_archive.lua bank_accounts.lua formspec.lua formspec_callback.lua trade.lua ch_core.lua

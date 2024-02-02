@@ -18,7 +18,7 @@ local zaplatit_postave_v_hotovosti = ch_core.zaplatit_postave
 	} or nil
 ]]
 function ch_core.zaplatit_od_postavy(player_name, castka, options)
-	local result, message
+	local result, _message
 	if options == nil then
 		options = {}
 	end
@@ -29,13 +29,13 @@ function ch_core.zaplatit_od_postavy(player_name, castka, options)
 		end
 	end
 	if options.bank ~= false then
-		result, message = ch_bank.platba{
+		result, _message = ch_bank.platba{
 			from_player = player_name,
 			to_player = "",
 			amount = castka,
 			label = options.label or "obecná platba",
 			group = options.group,
-			simulation = simulation,
+			simulation = options.simulation,
 		}
 		if result then
 			if not options.simulation then
@@ -73,7 +73,7 @@ end
 	} or nil
 ]]
 function ch_core.zaplatit_postave(player_name, castka, options)
-	local result, message
+	local result, _message
 	if options == nil then
 		options = {}
 	end
@@ -84,13 +84,13 @@ function ch_core.zaplatit_postave(player_name, castka, options)
 		end
 	end
 	if options.bank then
-		result, message = ch_bank.platba{
+		result, _message = ch_bank.platba{
 			from_player = "",
 			to_player = player_name,
 			amount = castka,
 			label = options.label or "obecná platba",
 			group = options.group,
-			simulation = simulation,
+			simulation = options.simulation,
 		}
 		if result then
 			if not options.simulation then

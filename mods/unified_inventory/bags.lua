@@ -9,7 +9,6 @@ License: GPLv3
 local S = minetest.get_translator("unified_inventory")
 local F = minetest.formspec_escape
 local ui = unified_inventory
-local has_ch_bank = minetest.get_modpath("ch_bank")
 
 local count_alignment = 14
 local count_empty_stacks = ch_core.count_empty_stacks
@@ -193,7 +192,8 @@ local function update_bag_metadata(player_inv, bags_inv, bag_i, change_hint)
 end
 
 local function nahlasit_batohy(player, bags_inv)
-	if has_ch_bank then
+	local ch_bank = ui.ch_bank
+	if ch_bank then
 		local player_inv = player:get_inventory()
 		local player_meta = player:get_meta()
 		local info_for_ch_bank = {}
@@ -309,8 +309,8 @@ local function load_bags_metadata(player, bags_inv)
 				table.insert(items_to_return, ItemStack(bags[i]))
 			end
 		end
-		if has_ch_bank then
-			ch_bank.give_items_to_player(player, player_inv, items_to_return)
+		if ui.ch_bank then
+			ui.ch_bank.give_items_to_player(player, player_inv, items_to_return)
 		else
 			minetest.log("warning", "Player "..player:get_player_name().." lost items during bag-upgrade: "..dump2(items_to_return))
 		end

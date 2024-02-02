@@ -10,7 +10,11 @@ local utils = {
 	STATE_OPEN = 1,
 	STATE_CLOSED = 2,
 	STATE_CONFIRMED = 3,
+	account_max = 1000000000000000, -- 10 bilionů Kčs
+	storage = minetest.get_mod_storage(),
 }
+
+assert(utils.storage ~= nil)
 
 local function mydofile(filename)
 	local f = loadfile(modpath.."/"..filename)
@@ -19,10 +23,13 @@ local function mydofile(filename)
 end
 
 mydofile("trade_inv.lua")
+mydofile("bank_archive.lua")
 mydofile("bank_accounts.lua")
 mydofile("formspec.lua")
 mydofile("formspec_callback.lua")
 mydofile("trade.lua")
 mydofile("ch_core.lua")
+
+unified_inventory.ch_bank = ch_bank
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

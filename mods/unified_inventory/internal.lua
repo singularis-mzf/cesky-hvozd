@@ -2,8 +2,6 @@ local S = minetest.get_translator("unified_inventory")
 local F = minetest.formspec_escape
 local ui = unified_inventory
 
-local has_ch_bank = minetest.get_modpath("ch_bank")
-
 -- This pair of encoding functions is used where variable text must go in
 -- button names, where the text might contain formspec metacharacters.
 -- We can escape button names for the formspec, to avoid screwing up
@@ -319,7 +317,8 @@ function ui.get_formspec(player, page)
 		-- Player inventory
 		fs[#fs + 1] = "listcolors[#00000000;#00000000]"
 		fs[#fs + 1] = ui_peruser.standard_inv
-		if has_ch_bank then
+		local ch_bank = ui.ch_bank
+		if ch_bank then
 			local zustatek, color = ch_bank.zustatek(player_name, true)
 			if zustatek ~= nil then
 				fs[#fs + 1] = "tableoptions[background=#00000000;highlight=#00000000;border=false]"..

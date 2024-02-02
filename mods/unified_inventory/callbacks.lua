@@ -1,5 +1,4 @@
 local ui = unified_inventory
-local has_ch_bank = minetest.get_modpath("ch_bank")
 
 local function default_refill(stack)
 	stack:set_count(stack:get_stack_max())
@@ -249,7 +248,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 
 	-- ch_bank buttons
-	if has_ch_bank and ch_bank.zustatek(player_name) ~= nil then
+	local ch_bank = ui.ch_bank
+	if ch_bank ~= nil and ch_bank.zustatek(player_name) ~= nil then
 		if fields.vlozit then
 			local inv = player:get_inventory()
 			local craft_list = inv:get_list("craft")
@@ -260,7 +260,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 					to_player = player_name,
 					amount = castka,
 					label = "vklad v hotovosti",
-					group = "vkladvhotovosti",
 				}
 				if success then
 					inv:set_list("craft", craft_list)
@@ -289,7 +288,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 					to_player = "",
 					amount = castka,
 					label = "výběr v hotovosti",
-					group = "vybervhotovosti",
 				}
 				if success then
 					inv:add_item("main", stack)

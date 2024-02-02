@@ -1,4 +1,4 @@
---[[
+	--[[
 
 API:
 
@@ -16,241 +16,27 @@ function ch_bank.zustatek(player_name, as_string)
 
 ]]
 
-local bank_history_length = 100
--- local account_max = 2000000000 -- 20 milionů Kčs
-local account_max = 1000000000000000 -- 10 bilionů Kčs
-local bank_day_pattern = "%d+[.] *%d+[.] *%d+"
-local change_pattern  = "-?%d+"
+local _tfinv, utils = ...
 
-local formatovat_castku = ch_core.formatovat_castku
-local ifthenelse = ch_core.ifthenelse
-local storage = minetest.get_mod_storage()
+-- imports
+local account_max = assert(utils.account_max)
+local formatovat_castku = assert(ch_core.formatovat_castku)
+local get_amount_from_storage = assert(utils.get_amount_from_storage)
+local get_current_bank_day = assert(ch_bank.get_current_bank_day)
+local ifthenelse = assert(ch_core.ifthenelse)
+local set_amount_to_storage = assert(utils.set_amount_to_storage)
 
--- [sha1(player_from_key/player_to_key/<take|give>/group/bank_day)] = index
-local transaction_grouping = {}
 local registered_after_transaction = {}
-
-local function get_current_bank_day()
-	local cas = ch_core.aktualni_cas()
-	return string.format("%d. %d. %d", cas.den, cas.mesic, cas.rok)
-end
-
-local function transaction_grouping_key(from_player, to_player, op_type, group, bank_day)
-	return minetest.sha1("@"..from_player..#from_player.."/"..to_player..#to_player.."/"..op_type.."/"..group.."/"..bank_day.."@", false)
-end
-
-local function deserialize_bank_record(s)
-	local version, rest, from_player, to_player, before, change, after, op_count, bank_day, label
-	if s == nil or s == "" then return nil end
-	version, rest = s:match("^([^|]*)|(.*)$")
-	if version == nil or version == "" then
-		return nil
-	elseif version == "1" then
-		from_player, to_player, before, change, after, op_count, bank_day, label =
-				rest:match("^([^|]*)|([^|]*)|("..change_pattern..")|("..change_pattern..")|("..change_pattern..")|(%d+)|("..bank_day_pattern..")|(.*)$")
-		if from_player == nil or to_player == nil or tonumber(change) == nil or bank_day == nil or label == nil then
-			minetest.log("warning", "deserialize_bank_record() failed: "..s)
-			return nil
-		end
-		return {
-			from_player = from_player,
-			to_player = to_player,
-			before = tonumber(before),
-			change = tonumber(change),
-			after = tonumber(after),
-			op_count = tonumber(op_count),
-			bank_day = bank_day,
-			label = label,
-		}
-	else
-		minetest.log("warning", "deserialize_bank_record(): unsupported version '"..version.."'")
-		return nil
-	end
-end
-
-local function serialize_bank_record(record)
-	assert(record)
-	assert(record.from_player) -- string
-	assert(record.to_player) -- string
-	assert(record.before) -- string
-	assert(record.change) -- int
-	assert(record.after) -- string
-	assert(record.op_count) -- int
-	assert(record.bank_day) -- string
-	assert(record.label) -- string
-	local before, change, after = record.before, record.change, record.after
-	if type(before) == "number" then
-		before = string.format("%d", before)
-	end
-	if type(change) == "number" then
-		change = string.format("%d", change)
-	end
-	if type(after) == "number" then
-		after = string.format("%d", after)
-	end
-	if record.from_player:find("|") ~= nil then
-		minetest.log("error", "serialize_bank_record(): from_player cannot contain |: "..dump2(record))
-		return nil
-	elseif record.to_player:find("|") ~= nil then
-		minetest.log("error", "serialize_bank_record(): to_player cannot contain |: "..dump2(record))
-		return nil
-	elseif not (before:match("^("..change_pattern..")$")) then
-		minetest.log("error", "serialize_bank_record(): invalid format of before! "..dump2(record))
-		return nil
-	elseif not (after:match("^("..change_pattern..")$")) then
-		minetest.log("error", "serialize_bank_record(): invalid format of after! "..dump2(record))
-		return nil
-	elseif not (change:match("^("..change_pattern..")$")) then
-		minetest.log("error", "serialize_bank_record(): invalid format of change! "..dump2(record))
-		return nil
-	elseif not tonumber(record.op_count) or tonumber(record.op_count) <= 0 then
-		minetest.log("error", "serialize_bank_record(): invalid op_count! "..dump2(record))
-		return nil
-	elseif not (record.bank_day:match("^("..bank_day_pattern..")$")) then
-		minetest.log("error", "serialize_bank_record(): invalid format of bank_day! "..dump2(record))
-		return nil
-	end
-	local result = "1|"..record.from_player.."|"..record.to_player.."|"..before.."|"..change.."|"..after.."|"..record.op_count.."|"..record.bank_day.."|"..record.label
-	local debug = table.copy(record)
-	debug.result = result
-	local test = deserialize_bank_record(result)
-	if test == nil then
-		error("deserialization of a serialized record failed <"..result..">")
-	end
-	debug.test = test
-	for _, field in ipairs({""}) do
-		if test[field] ~= record[field] then
-			minetest.log("warning", "serialize_bank_record(): "..field.." serialized incorrectly: "..dump2(debug))
-		end
-	end
-	return result
-end
-
-local precist_hotovost = ch_core.precist_hotovost
-
-local function generate_new_transaction_record(transaction, player_key, new_record)
-	local index_key = player_key.."/last_index"
-	local record_index = storage:get_int(index_key) + 1
-	local record = serialize_bank_record{
-		from_player = new_record.from_player,
-		to_player = new_record.to_player,
-		before = new_record.before,
-		change = new_record.change,
-		after = new_record.after,
-		op_count = 1,
-		bank_day = new_record.bank_day,
-		label = new_record.label or "",
-	}
-	if record == nil then
-		minetest.log("warning", "[ch_bank] serialization failed!")
-		return nil
-	end
-
-	-- remove an old record
-	if record_index > bank_history_length then
-		transaction[player_key.."/"..(record_index - bank_history_length)] = ""
-	end
-	-- save the record
-	transaction[player_key.."/"..record_index] = record
-	-- update the index
-	transaction[index_key] = record_index
-	return record_index
-end
-
-local function generate_grouped_transaction_record(transaction, player_key, new_record, group)
-	assert(group)
-	local grouping_key = transaction_grouping_key(new_record.from_player, new_record.to_player, ifthenelse(new_record.change > 0, "give", "take"), group, new_record.bank_day)
-	local record_index = transaction_grouping[grouping_key]
-	if record_index ~= nil then
-		local record_key = player_key.."/"..record_index
-		local record = deserialize_bank_record(storage:get_string(record_key))
-		if record ~= nil then
-			if new_record.label ~= nil then
-				record.label = new_record.label
-			end
-			record.change = assert(tonumber(record.change)) + new_record.change
-			if math.abs(record.change) <= account_max then
-				record.after = new_record.after
-				record.op_count = tonumber(record.op_count) + 1
-				record = serialize_bank_record(record)
-				if record == nil then
-					minetest.log("warning", "[ch_bank] serialization failed! (will add new record)")
-				else
-					-- save the record
-					transaction[record_key] = record
-					return record_index
-				end
-			end
-		end
-	end
-	record_index = generate_new_transaction_record(transaction, player_key, new_record)
-	if record_index ~= nil then
-		transaction_grouping[grouping_key] = record_index
-	end
-	return record_index
-end
-
-local function generate_transaction_record(transaction, player_key, new_record, group)
-	assert(new_record)
-	assert(new_record.from_player ~= nil)
-	assert(new_record.to_player ~= nil)
-	assert(new_record.before ~= nil and tonumber(new_record.before) ~= nil)
-	assert(new_record.change ~= nil and tonumber(new_record.change) ~= nil)
-	assert(new_record.after ~= nil and tonumber(new_record.after) ~= nil)
-	if new_record.bank_day == nil then
-		error("bank_day is nil!")
-	elseif not new_record.bank_day:match("^"..bank_day_pattern.."$") then
-		error("bank_day <"..new_record.bank_day.."> does not match the bank_day_pattern <"..bank_day_pattern..">!")
-	end
-
-	if group ~= nil then
-		return generate_grouped_transaction_record(transaction, player_key, new_record, group)
-	else
-		return generate_new_transaction_record(transaction, player_key, new_record)
-	end
-end
-
-local function get_amount_from_storage(key)
-	assert(type(key) == "string")
-	local s, n
-	s = storage:get_string(key)
-	if s == "" then
-		n = 0
-	else
-		n = tonumber(s)
-		if n == nil then
-			error("[ch_bank] get_amount_from_storage(): cannot decode amount '"..s.."' read from key '"..key.."'!")
-		end
-		if n < -account_max or n > account_max then
-			minetest.log("warning", "[ch_bank] get_amount_from_storage(): the value read is out of range (s="..s..")(n="..n..")(key="..key..")!")
-		end
-	end
-	assert(type(n) == "number")
-	return n
-end
-
-local function set_amount_to_storage(key, amount)
-	assert(type(key) == "string")
-	assert(type(amount) == "number")
-	assert(amount >= -account_max)
-	assert(amount <= account_max)
-	local s = string.format("%d", amount)
-	assert(tonumber(s) == amount)
-	storage:set_string(key, s)
-	local s2 = storage:get_string(key)
-	assert(s == s2)
-	assert(amount == tonumber(s2))
-end
 
 local next_transaction_id = 1
 
-local function platba_inner(transaction_id, from_player, to_player, amount, label_from, label_to, group, is_simulation)
+local function platba_inner(transaction_id, from_player, to_player, amount, label_from, label_to, is_simulation)
 	local log_level = "action"
 	local log_prefix = "[ch_bank]["..transaction_id..(ifthenelse(is_simulation, "*", "")).."] "
-	local bank_day = get_current_bank_day()
-	local transaction = {}
-	local take_state_key, take_state_before, take_state_after, take_warning
-	local give_state_key, give_state_before, give_state_after, give_warning
+	local bank_day, cas = get_current_bank_day()
+	assert(cas)
+	local take_state_key, take_state_before, take_state_after, take_warning, take_record
+	local give_state_key, give_state_before, give_state_after, give_warning, give_record
 
 	if from_player == to_player then
 		return false, "nelze postat platbu sobě"
@@ -282,16 +68,14 @@ local function platba_inner(transaction_id, from_player, to_player, amount, labe
 			minetest.log("warning", log_prefix..take_warning)
 			take_state_after = -account_max
 		end
-		local take_record_index = generate_transaction_record(transaction, player_key, {
+		take_record = {
 			from_player = from_player,
 			to_player = to_player,
-			before = take_state_before,
-			change = -amount,
-			after = take_state_after,
-			bank_day = bank_day,
 			label = label_from,
-			}, group)
-		minetest.log(log_level, log_prefix.."Take record index: "..(take_record_index or "nil"))
+			change = take_state_after - take_state_before,
+			op_count = 1,
+			time = string.format("%02d:%02d:%02d", cas.hodina, cas.minuta, cas.sekunda),
+		}
 	end
 	if to_player ~= "" then
 		-- give
@@ -318,16 +102,14 @@ local function platba_inner(transaction_id, from_player, to_player, amount, labe
 			minetest.log("warning", log_prefix..give_warning)
 			give_state_after = account_max
 		end
-		local give_record_index = generate_transaction_record(transaction, player_key, {
+		give_record = {
 			from_player = from_player,
 			to_player = to_player,
-			before = give_state_before,
-			change = amount,
-			after = give_state_after,
-			bank_day = bank_day,
 			label = label_to,
-			}, group)
-		minetest.log(log_level, log_prefix.."Give record index: "..(give_record_index or "nil"))
+			change = give_state_after - give_state_before,
+			op_count = 1,
+			time = string.format("%02d:%02d:%02d", cas.hodina, cas.minuta, cas.sekunda),
+		}
 	end
 	if take_state_key == nil and give_state_key == nil then
 		return false, "není co dělat"
@@ -335,6 +117,13 @@ local function platba_inner(transaction_id, from_player, to_player, amount, labe
 
 	if is_simulation then
 		return true, nil
+	end
+
+	if take_state_key ~= nil then
+		utils.add_today_transaction(from_player, take_record)
+	end
+	if give_state_key ~= nil then
+		utils.add_today_transaction(to_player, give_record)
 	end
 
 	if take_state_key ~= nil then
@@ -355,20 +144,14 @@ local function platba_inner(transaction_id, from_player, to_player, amount, labe
 		-- give successful
 		minetest.log(log_level, log_prefix.."Give successful: state set to "..give_state_after)
 	end
-	local counter = 0
-	for k, v in pairs(transaction) do
-		local t = type(v)
-		counter = counter + 1
-		minetest.log(log_level, log_prefix.."Transaction setup ["..counter.."]: key("..k..") type("..t..") value ("..dump2(v)..").")
-		if t == "string" then
-			storage:set_string(k, v)
-		elseif t == "number" then
-			storage:set_int(k, v)
-		else
-			minetest.log("warning", log_prefix.."Transaction contains a value of invalid type '"..t.."' with key '"..k.."'!")
+
+	-- update inventory formspec
+	for _, player_name in ipairs({from_player, to_player}) do
+		local player = player_name ~= "" and minetest.get_player_by_name(player_name)
+		if player ~= nil then
+			unified_inventory.set_inventory_formspec(player, unified_inventory.current_page[player_name] or unified_inventory.default)
 		end
 	end
-	minetest.log(log_level, log_prefix.."Transaction setup finished, "..counter.." keys were set.")
 
 	local transaction_info = {amount = amount}
 	if from_player ~= "" then
@@ -415,7 +198,7 @@ function ch_bank.platba(def)
 	local log_prefix = "[ch_bank]["..transaction_id.."] "
 
 	minetest.log("action", log_prefix.."Transaction STARTED: "..dump2(def))
-	local success, warning_message = platba_inner(transaction_id, def.from_player, def.to_player, def.amount, def.label_from or def.label, def.label_to or def.label, def.group, def.simulation)
+	local success, warning_message = platba_inner(transaction_id, def.from_player, def.to_player, def.amount, def.label_from or def.label, def.label_to or def.label, def.simulation)
 	if success then
 		minetest.log("action", log_prefix.."Transaction FINISHED.")
 	else
@@ -482,7 +265,6 @@ local function cc_platba(name, params)
 		castka = math.floor(castka * 100)
 	end
 	if castka == nil or castka <= 0 then
-		print("DEBUG: <"..(castka or "nil")..">")
 		return false, "neplatná částka"
 	end
 	zprava = zprava:gsub("^ *", "")

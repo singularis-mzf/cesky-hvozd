@@ -124,7 +124,6 @@ function tinv.open_simulation(player_name, inv, listname)
 	local list = assert(inv:get_list(listname))
 	sim_inv:set_size(player_name, size)
 	sim_inv:set_list(player_name, list)
-	print("DEBUG: openned simulation for "..player_name..": "..dump2({size = size, list = list}))
 	return size, list
 end
 
@@ -135,13 +134,11 @@ function tinv.add_items_to_simulation(player_name, stacks) -- true | false
 			return false
 		end
 	end
-	print("DEBUG: added items to simulation for "..player_name..": "..dump2({list_after_add = sim_inv:get_list(player_name), stacks = stacks}))
 	return true
 end
 
 function tinv.close_simulation(player_name) -- => stacks
 	local result = sim_inv:get_list(player_name)
-	print("DEBUG: simulation closed for "..player_name..": "..dump2({result = result}))
 	sim_inv:set_size(player_name, 0)
 	return result
 end
