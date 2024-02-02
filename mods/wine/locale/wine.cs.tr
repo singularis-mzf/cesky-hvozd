@@ -1,7 +1,7 @@
 # Translation of wine mod
 # textdomain: wine
 # author: Singularis
-# last update: 2023/December/29
+# last update: 2024/January/31
 
 Glass of Wine=sklenice vína
 Bottle of Wine=láhev vína
@@ -65,3 +65,4 @@ Empty Drinking Glass=prázdná sklenice
 # [MOD] Wine loaded=
 
 Large Drinking Glass=prázdný půllitr
+Water Level: @1%=úroveň vody: @1%

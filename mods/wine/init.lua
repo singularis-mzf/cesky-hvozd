@@ -5,7 +5,6 @@ local def = minetest.get_modpath("default")
 local snd_d = def and default.node_sound_defaults()
 local snd_g = minetest.registered_nodes["vessels:drinking_glass"].sounds
 local glass_item = def and "default:glass"
-local txt
 
 if not snd_g then
 	error("Missing sounds for a drinking glass!")
@@ -194,6 +193,13 @@ local function winebarrel_formspec(item_percent, brewing, water_percent)
 	.. "listring[current_player;main]"
 end
 
+local function winebarrel_infotext(_status, brewing, water_percent)
+	if brewing ~= "" then
+		brewing = " "..brewing
+	end
+	return S("Fermenting Barrel")..brewing.."\n"..S("Water Level: @1%", water_percent or 0)
+end
+
 
 -- list of buckets used to fill barrel
 local bucket_list = {
@@ -243,7 +249,7 @@ minetest.register_node("wine:wine_barrel", {
 		local meta = minetest.get_meta(pos)
 
 		meta:set_string("formspec", winebarrel_formspec(0, "", 0))
-		meta:set_string("infotext", S("Fermenting Barrel"))
+		meta:set_string("infotext", winebarrel_infotext(0, "", 0))
 		meta:set_float("status", 0)
 
 		local inv = meta:get_inventory()
@@ -447,7 +453,7 @@ minetest.register_node("wine:wine_barrel", {
 		if not inv or inv:is_empty("src") then
 
 			meta:set_float("status", 0)
-			meta:set_string("infotext", S("Fermenting Barrel"))
+			meta:set_string("infotext", winebarrel_infotext(0, "", water))
 			meta:set_string("formspec", winebarrel_formspec(0, "", water))
 
 			return false
@@ -456,9 +462,7 @@ minetest.register_node("wine:wine_barrel", {
 		-- check water level
 		if water < 5 then
 
-			txt = S("Fermenting Barrel") .. " " .. S("(Water Level Low)")
-
-			meta:set_string("infotext", txt)
+			meta:set_string("infotext", winebarrel_infotext(0, S("(Water Level Low)"), water))
 			meta:set_float("status", 0)
 			meta:set_string("formspec", winebarrel_formspec(0,
 					S("(Water Level Low)"), water))
@@ -507,9 +511,7 @@ minetest.register_node("wine:wine_barrel", {
 		-- if we have a wrong recipe change status
 		if not has_items then
 
-			txt = S("Fermenting Barrel") .. " " .. S("(No Valid Recipe)")
-
-			meta:set_string("infotext", txt)
+			meta:set_string("infotext", winebarrel_infotext(0, S("(No Valid Recipe)"), water))
 			meta:set_float("status", 0)
 			meta:set_string("formspec",
 					winebarrel_formspec(0, S("(No Valid Recipe)"), water))
@@ -520,9 +522,7 @@ minetest.register_node("wine:wine_barrel", {
 		-- is there room for additional fermentation?
 		if not inv:room_for_item("dst", recipe[2]) then
 
-			txt = S("Fermenting Barrel") .. " " .. S("(Output Full)")
-
-			meta:set_string("infotext", txt)
+			meta:set_string("infotext", winebarrel_infotext(0, S("(Output Full)"), water))
 			meta:set_string("formspec",
 					winebarrel_formspec(0, S("(Output Full)"), water))
 
@@ -534,16 +534,12 @@ minetest.register_node("wine:wine_barrel", {
 		-- fermenting (change status)
 		if status < 100 then
 
-			txt = S("Fermenting Barrel") .. " " .. S("(@1% Done)", status)
-
-			meta:set_string("infotext", txt)
+			meta:set_string("infotext", winebarrel_infotext(0, S("(@1% Done)", status), water))
 			meta:set_float("status", status + 5)
 
 			local desc = minetest.registered_items[recipe[2]].description or ""
 
-			txt = S("Brewing: @1", desc) .. " " .. S("(@1% Done)", status)
-
-			meta:set_string("formspec", winebarrel_formspec(status, txt, water))
+			meta:set_string("formspec", winebarrel_formspec(status, S("Brewing: @1", desc) .. "\n" .. S("(@1% Done)", status), water))
 
 		else -- when we hit 100% remove items needed and add beverage
 
@@ -563,7 +559,7 @@ minetest.register_node("wine:wine_barrel", {
 
 		if inv:is_empty("src") then
 			meta:set_float("status", 0.0)
-			meta:set_string("infotext", S("Fermenting Barrel"))
+			meta:set_string("infotext", winebarrel_infotext(0, "", water))
 		end
 
 		return true

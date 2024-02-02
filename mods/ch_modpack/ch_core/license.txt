@@ -43,6 +43,9 @@ ch_core_kouzhul.png
 ch_core_slunce.png
 ch_core_koruna.png
 ch_core_chessboard.png
+ch_core_wood_noise_32.png
+ch_core_wood_noise_64.png
+ch_core_wood_noise_128.png
 	Author: Singularis
 	License: CC-BY-SA 4.0
 
