@@ -57,11 +57,11 @@ end
 -- config {x, y, z, x_max, rotation}
 
 local function sednout(zidle_pos, zidle_node, player, config)
-	if not player or not player:is_player() or not zidle_pos or not zidle_node or not player_api.player_get_animation then
+	if not player or not player:is_player() or not zidle_pos or not zidle_node or not player_api.get_animation then
 		return false
 	end
 	local player_name = player:get_player_name()
-	local current_anim = player_api.player_get_animation(player) or ""
+	local current_anim = player_api.get_animation(player) or ""
 	local zero_vector = vector.zero()
 
 	if current_anim == "sit" or current_anim == "sedni" then
