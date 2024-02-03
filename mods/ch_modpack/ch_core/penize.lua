@@ -26,6 +26,8 @@ local penize = {
 	["ch_core:kcs_zcs"] = 10000,
 }
 
+local payment_methods = {}
+
 --[[
 	Zformátuje částku do textové podoby, např. "-1 235 123,45".
 	Částka může být záporná. Druhá vrácená hodnota je doporučený
@@ -44,7 +46,7 @@ function ch_core.formatovat_castku(n)
 	end
 	n = math.ceil(n)
 	if m ~= "" then
-		color = "#990000"
+		color = "#bb0000"
 	elseif n < 100 then
 		color = "#ffffff"
 	else
@@ -110,6 +112,31 @@ function ch_core.hotovost(castka)
 	return stacks
 end
 
+-- 0 = upřednostňovat platby z/na účet
+-- 1 = přijímat v hotovosti, platit z účtu
+-- 2 = přijímat na účet, platit hotově
+-- 3 = upřednostňovat hotovost
+-- 4 = zakázat platby z účtu
+
+--[[
+function ch_core.nastaveni_prichozich_plateb(player_name)
+	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	if offline_charinfo == nil then
+		return {}
+	end
+	local rezim = offline_charinfo.rezim_plateb
+	return {cash = true, bank = true, prefer_cash = rezim ~= 0 and rezim ~= 2}
+end
+
+function ch_core.nastaveni_odchozich_plateb(player_name)
+	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	if offline_charinfo == nil then
+		return {}
+	end
+	local rezim = offline_charinfo.rezim_plateb
+	return {cash = true, bank = rezim ~= 4, prefer_cash = rezim >= 2}
+end
+]]
 --[[
 	Parametr musí být ItemStack nebo nil. Je-li to dávka peněz,
 	vrátí jejich hodnotu (nezáporné celé číslo). Jinak vrací nil.
@@ -164,7 +191,7 @@ function ch_core.vzit_hotovost(stacks, limit)
 				else
 					-- take a part of the stack
 					local count_to_take = math.ceil(limit / value_per_item)
-					assert(count_to_take >= 1 and count_to_take < stack_count)
+					assert(count_to_take >= 1 and count_to_take <= stack_count)
 					local value_to_take = count_to_take * value_per_item
 					stack:set_count(stack_count - count_to_take)
 					local h_to_return = value_to_take - limit
@@ -205,106 +232,207 @@ function ch_core.vzit_hotovost(stacks, limit)
 	return castka
 end
 
+function ch_core.register_payment_method(name, pay_from_player, pay_to_player)
+	if payment_methods[name] ~= nil then
+		error("payment method "..name.." is already registered!")
+	end
+	if type(pay_from_player) ~= "function" or type(pay_to_player) ~= "function" then
+		error("ch_core.register_payment_method(): invalid type of arguments!")
+	end
+	payment_methods[name] = {pay_from = pay_from_player, pay_to = pay_to_player}
+end
 
+local function build_methods_to_try(options, allow_bank, prefer_cash)
+	if options[1] ~= nil then
+		return options
+	end
+	local methods_to_consider = {}
+	if options.bank ~= false and allow_bank then
+		methods_to_consider.bank = true
+	end
+	if options.smartshop ~= false and options.shop ~= nil then
+		methods_to_consider.smartshop = true
+	elseif options.cash ~= false then
+		methods_to_consider.cash = true
+	end
 
+	local methods_to_try = {}
+	if methods_to_consider.bank and not prefer_cash then
+		table.insert(methods_to_try, "bank")
+		methods_to_consider.bank = nil
+	end
+	if methods_to_consider.smartshop then
+		table.insert(methods_to_try, "smartshop")
+		methods_to_consider.smartshop = nil
+	end
+	if methods_to_consider.cash then
+		table.insert(methods_to_try, "cash")
+		methods_to_consider.cash = nil
+	end
+	if methods_to_consider.bank then
+		table.insert(methods_to_try, "bank")
+		methods_to_consider.bank = nil
+	end
+	for method, _ in pairs(methods_to_consider) do
+		table.insert(methods_to_try, method)
+	end
+	return methods_to_try
+end
 
+local function pay_from_or_to(dir, player_name, amount, options)
+	if options == nil then options = {} end
+	local rezim = (ch_core.offline_charinfo[player_name] or {}).rezim_plateb or 0
+	local methods_to_try
+	if dir == "from" then
+		methods_to_try = build_methods_to_try(options, rezim ~= 4, rezim >= 2)
+	else
+		methods_to_try = build_methods_to_try(options, true, rezim ~= 0 and rezim ~= 2)
+	end
+	local silent = options.simulation and options.silent
+	local errors = {}
+	local i = 1
+	local method = methods_to_try[i]
+	while method ~= nil do
+		local pm = payment_methods[method]
+		if pm ~= nil then
+			local success, error_message
+			if dir == "from" then
+				success, error_message = pm.pay_from(player_name, amount, options)
+			else
+				success, error_message = pm.pay_to(player_name, amount, options)
+			end
+			if success then
+				if not silent then
+					minetest.log("action", "pay_"..dir.."("..player_name..", "..amount..") succeeded with method "..method)
+				end
+				return true, {method = method}
+			end
+			if error_message ~= nil then
+				table.insert(errors, error_message)
+			end
+		end
+		i = i + 1
+		method = methods_to_try[i]
+	end
+	if #errors == 0 then
+		return false, "Nebyla nalezena žádná použitelná platební metoda."
+	end
+	if options.assert == true then
+		error("Payment assertion failed: pay_"..dir.."("..player_name..", "..amount.."): "..dump2({dir = dir, options = options, errors = errors, methods_to_try = methods_to_try}))
+	end
+	if not silent then
+		minetest.log("action", "pay_"..dir.."("..player_name..", "..amount..") failed! "..#methods_to_try.." methods has been tried. Errors: "..dump2(errors))
+	end
+	return false, {errors = errors}
+end
 
-ch_core.close_submod("penize")
+function ch_core.pay_from(player_name, amount, options)
+	return pay_from_or_to("from", player_name, amount, options)
+end
+
+function ch_core.pay_to(player_name, amount, options)
+	return pay_from_or_to("to", player_name, amount, options)
+end
 
 --[[
-	Daná postava zaplatí požadovanou částku v hotovosti.
-	Vrací true v případě úspěchu.
-	V případě neúspěchu vrátí false a nic nebude zaplaceno.
-	- player_name: string // jméno postavy
-	- castka : int >= 0 // částka k zaplacení
-	- options : {
-		cash = bool or nil,
-		player_inv = InvRef or nil,
-		simulation = bool or nil,
-	} or nil
+options:
+
+	[method] : bool or nil, // je-li false, daná metoda nemá dovoleno běžet
+		a musí vrátit false bez chybového hlášení
+	assert : bool or nil, // je-li true a platba nebude uskutečněna
+		žádnou platební metodou, shodí server. Tato volba je obsluhována
+		přímo ch_core a platební metody by s ní neměly interferovat.
+	silent : bool or nil, // je-li true a je-li i simulation == true,
+		mělo by potlačit obvyklé logování, aby transakce zanechala co nejméně stop
+	simulation : bool or nil, // je-li true, jen vyzkouší, zda může uspět;
+		ve skutečnosti platbu neprovede a nikam nezaznamená
+
+	player_inv : InvRef or nil, // platí pro metodu "cash"; specifikuje
+		inventář, se kterým se má zacházet jako s hráčovým/iným
+	listname : string or nil, // platí pro metodu "cash"; specifikuje
+		listname v inventáři; není-li zadáno, použije se "main"
+
+	label : string or nil, // platí pro metodu "bank";
+		udává poznámku, která se má uložit do záznamu o platebním převodu
+
+	shop : shop_class or nil, // platí pro metodu "smartshop";
+		odkazuje na objekt obchodního terminálu, který se má použít
+		namísto hráčova/ina inventáře
+
+	Další platební metody mohou mít svoje vlastní parametry.
 ]]
-function ch_core.zaplatit_od_postavy(player_name, castka, options)
-	local player_inv, simulation
-	if options ~= nil then
-		if options.cash == false then
-			return nil -- není povoleno
-		end
-		player_inv = options.player_inv
-		simulation = options.simulation
-	end
+
+
+local function cash_pay_from_player(player_name, amount, options)
+	if options.cash == false then return false end
+	local player_inv = options.player_inv
 	if player_inv == nil then
 		local player = minetest.get_player_by_name(player_name)
 		if player == nil then
-			return nil -- postava není ve hře
+			return false, "Postava není ve hře"
 		end
 		player_inv = player:get_inventory()
 	end
-	local inv_list = player_inv:get_list("main")
-	local hotovost_v_inv_pred = ch_core.vzit_hotovost(player_inv:get_list("main")) or 0
-	local ziskano = ch_core.vzit_hotovost(inv_list, castka)
-	if ziskano ~= castka then
-		minetest.log("action", player_name.." failed to pay "..castka.." in cash (got "..(ziskano or "nil")..")")
-		print("DEBUG: "..dump2({ziskano = ziskano, castka = castka, options = options}))
-		return false
+	local silent = options.simulation and options.silent
+	local listname = options.listname or "main"
+	local inv_list = player_inv:get_list(listname)
+	local hotovost_v_inv_pred = ch_core.vzit_hotovost(player_inv:get_list(listname)) or 0
+	local ziskano = ch_core.vzit_hotovost(inv_list, amount)
+	if ziskano ~= amount then
+		if not silent then
+			minetest.log("action", player_name.." failed to pay "..amount.." in cash (got "..(ziskano or "nil")..")")
+			print("DEBUG: "..dump2({ziskano = ziskano, amount = amount, options = options}))
+		end
+		return false, "V inventáři není dost peněz v hotovosti."
 	end
-	if not simulation then
-		player_inv:set_list("main", inv_list)
-		minetest.log("action", player_name.." payed "..castka.." in cash")
+	if not options.simulation then
+		player_inv:set_list(listname, inv_list)
+		minetest.log("action", player_name.." payed "..amount.." in cash")
 		local hotovost_v_inv_po = ch_core.vzit_hotovost(inv_list) or 0
-		if hotovost_v_inv_po ~= hotovost_v_inv_pred - castka then
-			error("ERROR in zaplatit_od_postavy: pred="..hotovost_v_inv_pred..", po="..hotovost_v_inv_po..", castka="..castka)
+		if hotovost_v_inv_po ~= hotovost_v_inv_pred - amount then
+			error("ERROR in cash_pay_from_player: pred="..hotovost_v_inv_pred..", po="..hotovost_v_inv_po..", amount="..amount)
 		end
 	end
 	return true
 end
 
---[[
-	Zaplatí dané postavě v hotovosti uvedenou částku.
-	Vrací true v případě úspěchu.
-	V případě neúspěchu vrátí false a nic nebude zaplaceno.
-	- player_name: string // jméno postavy
-	- castka : int >= 0 // částka k zaplacení
-	- options : {
-		cash = bool or nil,
-		player_inv = InvRef or nil,
-		simulation = bool or nil,
-	} or nil
-]]
-function ch_core.zaplatit_postave(player_name, castka, options)
-	local player_inv, simulation
-	if options ~= nil then
-		if options.cash == false then
-			return nil -- není povoleno
-		end
-		player_inv = options.player_inv
-		simulation = options.simulation
-	end
+local function cash_pay_to_player(player_name, amount, options)
+	if options.cash == false then return false end
+	local player_inv = options.player_inv
 	if player_inv == nil then
 		local player = minetest.get_player_by_name(player_name)
 		if player == nil then
-			return nil -- postava není ve hře
+			return false, "Postava není ve hře"
 		end
 		player_inv = player:get_inventory()
 	end
-	local inv_backup = player_inv:get_list("main")
-	local hotovost_v_inv_pred = ch_core.vzit_hotovost(player_inv:get_list("main")) or 0
-	local hotovost = ch_core.hotovost(castka)
+	local silent = options.simulation and options.silent
+	local listname = options.listname or "main"
+	local inv_backup = player_inv:get_list(listname)
+	local hotovost_v_inv_pred = ch_core.vzit_hotovost(player_inv:get_list(listname)) or 0
+	local hotovost = ch_core.hotovost(amount)
 	for _, stack in ipairs(hotovost) do
-		local remains = player_inv:add_item("main", stack)
+		local remains = player_inv:add_item(listname, stack)
 		if not remains:is_empty() then
 			-- failure
-			player_inv:set_list("main", inv_backup)
-			return false
+			player_inv:set_list(listname, inv_backup)
+			return false, "Plný inventář, platba v hotovosti se do něj nevejde."
 		end
 	end
-	local hotovost_v_inv_po = ch_core.vzit_hotovost(player_inv:get_list("main")) or 0
-	if hotovost_v_inv_po ~= hotovost_v_inv_pred + castka then
-		error("ERROR in zaplatit_postave: pred="..hotovost_v_inv_pred..", po="..hotovost_v_inv_po..", castka="..castka)
+	local hotovost_v_inv_po = ch_core.vzit_hotovost(player_inv:get_list(listname)) or 0
+	if hotovost_v_inv_po ~= hotovost_v_inv_pred + amount then
+		error("ERROR in cash_pay_to_player: pred="..hotovost_v_inv_pred..", po="..hotovost_v_inv_po..", amount="..amount)
 	end
-	if simulation then
-		player_inv:set_list("main", inv_backup)
+	if options.simulation then
+		player_inv:set_list(listname, inv_backup)
 		return true
 	end
-	minetest.log("action", "to "..player_name.." "..castka.." has been payed in cash")
+	if not silent then
+		minetest.log("action", "to "..player_name.." "..amount.." has been payed in cash")
+	end
 	return true
 end
+
+ch_core.register_payment_method("cash", cash_pay_from_player, cash_pay_to_player)
+
+ch_core.close_submod("penize")

@@ -32,7 +32,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	return api.on_player_receive_fields(player, formname, fields)
 end)
 
-function api.build_owner_formspec(shop)
+function api.build_owner_formspec(shop, player_name)
+	assert(player_name)
 	local fpos = formspec_pos(shop.pos)
 	local send = shop:get_send()
 	local refill = shop:get_refill()
@@ -138,19 +139,26 @@ function api.build_owner_formspec(shop)
 	return table.concat(fs_parts, "")
 end
 
-function api.build_client_formspec(shop)
+function api.build_client_formspec(shop, player_name)
 	-- we need formspec version3 here,
 	-- so that we can make the give/pay slots list[]s, and cover them w/ an invisible button
 	-- which fixes UI scaling issues for small screens
 
+	assert(player_name)
 	local fpos = formspec_pos(shop.pos)
 	local strict_meta = shop:is_strict_meta()
+	local zustatek_fs
+
+	if smartshop.has.ch_bank then
+		zustatek_fs = ch_bank.get_zustatek_formspec(player_name, 2.85, 3.25, 12.7, "penize", "hcs", "kcs", "zcs")
+	end
 
 	local fs_parts = {
 		"formspec_version[3]",
-		"size[15.5,8]",
+		"size[15.5,9]",
+		zustatek_fs or "",
 		"style_type[image_button;bgcolor=#00000000;bgimg=blank.png;border=false]",
-		"list[current_player;main;2.875,3.125;8,4;]",
+		"list[current_player;main;2.875,3.75;8,4;]",
 		("label[0.375,0.625;%s]"):format(FS("for sale:")),
 		("label[0.375,1.875;%s]"):format(FS("price:")),
 	}

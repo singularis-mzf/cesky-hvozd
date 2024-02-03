@@ -12,6 +12,7 @@ local player_inventory_lists = {
 }
 
 -- ALIASES AND CONSTANT CONDITIONS
+local has_currency = minetest.get_modpath("currency")
 local has_emote = minetest.get_modpath("emote")
 local STATE_OPEN, STATE_CONFIRMED = utils.STATE_OPEN, utils.STATE_CONFIRMED
 
@@ -182,15 +183,22 @@ local function cancel_trade(player_name, trade_state)
 	-- 2. return items
 	local items_ltr = tinv.read_trade_inventory(player)
 	local items_rtl = tinv.read_trade_inventory(player_right)
-	local money_ltr = ch_bank.extrahovat_penize(items_ltr)
-	local money_rtl = ch_bank.extrahovat_penize(items_rtl)
+	local rezim_left = (ch_core.offline_charinfo[player_name] or {}).rezim_plateb or 0
+	local rezim_right = (ch_core.offline_charinfo[player_name_right] or {}).rezim_plateb or 0
+	local money_ltr, money_rtl
+	if rezim_left == 0 or rezim_left == 2 then
+		money_ltr = ch_core.vzit_hotovost(items_ltr)
+	end
+	if rezim_right == 0 or rezim_right == 2 then
+		money_rtl = ch_core.vzit_hotovost(items_rtl)
+	end
 	utils.give_items_to_player(player:get_pos(), player:get_inventory(), items_ltr)
 	utils.give_items_to_player(player_right:get_pos(), player_right:get_inventory(), items_rtl)
 	--  3. return money
-	if money_ltr > 0 then
+	if money_ltr ~= nil and money_ltr > 0 then
 		utils.give_money_to_player(player_name, money_ltr)
 	end
-	if money_rtl > 0 then
+	if money_rtl ~= nil and money_rtl > 0 then
 		utils.give_money_to_player(player_name_right, money_rtl)
 	end
 	-- 4. discard the trade inventory
@@ -254,7 +262,7 @@ function utils.nabidnout_obchod(from_player, to_player)
 	utils.set_is_offering_title(from_player_name, true)
 	ch_core.systemovy_kanal(from_player_name, "Nabízíte obchod postavě "..ch_core.prihlasovaci_na_zobrazovaci(to_player_name).."...")
 	ch_core.systemovy_kanal(to_player_name, "Postava "..ch_core.prihlasovaci_na_zobrazovaci(from_player_name).." vám nabízí obchod. Máte 20 sekund na reakci.")
-	ch_core.start_ch_timer(to_data, "trade", 20, {
+	local timer_def = {
 		label = "obchod",
 		func = function()
 			local ts = utils.get_player_trade_state(to_player_name)
@@ -263,7 +271,11 @@ function utils.nabidnout_obchod(from_player, to_player)
 				ch_bank.zrusit_obchod(to_player_name)
 			end
 		end,
-	})
+	}
+	if has_currency then
+		timer_def.hudbar_icon = "barter_top.png"
+	end
+	ch_core.start_ch_timer(to_data, "trade", 20, timer_def)
 end
 
 function utils.zacit_obchod(from_player, to_player)
@@ -366,12 +378,23 @@ function utils.uzavrit_obchod(player, player_right)
 
 	local items_ltr = tinv.read_trade_inventory(player)
 	local items_rtl = tinv.read_trade_inventory(player_right)
-	local money_ltr = ch_bank.extrahovat_penize(items_ltr)
-	local money_rtl = ch_bank.extrahovat_penize(items_rtl)
+	local rezim_left = (ch_core.offline_charinfo[player_name] or {}).rezim_plateb or 0
+	local rezim_right = (ch_core.offline_charinfo[player_name_right] or {}).rezim_plateb or 0
+	local money_ltr, money_rtl
+	if rezim_left == 0 or rezim_left == 2 then
+		money_ltr = ch_core.vzit_hotovost(items_ltr)
+	end
+	if rezim_right == 0 or rezim_right == 2 then
+		money_rtl = ch_core.vzit_hotovost(items_rtl)
+	end
 
 	-- 1. Give back money
-	utils.give_money_to_player(player_name, money_ltr)
-	utils.give_money_to_player(player_name_right, money_rtl)
+	if money_ltr ~= nil and money_ltr ~= 0 then
+		utils.give_money_to_player(player_name, money_ltr)
+	end
+	if money_rtl ~= nil and money_rtl ~= 0 then
+		utils.give_money_to_player(player_name_right, money_rtl)
+	end
 
 	local errors = {}
 	local success_items_rtl = tinv.add_items_to_simulation(player_name, items_rtl)
@@ -385,18 +408,19 @@ function utils.uzavrit_obchod(player, player_right)
 	local success_bank = true
 	if success_items_ltr and success_items_rtl then
 		local message
-		if money_ltr > money_rtl then
+		local money_diff = (money_ltr or 0) - (money_rtl or 0)
+		if money_diff > 0 then
 			success_bank, message = ch_bank.platba{
 				from_player = player_name,
 				to_player = player_name_right,
-				amount = money_ltr - money_rtl,
+				amount = money_diff,
 				label = "směna",
 			}
-		elseif money_ltr < money_rtl then
+		elseif money_diff < 0 then
 			success_bank, message = ch_bank.platba{
 				from_player = player_name_right,
 				to_player = player_name,
-				amount = money_rtl - money_ltr,
+				amount = -money_diff,
 				label = "směna",
 			}
 		end

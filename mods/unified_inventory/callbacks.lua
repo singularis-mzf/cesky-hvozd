@@ -268,33 +268,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 					ch_core.systemovy_kanal(player_name, "Vkládání na účet selhalo: "..(message or "neznámý důvod"))
 				end
 			end
-		elseif (fields.kcs or fields.zcs or fields.hcs) and fields.penize and fields.penize:match("^%d+$") and tonumber(fields.penize) <= 10000 and tonumber(fields.penize) ~= 0 then
-			local inv = player:get_inventory()
-			local stack
-			if fields.kcs then
-				stack = "ch_core:kcs_kcs"
-			elseif fields.zcs then
-				stack = "ch_core:kcs_zcs"
-			else
-				stack = "ch_core:kcs_h"
-			end
-			stack = ItemStack(stack.." "..tonumber(fields.penize))
-			local castka = ch_core.precist_hotovost(stack)
-			assert(castka)
-			assert(castka > 0)
-			if inv:room_for_item("main", stack) then
-				local success, message = ch_bank.platba{
-					from_player = player_name,
-					to_player = "",
-					amount = castka,
-					label = "výběr v hotovosti",
-				}
-				if success then
-					inv:add_item("main", stack)
-				else
-					ch_core.systemovy_kanal(player_name, "Výběr z účtu selhal: "..(message or "neznámý důvod"))
-				end
-			end
+		elseif fields.kcs then
+			ch_bank.receive_inventory_fields(player, fields.penize, "kcs")
+		elseif fields.zcs then
+			ch_bank.receive_inventory_fields(player, fields.penize, "zcs")
+		elseif fields.hcs then
+			ch_bank.receive_inventory_fields(player, fields.penize, "h")
 		end
 	end
 

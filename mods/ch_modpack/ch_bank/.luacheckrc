@@ -19,9 +19,11 @@ globals = {
 		"je_ve_vykonu_trestu",
 		"jmeno_na_prihlasovaci",
 		"normalize_player",
+		"offline_charinfo",
 		"online_charinfo",
 		"precist_hotovost",
 		"prihlasovaci_na_zobrazovaci",
+		"register_payment_method",
 		"set_temporary_titul",
 		"show_formspec",
 		"soukroma_zprava",
@@ -29,8 +31,7 @@ globals = {
 		"systemovy_kanal",
 		"update_formspec",
 		"utf8_truncate_right",
-		"zaplatit_od_postavy",
-		"zaplatit_postave",
+		"vzit_hotovost",
 		colors = {fields = {
 			"black", "blue", "green", "cyan", "red", "magenta", "brown", "yellow", "light_gray", "dark_gray", "light_blue", "light_green", "light_cyan", "light_red", "light_magenta", "light_yellow", "white"
 		}},

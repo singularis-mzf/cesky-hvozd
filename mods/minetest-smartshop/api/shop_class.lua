@@ -513,14 +513,14 @@ end
 
 function shop_class:show_formspec(player, force_client_view)
     local formspec
+    local player_name = player:get_player_name()
     if self:is_owner(player) and not force_client_view then
-        formspec = api.build_owner_formspec(self)
+        formspec = api.build_owner_formspec(self, player_name)
     else
-        formspec = api.build_client_formspec(self)
+        formspec = api.build_client_formspec(self, player_name)
     end
 
     local formname = ("smartshop:%s"):format(self:get_pos_as_string())
-    local player_name = player:get_player_name()
 
     show_formspec(player_name, formname, formspec)
 end
@@ -530,9 +530,9 @@ function shop_class:show_history(player)
         return
     end
 
-    local formspec = api.build_history_formspec(self)
-    local formname = ("smartshop:%s"):format(self:get_pos_as_string())
     local player_name = player:get_player_name()
+    local formspec = api.build_history_formspec(self, player_name)
+    local formname = ("smartshop:%s"):format(self:get_pos_as_string())
 
     show_formspec(player_name, formname, formspec)
 end
@@ -581,6 +581,19 @@ function shop_class:receive_fields(player, fields)
 			api.try_purchase(player, self, buy_index)
 		end
         self:show_formspec(player, true)
+
+	elseif fields.kcs then
+		if smartshop.has.ch_bank then
+			ch_bank.receive_inventory_fields(player, fields.penize, "kcs")
+		end
+	elseif fields.hcs then
+		if smartshop.has.ch_bank then
+			ch_bank.receive_inventory_fields(player, fields.penize, "hcs")
+		end
+	elseif fields.zcs then
+		if smartshop.has.ch_bank then
+			ch_bank.receive_inventory_fields(player, fields.penize, "zcs")
+		end
 
     else
         if fields.is_unlimited and player_is_admin(player) then

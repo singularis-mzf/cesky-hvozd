@@ -85,6 +85,68 @@ function inv_class:remove_item(stack, match_meta)
 	return removed
 end
 
+-- => remaining_hundreds, how_much_to_remove
+local function remove_money_to_match_100(inv, item_name, amount)
+	local count_to_remove = 0
+	local target = math.floor(amount / 100) * 100
+	local stack = inv:remove_item(item_name.." "..math.min(amount, 10000))
+	local count = stack:get_count()
+	while count == 10000 and amount >= 10000 do
+		amount = amount - 10000
+		count_to_remove = count_to_remove + 10000
+	end
+	if count >= amount then
+		-- completely satisfied
+		return 0, count_to_remove + count
+	end
+	-- count < amount
+	count_to_remove = amount - 100
+	local remaining_hundreds = (amount - count_to_remove) / 100
+	assert(remaining_hundreds == math.floor(remaining_hundreds))
+	return remaining_hundreds, count_to_remove
+end
+
+--[[
+	=> { success = true|false, h_to_remove, kcs_to_remove, zcs_to_remove, remains }
+]]
+function inv_class:remove_ch_money(amount)
+	local remains
+	local result = {}
+	remains, result.h_to_remove = remove_money_to_match_100(self, "ch_core:kcs_h", amount)
+	if remains ~= 0 then
+		remains, result.kcs_to_remove = remove_money_to_match_100(self, "ch_core:kcs_kcs", remains)
+		result.zcs_to_remove = 0
+		while remains > 0 do
+			local stack = self:remove_item("ch_core:kcs_zcs "..math.min(remains, 10000), "give")
+			local count = stack:get_count()
+			if count >= remains then
+				result.zcs_to_remove = result.zcs_to_remove + remains
+				remains = 0
+				break
+			elseif count > 0 then
+				result.zcs_to_remove = result.zcs_to_remove + count
+				remains = remains - count
+			else
+				break -- no more items
+			end
+		end
+	end
+	local success = remains == 0
+	if success then
+		if result.h_to_remove < 0 then
+			success = self:add_item(ItemStack("ch_core:kcs_h "..(-result.h_to_remove)), "pay")
+		end
+		if success and result.kcs_to_remove < 0 then
+			success = self:add_item(ItemStack("ch_core:kcs_kcs "..(-result.kcs_to_remove)), "pay")
+		end
+		assert(result.zcs_to_remove >= 0)
+	end
+	result.success = success
+	result.remains = remains
+	print("DEBUG: remove_ch_money(): "..dump2({amount = amount, result = result}))
+	return result
+end
+
 --------------------
 
 function inv_class:get_tmp_inv()

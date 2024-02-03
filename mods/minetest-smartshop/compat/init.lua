@@ -2,9 +2,9 @@ smartshop.compat = {}
 
 smartshop.dofile("compat", "old_smartshops")
 
-if smartshop.has.currency then
+--[[if smartshop.has.currency then
 	smartshop.dofile("compat", "currency")
-end
+end]]
 
 if smartshop.has.mesecons then
 	smartshop.dofile("compat", "mesecons")

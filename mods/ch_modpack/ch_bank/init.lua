@@ -28,7 +28,7 @@ mydofile("bank_accounts.lua")
 mydofile("formspec.lua")
 mydofile("formspec_callback.lua")
 mydofile("trade.lua")
-mydofile("ch_core.lua")
+mydofile("payment_method.lua")
 
 unified_inventory.ch_bank = ch_bank
 

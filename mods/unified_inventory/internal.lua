@@ -319,19 +319,7 @@ function ui.get_formspec(player, page)
 		fs[#fs + 1] = ui_peruser.standard_inv
 		local ch_bank = ui.ch_bank
 		if ch_bank then
-			local zustatek, color = ch_bank.zustatek(player_name, true)
-			if zustatek ~= nil then
-				fs[#fs + 1] = "tableoptions[background=#00000000;highlight=#00000000;border=false]"..
-					"tablecolumns[color;text;color;text;color;text]"..
-					"table["..ui_peruser.money_x..","..ui_peruser.money_y..";10,0.5;;#cccccc,zůstatek na bankovním účtu:,"..color..","..
-					minetest.formspec_escape(zustatek)..",#cccccc,Kčs]"..
-					"field["..(ui_peruser.money_x + 6.8)..","..(ui_peruser.money_y - 0.1)..";1,0.5;penize;;1]"..
-					"tooltip[penize;Částka pro výběr z účtu. Musí být celé číslo v rozsahu 1 až 10000.]"..
-					"field_close_on_enter[penize;false]"..
-					"item_image_button["..(ui_peruser.money_x + 8.0)..","..(ui_peruser.money_y - 0.2)..";0.6,0.6;ch_core:kcs_kcs;kcs;]"..
-					"item_image_button["..(ui_peruser.money_x + 8.7)..","..(ui_peruser.money_y - 0.2)..";0.6,0.6;ch_core:kcs_h;hcs;]"..
-					"item_image_button["..(ui_peruser.money_x + 9.4)..","..(ui_peruser.money_y - 0.2)..";0.6,0.6;ch_core:kcs_zcs;zcs;]"
-			end
+			fs[#fs + 1] = ch_bank.get_zustatek_formspec(player_name, ui_peruser.money_x, ui_peruser.money_y, 10, "penize", "hcs", "kcs", "zcs")
 		end
 	end
 

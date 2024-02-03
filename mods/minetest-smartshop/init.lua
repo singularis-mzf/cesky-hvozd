@@ -3,8 +3,8 @@ local modpath = minetest.get_modpath(modname)
 local S = minetest.get_translator(modname)
 
 smartshop = {
-	version = os.time({year = 2022, month = 7, day = 28}),
-	fork = "fluxionary",
+	version = os.time({year = 2024, month = 2, day = 2}),
+	fork = "ceskyhvozd",
 
 	modname = modname,
 	modpath = modpath,
@@ -25,13 +25,12 @@ smartshop = {
 		else
 			player_name = player
 		end
-		minetest.chat_send_player(player_name, ("[%s] %s"):format(S(modname), S(message, ...)))
+		ch_core.systemovy_kanal(player_name, ("[%s] %s"):format(S(modname), S(message, ...)))
 	end,
 
 	has = {
-		currency = minetest.get_modpath("currency"),
+		ch_bank = minetest.get_modpath("ch_bank"),
 		default = minetest.get_modpath("default"),
-		kcs = minetest.get_modpath("kcs"),
 		mesecons = minetest.get_modpath("mesecons"),
 		mesecons_mvps = minetest.get_modpath("mesecons_mvps"),
 		petz = minetest.get_modpath("petz"),

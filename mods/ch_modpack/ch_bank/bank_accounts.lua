@@ -224,6 +224,23 @@ function ch_bank.zustatek(player_name, as_string)
 	return result, nil
 end
 
+local cccccc = minetest.get_color_escape_sequence("#cccccc")
+
+-- width: 10
+function ch_bank.get_zustatek_formspec(player_name, x_base, y_base, width, id_penize, id_hcs, id_kcs, id_zcs)
+	local zustatek, color = ch_bank.zustatek(player_name, true)
+	if zustatek == nil then
+		return ""
+	end
+	return "label["..(x_base + 0.05)..","..(y_base + 0.25)..";"..cccccc.."zůstatek na bankovním účtu:  "..minetest.get_color_escape_sequence(color)..minetest.formspec_escape(zustatek)..cccccc.." Kčs]"..
+		"field["..(width - 3.2)..","..(y_base - 0.1)..";1,0.5;"..(id_penize or "penize")..";;1]"..
+		"tooltip["..(id_penize or "penize")..";Částka pro výběr z účtu. Musí být celé číslo v rozsahu 1 až 10000.]"..
+		"field_close_on_enter["..(id_penize or "penize")..";false]"..
+		"item_image_button["..(width - 2.0)..","..(y_base - 0.2)..";0.6,0.6;ch_core:kcs_kcs;"..(id_kcs or "kcs")..";]"..
+		"item_image_button["..(width - 1.3)..","..(y_base - 0.2)..";0.6,0.6;ch_core:kcs_h;"..(id_hcs or "hcs")..";]"..
+		"item_image_button["..(width - 0.6)..","..(y_base - 0.2)..";0.6,0.6;ch_core:kcs_zcs;"..(id_zcs or "zcs")..";]"
+end
+
 function ch_bank.register_after_transaction(func)
 	--[[ transaction_info = {
 		[
@@ -358,3 +375,39 @@ cc_def = {
 }
 minetest.register_chatcommand("zůstatek", cc_def)
 minetest.register_chatcommand("zustatek", cc_def)
+
+function ch_bank.receive_inventory_fields(player, castka, typ_mince, listname)
+	if castka == nil or not tostring(castka):match("^%d+$") then
+		return false
+	end
+	castka = tonumber(castka)
+	if castka == nil or castka <= 0 or castka > 10000 then
+		return false
+	end
+	if typ_mince ~= "kcs" and typ_mince ~= "zcs" and typ_mince ~= "h" then
+		return false
+	end
+	local stack = ItemStack("ch_core:kcs_"..typ_mince.." "..castka)
+	local inv = player:get_inventory()
+	castka = ch_core.precist_hotovost(stack)
+	assert(castka)
+	assert(castka > 0)
+	if listname == nil then
+		listname = "main"
+	end
+	local player_name = player:get_player_name()
+	if inv:room_for_item(listname, stack) then
+		local success, message = ch_bank.platba{
+			from_player = player_name,
+			to_player = "",
+			amount = castka,
+			label = "výběr v hotovosti",
+		}
+		if success then
+			inv:add_item(listname, stack)
+		else
+			ch_core.systemovy_kanal(player_name, "Výběr z účtu selhal: "..(message or "neznámý důvod"))
+		end
+	end
+	return true
+end
