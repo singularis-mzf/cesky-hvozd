@@ -34,6 +34,7 @@ travelnet = {}
 travelnet.player_formspec_data = {}
 travelnet.targets = {}
 travelnet.path = minetest.get_modpath(minetest.get_current_modname())
+travelnet.storage = minetest.get_mod_storage()
 
 local function mod_dofile(filename)
 	dofile(travelnet.path .. "/"..filename..".lua")

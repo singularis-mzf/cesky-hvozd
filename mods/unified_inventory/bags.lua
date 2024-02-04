@@ -100,7 +100,10 @@ ui.register_button("bags", {
 	type = "image",
 	image = "ui_bags_icon.png",
 	tooltip = S("Bags"),
-	hide_lite=true
+	hide_lite=true,
+	condition = function(player)
+		return minetest.check_player_privs(player, "ch_registered_player")
+	end,
 })
 
 local function get_player_bag_stack(player, i)

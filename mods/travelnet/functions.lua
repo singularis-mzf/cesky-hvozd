@@ -191,6 +191,29 @@ function travelnet.get_ordered_stations(owner_name, network_name, is_elevator)
 		return stations
 end
 
+local function square(x)
+	return x * x
+end
+
+function travelnet.get_price(pos1, pos2)
+	if pos1 == nil or pos2 == nil then
+		return 0
+	end
+	local hash1, hash2 = minetest.hash_node_position(pos1), minetest.hash_node_position(pos2)
+	if hash1 > hash2 then
+		pos1, pos2 = pos2, pos1
+		hash1, hash2 = hash2, hash1
+	end
+	if travelnet.storage:get_int(string.format("%d_%d", hash1, hash2)) == 1 then
+		return 0 -- free connection
+	end
+	local d2 = square(pos1.x - pos2.x) + square(pos1.y - pos2.y) / 4 + square(pos1.z - pos2.z)
+	local price = (d2 ^ 0.75) / 50.0 - 75.0
+	price = math.ceil(price)
+	price = math.max(0, price)
+	return price
+end
+
 function travelnet.get_station(owner_name, station_network, station_name)
 
 	local network = travelnet.get_network(owner_name, station_network)
@@ -303,11 +326,22 @@ travelnet.rotate_player = function(target_pos, player)
 end
 
 
-travelnet.remove_box = function(_, _, oldmetadata, digger)
+travelnet.remove_box = function(pos, _, oldmetadata, digger)
 	if not oldmetadata or oldmetadata == "nil" or not oldmetadata.fields then
 		minetest.chat_send_player(digger:get_player_name(), S("Error") .. ": " ..
 				S("Could not find information about the station that is to be removed."))
 		return
+	end
+
+	-- remove free connections
+	local hash = tostring(minetest.hash_node_position(pos))
+	local h1, h2 = string.format("%d_", hash), string.format("_%d", hash)
+	local storage_table = travelnet.storage:to_table().fields
+	for field, _ in pairs(storage_table) do
+		if #field > #hash and field:sub(1,#h1) == h1 or field:sub(-#h2,-1) == h2 then
+			minetest.log("action", "Free connection "..field.." removed with the box at "..minetest.pos_to_string(pos)..".")
+			travelnet.storage:set_int(field, 0)
+		end
 	end
 
 	local owner_name      = oldmetadata.fields["owner"]

@@ -168,3 +168,33 @@ minetest.register_chatcommand("cestovat", {
 	privs = {},
 	func = on_chatcommand,
 })
+
+on_chatcommand = function(name, param)
+	local b, hash1, hash2 = param:match("^([^ ]+) (%d+) (%d+)$")
+	if b == nil then
+		return false, "Chybné zadání!"
+	end
+	local n
+	if b == "ano" then
+		n = 1
+	elseif b == "ne" then
+		n = 0
+	else
+		return false, "Chybné zádání!"
+	end
+	if tonumber(hash1) == tonumber(hash2) then
+		return false, "Chybné zadání, kódy nemohou být stejné!"
+	end
+	if tonumber(hash1) > tonumber(hash2) then
+		hash1, hash2 = hash2, hash1
+	end
+	travelnet.storage:set_int(string.format("%d_%d", hash1, hash2), n)
+	return true, "Úspěšně nastaveno."
+end
+
+minetest.register_chatcommand("cestovat_zdarma", {
+	description = "Nastaví cestování zdarma mezi vybranými budkami.",
+	params = "<ano|ne> <kód1> <kód2>",
+	privs = {server = true},
+	func = on_chatcommand,
+})

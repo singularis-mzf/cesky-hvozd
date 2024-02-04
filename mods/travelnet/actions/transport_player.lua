@@ -3,6 +3,10 @@ local S = minetest.get_translator("travelnet")
 return function (node_info, fields, player)
 
 	local network = travelnet.get_network(node_info.props.owner_name, node_info.props.station_network)
+	local nl_pos = string.find(fields.target, "\xe2\x80\x8b")
+	if nl_pos ~= nil then
+		fields.target = fields.target:sub(1, nl_pos - 1)
+	end
 
 	if node_info.node ~= nil and node_info.props.is_elevator then
 		for k,_ in pairs(network) do
@@ -89,18 +93,6 @@ return function (node_info, fields, player)
 
 		travelnet.remove_box(target_pos, nil, oldmetadata, player)
 	else
-		-- TEST:
-		local function x2(x) return x * x end
-		local player_pos = node_info.pos
-		local d2 = x2(player_pos.x - target_pos.x) +
-			x2(player_pos.y - target_pos.y) / 4 +
-			x2(player_pos.z - target_pos.z)
-		local castka = math.max(0, math.ceil((d2 ^ 0.75) / 50.0 - 75.0))
-		castka = ch_core.formatovat_castku(castka)
-		if player_name == "Administrace" then
-			minetest.chat_send_player(player_name, "[TEST] Cena za přesun by byla: "..castka.." Kčs, vzdálenost je "..(math.ceil(math.sqrt(d2))).." metrů.")
-		end
-		--
 		player:move_to(vector.add(target_pos, player_model_vec), false)
 		travelnet.rotate_player(target_pos, player)
 	end

@@ -97,17 +97,27 @@ end
 
 function travelnet.formspecs.primary(options, player_name)
 	if not options then options = {} end
+
+	local network = travelnet.get_or_create_network(options.owner_name, options.station_network)
+	local current_station_pos
+	if options.station_name ~= nil and network[options.station_name] ~= nil and network[options.station_name].pos ~= nil then
+		current_station_pos = network[options.station_name].pos
+	end
+	local current_station_desc
+	if current_station_pos ~= nil then
+		current_station_desc = ("%s %d"):format(minetest.pos_to_string(current_station_pos), minetest.hash_node_position(current_station_pos))
+	else
+		current_station_desc = "?"
+	end
+
 	-- add name of station + network + owner + update-button
 	local formspec = ([[
 			size[12,%s]
-			label[3.3,0.0;%s:]
-			label[0.3,0.4;%s]
-			label[6.3,0.4;%s]
-			label[0.3,0.8;%s]
-			label[6.3,0.8;%s]
-			label[0.3,1.2;%s]
-			label[6.3,1.2;%s]
-			label[3.3,1.6;%s]
+			item_image[0.0,0.0;1,1;travelnet:travelnet]
+			tablecolumns[text;text]
+			tableoptions[background=#00000000]
+			table[1.0,-0.1;8,1.75;info;%s,,%s,%s,%s,%s,%s,%s,%s,%s;1]
+			label[3.3,1.75;%s]
 			button[11.3,0.0;1.0,0.5;station_exit;%s]
 		]]):format(
 			tostring(options.height or 10),
@@ -118,7 +128,9 @@ function travelnet.formspecs.primary(options, player_name)
 			minetest.formspec_escape(options.station_network or "?"),
 			S("Owned by:"),
 			minetest.formspec_escape(ch_core.prihlasovaci_na_zobrazovaci(options.owner_name or "?")),
-			S("Click on target to travel there:"),
+			S("Position and code:"),
+			minetest.formspec_escape(current_station_desc),
+			minetest.get_color_escape_sequence("#60c337")..S("Click on target to travel there:"),
 			S("Exit")
 		)
 
@@ -154,6 +166,16 @@ function travelnet.formspecs.primary(options, player_name)
 		end
 	end
 
+	local player_role = ch_core.get_player_role(player_name)
+	local price_mode
+	if player_role == "new" then
+		price_mode = "hidden"
+	elseif travelnet.is_free or player_role == "admin" or minetest.is_creative_enabled(player_name) then
+		price_mode = "preview"
+	else
+		price_mode = "enforced"
+	end
+
 	for n=((page_number-1)*page_size)+1,(page_number*page_size) do
 		local k = stations[n]
 		if not k then break end
@@ -167,18 +189,51 @@ function travelnet.formspecs.primary(options, player_name)
 
 		-- check if there is an elevator door in front that needs to be opened
 		if k == options.station_name then
+			-- current station:
 			formspec = formspec ..
-				("button[%f,%f;1,0.5;open_door;<>]label[%f,%f;%s]")
-						:format(x, y + 2.5, x + 0.9, y + 2.35, k)
-		elseif options.is_elevator then
-			local network = travelnet.get_or_create_network(options.owner_name, options.station_network)
-			formspec = formspec ..
-				("button[%f,%f;1,0.5;target;%s]label[%f,%f;%s]")
-						:format(x, y + 2.5, minetest.formspec_escape(tostring(network[k].nr)), x + 0.9, y + 2.35, k)
+				("button[%f,%f;1,0.5;open_door;<>]label[%f,%f;%s]"):format(
+					x, y + 2.5,
+					x + 0.9, y + 2.35, k)
 		else
-			formspec = formspec ..
-				("button[%f,%f;4,0.5;target;%s]")
+			local price_str
+			if price_mode ~= "hidden" then
+				local price = travelnet.get_price(current_station_pos, network[k].pos)
+				local price_color
+				if price == 0 then
+					price_color, price_str = "#00aa00", "zdarma"
+				else
+					price_color, price_str = "#009999", ch_core.formatovat_castku(price).." Kčs"
+				end
+				if price_mode == "preview" then
+					price_color, price_str = "#aaaaaa", "("..price_str..")"
+				end
+				price_str = minetest.get_color_escape_sequence(price_color)..price_str
+			end
+			if options.is_elevator then
+				-- local network = travelnet.get_or_create_network(options.owner_name, options.station_network)
+				if price_mode ~= "hidden" then
+					formspec = formspec ..
+						("button[%f,%f;1,0.5;target;%s]label[%f,%f;%s]label[%f,%f;%s]")
+							:format(
+								x, y + 2.5, minetest.formspec_escape(tostring(network[k].nr)),
+								x + 0.9, y + 2.35, k,
+								x + 0.9, y + 2.65, minetest.formspec_escape(price_str))
+				else
+					formspec = formspec ..
+						("button[%f,%f;1,0.5;target;%s]label[%f,%f;%s]")
+							:format(
+								x, y + 2.5, minetest.formspec_escape(tostring(network[k].nr)),
+								x + 0.9, y + 2.35, k)
+				end
+			elseif price_mode ~= "hidden" then
+				formspec = formspec ..
+					("button[%f,%f;4,0.5;target;%s]")
+						:format(x, y + 2.5, minetest.formspec_escape(k.."\xe2\x80\x8b\n"..price_str))
+			else
+				formspec = formspec ..
+					("button[%f,%f;4,0.5;target;%s]")
 						:format(x, y + 2.5, minetest.formspec_escape(k))
+			end
 		end
 
 		y = y+1
@@ -188,9 +243,9 @@ function travelnet.formspecs.primary(options, player_name)
 	or minetest.check_player_privs(player_name, { travelnet_attach = true })
 	then
 		formspec = formspec .. ([[
-				label[8.0,1.6;%s]
-				button[9.6,1.6;1.4,0.5;move_up;%s]
-				button[10.9,1.6;1.4,0.5;move_down;%s]
+				label[8.0,1.75;%s]
+				button[9.6,1.75;1.4,0.5;move_up;%s]
+				button[10.9,1.75;1.4,0.5;move_down;%s]
 			]]):format(
 				S("Position in list:"),
 				S("move up"),

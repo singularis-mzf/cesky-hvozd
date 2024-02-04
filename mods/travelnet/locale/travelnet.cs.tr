@@ -78,4 +78,5 @@ Owned by:=Vlastník/ice:
 Travelnet-Box=cestovní budka
 Page @1/@2=Strana @1/@2
 You are not in a Travelnet-Box!=Nejste v cestovní budce!
-You are not allowed to travel to this station.=Tato síť cestovních budek je zabezpečená.@nNemáte právo po ní cestovat.
+You are not allowed to travel to this station.=Do tohoto cíle nemůžete odcestovat.
+Position and code:=Pozice a kód:

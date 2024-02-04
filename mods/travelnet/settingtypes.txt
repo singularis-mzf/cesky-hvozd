@@ -10,3 +10,4 @@ travelnet.abm_enabled (abm solution for load travelnet network back from meta) b
 travelnet.allow_attach (allow anyone to add a travelnet to any network) bool false
 travelnet.allow_dig (allow anyone to remove travelnets from any network) bool false
 travelnet.allow_travel (allow players to use other networks) bool true
+travelnet.is_free (disable payment enforcing for all players) bool false

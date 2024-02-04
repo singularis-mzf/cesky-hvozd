@@ -22,6 +22,9 @@ travelnet.doors_enabled            = minetest.settings:get_bool("travelnet.doors
 -- starts an abm which re-adds travelnet stations to networks in case the savefile got lost
 travelnet.abm_enabled              = minetest.settings:get_bool("travelnet.abm_enabled", false)
 
+-- will disable payment enforcement for all players
+travelnet.is_free                  = minetest.settings:get_bool("travelnet.is_free", false)
+
 -- change these if you want other receipes for travelnet or elevator
 travelnet.travelnet_recipe = {
 	{ "default:glass", "default:steel_ingot", "default:glass" },
@@ -102,11 +105,38 @@ end
 -- params: player_name, owner_name, network_name, station_name_start, station_name_target
 travelnet.allow_travel = function(player_name, owner_name, station_network, station_name, target)
 	local result = minetest.settings:get_bool("travelnet.allow_travel", true)
+	local network = travelnet.get_network(owner_name, station_network)
+	local current_pos = ch_core.safe_get_3(network, station_name, "pos")
+	local target_pos = ch_core.safe_get_3(network, target, "pos")
+	local price, pay_success
 	if result then
-		minetest.log("action", "travelnet.allow_travel() called by "..player_name.." for travelnet box owned by "..owner_name.." at network "..station_network..", box name is "..station_name.." and the target is "..target.."["..(station_network:sub(1, 1) == "@" and "true" or "false")..","..(player_name ~= owner_name and "true" or "false")..","..(not minetest.check_player_privs(player_name, "protection_bypass") and "true" or "false").."]")
-		if station_network:sub(1, 1) == "@" and player_name ~= owner_name and not minetest.check_player_privs(player_name, "protection_bypass") then
+		local pinfo = ch_core.normalize_player(player_name)
+		if pinfo.player == nil then
+			return false -- player not online
+		end
+		if pinfo.role == "admin" then
+			return true
+		end
+		if station_network:sub(1, 1) == "@" and player_name ~= owner_name then
+			ch_core.systemovy_kanal(player_name, ch_core.colors.red.."Tato síť cestovních budek je zabezpečená a vyhrazená pro postavu: "..ch_core.prihlasovaci_na_zobrazovaci(owner_name).."!")
 			result = false
 		end
+		if result and not travelnet.is_free and not minetest.is_creative_enabled(player_name) then
+			-- payment
+			if current_pos ~= nil and target_pos ~= nil then
+				price = travelnet.get_price(current_pos, target_pos)
+				if (price or 0) > 0 then
+					pay_success = ch_core.pay_from(player_name, price, {label = "platba za cestování cestovní budkou"})
+					if pay_success then
+						ch_core.systemovy_kanal(player_name, ch_core.formatovat_castku(price).." Kčs zaplaceno za cestu cestovní budkou.")
+					else
+						ch_core.systemovy_kanal(player_name, ch_core.colors.red.."Na tuto cestu nemáte dost peněz! Cena cesty: "..ch_core.formatovat_castku(price).." Kčs")
+						result = false
+					end
+				end
+			end
+		end
 	end
+	minetest.log("action", "travelnet.allow_travel() called:\n- player: "..player_name.."\n- box   : "..minetest.pos_to_string(current_pos).." owned by "..owner_name.."  at network "..station_network.." with box name {"..station_name.."}\n- target: "..minetest.pos_to_string(target_pos).." {"..target.."}\n- price: "..(price or "nil")..", payment_success = "..tostring(pay_success).."\n- result = "..tostring(result))
 	return result
 end
