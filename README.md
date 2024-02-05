@@ -1258,6 +1258,12 @@ Prohlášení autora/ky na [fóru](https://forum.minetest.net/viewtopic.php?f=4&
 * Původní licence: kód LGPLv3, textury CC BY-SA 3.0 a CC BY-SA 4.0
 * [ContentDB](https://content.minetest.net/packages/TestificateMods/sickles/)
 
+## Skybox Textures (skybox)
+
+* Zdroj: [https://github.com/minetest-mods/skybox](https://github.com/minetest-mods/skybox), revize 740e40e0f2e3d1be6d794dacd10ff2b9c6f01801
+* Původní licence textur: CC BY-SA 3.0 (SkyboxSet by Heiko Irrgang (http://gamvas.com)) Based on a work at http://93i.de.
+* [ContentDB](https://content.minetest.net/packages/sofar/skybox/)
+
 ## Technic CNC Improve Machine (technic\_cnc\_improve)
 
 * Zdroj: [https://github.com/Emojigit/technic\_cnc\_improve](https://github.com/Emojigit/technic\_cnc\_improve), revize 769fb8111edd0a895514db3a2df316c0b49b0252

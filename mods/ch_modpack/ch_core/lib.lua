@@ -559,6 +559,94 @@ function ch_core.get_player_role(player_or_player_name)
 end
 
 --[[
+	Vrátí herní čas ve struktuře:
+	{timeofday, hodina, minuta, sekunda, daynight_ratio, natural_light}
+	Pokud hra neběží, vrátí nil.
+]]
+function ch_core.herni_cas()
+	local timeofday = minetest.get_timeofday()
+	if timeofday == nil then return nil end
+	local sekundy_celkem = math.floor(timeofday * 86400)
+	local minuty_celkem = math.floor(sekundy_celkem / 60)
+	local hodiny_celkem = math.floor(minuty_celkem / 60)
+	local result = {
+		timeofday = timeofday,
+		hodina = hodiny_celkem,
+		minuta = minuty_celkem % 60,
+		sekunda = sekundy_celkem % 60,
+	}
+
+	if 367 < minuty_celkem and minuty_celkem < 1072 then
+		-- den
+		result.day_night_ratio, result.natural_light = 1, 15
+	elseif minuty_celkem < 282 or minuty_celkem > 1158 then
+		-- noc
+		result.day_night_ratio, result.natural_light = 0, 2
+	elseif minuty_celkem < 500 then
+		-- úsvit
+		result.day_night_ratio = (minuty_celkem - 282) / 86.0
+		if minuty_celkem < 295 then
+			result.natural_light = 3
+		elseif minuty_celkem < 305 then
+			result.natural_light = 4
+		elseif minuty_celkem < 312 then
+			result.natural_light = 5
+		elseif minuty_celkem < 319 then
+			result.natural_light = 6
+		elseif minuty_celkem < 325 then
+			result.natural_light = 7
+		elseif minuty_celkem < 331 then
+			result.natural_light = 8
+		elseif minuty_celkem < 336 then
+			result.natural_light = 9
+		elseif minuty_celkem < 341 then
+			result.natural_light = 10
+		elseif minuty_celkem < 346 then
+			result.natural_light = 11
+		elseif minuty_celkem < 351 then
+			result.natural_light = 12
+		elseif minuty_celkem < 359 then
+			result.natural_light = 13
+		elseif minuty_celkem < 367 then
+			result.natural_light = 14
+		else
+			result.natural_light = 15
+		end
+	else
+		-- soumrak
+		result.day_night_ratio = (1158 - minuty_celkem) / 86.0
+		if minuty_celkem < 1080 then
+			result.natural_light = 14
+		elseif minuty_celkem < 1088 then
+			result.natural_light = 13
+		elseif minuty_celkem < 1093 then
+			result.natural_light = 12
+		elseif minuty_celkem < 1098 then
+			result.natural_light = 11
+		elseif minuty_celkem < 1103 then
+			result.natural_light = 10
+		elseif minuty_celkem < 1108 then
+			result.natural_light = 9
+		elseif minuty_celkem < 1114 then
+			result.natural_light = 8
+		elseif minuty_celkem < 1120 then
+			result.natural_light = 7
+		elseif minuty_celkem < 1127 then
+			result.natural_light = 6
+		elseif minuty_celkem < 1134 then
+			result.natural_light = 5
+		elseif minuty_celkem < 1144 then
+			result.natural_light = 4
+		elseif minuty_celkem < 1157 then
+			result.natural_light = 3
+		else
+			result.natural_light = 2
+		end
+	end
+	return result
+end
+
+--[[
 Jednoduchá funkce, která vyhodnotí condition jako podmínku
 a podle výsledku vrátí buď true_result, nebo false_result.
 ]]

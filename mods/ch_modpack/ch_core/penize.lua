@@ -138,11 +138,24 @@ function ch_core.nastaveni_odchozich_plateb(player_name)
 end
 ]]
 --[[
-	Parametr musí být ItemStack nebo nil. Je-li to dávka peněz,
-	vrátí jejich hodnotu (nezáporné celé číslo). Jinak vrací nil.
+	Parametr musí být ItemStack, seznam ItemStacků nebo nil.
+	Je-li to seznam, vrátí součet hodnoty všech nalezených peněz (nepeněžní dávky ignoruje).
+	Je-li to dávka peněz, vrátí jejich hodnotu (nezáporné celé číslo).
+	Jinak vrací nil.
 ]]
 function ch_core.precist_hotovost(stack)
-	if stack ~= nil and not stack:is_empty() then
+	if stack == nil then
+		return nil
+	elseif type(stack) == "table" then
+		local result = 0
+		for i, stack in ipairs(stacks) do
+			local v = penize[stack:get_name()]
+			if v ~= nil then
+				result = result + v * stack:get_count()
+			end
+		end
+		return result
+	else
 		local v = penize[stack:get_name()]
 		if v ~= nil then
 			return v * stack:get_count()
@@ -151,85 +164,187 @@ function ch_core.precist_hotovost(stack)
 end
 local precist_hotovost = ch_core.precist_hotovost
 
+-- current_count, count_to_remove
+-- vrací: count_to_remove_now, hundreds_to_remove
+-- hodnota count_to_remove_now může být i záporné číslo v rozsahu -100 až -1,
+-- v takovém případě značí absolutní hodnota počet mincí, které je nutno přidat
+local function remove100(current_count, count_to_remove)
+	if count_to_remove <= current_count then
+		return count_to_remove, 0
+	end
+	local count_to_remove_ones = count_to_remove % 100
+	local count_to_remove_hundreds = (count_to_remove - count_to_remove_ones) / 100
+	local new_count = current_count - count_to_remove_ones
+	local new_count_hundreds = math.floor(new_count / 100)
+	return count_to_remove_ones + 100 * new_count_hundreds, count_to_remove_hundreds - new_count_hundreds
+end
+
+--[[
+	Pokusí se z uvedených počtů mincí odebrat mince tak,
+	aby byla odebrána přesně zadaná hodnota. Vrátí nil,
+	pokud je hodnota větší než součet hodnoty všech dostupných mincí.
+	- items: table {["ch_core:kcs_h"] = (int >= 0) or nil, ...}
+	- amount: int >= 0
+	- vrací: {ch_core_kcs_1h = int, ...} or nil
+		vrácený údaj značí, kolik mincí je potřeba odebrat z inventáře;
+		může být záporný, v takovém případě uvádí, kolik mincí je
+		potřeba do inventáře přidat
+]]
+function ch_core.rozmenit(items, amount)
+	local current_h = items["ch_core:kcs_h"] or 0
+	local current_kcs = items["ch_core:kcs_kcs"] or 0
+	local current_zcs = items["ch_core:kcs_zcs"] or 0
+	if current_h < 0 or current_kcs < 0 or current_zcs < 0 then
+		error("Chybné zadání rozměňování! "..dump2({items = items, amount = amount}))
+	end
+	local h_to_remove, kcs_to_remove, zcs_to_remove
+	h_to_remove, kcs_to_remove = remove100(current_h, amount)
+	kcs_to_remove, zcs_to_remove = remove100(current_kcs, kcs_to_remove)
+	if zcs_to_remove <= current_zcs then
+		-- verify the result:
+		if (h_to_remove + 100 * kcs_to_remove + 10000 * zcs_to_remove) ~= amount or h_to_remove > current_h or kcs_to_remove > current_kcs then
+			error("Internal error in ch_core.rozmenit(): "..dump2({current_h = current_h, current_kcs = current_kcs, current_zcs = current_zcs, h_to_remove = h_to_remove, kcs_to_remove = kcs_to_remove, zcs_to_remove = zcs_to_remove, amount = amount, items = items, value_to_remove = h_to_remove + 100 * kcs_to_remove + 10000 * zcs_to_remove}))
+		end
+		return {
+			["ch_core:kcs_h"] = h_to_remove,
+			["ch_core:kcs_kcs"] = kcs_to_remove,
+			["ch_core:kcs_zcs"] = zcs_to_remove,
+		}
+	else
+		return nil
+	end
+end
+
+--[[
+	Všechny stacky s penězi v tabulce vyprázdní a vrátí jejich původní
+	celkovou hodnotu.
+	- stacks: table {ItemStack...}
+	- limit: int >= 0 or nil
+	returns: int >= 0 or nil
+]]
+function ch_core.vzit_vsechnu_hotovost(stacks)
+	local castka = 0
+	for _, stack in ipairs(stacks) do
+		local stack_count = stack:get_count()
+		if stack_count > 0 then
+			local value_per_item = penize[stack:get_name()]
+			if value_per_item ~= nil then
+				castka = castka + value_per_item * stack_count
+				stack:clear()
+			end
+		end
+	end
+	return castka
+end
+
 --[[
 	Odečte ze stacků v tabulce peníze maximálně do zadaného limitu
 	a vrátí celkovou odečtenou částku, nebo nil, pokud se nepodaří
 	vrátit drobné.
 	- stacks: table {ItemStack...}
 	- limit: int >= 0 or nil
+	- strict: bool or nil (je-li true, vrátí nil, pokud nemůže odečíst přesně
+		částku „limit“)
 	returns: int >= 0 or nil
 ]]
-function ch_core.vzit_hotovost(stacks, limit)
+function ch_core.vzit_hotovost(stacks, limit, strict)
 	-- Odečte ze stacků v tabulce peníze a vrátí celkovou částku.
 	if limit == nil then
-		limit = 1000000000000000 -- 10 bilionů Kčs
-	else
-		limit = tonumber(limit)
-		if limit == nil or limit < 0 or math.floor(limit) ~= limit then
-			error("ch_core.vzit_hotovost(): limit must be a non-negative integer!")
+		return ch_core.vzit_vsechnu_hotovost(stacks)
+	end
+	limit = tonumber(limit)
+	if limit == nil or limit < 0 or math.floor(limit) ~= limit then
+		error("ch_core.vzit_hotovost(): limit must be a non-negative integer!")
+	end
+	local items = {
+		[""] = {count = 0, indices = {}},
+		["ch_core:kcs_h"] = {count = 0, indices = {}},
+		["ch_core:kcs_kcs"] = {count = 0, indices = {}},
+		["ch_core:kcs_zcs"] = {count = 0, indices = {}},
+	}
+	for i, stack in ipairs(stacks) do
+		local name = stack:get_name()
+		local info = items[name]
+		if info ~= nil then
+			info.count = info.count + stack:get_count()
+			table.insert(info.indices, i)
 		end
 	end
-	local castka, i, last_empty_i, stack_to_return
-	castka = 0
-	i = 1
-	while i <= #stacks do
-		local stack = stacks[i]
-		if stack:is_empty() then
-			last_empty_i = i
-		else
-			local value_per_item = penize[stack:get_name()]
-			if value_per_item ~= nil then
-				local stack_count = stack:get_count()
-				local stack_value = value_per_item * stack_count
-				assert(stack_value >= 1)
-				if stack_value <= limit then
-					-- take full stack
-					castka = castka + stack_value
-					limit = limit - stack_value
-					stack:clear()
-					last_empty_i = i
-				else
-					-- take a part of the stack
-					local count_to_take = math.ceil(limit / value_per_item)
-					assert(count_to_take >= 1 and count_to_take <= stack_count)
-					local value_to_take = count_to_take * value_per_item
-					stack:set_count(stack_count - count_to_take)
-					local h_to_return = value_to_take - limit
-					if h_to_return > 0 then
-						local kcs_to_return, zcs_to_return = h_to_return / 100.0, h_to_return / 10000.0
-						if zcs_to_return == math.floor(zcs_to_return) then
-							stack_to_return = ItemStack("ch_core:kcs_zcs "..zcs_to_return)
-						elseif kcs_to_return == math.floor(kcs_to_return) then
-							stack_to_return = ItemStack("ch_core:kcs_kcs "..kcs_to_return)
-						else
-							stack_to_return = ItemStack("ch_core:kcs_h "..h_to_return)
-						end
-					end
-					castka = castka + limit
-					limit = 0
-					break
-				end
-			end
-		end
-		i = i + 1
-	end
-	if stack_to_return ~= nil then
-		if last_empty_i == nil then
-			i = i + 1
-			while i <= #stacks do
-				if stacks[i]:is_empty() then
-					last_empty_i = i
-					break
-				end
-				i = i + 1
-			end
-		end
-		if last_empty_i == nil then
+	local total_value = items["ch_core:kcs_h"].count +
+		items["ch_core:kcs_kcs"].count * penize["ch_core:kcs_kcs"] +
+		items["ch_core:kcs_zcs"].count * penize["ch_core:kcs_zcs"]
+
+	if total_value <= limit then
+		if strict and total_value ~= limit then
 			return nil
 		end
-		stacks[last_empty_i] = stack_to_return
+
+		for name, info in pairs(items) do
+			if name ~= "" then
+				for _, i in ipairs(info.indices) do
+					stacks[i]:clear()
+				end
+			end
+		end
+		return total_value
 	end
-	return castka
+
+	local new_stacks = {} -- {i = int, stack = ItemStack or false}
+	local next_empty_index = 1
+	local rinfo = ch_core.rozmenit({
+		["ch_core:kcs_h"] = items["ch_core:kcs_h"].count,
+		["ch_core:kcs_kcs"] = items["ch_core:kcs_kcs"].count,
+		["ch_core:kcs_zcs"] = items["ch_core:kcs_zcs"].count,
+	}, limit)
+	for name, info in pairs(items) do
+		if name ~= "" then
+			local count_to_remove = rinfo[name]
+			if count_to_remove < 0 then
+				local stack_to_add = ItemStack(name.." "..(-count_to_remove))
+				-- try to add to the existing stacks
+				local j = 1
+				while not stack_to_add:is_empty() and j <= #info.indices do
+					local i = info.indices[j]
+					local new_stack = ItemStack(stacks[i])
+					stack_to_add = new_stack:add_item(stack_to_add)
+					table.insert(new_stacks, {i = i, stack = new_stack})
+				end
+				if not stack_to_add:is_empty() then
+					-- need an empty stack...
+					local empty_i = items[""].indices[next_empty_index]
+					if empty_i == nil then
+						return nil -- failure
+					end
+					table.insert(new_stacks, {i = empty_i, stack = stack_to_add})
+					next_empty_index = next_empty_index + 1
+				end
+			else
+				while count_to_remove > 0 do
+					for _, i in ipairs(info.indices) do
+						local current_stack = stacks[i]
+						local stack_count = current_stack:get_count()
+						if stack_count < count_to_remove then
+							count_to_remove = count_to_remove - stack_count
+							table.insert(new_stacks, {i = i, stack = ItemStack()})
+						else
+							local new_stack = ItemStack(current_stack)
+							new_stack:take_item(count_to_remove)
+							table.insert(new_stacks, {i = i, stack = new_stack})
+							count_to_remove = 0
+							break
+						end
+					end
+				end
+				assert(count_to_remove == 0)
+			end
+		end
+	end
+
+	-- commit the transaction
+	for _, pair in ipairs(new_stacks) do
+		stacks[pair.i]:replace(pair.stack)
+	end
+	return limit
 end
 
 function ch_core.register_payment_method(name, pay_from_player, pay_to_player)

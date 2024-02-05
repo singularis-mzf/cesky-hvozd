@@ -261,7 +261,7 @@ function api.update_entities(shop)
 		end
 	end
 
-	local shop_title = shop:get_shop_title()
+	local shop_title = "" -- shop:get_shop_title() -- disable nametags, till a better implementation is available
 	if shop_title and shop_title ~= "" and obj then
 		local attrs = {
 			color = {r = 255, g = 255, b = 255, a = 255},

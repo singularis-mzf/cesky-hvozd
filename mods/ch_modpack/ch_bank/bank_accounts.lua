@@ -385,6 +385,9 @@ function ch_bank.receive_inventory_fields(player, castka, typ_mince, listname)
 		return false
 	end
 	if typ_mince ~= "kcs" and typ_mince ~= "zcs" and typ_mince ~= "h" then
+		if typ_mince == "hcs" then
+			minetest.log("warning", "ch_bank.receive_inventory_fields() doesn't accept 'hcs' as typ_mince, 'h' is required!")
+		end
 		return false
 	end
 	local stack = ItemStack("ch_core:kcs_"..typ_mince.." "..castka)

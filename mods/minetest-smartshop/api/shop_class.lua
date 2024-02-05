@@ -585,14 +585,17 @@ function shop_class:receive_fields(player, fields)
 	elseif fields.kcs then
 		if smartshop.has.ch_bank then
 			ch_bank.receive_inventory_fields(player, fields.penize, "kcs")
+			self:show_formspec(player, true)
 		end
 	elseif fields.hcs then
 		if smartshop.has.ch_bank then
-			ch_bank.receive_inventory_fields(player, fields.penize, "hcs")
+			ch_bank.receive_inventory_fields(player, fields.penize, "h")
+			self:show_formspec(player, true)
 		end
 	elseif fields.zcs then
 		if smartshop.has.ch_bank then
 			ch_bank.receive_inventory_fields(player, fields.penize, "zcs")
+			self:show_formspec(player, true)
 		end
 
     else

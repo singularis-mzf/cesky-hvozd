@@ -152,6 +152,7 @@ local function convert_transactions_to_archive(t_in)
 		local tr_key = tr.from_player.."/"..tr.to_player.."/"..tr.label
 		local old_i = tr_key_to_i[tr_key]
 		if old_i == nil or math.abs(result[old_i].change + tr.change) > account_max then
+			tr.time = nil
 			table.insert(result, tr)
 			tr_key_to_i[tr_key] = #result
 		else
@@ -295,6 +296,11 @@ local function get_bank_month_history(player_name, bank_month)
 		json = load_file("bank/"..bank_month, player_name)
 		if json ~= nil then
 			h = assert(minetest.parse_json(json))
+			for _, day_record in pairs(h) do
+				for _, tr in ipairs(day_record.transactions) do
+					tr.time = nil -- remove time if stored (it should not be)
+				end
+			end
 		else
 			h = {}
 		end

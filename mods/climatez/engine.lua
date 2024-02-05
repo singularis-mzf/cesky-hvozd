@@ -5,6 +5,8 @@ climatez.climates = {}
 climatez.players = {}
 climatez.settings = {}
 
+local has_ch_sky = minetest.get_modpath("ch_sky")
+
 --Settings
 
 local settings = Settings(modpath .. "/climatez.conf")
@@ -283,16 +285,20 @@ local function add_climate_player(player_name, climate_id, downfall_type)
 		downfall_sky_color = "#DEB887"
 		downfall_clouds_color = "#DEB887"
 	end
-	climatez.players[player_name].sky_color = player:get_sky().sky_color or "#8cbafa"
-	player:set_sky({
-		sky_color = {
-			day_sky = downfall_sky_color,
-		}
-	})
-	climatez.players[player_name].clouds_color = player:get_clouds().color or "#fff0f0e5"
-	player:set_clouds({
-		color = downfall_clouds_color,
-	})
+	if has_ch_sky and ch_sky.is_enabled_for_player(player) then
+		ch_sky.colorize_sky(player, 0.75, downfall_sky_color)
+	else
+		climatez.players[player_name].sky_color = player:get_sky().sky_color or "#8cbafa"
+		player:set_sky({
+			sky_color = {
+				day_sky = downfall_sky_color,
+			}
+		})
+		climatez.players[player_name].clouds_color = player:get_clouds().color or "#fff0f0e5"
+		player:set_clouds({
+			color = downfall_clouds_color,
+		})
+	end
 
 	if downfall_type == "sand" and climatez.settings.dust_effect then
 		climatez.players[player_name].hud_id = player:hud_add({
@@ -318,14 +324,18 @@ local function remove_climate_player_effects(player_name)
 	if not player then
 		return
 	end
-	player:set_sky({
-		sky_color = {
-			day_sky = climatez.players[player_name].sky_color,
-		}
-	})
-	player:set_clouds({
-		color = climatez.players[player_name].clouds_color,
-	})
+	if has_ch_sky and ch_sky.is_enabled_for_player(player) then
+		ch_sky.colorize_sky(player, 0)
+	else
+		player:set_sky({
+			sky_color = {
+				day_sky = climatez.players[player_name].sky_color,
+			}
+		})
+		player:set_clouds({
+			color = climatez.players[player_name].clouds_color,
+		})
+	end
 
 	local downfall_type = climatez.players[player_name].downfall_type
 

@@ -70,6 +70,7 @@ local offline_charinfo_data_types = {
 	doslech = "int", -- >= 0
 	last_login = "int", -- >= 0, in seconds since 1. 1. 2000 UTC; 0 is invalid value
 	neshybat = "int", -- 0 = shýbat se při stisku Shift, 1 = neshýbat se
+	no_ch_sky = "int", -- 0 = krásná obloha ano, 1 = ne
 	past_ap_playtime = "float", -- in seconds
 	past_playtime = "float", -- in seconds
 	pending_registration_privs = "string",

@@ -371,6 +371,13 @@ local function get_formspec(player, perplayer_formspec)
 			fsgen:checkbox("zobrazitbody", "zobrazit ukazatel úrovní a bodů", (toffline_charinfo.skryt_body or 0) == 0, tooltip))
 	end
 
+	-- Krásná obloha [all players]
+	tooltip =
+		"Zobrazí texturovanou oblohu namísto výchozí minetestovské. Pokud máte problémy\n"..
+		"s výkonem grafiky, můžete toto nastavení zkusit vypnout."
+	table.insert(formspec,
+		fsgen:checkbox("krasna_obloha", "krásná obloha", (toffline_charinfo.no_ch_sky or 0) == 0, tooltip))
+
 	if tplayer ~= nil then
 		-- Osobní osvětlení světa [all players in game]
 		tooltip =
@@ -615,6 +622,28 @@ local function on_player_receive_fields(player, formname, fields)
 		update_formspec = not ch_core.nastavit_shybani(tplayer_name, fields.chs_shybat == "true") or player_name ~= tplayer_name
 	elseif fields.chs_zobrazitbody then
 		update_formspec = not ch_core.showhide_ap_hud(tplayer_name, fields.chs_zobrazitbody == "true") or player_name ~= tplayer_name
+	elseif fields.chs_krasna_obloha then
+		if fields.chs_krasna_obloha == "true" then
+			if toffline_charinfo.no_ch_sky == 1 then
+				update_formspec = true
+				toffline_charinfo.no_ch_sky = 0
+				ch_core.save_offline_charinfo(tplayer_name, "no_ch_sky")
+				local tonline_charinfo = ch_core.online_charinfo[tplayer_name]
+				if tonline_charinfo ~= nil and tonline_charinfo.sky_info ~= nil then
+					tonline_charinfo.sky_info.ch_sky_enabled = true
+				end
+			end
+		else
+			if toffline_charinfo.no_ch_sky ~= 1 then
+				update_formspec = true
+				toffline_charinfo.no_ch_sky = 1
+				ch_core.save_offline_charinfo(tplayer_name, "no_ch_sky")
+				local tonline_charinfo = ch_core.online_charinfo[tplayer_name]
+				if tonline_charinfo ~= nil and tonline_charinfo.sky_info ~= nil then
+					tonline_charinfo.sky_info.ch_sky_enabled = false
+				end
+			end
+		end
 
 	-- 3. FIELDS WITH BUTTONS
 	elseif fields.chs_adoslech_set and tonumber(fields.chs_adoslech) ~= nil then
