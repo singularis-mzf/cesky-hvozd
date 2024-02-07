@@ -146,8 +146,6 @@ local function stamina_update_hud(player, stamina_level)
 
 		player_data.hud_label = hud_label
 
-		minetest.log("action", "[debug] Stamina: change = "..dump2({before = state_before, after = state_after, arguments = {player, "hlad", hud_value, hud_maxvalue, hud_icon, hud_bgicon, hud_bar, hud_label, 0xFFFFFF}}))
-
 	elseif player_data.hud_value ~= hud_value then
 		-- update only the value
 		minetest.log("action", "[debug] Stamina of "..player:get_player_name().." HUD value update: ("..player_data.hud_value..") => ("..hud_value..")")

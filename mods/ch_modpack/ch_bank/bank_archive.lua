@@ -28,8 +28,10 @@ local today_transactions = { --[[
 	player_name => {
 		bank_day = string,
 		state_before = int,
+		has_wage = bool,
 		transactions = {
-			{from_player, to_player, label, change, op_count, time}... -- v pořadí od nejstarší(!) transakce
+			-- v pořadí od nejstarší(!) transakce (nejnovější transakce je poslední)
+			{from_player, to_player, label, change, op_count, time, [transactions = {...}]}...
 		}
 	}
 ]]}
@@ -153,6 +155,7 @@ local function convert_transactions_to_archive(t_in)
 		local old_i = tr_key_to_i[tr_key]
 		if old_i == nil or math.abs(result[old_i].change + tr.change) > account_max then
 			tr.time = nil
+			tr.transactions = nil
 			table.insert(result, tr)
 			tr_key_to_i[tr_key] = #result
 		else
@@ -162,7 +165,25 @@ local function convert_transactions_to_archive(t_in)
 			tr_old.op_count = tr_old.op_count + tr.op_count
 		end
 	end
-	minetest.log("action", "[DEBUG] convert_transactions_to_archive: "..#t_in.." transactions compressed to "..#result..".")
+	return result
+end
+
+local function prev_bank_month(bank_month)
+	local n = tonumber(bank_month:sub(6,7)) - 1
+	if n > 0 then
+		return string.format("%s%02d", bank_month:sub(1,5), n)
+	else
+		return string.format("%04d-12", assert(tonumber(bank_month:sub(1,4))) - 1)
+	end
+end
+
+local function load_file(dir_path, file_name)
+	local f = io.open(worldpath.."/"..dir_path.."/"..file_name)
+	local result
+	if f then
+		result = f:read("*a")
+		f:close()
+	end
 	return result
 end
 
@@ -171,10 +192,61 @@ local function save_file(dir_path, file_name, content)
 	minetest.safe_file_write(worldpath.."/"..dir_path.."/"..file_name, content)
 end
 
+local function get_bank_month_history(player_name, bank_month)
+	minetest.log("action", "[ch_bank DEBUG] get_bank_month_history("..player_name..", "..bank_month..")")
+	local month = get_current_bank_day():sub(1,7)
+	local i = 1
+	while i <= 3 and month ~= bank_month do
+		month = prev_bank_month(month)
+		i = i + 1
+	end
+	if month ~= bank_month then
+		return nil -- 3 months only
+	end
+	local bhistory = get_or_add(bank_history, bank_month)
+	if bhistory[player_name] == nil then
+		-- load from file
+		local json = load_file("bank/"..bank_month, player_name)
+		local h = {}
+		if json == nil then
+			minetest.log("warning", "No bank history data found for player "..player_name..", bank month "..bank_month..".")
+		else
+			local encoded_data = assert(minetest.parse_json(json))
+			for day_id, day_data in pairs(encoded_data) do
+				local day = tonumber(day_id:sub(2,-1))
+				if day == nil then
+					error("Cannot parse day id '"..day.."'!")
+				end
+				h[day] = day_data
+				if day_data.transactions == nil then
+					day_data.transactions = {}
+				else
+					for _, tr in ipairs(day_data.transactions) do
+						tr.time = nil -- remove time if stored (it should not be)
+						tr.transactions = nil
+					end
+				end
+			end
+		end
+		bhistory[player_name] = h
+		return h
+	else
+		return bhistory[player_name]
+	end
+end
+
 local function save_bank_history(player_name, bank_month)
+	minetest.log("action", "[ch_bank DEBUG] save_bank_history("..player_name..", "..bank_month..")")
 	local current_month = ch_core.get_or_add(bank_history, bank_month)
 	local current_data = ch_core.get_or_add(current_month, player_name)
-	local data, error_message = minetest.write_json(current_data)
+	local encoded_data = {}
+	for i = 1, 31 do
+		if current_data[i] ~= nil then
+			encoded_data["D"..i] = current_data[i]
+		end
+	end
+
+	local data, error_message = minetest.write_json(encoded_data)
 	if data == nil then
 		error("save_bank_history(): serialization error: "..tostring(error_message or "nil"))
 	end
@@ -183,6 +255,7 @@ local function save_bank_history(player_name, bank_month)
 end
 
 local function open_new_bank_day(player_name, bank_day, state_before)
+	minetest.log("action", "[ch_bank DEBUG] open_new_bank_day("..player_name..", "..bank_day..", "..state_before..")")
 	local player_key = player_name..#player_name
 	local result = {
 		bank_day = bank_day,
@@ -212,6 +285,7 @@ local function get_today_transactions(player_name)
 	if result == nil then
 		-- načíst...
 		result_json = storage:get_string(player_key.."/transactions")
+		minetest.log("action", "[ch_bank DEBUG] get_today_transactions("..player_name..") on "..today..", will try to load them.")
 		if result_json == "" then
 			-- zatím nic, založit nový den
 			return open_new_bank_day(player_name, today, get_amount_from_storage(player_key.."/state"))
@@ -232,7 +306,7 @@ local function get_today_transactions(player_name)
 	-- načten starý den
 	local bank_month = result.bank_day:sub(1,7)
 	local day = tonumber(result.bank_day:sub(9,10))
-	local history = get_or_add(get_or_add(bank_history, bank_month), player_name)
+	local history = get_bank_month_history(player_name, bank_month)
 	local state_after = get_amount_from_storage(player_key.."/state")
 	history[day] = {
 		state_before = result.state_before,
@@ -251,127 +325,46 @@ function utils.add_today_transaction(player_name, record)
 	assert(tt)
 	assert(tt.transactions)
 	local check, error_message = utils.check_transaction_record(record, true)
-	if check then
-		table.insert(tt.transactions, record)
-		local result_json = assert(minetest.write_json(tt))
-		storage:set_string(player_name..#player_name.."/transactions", result_json)
-	else
+	if not check then
 		error("Invalid transaction record: "..(error_message or "nil"))
 	end
-end
-
-local function prev_bank_month(bank_month)
-	local n = tonumber(bank_month:sub(6,7)) - 1
-	if n > 0 then
-		return string.format("%s%02d", bank_month:sub(1,5), n)
-	else
-		return string.format("%04d-12", assert(tonumber(bank_month:sub(1,4))) - 1)
-	end
-end
-
-local function load_file(dir_path, file_name)
-	local f = io.open(worldpath.."/"..dir_path.."/"..file_name)
-	local result
-	if f then
-		result = f:read("*a")
-		f:close()
-	end
-	return result
-end
-
-local function get_bank_month_history(player_name, bank_month)
-	local month = get_current_bank_day():sub(1,7)
-	local i = 1
-	while i <= 3 and month ~= bank_month do
-		month = prev_bank_month(month)
-		i = i + 1
-	end
-	if month ~= bank_month then
-		return nil -- 3 months only
-	end
-	local bhistory = get_or_add(bank_history, bank_month)
-	if bhistory[player_name] == nil then
-		-- load from file
-		local json, h
-		json = load_file("bank/"..bank_month, player_name)
-		if json ~= nil then
-			h = assert(minetest.parse_json(json))
-			for _, day_record in pairs(h) do
-				for _, tr in ipairs(day_record.transactions) do
-					tr.time = nil -- remove time if stored (it should not be)
-				end
-			end
+	local last_transaction = tt.transactions[#tt.transactions]
+	if last_transaction ~= nil and record.from_player == last_transaction.from_player and record.to_player == last_transaction.to_player and record.label == last_transaction.label and math.abs(last_transaction.change + record.change) < account_max then
+		if last_transaction.transactions ~= nil then
+			-- přidat k existující kombinované transakci
+			table.insert(last_transaction.transactions, record)
+			last_transaction.change = last_transaction.change + record.change
+			last_transaction.op_count = last_transaction.op_count + record.op_count
 		else
-			h = {}
+			-- vytvořit novou kombinovanou transakci
+			local subtransactions = { last_transaction, record }
+			tt.transactions[#tt.transactions] = {
+				from_player = last_transaction.from_player,
+				to_player = last_transaction.to_player,
+				change = last_transaction.change + record.change,
+				label = last_transaction.label,
+				op_count = last_transaction.op_count + record.op_count,
+				time = last_transaction.time,
+				transactions = subtransactions,
+			}
 		end
-		bhistory[player_name] = h
-		return h
 	else
-		return bhistory[player_name]
+		-- přidat novou samostatnou transakci
+		table.insert(tt.transactions, record)
 	end
+	local result_json = assert(minetest.write_json(tt))
+	storage:set_string(player_name..#player_name.."/transactions", result_json)
 end
 
 local function formatovat_bank_day(bank_day)
 	return string.format("%d. %d. %d", bank_day:sub(9,10), bank_day:sub(6,7), bank_day:sub(1,4))
 end
 
---[[
-	assert(record.from_player) -- string
-	assert(record.to_player) -- string
-	assert(record.before) -- string
-	assert(record.change) -- int
-	assert(record.after) -- string
-	assert(record.op_count) -- int
-	assert(record.bank_day) -- string
-	assert(record.label) -- string
-]]
-
---[[
-	Vrátí seznam transakcí dané postavy v pořadí od nejnovější po nejstarší.
-	player_name : string -- přihlašovací jméno postavy
-	limit : enum ("day" || "month" || "all")
-	returns:
-	=> {
-		{from_player, to_player, label, change, op_count, bank_day}...
-		{state}... -- uvádí mezistav účtu
-	}
-	=> nil
-]]
---[[
-function utils.get_transactions(player_name, limit)
-	if limit ~= "day" and limit ~= "month" and limit ~= "all" then
-		error("get_transactions(): Unknown limit: "..tostring(limit or "nil"))
-	end
-	local result = {}
-	-- Today's transactions
-	local tt = get_today_transactions(player_name)
-	local bank_day = tt.bank_day
-	for i = #tt.transactions, 1, -1 do
-		local tr = tt.transactions[i]
-		table.insert(result, {
-			from_player = tr.from_player,
-			to_player = tr.to_player,
-			label = tr.label,
-			change = tr.change,
-			op_count = tr.op_count,
-			bank_day = bank_day,
-		})
-	end
-	table.insert(result, {state = tt.state_before})
-	if limit == "day" then
-		return result
-	end
-	-- Month's transactions
-	local bank_month = bank_day:sub(1,7)
-	local history = ch_core.safe_get_3(bank_history)
-	for day = tonumber(bank_day:sub(10,11)) - 1, 1, -1 do
-
-	end
-
-end ]]
-
-local function transaction_to_formspec(transaction)
+local function transaction_to_formspec(transaction, tree_level)
 	local column1, color2, text2, text3, castka
+	if tree_level == nil then
+		tree_level = 1
+	end
 	castka, color2 = formatovat_castku(transaction.change)
 	text2 = F(ifthenelse(transaction.change > 0, "+"..castka.." Kčs", castka.." Kčs"))
 	if transaction.change > 0 and transaction.from_player ~= "" then
@@ -383,12 +376,21 @@ local function transaction_to_formspec(transaction)
 	end
 	if transaction.op_count > 1 then
 		text3 = F("["..transaction.op_count.." tr.] "..transaction.label)
+		if transaction.transactions ~= nil then
+			local result = {
+				tree_level..","..column1..","..color2..","..text2..",#ffffff,"..text3
+			}
+			for i = #transaction.transactions, 1, -1 do
+				table.insert(result, transaction_to_formspec(transaction.transactions[i], tree_level + 1))
+			end
+			return table.concat(result, ",")
+		end
 	elseif transaction.time ~= nil then
 		text3 = F(transaction.time.." "..transaction.label)
 	else
 		text3 = F(transaction.label)
 	end
-	return "1,"..column1..","..color2..","..text2..",#ffffff,"..text3
+	return tree_level..","..column1..","..color2..","..text2..",#ffffff,"..text3
 end
 
 local function bank_history_day_to_formspec(bank_day, day_record)
@@ -529,7 +531,7 @@ unified_inventory.register_button("ch_bank", {
 unified_inventory.register_page("ch_bank", {get_formspec = get_formspec})
 
 local kcs1, kcs2 = "Kčs", "Kcs"
-local function precist_castku_(s)
+local function precist_castku(s)
 	print(s)
 	if s:sub(-#kcs1,-1) == kcs1 then
 		s = s:sub(1, -#kcs1 - 1)
@@ -544,11 +546,6 @@ local function precist_castku_(s)
 	elseif s:find("^%d+[.]%d%d$") ~= nil then
 		return tonumber(s:sub(1,-4)) * 100 + tonumber(s:sub(-2,-1))
 	end
-end
-local function precist_castku(s)
-	local result = precist_castku_(s)
-	print("DEBUG: '"..s.."' read as: "..result)
-	return result
 end
 
 local function on_player_receive_fields(player, formname, fields)
@@ -626,3 +623,24 @@ local function on_player_receive_fields(player, formname, fields)
 	return true
 end
 minetest.register_on_player_receive_fields(on_player_receive_fields)
+
+function utils.try_pay_wage(player_name)
+	if utils.wage_amount <= 0 then return end
+	local online_charinfo = ch_core.online_charinfo[player_name]
+	local now = minetest.get_us_time()
+	if online_charinfo ~= nil and now - online_charinfo.join_timestamp < utils.wage_time - 5000000 then
+		print("DEBUG: "..(now - (online_charinfo.join_timestamp or 0)))
+		return
+	end
+	local tt = get_today_transactions(player_name)
+	if tt and not tt.has_wage then
+		tt.has_wage = true
+		ch_bank.platba{
+			from_player = "",
+			to_player = player_name,
+			amount = utils.wage_amount,
+			label = "mzda (za připojení do hry)",
+			message_to_chat = "banka: na účet jste obdržel/a mzdu 30,- Kčs",
+		}
+	end
+end

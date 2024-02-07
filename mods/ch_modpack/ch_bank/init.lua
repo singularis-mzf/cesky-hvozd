@@ -12,6 +12,8 @@ local utils = {
 	STATE_CONFIRMED = 3,
 	account_max = 1000000000000000, -- 10 bilionů Kčs
 	storage = minetest.get_mod_storage(),
+	wage_amount = 3000, -- 30,- Kčs
+	wage_time = 300 * 1000000, -- 5 minut
 }
 
 assert(utils.storage ~= nil)

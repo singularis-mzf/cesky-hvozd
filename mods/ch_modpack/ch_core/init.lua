@@ -66,6 +66,7 @@ dofile(modpath .. "/formspecs.lua") -- : data, lib
 dofile(modpath .. "/areas.lua") -- : lib
 dofile(modpath .. "/nametag.lua") -- : data, lib
 dofile(modpath .. "/chat.lua") -- : data, lib, privs, nametag
+-- dofile(modpath .. "/inv_inspector.lua") -- : data, formspecs, lib, chat
 dofile(modpath .. "/podnebi.lua") -- : privs, chat
 dofile(modpath .. "/dennoc.lua") -- : privs, chat
 dofile(modpath .. "/hud.lua") -- : data, lib, chat

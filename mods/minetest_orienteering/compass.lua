@@ -13,10 +13,19 @@ local barvy = {
 	{ description = "modrá", color = 0x2c4df1 },
 	{ description = "zelená", color = 0x2cf136 },
 	{ description = "žlutá", color = 0xf1d32c },
+	{ description = "tyrkysová", color = 0x23c4ab },
+	{ description = "růžová", color = 0xe27cdd },
+	{ description = "oranžová", color = 0xe67e00 },
+	{ description = "šedá", color = 0xaaaaaa },
+	{ description = "tmavě šedá", color = 0x666666 },
+	{ description = "černá", color = 0x000000 },
 }
+
 local barvy_text
 local barvy_color_to_index
 local xy_00 = {x = 0, y = 0}
+local image_waypoint_scale = {x = 0.25, y = 0.25}
+local waypoint_offset = {x = 0, y = 30, z = 0}
 local default_player_form = {abbr = "", pos = vector.zero()}
 local item_description_unset = "Builder Compass (unset)"
 local item_description_set = "Builder Compass"
@@ -387,11 +396,23 @@ local function update_bc_player_huds(player)
 								alignment = xy_00,
 								z_index = -300,
 								text = " m",
+								offset = waypoint_offset,
 								-- precision = 1,
 								-- variable fields:
 								name = position.name,
 								world_pos = position.pos,
 								number = position.color,
+							}
+							table.insert(huds_to_add, hud_def)
+							hud_def = {
+								-- constant fields:
+								hud_elem_type = "image_waypoint",
+								alignment = xy_00,
+								z_index = -300,
+								text = string.format("ch_core_dot.png^[multiply:#%06x", position.color),
+								scale = image_waypoint_scale,
+								-- variable fields:
+								world_pos = position.pos,
 							}
 							table.insert(huds_to_add, hud_def)
 						end

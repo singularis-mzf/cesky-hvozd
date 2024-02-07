@@ -178,6 +178,28 @@ local function platba_inner(transaction_id, from_player, to_player, amount, labe
 	end
 end
 
+--[[
+	Definice platby = {
+		from_player = string, // přihlašovací jméno postavy, které mají být
+			odebrány peníze, nebo ""
+		to_player = string, // přihlašovací jméno postavy, které mají být
+			připsány peníze, nebo ""
+		amount = int > 0, // částka k převodu; musí být větší než 0
+			a menší nebo rovna account_max
+		label = string or nil, // popisek platby; text, který má být uložen
+			k záznamu o platbě v historii; musí být uvedena buď
+			"label" pro obě strany transakce, nebo "label_from" a "label_to"
+			pro možnost rozdílného popisu pro from_player a to_player.
+		label_from = string or nil,
+		label_to = string or nil,
+		message_to_chat = string or nil, // zpráva, která má být vypsána
+			do četu v případě úspěšné transakce.
+	}
+	Poznámky:
+	- alespoň jedna z hodnot from_player a to_player musí být jméno postavy
+	- from_player se nesmí rovnat to_player (nelze poslat platbu sobě)
+]]
+
 function ch_bank.platba(def)
 	assert(def)
 	assert(def.from_player)
@@ -201,6 +223,12 @@ function ch_bank.platba(def)
 	local success, warning_message = platba_inner(transaction_id, def.from_player, def.to_player, def.amount, def.label_from or def.label, def.label_to or def.label, def.simulation)
 	if success then
 		minetest.log("action", log_prefix.."Transaction FINISHED.")
+		if def.message_to_chat ~= nil then
+			local player_name = ifthenelse(def.to_player ~= "", def.to_player, def.from_player)
+			if player_name ~= "" and minetest.get_player_by_name(player_name) ~= nil then
+				ch_core.systemovy_kanal(player_name, def.message_to_chat)
+			end
+		end
 	else
 		minetest.log("action", log_prefix.."Transaction FAILED: "..(warning_message or "nil"))
 		if def.expected then
@@ -414,3 +442,10 @@ function ch_bank.receive_inventory_fields(player, castka, typ_mince, listname)
 	end
 	return true
 end
+
+-- Mzda
+local function on_joinplayer(player, last_login)
+	minetest.after(utils.wage_time / 1000000, utils.try_pay_wage, player:get_player_name())
+end
+
+minetest.register_on_joinplayer(on_joinplayer)

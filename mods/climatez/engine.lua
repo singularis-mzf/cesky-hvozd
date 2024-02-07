@@ -34,6 +34,24 @@ climatez.settings = {
 local timer = 0 -- A timer to create climates each x seconds an for lightning too.
 local climatez_disabled = false
 
+local get_sky, set_sky
+if has_ch_sky then
+	get_sky, set_sky = ch_sky.get_sky, ch_sky.set_sky
+else
+	function get_sky(player)
+		return player:get_sky(true)
+	end
+	function set_sky(player, sky)
+		return player:set_sky(sky)
+	end
+end
+local function get_clouds(player)
+	return player:get_clouds()
+end
+local function set_clouds(player, clouds)
+	return player:set_clouds(clouds)
+end
+
 --Helper Functions
 
 local function remove_table_by_key(tab, key)
@@ -285,20 +303,16 @@ local function add_climate_player(player_name, climate_id, downfall_type)
 		downfall_sky_color = "#DEB887"
 		downfall_clouds_color = "#DEB887"
 	end
-	if has_ch_sky and ch_sky.is_enabled_for_player(player) then
-		ch_sky.colorize_sky(player, 0.75, downfall_sky_color)
-	else
-		climatez.players[player_name].sky_color = player:get_sky().sky_color or "#8cbafa"
-		player:set_sky({
-			sky_color = {
-				day_sky = downfall_sky_color,
-			}
-		})
-		climatez.players[player_name].clouds_color = player:get_clouds().color or "#fff0f0e5"
-		player:set_clouds({
-			color = downfall_clouds_color,
-		})
-	end
+	climatez.players[player_name].sky_color = get_sky(player).sky_color or "#8cbafa"
+	set_sky(player, {
+		sky_color = {
+			day_sky = downfall_sky_color,
+		}
+	})
+	climatez.players[player_name].clouds_color = get_clouds(player).color or "#fff0f0e5"
+	set_clouds(player, {
+		color = downfall_clouds_color,
+	})
 
 	if downfall_type == "sand" and climatez.settings.dust_effect then
 		climatez.players[player_name].hud_id = player:hud_add({
@@ -324,18 +338,14 @@ local function remove_climate_player_effects(player_name)
 	if not player then
 		return
 	end
-	if has_ch_sky and ch_sky.is_enabled_for_player(player) then
-		ch_sky.colorize_sky(player, 0)
-	else
-		player:set_sky({
-			sky_color = {
-				day_sky = climatez.players[player_name].sky_color,
-			}
-		})
-		player:set_clouds({
-			color = climatez.players[player_name].clouds_color,
-		})
-	end
+	set_sky(player, {
+		sky_color = {
+			day_sky = climatez.players[player_name].sky_color,
+		}
+	})
+	set_clouds(player, {
+		color = climatez.players[player_name].clouds_color,
+	})
 
 	local downfall_type = climatez.players[player_name].downfall_type
 

@@ -303,13 +303,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPL 2.1+
 * [ContentDB](https://content.minetest.net/packages/ShadowNinja/areas/)
 
-## Auroras (auroras)
-
-* Zdroj: [https://github.com/random-geek/auroras](https://github.com/random-geek/auroras), revize 52f6b3eda55c67494ff132e0696cade4236a2795
-* Původní licence: GPLv3
-* Licence úprav: GPLv3
-* [ContentDB](https://content.minetest.net/packages/random\_geek/auroras/)
-
 ## Baked Clay (bakedclay)
 
 * Zdroj: [https://notabug.org/tenplus1/bakedclay](https://notabug.org/tenplus1/bakedclay), revize 975bee989893aa25d5627a45be3801c658905f1d
@@ -648,13 +641,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: GPLv3
 * Licence úprav: GPLv3
 * [ContentDB](https://content.minetest.net/packages/Can202/icecream/)
-
-## Inventory Manager (inv\_manager)
-
-* Zdroj: [https://github.com/Acronymmk/inv\_manager](https://github.com/Acronymmk/inv\_manager), revize 54e6fe276355597a152b49289af274a74cd42c36
-* Původní licence: kód MIT, textury CC-BY-SA-4.0
-* Licence úprav: kód MIT, textury CC-BY-SA-4.0
-* [ContentDB](https://content.minetest.net/packages/Acronymmk/inv\_manager/)
 
 ## Itemshelf (itemshelf)
 

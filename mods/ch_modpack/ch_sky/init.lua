@@ -5,13 +5,25 @@ local modpath = minetest.get_modpath(modname)
 
 ch_sky = {}
 
+local function get_online_skyinfo_and_player_name(player)
+	local player_name = player:get_player_name()
+	local online_charinfo = ch_core.online_charinfo[player_name]
+	if online_charinfo == nil and minetest.get_player_name(player_name) then
+		minetest.log("warning", "online_charinfo not found for online player "..player_name.."!")
+		return
+	end
+	return online_charinfo.sky_info, player_name
+end
+
+local function is_underground(y)
+	return y <= -100
+end
+
 function ch_sky.colorize_sky(player, ratio, color)
 	if color ~= nil and type(color) ~= "string" then
 		error("ch_sky.colorize_sky() supports only string as color!")
 	end
-	local player_name = player:get_player_name()
--- 	-- print("DEBUG: ch_sky.colorize_sky(): "..dump2({player_name = player_name, ratio = ratio, color = color}))
-	local online_skyinfo = ch_core.safe_get_4(ch_core, "online_charinfo", player_name, "sky_info")
+	local online_skyinfo = get_online_skyinfo_and_player_name(player)
 	if online_skyinfo == nil then
 		return
 	end
@@ -33,6 +45,117 @@ function ch_sky.is_enabled_for_player(player)
 	local player_name = player:get_player_name()
 	local offline_charinfo = ch_core.offline_charinfo[player_name]
 	return offline_charinfo == nil or offline_charinfo.no_ch_sky ~= 1
+end
+
+function ch_sky.get_sky(player)
+	local online_skyinfo, player_name = get_online_skyinfo_and_player_name(player)
+	if online_skyinfo ~= nil then
+		return online_skyinfo.sky
+	else
+		return player:get_sky(true)
+	end
+end
+
+function ch_sky.get_sun(player)
+	local online_skyinfo, player_name = get_online_skyinfo_and_player_name(player)
+	if online_skyinfo ~= nil then
+		return online_skyinfo.sun
+	else
+		return player:get_sun()
+	end
+end
+
+function ch_sky.get_moon(player)
+	local online_skyinfo, player_name = get_online_skyinfo_and_player_name(player)
+	if online_skyinfo ~= nil then
+		return online_skyinfo.moon
+	else
+		return player:get_moon()
+	end
+end
+
+function ch_sky.get_stars(player)
+	local online_skyinfo, player_name = get_online_skyinfo_and_player_name(player)
+	if online_skyinfo ~= nil then
+		return online_skyinfo.stars
+	else
+		return player:get_stars()
+	end
+end
+
+function ch_sky.set_sky(player, sky)
+	local online_skyinfo, player_name = get_online_skyinfo_and_player_name(player)
+	if online_skyinfo ~= nil then
+		if online_skyinfo.sky == nil then
+			online_skyinfo.sky = sky
+		else
+			for k, v in pairs(sky) do
+				if (k == "sky_color" or k == "fog") and type(v) == "table" and type(online_skyinfo.sky[k]) == "table" then
+					local subtable = online_skyinfo.sky[k]
+					for k2, v2 in pairs(v) do
+						subtable[k2] =v2
+					end
+				else
+					online_skyinfo.sky[k] = v
+				end
+			end
+		end
+		if online_skyinfo.ch_sky_active then
+			return
+		end
+	end
+	player:set_sky(sky)
+end
+
+function ch_sky.set_sun(player, sun)
+	local online_skyinfo, player_name = get_online_skyinfo_and_player_name(player)
+	if online_skyinfo ~= nil then
+		if online_skyinfo.sun == nil then
+			online_skyinfo.sun = sun
+		else
+			for k, v in pairs(sun) do
+				online_skyinfo.sun[k] = v
+			end
+		end
+		if online_skyinfo.ch_sky_active then
+			return
+		end
+	end
+	player:set_sun(sky)
+end
+
+function ch_sky.set_moon(player, moon)
+	local online_skyinfo, player_name = get_online_skyinfo_and_player_name(player)
+	if online_skyinfo ~= nil then
+		if online_skyinfo.moon == nil then
+			online_skyinfo.moon = moon
+		else
+			for k, v in pairs(moon) do
+				online_skyinfo.moon[k] = v
+			end
+		end
+		if online_skyinfo.ch_sky_active then
+			return
+		end
+	end
+	player:set_moon(sky)
+end
+
+function ch_sky.set_stars(player, stars)
+	local online_skyinfo, player_name = get_online_skyinfo_and_player_name(player)
+	if online_skyinfo ~= nil then
+		if online_skyinfo.stars == nil then
+			online_skyinfo.stars = stars
+		else
+			for k, v in pairs(stars) do
+				online_skyinfo.stars[k] = v
+			end
+		end
+		if online_skyinfo.ch_sky_active then
+			return
+		end
+	end
+	player:set_stars(sky)
 end
 
 local get_colors_cache = {}
@@ -59,45 +182,83 @@ end
 
 local function update_ch_sky(player, player_name, online_skyinfo, global_day_night_ratio)
 	assert(online_skyinfo)
+	local force_update = online_skyinfo.force_update
 	if not online_skyinfo.ch_sky_enabled then
 		if online_skyinfo.ch_sky_active then
 			-- deactivate ch_sky
-			player:set_sky() -- reset the sky
 			online_skyinfo.ch_sky_active = false
+			online_skyinfo.force_update = false
+			player:set_sky()
+			player:set_sun()
+			player:set_moon()
+			player:set_stars()
+			player:set_sky(online_skyinfo.sky)
+			player:set_sun(online_skyinfo.sun)
+			player:set_moon(online_skyinfo.moon)
+			player:set_stars(online_skyinfo.stars)
 		end
 		return
-	end
-	local day_night_ratio = player:get_day_night_ratio() or global_day_night_ratio
-	if not online_skyinfo.force_update and online_skyinfo.ch_sky_active then
-		if online_skyinfo.day_night_ratio == day_night_ratio then
-			return false -- nothing to update
-		end
-	else
+	elseif not online_skyinfo.ch_sky_active then
+		-- activate ch_sky
+		player:set_sun()
+		player:set_moon()
+		player:set_stars()
 		online_skyinfo.ch_sky_active = true
-		online_skyinfo.force_update = false
+		force_update = true
 	end
-	local colors = get_colors(day_night_ratio)
-	local texture_modifier = ""
-	if online_skyinfo.colorize_color ~= nil and online_skyinfo.colorize_ratio ~= nil then
-		local ratio_int = math.floor(online_skyinfo.colorize_ratio * 255)
-		ratio_int = math.min(255, math.max(0, ratio_int))
-		texture_modifier = string.format("%s^[colorize:%s:%d", texture_modifier, online_skyinfo.colorize_color, ratio_int)
+	online_skyinfo.force_update = false
+
+	local player_is_underground = is_underground(player:get_pos().y)
+	local day_night_ratio = math.max(0.0, math.min(1.0,
+		(player:get_day_night_ratio() or global_day_night_ratio)))
+	if not force_update and player_is_underground == online_skyinfo.player_was_underground and day_night_ratio == online_skyinfo.last_day_night_ratio then
+		return -- nothing to update
 	end
-	texture_modifier = texture_modifier.."^[multiply:"..colors.multiplier
-	-- print("DEBUG: will set texture modifier: "..texture_modifier)
-	player:set_sky({
-		type = "skybox",
-		base_color = online_skyinfo.colorize_color or colors.base_color,
-		textures = {
-			"TropicalSunnyDayUp.jpg^[transformR90"..texture_modifier,
-			"TropicalSunnyDayDown.jpg"..texture_modifier,
-			"TropicalSunnyDayRight.jpg"..texture_modifier,
-			"TropicalSunnyDayLeft.jpg"..texture_modifier,
-			"TropicalSunnyDayFront.jpg"..texture_modifier,
-			"TropicalSunnyDayBack.jpg"..texture_modifier,
-		},
-		clouds = false,
-	})
+	local sky_color, texture_modifier, texture_modifier2
+	if player_is_underground then
+		sky_color = "#080808"
+		texture_modifier = "^[resize:1x1^[multiply:"..sky_color
+		texture_modifier2 = texture_modifier
+	else
+		local colors = get_colors(day_night_ratio)
+		texture_modifier = "^[multiply:"..colors.multiplier
+		if online_skyinfo.colorize_color ~= nil and online_skyinfo.colorize_ratio ~= nil then
+			local int_ratio = math.max(0, math.min(255, math.floor(online_skyinfo.colorize_ratio * 255)))
+			sky_color = online_skyinfo.colorize_color
+			texture_modifier2 = string.format("%s^[colorize:%s:%d", texture_modifier, sky_color, int_ratio)
+		else
+			sky_color = colors.base_color
+			texture_modifier2 = texture_modifier
+		end
+	end
+	if force_update or player_is_underground ~= online_skyinfo.player_was_underground then
+		online_skyinfo.player_was_underground = player_is_underground
+		if player_is_underground then
+			player:set_sun{visible = false, sunrise_visible = false}
+			player:set_moon{visible = false}
+			player:set_stars{visible = false}
+		else
+			player:set_sun()
+			player:set_moon()
+			player:set_stars()
+		end
+	end
+	if force_update or online_skyinfo.last_texture_modifier ~= texture_modifier2 then
+		online_skyinfo.last_texture_modifier = texture_modifier2
+		player:set_sky({
+			type = "skybox",
+			base_color = assert(sky_color),
+			textures = {
+				"TropicalSunnyDayUp.jpg^[transformR90"..texture_modifier2,
+				"TropicalSunnyDayDown.jpg^[multiply:#000000^[resize:1x1",
+				"TropicalSunnyDayRight.jpg"..texture_modifier,
+				"TropicalSunnyDayLeft.jpg"..texture_modifier,
+				"TropicalSunnyDayFront.jpg"..texture_modifier,
+				"TropicalSunnyDayBack.jpg"..texture_modifier,
+			},
+			clouds = false,
+		})
+	end
 end
 
 local dtime_acc = 0
@@ -126,8 +287,14 @@ local function on_joinplayer(player, _last_login)
 	online_charinfo.sky_info = {
 		ch_sky_active = false,
 		ch_sky_enabled = true,
-		day_night_ratio = -1,
 		force_update = true,
+		last_day_night_ratio = -1,
+		last_texture_modifier = "",
+		sky = player:get_sky(true),
+		sun = player:get_sun(),
+		moon = player:get_moon(),
+		stars = player:get_stars(),
+		player_was_underground = is_underground(player:get_pos().y),
 	}
 	local offline_charinfo = ch_core.offline_charinfo[player_name]
 	if offline_charinfo == nil or offline_charinfo.no_ch_sky ~= 1 then
