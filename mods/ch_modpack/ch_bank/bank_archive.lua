@@ -624,23 +624,40 @@ local function on_player_receive_fields(player, formname, fields)
 end
 minetest.register_on_player_receive_fields(on_player_receive_fields)
 
-function utils.try_pay_wage(player_name)
+function utils.try_pay_wage(player_name, join_timestamp, ap_xp_at_join)
 	if utils.wage_amount <= 0 then return end
 	local online_charinfo = ch_core.online_charinfo[player_name]
+	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local ap_xp_now = (offline_charinfo and offline_charinfo.ap_xp) or 0
 	local now = minetest.get_us_time()
-	if online_charinfo ~= nil and now - online_charinfo.join_timestamp < utils.wage_time - 5000000 then
-		print("DEBUG: "..(now - (online_charinfo.join_timestamp or 0)))
-		return
-	end
-	local tt = get_today_transactions(player_name)
-	if tt and not tt.has_wage then
-		tt.has_wage = true
-		ch_bank.platba{
-			from_player = "",
-			to_player = player_name,
-			amount = utils.wage_amount,
-			label = "mzda (za připojení do hry)",
-			message_to_chat = "banka: na účet jste obdržel/a mzdu 30,- Kčs",
-		}
+
+	if
+		online_charinfo ~= nil and
+		offline_charinfo ~= nil and
+		online_charinfo.join_timestamp == join_timestamp and
+		ap_xp_now >= ap_xp_at_join + 10
+	then
+		local tt = get_today_transactions(player_name)
+		if tt and not tt.has_wage then
+			tt.has_wage = true
+			ch_bank.platba{
+				from_player = "",
+				to_player = player_name,
+				amount = utils.wage_amount,
+				label = "mzda (za připojení do hry)",
+				message_to_chat = "banka: na účet jste obdržel/a mzdu 30,- Kčs",
+			}
+		end
+	else
+		minetest.log("action", "DEBUG: "..dump2({
+			event = "try_pay_wage failed",
+			player_name = player_name,
+			join_timestamp = join_timestamp,
+			ap_xp_at_join = ap_xp_at_join,
+			now = now,
+			ap_xp_now = ap_xp_now,
+			online_charinfo = online_charinfo and "true" or "false",
+			offline_charinfo = offline_charinfo and "true" or "false",
+		}))
 	end
 end

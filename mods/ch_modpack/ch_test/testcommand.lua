@@ -1,112 +1,6 @@
 local def
 
-local function zero()
-	return 0
-end
-
-minetest.create_detached_inventory("ch_test_watch_inventory", {
-	allow_move = zero, allow_put = zero, allow_take = zero
-})
-
-local function update_inventory(player_name, listname)
-	local watch_inv = minetest.get_inventory({type = "detached", name = "ch_test_watch_inventory"})
-	local player = minetest.get_player_by_name(player_name)
-	local player_inv, new_size
-	if player then
-		player_inv = player:get_inventory()
-		new_size = player_inv:get_size(listname)
-		watch_inv:set_size("main", new_size)
-		print("[ch_test] size of detached:ch_test_watch_inventory/main set to "..new_size)
-		if new_size > 0 then
-			watch_inv:set_list("main", player_inv:get_list(listname))
-		end
-	else
-		new_size = 0
-		watch_inv:set_size("main", new_size)
-		print("[ch_test] size of detached:ch_test_watch_inventory/main set to "..new_size)
-	end
-	return new_size
-end
-
-local dropdown = ch_core.make_dropdown({
-	"main",
-	"craft",
-	"bag1",
-	"bag2",
-	"bag3",
-	"bag4",
-	"bag5",
-	"bag6",
-	"bag7",
-	"bag8",
-})
-
-local count_to_size = {
-	[1] = "1,1",
-	[4] = "2,2",
-	[9] = "3,3",
-	[16] = "4,4",
-	[32] = "8,4",
-}
-
-local function get_formspec(player_name, inventory_index)
-	local watch_inv = minetest.get_inventory({type = "detached", name = "ch_test_watch_inventory"})
-	local size = watch_inv:get_size("main")
-	local formspec = {
-		"formspec_version[5]",
-		"size[14,13.5]",
-		"dropdown[1,0.375;2,0.5;inventory;", dropdown.formspec_list, ";"..inventory_index..";true]",
-		"list[current_player;main;2.5,8;8,4;]",
-	}
-	if size ~= 0 then
-		table.insert(formspec, "list[detached:ch_test_watch_inventory;main;2.5,1;"..(count_to_size[size] or "8,4")..";]")
-	end
-	return table.concat(formspec)
-end
-
-local function formspec_callback(custom_state, player, formname, fields)
-	if fields.quit then
-		local watch_inv = minetest.get_inventory({type = "detached", name = "ch_test_watch_inventory"})
-		watch_inv:set_size("main", 0)
-		return
-	end
-	if fields.inventory then
-		local new_inventory = dropdown.get_value_from_index(fields.inventory, 1)
-		print("new_inventory = "..(new_inventory or "nil"))
-		update_inventory(custom_state.player_name, new_inventory)
-		custom_state.inventory_index = dropdown.value_to_index[new_inventory]
-	end
-	print("DEBUG: formspec_callback called: "..dump2(fields))
-	return get_formspec(player:get_player_name(), custom_state.inventory_index)
-end
-
-local function command(player_name, param)
-	local player = minetest.get_player_by_name(player_name)
-	if not player then
-		error("Player object '"..player_name.."' not found!")
-	end
-
-	--[[
-	local another_player = minetest.get_player_by_name(param)
-	if another_player == nil then
-		return false, "Postava '"..param.."' není ve hře!"
-	end
-	local inv = another_player:get_inventory()
-	print("Inventory location = "..dump2({location = inv:get_location(), player_name = param}))
-	]]
-
-	local inventory_index = 1
-	update_inventory(param, dropdown.index_to_value[inventory_index])
-	local formspec = get_formspec(player_name, inventory_index)
-	ch_core.show_formspec(player, "ch_test:test_command", formspec, formspec_callback, {
-		player_name = param,
-		inventory_index = inventory_index,
-	}, {})
-end
-
-
-
---
+--[[
 
 local color = minetest.get_color_escape_sequence("#FFCC9980")
 local color2 = minetest.get_color_escape_sequence("#FFCC99")
@@ -160,39 +54,170 @@ end
 -- , => \\,
 -- ] => \\]
 -- [ => \\[
+]]
+
+local active_nodenames = {
+"advtrains:across_on",
+"advtrains:track_swl_cr",
+"advtrains:track_swl_cr_45",
+"advtrains:track_swl_st",
+"advtrains:track_swl_st_45",
+"advtrains:track_swr_cr",
+"advtrains:track_swr_cr_45",
+"advtrains:track_swr_st",
+"advtrains:track_swr_st_45",
+"auto_tree_tap:off",
+"auto_tree_tap:on",
+"clothing:dirty_water_source",
+"clothing:mannequin_stand",
+"cottages:window_shutter_closed",
+"cottages:window_shutter_open",
+"craftable_lava:hot_stone",
+"default:cactus",
+"default:cobble",
+"default:dirt",
+"default:dry_dirt_with_dry_grass",
+"default:lava_flowing",
+"default:lava_source",
+"default:mossycobble",
+"default:papyrus",
+"default:river_water_source",
+"default:stone",
+"default:stone_with_coal",
+"default:water_source",
+"elevator:elevator_off",
+"elevator:elevator_on",
+"group:flora",
+"group:growing",
+"group:mushroom",
+"group:pipe_to_update",
+"group:portable_tl",
+"group:radioactive",
+"group:spreading_dirt_type",
+"group:streets_light",
+"group:technic_machine",
+"group:tnt",
+"group:tube_to_update",
+"group:vacuum_tube",
+"group:water",
+"group:waterable",
+"handdryer:xa5",
+"homedecor:coffee_maker",
+"homedecor:microwave_oven",
+"homedecor:microwave_oven_active",
+"homedecor:microwave_oven_active_locked",
+"homedecor:microwave_oven_locked",
+"homedecor:oven",
+"homedecor:oven_active",
+"homedecor:oven_active_locked",
+"homedecor:oven_locked",
+"homedecor:oven_steel",
+"homedecor:oven_steel_active",
+"homedecor:oven_steel_active_locked",
+"homedecor:oven_steel_locked",
+"ch_extras:world_anchor",
+"mesecons_hydroturbine:hydro_turbine_off",
+"mesecons_hydroturbine:hydro_turbine_on",
+"mesecons_solarpanel:solar_panel_off",
+"mesecons_solarpanel:solar_panel_on",
+"mesecons_torch:mesecon_torch_off",
+"mesecons_torch:mesecon_torch_on",
+"mobs:beehive",
+"moreblocks:horizontal_jungle_tree",
+"moreblocks:horizontal_tree",
+"moretrees:apple_tree_trunk_sideways",
+"moretrees:beech_trunk_sideways",
+"moretrees:birch_trunk_sideways",
+"moretrees:cedar_trunk_sideways",
+"moretrees:date_palm_ffruit_trunk",
+"moretrees:date_palm_fruit_trunk",
+"moretrees:date_palm_mfruit_trunk",
+"moretrees:date_palm_trunk_sideways",
+"moretrees:fir_trunk_sideways",
+"moretrees:jungletree_trunk_sideways",
+"moretrees:oak_trunk_sideways",
+"moretrees:palm_fruit_trunk",
+"moretrees:palm_fruit_trunk_gen",
+"moretrees:palm_trunk_sideways",
+"moretrees:poplar_trunk_sideways",
+"moretrees:rubber_tree_trunk_empty",
+"moretrees:rubber_tree_trunk_empty_sideways",
+"moretrees:rubber_tree_trunk_sideways",
+"moretrees:sequoia_trunk_sideways",
+"moretrees:spruce_trunk_sideways",
+"new_campfire:campfire_active",
+"new_campfire:campfire_active_with_grille",
+"new_campfire:fireplace_with_embers",
+"new_campfire:fireplace_with_embers_with_grille",
+"ontime_clocks:frameless_black",
+"ontime_clocks:frameless_gold",
+"ontime_clocks:frameless_white",
+"ontime_clocks:green_digital",
+"ontime_clocks:red_digital",
+"ontime_clocks:white",
+"pipeworks:entry_block_empty",
+"pipeworks:entry_block_loaded",
+"pipeworks:entry_panel_empty",
+"pipeworks:entry_panel_loaded",
+"pipeworks:flow_sensor_empty",
+"pipeworks:flow_sensor_loaded",
+"pipeworks:fountainhead",
+"pipeworks:fountainhead_pouring",
+"pipeworks:pipe_1_empty",
+"pipeworks:pipe_1_loaded",
+"pipeworks:pipe_10_empty",
+"pipeworks:pipe_10_loaded",
+"pipeworks:pipe_2_empty",
+"pipeworks:pipe_2_loaded",
+"pipeworks:pipe_3_empty",
+"pipeworks:pipe_3_loaded",
+"pipeworks:pipe_4_empty",
+"pipeworks:pipe_4_loaded",
+"pipeworks:pipe_5_empty",
+"pipeworks:pipe_5_loaded",
+"pipeworks:pipe_6_empty",
+"pipeworks:pipe_6_loaded",
+"pipeworks:pipe_7_empty",
+"pipeworks:pipe_7_loaded",
+"pipeworks:pipe_8_empty",
+"pipeworks:pipe_8_loaded",
+"pipeworks:pipe_9_empty",
+"pipeworks:pipe_9_loaded",
+"pipeworks:spigot",
+"pipeworks:spigot_pouring",
+"pipeworks:straight_pipe_empty",
+"pipeworks:straight_pipe_loaded",
+"pipeworks:valve_off_empty",
+"pipeworks:valve_on_empty",
+"pipeworks:valve_on_loaded",
+"stairs:slab_cobble",
+"stairs:stair_cobble",
+"stairs:stair_inner_cobble",
+"stairs:stair_outer_cobble",
+"streets:roadwork_blinking_light_off",
+"streets:roadwork_blinking_light_on",
+"streets:roadwork_delineator_light_off_top",
+"streets:roadwork_delineator_light_on_top",
+"technic:coal_alloy_furnace",
+"technic:coal_alloy_furnace_active",
+"technic:corium_flowing",
+"technic:corium_source",
+"technic:hv_nuclear_reactor_core_active",
+"technic:power_monitor",
+"technic:switching_station",
+"tnt:gunpowder",
+"walls:cobble",
+}
 
 local function command(player_name, param)
-	local formspec = {
-		"formspec_version[5]",
-		"size[13,15]",
-		"padding[0,0]",
-		"no_prepend[]",
-		"bgcolor[#333333;both;#00000033]",
-		"background[0,0;3,3;air]",
-		"tabheader[0.5,3;12,0.75;theader;Caption 1,Caption 2,Caption 3 is very long;2;false;true]",
-		"tooltip[password;Tooltip ",color,"text;#003300;#ffffff]",
-		"scroll_container[0,5;12,5;scname;vertical]",
-		"listcolors[#333333;#666666;#ff0000;#003300;#ffffff]",
-		"list[current_player;main;0.5,0;8,4;0]",
-		"image[0.5,5;1,1;air]",
-		"item_image[2,5;1,1;air]",
-		"pwdfield[0.5,6.5;4,0.5;password;He",color,"slo:]",
-		"field[0.5,7.5;4,0.5;field;Fie",color,"ld:;...]",
-		"field_close_on_enter[field;false]",
-		"textarea[0.5,8.5;6,4;tarea;Text",color,"area:;Text v ",color,"textarea.]",
-		"label[7,6;Jen ", color, "label..., ale může mít\ndruhý řádek.]",
-		"hypertext[0.5,13;10,4;htext;A",color,"B"..escape_hypertext2("(!)(\")(#)($)(%)(&)(')(*)(+)(,)(-)(.)(/)(:)(;)(<)(=)(>)(?)(@)([)(\\)(])(^)(_)(`)({)(|)(})(~).").."]",
-		"vertlabel[10,8.5;Vertical label...]",
-		"button[0.5,15;3,3;buton;Clicka",color,"ble Button\ndalší?]",
-		"image_button[5.5,15;1,1;air;ibutton;Imag",color,"e Button;Label;true;true]",
-		"textlist[0.5,20;5,5;tlist;elem 1,elem 2,#3300FFelem 3, elem 4,elem 5,elem 6;2;true]",
-		"textarea[0.5,26;6,4;;;Text v ",color,"textarea bez názvu.]",
-		"scroll_container_end[]",
-		"scrollbaroptions[max=1000;arrows=default]",
-		"scrollbar[12,5;0.5,5;vertical;scname;0]",
-	}
-	formspec = table.concat(formspec)
-	minetest.show_formspec(player_name, "ch_test:test", formspec)
+	local pos = vector.round(minetest.get_player_by_name(player_name):get_pos())
+	local _, counts = minetest.find_nodes_in_area(vector.offset(pos, -64, -64, -64), vector.offset(pos, 64, 64, 64), active_nodenames, false)
+	for name, count in pairs(counts) do
+		if count > 0 then
+			print("- "..name..": "..count.."x")
+		end
+	end
+	return true
 end
 
 

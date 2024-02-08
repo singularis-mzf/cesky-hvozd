@@ -445,7 +445,14 @@ end
 
 -- Mzda
 local function on_joinplayer(player, last_login)
-	minetest.after(utils.wage_time / 1000000, utils.try_pay_wage, player:get_player_name())
+	local player_name = player:get_player_name()
+	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
+	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local ap_xp
+	if offline_charinfo ~= nil then
+		ap_xp = offline_charinfo.ap_xp
+	end
+	minetest.after(utils.wage_time / 1000000, utils.try_pay_wage, player_name, online_charinfo.join_timestamp, ap_xp or 0)
 end
 
 minetest.register_on_joinplayer(on_joinplayer)
