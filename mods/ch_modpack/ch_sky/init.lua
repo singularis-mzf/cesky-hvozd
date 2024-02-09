@@ -216,7 +216,7 @@ local function update_ch_sky(player, player_name, online_skyinfo, global_day_nig
 	end
 	local sky_color, texture_modifier, texture_modifier2
 	if player_is_underground then
-		sky_color = "#080808"
+		sky_color = "#030303"
 		texture_modifier = "^[resize:1x1^[multiply:"..sky_color
 		texture_modifier2 = texture_modifier
 	else

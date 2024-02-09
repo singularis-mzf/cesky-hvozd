@@ -1,0 +1,5 @@
+Used texture modifications in GIMP (by Singularis):
+
+- Cover the sun in TropicalSunnyDayBack.jpg.
+- Adjust brightness (-25) and contrast (-3).
+- Resize to 512x512 ("Down" to 32x32).
