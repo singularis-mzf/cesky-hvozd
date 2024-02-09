@@ -309,6 +309,9 @@ local function add_climate_player(player_name, climate_id, downfall_type)
 			day_sky = downfall_sky_color,
 		}
 	})
+	if has_ch_sky then
+		ch_sky.colorize_sky(player, {day_color = downfall_sky_color, day_ratio = 0.6})
+	end
 	climatez.players[player_name].clouds_color = get_clouds(player).color or "#fff0f0e5"
 	set_clouds(player, {
 		color = downfall_clouds_color,
@@ -343,6 +346,9 @@ local function remove_climate_player_effects(player_name)
 			day_sky = climatez.players[player_name].sky_color,
 		}
 	})
+	if has_ch_sky then
+		ch_sky.colorize_sky(player, {})
+	end
 	set_clouds(player, {
 		color = climatez.players[player_name].clouds_color,
 	})

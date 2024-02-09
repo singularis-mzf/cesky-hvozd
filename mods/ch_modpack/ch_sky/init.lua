@@ -19,25 +19,30 @@ local function is_underground(y)
 	return y <= -100
 end
 
-function ch_sky.colorize_sky(player, ratio, color)
-	if color ~= nil and type(color) ~= "string" then
+--[[
+	args = {
+		day_color = string or nil,
+		day_ratio = string or nil,
+		night_color = string or nil,
+		night_ratio = string or nil,
+	}
+]]
+
+function ch_sky.colorize_sky(player, args)
+	if
+		(args.day_color ~= nil and type(args.day_color) ~= "string") or
+		(args.night_color ~= nil and type(args.night_color) ~= "string")
+	then
 		error("ch_sky.colorize_sky() supports only string as color!")
 	end
 	local online_skyinfo = get_online_skyinfo_and_player_name(player)
 	if online_skyinfo == nil then
 		return
 	end
-	if ratio == 0 then
-		online_skyinfo.colorize_color = nil
-		online_skyinfo.colorize_ratio = nil
-	else
-		online_skyinfo.colorize_ratio = ratio
-		if color ~= nil then
-			online_skyinfo.colorize_color = color
-		elseif online_skyinfo.colorize_color == nil then
-			online_skyinfo.colorize_color = "#ffffff"
-		end
-	end
+	online_skyinfo.colorize_day_color = args.day_color
+	online_skyinfo.colorize_day_ratio = args.day_ratio
+	online_skyinfo.colorize_night_color = args.night_color
+	online_skyinfo.colorize_night_ratio = args.night_ratio
 	online_skyinfo.force_update = true
 end
 
@@ -214,21 +219,26 @@ local function update_ch_sky(player, player_name, online_skyinfo, global_day_nig
 	if not force_update and player_is_underground == online_skyinfo.player_was_underground and day_night_ratio == online_skyinfo.last_day_night_ratio then
 		return -- nothing to update
 	end
-	local sky_color, texture_modifier, texture_modifier2
+	local is_night = day_night_ratio < 0.5
+	local sky_color, texture_modifier
 	if player_is_underground then
 		sky_color = "#030303"
 		texture_modifier = "^[resize:1x1^[multiply:"..sky_color
-		texture_modifier2 = texture_modifier
 	else
 		local colors = get_colors(day_night_ratio)
 		texture_modifier = "^[multiply:"..colors.multiplier
-		if online_skyinfo.colorize_color ~= nil and online_skyinfo.colorize_ratio ~= nil then
-			local int_ratio = math.max(0, math.min(255, math.floor(online_skyinfo.colorize_ratio * 255)))
-			sky_color = online_skyinfo.colorize_color
-			texture_modifier2 = string.format("%s^[colorize:%s:%d", texture_modifier, sky_color, int_ratio)
+		local colorize_color, colorize_ratio
+		if is_night then
+			colorize_color, colorize_ratio = online_skyinfo.colorize_night_color, online_skyinfo.colorize_night_ratio
+		else
+			colorize_color, colorize_ratio = online_skyinfo.colorize_day_color, online_skyinfo.colorize_day_ratio
+		end
+		if colorize_color ~= nil and colorize_ratio ~= nil and colorize_ratio > 0.0 then
+			local int_ratio = math.max(0, math.min(255, math.floor(colorize_ratio * 255)))
+			sky_color = colorize_color
+			texture_modifier = string.format("%s^[colorize:%s:%d", texture_modifier, sky_color, int_ratio)
 		else
 			sky_color = colors.base_color
-			texture_modifier2 = texture_modifier
 		end
 	end
 	if force_update or player_is_underground ~= online_skyinfo.player_was_underground then
@@ -243,14 +253,16 @@ local function update_ch_sky(player, player_name, online_skyinfo, global_day_nig
 			player:set_stars()
 		end
 	end
-	if force_update or online_skyinfo.last_texture_modifier ~= texture_modifier2 then
-		online_skyinfo.last_texture_modifier = texture_modifier2
+	if force_update or online_skyinfo.last_texture_modifier ~= texture_modifier then
+		online_skyinfo.last_texture_modifier = texture_modifier
 		player:set_sky({
 			type = "skybox",
 			base_color = assert(sky_color),
 			textures = {
-				"TropicalSunnyDayUp.jpg^[transformR90"..texture_modifier2,
-				"TropicalSunnyDayDown.jpg^[multiply:#000000^[resize:1x1",
+				-- top:
+				"TropicalSunnyDayUp.jpg^[transformR90"..texture_modifier,
+				-- bottom:
+				"TropicalSunnyDayDown.jpg^[multiply:#000000",
 				"TropicalSunnyDayRight.jpg"..texture_modifier,
 				"TropicalSunnyDayLeft.jpg"..texture_modifier,
 				"TropicalSunnyDayFront.jpg"..texture_modifier,

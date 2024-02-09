@@ -2,6 +2,8 @@
 
 local S = minetest.get_translator("unifieddyes")
 
+local has_ch_sky = minetest.get_modpath("ch_sky")
+
 local function get_palette(ndef)
 	if ndef == nil then
 		return nil
@@ -39,7 +41,13 @@ function unifieddyes.on_airbrush(itemstack, player, pointed_thing)
 				local r = tonumber(string.sub(hexcolor,1,2),16)
 				local g = tonumber(string.sub(hexcolor,3,4),16)
 				local b = tonumber(string.sub(hexcolor,5,6),16)
-				player:set_sky({r=r,g=g,b=b,a=255},"plain")
+				local color = string.format("#%02x%02x%02x", r, g, b)
+				if has_ch_sky then
+					ch_sky.set_sky(player, {type = "plain", base_color = color})
+					ch_sky.colorize_sky(player, {day_color = color, day_ratio = 1.0, night_color = color, night_ratio = 1.0})
+				else
+					player:set_sky({type = "plain", base_color = color})
+				end
 			end
 		end
 		return
