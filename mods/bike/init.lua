@@ -285,6 +285,10 @@ function bike.on_rightclick(self, clicker)
 		end
 		-- print("DEBUG: self.lock = "..(self.lock or "nil")..", self.owner = "..(self.owner or "nil")..", pname = "..(pname or "nil")..", check_player_privs() = "..(minetest.check_player_privs(pname, "protection_bypass") and "true" or "false"))
 
+		if ch_core.get_player_role(pname) == "new" then
+			ch_core.systemovy_kanal(pname, minetest.get_color_escape_sequence("#ffff00").."NÁPOVĚDA: Právě jste nasedl/a na jízdní kolo. Až z něho budete chtít sesednout, stiskněte klávesu Shift (sneak). Pokud jako nová postava necháte svoje kolo bez dozoru jinde než ve vlastním inventáři, můžete o něj přijít. Až sesednete, kolo si vezmete zpět do inventáře levým klikem.")
+		end
+
 		-- Make integrated player appear
 		self.object:set_properties({
 			textures = {
@@ -350,6 +354,12 @@ function bike.on_activate(self, staticdata, dtime_s)
 			self.owner = data.owner
 			self.lock = data.lock or 0
 		end
+	end
+	local pinfo = ch_core.normalize_player(self.owner)
+	if pinfo.role == "new" and pinfo.player == nil then
+		minetest.log("action", "Forgotten bike of a new player "..pinfo.player_name.." at "..minetest.pos_to_string(self.object:get_pos()).." removed.")
+		self.object:remove()
+		return
 	end
 	self.object:set_properties({
 		infotext = get_infotext(self.owner, self.lock),

@@ -407,7 +407,7 @@ function unifieddyes.getpaletteidx(color, palette_type)
 		elseif palette_type == "4dir" then
 			if unifieddyes.gpidx_hues_4dir[color] and unifieddyes.gpidx_shades_4dir[shade] then
 				local a, b = (unifieddyes.gpidx_shades_4dir[shade] * 32 + unifieddyes.gpidx_hues_4dir[color] * 4), unifieddyes.gpidx_hues_4dir[color]
-				print("Will return "..a..", "..b.." for shade="..shade..", color="..color)
+				-- print("Will return "..a..", "..b.." for shade="..shade..", color="..color)
 
 				return (unifieddyes.gpidx_shades_4dir[shade] * 32 + unifieddyes.gpidx_hues_4dir[color] * 4),
 					unifieddyes.gpidx_hues_4dir[color]
