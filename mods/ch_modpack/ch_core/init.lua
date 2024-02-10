@@ -268,8 +268,7 @@ local function globalstep(dtime)
 					end
 				end
 				if disrupt_teleport_flag then
-					ch_core.cancel_ch_timer(online_charinfo, "teleportace")
-					ch_core.systemovy_kanal(player_name, "Přemístění zrušeno v důsledku akce hráče/ky nebo postavy.")
+					ch_core.cancel_teleport(player_name, true)
 				end
 			end
 

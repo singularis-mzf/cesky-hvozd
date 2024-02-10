@@ -147,4 +147,8 @@ end
 -- upon server start, read the savefile
 travelnet.restore_data()
 travelnet.player_formspec_data = nil
+
+-- ch_core integration:
+ch_core.default_teleport_sound = {name = "travelnet_travel", gain = 0.75}
+
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

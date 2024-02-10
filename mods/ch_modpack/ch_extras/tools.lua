@@ -1,4 +1,4 @@
-local def
+-- local def
 local empty_table = {}
 local ch_help, ch_help_group
 local default_tool_sounds = {breaks = "default_tool_breaks"}
@@ -412,20 +412,19 @@ local function teleporter_on_use(itemstack, player, pointed_thing)
 			local distance = vector.distance(destination, old_pos)
 			minetest.log("action", "Teleporter will teleport player "..player_name.." from "..minetest.pos_to_string(old_pos).." to "..destination_kind.." "..minetest.pos_to_string(destination).." (distance="..distance..")")
 
-			--[[ detach the player if attached
-			if player_api.player_attached[player_name] then
-				player:set_detach()
-				player_api.player_attached[player_name] = false
-				player_api.set_animation(player, "stand" , 30)
-			end ]]
-
 			-- teleport the player
-			if ch_core.teleport_player(player, destination, 2) then
-				if distance > 1 then
-					minetest.after(0.1, function() minetest.sound_play("mobs_spell", {pos = destination, max_hear_distance = 5, gain = 0.2}, true) end)
-				end
-			else
-				ch_core.systemovy_kanal(player_name, "Chyba: přemístění selhalo z neznámých důvodů.")
+			local teleport_def = {
+				type = "normal",
+				player = player,
+				target_pos = destination,
+			}
+			if distance > 1 then
+				teleport_def.sound_after = {name = "mobs_spell", gain = 0.2}
+			end
+
+			local success, error_message = ch_core.teleport_player(teleport_def)
+			if not success then
+				ch_core.systemovy_kanal(player_name, "Chyba: přemístění selhalo: "..(error_message or "neznámý důvod"))
 			end
 		else
 			ch_core.systemovy_kanal(player_name, "Chyba: přemístění selhalo z prostorových důvodů.")
