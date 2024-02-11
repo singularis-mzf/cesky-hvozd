@@ -378,6 +378,16 @@ local function get_formspec(player, perplayer_formspec)
 	table.insert(formspec,
 		fsgen:checkbox("krasna_obloha", "krásná obloha", (toffline_charinfo.no_ch_sky or 0) == 0, tooltip))
 
+	-- Vyhozené předměty do koše? [not for new players]
+	if tplayer_role ~= "new" and tplayer_role ~= "none" and ch_core.get_trash_inventory(tplayer_name) ~= nil then
+		tooltip =
+			"Pokud zapnete tuto volbu, předměty, které byste normálně vyhodili na zem (např. klávesou Q),\n"..
+			"se místo toho zničí (vyhodí do koše). To vám umožní se rychle a pohodlně zbavovat předmětů\n"..
+			"z výběrové lišty. Pokud však budete chtít něco hodit na zem, budete toto nastavení muset dočasně vypnout."
+		table.insert(formspec,
+			fsgen:checkbox("predmetydokose", "předměty vyhazovat do koše místo na zem", toffline_charinfo.discard_drops == 1, tooltip))
+	end
+
 	if tplayer ~= nil then
 		-- Osobní osvětlení světa [all players in game]
 		tooltip =
@@ -644,6 +654,10 @@ local function on_player_receive_fields(player, formname, fields)
 				end
 			end
 		end
+	elseif fields.chs_predmetydokose then
+		toffline_charinfo.discard_drops = ifthenelse(fields.chs_predmetydokose == "true", 1, 0)
+		ch_core.save_offline_charinfo(tplayer_name, "discard_drops")
+		update_formspec = true
 
 	-- 3. FIELDS WITH BUTTONS
 	elseif fields.chs_adoslech_set and tonumber(fields.chs_adoslech) ~= nil then

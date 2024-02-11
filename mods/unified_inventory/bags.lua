@@ -69,7 +69,7 @@ local function get_bags_formspec(bags_info)
 	local formspec = {
 		ui.style_full.standard_inv_bg,
 		"label[0.3,0.65;"..S("Bags").."]",
-		string.format("label[%f,%f;%s]", trash_x, trash_y - 0.25, F(S("Trash:"))),
+		string.format("label[%f,%f;%s]", trash_x + 0.25, trash_y - 0.25, F(S("Trash:"))),
 		ui.make_trash_slot(trash_x, trash_y),
 	}
 	local player_name = bags_info.player_name
@@ -83,6 +83,11 @@ local function get_bags_formspec(bags_info)
 		if current_bag ~= nil then
 			table.insert(formspec, "button["..(x_base + 1.15)..","..y_base..";2.5,1.0;bag"..i..";"..F(current_bag.title).."]")
 		end
+	end
+	if ch_core.get_trash_inventory(player_name) then
+		table.insert(formspec, string.format(
+			"button[%f,%f;2,0.75;bagtrash;%s]tooltip[bagtrash;%s]", trash_x - 0.25, (trash_y - 1.25), S("Trash Bin"),
+			minetest.formspec_escape("Do odpadkového koše se házejí předměty, které se rozhodnete zničit, pro případ, že byste si to rozmysleli. Obsah koše se ztrácí odpojením ze hry.")))
 	end
 	return table.concat(formspec)
 end
@@ -149,6 +154,34 @@ for bag_i = 1, 6 do
 	})
 end
 
+ui.register_page("bagtrash", {
+	get_formspec = function(player)
+		local bags_info = ui.get_bags_info(player)
+		local trash_inventory = ch_core.get_trash_inventory(player:get_player_name())
+		if trash_inventory == nil then
+			-- some error
+			return ""
+		end
+		local baginv_x, baginv_y = 11, 0.25
+		local formspec = {
+			get_bags_formspec(bags_info),
+			ui.make_inv_img_grid(baginv_x, baginv_y, trash_inventory.width, trash_inventory.height),
+			"image[9.75,0.4;1,1;ui_trash_icon.png]",
+			"tooltip[9.75,0.4;1,1;"..S("Trash Bin").."]",
+			-- "label[0.3,0.65;" .. F(current_bag.title) .. "]",
+			"listcolors[#00000000;#00000000]",
+			"listring[current_player;main]",
+			string.format("list[%s;%s;%f,%f;%d,%d;]", trash_inventory.location, trash_inventory.listname, baginv_x + ui.list_img_offset, baginv_y + ui.list_img_offset, trash_inventory.width, trash_inventory.height),
+			string.format("listring[%s;%s]", trash_inventory.location, trash_inventory.listname),
+			string.format("button[%f,%f;6,1;dispose_trashinv;%s]", baginv_x + ui.list_img_offset, baginv_y + ui.list_img_offset + 2.5, S("Dispose Trash Bin")),
+		}
+		return {
+			draw_item_list = false,
+			formspec = table.concat(formspec)
+		}
+	end,
+})
+
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if formname ~= "" then
 		return
@@ -164,6 +197,17 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		elseif fields["bag"..i.."savetitle"] then
 			local meta = player:get_meta()
 			meta:set_string("bag"..i.."_title", fields["bag"..i.."title"] or "")
+			return
+		end
+	end
+	if fields.bagtrash and ch_core.get_trash_inventory(player:get_player_name()) then
+		ui.set_inventory_formspec(player, "bagtrash")
+		return
+	end
+	if fields.dispose_trashinv then
+		local trash_inv = ch_core.get_trash_inventory(player:get_player_name())
+		if trash_inv ~= nil then
+			trash_inv.inventory:set_list("main", {})
 			return
 		end
 	end

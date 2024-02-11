@@ -66,6 +66,7 @@ local offline_charinfo_data_types = {
 	ap_level = "int", -- > 0
 	ap_xp = "int", -- >= 0
 	ap_version = "int", -- >= 0
+	discard_drops = "int", -- 0 = nic, 1 = předměty házet do koše
 	domov = "string",
 	doslech = "int", -- >= 0
 	last_login = "int", -- >= 0, in seconds since 1. 1. 2000 UTC; 0 is invalid value
