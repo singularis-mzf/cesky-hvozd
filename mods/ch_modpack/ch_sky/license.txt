@@ -16,3 +16,8 @@ https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 
 Licenses of media (textures)
 ----------------------------
+fog.xcf:
+	Author: Singularis
+	License: CC0
+
+For others: see textures/LICENSE
