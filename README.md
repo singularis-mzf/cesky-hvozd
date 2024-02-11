@@ -515,6 +515,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: kód MIT, ostatní CC BY-SA 3.0
 * [ContentDB](https://content.minetest.net/packages/Nathan.S/drinks/)
 
+## Emoji (emoji)
+
+* Zdroj: [https://github.com/bosapara/emoji](https://github.com/bosapara/emoji), revize 5aee8ace758cd368a0f56011258b370c8dacf7da
+* Původní licence: LGPLv3+
+* Licence úprav: LGPLv3+
+* [ContentDB](https://content.minetest.net/packages/bosapara/emoji/)
+
 ## Emote (emote)
 
 * Zdroj: [https://github.com/minetest-mods/emote](https://github.com/minetest-mods/emote), revize 402a6f07f5ace5ca1a072664608ac3ce30f7d84c
