@@ -92,7 +92,7 @@ local dirtab = {
 
 local tube = {
 	insert_object = function(pos, node, stack, direction)
-		print(minetest.pos_to_string(direction), dirtab[direction.x+2+(direction.z+2)*2], node.param2)
+		print("[battery box] insert_object "..minetest.pos_to_string(direction), dirtab[direction.x+2+(direction.z+2)*2], node.param2)
 		if direction.y == 1
 			or (direction.y == 0 and dirtab[direction.x+2+(direction.z+2)*2] == node.param2) then
 			return stack
@@ -106,7 +106,7 @@ local tube = {
 		end
 	end,
 	can_insert = function(pos, node, stack, direction)
-		print(minetest.pos_to_string(direction), dirtab[direction.x+2+(direction.z+2)*2], node.param2)
+		print("[battery box] can_insert "..minetest.pos_to_string(direction), dirtab[direction.x+2+(direction.z+2)*2], node.param2)
 		if direction.y == 1
 			or (direction.y == 0 and dirtab[direction.x+2+(direction.z+2)*2] == node.param2) then
 			return false
@@ -196,7 +196,7 @@ function technic.register_battery_box(data)
 		local meta           = minetest.get_meta(pos)
 
 		if not technic.is_tier_cable(below.name, tier) then
-			meta:set_string("infotext", S("@1 Has No Network", S("@1 Battery Box", S(tier))).. "(itext)")
+			meta:set_string("infotext", S("@1 Has No Network", S("@1 Battery Box", S(tier))))
 			return
 		end
 

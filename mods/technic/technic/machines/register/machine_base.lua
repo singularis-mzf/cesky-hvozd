@@ -107,7 +107,7 @@ function technic.register_base_machine(data)
 
 		local powered = eu_input >= machine_demand[EU_upgrade+1]
 		if powered then
-			meta:set_int("src_time", meta:get_int("src_time") + round(data.speed*10))
+			meta:set_int("src_time", meta:get_int("src_time") + round(data.speed*5))
 		end
 		while true do
 			local result = technic.get_recipe(typename, inv:get_list("src"))

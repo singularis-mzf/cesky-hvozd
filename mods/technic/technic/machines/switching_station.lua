@@ -49,9 +49,9 @@ minetest.register_node("technic:switching_station",{
 		technic.redundant_warn.poshash = nil
 	end,
 	after_dig_node = function(pos)
-		minetest.forceload_free_block(pos)
+		-- minetest.forceload_free_block(pos)
 		pos.y = pos.y - 1
-		minetest.forceload_free_block(pos)
+		-- minetest.forceload_free_block(pos)
 		local poshash = minetest.hash_node_position(pos)
 		technic.redundant_warn.poshash = nil
 	end,
@@ -87,6 +87,8 @@ minetest.register_node("technic:switching_station",{
 		},
 	},
 })
+
+--[[
 
 --------------------------------------------------
 -- Functions to traverse the electrical network
@@ -207,6 +209,7 @@ local get_network = function(sw_pos, pos1, tier)
 			PR_nodes = PR_nodes, RE_nodes = RE_nodes, BA_nodes = BA_nodes}
 	return PR_nodes, BA_nodes, RE_nodes
 end
+
 
 -----------------------------------------------
 -- The action code for the switching station --
@@ -449,7 +452,7 @@ local function switching_station_timeout_count(pos, tier)
 	local meta = minetest.get_meta(pos)
 	local timeout = meta:get_int(tier.."_EU_timeout")
 	if timeout <= 0 then
-		meta:set_int(tier.."_EU_input", 0) -- Not needed anymore <-- actually, it is for supply converter
+		meta:set_int(tier.."_EU_input", 0) -- Not needed anymore < -- actually, it is for supply converter
 		return true
 	else
 		meta:set_int(tier.."_EU_timeout", timeout - 1)
@@ -498,8 +501,92 @@ minetest.register_abm({
 	end,
 })
 
+-- ]]
+
+
 for tier, machines in pairs(technic.machines) do
 	-- SPECIAL will not be traversed
 	technic.register_machine(tier, "technic:switching_station", "SPECIAL")
 end
+
+-- =========================================================================
+local function get_machine_tiers_and_type(nodename)
+	local tiers = {}
+	local tier_count = 0
+	for _, tier in ipairs({"HV", "MV", "LV"}) do
+		local machines = technic.machines[tier]
+		local machine_type = machines[nodename]
+		if machine_type ~= nil then
+			tiers[tier] = machine_type
+			tier_count = tier_count + 1
+		end
+	end
+	if tier_count > 0 then
+		return tier_count, tiers
+	else
+		return 0
+	end
+end
+
+local function on_new_abm(pos, node, active_object_count, active_object_count_wider)
+	local tier_count, tiers = get_machine_tiers_and_type(node.name)
+	if tier_count == 0  then return end
+	local node_def = minetest.registered_nodes[node.name]
+	local technic_run = node_def.technic_run
+	if technic_run ~= nil then
+		for tier, machine_type in pairs(tiers) do
+			local cable_nodes = minetest.find_nodes_in_area(vector.offset(pos, -2, -2, -2), vector.offset(pos, 2, 2, 2), "group:technic_"..tier:lower().."_cable", false)
+			local input
+
+			if machine_type == technic.receiver then
+				if tier == "LV" or #cable_nodes >= 2 then
+					input = 100000
+				else
+					input = 0
+				end
+			elseif machine_type == technic.battery or machine_type == technic.producer_receiver then
+				if #cable_nodes >= 2 then
+					input = 100000
+				else
+					input = 0
+				end
+			end
+			if input ~= nil then
+				minetest.get_meta(pos):set_int(tier.."_EU_input", input)
+			end
+
+			if machine_type == technic.producer or machine_type == technic.receiver or machine_type == technic.battery then
+				technic_run(pos, node, machine_type)
+				break
+			elseif machine_type == technic.producer_receiver then
+				technic_run(pos, node, technic.producer)
+				technic_run(pos, node, technic.receiver)
+				break
+			end
+		end
+	end
+end
+
+local function disable_forceloads(pos, node, dtime_s)
+	minetest.forceload_free_block(pos)
+	pos.y = pos.y - 1
+	minetest.forceload_free_block(pos)
+end
+
+minetest.register_abm{
+	label = "Technic machine cycle",
+	nodenames = {"group:technic_machine"},
+	interval = 1.0,
+	chance = 1,
+	catch_up = false,
+	action = on_new_abm,
+}
+
+minetest.register_lbm{
+	label = "Disable Switching Station Forceloads",
+	name = "technic:disable_sws_forceloads_1",
+	nodenames = {"technic:switching_station"},
+	run_at_every_load = false,
+	action = disable_forceloads,
+}
 

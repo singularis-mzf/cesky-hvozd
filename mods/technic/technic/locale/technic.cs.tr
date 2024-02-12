@@ -89,6 +89,7 @@ Private=Soukromý
 Digiline Channel=Kanál digilinky
 Channel=Kanál
 By Mesecons=Dle mesespojů
+Purging cache=Vyprazdňuji zásobník
 
 ## Machine names
 # $1: Tier

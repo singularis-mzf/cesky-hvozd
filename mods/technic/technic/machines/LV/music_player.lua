@@ -17,7 +17,7 @@ local music_handles = {}
 
 local function play_track(pos, track)
 	return minetest.sound_play("technic_track"..tostring(track),
-			{pos = pos, gain = 1.0, loop = true, max_hear_distance = 72,})
+			{pos = pos, gain = 0.9, loop = true, max_hear_distance = 72,})
 end
 
 local run = function(pos, node)
