@@ -5,7 +5,19 @@ local margin = 0.5
 local padding = 0.2
 local grid_size = 1 + padding
 
-local fs_prefix = "formspec_version[4]size[%d,%d]style_type[list;size=1,1;spacing=0.2,0.2]label[0.5,0.5;%s]"
+local fs_prefix
+
+if minetest.get_modpath("ch_core") then
+	fs_prefix = ch_core.formspec_header{
+		formspec_version = 4,
+		size = {10, 10},
+		auto_background = true,
+	}
+	fs_prefix = fs_prefix:gsub("size%[[^]]*%]", "size[%%d,%%d]")
+	fs_prefix = fs_prefix.."style_type[list;size=1,1;spacing=0.2,0.2]label[0.5,0.5;%s]"
+else
+	fs_prefix = "formspec_version[4]size[%d,%d]style_type[list;size=1,1;spacing=0.2,0.2]label[0.5,0.5;%s]"
+end
 
 local fs_slimhalf = "label[0.5,4.8;"..S("Slim Elements half / normal height:").."]"..
 	"image_button[0.5,5.2;1,0.49;technic_cnc_full%s.png;full; ]"..
@@ -22,18 +34,29 @@ local slimhalf_buttons = {
 
 -- Create button grid that returns paging information (leftover button count).
 -- WIP: Starting index could be easily added if needed to provide full paging.
-local function image_button_grid(x_start, y_start, width, height, items, selected)
+local function image_button_grid(x_start, y_start, width, height, items, selected, material_prefix, material_suffix)
 	local result = ""
 	local count = 0
 	local row = 0
 	local column = 0
 	local max_row = math.floor(height / grid_size + 0.1)
 	local max_column = math.ceil(math.min(#items, math.floor(width / grid_size) * max_row) / max_row + 0.1)
+
+	if material_suffix == nil then
+		material_suffix = ""
+	end
+
 	for _,name in ipairs(items) do
 		local x = x_start + column * grid_size
 		local y = y_start + row * grid_size
-		local modifier = selected == name and "^[invert:b" or ""
-		result = result .. ("image_button[%0.1f,%0.1f;1,1;technic_cnc_%s.png%s;%s;]"):format(x, y, name, modifier, name)
+		-- local modifier = selected == name and "^[invert:b" or ""
+		local item_name = material_prefix.."_technic_cnc_"..name..material_suffix
+		if minetest.registered_nodes[item_name] ~= nil then
+			if name == selected then
+				result = result..("style[%s;bgcolor=#00ff00ee]"):format(name)
+			end
+			result = result .. ("item_image_button[%0.1f,%0.1f;1,1;%s;%s;]"):format(x, y, item_name, name)
+		end
 		count = count + 1
 		if column + 1 < max_column then
 			column = column + 1
@@ -64,16 +87,31 @@ local function get_formspec(nodename, def, meta)
 	local fs = fs_prefix:format(width, height, S("Choose Milling Program:"))
 	local p = meta:get("program")
 
+	local material
+	local node_inv = meta.get_inventory and meta:get_inventory()
+	if node_inv ~= nil then
+		material = node_inv:get_stack("src", 1):get_name()
+	end
+	if material == nil then
+		material = "default:wood"
+	end
+
 	-- Programming buttons
 	local x = margin
 	local y = 1
-	local buttons1, leftover1 = image_button_grid(x, y, width - margin * 2, grid_size * 3, def.programs, p)
+	local buttons1, leftover1 = image_button_grid(x, y, width - margin * 2, grid_size * 3, def.programs, p, material, "")
 
 	-- Slim / half / normal
 	x = margin + grid_size
 	y = 5.2
-	local buttons2, leftover2 = image_button_grid(x, y, width - grid_size - margin * 2, grid_size, slimhalf_buttons, p)
 	local half = meta:get("size") == "2"
+	local material_suffix
+	if half then
+		material_suffix = ""
+	else
+		material_suffix = "_double"
+	end
+	local buttons2, leftover2 = image_button_grid(x, y, width - grid_size - margin * 2, grid_size, slimhalf_buttons, p, material, material_suffix)
 	fs = fs .. buttons1 .. fs_slimhalf:format(half and "" or "_active", half and "_active" or "") .. buttons2
 
 	-- Program paging controls
@@ -150,14 +188,17 @@ local function on_receive_fields(pos, meta, fields, sender, update_formspec)
 	local products = technic_cnc.products
 	for program, _ in pairs(fields) do
 		if products[program] then
-			local update = meta:get("program") ~= program
+			-- local update = meta:get("program") ~= program
+			if meta:get("program") == program then
+				program = ""
+			end
 			technic_cnc.set_program(meta, program, meta:get_int("size"))
 			technic_cnc.enable(meta)
 			meta:set_string("cnc_user", name)
 			program_selected = true
-			if update then
+			-- if update then
 				update_formspec(meta)
-			end
+			-- end
 			break
 		end
 	end

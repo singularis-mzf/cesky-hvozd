@@ -229,12 +229,14 @@ technic_cnc.register_all(
 	S("Copper")
 )
 
+--[[
 technic_cnc.register_all(
 	"default:tinblock",
 	{cracky = 1, level = 2, not_in_creative_inventory = 1},
 	{"default_tin_block.png"},
 	S("Tin")
 )
+]]
 
 technic_cnc.register_all(
 	"default:goldblock",

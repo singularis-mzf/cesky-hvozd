@@ -45,6 +45,8 @@ function technic_cnc.register_program(recipeitem, suffix, model, groups, images,
 	if node_def then
 		if node_def.description then
 			def.description = node_def.description.." "..description
+		else
+			minetest.log("warning", "Description of a node "..recipeitem.." not found!")
 		end
 		if node_def.use_texture_alpha then
 			def.use_texture_alpha = node_def.use_texture_alpha
@@ -61,6 +63,8 @@ function technic_cnc.register_program(recipeitem, suffix, model, groups, images,
 			def.light_source = node_def.light_source
 		end
 		def.sounds = node_def.sounds
+	else
+		minetest.log("error", "A recipe item "..recipeitem.." for CNC not found!")
 	end
 
 	minetest.register_node(":"..recipeitem.."_"..suffix, def)
@@ -185,7 +189,7 @@ function technic_cnc.get_product(program, material, size)
 end
 
 function technic_cnc.set_program(meta, program, size)
-	if technic_cnc.products[program] then
+	if technic_cnc.products[program] or program == "" then
 		if size then
 			meta:set_int("size", math.max(1, math.min(2, size)))
 		end
@@ -306,7 +310,7 @@ function technic_cnc.register_cnc_machine(nodename, def)
 					meta:set_string("program", program)
 					meta:set_int("size", size)
 				end
-				meta:set_string("formspec", get_formspec(nodename, def, meta))
+				meta:set_string("formspec", get_formspec(nodename, def, meta, ""))
 			end
 		end
 	end
@@ -415,6 +419,7 @@ function technic_cnc.register_cnc_machine(nodename, def)
 	end
 
 	-- Formspec handlers with / without pipeworks
+	local on_metadata_inventory_move, on_metadata_inventory_put_or_take
 	do
 		local wrapped_on_receive_fields = on_receive_fields
 		local function update_formspec(meta)
@@ -435,6 +440,17 @@ function technic_cnc.register_cnc_machine(nodename, def)
 				local meta = minetest.get_meta(pos)
 				wrapped_on_receive_fields(pos, meta, fields, sender, update_formspec)
 				upgrade_machine(meta)
+			end
+		end
+
+		function on_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
+			if from_list == "src" or to_list == "src" then
+				update_formspec(minetest.get_meta(pos))
+			end
+		end
+		function on_metadata_inventory_put_or_take(pos, listname, index, stack, player)
+			if listname == "src" then
+				update_formspec(minetest.get_meta(pos))
 			end
 		end
 	end
@@ -473,6 +489,9 @@ function technic_cnc.register_cnc_machine(nodename, def)
 		allow_metadata_inventory_put = def.allow_metadata_inventory_put or allow_metadata_inventory_put,
 		allow_metadata_inventory_take = def.allow_metadata_inventory_take or allow_metadata_inventory_take,
 		allow_metadata_inventory_move = def.allow_metadata_inventory_move or allow_metadata_inventory_move,
+		on_metadata_inventory_move = on_metadata_inventory_move,
+		on_metadata_inventory_put = on_metadata_inventory_put_or_take,
+		on_metadata_inventory_take = on_metadata_inventory_put_or_take,
 		on_receive_fields = on_receive_fields,
 		technic_run = def.technic_run or technic_run,
 	})
@@ -496,6 +515,9 @@ function technic_cnc.register_cnc_machine(nodename, def)
 			allow_metadata_inventory_put = def.allow_metadata_inventory_put or allow_metadata_inventory_put,
 			allow_metadata_inventory_take = def.allow_metadata_inventory_take or allow_metadata_inventory_take,
 			allow_metadata_inventory_move = def.allow_metadata_inventory_move or allow_metadata_inventory_move,
+			on_metadata_inventory_move = on_metadata_inventory_move,
+			on_metadata_inventory_put = on_metadata_inventory_put_or_take,
+			on_metadata_inventory_take = on_metadata_inventory_put_or_take,
 			on_receive_fields = on_receive_fields,
 			technic_run = def.technic_run or technic_run,
 			technic_disabled_machine_name = nodename,
