@@ -3,6 +3,8 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 local modpath = minetest.get_modpath("compactor")
 compactor = {}
 
+local compactor_input_size = 4
+
 technic.register_recipe_type("compacting", {description = "průmyslové lisování"})
 
 function compactor.register_compactor_recipe(data)
@@ -14,6 +16,7 @@ function compactor.register_compactor(data)
     data.typename = "compacting"
     data.machine_name = "compactor"
     data.machine_desc = minetest.translate("technic", "@1 Compactor", "%s")
+	data.input_size = compactor_input_size
     technic.register_base_machine(data)
 end
 

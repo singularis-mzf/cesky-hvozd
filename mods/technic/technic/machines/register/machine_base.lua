@@ -33,7 +33,7 @@ end
 
 function technic.register_base_machine(data)
 	local typename = data.typename
-	local input_size = technic.recipes[typename].input_size
+	local input_size = data.input_size or technic.recipes[typename].input_size
 	local machine_name = data.machine_name
 	local machine_desc = data.machine_desc
 	local tier = data.tier
@@ -110,8 +110,34 @@ function technic.register_base_machine(data)
 			meta:set_int("src_time", meta:get_int("src_time") + round(data.speed*5))
 		end
 		while true do
-			local result = technic.get_recipe(typename, inv:get_list("src"))
-			if not result then
+			-- compress input:
+			local src_size = inv:get_size("src") or 0
+			if src_size ~= input_size then
+				local node_def = minetest.registered_nodes[node.name]
+				node_def.on_construct(pos)
+				src_size = inv:get_size("src") or 0
+				assert(src_size == input_size)
+			end
+			inv:set_size("src_tmp", src_size)
+			inv:set_list("src_tmp", {})
+			for _, stack in ipairs(inv:get_list("src")) do
+				if not stack:is_empty() then
+					inv:add_item("src_tmp", stack)
+				end
+			end
+			local src_list = inv:get_list("src_tmp")
+
+			local result, src_i
+			for i = 1, src_size do
+				if not src_list[i]:is_empty() then
+					result = technic.get_recipe(typename, {src_list[i]})
+					if result then
+						src_i = i
+						break
+					end
+				end
+			end
+			if not result or src_i == nil then
 				technic.swap_node(pos, machine_node)
 				meta:set_string("infotext", S("@1 Idle", machine_desc_tier))
 				meta:set_int(tier.."_EU_demand", 0)
@@ -157,7 +183,13 @@ function technic.register_base_machine(data)
 				return
 			end
 			meta:set_int("src_time", meta:get_int("src_time") - round(result.time*10))
-			inv:set_list("src", result.new_input)
+			src_list[src_i] = ItemStack()
+			inv:set_list("src", src_list) -- update src
+			for _, stack in ipairs(result.new_input) do
+				if not stack:is_empty() then
+					inv:add_item("src", stack)
+				end
+			end
 			inv:set_list("dst", inv:get_list("dst_tmp"))
 		end
 	end
