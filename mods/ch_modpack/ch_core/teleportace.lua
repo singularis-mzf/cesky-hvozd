@@ -209,6 +209,7 @@ function ch_core.teleport_player(def)
 			label = "přemístění",
 			func = get_finish_teleport_func(player_name, d, false),
 			hudbar_icon = (minetest.registered_items["basic_materials:energy_crystal_simple"] or {}).inventory_image,
+			hudbar_bar = "hudbars_bar_timer.png^[multiply:#0000ff",
 
 			teleport_type = d.type,
 			start_pos = player and player:get_pos(),

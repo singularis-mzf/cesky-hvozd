@@ -372,6 +372,8 @@ local cc_def = {
 	func = cc_platba,
 }
 minetest.register_chatcommand("platba", cc_def)
+minetest.register_chatcommand("převod", cc_def)
+minetest.register_chatcommand("prevod", cc_def)
 
 local function cc_zustatek(name, params)
 	local role = ch_core.get_player_role(name)

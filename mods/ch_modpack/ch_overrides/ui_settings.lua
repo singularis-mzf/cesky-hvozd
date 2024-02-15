@@ -5,19 +5,23 @@ local white, light_gray, light_green = ch_core.colors.white, ch_core.colors.ligh
 -- minetest.get_color_escape_sequence("#CCCCCC")
 
 local has_ch_bank = minetest.get_modpath("ch_bank")
+local has_ch_extras = minetest.get_modpath("ch_extras")
+local has_emoji = minetest.get_modpath("emoji")
+local has_emote = minetest.get_modpath("emote")
+local has_minenews = minetest.get_modpath("minenews")
 local has_woodcutting = minetest.get_modpath("woodcutting")
 --
 -- fsgen_class
 -- -------------------------------------------------------------------------
 local fsgen_class = {}
 
-function fsgen_class:field_with_button(id, label, value, tooltip)
+function fsgen_class:field_with_button(id, label, value, tooltip, button_fstext)
 	local a = "field[0,"..(self.y + 0.4)..";4.75,0.5;chs_"..id..";"..light_gray..F(label or "")..";"..F(value or "").."]"
 	local b = ""
 	if tooltip ~= nil then
 		b = "tooltip[chs_"..id..";"..F(tooltip).."]"
 	end
-	local c = "button[4.9,"..(self.y + 0.2)..";1.5,0.75;chs_"..id.."_set;nastavit]"
+	local c = "button[4.9,"..(self.y + 0.2)..";1.5,0.75;chs_"..id.."_set;"..(button_fstext or "nastavit").."]"
 	self.y = self.y + 1
 	return a..b..c
 end
@@ -83,6 +87,18 @@ function fsgen_class:table(id, label, fs_options, current_index, height, tooltip
 	end
 	self.y = self.y + 0.25 + height
 	return a..b..c
+end
+
+-- pozor - hypertext zde není odzvláštněn, proto musí být odzvláštněn již předem!
+function fsgen_class:hypertext(id, height, hypertext, bgcolor)
+	local y = self.y + 0.1
+	local size = "0,"..y..";6.4,"..height
+	local a = ""
+	if bgcolor ~= nil then
+		a = "box["..size..";"..bgcolor.."]"
+	end
+	self.y = y + height
+	return a.."hypertext["..size..";chs_"..id..";"..hypertext.."]"
 end
 
 function fsgen_class:new()
@@ -202,6 +218,26 @@ local function semiround_vector(v)
 	v = vector.round(v)
 	v = vector.multiply(v, 0.01)
 	return v
+end
+
+local function invoke_chat_command(player_name, player, command, args)
+	if player == nil or command == nil then return end
+	local def = minetest.registered_chatcommands[command]
+	if def == nil then return end
+	local f = def.func
+	if f == nil then
+		minetest.log("warning", "Chatcommand function not found: /"..command)
+		return
+	end
+	if def.privs ~= nil and not minetest.check_player_privs(player_name, def.privs) then
+		minenews.log("warning", "Player "..player_name.." tried to invoke command /"..command.." with insufficient privs!")
+		return
+	end
+	local result, message = f(player_name, args)
+	if message ~= nil and message ~= "" then
+		minetest.chat_send_player(player_name, message)
+	end
+	return result, message
 end
 
 --
@@ -512,6 +548,72 @@ local function get_formspec(player, perplayer_formspec)
 			"10 jim nastaví maximální hlasitost."))
 	]]
 
+	if tplayer ~= nil then
+		table.insert(formspec,
+			fsgen:hypertext("nadpis1", 0.5, "<big>Akce:</big>", "#0000FF33"))
+
+		if has_emote then
+			-- /sedni
+			table.insert(formspec,
+				fsgen:button("sedni", "/sedni", "sednout si"))
+			-- /lehni
+			table.insert(formspec,
+				fsgen:button("lehni", "/lehni", "lehnout si"))
+		end
+
+		-- /domů [online players with "home" priv]
+		if tplayer_privs.home then
+			table.insert(formspec,
+				fsgen:button("prenest_domu", "/domů", "přemístit se na pozici /doma"))
+		end
+
+		-- /smajlík [online players]
+		if has_emoji then
+			table.insert(formspec,
+				fsgen:field_with_button("smajlik", "/s nebo /smajlík:", "", "pokud nic nezadáte, otevře okno pro výběr smajlíka; zadáte-li podporovaného smajlíka, nad vaší postavou a v četu se objeví zadaný smajlík"))
+		end
+
+		-- /pop [online players]
+		table.insert(formspec,
+			fsgen:button("pop", "/pop nebo /pryč", "jdu pryč od počítače"))
+
+		-- /info [online players]
+		table.insert(formspec,
+			fsgen:button("info", "/info", "vypsat informace o vaší postavě"))
+
+		-- /odpočítat [online players]
+		table.insert(formspec,
+			fsgen:field_with_button("odpocitat", "/odpočítat (sekund):", "60", "odpočítá zadaný počet sekund", "odpočítat"))
+
+		-- /mods [online players]
+		table.insert(formspec,
+			fsgen:button("mods", "/mods", "vypsat seznam módů nasazených na serveru"))
+
+		-- /práva [online players]
+		table.insert(formspec,
+			fsgen:field_with_button("prava", "/práva (vaše, nebo jiné postavy)", "", "vypíše vaše práva (pokud nic nezadáte) nebo práva jiné postavy", "vypsat"))
+
+		if has_minenews then
+			-- /novinky
+			table.insert(formspec,
+				fsgen:button("novinky", "/novinky", "zobrazit novinky na serveru\n(otevře jiné okno)"))
+		end
+
+		-- /kdojsem [online players]
+		table.insert(formspec,
+			fsgen:button("kdojsem", "/kdojsem", "vypsat zobrazované jméno vaší postavy"))
+
+		-- /mojekotvy [ch_extras + online players]
+		if has_ch_extras then
+			table.insert(formspec,
+				fsgen:button("mojekotvy", "/mojekotvy", "vypsat seznam vašich\naktivních soukromých světových kotev"))
+		end
+	end
+
+	--[[
+			table.insert(formspec,
+			fsgen:button("domu", "pozice pro /domů: "..domov, "nastavit sem "..minetest.pos_to_string(player_pos), tooltip))
+]]
 	--
 	table.insert(formspec, "scroll_container_end[]")
 	local sbar_right_max = math.max(0, math.ceil(10 * (fsgen.y - right_form.h + 0.5)))
@@ -545,6 +647,7 @@ ui.register_page("ch_settings", {get_formspec = get_formspec})
 
 local function on_player_receive_fields(player, formname, fields)
 	if formname ~= "" then return end
+	-- print("DEBUG: "..dump2({fields = fields}))
 	local player_info = ch_core.normalize_player(player)
 	local player_name = assert(player_info.player_name) -- (who is the formspec for)
 	local player_role = assert(player_info.role)
@@ -580,13 +683,14 @@ local function on_player_receive_fields(player, formname, fields)
 		ui.set_inventory_formspec(player, "ch_settings")
 		return true
 	end
+	local tplayer = tplayer_info.player
 	local toffline_charinfo = ch_core.offline_charinfo[tplayer_name] or {}
 	local update_formspec = false
 
 	-- Expected dropdown values:
 	local expected = {
 		chs_zacatek = tostring(get_zacatek_kam(toffline_charinfo)),
-		chs_dennoc = tostring(first(get_dennoc_choice_and_ratio(tplayer_info.player))),
+		chs_dennoc = tostring(first(get_dennoc_choice_and_ratio(tplayer))),
 		chs_drevorubectvi = has_woodcutting and tostring(get_woodcutting_mode(tplayer_info.player_name)),
 		chs_rezim_plateb = tostring(get_rezim_plateb(tplayer_info.player_name, toffline_charinfo)),
 	}
@@ -598,9 +702,8 @@ local function on_player_receive_fields(player, formname, fields)
 		toffline_charinfo.zacatek_kam = new_zacatek
 		ch_core.save_offline_charinfo(tplayer_name, "zacatek_kam")
 		update_formspec = true
-	elseif tplayer_info.player ~= nil and fields.chs_dennoc and tostring(fields.chs_dennoc) ~= expected.chs_dennoc then
+	elseif tplayer ~= nil and fields.chs_dennoc and tostring(fields.chs_dennoc) ~= expected.chs_dennoc then
 		local new_choice = clip(1, 12, math.round(assert(tonumber(fields.chs_dennoc))))
-		local tplayer = tplayer_info.player
 		if new_choice == 1 then
 			tplayer:override_day_night_ratio(nil)
 		elseif new_choice == 2 then
@@ -677,17 +780,42 @@ local function on_player_receive_fields(player, formname, fields)
 		dreambuilder_hotbar.set_hotbar_size(tplayer_name, new_size)
 		update_formspec = true
 
-	-- 4. BUTTONS
+	-- 4. BUTTONS <beware: suffix _set is added to the ID of the button!>
 	elseif fields.chs_domu_set and tplayer_info.privs.home then
 		local player_pos = player:get_pos()
 		local posstr = minetest.pos_to_string(player_pos)
 		assert(minetest.string_to_pos(posstr))
 		toffline_charinfo.domov = posstr
 		update_formspec = true
-	elseif fields.chs_navodyznovu_set and tplayer_info.player ~= nil then
-		ch_core.clear_help(tplayer_info.player)
-	elseif fields.chs_skrytcas_set and tplayer_info.player ~= nil then
-		ch_core.clear_datetime_hud(tplayer_info.player)
+
+	elseif fields.chs_navodyznovu_set and tplayer ~= nil then
+		ch_core.clear_help(tplayer)
+	elseif fields.chs_skrytcas_set and tplayer ~= nil then
+		ch_core.clear_datetime_hud(tplayer)
+	elseif fields.chs_mods_set and tplayer ~= nil then
+		invoke_chat_command(tplayer_name, tplayer, "mods", "")
+	elseif fields.chs_prenest_domu_set and tplayer ~= nil and tplayer_info.privs.home then
+		invoke_chat_command(tplayer_name, tplayer, "domů", "")
+	elseif fields.chs_info_set and tplayer ~= nil then
+		invoke_chat_command(tplayer_name, tplayer, "info", "")
+	elseif fields.chs_kdojsem_set and tplayer ~= nil then
+		invoke_chat_command(tplayer_name, tplayer, "kdojsem", "")
+	elseif fields.chs_odpocitat_set and tplayer ~= nil then
+		invoke_chat_command(tplayer_name, tplayer, "odpočítat", fields.chs_odpocitat or "")
+	elseif fields.chs_pop_set and tplayer ~= nil then
+		invoke_chat_command(tplayer_name, tplayer, "pop", "")
+	elseif fields.chs_prava_set and tplayer ~= nil then
+		invoke_chat_command(tplayer_name, tplayer, "práva", fields.chs_prava or "")
+	elseif fields.chs_smajlik_set and tplayer ~= nil then
+		invoke_chat_command(tplayer_name, tplayer, "smajlík", fields.chs_smajlik or "")
+	elseif fields.chs_mojekotvy_set and tplayer ~= nil then
+		invoke_chat_command(tplayer_name, tplayer, "mojekotvy", "")
+	elseif fields.chs_lehni_set and tplayer ~= nil then
+		invoke_chat_command(tplayer_name, tplayer, "lehni", "")
+	elseif fields.chs_sedni_set and tplayer ~= nil then
+		invoke_chat_command(tplayer_name, tplayer, "sedni", "")
+	elseif fields.chs_novinky_set and tplayer ~= nil then
+		invoke_chat_command(tplayer_name, tplayer, "novinky", "")
 	end
 
 	if update_formspec then
@@ -695,8 +823,8 @@ local function on_player_receive_fields(player, formname, fields)
 		ui.set_inventory_formspec(player, "ch_settings")
 
 		-- if player is admin and tplayer is in game, update also tplayer's page
-		if tplayer_info.player ~= nil and tplayer_name ~= player_name and ui.current_page[tplayer_name] == "ch_settings" then
-			ui.set_inventory_formspec(tplayer_info.player, "ch_settings")
+		if tplayer ~= nil and tplayer_name ~= player_name and ui.current_page[tplayer_name] == "ch_settings" then
+			ui.set_inventory_formspec(tplayer, "ch_settings")
 		end
 
 		-- if the player is a target of some admin, update also admin's page

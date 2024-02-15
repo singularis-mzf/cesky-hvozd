@@ -99,9 +99,21 @@ local def = {
 		end
 		ch_core.cancel_ch_timer(online_charinfo, "custom_timer")
 		local timer_func = function()
-			ch_core.systemovy_kanal(player_name, "Nastavený časovač vypršel.")
+			local player = minetest.get_player_by_name(player_name)
+			if player ~= nil then
+				ch_core.systemovy_kanal(player_name, "Nastavený časovač vypršel.")
+				minetest.sound_play("chat3_bell", {to_player = player_name, gain = 1.0}, true)
+			end
 		end
-		ch_core.start_ch_timer(online_charinfo, "custom_timer", sekund, {label = "odpočet", func = timer_func})
+		local timer_def = {
+			label = "odpočet",
+			func = timer_func,
+		}
+		local watch_def = minetest.registered_items["orienteering:watch"]
+		if watch_def ~= nil and watch_def.inventory_image ~= nil then
+			timer_def.hudbar_icon = watch_def.inventory_image
+		end
+		ch_core.start_ch_timer(online_charinfo, "custom_timer", sekund, timer_def)
 		return true
 	end,
 }

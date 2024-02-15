@@ -95,6 +95,16 @@ local facedir_to_rotation_data = {
 	[23] = vector.new(0, -0.5 * math.pi, math.pi),
 }
 
+local hypertext_escape_replacements = {
+	["\\"] = "\\\\\\\\",
+	["<"] = "\\\\<",
+	[">"] = "\\\\>",
+	[";"] = "\\;",
+	[","] = "\\,",
+	["["] = "\\[",
+	["]"] = "\\]",
+}
+
 local utf8_charlen = {}
 for i = 1, 191, 1 do
 	-- 1 to 127 => jednobajtové znaky
@@ -469,6 +479,17 @@ z výchozího otočení (facedir = 0) do otočení cílového.
 ]]
 function ch_core.facedir_to_rotation(facedir)
 	return vector.copy(facedir_to_rotation_data[facedir % 24])
+end
+
+--[[
+V zadaném textu odzvláštní všechny znaky, které mají speciální význam
+uvnitř prvku hypetext[] ve formspecu. Tato funkce již v sobě zahrnuje
+funkci minetest.formspec_escape, takže její obsah by už měl být doslovně
+vložen do formspecu bez dalšího zpracování.
+]]
+function ch_core.formspec_hypertext_escape(text)
+	local result = string.gsub(text, "[][><\\,;]", hypertext_escape_replacements)
+	return result
 end
 
 --[[
