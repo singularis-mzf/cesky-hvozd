@@ -7,6 +7,25 @@ letters = {
 	end,
 }
 
+local item_to_color = {
+	["bakedclay:black"] = 32,
+	["bakedclay:blue"] = 168,
+	["bakedclay:brown"] = 200,
+	["bakedclay:cyan"] = 224,
+	["bakedclay:dark_green"] = 216,
+	["bakedclay:dark_grey"] = 24,
+	["bakedclay:green"] = 152,
+	["bakedclay:grey"] = 16,
+	["bakedclay:magenta"] = 184,
+	["bakedclay:natural"] = 0,
+	["bakedclay:orange"] = 136,
+	["bakedclay:pink"] = 56,
+	["bakedclay:red"] = 128,
+	["bakedclay:violet"] = 240,
+	["bakedclay:white"] = 0,
+	["bakedclay:yellow"] = 144,
+}
+
 local lower_letters = {
 	{"al", "a"},
 	{"aal", "á"},
@@ -186,26 +205,28 @@ local cost = 0.110
 
 function letter_cutter:get_output_inv_lower(modname, subname, amount, max)
 
+	local color = item_to_color[subname] or 0
 	local list = {}
 	if amount < 1 then
 		return list
 	end
 
 	for i, t in ipairs(lower_letters) do
-		table.insert(list, "letters:letter_" ..t[1].." "..math.min(math.floor(amount/cost), max))
+		table.insert(list, minetest.itemstring_with_palette("letters:letter_" ..t[1].." "..math.min(math.floor(amount/cost), max), color))
 	end
 	return list
 end
 
 function letter_cutter:get_output_inv_upper(modname, subname, amount, max)
 
+	local color = item_to_color[subname] or 0
 	local list = {}
 	if amount < 1 then
 		return list
 	end
 
 	for i, t in ipairs(upper_letters) do
-		table.insert(list, "letters:letter_" ..t[1].." "..math.min(math.floor(amount/cost), max))
+		table.insert(list, minetest.itemstring_with_palette("letters:letter_" ..t[1].." "..math.min(math.floor(amount/cost), max), color))
 	end
 	return list
 end
@@ -250,9 +271,9 @@ function letter_cutter:update_inventory_lower(pos, amount)
 
 	end
 	local node_name = stack:get_name() or ""
-	local name_parts = letter_cutter.known_nodes[node_name] or ""
-	local modname  = name_parts[1] or ""
-	local material = name_parts[2] or ""
+	-- local name_parts = letter_cutter.known_nodes[node_name] or ""
+	local modname  = ""
+	local material = node_name
 
 	inv:set_list("input", {
 		node_name.. " " .. math.floor(amount)
@@ -288,9 +309,9 @@ function letter_cutter:update_inventory_upper(pos, amount)
 
 	end
 	local node_name = stack:get_name() or ""
-	local name_parts = letter_cutter.known_nodes[node_name] or ""
-	local modname  = name_parts[1] or ""
-	local material = name_parts[2] or ""
+	-- local name_parts = letter_cutter.known_nodes[node_name] or ""
+	local modname  = ""
+	local material = node_name
 
 	inv:set_list("input", {
 		node_name.. " " .. math.floor(amount)
@@ -323,18 +344,14 @@ function letter_cutter.allow_metadata_inventory_put(
 		return 0
 	end
 
-	local meta = minetest.get_meta(pos)
-	local inv  = meta:get_inventory()
+	-- local meta = minetest.get_meta(pos)
+	-- local inv  = meta:get_inventory()
 	local stackname = stack:get_name()
 	local count = stack:get_count()
 
 	-- Only accept certain blocks as input which are known to be craftable into stairs:
 	if listname == "input" then
-		if not inv:is_empty("input") and inv:get_stack("input", index):get_name() ~= stackname then
-			return 0
-		end
-		local def = minetest.registered_nodes[stackname]
-		if def and def.groups and def.groups.bakedclay and inv:room_for_item("input", stack) then
+		if item_to_color[stackname] ~= nil then
 			return count
 		end
 		return 0
@@ -406,10 +423,14 @@ local function update_cutter_formspec(pos)
 			"list[current_name;input;1.5,0;1,1;]" ..
 			"list[current_name;output;2.8,0;12,5;]" ..
 			-- "button[0,1;2.5,1;itemlist;Použitelné materiály]" ..
-			"list[current_player;main;1.5,6;8,4;]" ..
-			"field[0.5,5.3;5,1;text;Zadat text;${text}]" ..
-			"button[5.5,5;2,1;make_text;Vyřezat text]" ..
-			"label[7.5,5.2;" .. minetest.formspec_escape(meta:get_string("message")) .. "]")
+			"list[current_player;main;2.8,6;8,4;]" ..
+			"field[3.075,5.4;5,1;text;Zadat text;${text}]" ..
+			"button[7.8,5.1;2,1;make_text;Vyřezat text]" ..
+			"label[9.8,5.2;" .. minetest.formspec_escape(meta:get_string("message")) .. "]"..
+			"listring[current_name;output]"..
+			"listring[current_player;main]"..
+			"listring[current_name;input]"..
+			"listring[current_player;main]")
 end
 
 local function cut_from_text(pos, input_text, player)
@@ -429,10 +450,17 @@ local function cut_from_text(pos, input_text, player)
 	end
 
 	local origname = cutterinput[1]:get_name()
+	local color = item_to_color[origname]
 
 	local playerinv = player:get_inventory()
 
 	meta:set_string("text", input_text)
+
+	if color == nil then
+		meta:set_string("message", "Nepodporovaný materiál.")
+		update_cutter_formspec(pos)
+		return
+	end
 
 	local totalcost = 0
 	local throwawayinv = minetest.create_detached_inventory("letter_cutter:throwaway", {}, playername)
@@ -470,7 +498,7 @@ local function cut_from_text(pos, input_text, player)
 
 			totalcost = totalcost + cost
 
-			throwawayinv:add_item("main", lettername)
+			throwawayinv:add_item("main", minetest.itemstring_with_palette(lettername, color))
             i = i + string.len(char)
         else
             i = i + 1
@@ -646,6 +674,14 @@ minetest.register_node("letters:letter_cutter_upper",  {
 	on_metadata_inventory_take = letter_cutter.on_metadata_inventory_take_upper,
 	on_receive_fields = letter_cutter.on_receive_fields,
 })
+
+minetest.register_lbm{
+	label = "Update letter cutters",
+	name = "letters:update_cutters",
+	nodenames = {"letters:letter_cutter_lower", "letters:letter_cutter_upper"},
+	run_at_every_load = true,
+	action = update_cutter_formspec,
+}
 
 minetest.register_craft({
 	output = "letters:letter_cutter_upper",

@@ -156,6 +156,9 @@ local alternate_to_group_value = {
 	["_tripleslope"] = 3,
 	["_special"] = 19,
 	["_l"] = 20,
+	["_cube"] = 21,
+	["_chimney"] = 22,
+	["_wchimney"] = 23,
 }
 
 local not_blocking_trains_shapes = {

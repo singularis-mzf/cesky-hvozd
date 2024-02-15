@@ -81,6 +81,9 @@ circular_saw.names = {
 	{"panel", "_l", 1},
 	{"panel", "_wide_1", 1},
 	{"panel", "_wide", 4},
+	{"slab", "_cube", 4},
+	{"stair", "_chimney", 8},
+	{"stair", "_wchimney", 8},
 
 	-- {"slope", "_slab_half", 2},
 	-- {"slope", "_slab_half_raised", 6},

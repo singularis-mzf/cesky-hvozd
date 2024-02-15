@@ -122,6 +122,9 @@ slab=deska
 slab half=deska, spodní polovina
 slab half raised=deska, horní polovina
 special=vychýlená tyč
+cube=kvádr
+chimney=komín
+wchimney=komín široký
 
 inner half=vnitřní poloviční spodní
 inner half raised=vnitřní poloviční horní
