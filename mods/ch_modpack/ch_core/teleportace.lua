@@ -261,7 +261,7 @@ function ch_core.cancel_teleport(player_name, due_to_player_action)
 	if player ~= nil then
 		player:set_properties{pointable = true}
 	end
-	if timer_def.d.type == "player" then
+	if timer_def.def.type == "player" then
 		ch_core.systemovy_kanal(player_name, ifthenelse(due_to_player_action,
 			"Přemístění zrušeno v důsledku akce hráče/ky nebo postavy.",
 			"Přemístění zrušeno."))
