@@ -27,17 +27,42 @@ then
 	stairsplus.expect_infinite_stacks = true
 end
 
+local groups_to_copy = {
+	attached_node = true,
+	bouncy = true,
+	choppy = true,
+	connect_to_raillike = true,
+	cracky = true,
+	crumbly = true,
+	dig_immediate = true,
+	disable_jump = true,
+	disable_descend = true,
+	explody = true,
+	fall_damage_add_percent = true,
+	falling_node = true,
+	flammable = true,
+	fleshy = true,
+	float = true,
+	level = true,
+	oddly_breakable_by_hand = true,
+	slippery = true,
+	snappy = true,
+}
+
 function stairsplus:prepare_groups(groups)
 	local result = {}
-	if groups then
+	if not moreblocks.config.stairsplus_in_creative_inventory then
+		result.not_in_creative_inventory = 1
+	end
+	if groups ~= nil then
 		for k, v in pairs(groups) do
-			if k ~= "wood" and k ~= "stone" and k ~= "wool" and k ~= "tree" then
+			if groups_to_copy[k] then
 				result[k] = v
 			end
 		end
-	end
-	if not moreblocks.config.stairsplus_in_creative_inventory then
-		result.not_in_creative_inventory = 1
+		if (groups.not_in_creative_inventory or 0) ~= 0 then
+			result.not_in_creative_inventory = groups.not_in_creative_inventory
+		end
 	end
 	return result
 end

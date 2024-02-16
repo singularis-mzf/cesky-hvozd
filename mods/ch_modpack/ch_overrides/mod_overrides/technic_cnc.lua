@@ -23,7 +23,6 @@ local recipeitems = {
 	"default:obsidian_glass",
 	"default:pine_wood",
 	"default:steelblock",
-	"default:tinblock",
 	"default:wood",
 	"farming:straw",
 	"moreblocks:cactus_checker",
