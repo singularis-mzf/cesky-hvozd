@@ -570,7 +570,7 @@ local function get_formspec(player, perplayer_formspec)
 		-- /smajlík [online players]
 		if has_emoji then
 			table.insert(formspec,
-				fsgen:field_with_button("smajlik", "/s nebo /smajlík:", "", "pokud nic nezadáte, otevře okno pro výběr smajlíka; zadáte-li podporovaného smajlíka, nad vaší postavou a v četu se objeví zadaný smajlík"))
+				fsgen:field_with_button("smajlik", "/s nebo /smajlík:", "", "pokud nic nezadáte, otevře okno pro výběr smajlíka; zadáte-li podporovaného smajlíka, nad vaší postavou a v četu se objeví zadaný smajlík", "odeslat"))
 		end
 
 		-- /pop [online players]

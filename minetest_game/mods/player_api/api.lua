@@ -185,6 +185,7 @@ function player_api.globalstep()
 		local model = player_data and models[player_data.model]
 		if model and not player_attached[name] then
 			local controls = player:get_player_control()
+			controls.RMB = nil -- don't react to RMB
 			local animation_speed_mod = model.animation_speed or 30
 
 			-- Determine if the player is sneaking, and reduce animation speed if so

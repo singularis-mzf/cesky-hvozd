@@ -567,6 +567,14 @@ function ch_core.get_or_add(t, k)
 end
 
 --[[
+Načte z metadat pozici uloženou pomocí ch_core.set_pos_to_meta().
+Není-li tam taková uložena, vrátí vector.zero().
+]]
+function ch_core.get_pos_from_meta(meta, key)
+	return vector.new(meta:get_float(key.."_x"), meta:get_float(key.."_y"), meta:get_float(key.."_z"))
+end
+
+--[[
 Určí podle práv typ postavy (admin|creative|new|survival).
 Pokud player_or_player_name není PlayerRef nebo jméno postavy, vrátí nil.
 ]]
@@ -1252,6 +1260,21 @@ function ch_core.set_immortal(player, true_or_false)
 		player:set_armor_groups({immortal = 0})
 	end
 	return true
+end
+
+--[[
+Uloží do metadat souřadnice x, y, z včetně desetinné části.
+]]
+function ch_core.set_pos_to_meta(meta, key, pos)
+	local x_key, y_key, z_key = key.."_x", key.."_y", key.."_z"
+	meta:set_float(x_key, pos.x)
+	meta:set_float(y_key, pos.y)
+	meta:set_float(z_key, pos.z)
+	local stored_pos = vector.new(meta:get_float(x_key), meta:get_float(y_key), meta:get_float(z_key))
+	if not vector.equals(pos, stored_pos) then
+		minetest.log("warning", "Position truncated when stored to metadata: "..vector.to_string(pos).." truncated to: "..vector.to_string(stored_pos))
+	end
+	return pos
 end
 
 --[[
