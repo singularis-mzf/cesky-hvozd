@@ -1106,3 +1106,38 @@ if has_solidcolor then
 		}
 	end
 end
+
+local function get_stone_door_inventory_image(texture)
+	return "[combine:40x40:12,4=default_stone.png\\^[resize\\:16x16:12,20=default_stone.png\\^[resize\\:16x16"
+end
+
+local function get_stone_door_tile(texture)
+	return {name = "[combine:128x128:0,0="..texture.."\\^[resize\\:64x64:64,0="..texture.."\\^[resize\\:64x64:0,64="..texture.."\\^[resize\\:64x64:64,64="..texture.."\\^[resize\\:64x64", backface_culling = true}
+end
+
+-- doors:stone_door
+doors.register("door_stone", {
+	tiles = {get_stone_door_tile("default_stone.png")},
+	use_texture_alpha = "opaque",
+	description = "kamenné dveře ze skalního kamene",
+	inventory_image = get_stone_door_inventory_image("default_stone.png"),
+	groups = { cracky = 2, oddly_breakable_by_hand = 2 },
+	recipe = {
+		{"default:stone", "default:stone", ""},
+		{"default:stone", "default:stone", ""},
+		{"default:stone", "default:stone", ""},
+	},
+})
+
+doors.register("door_desert_stone", {
+	tiles = {get_stone_door_tile("default_desert_stone.png")},
+	use_texture_alpha = "opaque",
+	description = "kamenné dveře z pouštního kamene",
+	inventory_image = get_stone_door_inventory_image("default_desert_stone.png"),
+	groups = { cracky = 2, oddly_breakable_by_hand = 2 },
+	recipe = {
+		{"default:desert_stone", "default:desert_stone", ""},
+		{"default:desert_stone", "default:desert_stone", ""},
+		{"default:desert_stone", "default:desert_stone", ""},
+	},
+})

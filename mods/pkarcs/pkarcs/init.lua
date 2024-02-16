@@ -39,7 +39,7 @@ function pkarcs.register_all(nodename, desc, tile, sound, group, craftmaterial)
 		tile_collection = table.copy(tile)
 	end
 
-	minetest.register_node(":pkarcs:"..nodename.."_arc", {
+	local def = {
 		description = desc.." (oblouk)",
 		paramtype = "light",
 		paramtype2 = "facedir",
@@ -103,7 +103,8 @@ function pkarcs.register_all(nodename, desc, tile, sound, group, craftmaterial)
 
 			return minetest.item_place(itemstack, placer, pointed_thing, param2)
 		end,
-	})
+	}
+	minetest.register_node(":pkarcs:"..nodename.."_arc", def)
 
 	minetest.register_craft({
 		output = "pkarcs:"..nodename.."_arc".." 5",
@@ -111,6 +112,31 @@ function pkarcs.register_all(nodename, desc, tile, sound, group, craftmaterial)
 			{ craftmaterial, craftmaterial, craftmaterial },
 			{ craftmaterial, "",            ""            },
 			{ craftmaterial, "",            ""            }
+		}
+	})
+
+	def = table.copy(def)
+	def.description = desc.." (blok s obloukem)"
+	local new_box = {}
+	for i, aabb in ipairs(def.node_box.fixed) do
+		new_box[i] = { aabb[1], aabb[2] - 1, aabb[3], aabb[4], aabb[5], aabb[6] }
+	end
+	def.node_box = {type = "fixed", fixed = new_box}
+	def.selection_box = def.node_box
+	def.collision_box = def.node_box
+	def.drop = {
+		items = {
+			{items = {craftmaterial}},
+			{items = {"pkarcs:"..nodename.."_arc"}}
+		},
+	}
+	minetest.register_node(":pkarcs:"..nodename.."_with_arc", def)
+
+	minetest.register_craft({
+		output = "pkarcs:"..nodename.."_with_arc",
+		recipe = {
+			{ craftmaterial, ""},
+			{ "pkarcs:"..nodename.."_arc", "" },
 		}
 	})
 
