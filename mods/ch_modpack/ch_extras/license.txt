@@ -140,3 +140,10 @@ ch_extras_kotva.png
 	License: CC BY-SA 4.0
 	Author: Singularis
 	Based on source: technic_admin_anchor.png by RealBadAngel under WTFPL from the mod "technic" from https://github.com/minetest-mods/technic
+
+ch_extras_tile1.png
+	License: CC BY-SA 4.0 (based on content under MIT license)
+	Author: Singularis
+	Based on source: stoneblocks_lantern_yellow.png by homiak & scotti under MIT license from the mod "stoneblocks" from https://github.com/homiak/stoneblocks
+	Copyright (c) 2024 homiak, scotti
+	Copyright (c) 2024 Singularis

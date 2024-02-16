@@ -41,6 +41,7 @@ ethereal.lua
 
 ethereal.lua
 petz.lua
+stoneblocks.lua
 	Author: Singularis
 	License: MIT
 
@@ -51,6 +52,10 @@ bbq_chimney_smoke_animation.png
 	Author: (C) Grizzly Adam
 	Source: Your Dad's BBQ Mod
 	License: CC-BY-SA-3.0
+
+ch_decor_lantern.obj
+	Author: Singularis
+	License: CC BY-SA 3.0
 
 cucina_vegana_mushroom_light.png
 cucina_vegana_mushroom_light_detail.png
@@ -115,6 +120,22 @@ petz_honeycomb.png
 	Author: runsy (?)(I'm not sure)
 	Source: Petz Mod (https://github.com/runsy/petz)
 	License: CC BY-SA 4.0
+
+stoneblocks_lantern_blue_lit.png
+stoneblocks_lantern_blue.png
+stoneblocks_lantern_green_lit.png
+stoneblocks_lantern_green.png
+stoneblocks_lantern_red_green_yellow_lit.png
+stoneblocks_lantern_red_green_yellow.png
+stoneblocks_lantern_red_lit.png
+stoneblocks_lantern_red.png
+stoneblocks_lantern_yellow_lit.png
+stoneblocks_lantern_yellow.png
+	Authors:
+		- Scottii
+		- homiak
+	Source: Stoneblocks mod (https://github.com/homiak/stoneblocks)
+	License: MIT
 
 technic_track1.ogg
 	Author: Emmett Plant (emmett@sonivius.com)

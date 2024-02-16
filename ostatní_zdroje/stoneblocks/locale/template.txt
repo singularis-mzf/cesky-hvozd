@@ -1,0 +1,24 @@
+# textdomain: stoneblocks
+# Template
+Black granite stone=
+Grey granite stone=
+Rubyblock with emerald=
+Rubyblock=
+Cats eye=
+Stone with ruby=
+Stone with emerald=
+Emeraldblock with ruby=
+Granite stone=
+Red granite stone=
+Rose granite stone=
+Stone with turquoise glass=
+Emerald block=
+Mixed stone block=
+Stone with turquoise=
+Sapphire stone=
+Stone with sapphire=
+Turquoise stone=
+Red turquoise stone=
+Turquoise glass stone=
+Sensitive Glass Block=
+Red stone lantern=

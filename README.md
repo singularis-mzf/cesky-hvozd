@@ -1257,6 +1257,12 @@ Prohlášení autora/ky na [fóru](https://forum.minetest.net/viewtopic.php?f=4&
 * Původní licence textur: CC BY-SA 3.0 (SkyboxSet by Heiko Irrgang (http://gamvas.com)) Based on a work at http://93i.de.
 * [ContentDB](https://content.minetest.net/packages/sofar/skybox/)
 
+## Stoneblocks (stoneblocks)
+
+* Zdroj: [https://github.com/homiak/stoneblocks](https://github.com/homiak/stoneblocks), revize 464e7c077045e746f97680192a64825962913180
+* Původní licence: MIT
+* [ContentDB](https://content.minetest.net/packages/homiak/stoneblocks/)
+
 ## Technic CNC Improve Machine (technic\_cnc\_improve)
 
 * Zdroj: [https://github.com/Emojigit/technic\_cnc\_improve](https://github.com/Emojigit/technic\_cnc\_improve), revize 769fb8111edd0a895514db3a2df316c0b49b0252

@@ -9,6 +9,7 @@ local mods = {
 	"ephesus",
 	"ethereal",
 	"petz",
+	"stoneblocks",
 	"xdecor",
 }
 

@@ -177,3 +177,15 @@ for paramtype2, ptdef in pairs(paramtypes) do
 	end
 	minetest.register_node("ch_test:test_"..paramtype2, def)
 end
+
+local def = {
+	description = "test: plazma [EXPERIMENTÁLNÍ]",
+	drawtype = "normal",
+	tiles = {{name = "ch_test_plasma.png", backface_culling = true}},
+	paramtype = "light",
+	paramtype2 = "facedir",
+	groups = {oddly_breakable_by_hand = 3},
+	is_ground_content = false,
+}
+
+minetest.register_node("ch_test:plasma", def)
