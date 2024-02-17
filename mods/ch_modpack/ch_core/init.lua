@@ -214,14 +214,8 @@ local function globalstep(dtime)
 			end
 
 			-- VĚZENÍ:
-			if ch_core.submods_loaded["vezeni"] and offline_charinfo.trest > 0 then
-				local vezeni_data = ch_core.vezeni_data
-				if not ch_core.pos_in_area(player_pos, vezeni_data.min, vezeni_data.max) then
-					player:set_pos(vezeni_data.stred)
-				elseif us_time >= (online_charinfo.pristi_kontrola_krumpace or 0) then
-					online_charinfo.pristi_kontrola_krumpace = us_time + 900000000
-					ch_core.vezeni_kontrola_krumpace(player)
-				end
+			if --[[ ch_core.submods_loaded["vezeni"] and ]] offline_charinfo.trest > 0 then
+				ch_core.vykon_trestu(player, player_pos, us_time, online_charinfo)
 			end
 
 			-- pokud se změnil držený předmět, možná bude potřeba zobrazit jeho nápovědu

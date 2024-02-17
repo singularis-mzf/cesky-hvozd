@@ -21,8 +21,50 @@ local nametag_color_unregistered = nametag_color_grey
 -- POZICE A OBLASTI
 -- ===========================================================================
 
-ch_core.unregistered_spawn = vector.new(-70,9.5,40)
-ch_core.registered_spawn = ch_core.unregistered_spawn
+local function setting_get_pos(name, setting_level)
+	local result = minetest.setting_get_pos(name)
+	if result ~= nil then
+		minetest.log("action", "Position setting "..name.." read: "..minetest.pos_to_string(result))
+	elseif setting_level == "required" then
+		error("Required position setting "..name.." not set or have an invalid format!")
+	elseif setting_level == "optional" then
+		minetest.log("action", "Position setting "..name.." not set (optional).")
+	else
+		minetest.log("error", "Position setting "..name.." not set! Will be reset to zeroes.")
+		result = vector.zero()
+	end
+	return result
+end
+
+local function setting_get_str(name, setting_level)
+	local result = minetest.settings:get(name)
+	if result ~= nil then
+		minetest.log("action", "String setting "..name.." read: "..result)
+	elseif setting_level == "required" then
+		error("Required string setting "..name.." not set!")
+	elseif setting_level == "optional" then
+		minetest.log("action", "String setting "..name.." not set (optional).")
+	else
+		minetest.log("error", "String setting "..name.." not set! Will be reset to an empty string")
+		result = ""
+	end
+	return result
+end
+
+ch_core.config = {
+	povinne_vytisky_listname = setting_get_str("ch_povinne_vytisky_listname", "optional") or "main",
+}
+
+ch_core.positions = {
+	zacatek_1 = setting_get_pos("static_spawnpoint") or vector.new(-70,9.5,40),
+	zacatek_2 = setting_get_pos("ch_zacatek_2"),
+	zacatek_3 = setting_get_pos("ch_zacatek_3"),
+	vezeni_min = setting_get_pos("ch_vezeni_min"),
+	vezeni_max = setting_get_pos("ch_vezeni_max"),
+	vezeni_cil = setting_get_pos("ch_vezeni_cil"),
+	vezeni_dvere = setting_get_pos("ch_vezeni_dvere", "optional"),
+	povinne_vytisky = setting_get_pos("ch_povinne_vytisky", "optional"),
+}
 
 -- lower case to login name
 local lc_to_player_name = {}
@@ -43,14 +85,10 @@ local global_data_data_types = {
 	povinne_vytisky = "vector",
 	povinne_vytisky_listname = "string",
 	pristi_ick = "int",
-	registered_spawn = "vector",
-	unregistered_spawn = "vector",
 }
 
 local initial_global_data = {
 	pristi_ick = 10000,
-	registered_spawn = vector.new(-70,9.5,40),
-	unregistered_spawn = vector.new(-70,9.5,40),
 }
 
 for k, t in pairs(global_data_data_types) do

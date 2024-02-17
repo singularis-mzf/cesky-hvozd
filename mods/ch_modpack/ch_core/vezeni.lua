@@ -3,7 +3,12 @@ ch_core.open_submod("vezeni", {chat = true, data = true, lib = true, privs = tru
 local trest_min = -100
 local trest_max = 1000000
 
-local vezeni_data = ch_core.vezeni_data
+local vezeni_data = {
+	min = assert(ch_core.positions.vezeni_min),
+	max = assert(ch_core.positions.vezeni_max),
+	stred = assert(ch_core.positions.vezeni_cil),
+	dvere = ch_core.positions.vezeni_dvere,
+}
 local send_to_prison_callbacks = {}
 
 local prohledavane_inventare = {
@@ -19,6 +24,7 @@ for _, n in ipairs({"default:pick_steel", "default:pick_bronze",
 	povolene_krumpace[n] = ItemStack(n)
 end
 
+--[[
 local function nacist_vezeni()
 	local offline_charinfo = ch_core.get_offline_charinfo("Administrace")
 	local s = offline_charinfo.data_vezeni
@@ -29,8 +35,10 @@ local function nacist_vezeni()
 	return offline_charinfo
 end
 nacist_vezeni()
+]]
 
 local function ulozit_vezeni()
+	minetest.log("error", "ulozit_vezeni() not supported, coordinates are in the configuration now!")
 	local offline_charinfo = ch_core.get_offline_charinfo("Administrace")
 	offline_charinfo.data_vezeni = minetest.serialize(ch_core.vezeni_data)
 	ch_core.save_offline_charinfo("Administrace", "data_vezeni")
@@ -309,6 +317,15 @@ function ch_core.je_ve_vykonu_trestu(player_name)
 		return trest
 	else
 		return nil
+	end
+end
+
+function ch_core.vykon_trestu(player, player_pos, us_time, online_charinfo)
+	if not ch_core.pos_in_area(player_pos, vezeni_data.min, vezeni_data.max) then
+		player:set_pos(vezeni_data.stred)
+	elseif us_time >= (online_charinfo.pristi_kontrola_krumpace or 0) then
+		online_charinfo.pristi_kontrola_krumpace = us_time + 900000000
+		ch_core.vezeni_kontrola_krumpace(player)
 	end
 end
 

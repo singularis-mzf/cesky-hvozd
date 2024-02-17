@@ -796,9 +796,9 @@ function shared.publish_book(book_item, edition) -- => IČK, error_message
 	update_infotext(meta, "item")
 
 	-- Povinné výtisky:
-	local pos = global_data.povinne_vytisky
+	local pos = assert(ch_core.positions.povinne_vytisky)
 	local pos_used
-	local listname = global_data.povinne_vytisky_listname
+	local listname = assert(ch_core.config.povinne_vytisky_listname)
 	local listindex
 	if listname ~= nil and listname ~= "" then
 		minetest.load_area(pos)
@@ -1157,6 +1157,7 @@ function shared.on_use(itemstack, user, pointed_thing)
 	end
 end
 
+--[[
 local function nastavit_povinne_vytisky(player_name, param)
 	local x, y, z, listname = param:match("^(-?%d+),(-?%d+),(-?%d+) (.+)$")
 	x, y, z = tonumber(x), tonumber(y), tonumber(z)
@@ -1203,3 +1204,4 @@ local def = {
 }
 minetest.register_chatcommand("povinne_vytisky", def)
 minetest.register_chatcommand("povinné_výtisky", def)
+]]
