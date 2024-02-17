@@ -36,12 +36,14 @@ local function display_poster(pos, node, player)
 	local titletexture = font:render(meta:get_string("display_text"),
 		font:get_height()*8.4, font:get_height(), { lines = 1 })
 
-	fs = string.format([=[
-		size[7,9]bgcolor[#0000]
-		background[0,0;7,9;signs_poster_formspec.png]
-		image[0,-0.2;8.4,2;%s]
-		style_type[textarea;textcolor=#111]
-		textarea[0.3,1.5;7,8;;%s;]]=],
+	fs = string.format(
+		"formspec_version[6]"..
+		"size[8,11]"..
+		"bgcolor[#0000]"..
+		"background[0,0;8,10;signs_poster_formspec.png^[multiply:#f0f0f0]"..
+		"image[0,-0.2;8.4,2;%s]"..
+		"style_type[textarea;textcolor=#111]"..
+		"textarea[0.3,1.75;7.5,8.1;;%s;]",
 		titletexture,
 		minetest.colorize("#111",
 			minetest.formspec_escape(meta:get_string("text"))))
@@ -50,7 +52,7 @@ local function display_poster(pos, node, player)
 		fs = string.format("%sbutton_exit[2.5,8;2,1;ok;%s]", fs, F("Close"))
 	else
 		fs = string.format(
-			"%sbutton[1,8;2,1;edit;%s]button_exit[4,8;2,1;ok;%s]",
+			"%sbutton[1.5,10;2,1;edit;%s]button_exit[4.5,10;2,1;ok;%s]",
 			fs, F("Edit"), F("Close"))
 	end
 	minetest.show_formspec(player:get_player_name(), fname, fs)
