@@ -15,7 +15,7 @@ smartshop.storage_class = storage_class
 
 function storage_class:get_title()
 	if not self.meta:get("title") then
-		self:set_title("storage@%s", self:get_pos_as_string())
+		self:set_title("uloziste@%s", self:get_pos_as_string())
 	end
 	return self.meta:get_string("title")
 end
@@ -37,8 +37,8 @@ function storage_class:initialize_metadata(player)
         player_name = player:get_player_name()
     end
 
-	self:set_infotext(S("External storage by: @1", player_name))
-	self:set_title("storage@%s", self:get_pos_as_string())
+	-- self:set_title("uloziste@%s", self:get_pos_as_string())
+	self:set_infotext(S("@1@nExternal storage by:@n@2", self:get_title(), player_name))
 end
 
 function storage_class:initialize_inventory()
@@ -65,14 +65,15 @@ end
 function storage_class:receive_fields(player, fields)
 	local changed = false
 	if fields.private then
-	    self:set_private(fields.private == "true")
+		self:set_private(fields.private == "true")
 		changed = true
 	end
 
 	if fields.title then
 		self:set_title(fields.title)
+		self:set_infotext(S("@1@nExternal storage by:@n@2", self:get_title(), self:get_owner()))
 		changed = true
-    end
+	end
 
 	if changed then
 		self:show_formspec(player)

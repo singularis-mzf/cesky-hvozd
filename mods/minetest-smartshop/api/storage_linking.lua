@@ -51,7 +51,13 @@ function api.try_link_storage(storage, player)
 	else
 		shop:link_storage(storage, storage_type)
 
-		smartshop.chat_send_player(player_name, "@1 úložiště připojeno!", storage_type)
+		if storage_type == "refill" then
+			smartshop.chat_send_player(player_name, "výdejové úložiště připojeno!")
+		elseif storage_type == "send" then
+			smartshop.chat_send_player(player_name, "příjmové úložiště připojeno!")
+		else
+			smartshop.chat_send_player(player_name, "@1 úložiště připojeno!", storage_type)
+		end
 	end
 
 	data_by_player_name[player_name] = nil

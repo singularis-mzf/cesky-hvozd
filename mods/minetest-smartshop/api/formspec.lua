@@ -122,14 +122,14 @@ function api.build_owner_formspec(shop, player_name)
 		})
 
 		if send then
-			local title = F(send:get_title())
+			local title = send:get_title()
 			table.insert(fs_parts, ("tooltip[tsend;%s]"):format(FS("payments sent to @1", title)))
 		else
 			table.insert(fs_parts, ("tooltip[tsend;%s]"):format(FS("click to set send storage")))
 		end
 
 		if refill then
-			local title = F(refill:get_title())
+			local title = refill:get_title()
 			table.insert(fs_parts, ("tooltip[trefill;%s]"):format(FS("automatically refilled from @1", title)))
 		else
 			table.insert(fs_parts, ("tooltip[trefill;%s]"):format(FS("click to set refill storage")))
@@ -247,8 +247,8 @@ function api.build_storage_formspec(storage)
 		"size[12,9]",
 		("field[0.3,5.3;2,1;title;;%s]"):format(F(storage:get_title())),
 		"field_close_on_enter[title;false]",
-		("tooltip[title;%s]"):format(FS("used with connected smartshops")),
-		("button_exit[0,6;2,1;save;%s]"):format(FS("save")),
+		("tooltip[title;%s]"):format(FS("external storage title")),
+		("button_exit[0,6;2,1;save;%s]"):format(FS("save title")),
 		("list[nodemeta:%s;main;0,0;12,5;]"):format(fpos),
 		"list[current_player;main;2,5;8,4;]",
 		("listring[nodemeta:%s;main]"):format(fpos),
