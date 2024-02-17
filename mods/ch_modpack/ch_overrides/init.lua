@@ -28,6 +28,7 @@ end
 dofile(modpath.."/chests.lua")
 dofile(modpath.."/extra_recipes.lua")
 dofile(modpath.."/falling_nodes.lua")
+dofile(modpath.."/liquid_physics.lua")
 dofile(modpath.."/ores.lua")
 dofile(modpath.."/poles.lua")
 dofile(modpath.."/security.lua")
