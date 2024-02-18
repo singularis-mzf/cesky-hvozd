@@ -311,6 +311,8 @@ minetest.register_tool("default:axe_diamond", {
 -- Swords
 --
 
+--[[
+
 minetest.register_tool("default:sword_wood", {
 	description = S("Wooden Sword"),
 	inventory_image = "default_tool_woodsword.png",
@@ -400,6 +402,7 @@ minetest.register_tool("default:sword_diamond", {
 	sound = {breaks = "default_tool_breaks"},
 	groups = {sword = 1}
 })
+]]
 
 --
 -- Register Craft Recipies
@@ -442,6 +445,7 @@ for name, mat in pairs(craft_ingreds) do
 		}
 	})
 
+	--[[
 	minetest.register_craft({
 		output = "default:sword_".. name,
 		recipe = {
@@ -450,6 +454,7 @@ for name, mat in pairs(craft_ingreds) do
 			{"group:stick"}
 		}
 	})
+	]]
 end
 
 minetest.register_craft({
@@ -470,8 +475,10 @@ minetest.register_craft({
 	burntime = 6,
 })
 
+--[[
 minetest.register_craft({
 	type = "fuel",
 	recipe = "default:sword_wood",
 	burntime = 5,
 })
+]]

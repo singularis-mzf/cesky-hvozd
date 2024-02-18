@@ -40,4 +40,3 @@ local ore_nodenames = {
 ]]
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
-

@@ -52,9 +52,11 @@ minetest.register_alias("SteelShovel", "default:shovel_steel")
 minetest.register_alias("WAxe", "default:axe_wood")
 minetest.register_alias("STAxe", "default:axe_stone")
 minetest.register_alias("SteelAxe", "default:axe_steel")
+--[[
 minetest.register_alias("WSword", "default:sword_wood")
 minetest.register_alias("STSword", "default:sword_stone")
 minetest.register_alias("SteelSword", "default:sword_steel")
+]]
 
 minetest.register_alias("Stick", "default:stick")
 minetest.register_alias("paper", "default:paper")

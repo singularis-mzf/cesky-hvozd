@@ -32,13 +32,13 @@ local default_metal_sounds = default.node_sound_metal_defaults()
 
 -- Returns the crafting recipe table for a given material and item.
 local function get_recipe(material, item)
-	if item == "sword" then
+	--[[ if item == "sword" then
 		return {
 			{material},
 			{material},
 			{"group:stick"},
 		}
-	end
+	end ]]
 	if item == "shovel" then
 		return {
 			{material},
@@ -209,9 +209,9 @@ local function add_ore(modname, description, mineral_name, oredef)
 			tdef.groups.pickaxe = 1
 		end
 
-		if tool_name == "sword" then
+		--[[ if tool_name == "sword" then
 			tdef.description = S(description .. " Sword")
-		end
+		end ]]
 
 		if tool_name == "pick" then
 			tdef.description = S(description .. " Pickaxe")
@@ -308,14 +308,14 @@ local oredefs = {
 				},
 				damage_groups = {fleshy = 5},
 			},
-			sword = {
+			--[[ sword = {
 				groupcaps = {
 					fleshy = {times = {[2] = 0.70, [3] = 0.30}, uses = 100, maxlevel = 1},
 					snappy = {times = {[1] = 1.70, [2] = 0.70, [3] = 0.30}, uses = 100, maxlevel = 1},
 					choppy = {times = {[3] = 0.80}, uses = 100, maxlevel = 0},
 				},
 				damage_groups = {fleshy = 6},
-			},
+			}, ]]
 		},
 		full_punch_interval = 1.0,
 	},
@@ -366,6 +366,7 @@ local oredefs = {
 				},
 				damage_groups = {fleshy = 8},
 			},
+			--[[
 			sword = {
 				groupcaps = {
 					fleshy = {times = {[2] = 0.65, [3] = 0.25}, uses = 200, maxlevel = 2},
@@ -373,7 +374,7 @@ local oredefs = {
 					choppy = {times = {[3] = 0.65}, uses = 200, maxlevel = 0},
 				},
 				damage_groups = {fleshy = 10},
-			},
+			}, ]]
 		},
 		full_punch_interval = 0.45,
 	}
