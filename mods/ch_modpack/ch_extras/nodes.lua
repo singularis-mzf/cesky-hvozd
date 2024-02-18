@@ -1197,3 +1197,37 @@ stairsplus:register_all("ch_extras", "scorched_tree", "ch_extras:scorched_tree",
 })
 stairsplus:register_noface_trunk("ch_extras", "scorched_tree_noface", "ch_extras:scorched_tree")
 stairsplus:register_allfaces_trunk("ch_extras", "scorched_tree_allfaces", "ch_extras:scorched_tree")
+
+-- Colorable fence
+
+def = {
+	description = "barvitelný plot",
+	texture = "ch_npc_colorable_fence.png",
+	material = "solidcolor:noise_block",
+	groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2, ud_param2_colorable = 1},
+	sounds = default.node_sound_wood_defaults(),
+}
+if not minetest.get_modpath("ch_npc") then
+	def.texture = "default_fence_wood.png"
+end
+
+default.register_fence("ch_extras:colorable_fence", table.copy(def))
+def.description = "barvitelné zábradlí"
+default.register_fence_rail("ch_extras:colorable_fence_rail", table.copy(def))
+def.description = "barvitelný plot: branka"
+doors.register_fencegate("ch_extras:colorable_fence_gate_v1", def)
+
+def = {
+	paramtype2 = "color",
+	palette = "unifieddyes_palette_extended.png",
+	on_construct = unifieddyes.on_construct,
+	on_dig = unifieddyes.on_dig,
+}
+minetest.override_item("ch_extras:colorable_fence", def)
+minetest.override_item("ch_extras:colorable_fence_rail", def)
+def.paramtype2 = "color4dir"
+def.palette = "unifieddyes_palette_color4dir.png"
+for _, item in ipairs({"ch_extras:colorable_fence_gate_v1_open", "ch_extras:colorable_fence_gate_v1_closed"}) do
+	def.groups = ch_core.override_groups(minetest.registered_nodes[item].groups, {ud_param2_colorable = 1})
+	minetest.override_item(item, def)
+end
