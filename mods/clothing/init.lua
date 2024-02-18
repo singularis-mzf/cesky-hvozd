@@ -14,6 +14,7 @@ if minetest.get_modpath("inventory_plus") then
 		"button[6,0;2,0.5;main;Zpět]"
 elseif minetest.get_modpath("unified_inventory") and
 		not unified_inventory.sfinv_compat_layer then
+	--[[
   local S = clothing.translator
   local F = minetest.formspec_escape
   local ui = unified_inventory
@@ -42,6 +43,7 @@ elseif minetest.get_modpath("unified_inventory") and
 			return {formspec=formspec}
 		end,
 	})
+	]]
 elseif minetest.get_modpath("sfinv") then
 	clothing.inv_mod = "sfinv"
 	sfinv.register_page("clothing:clothing", {
@@ -99,14 +101,18 @@ local function save_clothing_metadata(player, clothing_inv)
 	end
 end
 
-local function load_clothing_metadata(player, clothing_inv)
+local function load_clothing_metadata(player, clothing_inv, is_new)
 	local player_inv = player:get_inventory()
-  local player_meta = player:get_meta();
+	local player_meta = player:get_meta()
 	local clothing_meta = player_meta:get_string("clothing:inventory")
 	local clothes = clothing_meta and minetest.deserialize(clothing_meta)
 	local dirty_meta = false
 	if not clothes then
-		clothes = {[1] = "clothing:shirt_green", [4] = "clothing:pants_blue", [7] = "clothing:shoes_black" }
+		if is_new then
+			clothes = {"clothing:shirt_green", "clothing:pants_blue", "clothing:shoes_black"}
+		else
+			clothes = {}
+		end
 		dirty_meta = true
 	end
 	if not clothing_meta then
@@ -171,7 +177,8 @@ minetest.register_on_joinplayer(function(player)
 		inventory_plus.register_button(player,"clothing", S("Clothing"))
 	end
 
-	load_clothing_metadata(player, clothing_inv)
+	local is_new = ch_core.get_offline_charinfo(name).past_playtime == 0.0
+	load_clothing_metadata(player, clothing_inv, is_new)
 	minetest.after(1, function(name)
 		-- Ensure the ObjectRef is valid after 1s
 		clothing:set_player_clothing(minetest.get_player_by_name(name))

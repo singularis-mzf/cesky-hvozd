@@ -81,12 +81,24 @@ if minetest.global_exists("unified_inventory") then -- unified inventory install
 		unified_inventory.register_page(identifier, {get_formspec=function(player) return {formspec=options.get_formspec(player:get_player_name())} end})
 	end
 
+	--[[
 	unified_inventory.register_button("worldedit_gui", {
 		type = "image",
 		image = "inventory_plus_worldedit_gui.png",
 		condition = function(player)
 			return minetest.check_player_privs(player:get_player_name(), {worldedit=true})
 		end,
+	})
+	]]
+
+	-- chat command instead of GUI button:
+	minetest.register_chatcommand("es", {
+		-- params = "",
+		description = "nastaví okno inventáře tak, že se místo něj otevře okno Editoru světa",
+		privs = {worldedit = true},
+		func = function(name, param)
+			worldedit.show_page(name, "worldedit_gui")
+		end
 	})
 
 	minetest.register_on_player_receive_fields(function(player, formname, fields)

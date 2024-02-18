@@ -141,7 +141,11 @@ function ch_core.registrovat(player_name, reg_type, extra_privs)
 	minetest.set_player_privs(player_name, extra_privs)
 	local new_privs = minetest.privs_to_string(minetest.get_player_privs(player_name))
 	minetest.log("action", "Player "..player_name.." privs set to: "..new_privs)
-	ch_core.systemovy_kanal(player_name, "Vaše registrace byla nastavena do režimu „"..reg_type_desc.."“. Zkontrolujte si, prosím, svoje nová práva příkazem /práva.")
+	local message = "Vaše registrace byla nastavena do režimu „"..reg_type_desc.."“."
+	if reg_type ~= "new" then
+		message = message.." Zkontrolujte si, prosím, svoje nová práva příkazem /práva."
+	end
+	ch_core.systemovy_kanal(player_name, message)
 	player:set_nametag_attributes(ch_core.compute_player_nametag(ch_core.online_charinfo[player_name], offline_charinfo))
 	offline_charinfo.past_playtime = 0
 	offline_charinfo.past_ap_playtime = 0

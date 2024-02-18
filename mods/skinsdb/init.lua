@@ -17,7 +17,7 @@ dofile(skins.modpath.."/formspecs.lua")
 dofile(skins.modpath.."/chatcommands.lua")
 -- Unified inventory page/integration
 if minetest.get_modpath("unified_inventory") then
-	dofile(skins.modpath.."/unified_inventory_page.lua")
+	-- dofile(skins.modpath.."/unified_inventory_page.lua")
 end
 
 if minetest.get_modpath("sfinv") then
@@ -92,7 +92,7 @@ if not default_skin_obj then
 	default_skin_obj:set_texture("character.png")
 	default_skin_obj:set_meta("format", '1.0')
 	default_skin_obj:set_meta("_sort_id", 0)
-	default_skin_obj:set_meta("name", "Jan (pův. Sam)")
+	default_skin_obj:set_meta("name", "Jan (původně Sam)")
 	default_skin_obj:set_hand_from_texture()
 end
 

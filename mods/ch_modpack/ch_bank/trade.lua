@@ -260,8 +260,8 @@ function utils.nabidnout_obchod(from_player, to_player)
 	utils.set_player_trade_state(from_player_name, from_trade_state)
 	utils.set_player_trade_state(to_player_name, to_trade_state)
 	utils.set_is_offering_title(from_player_name, true)
-	ch_core.systemovy_kanal(from_player_name, "Nabízíte obchod postavě "..ch_core.prihlasovaci_na_zobrazovaci(to_player_name).."...")
-	ch_core.systemovy_kanal(to_player_name, "Postava "..ch_core.prihlasovaci_na_zobrazovaci(from_player_name).." vám nabízí obchod. Máte 20 sekund na reakci.")
+	ch_core.systemovy_kanal(from_player_name, "Nabízíte obchod postavě "..ch_core.prihlasovaci_na_zobrazovaci(to_player_name).."...", {alert = true})
+	ch_core.systemovy_kanal(to_player_name, "Postava "..ch_core.prihlasovaci_na_zobrazovaci(from_player_name).." vám nabízí obchod. Máte 20 sekund na reakci.", {alert = true})
 	local timer_def = {
 		label = "obchod",
 		func = function()
@@ -458,8 +458,8 @@ function utils.uzavrit_obchod(player, player_right)
 		tinv.close_simulation(player_name_right)
 		-- 2. announce errors
 		local message = "Směna selhala z následujících důvodů:\n- "..table.concat(errors, "\n- ")
-		ch_core.systemovy_kanal(player_name, message)
-		ch_core.systemovy_kanal(player_name_right, message)
+		ch_core.systemovy_kanal(player_name, message, {alert = true})
+		ch_core.systemovy_kanal(player_name_right, message, {alert = true})
 		return false
 	end
 end

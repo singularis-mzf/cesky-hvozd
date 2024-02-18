@@ -1,5 +1,7 @@
 ch_core.open_submod("chat", {privs = true, data = true, lib = true, nametag = true})
 
+local ifthenelse = ch_core.ifthenelse
+
 minetest.register_on_joinplayer(function(player, last_login)
 	local online_charinfo = ch_core.get_joining_online_charinfo(player:get_player_name())
 	if online_charinfo.doslech == nil then
@@ -31,14 +33,22 @@ ch_core.last_celoserverovy = {char = "", char_gen = 0, count = 0, zprava = ""}
 ch_core.last_sepot = {char = "", char_gen = 0, count = 0, zprava = ""}
 ch_core.last_soukromy = {char = "", char_gen = 0, count = 0, zprava = ""}
 
-function ch_core.systemovy_kanal(komu, zprava)
+function ch_core.systemovy_kanal(komu, zprava, volby)
 	if zprava == "" then
 		return true -- je-li zprava "", ignorovat
 	end
+	local is_alert = volby ~= nil and volby.alert
+	local color = ifthenelse(is_alert, color_soukromy, color_systemovy)
 	if not komu or komu == "" then -- je-li komu "", rozeslat všem
-		minetest.chat_send_all(color_systemovy .. "SERVER: " .. zprava .. color_reset)
+		minetest.chat_send_all(color .. "SERVER: " .. zprava .. color_reset)
+		if is_alert then
+			minetest.sound_play("chat3_bell", {gain = 1.0}, true)
+		end
 	else
-		minetest.chat_send_player(komu, color_systemovy .. "SERVER: " .. zprava .. color_reset)
+		minetest.chat_send_player(komu, color .. "SERVER: " .. zprava .. color_reset)
+		if is_alert then
+			minetest.sound_play("chat3_bell", {to_player = komu, gain = 1.0}, true)
+		end
 	end
 end
 

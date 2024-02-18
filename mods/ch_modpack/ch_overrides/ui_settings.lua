@@ -561,6 +561,10 @@ local function get_formspec(player, perplayer_formspec)
 				fsgen:button("lehni", "/lehni", "lehnout si"))
 		end
 
+		-- /začátek [online players]
+		table.insert(formspec,
+			fsgen:button("prenest_na_zacatek", "/začátek", "přemístit se na počáteční pozici"))
+
 		-- /domů [online players with "home" priv]
 		if tplayer_privs.home then
 			table.insert(formspec,
@@ -794,6 +798,8 @@ local function on_player_receive_fields(player, formname, fields)
 		ch_core.clear_datetime_hud(tplayer)
 	elseif fields.chs_mods_set and tplayer ~= nil then
 		invoke_chat_command(tplayer_name, tplayer, "mods", "")
+	elseif fields.chs_prenest_na_zacatek and tplayer ~= nil then
+		invoke_chat_command(tplayer_name, tplayer, "začátek", "")
 	elseif fields.chs_prenest_domu_set and tplayer ~= nil and tplayer_info.privs.home then
 		invoke_chat_command(tplayer_name, tplayer, "domů", "")
 	elseif fields.chs_info_set and tplayer ~= nil then
