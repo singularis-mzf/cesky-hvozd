@@ -103,8 +103,12 @@ local function load_clothing_metadata(player, clothing_inv)
 	local player_inv = player:get_inventory()
   local player_meta = player:get_meta();
 	local clothing_meta = player_meta:get_string("clothing:inventory")
-	local clothes = clothing_meta and minetest.deserialize(clothing_meta) or {}
+	local clothes = clothing_meta and minetest.deserialize(clothing_meta)
 	local dirty_meta = false
+	if not clothes then
+		clothes = {[1] = "clothing:shirt_green", [4] = "clothing:pants_blue", [7] = "clothing:shoes_black" }
+		dirty_meta = true
+	end
 	if not clothing_meta then
 		-- Backwards compatiblity
 		for i = 1, 9 do
