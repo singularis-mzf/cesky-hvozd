@@ -72,6 +72,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: GPL v3
 * Použity jen vybrané módy
 
+## Church Modpack (church)
+
+* Zdroj: [https://github.com/mootpoint/church](https://github.com/mootpoint/church), revize 066001b8586f25edb609fb166ef582ac963ae23f
+* Původní licence: GPL v3
+* Licence úprav: GPL v3
+* [ContentDB](https://content.minetest.net/packages/SFENCE/church/)
+
 ## Cool Trees (cool\_trees)
 
 * Zdroj: [https://github.com/runsy/cool\_trees/](https://github.com/runsy/cool\_trees/), revize af8e445c475efb050c1291da459336812b84591e

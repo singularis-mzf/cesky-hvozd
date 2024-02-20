@@ -1,0 +1,8 @@
+
+# wild hive spawn interval
+church_candles_wild_hive_spawn_interval (wild hive spawn interval) int 207 1
+
+# wild hive spawn chance
+# use 0 to disable
+church_candles_wild_hive_spawn_chance (wild hive spawn chance) int 6001 0
+

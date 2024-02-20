@@ -1,0 +1,6 @@
+file name: church_bell.obj
+Author: Lamoot
+http://opengameart.org/content/high-poly-church-bell
+Public Domain Dedication CC0 1.0 Universal (CC0 1.0)
+https://creativecommons.org/publicdomain/zero/1.0/
+original file name: church_bell.blend
