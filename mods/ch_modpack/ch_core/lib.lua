@@ -1587,6 +1587,7 @@ function ch_core.cas_na_strukturu(raw_timestamp)
 	else
 		time_offset_hours = 1
 	end
+	local znamka32 = math.max(-2147483647, math.min(2147483647, tm - 1577836800))
 	tm = tm + 3600 * time_offset_hours
 	local lt = os.date("!*t", tm)
 
@@ -1616,6 +1617,7 @@ function ch_core.cas_na_strukturu(raw_timestamp)
 		utc_sekunda = t.sec,
 		posun_cislo = time_offset_hours,
 		posun_text = "+0"..time_offset_hours..":00",
+		znamka32 = znamka32, -- časová známka v sekundách od 1. 1. 2020 UTC v rozsahu znaménkového int32
 	}
 end
 

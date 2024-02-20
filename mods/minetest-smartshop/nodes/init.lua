@@ -66,6 +66,11 @@ smartshop.nodes = {
         obj:on_metadata_inventory_take(listname, index, stack, player)
     end,
 
+    on_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
+        local obj = get_object(pos)
+        obj:on_metadata_inventory_move(from_list, from_index, to_list, to_index, count, player)
+    end,
+
     can_dig = function(pos, player)
         local obj = get_object(pos)
         return obj:can_dig(player)

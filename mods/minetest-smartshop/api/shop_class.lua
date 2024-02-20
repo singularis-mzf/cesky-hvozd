@@ -53,6 +53,7 @@ function shop_class:initialize_inventory()
         inv:set_size(("give%i"):format(i), 1)
         inv:set_size(("pay%i"):format(i), 1)
     end
+	inv:set_size("money", 3)
 end
 
 --------------------
@@ -68,6 +69,15 @@ end
 
 function shop_class:is_unlimited()
     return self.meta:get_int("unlimited") == 1
+end
+
+function shop_class:set_allow_returns(value)
+    self.meta:set_int("allow_returns", value and 1 or 0)
+    self.meta:mark_as_private("allow_returns")
+end
+
+function shop_class:allow_returns()
+    return self.meta:get_int("allow_returns") == 1
 end
 
 function shop_class:set_send_pos(send_pos)
@@ -597,6 +607,13 @@ function shop_class:receive_fields(player, fields)
 			ch_bank.receive_inventory_fields(player, fields.penize, "zcs")
 			self:show_formspec(player, true)
 		end
+	elseif tonumber(fields.money) ~= nil and (fields.money_set or fields.key_enter_field == "money") then
+		local inv = self.inv
+		if inv:get_size("money") ~= 3 then
+			self:initialize_inventory()
+		end
+		local count = math.max(1, math.min(10000, math.floor(tonumber(fields.money))))
+		inv:set_list("money", {"ch_core:kcs_h "..count, "ch_core:kcs_kcs "..count, "ch_core:kcs_zcs "..count})
 
     else
         if fields.is_unlimited and player_is_admin(player) then
@@ -619,6 +636,10 @@ function shop_class:receive_fields(player, fields)
             self:set_icons(fields.icons == "true")
             changed = true
         end
+		if fields.allow_returns and has_setup_right then
+			self:set_allow_returns(fields.allow_returns == "true")
+			changed = true
+		end
 		if fields.save_title and has_setup_right then
 			self:set_shop_title(fields.title or "")
 			minetest.log("action", "Shop title set to: "..(fields.title or ""))
@@ -778,6 +799,8 @@ function shop_class:allow_metadata_inventory_put(listname, index, stack, player)
 
     elseif listname == "main" then
         return stack:get_count()
+	elseif listname == "money" then
+		return 0
 
     else
         -- interacting with give/pay slots
@@ -807,6 +830,8 @@ function shop_class:allow_metadata_inventory_take(listname, index, stack, player
 
     elseif listname == "main" then
         return stack:get_count()
+	elseif listname == "money" then
+		return 0
 
     else
         local inv = self.inv
@@ -825,6 +850,20 @@ end
 function shop_class:allow_metadata_inventory_move(from_list, from_index, to_list, to_index, count, player)
     if node_class.allow_metadata_inventory_move(self, from_list, from_index, to_list, to_index, count, player) == 0 then
         return 0
+
+	elseif from_list == "money" then
+		if ((#to_list == 4 and to_list:sub(1,3) == "pay") or (#to_list == 5 and to_list:sub(1,4) == "give")) then
+			return count
+		else
+			return 0
+		end
+
+	elseif to_list == "money" then
+		if ((#from_list == 4 and from_list:sub(1,3) == "pay") or (#from_list == 5 and from_list:sub(1,4) == "give")) then
+			return count
+		else
+			return 0
+		end
 
     elseif from_list == "main" and to_list == "main" then
         return count
@@ -855,6 +894,22 @@ function shop_class:on_metadata_inventory_take(listname, index, stack, player)
     if listname == "main" then
         node_class.on_metadata_inventory_take(self, listname, index, stack, player)
     end
+end
+
+function shop_class:on_metadata_inventory_move(from_list, from_index, to_list, to_index, count, player)
+	if from_list == "money" then
+		local inv = self.inv
+		local stack = inv:get_stack(to_list, to_index)
+		stack:set_count(count)
+		inv:set_stack(from_list, from_index, stack)
+	elseif to_list == "money" then
+		local inv = self.inv
+		local stack = inv:get_stack(to_list, to_index)
+		stack:take_item(count)
+		inv:set_stack(to_list, to_index, stack)
+		return
+	end
+	node_class.on_metadata_inventory_move(self, from_list, from_index, to_list, to_index, count, player)
 end
 
 --------------------

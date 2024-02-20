@@ -190,3 +190,11 @@ function node_class:on_metadata_inventory_take(listname, index, stack, player)
 		minetest.pos_to_string(self.pos)
 	)
 end
+
+function node_class:on_metadata_inventory_move(from_list, from_index, to_list, to_index, count, player)
+	local inv = self.inv
+	local stack = inv:get_stack(to_list, to_index)
+	stack:set_count(count)
+	self:on_metadata_inventory_take(from_list, from_index, stack, player)
+	self:on_metadata_inventory_put(to_list, to_index, stack, player)
+end

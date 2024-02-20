@@ -43,6 +43,7 @@ function api.build_owner_formspec(shop, player_name)
 	local is_private = shop:is_private()
 	local allow_freebies = shop:allow_freebies()
 	local allow_icons = shop:allow_icons()
+	local allow_returns = shop:allow_returns()
 	local shop_title = shop:get_shop_title()
 	local owner = shop:get_owner()
 
@@ -94,6 +95,12 @@ function api.build_owner_formspec(shop, player_name)
 		"list[current_player;main;0,9.2;8,4;]",
 		("listring[nodemeta:%s;main]"):format(fpos),
 		"listring[current_player;main]",
+
+		"field[8.5,10.0;1.25,0.5;money;na cenu:;]",
+		"field_close_on_enter[money;false]",
+		("tooltip[money;%s]"):format(FS("put 1-10000 and press Enter to get samples of given number of coins to be dragged to pay or give slots")),
+		"button[9.4,9.7;1,0.5;money_set;>>]",
+		("list[nodemeta:%s;money;10.5,9.5;3,1;]"):format(fpos),
 	}
 
 	if player_is_admin(owner) then
@@ -101,6 +108,8 @@ function api.build_owner_formspec(shop, player_name)
 			("checkbox[12,0.6;is_unlimited;%s;%s]"):format(FS("unlimited?"), tostring(is_unlimited)),
 			("tooltip[is_unlimited;%s]"):format(FS("check this allow exchanges ex nihilo. " ..
 				"shop contents will be ignored")),
+			("checkbox[12,2.1;allow_returns;%s;%s]"):format(FS("allow returns?"), tostring(allow_returns)),
+			("tooltip[allow_returns;%s]"):format(FS("check this if you want to mark sold clothes, so they could be returned in a limited time period")),
 		})
 	end
 

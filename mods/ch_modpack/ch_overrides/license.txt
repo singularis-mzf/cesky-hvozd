@@ -949,7 +949,6 @@ farming_vanilla_5.png
 farming_vanilla_6.png
 farming_vanilla_7.png
 farming_vanilla_8.png
-moretrees_birch_trunk.png
 moretrees_birch_trunk_top.png
 moretrees_birch_wood.png
 moretrees_palm_trunk_top.png

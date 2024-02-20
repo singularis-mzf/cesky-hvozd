@@ -189,3 +189,41 @@ local def = {
 }
 
 minetest.register_node("ch_test:plasma", def)
+
+--[[
+if minetest.get_modpath("unifieddyes") then
+	local w = 1.0/16
+	local s = 0.5
+	local l = 1.0
+	local function f(x_min, x_max, y_min, y_max, z_min, z_max)
+		return {x_min, y_min, z_min, x_max, y_max, z_max}
+	end
+	def = {
+		description = "TEST: regál [EXPERIMENTÁLNÍ]",
+		drawtype = "nodebox",
+		tiles = {{name = "default_wood.png^[transformR90^[colorize:#f0f0f0:192", backface_culling = true}},
+		paramtype2 = "color4dir",
+		palette = "unifieddyes_palette_color4dir.png",
+		node_box = {
+			type = "fixed",
+			fixed = {
+				f(-0.5, 0.5, -0.5, 1.5, 0.5 - w, 0.5), -- zadní stěna
+				f(-0.5, 0.5, -0.5, -0.5 + w, s - 0.5, 0.5 - w), -- spodní stěna
+				f(-0.5, 0.5, 1.5 - w, 1.5, s - 0.5, 0.5 - w), -- horní stěna
+				f(-0.5, -0.5 + w, -0.5 + w, 1.5 - w, s - 0.5, 0.5 - w), -- levá stěna
+				f(0.5 - w, 0.5, -0.5 + w, 1.5 - w, s - 0.5, 0.5 - w), -- pravá stěna
+
+				f(-0.5 + w, 0.5 - w, 1.2, 1.2 + w / 2, 0.2, 0.2 + w ), -- tyč
+			},
+		},
+		groups = {oddly_breakable_by_hand = 2, ud_param2_colorable = 1},
+		is_ground_content = false,
+		on_construct = function(pos)
+			minetest.get_meta(pos):set_string("infotext", "TEST:\nvracení šatů a obuvi po 	vyzkoušení\n(pravý klik => dostanete zpět plnou cenu)")
+			unifieddyes.on_construct(pos)
+		end,
+	}
+
+	minetest.register_node("ch_test:regal", def)
+end
+]]

@@ -23,6 +23,7 @@ local storage_def = {
 	allow_metadata_inventory_move = nodes.allow_metadata_inventory_move,
 	on_metadata_inventory_put = nodes.on_metadata_inventory_put,
 	on_metadata_inventory_take = nodes.on_metadata_inventory_take,
+	on_metadata_inventory_move = nodes.on_metadata_inventory_move,
 	can_dig = nodes.can_dig,
 	on_blast = function() end,  -- explosion-proof
 	on_punch = function(pos, node, puncher, pointed_thing)

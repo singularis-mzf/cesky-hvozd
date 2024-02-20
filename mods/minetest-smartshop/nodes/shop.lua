@@ -11,12 +11,28 @@ local smartshop_def = {
 	sounds = smartshop.resources.sounds.shop_sounds,
 	groups = {
 		choppy = 2,
-        oddly_breakable_by_hand = 1,
+		oddly_breakable_by_hand = 1,
 	},
 	drawtype = "nodebox",
 	node_box = {
 		type = "fixed",
-		fixed = {-0.5, -0.5, -0.0, 0.5, 0.5, 0.5}
+		-- fixed = {-0.5, -0.5, -0.0, 0.5, 0.5, 0.5}
+		fixed = {
+			{-0.5, -0.5, 0.5 - 1/16, 0.5, 0.5, 0.5}, -- back
+			{-0.5, -0.5, -0.075, 0.5, -0.5 + 1/16, 0.5 - 1/16}, -- bottom
+			{-0.5, 0.5 - 1/16, -0.075, 0.5, 0.5, 0.5 - 1/16}, -- top
+			{-0.5, -0.5 + 1/16, -0.075, -0.5 + 1/16, 0.5 - 1/16, 0.5 - 1/16}, -- left
+			{0.5 - 1/16, -0.5 + 1/16, -0.075, 0.5, 0.5 - 1/16, 0.5 - 1/16}, -- right
+			{-0.5 + 1/16, -1/32, 0.1 - 0.075, 0.5 - 1/16, 1/32, 0.5 - 1/16}, -- middle
+		},
+	},
+	selection_box = {
+		type = "fixed",
+		fixed = {-0.5, -0.5, -0.075, 0.5, 0.5, 0.5},
+	},
+	collision_box = {
+		type = "fixed",
+		fixed = {-0.5, -0.5, -0.075, 0.5, 0.5, 0.5},
 	},
 	paramtype2 = "facedir",
 	paramtype = "light",
@@ -28,6 +44,7 @@ local smartshop_def = {
 	allow_metadata_inventory_move = nodes.allow_metadata_inventory_move,
 	on_metadata_inventory_put = nodes.on_metadata_inventory_put,
 	on_metadata_inventory_take = nodes.on_metadata_inventory_take,
+	on_metadata_inventory_move = nodes.on_metadata_inventory_move,
 	can_dig = nodes.can_dig,
 	on_destruct = nodes.on_destruct,
 	on_blast = function() end,  -- explosion-proof
