@@ -261,7 +261,7 @@ function unifieddyes.show_airbrush_form(player)
 				t[#t+1] = "label[0.5,8.25;"..S("(Right-clicked a node that supports all 256 colors, showing them all)").."]"
 				showall = true
 			end
-			if palette_info.real_palette:sub(1, 27) == "unifieddyes_palette_bright_" then
+			if palette_info.real_palette ~= nil and palette_info.real_palette:sub(1, 27) == "unifieddyes_palette_bright_" then
 				palette_data = unifieddyes.palette_data_bright_extended
 			end
 		end

@@ -1062,7 +1062,7 @@ if has_solidcolor then
 		local tile_bottom = {name = "solidcolor_clay.png", backface_culling = true, color = ldef.color}
 
 		def = {
-			description = "barvitelné linoleum na "..ldef.description6.." (nejde otáčet)",
+			description = "barvitelná mozaika na "..ldef.description6.." (nejde otáčet)",
 			drawtype = "normal",
 			tiles = {
 				tile_top, tile_bottom, tile_top, tile_top, tile_top, tile_top,
