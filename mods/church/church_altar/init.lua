@@ -40,7 +40,7 @@ elseif minetest.get_modpath("hades_sounds") then
 end
 
 minetest.register_node("church_altar:altar_end_stone", {
-	description = "Stone Alter End",
+	description = "kamenný oltář: konec",
 	tiles = {"church_altar_stone_end_top.png",
 	"church_altar_stone_end_top.png^[transformFXR180",
 	"church_altar_stone_sides.png",
@@ -54,7 +54,6 @@ minetest.register_node("church_altar:altar_end_stone", {
 	sunlight_propagates = true,
 	is_ground_content = false,
 	groups = {cracky = 3},
-	on_rotate = screwdriver.rotate_simple,
 	sounds = stone_sounds,
 	node_box = {
 		type = 'fixed',
@@ -76,7 +75,7 @@ minetest.register_node("church_altar:altar_end_stone", {
 })
 
 minetest.register_node("church_altar:altar_end_marble", {
-	description = "Marble Alter End",
+	description = "mramorový oltář: konec",
 	tiles = {"church_altar_marble_end_top.png",
 	"church_altar_marble_end_top.png^[transformFXR180",
 	"church_altar_marble_sides.png",
@@ -90,7 +89,6 @@ minetest.register_node("church_altar:altar_end_marble", {
 	sunlight_propagates = true,
 	is_ground_content = false,
 	groups = {cracky = 3},
-	on_rotate = screwdriver.rotate_simple,
 	sounds = stone_sounds,
 	node_box = {
 		type = 'fixed',
@@ -112,7 +110,7 @@ minetest.register_node("church_altar:altar_end_marble", {
 })
 
 minetest.register_node("church_altar:altar_middle_stone", {
-	description = "Stone Donation Alter",
+	description = "kamenný oltář",
 	tiles = {"church_altar_stone_center_top.png",
 	"church_altar_stone_center_top.png^[transformFX",
 	"church_altar_stone_sides.png",
@@ -125,7 +123,6 @@ minetest.register_node("church_altar:altar_middle_stone", {
 	sunlight_propagates = true,
 	is_ground_content = false,
 	groups = {cracky = 3},
-	on_rotate = screwdriver.rotate_simple,
 	sounds = stone_sounds,
 	node_box = {
 		type = 'fixed',
@@ -147,7 +144,6 @@ minetest.register_node("church_altar:altar_middle_stone", {
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("formspec", altar_formspec)
-		meta:set_string("infotext", "Altar")
 		local inv = meta:get_inventory()
 		inv:set_size("main", 8*1)
 	end,
@@ -155,14 +151,6 @@ minetest.register_node("church_altar:altar_middle_stone", {
 		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
 		return inv:is_empty("main")
-	end,
-	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
-		if not minetest.is_protected(pos, player:get_player_name()) then
-			return 1000
-		else
-			return 0
-		end
-
 	end,
 	on_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 		minetest.log("action", player:get_player_name()..
@@ -180,7 +168,7 @@ minetest.register_node("church_altar:altar_middle_stone", {
 })
 
 minetest.register_node("church_altar:altar_middle_marble", {
-	description = "Marble Donation Alter",
+	description = "mramorový oltář",
 	tiles = {"church_altar_marble_center_top.png",
 	"church_altar_marble_center_top.png^[transformFX",
 	"church_altar_marble_sides.png",
@@ -193,7 +181,6 @@ minetest.register_node("church_altar:altar_middle_marble", {
 	sunlight_propagates = true,
 	is_ground_content = false,
 	groups = {cracky = 3},
-	on_rotate = screwdriver.rotate_simple,
 	sounds = stone_sounds,
 	node_box = {
 		type = 'fixed',
@@ -215,7 +202,6 @@ minetest.register_node("church_altar:altar_middle_marble", {
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("formspec", altar_formspec)
-		meta:set_string("infotext", "Altar")
 		local inv = meta:get_inventory()
 		inv:set_size("main", 8*1)
 	end,
@@ -227,13 +213,6 @@ minetest.register_node("church_altar:altar_middle_marble", {
 	on_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 		minetest.log("action", player:get_player_name()..
 		" moves stuff in marble altar at "..minetest.pos_to_string(pos))
-	end,
-	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
-		if not minetest.is_protected(pos, player:get_player_name()) then
-			return 1000
-		else
-			return 0
-		end
 	end,
 	on_metadata_inventory_put = function(pos, listname, index, stack, player)
 		minetest.log("action", player:get_player_name()..
@@ -251,6 +230,7 @@ minetest.register_node("church_altar:altar_middle_marble", {
 -- Register ABM
 -------------------
 -- suck in items [code by jordan4ibanez / from the Hopper mod]
+--[[
 minetest.register_abm({
 	nodenames = {"church_altar:altar_middle_stone", "church_altar:altar_middle_marble"},
 	interval = 1.0,
@@ -274,25 +254,26 @@ minetest.register_abm({
 		end
 	end,
 })
+]]
 
 -----------------------------
 -- Register Craft Recipes
 -----------------------------
 local items = {
 		stone = "default:stone",
-		stone_slab = "stairs:slab_stone",
+		stone_slab = "moreblocks:slab_stone",
 		marble = "default:coral_skeleton",
 		marble_slab = "default:coral_skeleton",
 	}
 
 if minetest.get_modpath("technic_worldgen") then
 	items.marble = "technic:marble"
-	items.marble_slab = "stairs:slab_technic_marble"
+	items.marble_slab = "technic:slab_marble"
 end
 
 if minetest.get_modpath("darkage") then
 	items.marble = "darkage:marble"
-	items.marble_slab = "stairs:slab_darkage_marble"
+	items.marble_slab = "darkage:slab_marble"
 end
 
 if minetest.get_modpath("hades_core") then

@@ -8,18 +8,12 @@ see http://www.gnu.org/licenses/gpl-3.0.html
 
 =====================
 
-Church Mod Forum Topic :
-
-https://forum.minetest.net/viewtopic.php?f=9&t=28536
+This is a version modified and adapted by Singularis for Český hvozd Server.
 
 =====================
 
 Church Modpack adds many decorative nodes to the game.
 
 Including crosses, candles, podiums, pews, stained glass, and more.
-
-=====================
-
-![Preview](https://raw.githubusercontent.com/Napiophelios/church/master/screenshot.png)
 
 =====================

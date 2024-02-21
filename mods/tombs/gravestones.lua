@@ -220,7 +220,11 @@ for i, shape_def in ipairs(shapes) do
 
 	local def = table.copy(tombstone_common_def)
 
-	def.tiles = {textures..'.png'}
+	if type(textures) == "string" then
+		def.tiles = {textures..'.png'}
+	else
+		def.tiles = textures
+	end
 	if material_def.light ~= nil then
 		def.light_source = material_def.light
 	end

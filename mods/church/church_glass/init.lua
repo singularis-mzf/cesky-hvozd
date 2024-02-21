@@ -92,6 +92,7 @@ if minetest.get_modpath("basic_materials") then
 	strips.copper.item = "basic_materials:copper_strip"
 end
 
+--[[
 if minetest.get_modpath("technic_worldgen") then
 	strips.lead = {
 			strip = S("Lead"),
@@ -115,6 +116,7 @@ if minetest.get_modpath("hades_technic_worldgen") then
 		strips.lead.item = "basic_materials:lead_strip"
 	end
 end
+]]
 
 local styles = {
 		-- 1
@@ -199,7 +201,7 @@ for strip,strip_data in pairs(strips) do
 	for style,style_data in pairs(styles) do
 		local image = "church_glass_frame_"..style..".png^[multiply:#"..strip_data.hex
 		minetest.register_node("church_glass:church_frame_"..strip.."_"..style, {
-				description = "Stained Glass "..style.." "..strip_data.strip.." Frame",
+				description = "čiré chrámové sklo "..style,
 				use_texture_alpha = "clip",
 				inventory_image = image,
 				--wield_image = "church_glass_itemname.png",
@@ -250,7 +252,7 @@ for strip,strip_data in pairs(strips) do
 		for color,color_data in pairs(colors) do
 			local image = "(church_glass_glass_"..style..".png^[colorize:#"..color_data.hex..":128)^(church_glass_frame_"..style..".png^[multiply:#"..strip_data.hex..")"
 			minetest.register_node("church_glass:church_glass_"..strip.."_"..style.."_"..color, {
-					description = color_data.color.." Stained Glass "..style.." "..strip_data.strip.." Frame",
+					description = color_data.color.." chrámové sklo "..style,
 					use_texture_alpha = "blend",
 					inventory_image = image,
 					--wield_image = "church_glass_itemname.png",
@@ -294,9 +296,16 @@ for strip,strip_data in pairs(strips) do
 	end
 end
 
+local descriptions = {
+	blue = "modré",
+	green = "zelené",
+	red = "červené",
+	violet = "fialové",
+}
+
 for _, c in pairs({"blue", "green", "red", "violet"}) do
 	minetest.register_node("church_glass:church_glass_"..c, {
-		description = c.." Stained Glass",
+		description = "standardní "..descriptions[c].." chrámové sklo",
 		use_texture_alpha = "blend",
 		inventory_image = "church_glass_"..c..".png",
 		--wield_image = "church_glass_itemname.png",
@@ -331,7 +340,7 @@ for _, c in pairs({"blue", "green", "red", "violet"}) do
 	})
 
 	minetest.register_node("church_glass:church_glass_"..c.."_fancy", {
-		description = c.." Stained Glass",
+		description = "zdobné "..descriptions[c].." chrámové sklo",
 		use_texture_alpha = "blend",
 		inventory_image = "church_glass_"..c.."_fancy.png",
 		--wield_image = "church_glass_itemname.png",
@@ -364,8 +373,65 @@ for _, c in pairs({"blue", "green", "red", "violet"}) do
 			},
 		},
 	})
-	-----------------------------
-	-- Register Craft Recipes
-	-----------------------------
-
 end
+
+-----------------------------
+-- Register Craft Recipes
+-----------------------------
+minetest.register_craft{
+	output = "church_glass:church_glass_red",
+	recipe = {
+		{"church_glass:church_glass_copper_5_red", "church_glass:church_glass_copper_5_red"},
+		{"", ""},
+	},
+}
+minetest.register_craft{
+	output = "church_glass:church_glass_green",
+	recipe = {
+		{"church_glass:church_glass_copper_5_dark_green", "church_glass:church_glass_copper_5_dark_green"},
+		{"", ""},
+	},
+}
+minetest.register_craft{
+	output = "church_glass:church_glass_blue",
+	recipe = {
+		{"church_glass:church_glass_copper_1_blue", "church_glass:church_glass_copper_1_blue"},
+		{"", ""},
+	},
+}
+minetest.register_craft{
+	output = "church_glass:church_glass_violet",
+	recipe = {
+		{"church_glass:church_glass_copper_7_violet", "church_glass:church_glass_copper_7_violet"},
+		{"", ""},
+	},
+}
+
+minetest.register_craft{
+	output = "church_glass:church_glass_red_fancy",
+	recipe = {
+		{"church_glass:church_glass_copper_6_red", "church_glass:church_glass_copper_6_red"},
+		{"", ""},
+	},
+}
+minetest.register_craft{
+	output = "church_glass:church_glass_green_fancy",
+	recipe = {
+		{"church_glass:church_glass_copper_4_dark_green", "church_glass:church_glass_copper_4_dark_green"},
+		{"", ""},
+	},
+}
+minetest.register_craft{
+	output = "church_glass:church_glass_blue_fancy",
+	recipe = {
+		{"church_glass:church_glass_copper_2_blue", "church_glass:church_glass_copper_2_blue"},
+		{"", ""},
+	},
+}
+minetest.register_craft{
+	output = "church_glass:church_glass_violet_fancy",
+	recipe = {
+		{"church_glass:church_glass_copper_4_violet", "church_glass:church_glass_copper_4_violet"},
+		{"", ""},
+	},
+}

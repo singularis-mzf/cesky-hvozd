@@ -193,7 +193,6 @@ local function save_file(dir_path, file_name, content)
 end
 
 local function get_bank_month_history(player_name, bank_month)
-	minetest.log("action", "[ch_bank DEBUG] get_bank_month_history("..player_name..", "..bank_month..")")
 	local month = get_current_bank_day():sub(1,7)
 	local i = 1
 	while i <= 3 and month ~= bank_month do
@@ -236,7 +235,6 @@ local function get_bank_month_history(player_name, bank_month)
 end
 
 local function save_bank_history(player_name, bank_month)
-	minetest.log("action", "[ch_bank DEBUG] save_bank_history("..player_name..", "..bank_month..")")
 	local current_month = ch_core.get_or_add(bank_history, bank_month)
 	local current_data = ch_core.get_or_add(current_month, player_name)
 	local encoded_data = {}
@@ -648,16 +646,5 @@ function utils.try_pay_wage(player_name, join_timestamp, ap_xp_at_join)
 				message_to_chat = "banka: na účet jste obdržel/a mzdu 30,- Kčs",
 			}
 		end
-	else
-		minetest.log("action", "DEBUG: "..dump2({
-			event = "try_pay_wage failed",
-			player_name = player_name,
-			join_timestamp = join_timestamp,
-			ap_xp_at_join = ap_xp_at_join,
-			now = now,
-			ap_xp_now = ap_xp_now,
-			online_charinfo = online_charinfo and "true" or "false",
-			offline_charinfo = offline_charinfo and "true" or "false",
-		}))
 	end
 end

@@ -40,6 +40,7 @@ local materials = {
 	-- ["default:silver_sandstone"] = true,
 	["default:steelblock"] = true,
 	["default:stone"] = {color = color_gold},
+	["default:mossycobble"] = {color = color_white, map64 = true},
 	["default:wood"] = {color = color_white},
 	["jonez:marble"] = true,
 	["moreblocks:copperpatina"] = true,
@@ -72,6 +73,15 @@ for name, mdef in pairs(materials) do
 			tiles = tiles:gsub(".png$", "")
 		else
 			error("[tombs] Cannot parse tiles of "..name..": "..dump2(ndef.tiles))
+		end
+		if mdef.map64 then
+			local t = "[combine:64x64"
+			for x = -16, 48, 32 do
+				for y = -16, 48, 32 do
+					t = t..":"..x..","..y.."="..tiles..".png\\^[resize\\:32x32"
+				end
+			end
+			tiles = {{name = t}}
 		end
 		tombs.register_stones(name, name:gsub(":", "_"), ndef.description, tiles, mdef)
 	else
