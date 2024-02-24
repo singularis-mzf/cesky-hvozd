@@ -1,5 +1,9 @@
 -- COLORABLE GLASS (colorable alternative nodes)
 
+if not minetest.get_modpath("unifieddyes") then
+	return
+end
+
 local keys_to_transfer = {
 	description = false,
 	color = false,

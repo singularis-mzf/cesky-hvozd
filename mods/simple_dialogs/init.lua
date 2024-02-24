@@ -590,27 +590,38 @@ function simple_dialogs.dialog_to_formspec_inner(playername,npcself)
 	if not say then say="" end
 	--
 	--now get the replylist
-	local replies=""
+	local replies = {}
 	for r=1,#dlg[topic][subtopic].reply,1 do
-		if r>1 then replies=replies.."," end
-		local rply=dlg[topic][subtopic].reply[r].text
+		local rply = dlg[topic][subtopic].reply[r].text
 		--minetest.log("simple_dialogs->dtfsi reply rply bfr="..rply)
-		rply=simple_dialogs.populate_vars_and_funcs(npcself,rply,playername)
+		rply = simple_dialogs.populate_vars_and_funcs(npcself,rply,playername)
 		--minetest.log("simple_dialogs->dtfsi reply rply aft="..rply)
 		--if string.len(rply)>70 then rply=string.sub(rply,1,70)..string.char(10)..string.sub(rply,71) end  tried wrapping, it doesn't work well.
-		replies=replies..minetest.formspec_escape(rply)
+		-- // replies=replies..minetest.formspec_escape(rply)
+		table.insert(replies, minetest.formspec_escape(rply))
 		--minetest.log("simple_dialogs->dtfsi reply rply fnl="..rply)
 	end --for
 	--
-	local x=0.45
+	local x=0.8
 	local y=0.5
-	local x2=0.375
-	local y2=y+9.0
+	local w=9.0
 	formspec={
-		"textarea["..x..","..y..";9.4,8;;;".."\n"..minetest.formspec_escape(say).."]",
-		get_background_box(x2, y2, 27, 5),
-		"textlist["..x2..","..y2..";27,5;reply;"..replies..";0;true]"  --note that replies were escaped as they were added
+		"textarea["..x..","..y..";"..w..",8;;;".."\n"..minetest.formspec_escape(say).."]",
+		get_background_box(0.37, 9.3, 15.0, 5.4),
+		"scroll_container[0.57,9.5;13.9,5.0;scbar;vertical]",
+		"style_type[image_button:focused,image_button:hovered;fgimg=ch_core_white_pixel.png^\\[multiply:#204020]",
+		-- "textlist["..x2..","..y2..";27,5;reply;"..replies..";0;true]"  --note that replies were escaped as they were added
 	}
+	for i, reply in ipairs(replies) do
+		table.insert(formspec, "image_button[0.15,"..(0.5 * (i - 1) + 0.05)..";200,0.5;;reply;"..i..";false;false;]label[0.2,"..(0.5 * (i - 1) + 0.275)..";"..reply.."]")
+	end
+	table.insert(formspec, "scroll_container_end[]")
+	local scrollbar_max = math.floor(5 * (#replies - 9))
+	if scrollbar_max > 0 then
+		table.insert(formspec, "scrollbaroptions[max="..scrollbar_max..";arrows=show]"..
+			"scrollbar[14.6,9.5;0.5,5.0;vertical;scbar;0]")
+	end
+
 	--store the topic and subtopic in context as well
 	contextdlg[playername].topic=topic
 	contextdlg[playername].subtopic=subtopic
@@ -1428,7 +1439,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	--incoming reply fields look like: fields={ ["reply"] = CHG:1,}
 	if fields["reply"] then 
 		--minetest.log("simple_dialogs->sss got back reply!"..dump(fields["reply"]))
-		local r=tonumber(string.sub(fields["reply"],5))
+		-- // local r=tonumber(string.sub(fields["reply"],5))
+		local r=tonumber(fields["reply"])
 		--minetest.log("topic="..topic.." subtopic="..subtopic.." r="..r.."<")
 		--minetest.log("newtopic=npcself.dialog.dlg[topic][subtopic]="..dump(npcself.dialog.dlg[topic][subtopic]))
 		--this may seem incredibly paranoid, BUT, one server crashed here with "attempt to index a nil value"
