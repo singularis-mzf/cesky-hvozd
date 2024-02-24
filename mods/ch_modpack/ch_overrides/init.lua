@@ -38,6 +38,7 @@ dofile(modpath.."/trash_cans.lua")
 dofile(modpath.."/tool_breaking.lua")
 dofile(modpath.."/ui_appearance.lua")
 dofile(modpath.."/ui_settings.lua")
+dofile(modpath.."/underwater_dig.lua")
 
 -- log giveme
 

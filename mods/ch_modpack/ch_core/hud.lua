@@ -200,10 +200,14 @@ local function on_step(dtime)
 		local text = string.format("%s\n%d. %s %s\n%02d:%02d %s", cas.den_v_tydnu_nazev, cas.den, cas.nazev_mesice_2, cas.rok, cas.hodina, cas.minuta, cas.posun_text)
 		for player_name, record in pairs(datetime_huds) do
 			local player = minetest.get_player_by_name(player_name)
-			if player and record.hud_text ~= text then
-				player:hud_change(record.hud_id, "text", text.." ["..record.counter.."]")
-				record.counter = record.counter + 1
-				record.hud_text = text
+			if player ~= nil then
+				local ltext = ch_core.prihlasovaci_na_zobrazovaci(player_name).."\n"..text
+				if record.hud_text ~= ltext then
+					record.hud_text = ltext
+					ltext = ltext.." ["..record.counter.."]"
+					player:hud_change(record.hud_id, "text", ltext)
+					record.counter = record.counter + 1
+				end
 			end
 		end
 	end
