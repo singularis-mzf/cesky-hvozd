@@ -1,4 +1,4 @@
-local epsilon = 0.001
+local epsilon = 0.010
 
 local corner_nbox = {
 	type = "fixed",
