@@ -374,7 +374,8 @@ local function player_node_state(player, pointed_thing)
 	local node_pos = pointed_thing.under
 
 	-- TODO: compute pitch based on actual eye position (is that possible at all ??)
-	player_pos.y = player_pos.y + module.api_config.eye_offset_hack
+	-- player_pos.y = player_pos.y + module.api_config.eye_offset_hack
+	-- NO: use the bottom of the player model as a base position!
 	local node_dir = {}
 	for _,c in ipairs({"x", "y", "z"}) do
 		node_dir[c] = node_pos[c] - player_pos[c]
@@ -392,7 +393,7 @@ local function player_node_state(player, pointed_thing)
 	result.faced_side = quadrant_to_facing_map[string.format("%d,%d",hquadrant,vquadrant)]
 
 	-- Compute the nearest side of the node
-	local eye_offset = player:get_eye_offset()
+	local eye_offset = vector.zero() -- player:get_eye_offset()
 	local dpos = vector.subtract(vector.add(player_pos, eye_offset), node_pos)
 	if math.abs(dpos.x) >= math.max(math.abs(dpos.y), math.abs(dpos.z)) then
 		result.pointed_side = dpos_to_pointing_map[string.format("%d,0,0", math.sign(dpos.x))]
@@ -760,7 +761,13 @@ local function wrench_handler(itemstack, player, pointed_thing, mode, material, 
 	local on_rotate_result
 	if ndef.on_rotate then
 		-- function on_rotate(pos, node, user, mode, new_param2)
-		on_rotate_result = ndef.on_rotate(vector.copy(pos), table.copy(node), player, screwdriver.ROTATE_FACE, new_param2)
+		local mode
+		if ndef.paramtype2 == "degrotate" and new_param2 == (extra_data + 239) % 240 then
+			mode = screwdriver.ROTATE_AXIS
+		else
+			mode = screwdriver.ROTATE_FACE
+		end
+		on_rotate_result = ndef.on_rotate(vector.copy(pos), table.copy(node), player, mode, new_param2)
 	end
 	node.param2 = new_param2
 
