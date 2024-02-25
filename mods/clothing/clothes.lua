@@ -26,9 +26,9 @@ if minetest.settings:get_bool("clothing_enable_hood_mask", true) then
 end
 
 local groups_clothing_in_ci = {clothing = 1}
-local groups_clothing_not_in_ci = {clothing = 1, not_in_creative_inventory = 1}
+local groups_clothing_not_in_ci = groups_clothing_in_ci -- {clothing = 1, not_in_creative_inventory = 1}
 local groups_cape_in_ci = {cape = 1}
-local groups_cape_not_in_ci = {cape = 1, not_in_creative_inventory = 1}
+local groups_cape_not_in_ci = groups_cape_in_ci -- {cape = 1, not_in_creative_inventory = 1}
 
 -- groups_cape_in_ci = groups_cape_not_in_ci
 -- groups_clothing_in_ci = groups_clothing_not_in_ci

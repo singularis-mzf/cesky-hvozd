@@ -91,7 +91,11 @@ end
 function stairsplus:register_custom_subset(subset, modname, subname, recipeitem, fields)
 	local subset_copy = table.copy(subset)
 	for k, v in pairs(subset_copy) do
-		stairsplus.register_single(v[1], v[2], stairsplus.defs[v[1]][v[2]], modname, subname, recipeitem, fields)
+		local info = stairsplus.defs[v[1]][v[2]]
+		if info == nil then
+			error("stairsplus:register_custom_subset(): shape "..v[1].."/"..v[2].." is unknown!")
+		end
+		stairsplus.register_single(v[1], v[2], info, modname, subname, recipeitem, fields)
 	end
 
 	circular_saw.known_nodes[recipeitem] = {modname, subname}

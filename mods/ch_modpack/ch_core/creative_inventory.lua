@@ -1,5 +1,7 @@
 ch_core.open_submod("creative_inventory", {lib = true})
 
+local ifthenelse = ch_core.ifthenelse
+
 local none = {}
 local partition_defs = {
 	{
@@ -242,7 +244,171 @@ local partition_defs = {
 	},
 }
 
+function ch_core.overridable.is_clothing(item_name)
+	return minetest.get_item_group(item_name, "clothing") > 0 or
+		minetest.get_item_group(item_name, "cape") > 0
+end
+
+function ch_core.overridable.is_stairsplus_shape(item_name, item_def)
+	return false
+end
+
+function ch_core.overridable.is_cnc_shape(item_name, item_def)
+	return false
+end
+
+function ch_core.overridable.is_other_shape(item_name, groups)
+	return groups.fence or groups.gravestone or
+		item_name:sub(1, 7) == "pkarcs:" or
+		item_name:sub(1, 8) == "pillars:"
+end
+
+local function is_streets_signs(name, groups)
+	return name:sub(1, 8) == "streets:" and (groups.streets_tool or groups.sign)
+end
+
+local categories = {
+	{
+		description = "výchozí paleta předmětů",
+		condition = function(itemstring, name, def, groups, palette_index)
+			local o = ch_core.overridable
+			return
+				not o.is_clothing(name) and
+				not o.is_stairsplus_shape(name, def) and
+				not o.is_cnc_shape(name, def) and
+				not o.is_other_shape(name, groups) and
+				not is_streets_signs(name, groups) and
+				(not groups.dye or groups.basic_dye) and
+				not groups.platform and
+				not (name:sub(1, 16) == "clothing:fabric_") and
+				not (name:sub(1, 15) == "letters:letter_")
+		end,
+	},
+	{
+		description = "tvary",
+		condition = function(itemstring, name, def, groups, palette_index)
+			local o = ch_core.overridable
+			return o.is_stairsplus_shape(name, def) or
+				o.is_cnc_shape(name, def) or
+				o.is_other_shape(name, groups)
+		end,
+	},
+	{
+		description = "barvitelné předměty",
+		condition = function(itemstring, name, def, groups, palette_index)
+			return (groups.ud_param2_colorable or 0) > 0
+		end,
+	},
+	{
+		description = "barviva",
+		condition = function(itemstring, name, def, groups, palette_index)
+			return groups.dye ~= nil
+		end,
+	},
+	{
+		description = "dopravní značení",
+		condition = function(itemstring, name, def, groups, palette_index)
+			return is_streets_signs(name, groups) or name == "streets:smallpole" or name == "streets:bigpole" or name == "streets:bigpole_short"
+		end,
+	},
+	{
+		description = "látky (na šaty)",
+		condition = function(itemstring, name, def, groups, palette_index)
+			return name:sub(1, 16) == "clothing:fabric_"
+		end,
+	},
+	{
+		description = "oblečení a obuv",
+		condition = function(itemstring, name, def, groups, palette_index)
+			return ch_core.overridable.is_clothing(name)
+		end,
+	},
+	{
+		description = "nástupiště",
+		condition = function(itemstring, name, def, groups, palette_index)
+			return (groups.platform or 0) > 0
+		end,
+	},
+	{
+		description = "všechny předměty",
+		condition = function(itemstring, name, ndef, groups, palette_index)
+			return true
+		end,
+	},
+	{
+		description = "test: svítící bloky",
+		condition = function(itemstring, name, def, groups, palette_index)
+			return minetest.registered_nodes[name] ~= nil and def.paramtype == "light" and (def.light_source or 0) > 0
+		end,
+	},
+}
+
+local function get_default_categories()
+	local descriptions = {}
+	for i, category_def in ipairs(categories) do
+		descriptions[i] = category_def.description.." [0]"
+	end
+	return { descriptions = descriptions, filter = {} }
+end
+
+local function compute_categories(itemstrings)
+	local counts = {}
+	local descriptions = {}
+	local filter = {}
+	local itemstrings_set = {}
+	local registered_items = minetest.registered_items
+	local string_cache = {}
+
+	for i = 1, #categories do
+		counts[i] = 0
+	end
+
+	for _, itemstring in ipairs(itemstrings) do
+		if not itemstrings_set[itemstring] then
+			itemstrings_set[itemstring] = true
+			local stack = ItemStack(itemstring)
+			local name = stack:get_name()
+			local def = registered_items[name]
+			if def ~= nil then
+				local groups = def.groups or none
+				local palette_index
+				if name ~= itemstring then
+					palette_index = stack:get_meta():get_int("palette_index")
+				end
+				local mask = ""
+				for i, category_def in ipairs(categories) do
+					if category_def.condition(itemstring, name, def, groups, palette_index) then
+						mask = mask.."1"
+						counts[i] = counts[i] + 1
+					else
+						mask = mask.."0"
+					end
+				end
+				if string_cache[mask] ~= nil then
+					mask = string_cache[mask]
+				else
+					string_cache[mask] = mask
+				end
+				filter[itemstring] = mask
+			end
+		end
+	end
+	for i, category_def in ipairs(categories) do
+		descriptions[i] = category_def.description.." ["..counts[i].."]"
+	end
+	return { descriptions = descriptions, filter = filter }
+end
+
 ch_core.creative_inventory = {
+	categories = get_default_categories(),
+	--[[
+		= {
+			descriptions[index] = popisek, -- velikost #descriptions udává počet existujících kategorií
+			filter = {
+				[itemstring] = "00100[...]", -- maska kategorií pro každý itemstring
+			},
+		}
+	]]
 	items_by_order = {},
 	partitions_by_name = {
 		others = {
@@ -253,15 +419,46 @@ ch_core.creative_inventory = {
 	not_initialized = true,
 }
 
-local function sort_items(items, group_by_mod)
-	-- items is expected to be a sequence of item names, e. g. {"default:cobble", "default:stick", ...}
+local function generate_palette_itemstrings(name, paramtype2, limit, list_to_add)
+	if list_to_add == nil then
+		list_to_add = {}
+	end
+	if limit == nil then
+		limit = 256
+	end
+	local step
+	if paramtype2 == "color" then
+		step = 1
+	elseif paramtype2 == "colorfacedir" or paramtype2 == "colordegrotate" then
+		step = 32
+	elseif paramtype2 == "color4dir" then
+		step = 4
+	elseif paramtype2 == "colorwallmounted" then
+		step = 8
+	else
+		table.insert(list_to_add, name)
+		return list_to_add
+	end
+	local i = 0
+	while i < limit and i * step < 256 do
+		local itemstring = minetest.itemstring_with_palette(name, i * step)
+		table.insert(list_to_add, itemstring)
+		i = i + 1
+	end
+	return list_to_add
+end
+
+local function sort_items(itemstrings, group_by_mod)
+	-- items is expected to be a sequence of item strings, e. g. {"default:cobble", "default:stick", ...}
 	-- the original list is not changed; the new list is returned
 	local counter_nil, counter_same, counter_diff = 0, 0, 0
-	local item_to_key = {}
+	local itemstring_to_key = {}
 
-	for _, item in ipairs(items) do
-		local def = minetest.registered_items[item]
-		local desc = (def and def.description) or ""
+	for _, itemstring in ipairs(itemstrings) do
+		local stack = ItemStack(itemstring)
+		local name = stack:get_name()
+		local def = minetest.registered_items[name]
+		local desc = stack:get_description() or ""
 		local tdesc = minetest.get_translated_string("cs", desc)
 		if tdesc == nil then
 			counter_nil = counter_nil + 1
@@ -275,16 +472,20 @@ local function sort_items(items, group_by_mod)
 			end
 		end
 		if group_by_mod then
-			local index = item:find(":")
+			local index = name:find(":")
 			if index then
-				tdesc = item:sub(1, index)..tdesc
+				tdesc = name:sub(1, index)..tdesc
 			end
 		end
-		item_to_key[item] = ch_core.utf8_radici_klic(tdesc, false)
+		local palette_index = stack:get_meta():get_int("palette_index")
+		if palette_index > 0 then
+			tdesc = string.format("%s/%03d", tdesc, palette_index)
+		end
+		itemstring_to_key[itemstring] = ch_core.utf8_radici_klic(tdesc, false)
 	end
 
-	local result = table.copy(items)
-	table.sort(result, function(a, b) return item_to_key[a] < item_to_key[b] end)
+	local result = table.copy(itemstrings)
+	table.sort(result, function(a, b) return itemstring_to_key[a] < itemstring_to_key[b] end)
 	minetest.log("info", "sort_items() stats: "..counter_diff.." differents, "..counter_same.." same, "..counter_nil.." nil, "..(counter_diff + counter_same + counter_nil).." total, count = "..#result..".")
 	return result
 end
@@ -372,7 +573,11 @@ function ch_core.update_creative_inventory(force_update)
 
 			local partition_list = existing_partitions[partition]
 			if not partition_list then
-				existing_partitions[partition] = {name}
+				partition_list = {}
+				existing_partitions[partition] = partition_list
+			end
+			if groups.ui_generate_palette_items ~= nil and groups.ui_generate_palette_items > 0 then
+				generate_palette_itemstrings(name, def.paramtype2, groups.ui_generate_palette_items, partition_list)
 			else
 				table.insert(partition_list, name)
 			end
@@ -423,8 +628,12 @@ function ch_core.update_creative_inventory(force_update)
 		partitions_by_name_count = partitions_by_name_count + 1
 	end
 
+	-- 7. přidej kategorie
+	local categories = compute_categories(items_by_order)
+
 	-- commit
 	local new_ci = {
+		categories = categories,
 		items_by_order = items_by_order,
 		partitions_by_name = partitions_by_name,
 	}

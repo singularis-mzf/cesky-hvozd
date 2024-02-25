@@ -48,6 +48,13 @@ function doors.fencegate_toggle(self, player)
 	return toggle_fencegate(self.pos, nil, player)
 end
 
+local function get_material_description(node_name)
+	local mdef = minetest.registered_nodes[node_name or ""]
+	if mdef ~= nil and (mdef.groups == nil or (mdef.groups.not_in_creative_inventory or 0) <= 0) then
+		return mdef.description
+	end
+end
+
 function doors.register_fencegate(name, def)
 	local fence = {
 		description = def.description,
@@ -93,6 +100,11 @@ function doors.register_fencegate(name, def)
 
 	if not fence.sounds then
 		fence.sounds = default.node_sound_wood_defaults()
+	end
+
+	local base_description = get_material_description(def.material)
+	if base_description ~= nil then
+		fence.description = base_description..": branka"
 	end
 
 	local fence_closed = table.copy(fence)

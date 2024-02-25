@@ -7,10 +7,12 @@ local S = technic_cnc.getter
 function technic_cnc.register_program(recipeitem, suffix, model, groups, images, description, cbox, sbox)
 
 	if cbox and not sbox then sbox = cbox end
-	groups.not_in_creative_inventory = 1
+
+	groups = table.copy(groups)
+	groups.not_in_creative_inventory = nil
 
 	local def = {
-		description   = "neznámý materiál "..description,
+		description   = "neznámý materiál: "..description,
 		tiles         = images,
 		paramtype     = "light",
 		paramtype2    = "facedir",
@@ -18,6 +20,7 @@ function technic_cnc.register_program(recipeitem, suffix, model, groups, images,
 		groups        = groups,
 		selection_box = sbox,
 		collision_box = cbox,
+		_technic_cnc_recipeitem = recipeitem,
 	}
 
 	if type(model) ~= "string" then -- assume a nodebox if it's a table or function call
@@ -44,7 +47,7 @@ function technic_cnc.register_program(recipeitem, suffix, model, groups, images,
 	local node_def = minetest.registered_nodes[recipeitem]
 	if node_def then
 		if node_def.description then
-			def.description = node_def.description.." "..description
+			def.description = node_def.description..": "..description
 		else
 			minetest.log("warning", "Description of a node "..recipeitem.." not found!")
 		end
@@ -74,6 +77,9 @@ local cnc_recipe_items = {}
 
 if minetest.get_modpath("ch_core") then
 	ch_core.create_private_vgroup("na_cnc", cnc_recipe_items)
+	function ch_core.overridable.is_cnc_shape(item_name, item_def)
+		return item_def._technic_cnc_recipeitem ~= nil
+	end
 end
 
 -- function to iterate over all the programs the CNC machine knows

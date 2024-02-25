@@ -50,3 +50,7 @@ function stairsplus:get_shape(recipeitem, category, alternate)
 		return
 	end
 end
+
+function ch_core.overridable.is_stairsplus_shape(item_name, item_def)
+	return item_def._stairsplus_recipeitem ~= nil
+end

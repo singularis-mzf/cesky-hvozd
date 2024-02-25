@@ -109,6 +109,11 @@ local function join_groups(a, b)
 end
 
 function pillars.register_pillar(name, def)
+	assert(def.basenode)
+	local basenode_def = minetest.registered_nodes[def.basenode]
+	if basenode_def == nil then
+		error(basenode_def.." not defined!")
+	end
     local groups = table.copy(def.groups)
 	groups.pillar = 1
 	
@@ -133,7 +138,7 @@ function pillars.register_pillar(name, def)
         end
 
 	    minetest.register_node(":pillars:" .. name .. v[1], {
-		    description = def.description,
+		    description = (basenode_def.description or "neznámý materiál")..": pilíř",
 		    drawtype = "nodebox",
 		    paramtype = "light",
 			paramtype2 = "facedir",

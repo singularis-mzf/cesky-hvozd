@@ -3,7 +3,8 @@ local S = technic_cnc.getter
 -- Define slope boxes for the various nodes
 -------------------------------------------
 technic_cnc.programs = {
-	{ suffix  = "technic_cnc_stick",
+	{
+		suffix  = "technic_cnc_stick",
 		model = {-0.15, -0.5, -0.15, 0.15, 0.5, 0.15},
 		desc  = S("Stick")
 	},

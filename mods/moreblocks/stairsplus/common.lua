@@ -161,6 +161,7 @@ local alternate_to_group_value = {
 	["_wchimney"] = 23,
 }
 
+--[[
 local not_blocking_trains_shapes = {
 	["micro/_1"] = 1,
 	["micro/_2"] = 1,
@@ -186,28 +187,36 @@ local not_blocking_trains_shapes = {
 	["slope/_slab_half_raised"] = 1,
 	["slope/_tripleslope"] = 1,
 }
+]]
 
 stairsplus.register_single = function(category, alternate, info, modname, subname, recipeitem, fields)
 
 	local src_def = minetest.registered_nodes[recipeitem] or {}
 	local desc_base = fields.description
+	--[[
 	local readable_alternate = alternate:gsub("_", " "):gsub("^%s*(.-)%s*$", "%1");
-	local def = {}
 
 	if readable_alternate == "" then
 		readable_alternate = "normal";
-	end
+	end ]]
 
-	if category ~= "slab" then
-		def = table.copy(info)
-	end
+	local def = table.copy(info)
 
 	-- copy fields to def
 	for k, v in pairs(fields) do
 		def[k] = v
 	end
 
-	def.drawtype = "nodebox"
+	if info.mesh then
+		def.drawtype = "mesh"
+		def.mesh = info.mesh
+	elseif info.node_box then
+		def.drawtype = "nodebox"
+		def.node_box = assert(info.node_box)
+	else
+		error("Invalid shape def: "..dump2(def))
+	end
+
 	def.paramtype = "light"
 	def.paramtype2 = def.paramtype2 or "facedir"
 	if def.use_texture_alpha == nil then
@@ -223,41 +232,20 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 	def.on_place = stairsplus.rotate_node_aux
 	def.groups = stairsplus:prepare_groups(fields.groups)
 	def.groups[category] = alternate_to_group_value[alternate] or 1
-
-	local not_blocking_trains = not_blocking_trains_shapes[category.."/"..alternate]
-	if not_blocking_trains then
-		def.groups.not_blocking_trains = not_blocking_trains
+	if info.not_blocking_trains then
+		def.groups.not_blocking_trains = 1
 	end
 
-	if category == "slab" then
-		if type(info) ~= "table" then
-			def.node_box = {
-				type = "fixed",
-				fixed = {-0.5, -0.5, -0.5, 0.5, (info/16)-0.5, 0.5},
-			}
-			def.description = ("%s (%s, %d/16)"):format(desc_base, S("Slab"), info)
-			-- print("DEBUG: tiles of "..modname.. ":" .. category .. "_" .. subname .. alternate.." are: "..dump2(def.tiles))
-		else
-			def.node_box = {
-				type = "fixed",
-				fixed = info,
-			}
-			def.description = desc_base .. " (" .. S(descriptions[category]) .. ", " .. S(readable_alternate) .. ")"
-		end
-		if alternate == "_triplet" then
-			def.groups.not_in_creative_inventory = nil
-		end
-	else
-		def.description = ("%s (%s, %s)"):format(desc_base, S(descriptions[category]), S(readable_alternate))
-		if category == "slope" then
-			def.drawtype = "mesh"
-			if alternate == "_tripleslope" then
-				def.groups.not_in_creative_inventory = nil
-			end
+	def.description = desc_base..": "..assert(info.description)
+	if category == "stair" and alternate == "" then
+		def.groups.stair = 1
+	end
 
-		elseif category == "stair" and alternate == "" then
-			def.groups.stair = 1
-		end
+	if info.selection_box ~= nil then
+		def.selection_box = info.selection_box
+	end
+	if info.collision_box ~= nil then
+		def.collision_box = info.collision_box
 	end
 
 	-- world-aligned textures

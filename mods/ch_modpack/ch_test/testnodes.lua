@@ -41,10 +41,12 @@ local paramtypes = {
 		param2_max = 255,
 		palette = "unifieddyes_palette_extended.png",
 		ud_param2_colorable = 1,
+		ui_generate_palette_items = 16,
 	},
 	colorfacedir = {
 		param2_max = 255,
 		palette = "unifieddyes_palette_mulberrys.png",
+		ui_generate_palette_items = 16,
 	},
 	color4dir = {
 		param2_max = 255,
@@ -91,7 +93,7 @@ local tiles = {
 	{name = "ch_test_4dir_5.png", backface_culling = true},
 	{name = "ch_test_4dir_6.png", backface_culling = true},
 }
-local groups = {
+local default_groups = {
 	oddly_breakable_by_hand = 1,
 }
 local paramtype_to_next_param2 = {}
@@ -159,7 +161,6 @@ for paramtype2, ptdef in pairs(paramtypes) do
 		tiles = tiles,
 		paramtype = ptdef.paramtype or "none",
 		paramtype2 = paramtype2,
-		groups = groups,
 		is_ground_content = false,
 		after_place_node = after_place_node,
 		on_punch = on_punch,
@@ -170,11 +171,14 @@ for paramtype2, ptdef in pairs(paramtypes) do
 			def[field] = ptdef[field]
 		end
 	end
+	local groups = table.copy(default_groups)
 	if ptdef.ud_param2_colorable ~= nil then
-		local groups = table.copy(groups)
 		groups.ud_param2_colorable = ptdef.ud_param2_colorable
-		def.groups = groups
 	end
+	if ptdef.ui_generate_palette_items ~= nil then
+		groups.ui_generate_palette_items = ptdef.ui_generate_palette_items
+	end
+	def.groups = groups
 	minetest.register_node("ch_test:test_"..paramtype2, def)
 end
 

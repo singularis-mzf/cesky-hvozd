@@ -161,7 +161,7 @@ local wool_shapes = {
 	{ "slope", "_outer_half_raised" },
 	{ "slope", "_outer_cut" },
 	{ "slope", "_outer_cut_half" },
-	{ "slope", "_outer_cut_half_raised" },
+	-- { "slope", "_outer_cut_half_raised" },
 	{ "slope", "_cut" },
 	{ "slope", "_slab" },
 	{ "slope", "_tripleslope" },

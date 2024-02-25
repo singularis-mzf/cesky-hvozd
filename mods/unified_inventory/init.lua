@@ -78,9 +78,9 @@ ui.style_full = {
 	formh = 12.25,
 	-- Item browser size, pos
 	pagecols = 8,
-	pagerows = 12,
+	pagerows = 10,
 	page_x = 10.75,
-	page_y = 0.10,
+	page_y = 1.60,
 	-- Item browser controls
 	page_buttons_x = 11.60,
 	page_buttons_y = 10.15,
@@ -212,8 +212,8 @@ dofile(modpath.."/item_names.lua")
 dofile(modpath.."/legacy.lua") -- mod compatibility
 
 -- Injections:
-ch_core.trash_one_sound = "trash"
-ch_core.trash_all_sound = "trash_all"
+ch_core.overridable.trash_one_sound = "trash"
+ch_core.overridable.trash_all_sound = "trash_all"
 
 minetest.register_on_mods_loaded(function()
 	local pipeworks = ch_core.get_shared_vgroup("pipeworks")

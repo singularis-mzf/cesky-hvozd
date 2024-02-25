@@ -15,8 +15,6 @@ ch_core = {
 		-- dvere = nil,
 		stred = vector.new(0, 0, 0),
 	},
-	trash_one_sound = "", -- zvuk k přehrání při mazání jednoho předmětu
-	trash_all_sound = "", -- zvuk k přehrání při mazání více předmětů
 	colors = {
 		black = minetest.get_color_escape_sequence("#000000"),
 		blue = minetest.get_color_escape_sequence("#0000AA"),
@@ -35,6 +33,11 @@ ch_core = {
 		light_magenta = minetest.get_color_escape_sequence("#FF55FF"),
 		light_yellow = minetest.get_color_escape_sequence("#FFFF55"),
 		white = minetest.get_color_escape_sequence("#FFFFFF"),
+	},
+	overridable = {
+		-- funkce a proměnné, které mohou být přepsány z ostatních módů
+		trash_all_sound = "", -- zvuk k přehrání při mazání více předmětů
+		trash_one_sound = "", -- zvuk k přehrání při mazání jednoho předmětu
 	},
 }
 

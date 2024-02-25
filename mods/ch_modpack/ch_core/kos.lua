@@ -132,9 +132,9 @@ function ch_core.vyhodit_inventar(player_name, inv, listname, description)
 
 			local trash_sound
 			if #item_strings == 1 then
-				trash_sound = ch_core.trash_one_sound
+				trash_sound = ch_core.overridable.trash_one_sound
 			else
-				trash_sound = ch_core.trash_all_sound
+				trash_sound = ch_core.overridable.trash_all_sound
 			end
 			if trash_sound ~= nil and trash_sound ~= "" then
 				minetest.sound_play(trash_sound, { to_player = player_name, gain = 1.0 })

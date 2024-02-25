@@ -104,6 +104,19 @@ end
 
 -- Add category GUI elements (top right)
 local function formspec_add_categories(player, formspec, ui_peruser)
+	local n = #formspec + 1
+	local x, y = ui_peruser.page_x, ui_peruser.page_y - 1.0
+	local category_descs = ch_core.creative_inventory.categories.descriptions
+
+	formspec[n] = "dropdown["..x..","..y..";6.75,0.5;ui_category;"
+	n = n + 1
+	formspec[n] = minetest.formspec_escape(category_descs[1])
+	n = n + 1
+	for i = 2, #category_descs do
+		formspec[n] = ","..minetest.formspec_escape(category_descs[i])
+		n = n + 1
+	end
+	formspec[n] = ";"..(ui.current_category[player:get_player_name()] or "1")..";true]"
 	return nil
 --[[
 	local player_name = player:get_player_name()
@@ -236,9 +249,11 @@ local function formspec_add_item_browser(player, formspec, ui_peruser)
 			/ (ui_peruser.items_per_page) + 1)
 	for y = 0, ui_peruser.pagerows - 1 do
 		for x = 0, ui_peruser.pagecols - 1 do
-			local name = ui.filtered_items_list[player_name][list_index]
-			local item = minetest.registered_items[name]
-			if item then
+			local itemstring = ui.filtered_items_list[player_name][list_index]
+			if itemstring then
+				local stack = ItemStack(itemstring)
+				local name = stack:get_name()
+				local item = minetest.registered_items[name]
 				-- Clicked on current item: Flip crafting direction
 				if name == ui.current_item[player_name] then
 					local cdir = ui.current_craft_direction[player_name]
@@ -253,14 +268,18 @@ local function formspec_add_item_browser(player, formspec, ui_peruser)
 				end
 
 				local button_name = "item_button_" .. dir .. "_"
-					.. ui.mangle_for_formspec(name)
+					.. ui.mangle_for_formspec(itemstring)
 				formspec[n] = ("item_image_button[%f,%f;%f,%f;%s;%s;]"):format(
 					ui_peruser.page_x + x * ui_peruser.btn_spc,
 					ui_peruser.page_y + y * ui_peruser.btn_spc,
 					ui_peruser.btn_size, ui_peruser.btn_size,
-					name, button_name
+					minetest.formspec_escape(itemstring), button_name
 				)
 				local tooltip = item.description
+				local color = stack:get_meta():get_int("palette_index")
+				if color > 0 then
+					tooltip = tooltip.." [barva "..color.."]"
+				end
 				--[[ if item.mod_origin then
 					-- "mod_origin" may not be specified for items that were
 					-- registered in a callback (during or before ServerEnv init)
@@ -405,7 +424,7 @@ function ui.apply_filter(player, filter, search_dir)
 
 	if lfilter:sub(1, 6) == "group:" then
 		local groups = lfilter:sub(7):split(",")
-		ffilter = function(name, def)
+		ffilter = function(itemstring, name, def)
 			for _, group in ipairs(groups) do
 				local vgroup = ch_core.try_read_vgroup(group)
 				if vgroup then
@@ -422,7 +441,7 @@ function ui.apply_filter(player, filter, search_dir)
 		local player_info = minetest.get_player_information(player_name)
 		local lang = player_info and player_info.lang_code or ""
 
-		ffilter = function(name, def)
+		ffilter = function(itemstring, name, def)
 			if string.find(lower(name), lfilter, 1, true)
 			or string.find(lower(def.description), lfilter, 1, true) then
 				return true
@@ -432,17 +451,21 @@ function ui.apply_filter(player, filter, search_dir)
 			return llocaldesc and string.find(llocaldesc, lfilter, 1, true)
 		end
 	end
+
+	local category = ui.current_category[player_name] or 1
+	local category_filter = assert(ch_core.creative_inventory.categories.filter)
+
 	local filtered_items_list = {}
 
-	for _, name in ipairs(ch_core.creative_inventory.items_by_order) do
+	for _, itemstring in ipairs(ch_core.creative_inventory.items_by_order) do
+		local name = ItemStack(itemstring):get_name()
 		local def = minetest.registered_items[name]
-		if ffilter(name, def) then
-			table.insert(filtered_items_list, name)
+		if string.sub(category_filter[itemstring], category, category) == "1" and ffilter(itemstring, name, def) then
+			table.insert(filtered_items_list, itemstring)
 		end
 	end
-	ui.filtered_items_list[player_name] = filtered_items_list
-	--[[ local category = ui.current_category[player_name] or 'all'
-	--if category == 'all' then
+	-- ui.filtered_items_list[player_name] = filtered_items_list
+	--[[if category == 'all' then
 		for name, def in pairs(minetest.registered_items) do
 			if valid_def(def)
 			and ffilter(name, def) then
@@ -469,7 +492,8 @@ function ui.apply_filter(player, filter, search_dir)
 	end
 	table.sort(ui.filtered_items_list[player_name])
 	]]
-	ui.filtered_items_list_size[player_name] = #ui.filtered_items_list[player_name]
+	ui.filtered_items_list[player_name] = filtered_items_list
+	ui.filtered_items_list_size[player_name] = #filtered_items_list
 	ui.current_index[player_name] = 1
 	ui.activefilter[player_name] = filter
 	ui.active_search_direction[player_name] = search_dir

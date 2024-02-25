@@ -308,6 +308,13 @@ end
 --
 local fence_collision_extra = minetest.settings:get_bool("enable_fence_tall") and 3/8 or 0
 
+local function get_material_description(node_name)
+	local mdef = minetest.registered_nodes[node_name or ""]
+	if mdef ~= nil and (mdef.groups == nil or (mdef.groups.not_in_creative_inventory or 0) <= 0) then
+		return mdef.description
+	end
+end
+
 function default.register_fence(name, def)
 	minetest.register_craft({
 		output = name .. " 4",
@@ -363,6 +370,11 @@ function default.register_fence(name, def)
 
 	-- Always add to the fence group, even if no group provided
 	def.groups.fence = 1
+
+	local base_description = get_material_description(def.material)
+	if base_description ~= nil and name ~= "mobs:fence_wood" then
+		def.description = base_description..": plot"
+	end
 
 	def.texture = nil
 	def.material = nil
@@ -432,6 +444,11 @@ function default.register_fence_rail(name, def)
 
 	-- Always add to the fence group, even if no group provided
 	def.groups.fence = 1
+
+	local base_description = get_material_description(def.material)
+	if base_description ~= nil then
+		def.description = base_description..": zábradlí"
+	end
 
 	def.texture = nil
 	def.material = nil

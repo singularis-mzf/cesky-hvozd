@@ -23,7 +23,7 @@ minetest.register_on_joinplayer(function(player)
 	unified_inventory.activefilter[player_name] = ""
 	unified_inventory.active_search_direction[player_name] = "nochange"
 	unified_inventory.current_searchbox[player_name] = ""
-	unified_inventory.current_category[player_name] = "all"
+	unified_inventory.current_category[player_name] = 1
 	unified_inventory.current_category_scroll[player_name] = 0
 	unified_inventory.alternate[player_name] = 1
 	unified_inventory.current_item[player_name] = nil
@@ -85,23 +85,16 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 
 
-	local clicked_category
-	for name, value in pairs(fields) do
-		local category_name = string.match(name, "^category_(.+)$")
-		if category_name then
-			clicked_category = category_name
-			break
-		end
-	end
-
-	if clicked_category
-	and clicked_category ~= unified_inventory.current_category[player_name] then
+	local clicked_category = fields.ui_category
+	if clicked_category and clicked_category ~= unified_inventory.current_category[player_name] then
 		unified_inventory.current_category[player_name] = clicked_category
 		unified_inventory.apply_filter(player, unified_inventory.current_searchbox[player_name], "nochange")
-		unified_inventory.set_inventory_formspec(player,
-				unified_inventory.current_page[player_name])
+		unified_inventory.set_inventory_formspec(player, unified_inventory.current_page[player_name])
+		minetest.sound_play("paperflip1",
+				{to_player=player_name, gain = 1.0})
 	end
 
+	--[[
 	if fields.next_category or fields.prev_category then
 		local step = fields.next_category and 1 or -1
 		local scroll_old = ui.current_category_scroll[player_name]
@@ -113,6 +106,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 					unified_inventory.current_page[player_name])
 		end
 	end
+	]]
 
 	for i, def in pairs(unified_inventory.buttons) do
 		if fields[def.name] then
@@ -190,7 +184,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			page = "craftguide"
 		end
 		if page == "craftguide" then
-			unified_inventory.current_item[player_name] = clicked_item
+			local stack = ItemStack(clicked_item)
+			unified_inventory.current_item[player_name] = stack:get_name()
 			unified_inventory.alternate[player_name] = 1
 			unified_inventory.set_inventory_formspec(player, "craftguide")
 		elseif player_creative then

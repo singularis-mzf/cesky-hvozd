@@ -9,6 +9,7 @@ local S = minetest.get_translator("moreblocks")
 
 local defs = {
 	[""] = {
+		description = "pobřežní svah",
 		mesh = "moreblocks_bank_slope.obj",
 	},
 	["_cut"] = {
@@ -92,7 +93,7 @@ function stairsplus:register_bank_slopes(recipeitem)
 			new_def.mod_origin = nil
 			new_def.drop = nil
 			new_def._stairsplus_category = "bank_slope"
-			new_def.description = S("Bank Slope: @1", new_def.description or S("Unknown"))
+			new_def.description = (new_def.description or "neznámý blok")..": pobřežní svah"
 			new_def.mesh = slopedef.mesh
 			local same_box = new_def.collision_box == new_def.selection_box
 			if new_def.collision_box then

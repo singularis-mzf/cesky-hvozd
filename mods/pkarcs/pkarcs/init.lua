@@ -40,7 +40,7 @@ function pkarcs.register_all(nodename, desc, tile, sound, group, craftmaterial)
 	end
 
 	local def = {
-		description = desc.." (oblouk)",
+		description = desc..": oblouk",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		tiles = tile_collection,
@@ -116,7 +116,7 @@ function pkarcs.register_all(nodename, desc, tile, sound, group, craftmaterial)
 	})
 
 	def = table.copy(def)
-	def.description = desc.." (blok s obloukem)"
+	def.description = desc..": blok s obloukem"
 	local new_box = {}
 	for i, aabb in ipairs(def.node_box.fixed) do
 		new_box[i] = { aabb[1], aabb[2] - 1, aabb[3], aabb[4], aabb[5], aabb[6] }
@@ -141,7 +141,7 @@ function pkarcs.register_all(nodename, desc, tile, sound, group, craftmaterial)
 	})
 
 	minetest.register_node(":pkarcs:"..nodename.."_outer_arc", {
-		description = desc.." (vnější oblouk)",
+		description = desc..": vnější oblouk",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		tiles = tile_collection,
@@ -217,7 +217,7 @@ function pkarcs.register_all(nodename, desc, tile, sound, group, craftmaterial)
 	})
 
 	minetest.register_node(":pkarcs:"..nodename.."_inner_arc", {
-		description = desc.." (vnitřní oblouk)",
+		description = desc..": vnitřní oblouk",
 		paramtype = "light",
 		paramtype2 = "facedir",
 		tiles = tile_collection,
