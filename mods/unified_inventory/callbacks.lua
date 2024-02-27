@@ -17,7 +17,7 @@ minetest.register_on_joinplayer(function(player)
 	unified_inventory.current_index[player_name] = 1 -- Item (~page) index
 
 	-- fill the list from ch_core instead of the default list:
-	ch_core.update_creative_inventory()
+	-- ch_core.update_creative_inventory()
 	unified_inventory.filtered_items_list[player_name] = ch_core.creative_inventory.items_by_order -- unified_inventory.items_list
 
 	unified_inventory.activefilter[player_name] = ""
@@ -85,7 +85,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 
 
-	local clicked_category = fields.ui_category
+	local clicked_category = tonumber(fields.ui_category) or 1
 	if clicked_category and clicked_category ~= unified_inventory.current_category[player_name] then
 		unified_inventory.current_category[player_name] = clicked_category
 		unified_inventory.apply_filter(player, unified_inventory.current_searchbox[player_name], "nochange")
@@ -165,7 +165,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			clicked_item = unified_inventory.demangle_for_formspec(mangled_item)
 			if string.sub(clicked_item, 1, 6) == "group:" then
 				-- Change search filter to this group
-				unified_inventory.current_category[player_name] = "all"
+				unified_inventory.current_category[player_name] = 1
 				apply_new_filter(player, clicked_item, new_dir)
 				return
 			end

@@ -1,5 +1,9 @@
+local internal = ...
+local internal = ...
 local F = minetest.formspec_escape
 local S = minetest.get_translator("ch_npc")
+local has_clothing = minetest.get_modpath("clothing")
+local ifthenelse = ch_core.ifthenelse
 
 local i_to_model, model_to_i, model_list
 
@@ -17,25 +21,39 @@ minetest.register_on_mods_loaded(function()
 end)
 
 -- NODE FORMSPEC (for admin)
-function ch_npc.internal.get_node_formspec(meta)
+function internal.get_node_formspec(custom_state)
+	local pos = custom_state.pos
+	local meta = minetest.get_meta(pos)
 	-- local enabled = meta:get_string("enabled")
 	local npc_model = meta:get_string("npc_model")
 	local npc_name = meta:get_string("npc_name")
 	local npc_dialog = meta:get_string("npc_dialog")
+	local npc_infotext = meta:get_string("npc_infotext")
 
 	local parts = {
-		"formspec_version[5]",
-		"size[10,10]",
-		"textlist[1,0.5;6,6;npc_model;", model_list, ";", model_to_i[npc_model] or "1", ";false]",
-		"field[1,7;8,0.5;npc_name;Jméno postavy;", F(npc_name), "]",
-		"field[1,8;8,0.5;npc_dialog;Dialog postavy;", F(npc_dialog), "]",
-		"button_exit[1,9;2,0.5;zobrazit;Zobrazit postavu]",
-		"button_exit[5,9;2,0.5;skryt;Skrýt postavu]",
+		ch_core.formspec_header{
+			formspec_version = 7,
+			size = {16,12},
+			position = {0,0},
+			anchor = {0,0},
+			bgcolor = {"#00000020", "false", ""},
+			no_prepend = true,
+		},
+		ifthenelse(has_clothing, "list[nodemeta:"..pos.x.."\\,"..pos.y.."\\,"..pos.z..";clothes;0.25,0.25;12,1;]", ""),
+		"list[current_player;main;6,1.75;8,4;]",
+		"textlist[0.25,1.5;5.5,5;npc_model;", model_list, ";", model_to_i[npc_model] or "1", ";false]",
+		"field[0.25,7.0;6,0.5;npc_name;Jméno postavy;", F(npc_name), "]"..
+		"field[0.25,8;6,0.5;npc_dialog;Dialog postavy;", F(npc_dialog), "]"..
+		"textarea[0.25,9;6,2;npc_infotext;Infotext postavy:;", F(npc_infotext), "]"..
+		"button_exit[6.5,10.75;3,0.75;zobrazit;Zobrazit postavu]",
+		"button_exit[9.5,10.75;3,0.75;skryt;Skrýt postavu]",
+		"button_exit[12.5,10.75;3,0.75;odstranit;Odstranit]",
 	}
 	return table.concat(parts)
 end
 
-function ch_npc.internal.on_player_receive_fields_node_formspec(pos, player, fields)
+function internal.formspec_callback(custom_state, player, formname, fields)
+	local pos = custom_state.pos
 	local player_name = player:get_player_name()
 
 	if not minetest.check_player_privs(player_name, "spawn_npc") then
@@ -48,6 +66,13 @@ function ch_npc.internal.on_player_receive_fields_node_formspec(pos, player, fie
 	local node = minetest.get_node(pos)
 	local meta = minetest.get_meta(pos)
 
+	if fields.odstranit then
+		meta:set_string("enabled", "false")
+		ch_npc.update_npc(pos, node, meta)
+		minetest.remove_node(pos)
+		minetest.close_formspec(player_name, formname)
+		return
+	end
 	if fields.zobrazit then
 		meta:set_string("enabled", "true")
 	end
@@ -55,9 +80,11 @@ function ch_npc.internal.on_player_receive_fields_node_formspec(pos, player, fie
 		meta:set_string("enabled", "false")
 	end
 	if fields.npc_model then
-		local new_model = fields.npc_model:sub(5, -1)
-		-- print("DEBUG: Will set npc_model to ("..new_model..") => ("..tonumber(new_model)..") => ("..(i_to_model[tonumber(new_model)] or "nil=default")..")")
-		meta:set_string("npc_model", i_to_model[tonumber(new_model)] or "default")
+		local event = minetest.explode_textlist_event(fields.npc_model)
+		if event.type == "CHG" or event.type == "DCL" then
+			local new_model = assert(tonumber(event.index))
+			meta:set_string("npc_model", i_to_model[new_model] or "default")
+		end
 	end
 	if fields.npc_name then
 		meta:set_string("npc_name", fields.npc_name)
@@ -65,36 +92,10 @@ function ch_npc.internal.on_player_receive_fields_node_formspec(pos, player, fie
 	if fields.npc_dialog then
 		meta:set_string("npc_dialog", fields.npc_dialog)
 	end
+	if fields.npc_infotext then
+		meta:set_string("npc_infotext", fields.npc_infotext)
+	end
 
 	ch_npc.update_npc(pos, node, meta)
 	return true
 end
-
---[[ ENTITY FORMSPEC
-function ch_npc.internal.get_entity_formspec(meta)
-	-- local enabled = meta:get_string("enabled")
-	-- local model = meta:get_string("model")
-	-- local texture = meta:get_string("texture")
-	local npc_name = meta:get_string("npc_name")
-	local npc_text = meta:get_string("npc_text")
-	local npc_program = meta:get_string("npc_program")
-
-	local parts = {
-		"formspec_version[5]",
-		"size[8,10]",
-		"bgcolor[#00000000]",
-		"background[0,0;8,10;signs_poster_formspec.png]",
-		"style_type[textarea;textcolor=#111111]",
-		"style_type[textarea;font=mono]",
-		"textarea[0.3,0.5;7.5,0.5;;;", F(npc_name),"]",
-		"style_type[textarea;font=normal]",
-		"textarea[0.3,1.0;7.5,8;;;", F(npc_text),"]",
-		"button_exit[3.5,9.25;2,0.5;exit;", S("Close"), "]",
-	}
-	return table.concat(parts)
-end
-
-function ch_npc.internal.on_player_receive_fields_entity_formspec(pos, player, fields)
-	return true
-end
-]]

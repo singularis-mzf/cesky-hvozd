@@ -1,0 +1,20 @@
+Source code licenses:
+================================================
+init.lua
+LICENSE
+mod.conf
+	Author: Singularis
+	License: LGPL-2.1+
+
+Media files licenses:
+================================================
+ch_unkrep.png
+	Author: sdzen (Elise Staudter)
+	License: CC BY-SA 3.0
+	Source: Technic mod
+
+ch_unkrep_front.png
+	Author: Singularis
+	License: CC BY-SA 3.0
+	Used source:
+		- technic_workshop_top.png by "sdzen (Elise Staudter)" under CC BY-SA 3.0 license from Technic mod

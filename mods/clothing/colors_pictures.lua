@@ -2,104 +2,121 @@
 local S = clothing.translator;
 
 local basic_colors = {
-  white = {
-	color = "bíl",
-	hex = "FFFFFF",
-  },
-  grey = {
-    color = "šed",
-	  hex = "C0C0C0",
-  },
-  black = {
-    color = "čern",
-    hex = "232323",
-  },
-  red = {
-    color = "červen",
-    hex = "D11618",
-  },
-  yellow = {
-    color = "žlut",
-    hex = "DBDB19",
-  },
-  green = {
-    color = "zelen",
-    hex = "17DB19",
-  },
-  cyan = {
-    color = "tyrkysov",
-    hex = "16D1E7",
-  },
-  blue = {
-    color = "modr",
-    hex = "1717F1",
-  },
-  magenta = {
-    color = "purpurov",
-    hex = "DB17F1",
-  },
-  orange = {
-    color = "oranžov",
-    hex = "CF7218",
-  },
-  violet = {
-    color = "fialov",
-    hex = "7917F1",
-  },
-  brown = {
-    color = "hněd",
-    hex = "391A00",
-  },
-  pink = {
-    color = "růžov",
-    hex = "FFA5A5",
-  },
-  dark_grey = {
-    color = "tmavošed",
-    hex = "696969",
-  },
-  dark_green = {
-    color = "tmavozelen",
-    hex = "05430D",
-  },
+	white = {
+		color = "bíl",
+		hex = "f8f7f3",
+	},
+	grey = {
+		color = "šed",
+		hex = "afada6",
+	},
+	black = {
+		color = "čern",
+		hex = "161517",
+	},
+	red = {
+		color = "červen",
+		hex = "bc1934",
+	},
+	yellow = {
+		color = "žlut",
+		hex = "eddf9b",
+	},
+	green = {
+		color = "zelen",
+		hex = "98cd61",
+	},
+	cyan = {
+		color = "tyrkysov",
+		hex = "048fbe",
+	},
+	blue = {
+		color = "modr",
+		hex = "273e85",
+	},
+	magenta = {
+		color = "vínov",
+		hex = "7b0128",
+	},
+	orange = {
+		color = "oranžov",
+		hex = "e2542a",
+	},
+	violet = {
+		color = "fialov",
+		hex = "822577",
+	},
+	brown = {
+		color = "hněd",
+		hex = "874133",
+	},
+	pink = {
+		color = "růžov",
+		hex = "eeaeb2",
+	},
+	dark_grey = {
+		color = "tmavošed",
+		hex = "515056",
+	},
+	dark_green = {
+		color = "tmavozelen",
+		hex = "4c754c",
+	},
 
 -- low saturation colors:
-  red_s50 = {
+  --[[ red_s50 = {
     color = "pastelově červen",
     hex = "D26D6D",
   },
   yellow_s50 = {
     color = "pastelově žlut",
-    hex = "F9F995",
-  },
-  green_s50 = {
-    color = "pastelově zelen",
-    hex = "83E783",
-  },
-  cyan_s50 = {
-    color = "pastelově tyrkysov",
-    hex = "8AEFEF",
-  },
-  blue_s50 = {
+    hex = "F9F995", -- [ ]
+  }, ]]
+	green_s50 = {
+		color = "pastelově zelen",
+		hex = "b3dab9",
+	},
+	cyan_s50 = {
+		color = "pastelově tyrkysov",
+		hex = "8bd3e8",
+	},
+  --[[ blue_s50 = {
     color = "pastelově modr",
-    hex = "5959BC",
-  },
-  magenta_s50 = {
-    color = "pastelově purpurov",
-    hex = "DB77DB",
-  },
-  orange_s50 = {
-    color = "pastelově oranžov",
-    hex = "DDAC7A",
-  },
-  violet_s50 = {
-    color = "pastelově fialov",
-    hex = "9462C6",
-  },
-  dark_green_s50 = {
-    color = "pastelově tmavozelen",
-    hex = "567F56",
-  },
+    hex = "5959BC", -- [ ]
+  }, ]]
+	magenta_s50 = {
+		color = "pastelově purpurov",
+		hex = "9e5e62",
+	},
+	orange_s50 = {
+		color = "béžov",
+		hex = "dacab4",
+	},
+	violet_s50 = {
+		color = "pastelově fialov",
+		hex = "c8adc0",
+	},
+	dark_green_s50 = {
+		color = "khakiov",
+		hex = "6f725f",
+	},
+	-- new colors:
+	medium_blue = {
+		color = "džínov",
+		hex = "293d5a",
+	},
+	medium_blue_s50 = {
+		color = "světle džínov",
+		hex = "6684a0",
+	},
+	bright_rose = {
+		color = "křiklavě růžov",
+		hex = "fd6ca9",
+	},
+	bright_cyan = {
+		color = "křiklavě azurov",
+		hex = "00b4e8",
+	},
 }
 
 local colors = table.copy(basic_colors);

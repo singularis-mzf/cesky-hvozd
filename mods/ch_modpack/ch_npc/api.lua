@@ -1,3 +1,5 @@
+local internal = ...
+local has_clothing = minetest.get_modpath("clothing")
 local default_npc = ch_npc.registered_npcs["default"]
 
 function ch_npc.update_npc(pos, node, meta)
@@ -8,6 +10,7 @@ function ch_npc.update_npc(pos, node, meta)
 	local old_model = meta:get_string("shown_model")
 	local old_npc = ch_npc.registered_npcs[old_model]
 	local old_entity_pos = vector.add(pos, (old_npc or default_npc).offset)
+	local inv = meta:get_inventory()
 
 	-- search for existing objects
 	local found_objects = {}
@@ -42,12 +45,25 @@ function ch_npc.update_npc(pos, node, meta)
 		local new_entity_pos = vector.add(pos, new_npc.offset)
 		local npc_name = meta:get_string("npc_name")
 		local npc_dialog = meta:get_string("npc_dialog")
+		local npc_infotext = meta:get_string("npc_infotext")
+
+		local textures = table.copy(new_npc.textures)
+		if has_clothing and not inv:is_empty("clothes") then
+			local list = inv:get_list("clothes")
+			local layers = clothing:compute_player_texture_layers(list)
+			if #layers.cape > 0 then
+				textures[1] = textures[1].."^"..table.concat(layers.cape, "^")
+			end
+			if #layers.clothing > 0 then
+				textures[2] = table.concat(layers.clothing, "^")
+			end
+		end
 
 		local props_to_set = {
 			mesh = new_npc.mesh,
-			textures = new_npc.textures,
+			textures = textures,
 			collisionbox = new_npc.collisionbox,
-			infotext = npc_name,
+			infotext = npc_infotext,
 		}
 
 		if #found_objects == 0 then

@@ -131,6 +131,11 @@ function ch_core.register_player_globalstep(func, index)
 end
 
 local function globalstep(dtime)
+	if globstep_dtime_accumulated == 0 then
+		-- první globalstep:
+		ch_core.update_creative_inventory(true)
+	end
+
 	globstep_dtime_accumulated = globstep_dtime_accumulated + dtime
 	ch_core.cas = globstep_dtime_accumulated
 	local ch_core_cas = ch_core.cas

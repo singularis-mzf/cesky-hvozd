@@ -65,6 +65,26 @@ clothing.run_callbacks = function(self, callback, player, index, stack)
 	end
 end
 
+clothing.compute_player_texture_layers = function(self, clothing_stacks)
+	local layer = {
+		cape = {},
+		clothing = {},
+	}
+	for i, stack in ipairs(clothing_stacks) do
+		if stack:get_count() == 1 then
+			local def = stack:get_definition()
+			if def.groups and def.uv_image then
+				if def.groups.clothing == 1 then
+					table.insert(layer.clothing, def.uv_image)
+				elseif def.groups.cape == 1 then
+					table.insert(layer.cape, def.uv_image)
+				end
+			end
+		end
+	end
+	return layer
+end
+
 clothing.set_player_clothing = function(self, player)
 	if not player then
 		return

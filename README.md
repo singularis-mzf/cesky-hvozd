@@ -1115,6 +1115,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPLv3
 * [ContentDB](https://content.minetest.net/packages/bell07/woodcutting/)
 
+## Wrench (wrench)
+
+* Zdroj: [https://github.com/mt-mods/wrench](https://github.com/mt-mods/wrench), revize cc93ad0b541c3fb98c84016d9167424ff7e0aae1
+* Původní licence: LGPLv2.1 pro kód, CC BY-SA 4.0 pro média
+* Licence úprav: LGPLv2.1 pro kód, CC BY-SA 4.0 pro média
+* [ContentDB](https://content.minetest.net/packages/mt-mods/wrench/)
+
 ## XBan 2 (xban2)
 
 * Zdroj: [https://github.com/minetest-mods/xban2](https://github.com/minetest-mods/xban2), revize d2cda4f73a3a5372b70ffa63e2a16bf39d734e40

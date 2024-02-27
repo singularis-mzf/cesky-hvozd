@@ -30,7 +30,8 @@ local date_color = "#cccccc"
 local player_name_color = "#66cc66"
 local title_color = "#ffffff"
 
-local bulletin_boards = {
+-- local
+bulletin_boards = {
 	board_def = {},
 	global_boards = {},
 	global_boards_metadata = {},
@@ -58,6 +59,8 @@ if f then
 	if serialized_data.global_boards ~= nil then
 		bulletin_boards.global_boards = serialized_data.global_boards
 		bulletin_boards.global_boards_metadata = serialized_data.global_boards_metadata
+	else
+		minetest.log("warning", "No serialized data for bulletin_boards found!")
 	end
 end
 
@@ -153,15 +156,12 @@ local function collect_garbage(board_name)
 	local garbage_count = old_size - #board
 	if garbage_count > 0 then
 		minetest.log("action", "Board garbage collector collected "..garbage_count.." garbage items, "..#board.." items remain.")
-		local timestamp = minetest.get_gametime()
+		local timestamp = assert(minetest.get_gametime())
 		metadata.update_timestamp = timestamp
+		metadata.gc_timestamp = timestamp
 		save_boards()
 	end
 	return garbage_count
-end
-
-for k, board in pairs(bulletin_boards.global_boards) do
-	collect_garbage(k)
 end
 
 local function get_infotext(board_name, board)
@@ -197,18 +197,26 @@ local function update_board(pos, node)
 	else
 		node_timestamp = 0
 	end
-	if node_timestamp >= (metadata.update_timestamp or 0) then
-		-- print("DEBUG: board "..node.name.." @ "..minetest.pos_to_string(pos).." is up to date (node_ts is "..node_timestamp..", metadata = "..dump2(metadata)..").")
-		return true -- node is up to date
+	local update_timestamp = metadata.update_timestamp or 0
+	local gc_timestamp = metadata.gc_timestamp or update_timestamp
+	local update_color = node_timestamp < update_timestamp
+	local update_infotext = update_color or node_timestamp < gc_timestamp
+	if update_infotext then
+		-- update infotext
+		meta:set_string("infotext", get_infotext(node.name, board))
 	end
-	meta:set_string("infotext", get_infotext(node.name, board))
-	meta:set_string("board_timestamp", tostring(metadata.update_timestamp))
-	local dir = node.param2 % 8
-	local color = node.param2 - dir
-	local new_color = boards_colors[1 + (metadata.color_index % #boards_colors)]
-	if new_color ~= color then
-		node.param2 = dir + new_color
-		minetest.swap_node(pos, node)
+	if update_color then
+		-- update color
+		local dir = node.param2 % 8
+		local color = node.param2 - dir
+		local new_color = boards_colors[1 + (metadata.color_index % #boards_colors)]
+		if new_color ~= color then
+			node.param2 = dir + new_color
+			minetest.swap_node(pos, node)
+		end
+	end
+	if update_infotext or update_color then
+		meta:set_string("board_timestamp", tostring(metadata.update_timestamp))
 	end
 	return true
 end
@@ -656,11 +664,30 @@ minetest.register_craft({
 })
 end
 
-minetest.register_abm({
+-- Collect garbage on the first load:
+local is_after_start = true
+minetest.register_lbm{
+	label = "Bulletin Boards: Collect garbage",
+	name = "bulletin_boards:collect_garbage",
+	nodenames = {"group:bulletin_board"},
+	run_at_every_load = true,
+	action = function(pos, node, dtime_s)
+		if is_after_start then
+			is_after_start = false
+			minetest.after(0.25, function()
+				for k, board in pairs(bulletin_boards.global_boards) do
+					collect_garbage(k)
+				end
+			end)
+		end
+	end,
+}
+
+minetest.register_abm{
 	label = "Bulletin Boards Updating",
 	nodenames = {"group:bulletin_board"},
 	interval = 5,
 	chance = 1,
 	catch_up = true,
 	action = update_board,
-})
+}

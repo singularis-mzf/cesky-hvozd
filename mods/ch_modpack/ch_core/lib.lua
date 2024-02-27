@@ -1515,7 +1515,6 @@ function ch_core.utf8_wrap(s, max_chars, options)
 	end
 	return result
 end
-
 function ch_core.utf8_radici_klic(s, store_to_cache)
 	local result = utf8_sort_cache[s]
 	if not result then
@@ -1538,9 +1537,6 @@ function ch_core.utf8_radici_klic(s, store_to_cache)
 					k = utf8_sort_data_3[c]
 					table.insert(result, k or c)
 					i = i + 1
-					--[[ if not k then
-						print("Nenalezen klíč pro znak '"..c.."'")
-					end -- ]]
 				end
 			end
 		end

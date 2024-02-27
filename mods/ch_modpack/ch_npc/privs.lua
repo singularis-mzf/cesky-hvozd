@@ -1,3 +1,5 @@
+local internal = ...
+
 -- PRIVILEGE
 local def = {
 	description = "Umožňuje nastavovat, vyvolávat a skrývat nehráčské postavy.",

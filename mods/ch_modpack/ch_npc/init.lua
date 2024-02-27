@@ -1,78 +1,35 @@
 print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
-local S = minetest.get_translator("ch_npc")
-
-local player_name_to_node_pos = {}
-
--- API OBJECT
-ch_npc = {
-	internal = {
-		--[[ default_model = "npc.b3d",
-		default_textures = "folks_default.png", ]]
-		show_formspec = function(node_pos, player_name, formname, formspec)
-			player_name_to_node_pos[player_name] = node_pos
-			return minetest.show_formspec(player_name, formname, formspec)
-		end,
-	},
-	registered_npcs = {
-		default = {
-			mesh = "npc.b3d",
-			textures = {"folks_default.png"},
-			offset = vector.new(0, -0.5, 0),
-			collisionbox = nil,
-		},
-	},
-}
-
-function ch_npc.register_npc(id, model, textures, offset, collisionbox)
-	if ch_npc.registered_npcs[id] then
-		minetest.log("warning", "ch_npc: registered NPC "..id.." redefined!")
-	end
-	ch_npc.registered_npcs[id] = {
-		mesh = model,
-		textures = textures,
-		offset = offset or vector.zero,
-		collisionbox = collisionbox,
-	}
-	return id
-end
+-- local S = minetest.get_translator("ch_npc")
 
 local modpath = minetest.get_modpath(minetest.get_current_modname())
+local internal = {}
 
-dofile(modpath.."/privs.lua")
-dofile(modpath.."/entities.lua")
-dofile(modpath.."/formspecs.lua")
-dofile(modpath.."/api.lua")
-dofile(modpath.."/nodes.lua")
+-- API OBJECT
+ch_npc = {}
 
--- LBM (update entities when nodes are loaded)
-minetest.register_lbm({
-	label = "Update NPCs",
-	name = "ch_npc:update_npcs",
-	run_at_every_load = true,
-	nodenames = {"ch_npc:npc"},
-	action = function(pos, node)
-		ch_npc.update_npc(pos, node, minetest.get_meta(pos))
-	end,
-})
+local lua_files = {
+	"privs",
+	"registrations",
+	"entities",
+	"formspecs",
+	"api",
+	"nodes",
+	"skins",
+}
 
--- on_player_receive_fields
-local function on_player_receive_fields(player, formname, fields)
-	local player_name = player:get_player_name()
-	local pos = player_name_to_node_pos[player_name]
-	if not pos or minetest.get_item_group(minetest.get_node(pos).name, "ch_npc_spawner") == 0
-	then
-		return false
+local function mydofile(filename)
+	local f = loadfile(modpath.."/"..filename..".lua")
+	if not f then
+		error("File "..modpath.."/"..filename..".lua is missing!")
 	end
-
-	if formname == "ch_npc:node_formspec" then
-		return ch_npc.internal.on_player_receive_fields_node_formspec(pos, player, fields)
-	-- elseif formname == "ch_npc:entity_formspec" then
-		-- return ch_npc.internal.on_player_receive_fields_entity_formspec(pos, player, fields)
-	end
-	return false
+	assert(f)
+	return f(internal)
 end
-minetest.register_on_player_receive_fields(on_player_receive_fields)
+
+for _, filename in ipairs(lua_files) do
+	mydofile(filename)
+end
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 

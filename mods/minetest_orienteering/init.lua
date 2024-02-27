@@ -373,7 +373,13 @@ function orienteering.update_hud_displays(player)
 	local toDegrees=180/math.pi
 	local lista = ch_core.predmety_na_liste(player, false)
 	local name = player:get_player_name()
+	local player_huds = orienteering.playerhuds[name]
 	local gps, altimeter, triangulator, compass, sextant, watch, speedometer, quadcorder
+
+	if player_huds == nil then
+		minetest.log("warning", "Orienteering HUDs not yet initialized for player "..name)
+		return -- probably not initialized yet
+	end
 
 	gps = lista["orienteering:gps"]
 	altimeter = lista["orienteering:altimeter"]
@@ -464,12 +470,12 @@ function orienteering.update_hud_displays(player)
 	local line = 1
 	for i=1, o_lines do
 		if strs[i] ~= "" then
-			player:hud_change(orienteering.playerhuds[name]["o_line"..line], "text", strs[i])
+			player:hud_change(player_huds["o_line"..line], "text", strs[i])
 			line = line + 1
 		end
 	end
 	for l=line, o_lines do
-		player:hud_change(orienteering.playerhuds[name]["o_line"..l], "text", "")
+		player:hud_change(player_huds["o_line"..l], "text", "")
 	end
 
 	orienteering.update_bc_player_huds(player)

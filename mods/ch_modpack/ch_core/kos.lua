@@ -138,8 +138,6 @@ function ch_core.vyhodit_inventar(player_name, inv, listname, description)
 			end
 			if trash_sound ~= nil and trash_sound ~= "" then
 				minetest.sound_play(trash_sound, { to_player = player_name, gain = 1.0 })
-			else
-				minetest.chat_send_all("Will not play the sound, because: "..dump2({trash_one_sound = ch_core.trash_one_sound, trash_all_sound = ch_core.trash_all_sound, trash_sound = trash_sound or "nil"}))
 			end
 		end
 	end
@@ -171,7 +169,7 @@ function ch_core.vyhodit_predmet(player_name, stack, description)
 		list[#list] = stack
 		trash_inv:set_list("main", list)
 	end
-	local trash_sound = ch_core.trash_one_sound
+	local trash_sound = ch_core.overridable.trash_one_sound
 	if trash_sound ~= nil and trash_sound ~= "" then
 		minetest.sound_play(trash_sound, { to_player = player_name, gain = 1.0 })
 	end

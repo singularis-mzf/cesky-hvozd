@@ -7,6 +7,7 @@
 
 local S = minetest.get_translator("giftbox2")
 local F = minetest.formspec_escape
+local has_wrench = minetest.get_modpath("wrench")
 
 local OWNER_NOBODY = ""
 local set_owner = function( pos, player_name )
@@ -75,6 +76,19 @@ for i, colortab in ipairs( box_colors ) do
 		tube = false,
 	}
 	technic.chests.register_chest("giftbox2:giftbox_"..color, def)
+	if has_wrench then
+		wrench.register_node("giftbox2:giftbox_"..color, {
+			lists = {"main"},
+			metas = {
+				infotext = wrench.META_TYPE_STRING,
+				formspec = wrench.META_TYPE_STRING,
+				sort_mode = wrench.META_TYPE_INT,
+				autosort = wrench.META_TYPE_INT,
+				owner = wrench.META_TYPE_STRING,
+				owner2 = wrench.META_TYPE_STRING,
+			},
+		})
+	end
 
 	minetest.register_craft( {
 		output = "giftbox2:giftbox_" .. color,

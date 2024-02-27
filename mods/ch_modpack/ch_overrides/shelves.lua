@@ -648,6 +648,7 @@ minetest.register_craft{
 if minetest.get_modpath("wrench") then
 	def = {
 		lists = {"items"},
+		lists_ignore = {"returns"},
 		metas = {
 			owner = wrench.META_TYPE_STRING,
 			infotext = wrench.META_TYPE_STRING,

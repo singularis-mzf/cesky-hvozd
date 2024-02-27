@@ -17,7 +17,7 @@ dofile(modpath.."/testcommand.lua")
 dofile(modpath.."/testnodes.lua")
 dofile(modpath.."/wanted_blocks.lua")
 ----
-dofile(modpath.."/array_stats.lua")
+-- dofile(modpath.."/array_stats.lua")
 
 --[[
 local ore_nodenames = {

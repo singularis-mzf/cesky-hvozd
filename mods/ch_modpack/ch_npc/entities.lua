@@ -1,3 +1,5 @@
+local internal = ...
+
 -- ENTITY
 local function entity_on_activate(self, staticdata, dtime_s)
 	mobkit.actfunc(self, staticdata, dtime_s)
@@ -71,7 +73,9 @@ local def = {
 		visual = "mesh",
 		visual_size = {x = 1, y = 1},
 		mesh = model.mesh,
+		-- textures = {"blank.png", "blank.png", "blank.png", "blank.png"},
 		textures = model.textures,
+		use_texture_alpha = true,
 		static_save = false,
 		-- nametag = "",
 		-- nametag_color = "#ffffff",
