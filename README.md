@@ -1318,3 +1318,19 @@ Prohlášení autora/ky na [fóru](https://forum.minetest.net/viewtopic.php?f=4&
 * Zdroj: [https://codeberg.org/Wuzzy/xdecor-libre](https://codeberg.org/Wuzzy/xdecor-libre), revize 902674e8db4f324e14e68cb9d9a1eba954220d78
 * Původní licence: kód BSD, média různé
 * [ContentDB](https://content.minetest.net/packages/Wuzzy/xdecor/)
+
+# Ostatní použité zdroje 2
+
+Z následujících zdrojů jsou v repozitáři pouze kontrolní součty souborů (převážně z kapacitních důvodů), ale mám je uschované pro případ potřeby.
+
+## Real Fantasy (realfantasy)
+
+* Zdroj: [https://content.minetest.net/packages/Fhelron/realfantasy/](https://content.minetest.net/packages/Fhelron/realfantasy/), verze 1.0
+* Původní licence: CC BY-SA 4.0
+* [ContentDB](https://content.minetest.net/packages/Fhelron/realfantasy/)
+
+## SharpNet Photo Realism (sharpnet\_textures)
+
+* Zdroj: [https://github.com/Sharpik/Minetest-SharpNet-Photo-Realism-Texturespack](https://github.com/Sharpik/Minetest-SharpNet-Photo-Realism-Texturespack), revize a9b3d8805d84b44d1d7cb497ef092cf834bfe61e
+* Původní licence: část souborů Unlicense, zbytek GPLv3 nebo CC BY-SA nejasné verze.
+* [ContentDB](https://content.minetest.net/packages/Sharpik/sharpnet\_textures/)

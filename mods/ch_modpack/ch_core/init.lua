@@ -57,6 +57,7 @@ function ch_core.close_submod(submod)
 	return true
 end
 
+-- dofile(modpath .. "/rotation.lua")
 dofile(modpath .. "/privs.lua")
 dofile(modpath .. "/markers.lua")
 dofile(modpath .. "/data.lua")

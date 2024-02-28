@@ -231,3 +231,30 @@ if minetest.get_modpath("unifieddyes") then
 	minetest.register_node("ch_test:regal", def)
 end
 ]]
+
+--[[
+def = {
+	description = "test otáčení"
+}
+
+ch_core.register_4dir_nodes("ch_test:fdt", {tiles = true, node_box = true, drop = true},
+	{
+		-- common definition
+		drawtype = "nodebox",
+		tiles = {
+			{name = "ch_test_4dir_1.png", backface_culling = true},
+			{name = "ch_test_4dir_2.png", backface_culling = true},
+			{name = "ch_test_4dir_3.png", backface_culling = true},
+			{name = "ch_test_4dir_4.png", backface_culling = true},
+			{name = "ch_test_4dir_5.png", backface_culling = true},
+			{name = "ch_test_4dir_6.png", backface_culling = true},
+		},
+		node_box = {
+			type = "fixed",
+			fixed = {
+				{-0.5, -0.5, -0.5, -0.4, -0.3, -0.2},
+			},
+		},
+		groups = {oddly_breakable_by_hand = 3},
+	}
+]]

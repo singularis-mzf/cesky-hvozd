@@ -1,0 +1,479 @@
+License of source code
+----------------------
+
+GNU Lesser General Public License, version 2.1
+Copyright (C) 2022-2024 Singularis <singularis@volny.cz>
+
+This program is free software; you can redistribute it and/or modify it under the terms
+of the GNU Lesser General Public License as published by the Free Software Foundation;
+either version 2.1 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details:
+https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+
+
+Licenses of media (models, sounds and textures)
+----------------------------
+
+ch_overrides_mg_snow.obj
+	Author: Singularis
+	License: CC BY-SA 4.0
+
+underch_crystal.mtl
+underch_crystal.obj
+	Author: Hume2
+	Source: https://github.com/FaceDeer/dfcaverns (Taken from [underch] (Underground Challenge) mod by Hume2 under WTFPL)
+	License: MIT
+
+default_glass_footstep.1.ogg
+default_glass_footstep.2.ogg
+default_sand_footstep.1.ogg
+default_sand_footstep.2.ogg
+default_sand_footstep.3.ogg
+	Author: PolySaken
+	Source: https://content.minetest.net/packages/mt-mods/vision_lib/ (version 1.8)
+	License: CC BY-SA 4.0
+
+bones_bottom.png
+bones_front.png
+bones_rear.png
+bones_side.png
+bones_top.png
+bucket.png
+bucket_lava.png
+bucket_river_water.png
+bucket_water.png
+bucket_wooden.png
+bucket_wooden_river_water.png
+bucket_wooden_water.png
+butterflies_butterfly_red.png
+butterflies_butterfly_red_animated.png
+butterflies_butterfly_violet.png
+butterflies_butterfly_violet_animated.png
+butterflies_butterfly_white.png
+butterflies_butterfly_white_animated.png
+carts_cart.png
+carts_cart_front.png
+carts_cart_side.png
+carts_cart_top.png
+default_acacia_leaves.png
+default_acacia_leaves_simple.png
+default_aspen_leaves.png
+default_blueberry_bush_leaves.png
+default_blueberry_overlay.png
+default_book.png
+default_book_written.png
+default_bookshelf_slot.png
+default_brick.png
+default_bronze_ingot.png
+default_cactus_side.png
+default_cactus_top.png
+default_chest_front.png
+default_chest_inside.png
+default_chest_lock.png
+default_chest_side.png
+default_chest_top.png
+default_copper_ingot.png
+default_diamond.png
+default_diamond_block.png
+default_dry_dirt.png
+default_dry_grass.png
+default_dry_grass_1.png
+default_dry_grass_2.png
+default_dry_grass_3.png
+default_dry_grass_4.png
+default_dry_grass_5.png
+default_dry_grass_side.png
+default_dry_shrub.png
+default_emergent_jungle_sapling.png
+default_fence_acacia_wood.png
+default_fence_aspen_wood.png
+default_fence_junglewood.png
+default_fence_pine_wood.png
+default_fence_rail_acacia_wood.png
+default_fence_rail_aspen_wood.png
+default_fence_rail_junglewood.png
+default_fence_rail_pine_wood.png
+default_fence_rail_wood.png
+default_fence_wood.png
+default_furnace_bottom.png
+default_furnace_front.png
+default_furnace_front_active.png
+default_furnace_side.png
+default_furnace_top.png
+default_gold_ingot.png
+default_junglegrass.png
+default_jungleleaves.png
+default_jungleleaves_simple.png
+default_kelp.png
+default_key.png
+default_key_skeleton.png
+default_large_cactus_seedling.png
+default_lava.png
+default_lava_flowing_animated.png
+default_lava_source_animated.png
+default_leaves.png
+default_leaves_simple.png
+default_marram_grass_1.png
+default_marram_grass_2.png
+default_marram_grass_3.png
+default_mese_post_light_top.png
+default_moss.png
+default_moss_side.png
+default_obsidian_block.png
+default_obsidian_brick.png
+default_paper.png
+default_permafrost.png
+default_steel_ingot.png
+default_tin_ingot.png
+doors_door_steel.png
+doors_door_wood.png
+doors_item_steel.png
+doors_item_wood.png
+doors_trapdoor.png
+doors_trapdoor_side.png
+doors_trapdoor_steel.png
+doors_trapdoor_steel_side.png
+drinks_bottle_contents.png
+drinks_bucket_contents.png
+drinks_drinking_glass.png
+drinks_glass_bottle.png
+drinks_glass_contents.png
+fireflies_bottle.png
+fireflies_bottle_animated.png
+fireflies_bugnet.png
+fireflies_firefly.png
+fireflies_firefly_animated.png
+flowers_chrysanthemum_green.png
+flowers_dandelion_white.png
+flowers_dandelion_yellow.png
+flowers_geranium.png
+flowers_mushroom_brown.png
+flowers_mushroom_red.png
+flowers_rose.png
+flowers_tulip.png
+flowers_tulip_black.png
+flowers_viola.png
+flowers_waterlily.png
+flowers_waterlily_bottom.png
+map_mapping_kit.png
+screwdriver.png
+tnt_blast.png
+tnt_boom.png
+tnt_bottom.png
+tnt_gunpowder_burning_crossing_animated.png
+tnt_gunpowder_burning_curved_animated.png
+tnt_gunpowder_burning_straight_animated.png
+tnt_gunpowder_burning_t_junction_animated.png
+tnt_gunpowder_crossed.png
+tnt_gunpowder_curved.png
+tnt_gunpowder_inventory.png
+tnt_gunpowder_straight.png
+tnt_gunpowder_t_junction.png
+tnt_side.png
+tnt_tnt_stick.png
+tnt_top.png
+tnt_top_burning.png
+tnt_top_burning_animated.png
+vessels_drinking_glass.png
+vessels_drinking_glass_inv.png
+vessels_glass_bottle.png
+vessels_glass_fragments.png
+vessels_shelf.png
+vessels_shelf_slot.png
+vessels_steel_bottle.png
+xpanes_bar.png
+xpanes_bar_top.png
+xpanes_door_steel_bar.png
+xpanes_item_steel_bar.png
+xpanes_pane_half.png
+xpanes_space.png
+xpanes_trapdoor_steel_bar.png
+xpanes_trapdoor_steel_bar_side.png
+	Author: Lukas Reichlin
+	Source: Polygonia_64px texture pack
+	License: CC BY-SA 4.0
+
+default_desert_sandstone_block.png
+default_desert_sandstone_brick.png
+default_dirt.png
+default_sandstone_block.png
+default_sandstone_brick.png
+default_silver_sandstone_block.png
+default_silver_sandstone_brick.png
+default_snow.png
+	Copyright (C) 2010-2018:
+		celeron55, Perttu Ahola <celeron55@gmail.com>
+		Cisoun
+		G4JC
+		VanessaE
+		RealBadAngel
+		Calinou
+		MirceaKitsune
+		Jordach
+		PilzAdam
+		jojoa1997
+		InfinityProject
+		Splizard
+		Zeg9
+		paramat
+		BlockMen
+		sofar
+		Neuromancer
+		Gambit
+		asl97
+		KevDoy
+		Mito551
+		GreenXenith
+		kaeza
+		kilbith
+		tobyplowy
+		CloudyProton
+		TumeniNodes
+		Mossmanikin
+		random-geek
+		Extex101
+		An0n3m0us
+	Source: Minetest Game
+	Modified by: Singularis
+	License: CC BY-SA 3.0
+
+default_grass.png
+default_grass_side.png
+	Copyright (C) 2010-2018:
+		celeron55, Perttu Ahola <celeron55@gmail.com>
+		Cisoun
+		G4JC
+		VanessaE
+		RealBadAngel
+		Calinou
+		MirceaKitsune
+		Jordach
+		PilzAdam
+		jojoa1997
+		InfinityProject
+		Splizard
+		Zeg9
+		paramat
+		BlockMen
+		sofar
+		Neuromancer
+		Gambit
+		asl97
+		KevDoy
+		Mito551
+		GreenXenith
+		kaeza
+		kilbith
+		tobyplowy
+		CloudyProton
+		TumeniNodes
+		Mossmanikin
+		random-geek
+		Extex101
+		An0n3m0us
+	Used sources:
+		Minetest Game (CC BY-SA 3.0)
+		https://commons.wikimedia.org/wiki/File:Green_grass_texture_above.jpg by Kurt Kaiser (CC0)
+	Created from sources and adapted by: Singularis
+	License: CC BY-SA 3.0
+
+default_river_water.png
+default_river_water_flowing_animated.png
+default_river_water_source_animated.png
+default_water.png
+default_water_flowing_animated.png
+default_water_source_animated.png
+	Author: VanessaE
+	Source: hdx-64 texture pack
+	License: GFDLv1.3
+	Used source: https://commons.wikimedia.org/wiki/File:D_Zyl.jpg
+
+default_desert_sand.png
+default_sand.png
+default_silver_sand.png
+	Author: VanessaE
+	Source: hdx-64 texture pack
+	License: GFDLv1.3
+	Used source: https://commons.wikimedia.org/wiki/File:Sand.jpg
+
+default_gravel.png
+	Author: VanessaE
+	Source: hdx-64 texture pack
+	License: GFDLv1.3
+	Used source: https://commons.wikimedia.org/wiki/File:Gravel_small_stones.jpg
+
+default_pine_needles.png
+	Author: Singularis
+	License: CC BY-SA 4.0
+	Used sources:
+	- "Minetest Game (texture default_pine_needles.png from mod default)" (license CC BY-SA 3.0)
+		Copyright (C) 2010-2018:
+			celeron55, Perttu Ahola <celeron55@gmail.com>
+			Cisoun
+			G4JC
+			VanessaE
+			RealBadAngel
+			Calinou
+			MirceaKitsune
+			Jordach
+			PilzAdam
+			jojoa1997
+			InfinityProject
+			Splizard
+			Zeg9
+			paramat
+			BlockMen
+			sofar
+			Neuromancer
+			Gambit
+			asl97
+			KevDoy
+			Mito551
+			GreenXenith
+			kaeza
+			kilbith
+			tobyplowy
+			CloudyProton
+			TumeniNodes
+			Mossmanikin
+			random-geek
+			Extex101
+			An0n3m0us
+	- "Polygonia_64px texture pack" by Lukas Reichlin (license CC BY-SA 4.0)
+
+default_coniferous_litter.png
+default_coniferous_litter_side.png
+default_mese_post_light_side.png
+default_mese_post_light_side_dark.png
+default_rainforest_litter.png
+default_rainforest_litter_side.png
+unknown_item.png
+unknown_node.png
+unknown_object.png
+	Author: Lukas Reichlin
+	Modified by: Singularis
+	Source: Polygonia_64px texture pack
+	License: CC BY-SA 4.0
+
+default_desert_stone.png
+default_desert_stone_block.png
+default_desert_stone_brick.png
+default_stone.png
+default_stone_block.png
+default_stone_brick.png
+	Author: Singularis
+	Used source: https://commons.wikimedia.org/wiki/File:Light_brown_stone_texture.jpg (public domain)
+	License: CC BY 4.0
+
+default_grass_1.png
+default_grass_2.png
+default_grass_3.png
+default_grass_4.png
+default_grass_5.png
+moon.png
+moon_tonemap.png
+sun.png
+wool_black.png
+wool_blue.png
+wool_brown.png
+wool_colored_light_blue.png
+wool_cyan.png
+wool_dark_green.png
+wool_dark_grey.png
+wool_green.png
+wool_grey.png
+wool_magenta.png
+wool_orange.png
+wool_pink.png
+wool_red.png
+wool_violet.png
+wool_white.png
+wool_yellow.png
+	License: Unlicense
+	Author: Sharpik
+	Source: https://github.com/Sharpik/Minetest-SharpNet-Photo-Realism-Texturespack
+
+crack_anylength.png
+default_acacia_wood.png
+default_aspen_wood.png
+default_bookshelf.png
+default_glass.png
+default_glass_alt.png
+default_glass_detail.png
+default_junglewood.png
+default_mese_block.png
+default_pine_wood.png
+default_wood.png
+gui_hotbar.png
+gui_hotbar_selected.png
+	Copyright (C) 2010-2022:
+		celeron55, Perttu Ahola <celeron55@gmail.com>
+		Cisoun
+		G4JC
+		VanessaE
+		RealBadAngel
+		Calinou
+		MirceaKitsune
+		Jordach
+		PilzAdam
+		jojoa1997
+		InfinityProject
+		Splizard
+		Zeg9
+		paramat
+		BlockMen
+		sofar
+		Neuromancer
+		Gambit
+		asl97
+		KevDoy
+		Mito551
+		GreenXenith
+		kaeza
+		kilbith
+		tobyplowy
+		CloudyProton
+		TumeniNodes
+		Mossmanikin
+		random-geek
+		Extex101
+		An0n3m0us
+		rudzik8
+	Source: Graceful 32x (texture pack)
+	License: CC BY-SA 3.0
+
+default_cobble.png
+default_desert_cobble.png
+default_mossycobble.png
+	Authors: Sirrobzeroone, Various Artists, Denzis, Cestmír Dammer,
+		Matt Rumble, Calinou, 7Soul1, Glitch, Rubberduck, ScratchIO,
+		Singularis
+	License: CC0
+	Used source:
+		https://github.com/sirrobzeroone/DungeonSoup
+
+default_fern_1.png
+default_fern_2.png
+default_fern_3.png
+	Authors: Sirrobzeroone, Various Artists, Denzis, Cestmír Dammer,
+		Matt Rumble, Calinou, 7Soul1, Glitch, Rubberduck, ScratchIO
+	License: CC0
+	Source:
+		https://github.com/sirrobzeroone/DungeonSoup
+
+dfcaverns_glow_mese.png
+	Author: FaceDeer
+	Source: https://github.com/FaceDeer/dfcaverns
+	License: MIT
+
+default_acacia_wood.png
+default_wood.png
+	Author: Singularis
+	License: CC BY-SA 3.0
+	Used source:
+		- https://opengameart.org/content/5-wood-textures
+		  Author: Luke.RUSTLTD
+		  License: CC0

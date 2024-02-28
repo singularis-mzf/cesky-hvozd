@@ -14,7 +14,6 @@ local mods = {
 	"jonez",
 	"moreblocks",
 	"moretrees",
-	"screwdriver",
 	"technic_cnc",
 	"ts_furniture", -- colored chairs and sitting
 }
@@ -48,5 +47,12 @@ minetest.override_chatcommand("giveme", {func = function(player_name, param)
 	minetest.log("action", player_name.." gives themself: "..param)
 	return giveme_func(player_name, param)
 end})
+
+-- temp
+
+minetest.override_item("default:wood", {
+	tiles = {"default_wood.png^[resize:256x256^(ch_core_planks_128.png^[makealpha:255,255,255^[opacity:100^[resize:256x256)"},
+})
+
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
