@@ -222,9 +222,16 @@ function ts_furniture.register_furniture(recipe, description, tiles)
 
 			local current_groups = table.copy(groups)
 			current_groups["ts_" ..furniture] = 1
+			local new_desc
+			if recipe:sub(1, 10) == "bakedclay:" then
+				new_desc = S(description.." "..def.description)
+				print("DEBUG: "..dump2({description = description, def_description = def.description, recipe = recipe, new_desc = new_desc, new_desc_source = description.." "..def.description}))
+			else
+				new_desc = (recipe_def.description or "neznámý materiál")..": "..S(def.description)
+			end
 
 			minetest.register_node(":" .. node_name, {
-				description = S(description .. " " .. def.description),
+				description = new_desc,
 				drawtype = "nodebox",
 				paramtype = "light",
 				paramtype2 = "facedir",
@@ -255,7 +262,7 @@ ts_furniture.register_furniture("default:junglewood", "Jungle Wood")
 
 if (minetest.get_modpath("moretrees")) then
 	ts_furniture.register_furniture("moretrees:apple_tree_planks", "Apple Tree")
-	ts_furniture.register_furniture("moretrees:beech_planks", "Beech")
+	-- ts_furniture.register_furniture("moretrees:beech_planks", "Beech")
 	ts_furniture.register_furniture("moretrees:birch_planks", "Birch")
 	ts_furniture.register_furniture("moretrees:fir_planks", "Fir")
 	ts_furniture.register_furniture("moretrees:oak_planks", "Oak")

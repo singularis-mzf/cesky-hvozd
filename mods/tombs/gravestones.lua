@@ -220,8 +220,8 @@ for i, shape_def in ipairs(shapes) do
 
 	local def = table.copy(tombstone_common_def)
 
-	if type(textures) == "string" then
-		def.tiles = {textures..'.png'}
+	if type(textures) ~= "table" then
+		error("tombs.register_stones(): textures must be a table!")
 	else
 		def.tiles = textures
 	end

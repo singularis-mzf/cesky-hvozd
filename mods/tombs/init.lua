@@ -62,28 +62,23 @@ for name, mdef in pairs(materials) do
 		if ndef.description == nil then
 			error("[tombs] Invalid description for "..name)
 		end
-		local tiles = ndef.tiles
-		if type(tiles) == "table" then
-			tiles = tiles[1]
-			if type(tiles) == "table" then
-				tiles = tiles.name
+		local texture = ndef.tiles
+		if type(texture) == "table" then
+			texture = texture[1]
+			if type(texture) == "table" then
+				texture = assert(texture.name)
 			end
-		end
-		if type(tiles) == "string" then
-			tiles = tiles:gsub(".png$", "")
-		else
-			error("[tombs] Cannot parse tiles of "..name..": "..dump2(ndef.tiles))
 		end
 		if mdef.map64 then
 			local t = "[combine:64x64"
 			for x = -16, 48, 32 do
 				for y = -16, 48, 32 do
-					t = t..":"..x..","..y.."="..tiles..".png\\^[resize\\:32x32"
+					t = t..":"..x..","..y.."="..texture.."\\^[resize\\:32x32"
 				end
 			end
-			tiles = {{name = t}}
+			texture = t
 		end
-		tombs.register_stones(name, name:gsub(":", "_"), ndef.description, tiles, mdef)
+		tombs.register_stones(name, name:gsub(":", "_"), ndef.description, {{name = texture}}, mdef)
 	else
 		minetest.log("warning", "Material "..name.." expected for tomb stone not found!")
 	end

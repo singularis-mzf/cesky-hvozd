@@ -19,6 +19,21 @@ moretrees.treelist = {
 	{"jungletree",   S("Jungle Tree"),     nil,                    nil, nil, nil, "default_junglesapling.png"  },
 }
 
+-- Beech aliases
+
+minetest.register_alias("moretrees:beech_trunk", "default:tree")
+minetest.register_alias("moretrees:beech_planks", "default:wood")
+minetest.register_alias("moretrees:beech_leaves", "default:leaves")
+minetest.register_alias("moretrees:beech_fence", "default:fence_wood")
+minetest.register_alias("moretrees:beech_fence_rail", "default:fence_rail_wood")
+minetest.register_alias("moretrees:beech_gate_closed", "default:gate_wood_closed")
+minetest.register_alias("moretrees:beech_gate_open", "default:gate_wood_open")
+minetest.register_alias("moretrees:beech_mese_post_light", "default:mese_post_light")
+minetest.register_alias("moretrees:beech_trunk_allfaces", "moreblocks:tree_allfaces")
+minetest.register_alias("moretrees:beech_trunk_noface", "moreblocks:tree_noface")
+
+-- minetest.register_alias("moretrees:beech_fence", "")
+
 moretrees.treedesc = {
 	beech = {
 		trunk = S("Beech Tree Trunk"),
@@ -308,7 +323,7 @@ for i in ipairs(moretrees.treelist) do
 	end
 
 	-- the default game provides jungle tree and pine trunk/planks nodes.
-	if treename ~= "pine" then
+	if treename ~= "pine" and treename ~= "beech" then
 
 		if treename ~= "jungletree" then
 
@@ -386,7 +401,7 @@ for i in ipairs(moretrees.treelist) do
 			end
 		})
 	end
-	if treename ~= "jungletree" and treename ~= "pine" then
+	if treename ~= "jungletree" and treename ~= "pine" and treename ~= "beech" then
 		local moretrees_leaves_inventory_image = nil
 		local moretrees_new_leaves_waving = nil
 
@@ -598,8 +613,7 @@ for i in ipairs(moretrees.treelist) do
 		})
 	end
 
-	if treename ~= "jungletree"
-		and treename ~= "pine" then
+	if treename ~= "jungletree" and treename ~= "pine" and treename ~= "beech" then
 			default.register_leafdecay({
 				trunks = { "moretrees:"..treename.."_trunk" },
 				leaves = { "moretrees:"..treename.."_leaves", fruitname },

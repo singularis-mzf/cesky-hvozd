@@ -159,7 +159,7 @@ function stairsplus:register_noface_trunk(modname, subname, original_node_name, 
 	end
 	local stairsplus_level = options.stairsplus or "all"
 	def = table.copy(def)
-	def.description = (def.description or "").." "..S("(no face)")
+	def.description = (def.description or "")..": "..S("no face")
 	local t = def.tiles[tile_index or 3] or def.tiles[#def.tiles] or def.tiles[1]
 	if not t then
 		minetest.log("error", "Cannot determine tiles for "..modname..":"..subname.."!")
@@ -194,7 +194,7 @@ function stairsplus:register_allfaces_trunk(modname, subname, original_node_name
 	end
 	local stairsplus_level = options.stairsplus or "none"
 	def = table.copy(def)
-	def.description = (def.description or "").." "..S("(all faces)")
+	def.description = (def.description or "")..": "..S("all faces")
 	local t = def.tiles[tile_index or 1] or def.tiles[#def.tiles]
 	if not t then
 		minetest.log("error", "Cannot determine tiles for "..modname..":"..subname.."!")

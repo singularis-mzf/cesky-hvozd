@@ -61,7 +61,7 @@ for _, row in ipairs(podiums.materials) do
 	local name, desc, tiles, craft_material, slab_material = row[1], row[2], row[3], row[4], row[5]
 	minetest.register_node(":church_podiums:podium_" ..name, {
 		drawtype = "nodebox",
-		description = "řečnický pult "..desc,
+		description = assert(minetest.registered_nodes[craft_material].description)..": řečnický pult",
 		--inventory_image = "podiums_" ..name.. "_inv.png",
 		--wield_image = "podiums_" ..name.. "_inv.png",
 		tiles = { tiles },
