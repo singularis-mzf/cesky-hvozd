@@ -90,8 +90,8 @@ mobs:alias_mob("mobs:rat", "mobs_animal:rat") -- compatibility
 minetest.register_craftitem(":mobs:rat_cooked", {
 	description = S("Cooked Rat"),
 	inventory_image = "mobs_cooked_rat.png",
-	on_use = minetest.item_eat(3),
-	groups = {food_rat = 1, flammable = 2}
+	on_use = ch_core.item_eat(),
+	groups = {food_rat = 1, flammable = 2, ch_food = 3}
 })
 
 minetest.register_craft({

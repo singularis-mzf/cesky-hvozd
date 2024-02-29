@@ -303,9 +303,11 @@ for product, def in pairs(canned_food_definitions) do
 	if minetest.get_modpath(def.found_in) then
 	--if minetest.global_exists(def.found_in) then
 		if def.sugar and minetest.get_modpath("farming") or not def.sugar then
-			
+
 			-- general description
-			
+
+			local food_value = math.max(1, math.floor (def.orig_nutritional_value * def.amount * 1.33) + (def.sugar and 1 or 0))
+
 			local nodetable = {
 				description = def.proper_name,
 				drawtype = "plantlike",
@@ -322,38 +324,38 @@ for product, def in pairs(canned_food_definitions) do
 				groups = { canned_food = 1,
 			                 vessel = 1,
 			                 dig_immediate = 3,
-			                 attached_node = 1 },
+			                 attached_node = 1,
+			                 ch_food = food_value,
+					},
 				-- canned food prolongs shelf life IRL, but in minetest food never
 				-- goes bad. Here, we increase the nutritional value instead.
-				on_use = minetest.item_eat(
-						math.floor (def.orig_nutritional_value * def.amount * 1.33)
-						+ (def.sugar and 1 or 0), "vessels:glass_bottle"),
+				on_use = ch_core.item_eat("vessels:glass_bottle"),
 				-- the empty bottle stays, of course
 				sounds = default.node_sound_glass_defaults(),
 			}
-			
-			
+
+
 			if not def.transforms then
-			-- introducing a new item, a bit more nutricious than the source 
+			-- introducing a new item, a bit more nutricious than the source
 			-- material when sugar is used. Always stays the same.
 				minetest.register_node("canned_food:" .. product, nodetable)
-			
+
 			else
 			-- Some products involve marinating or salting, however there is no salt
 			-- or vingerar in minetest; instead we imitate this more complex process
 			-- by putting the jar on a wooden shelf in a dark room for a long while.
 			-- The effort is rewarded accordingly.
-			
+
 				-- adding transformation code
 				nodetable.on_construct = function(pos)
 						local t = minetest.get_node_timer(pos)
 						t:start(180)
 					end
-					
+
 				nodetable.on_timer = function(pos)
 						-- if light level is 11 or less, and wood is nearby, there is 1 in 10 chance...
-						if minetest.get_node_light(pos) > 11 or 
-						   not minetest.find_node_near(pos, 1, {"group:wood"}) 
+						if minetest.get_node_light(pos) > 11 or
+						   not minetest.find_node_near(pos, 1, {"group:wood"})
 						   or math.random() > 0.1 then
 							return true
 						else
@@ -366,6 +368,8 @@ for product, def in pairs(canned_food_definitions) do
 
 				-- add node to the list for LBM
 				table.insert(lbm_list, "canned_food:" .. product)
+
+				local food_value = math.max(1, (math.floor (def.orig_nutritional_value * def.amount * 1.33) + (def.sugar and 1 or 0)) * 2)
 
 				-- a better version
 				minetest.register_node("canned_food:" .. product .."_plus", {
@@ -381,16 +385,16 @@ for product, def in pairs(canned_food_definitions) do
 						type = "fixed",
 						fixed = {-0.25, -0.5, -0.25, 0.25, 0.3, 0.25}
 					},
-					groups = { canned_food = 1, 
-						vessel = 1, 
-						dig_immediate = 3, 
+					groups = { canned_food = 1,
+						vessel = 1,
+						dig_immediate = 3,
 						attached_node = 1,
-						canned_food_plus = 1 },
-					-- the reward for putting the food in a cellar is even greater 
+						canned_food_plus = 1,
+						ch_food = food_value,
+					},
+					-- the reward for putting the food in a cellar is even greater
 					-- than for merely canning it.
-					on_use = minetest.item_eat(
-							(math.floor(def.orig_nutritional_value * def.amount * 1.33)
-							+ (def.sugar and 1 or 0))*2, "vessels:glass_bottle"),
+					on_use = ch_core.item_eat("vessels:glass_bottle"),
 					-- the empty bottle stays, of course
 					sounds = default.node_sound_glass_defaults(),
 				})
@@ -403,7 +407,7 @@ for product, def in pairs(canned_food_definitions) do
 						items = {"canned_food:" .. product},
 					})
 				end
-				
+
 			end
 
 			-- a family of shapeless recipes, with sugar for jams
@@ -418,8 +422,8 @@ for product, def in pairs(canned_food_definitions) do
 			end
 			-- prevent creation of a recipe with more items than there are slots
 			-- left in the 9-tile craft grid
-			if def.amount > max then 
-				def.amount = max 
+			if def.amount > max then
+				def.amount = max
 			end
 			for i=1,def.amount do
 				table.insert(ingredients, def.obj_name)

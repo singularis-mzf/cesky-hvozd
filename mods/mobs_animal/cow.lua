@@ -168,8 +168,8 @@ mobs:alias_mob("mobs:cow", "mobs_animal:cow") -- compatibility
 bucket.register_full_bucket(":mobs:bucket_milk", "bucket:bucket_empty", "", {
 	description = "kbelík mléka",
 	inventory_image = "mobs_bucket_milk.png",
-	groups = {milk_bucket = 1, food_milk = 1, flammable = 3, drink = 1},
-	on_use = minetest.item_eat(8, "bucket:bucket_empty"),
+	groups = {milk_bucket = 1, food_milk = 1, flammable = 3, drink = 8},
+	on_use = ch_core.item_eat("bucket:bucket_empty"),
 	node_name = ":mobs:bucket_milk_placed",
 })
 
@@ -177,8 +177,8 @@ bucket.register_full_bucket(":mobs:bucket_milk", "bucket:bucket_empty", "", {
 minetest.register_craftitem(":mobs:glass_milk", {
 	description = S("Glass of Milk"),
 	inventory_image = "mobs_glass_milk.png",
-	on_use = minetest.item_eat(2, "vessels:drinking_glass"),
-	groups = {food_milk_glass = 1, flammable = 3, vessel = 1, drink = 1},
+	on_use = ch_core.item_eat("vessels:drinking_glass"),
+	groups = {food_milk_glass = 1, flammable = 3, vessel = 1, drink = 2},
 })
 
 minetest.register_craft({
@@ -208,8 +208,8 @@ minetest.register_craft({
 minetest.register_craftitem(":mobs:butter", {
 	description = S("Butter"),
 	inventory_image = "mobs_butter.png",
-	on_use = minetest.item_eat(1),
-	groups = {food_butter = 1, flammable = 2}
+	on_use = ch_core.item_eat(),
+	groups = {food_butter = 1, flammable = 2, ch_food = 1}
 })
 
 local salt_item = "default:sapling" -- some saplings are high in sodium
@@ -228,8 +228,8 @@ minetest.register_craft({
 minetest.register_craftitem(":mobs:cheese", {
 	description = S("Cheese"),
 	inventory_image = "mobs_cheese.png",
-	on_use = minetest.item_eat(4),
-	groups = {food_cheese = 1, flammable = 2}
+	on_use = ch_core.item_eat(),
+	groups = {food_cheese = 1, flammable = 2, ch_food = 4}
 })
 
 minetest.register_craft({
@@ -270,8 +270,8 @@ if minetest.get_modpath("bucket_wooden") then
 	bucket.register_full_bucket(":mobs:bucket_wooden_milk", "bucket_wooden:bucket_empty", "", {
 		description = "vědro mléka",
 		inventory_image = "mobs_wooden_bucket_milk.png",
-		groups = {milk_bucket = 1, food_milk = 1, flammable = 3, drink = 1},
-		on_use = minetest.item_eat(8, "bucket_wooden:bucket_empty"),
+		groups = {milk_bucket = 1, food_milk = 1, flammable = 3, drink = 8},
+		on_use = minetest.item_eat("bucket_wooden:bucket_empty"),
 		node_name = ":mobs:bucket_wooden_milk_placed",
 	})
 

@@ -30,6 +30,8 @@ local MP = core.get_modpath(core.get_current_modname())
 local S = minetest.get_translator("drawers")
 local NS = S
 
+local has_wrench = minetest.get_modpath("wrench")
+
 drawers.node_box_simple = {
 	{-0.5, -0.5, -0.4375, 0.5, 0.5, 0.5},
 	{-0.5, -0.5, -0.5, -0.4375, 0.5, -0.4375},
@@ -45,6 +47,35 @@ drawers.drawer_formspec = "size[9,7]" ..
 	drawers.gui_bg_img ..
 	drawers.gui_slots ..
 	drawers.get_upgrade_slots_bg(2, 0.5)
+
+local wrench_defs
+
+if has_wrench then
+	wrench_defs = {}
+
+	for _, i in ipairs({1, 2, 4}) do
+		local metas = {formspec = wrench.META_TYPE_IGNORE}
+		for j = 1, i do
+			local s
+			if i == 1 then
+				s = ""
+			else
+				s = tostring(j)
+			end
+			metas["name"..s] = wrench.META_TYPE_STRING
+			metas["count"..s] = wrench.META_TYPE_INT
+			metas["max_count"..s] = wrench.META_TYPE_INT
+			metas["base_stack_max"..s] = wrench.META_TYPE_INT
+			metas["entity_infotext"..s] = wrench.META_TYPE_STRING
+			metas["stack_max_factor"..s] = wrench.META_TYPE_INT
+		end
+		wrench_defs[i] = {
+			lists = {"upgrades"},
+			metas = metas,
+			after_place = drawers.spawn_visuals,
+		}
+	end
+end
 
 -- construct drawer
 function drawers.drawer_on_construct(pos)
@@ -337,6 +368,9 @@ function drawers.register_drawer(name, def)
 			-- possible duplication bugs occur otherwise
 			mesecon.register_mvps_stopper(name .. "1")
 		end
+		if has_wrench then
+			wrench.register_node(name .. "1", wrench_defs[1])
+		end
 	end
 
 	if drawers.enable_1x2 then
@@ -352,6 +386,9 @@ function drawers.register_drawer(name, def)
 		if has_mesecons_mvps then
 			mesecon.register_mvps_stopper(name .. "2")
 		end
+		if has_wrench then
+			wrench.register_node(name .. "2", wrench_defs[2])
+		end
 	end
 
 	if drawers.enable_2x2 then
@@ -366,6 +403,9 @@ function drawers.register_drawer(name, def)
 		core.register_node(name .. "4", def4)
 		if has_mesecons_mvps then
 			mesecon.register_mvps_stopper(name .. "4")
+		end
+		if has_wrench then
+			wrench.register_node(name .. "4", wrench_defs[4])
 		end
 	end
 

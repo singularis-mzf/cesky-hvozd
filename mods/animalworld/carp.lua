@@ -85,16 +85,16 @@ mobs:register_egg("animalworld:carp", S("Carp"), "acarp.png")
 minetest.register_craftitem(":animalworld:rawfish", {
 	description = S("Raw Fish"),
 	inventory_image = "animalworld_rawfish.png",
-	on_use = minetest.item_eat(3),
-	groups = {food_meat_raw = 1, food_fish_raw = 1, flammable = 2},
+	on_use = ch_core.item_eat(),
+	groups = {food_meat_raw = 1, food_fish_raw = 1, flammable = 2, ch_food = 3},
 })
 
 -- cooked fish
 minetest.register_craftitem(":animalworld:cookedfish", {
 	description = S("Cooked Fish"),
 	inventory_image = "animalworld_cookedfish.png",
-	on_use = minetest.item_eat(5),
-	groups = {food_meat = 1, food_fish = 1, flammable = 2},
+	on_use = ch_core.item_eat(),
+	groups = {food_meat = 1, food_fish = 1, flammable = 2, ch_food = 5},
 })
 
 minetest.register_craft({

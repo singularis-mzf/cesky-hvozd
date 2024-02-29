@@ -23,5 +23,14 @@ ch_test_4dir_3.png
 ch_test_4dir_4.png
 ch_test_4dir_5.png
 ch_test_4dir_6.png
+ch_test_chest_material.png
 	Author: Singularis
 	License: CC-BY-SA 4.0
+
+ch_test_chest_front_overlay.png
+ch_test_chest_side_overlay.png
+ch_test_chest_top_overlay.png
+	Author: Singularis
+	License: CC-BY-SA 4.0
+	Used source:
+	- "Polygonia_64px texture pack" by Lukas Reichlin (license CC BY-SA 4.0)

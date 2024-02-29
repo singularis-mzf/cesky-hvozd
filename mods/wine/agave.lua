@@ -28,10 +28,10 @@ minetest.register_node("wine:blue_agave", {
 		type = "fixed",
 		fixed = {-0.2, -0.5, -0.2, 0.2, 0.3, 0.2}
 	},
-	groups = {snappy = 3, attached_node = 1, plant = 1},
+	groups = {snappy = 3, attached_node = 1, plant = 1, ch_food = 2},
 	sounds = snd_l,
 
-	on_use = minetest.item_eat(2),
+	on_use = ch_core.item_eat(),
 
 	on_construct = function(pos)
 		minetest.get_node_timer(pos):start(17)

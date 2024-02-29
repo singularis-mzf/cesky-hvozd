@@ -150,7 +150,7 @@ for yp = 0, 1 do
 for zm = 0, 1 do
 for zp = 0, 1 do
 	local tname = xm..xp..ym..yp..zm..zp
-	wrench.register_node("pipeworks:lua_tube"..tname, lua_tube_data)
+	-- wrench.register_node("pipeworks:lua_tube"..tname, lua_tube_data)
 	wrench.register_node("pipeworks:mese_tube_"..tname, mese_tube_data)
 end
 end
@@ -160,4 +160,4 @@ end
 end
 
 lua_tube_data.drop = nil
-wrench.register_node("pipeworks:lua_tube_burnt", lua_tube_data)
+-- wrench.register_node("pipeworks:lua_tube_burnt", lua_tube_data)

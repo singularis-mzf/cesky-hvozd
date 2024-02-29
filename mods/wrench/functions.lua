@@ -124,7 +124,7 @@ local function safe_to_pickup(def, meta, inv)
 		table.insert(all_lists, list)
 	end
 	local lists = inv:get_lists()
-	for k in ipairs(lists) do
+	for k in pairs(lists) do
 		if table.indexof(all_lists, k) == -1 then
 			return false
 		end

@@ -231,7 +231,7 @@ minetest.register_craft({
 minetest.register_craftitem("farming:turkish_delight", {
 	description = S("Turkish Delight"),
 	inventory_image = "farming_turkish_delight.png",
-	groups = {flammable = 3},
+	groups = {flammable = 3, ch_food = 2},
 	on_use = minetest.item_eat(2)
 })
 
@@ -253,7 +253,7 @@ minetest.register_craft({
 minetest.register_craftitem("farming:garlic_bread", {
 	description = S("Garlic Bread"),
 	inventory_image = "farming_garlic_bread.png",
-	groups = {flammable = 3},
+	groups = {flammable = 3, ch_food = 2},
 	on_use = minetest.item_eat(2)
 })
 
@@ -269,7 +269,8 @@ minetest.register_craft({
 minetest.register_craftitem("farming:donut", {
 	description = S("Donut"),
 	inventory_image = "farming_donut.png",
-	on_use = minetest.item_eat(4)
+	on_use = minetest.item_eat(4),
+	groups = {ch_food = 4},
 })
 
 minetest.register_craft({
@@ -284,7 +285,8 @@ minetest.register_craft({
 minetest.register_craftitem("farming:donut_chocolate", {
 	description = S("Chocolate Donut"),
 	inventory_image = "farming_donut_chocolate.png",
-	on_use = minetest.item_eat(6)
+	on_use = minetest.item_eat(6),
+	groups = {ch_food = 6},
 })
 
 minetest.register_craft({
@@ -298,7 +300,8 @@ minetest.register_craft({
 minetest.register_craftitem("farming:donut_apple", {
 	description = S("Apple Donut"),
 	inventory_image = "farming_donut_apple.png",
-	on_use = minetest.item_eat(6)
+	on_use = minetest.item_eat(6),
+	groups = {ch_food = 6},
 })
 
 minetest.register_craft({
@@ -314,7 +317,8 @@ minetest.register_craft({
 minetest.register_craftitem("farming:porridge", {
 	description = S("Porridge"),
 	inventory_image = "farming_porridge.png",
-	on_use = minetest.item_eat(6, "farming:bowl")
+	on_use = minetest.item_eat(6, "farming:bowl"),
+	groups = {ch_food = 6},
 })
 
 minetest.register_craft({
@@ -334,7 +338,8 @@ minetest.register_craft({
 minetest.register_craftitem("farming:jaffa_cake", {
 	description = S("Jaffa Cake"),
 	inventory_image = "farming_jaffa_cake.png",
-	on_use = minetest.item_eat(6)
+	on_use = minetest.item_eat(6),
+	groups = {ch_food = 6},
 })
 
 minetest.register_craft({
@@ -357,7 +362,8 @@ minetest.register_craft({
 minetest.register_craftitem("farming:apple_pie", {
 	description = S("Apple Pie"),
 	inventory_image = "farming_apple_pie.png",
-	on_use = minetest.item_eat(6)
+	on_use = minetest.item_eat(6),
+	groups = {ch_food = 6},
 })
 
 minetest.register_craft({
@@ -374,7 +380,7 @@ minetest.register_craft({
 minetest.register_craftitem("farming:cactus_juice", {
 	description = S("Cactus Juice"),
 	inventory_image = "farming_cactus_juice.png",
-	groups = {vessel = 1, drink = 1},
+	groups = {vessel = 1, drink = 1, ch_food = 2, ch_poison = 1},
 	on_use = function(itemstack, user, pointed_thing)
 		if user then
 			if math.random(5) == 1 then
@@ -432,7 +438,8 @@ minetest.register_craft({
 minetest.register_craftitem("farming:spaghetti", {
 	description = S("Spaghetti"),
 	inventory_image = "farming_spaghetti.png",
-	on_use = minetest.item_eat(8)
+	on_use = minetest.item_eat(8),
+	groups = {ch_food = 8},
 })
 
 minetest.register_craft({
@@ -449,7 +456,8 @@ minetest.register_craft({
 minetest.register_craftitem("farming:bibimbap", {
 	description = S("Bibimbap"),
 	inventory_image = "farming_bibimbap.png",
-	on_use = minetest.item_eat(8, "farming:bowl")
+	on_use = minetest.item_eat(8, "farming:bowl"),
+	groups = {ch_food = 8},
 })
 
 minetest.register_craft({
@@ -479,6 +487,7 @@ minetest.register_craftitem("farming:burger", {
 	description = S("Burger"),
 	inventory_image = "farming_burger.png",
 	on_use = minetest.item_eat(16),
+	groups = {ch_food = 16},
 })
 
 minetest.register_craft({
@@ -495,7 +504,8 @@ minetest.register_craft({
 minetest.register_craftitem("farming:salad", {
 	description = S("Salad"),
 	inventory_image = "farming_salad.png",
-	on_use = minetest.item_eat(8, "farming:bowl")
+	on_use = minetest.item_eat(8, "farming:bowl"),
+	groups = {ch_food = 8},
 })
 
 minetest.register_craft({
@@ -513,7 +523,7 @@ minetest.register_craftitem("farming:smoothie_berry", {
 	description = S("Triple Berry Smoothie"),
 	inventory_image = "farming_berry_smoothie.png",
 	on_use = minetest.item_eat(6, "vessels:drinking_glass"),
-	groups = {vessel = 1, drink = 1}
+	groups = {vessel = 1, drink = 6}
 })
 
 minetest.register_craft({
@@ -532,6 +542,7 @@ minetest.register_craftitem("farming:spanish_potatoes", {
 	description = S("Spanish Potatoes"),
 	inventory_image = "farming_spanish_potatoes.png",
 	on_use = minetest.item_eat(8, "farming:bowl"),
+	groups = {ch_food = 8},
 })
 
 minetest.register_craft({
@@ -550,7 +561,8 @@ minetest.register_craft({
 minetest.register_craftitem("farming:potato_omelet", {
 	description = S("Potato omelet"),
 	inventory_image = "farming_potato_omelet.png",
-	on_use = minetest.item_eat(6, "farming:bowl")
+	on_use = minetest.item_eat(6, "farming:bowl"),
+	groups = {ch_food = 6},
 })
 
 minetest.register_craft({
@@ -567,7 +579,8 @@ minetest.register_craft({
 minetest.register_craftitem("farming:paella", {
 	description = S("Paella"),
 	inventory_image = "farming_paella.png",
-	on_use = minetest.item_eat(8, "farming:bowl")
+	on_use = minetest.item_eat(8, "farming:bowl"),
+	groups = {ch_food = 8},
 })
 
 minetest.register_craft({
@@ -585,7 +598,8 @@ minetest.register_craft({
 minetest.register_craftitem("farming:flan", {
 	description = S("Vanilla Flan"),
 	inventory_image = "farming_vanilla_flan.png",
-	on_use = minetest.item_eat(6)
+	on_use = minetest.item_eat(6),
+	groups = {ch_food = 6},
 })
 
 minetest.register_craft({
@@ -608,7 +622,7 @@ minetest.register_craftitem("farming:cheese_vegan", {
 	description = S("Vegan Cheese"),
 	inventory_image = "farming_cheese_vegan.png",
 	on_use = minetest.item_eat(2),
-	groups = {food_cheese = 1, flammable = 2}
+	groups = {food_cheese = 1, flammable = 2, ch_food = 2}
 })
 
 
@@ -645,7 +659,7 @@ minetest.register_craftitem("farming:onigiri", {
 	description = S("Onirigi"),
 	inventory_image = "farming_onigiri.png",
 	on_use = minetest.item_eat(2),
-	groups = {flammable = 2}
+	groups = {flammable = 2, ch_food = 2}
 })
 
 minetest.register_craft({
@@ -662,7 +676,7 @@ minetest.register_craftitem("farming:gyoza", {
 	description = S("Gyoza"),
 	inventory_image = "farming_gyoza.png",
 	on_use = minetest.item_eat(4),
-	groups = {flammable = 2}
+	groups = {flammable = 2, ch_food = 4}
 })
 
 minetest.register_craft({
@@ -684,7 +698,7 @@ minetest.register_craftitem("farming:mochi", {
 	description = S("Mochi"),
 	inventory_image = "farming_mochi.png",
 	on_use = minetest.item_eat(3),
-	groups = {flammable = 2}
+	groups = {flammable = 2, ch_food = 3}
 })
 
 minetest.register_craft({

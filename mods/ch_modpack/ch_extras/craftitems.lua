@@ -39,8 +39,8 @@ def = {
 	description = "rohlík",
 	inventory_image = "ch_extras_rohlik.png",
 	wield_image = "ch_extras_rohlik.png",
-	groups = {food = 2},
-	on_use = minetest.item_eat(2),
+	groups = {food = 2, ch_food = 2},
+	on_use = ch_core.item_eat(),
 }
 
 minetest.register_craftitem("ch_extras:rohlik", def)
@@ -49,8 +49,8 @@ def = {
 	description = "párek v rohlíku",
 	inventory_image = "ch_extras_parekvrohliku.png",
 	wield_image = "ch_extras_parekvrohliku.png",
-	groups = {food = 6, food_hot_dog = 1},
-	on_use = minetest.item_eat(6),
+	groups = {food = 6, food_hot_dog = 1, ch_food = 6},
+	on_use = ch_core.item_eat(),
 }
 
 minetest.register_craftitem("ch_extras:parekvrohliku", def)
@@ -59,8 +59,8 @@ def = {
 	description = "párek v rohlíku s kečupem",
 	inventory_image = "ch_extras_parekvrohliku_k.png",
 	wield_image = "ch_extras_parekvrohliku_k.png",
-	groups = {food = 8, food_hot_dog = 1},
-	on_use = minetest.item_eat(8),
+	groups = {food = 8, food_hot_dog = 1, ch_food = 8},
+	on_use = ch_core.item_eat(),
 }
 
 minetest.register_craftitem("ch_extras:parekvrohliku_k", def)
@@ -69,8 +69,8 @@ def = {
 	description = "párek v rohlíku s hořčicí",
 	inventory_image = "ch_extras_parekvrohliku_h.png",
 	wield_image = "ch_extras_parekvrohliku_h.png",
-	groups = {food = 8, food_hot_dog = 1},
-	on_use = minetest.item_eat(8),
+	groups = {food = 8, food_hot_dog = 1, ch_food = 8},
+	on_use = ch_core.item_eat(),
 }
 
 minetest.register_craftitem("ch_extras:parekvrohliku_h", def)
@@ -139,8 +139,8 @@ def = {
 	description = "kapří hlava",
 	inventory_image = "ch_extras_kapr_hlava.png",
 	wield_image = "ch_extras_kapr_hlava.png",
-	groups = {food = 1},
-	on_use = minetest.item_eat(1),
+	groups = {food = 1, ch_food = 1},
+	on_use = ch_core.item_eat(),
 }
 minetest.register_craftitem("ch_extras:carp_head", def)
 
@@ -148,8 +148,8 @@ def = {
 	description = "kapří maso (syrové)",
 	inventory_image = "ch_extras_kapr_telo.png",
 	wield_image = "ch_extras_kapr_telo.png",
-	-- groups = {food = 1},
-	-- on_use = minetest.item_eat(1),
+	-- groups = {food = 1, ch_food = 1},
+	-- on_use = ch_core.item_eat(),
 }
 minetest.register_craftitem("ch_extras:carp_meat", def)
 
@@ -157,8 +157,8 @@ def = {
 	description = "pečený kapr",
 	inventory_image = "ch_extras_kapr_peceny.png",
 	wield_image = "ch_extras_kapr_peceny.png",
-	groups = {food = 12},
-	on_use = minetest.item_eat(12),
+	groups = {food = 12, ch_food = 12},
+	on_use = ch_core.item_eat(),
 }
 minetest.register_craftitem("ch_extras:carp_cooked", def)
 
@@ -166,8 +166,8 @@ def = {
 	description = "kapří polévka",
 	inventory_image = "ch_extras_kapr_polevka.png",
 	wield_image = "ch_extras_kapr_polevka.png",
-	groups = {food = 4},
-	on_use = minetest.item_eat(4),
+	groups = {food = 4, ch_food = 12},
+	on_use = ch_core.item_eat(),
 }
 minetest.register_craftitem("ch_extras:carp_soup", def)
 
@@ -213,8 +213,8 @@ def = {
 	description = "vánočka",
 	inventory_image = "ch_extras_vanocka.png",
 	wield_image = "ch_extras_vanocka.png",
-	groups = {food = 6},
-	on_use = minetest.item_eat(6),
+	groups = {food = 6, ch_food = 6},
+	on_use = ch_core.item_eat(),
 }
 minetest.register_craftitem("ch_extras:vanocka", def)
 

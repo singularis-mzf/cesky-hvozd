@@ -27,16 +27,16 @@ minetest.register_craftitem("mobs:leather", {
 minetest.register_craftitem("mobs:meat_raw", {
 	description = S("Raw Meat"),
 	inventory_image = "mobs_meat_raw.png",
-	on_use = minetest.item_eat(3),
-	groups = {food_meat_raw = 1, flammable = 2}
+	on_use = ch_core.item_eat(),
+	groups = {food_meat_raw = 1, flammable = 2, ch_food = 3}
 })
 
 -- cooked meat
 minetest.register_craftitem("mobs:meat", {
 	description = S("Meat"),
 	inventory_image = "mobs_meat.png",
-	on_use = minetest.item_eat(8),
-	groups = {food_meat = 1, flammable = 2}
+	on_use = ch_core.item_eat(),
+	groups = {food_meat = 1, flammable = 2, ch_food = 8}
 })
 
 minetest.register_craft({
@@ -362,10 +362,10 @@ minetest.register_node("mobs:meatblock", {
 	description = S("Meat Block"),
 	tiles = {"mobs_meat_top.png", "mobs_meat_bottom.png", "mobs_meat_side.png"},
 	paramtype2 = "facedir",
-	groups = {choppy = 1, oddly_breakable_by_hand = 1, flammable = 2},
+	groups = {choppy = 1, oddly_breakable_by_hand = 1, flammable = 2, ch_food = 20},
 	sounds = default and default.node_sound_leaves_defaults(),
 	on_place = minetest.rotate_node,
-	on_use = minetest.item_eat(20)
+	on_use = ch_core.item_eat()
 })
 
 minetest.register_craft({

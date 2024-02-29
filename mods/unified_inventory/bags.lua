@@ -11,8 +11,18 @@ local F = minetest.formspec_escape
 local ui = unified_inventory
 
 local count_alignment = 14
+local pack_limit_per_stack = 100000
+local pack_limit_per_bag = 100000
 local count_empty_stacks = ch_core.count_empty_stacks
 local ifthenelse = ch_core.ifthenelse
+
+local function get_bags_detached_inventory(player_name)
+	return minetest.get_inventory{type = "detached", name = player_name.."_bags"}
+end
+
+local function get_player_bag_stack(player, i)
+	return get_bags_detached_inventory(player:get_player_name()):get_stack("bag" .. i, 1)
+end
 
 function ui.get_bags_info(player)
 	if not minetest.is_player(player) then
@@ -21,7 +31,7 @@ function ui.get_bags_info(player)
 	local player_name = player:get_player_name()
 	local inventory = player:get_inventory()
 	local meta = player:get_meta()
-	local detached = minetest.get_inventory{type = "detached", name = player_name.."_bags"}
+	local detached = get_bags_detached_inventory(player_name)
 	local result = {
 		player_name = player_name,
 		total_bags = 6,
@@ -32,9 +42,10 @@ function ui.get_bags_info(player)
 		local item = detached:get_stack("bag"..i, 1)
 		if not item:is_empty() then
 			local itemname = item:get_name()
+			local itemmeta = item:get_meta()
 			local slots = minetest.get_item_group(itemname, "bagslots")
 			if slots > 0 then
-				local title = meta:get_string("bag"..i.."_title")
+				local title = itemmeta:get_string("title")
 				if title == "" then
 					title = "batoh "..i
 				end
@@ -111,13 +122,6 @@ ui.register_button("bags", {
 	end,
 })
 
-local function get_player_bag_stack(player, i)
-	return minetest.get_inventory({
-		type = "detached",
-		name = player:get_player_name() .. "_bags"
-	}):get_stack("bag" .. i, 1)
-end
-
 for bag_i = 1, 6 do
 	ui.register_page("bag" .. bag_i, {
 		get_formspec = function(player)
@@ -182,6 +186,16 @@ ui.register_page("bagtrash", {
 	end,
 })
 
+local function set_bag_title(bag_i, item_name, item_meta, new_title)
+	local item_def = minetest.registered_items[item_name]
+	local item_description = (item_def ~= nil and item_def.description) or "neznámý předmět"
+	if new_title == nil or new_title == "" then
+		new_title = "batoh "..bag_i
+	end
+	item_meta:set_string("title", new_title)
+	item_meta:set_string("description", new_title.." ("..item_description..")")
+end
+
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if formname ~= "" then
 		return
@@ -195,8 +209,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			ui.set_inventory_formspec(player, "bag" .. i)
 			return
 		elseif fields["bag"..i.."savetitle"] then
-			local meta = player:get_meta()
-			meta:set_string("bag"..i.."_title", fields["bag"..i.."title"] or "")
+			local detached = get_bags_detached_inventory(player:get_player_name())
+			local stack = detached:get_stack("bag"..i, 1)
+			if not stack:is_empty() then
+				set_bag_title(i, stack:get_name(), stack:get_meta(), fields["bag"..i.."title"])
+				detached:set_stack("bag"..i, 1, stack)
+			end
 			return
 		end
 	end
@@ -241,23 +259,17 @@ end
 local function nahlasit_batohy(player, bags_inv)
 	local ch_bank = ui.ch_bank
 	if ch_bank then
-		local player_inv = player:get_inventory()
-		local player_meta = player:get_meta()
+		local bags_info = ui.get_bags_info(player)
 		local info_for_ch_bank = {}
 
 		for i = 1, 6 do
-			local listname = "bag"..i.."contents"
-			local bag_size = player_inv:get_size(listname)
-			if bag_size > 0 then
-				local title = player_meta:get_string("bag"..i.."_title")
-				if title == "" then
-					title = S("Bag @1", i)
-				end
+			local bag_info = bags_info["bag"..i]
+			if bag_info ~= nil then
 				table.insert(info_for_ch_bank, {
-					listname = listname,
-					title = title,
+					listname = "bag"..i.."contents",
+					title = bag_info.title,
 					width = 5,
-					height = math.ceil(bag_size / 5),
+					height = math.ceil(bag_info.slots / 5),
 				})
 			end
 		end
@@ -270,18 +282,17 @@ local function save_bags_metadata(player, bags_inv)
 	local bags = {}
 	for i = 1, 6 do
 		local bag = "bag" .. i
-		if not bags_inv:is_empty(bag) then
-			-- Stack limit is 1, otherwise use stack:to_string()
-			bags[i] = bags_inv:get_stack(bag, 1):get_name()
+		local stack = bags_inv:get_stack(bag, 1)
+		if not stack:is_empty() then
+			bags[i] = { name = stack:get_name(), title = stack:get_meta():get_string("title") or "" }
 			is_empty = false
 		end
 	end
 	local meta = player:get_meta()
 	if is_empty then
-		meta:set_string("unified_inventory:bags", nil)
+		meta:set_string("unified_inventory:bags", "")
 	else
-		meta:set_string("unified_inventory:bags",
-			minetest.serialize(bags))
+		meta:set_string("unified_inventory:bags", minetest.serialize(bags))
 	end
 	nahlasit_batohy(player, bags_inv)
 end
@@ -289,35 +300,39 @@ end
 local function load_bags_metadata(player, bags_inv)
 	local player_inv = player:get_inventory()
 	local meta = player:get_meta()
-	local bags_meta = meta:get("unified_inventory:bags")
-	local bags = bags_meta and minetest.deserialize(bags_meta) or {}
+	local bags_meta = meta:get_string("unified_inventory:bags")
+	local bags = (bags_meta ~= "" and minetest.deserialize(bags_meta)) or {}
 	local dirty_meta = false
-	if not bags_meta then
-		-- Backwards compatiblity
-		for i = 1, 6 do
-			local bag = "bag" .. i
-			if not player_inv:is_empty(bag) then
-				-- Stack limit is 1, otherwise use stack:to_string()
-				bags[i] = player_inv:get_stack(bag, 1):get_name()
-				dirty_meta = true
+
+	for i = 1, 6 do
+		local bag = bags[i]
+		if bag ~= nil then
+			if type(bag) == "string" then
+				-- legacy format: title in the player metadata
+				local title = meta:get_string("bag"..i.."_title")
+				bags[i] = {name = bag, title = title}
 			end
 		end
 	end
+
 	-- Fill detached slots
+	local empty_stack = ItemStack()
 	for i = 1, 6 do
 		local bag = "bag" .. i
 		bags_inv:set_size(bag, 1)
 		if bags[i] ~= nil then
-			local expected_size = minetest.get_item_group(bags[i], "bagslots")
-			local bag_item = ItemStack(bags[i])
-			bag_item:get_meta():set_int("count_alignment", 14) -- bottom middle
+			local expected_size = minetest.get_item_group(bags[i].name, "bagslots")
+			local bag_item = ItemStack(bags[i].name)
+			local bag_meta = bag_item:get_meta()
+			bag_meta:set_int("count_alignment", 14) -- bottom middle
+			set_bag_title(i, bags[i].name, bag_meta, bags[i].title)
 			bags_inv:set_stack(bag, 1, bag_item)
 			if player_inv:get_size(bag.."contents") < expected_size then
 				player_inv:set_size(bag.."contents", expected_size)
 			end
 			update_bag_metadata(player_inv, bags_inv, i)
 		else
-			bags_inv:set_stack(bag, 1, ItemStack())
+			bags_inv:set_stack(bag, 1, empty_stack)
 		end
 	end
 
@@ -380,59 +395,105 @@ local function load_bags_metadata(player, bags_inv)
 	end
 end
 
+local function pack_bag(stack, inv, listname)
+	local meta = stack:get_meta()
+	local s = meta:get_string("contents")
+	if s ~= "" then
+		return 0 -- a bag is already packed
+	end
+	if inv:is_empty(listname) then
+		s = ""
+	else
+		local list = inv:get_list(listname)
+		s = ch_core.serialize_stacklist(list, pack_limit_per_stack)
+	end
+	if s == nil or #s > pack_limit_per_bag then
+		return 0 -- cannot pack
+	end
+	local bag_description = minetest.registered_items[stack:get_name()].description
+	inv:set_list(listname, {}) -- no item duplication
+	local title = meta:get_string("title")
+	if title == "" then
+		title = "batoh "..listname:sub(-1,-1)
+		meta:set_string("title", title)
+	end
+	meta:set_string("contents", s)
+	local bag_id = math.random(1, 2147483647)
+	meta:set_int("bag_id", bag_id)
+	return bag_id
+end
+
+local function unpack_bag(stack, inv, listname)
+	local meta = stack:get_meta()
+	if meta:get_int("bag_id") == 0 then
+		return false -- empty bag
+	end
+	local s = meta:get_string("contents")
+	local list
+	if s == "" then
+		list = {}
+	else
+		list = ch_core.deserialize_stacklist(s)
+	end
+	if list == nil then
+		minetest.log("error", "Bag deserialization failed: "..s)
+		return false -- cannot deserialize
+	end
+	inv:set_list(listname, list)
+	meta:set_string("contents", "")
+	meta:set_int("bag_id", 0)
+	return true
+end
+
 local function bags_on_put(inv, listname, index, stack, player)
+	local bag_size = stack:get_definition().groups.bagslots
 	local player_inv = player:get_inventory()
-	player_inv:set_size(listname .. "contents",
-		stack:get_definition().groups.bagslots)
-	stack:get_meta():set_int("count_alignment", count_alignment)
+	player_inv:set_size(listname .. "contents", bag_size)
+	unpack_bag(stack, player_inv, listname.."contents")
+	local meta = stack:get_meta()
+	meta:set_int("count_alignment", count_alignment)
+	local title = meta:get_string("title")
+	if title == "" then
+		title = "batoh "..listname:sub(-1,-1)
+		meta:set_string("title", title)
+	end
 	inv:set_stack(listname, index, stack)
-	update_bag_metadata(player_inv, inv, tonumber(listname:sub(4, 4)))
+	update_bag_metadata(player_inv, inv, tonumber(listname:sub(-1, -1)))
 	save_bags_metadata(player, inv)
 	ui.set_inventory_formspec(player, "bags")
 end
 
 local function bags_allow_put(inv, listname, index, stack, player)
-	local new_slots = stack:get_definition().groups.bagslots
-	if not new_slots then
-		return 0
-	end
+	return 1
+end
+
+local function check_bag_after_allow_take(player_name, bag_i, expected_bag_id)
+	local player = minetest.get_player_by_name(player_name)
+	if player == nil then return end
 	local player_inv = player:get_inventory()
-	local old_slots = player_inv:get_size(listname .. "contents")
-
-	if new_slots >= old_slots then
-		return 1
-	end
-
-	-- using a smaller bag, make sure it fits
-	local old_list = player_inv:get_list(listname .. "contents")
-	local new_list = {}
-	local slots_used = 0
-	local use_new_list = false
-
-	for i, v in ipairs(old_list) do
-		if v and not v:is_empty() then
-			slots_used = slots_used + 1
-			use_new_list = i > new_slots
-			new_list[slots_used] = v
-		end
-	end
-	if new_slots >= slots_used then
-		if use_new_list then
-			player_inv:set_list(listname .. "contents", new_list)
-		end
-		return 1
-	end
-	-- New bag is smaller: Disallow inserting
-	return 0
+	local bag = player_inv:get_stack("bag"..bag_i, 1)
+	if bag:is_empty() then return end
+	local meta = bag:get_meta()
+	local bag_id = meta:get_int("bag_id")
+	if bag_id ~= expected_bag_id then return end -- another bag
+	-- a bag has not been taken!
+	minetest.log("warning", "A bag "..player_name.."/"..bag_i.." has not been taken after bags_allow_take has been called!")
+	unpack_bag(bag, player_inv, "bag"..bag_i.."contents")
+	local inv = minetest.get_inventory{type = "detached", name = player_name.."_bags"}
+	update_bag_metadata(player_inv, inv, bag_i)
+	save_bags_metadata(player, inv)
 end
 
 local function bags_allow_take(inv, listname, index, stack, player)
-	if player:get_inventory():is_empty(listname .. "contents") then
-		stack:get_meta():from_table(false) -- clear metadata
-		inv:set_stack(listname, index, stack)
-		return 1
+	local player_inv = player:get_inventory()
+	local bag_id = pack_bag(stack, player_inv, listname.."contents", player:get_meta():get_string(listname.."_title"))
+	if bag_id == 0 then
+		-- cannot pack the bag
+		return 0
 	end
-	return 0
+	inv:set_stack(listname, index, stack)
+	minetest.after(0.1, check_bag_after_allow_take, player:get_player_name(), listname:sub(-1, -1), bag_id)
+	return 1
 end
 
 local function bags_on_take(inv, listname, index, stack, player)
@@ -507,6 +568,7 @@ minetest.register_tool("unified_inventory:bag_small", {
 	description = S("Small Bag"),
 	_ch_help = ch_help,
 	_ch_help_group = ch_help_group,
+	_ch_nested_inventory_meta = "contents",
 	inventory_image = "bags_small.png",
 	groups = {bagslots=15},
 })
@@ -515,6 +577,7 @@ minetest.register_tool("unified_inventory:bag_medium", {
 	description = S("Medium Bag"),
 	_ch_help = ch_help,
 	_ch_help_group = ch_help_group,
+	_ch_nested_inventory_meta = "contents",
 	inventory_image = "bags_medium.png",
 	groups = {bagslots=30},
 })
@@ -523,6 +586,7 @@ minetest.register_tool("unified_inventory:bag_large", {
 	description = S("Large Bag"),
 	_ch_help = ch_help,
 	_ch_help_group = ch_help_group,
+	_ch_nested_inventory_meta = "contents",
 	inventory_image = "bags_large.png",
 	groups = {bagslots=45},
 })

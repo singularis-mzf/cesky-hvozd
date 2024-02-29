@@ -237,14 +237,14 @@ end
 local function get_glass_template(drink_id, drink_desc2, color, health)
 	local eat_func = eat_func_cache[glass][health]
 	if not eat_func then
-		eat_func = minetest.item_eat(health, glass)
+		eat_func = ch_core.item_eat(glass)
 		eat_func_cache[glass][health] = eat_func
 	end
 	return {
 		description = "sklenice "..drink_desc2,
 		juice_type = drink_id,
 		inventory_image = "drinks_glass_contents.png^[colorize:"..color..":200^drinks_drinking_glass.png",
-		groups = {drink = 1},
+		groups = {drink = math.max(1, health)},
 		on_use = eat_func,
 	}, "plantlike"
 end
@@ -252,14 +252,14 @@ end
 local function get_large_glass_template(drink_id, drink_desc2, color, health)
 	local eat_func = eat_func_cache[large_glass][health]
 	if not eat_func then
-		eat_func = minetest.item_eat(health, large_glass)
+		eat_func = ch_core.item_eat(large_glass)
 		eat_func_cache[large_glass][health] = eat_func
 	end
 	return {
 		description = "půllitr "..drink_desc2,
 		juice_type = drink_id,
 		inventory_image = "drinks_glass_contents.png^[colorize:"..color..":200^drinks_drinking_glass.png",
-		groups = {drink = 1},
+		groups = {drink = math.max(1, health)},
 		on_use = eat_func,
 	}, "plantlike"
 end
@@ -267,14 +267,14 @@ end
 local function get_glass_bottle_template(drink_id, drink_desc2, color, health)
 	local eat_func = eat_func_cache[glass_bottle][health]
 	if not eat_func then
-		eat_func = minetest.item_eat(health, glass_bottle)
+		eat_func = ch_core.item_eat(glass_bottle)
 		eat_func_cache[glass_bottle][health] = eat_func
 	end
 	return {
 		description = "láhev "..drink_desc2,
 		juice_type = drink_id,
 		inventory_image = "drinks_bottle_contents.png^[colorize:"..color..":200^drinks_glass_bottle.png",
-		groups = {drink = 1},
+		groups = {drink = math.max(1, health)},
 		on_use = eat_func,
 	}, "plantlike"
 end
@@ -282,13 +282,13 @@ end
 local function get_steel_bottle_template(drink_id, drink_desc2, color, health)
 	local eat_func = eat_func_cache[steel_bottle][health]
 	if not eat_func then
-		eat_func = minetest.item_eat(health, steel_bottle)
+		eat_func = ch_core.item_eat(steel_bottle)
 		eat_func_cache[steel_bottle][health] = eat_func
 	end
 	return {
 		description = "kovová láhev "..drink_desc2,
 		juice_type = drink_id,
-		groups = {drink = 1},
+		groups = {drink = math.max(1, health)},
 		inventory_image = "vessels_steel_bottle.png",
 		on_use = eat_func,
 	}, "craftitem"

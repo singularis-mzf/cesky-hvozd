@@ -446,7 +446,7 @@ minetest.register_craftitem(":ethereal:fish_cooked", {
 	description = S("Cooked Fish"),
 	inventory_image = "ethereal_fish_cooked.png",
 	wield_image = "ethereal_fish_cooked.png",
-	groups = {food_fish = 1, flammable = 3},
+	groups = {food_fish = 1, flammable = 3, ch_food = 5},
 	on_use = minetest.item_eat(5)
 })
 

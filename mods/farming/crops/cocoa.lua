@@ -95,7 +95,8 @@ minetest.register_craft( {
 minetest.register_craftitem("farming:cookie", {
 	description = S("Cookie"),
 	inventory_image = "farming_cookie.png",
-	on_use = minetest.item_eat(2)
+	on_use = minetest.item_eat(2),
+	groups = {ch_food = 2},
 })
 
 minetest.register_craft( {
@@ -109,7 +110,8 @@ minetest.register_craft( {
 minetest.register_craftitem("farming:chocolate_dark", {
 	description = S("Bar of Dark Chocolate"),
 	inventory_image = "farming_chocolate_dark.png",
-	on_use = minetest.item_eat(3)
+	on_use = minetest.item_eat(3),
+	groups = {ch_food = 3},
 })
 
 minetest.register_craft( {

@@ -7,7 +7,7 @@ local S = farming.intllib
 minetest.register_craftitem("farming:pea_pod", {
 	description = S("Pea Pod"),
 	inventory_image = "farming_pea_pod.png",
-	groups = {seed = 2, food_peas = 1, food_pea_pod = 1, flammable = 2},
+	groups = {seed = 2, food_peas = 1, food_pea_pod = 1, flammable = 2, ch_food = 1},
 	on_place = function(itemstack, placer, pointed_thing)
 		return farming.place_seed(itemstack, placer, pointed_thing, "farming:pea_1")
 	end,
@@ -21,7 +21,7 @@ minetest.register_alias("farming:peas", "farming:pea_pod")
 minetest.register_craftitem("farming:pea_soup", {
 	description = S("Pea Soup"),
 	inventory_image = "farming_pea_soup.png",
-	groups = {flammable = 2},
+	groups = {flammable = 2, ch_food = 4},
 	on_use = minetest.item_eat(4, "farming:bowl")
 })
 

@@ -1,10 +1,16 @@
 
+local registered_node_override = {
+	_ch_nested_inventory_meta = "data",
+}
+
 function wrench.register_node(name, def)
 	assert(type(name) == "string", "wrench.register_node invalid type for name")
 	assert(type(def) == "table", "wrench.register_node invalid type for def")
 	local node_def = minetest.registered_nodes[name]
 	if node_def then
 		wrench.registered_nodes[name] = table.copy(def)
+		minetest.override_item(name, registered_node_override)
+		print("DEBUG: Wrench registered: "..name)
 	else
 		minetest.log("warning", "[wrench] Attempt to register unknown node: "..name)
 	end

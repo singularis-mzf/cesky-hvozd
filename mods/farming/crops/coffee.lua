@@ -24,7 +24,7 @@ minetest.register_node("farming:coffee_cup", {
 		type = "fixed",
 		fixed = {-0.25, -0.5, -0.25, 0.25, 0.25, 0.25}
 	},
-	groups = {vessel = 1, dig_immediate = 3, attached_node = 1, drink = 1},
+	groups = {vessel = 1, dig_immediate = 3, attached_node = 1, drink = 2},
 	on_use = minetest.item_eat(2, "vessels:drinking_glass"),
 	sounds = default.node_sound_glass_defaults()
 })

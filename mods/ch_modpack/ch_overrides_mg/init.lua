@@ -60,12 +60,14 @@ minetest.override_item("default:acacia_wood", {
 })
 
 minetest.override_item("default:junglewood", {
-	tiles = {"(default_junglewood.png^[resize:128x128)^(ch_core_planks_128.png^[makealpha:255,255,255^[opacity:100^[resize:128x128)"},
+	tiles = {"(default_junglewood.png^[resize:128x128)^(ch_core_planks_128.png^[makealpha:255,255,255^[opacity:150^[resize:128x128)"},
 })
 
+--[[
 minetest.override_item("default:pine_wood", {
-	tiles = {"(default_pine_wood.png^[resize:128x128)^(ch_core_planks_128.png^[makealpha:255,255,255^[opacity:50^[resize:128x128)"},
+	tiles = {"default_pine_wood.png^[resize:128x128^(ch_core_planks_128.png^[makealpha:255,255,255^[opacity:50^[resize:128x128)"},
 })
+]]
 
 minetest.override_item("default:wood", {
 	tiles = {"(default_wood.png^[resize:128x128)^(ch_core_planks_128.png^[makealpha:255,255,255^[opacity:100^[resize:128x128)"},

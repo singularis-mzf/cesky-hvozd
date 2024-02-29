@@ -63,3 +63,40 @@ if minetest.get_modpath("technic_cnc") then
 	overrides.tiles = {{name = "farming_pumpkin_side.png", backface_culling = true}}
 	minetest.override_item("farming:pumpkin_8", overrides)
 end
+
+-- Food
+local extra_food = {
+	["default:apple"] = 2,
+	["default:blueberries"] = 2,
+	["flowers:mushroom_brown"] = 1,
+	["flowers:mushroom_red"] = -5,
+}
+
+local bowls = {
+	["farming:porridge"] = "farming:bowl",
+	["farming:cactus_juice"] = "vessels:drinking_glass",
+	["farming:bibimbap"] = "farming:bowl",
+	["farming:salad"] = "farming:bowl",
+	["farming:smoothie_berry"] = "vessels:drinking_glass",
+	["farming:smoothie_raspberry"] = "vessels:drinking_glass",
+	["farming:spanish_potatoes"] = "farming:bowl",
+	["farming:potato_omelet"] = "farming:bowl",
+	["farming:paella"] = "farming:bowl",
+}
+
+for name, def in pairs(minetest.registered_items) do
+	if name:sub(1, 8) == "farming:" and def.on_use ~= nil and def.groups ~= nil and (def.groups.ch_food ~= nil or def.groups.drink ~= nil) then
+		minetest.override_item(name, {on_use = ch_core.item_eat(bowls[name])})
+	end
+end
+for name, value in pairs(extra_food) do
+	if minetest.registered_items[name] ~= nil then
+		local groups = minetest.registered_items[name].groups or {}
+		if value >= 0 then
+			groups.ch_food = value
+		else
+			groups.ch_poison = -value
+		end
+		minetest.override_item(name, {groups = groups, on_use = ch_core.item_eat()})
+	end
+end

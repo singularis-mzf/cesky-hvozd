@@ -4,7 +4,7 @@ local S = farming.intllib
 minetest.register_craftitem("farming:vanilla", {
 	description = S("Vanilla"),
 	inventory_image = "farming_vanilla.png",
-	groups = {seed = 2, food_vanilla = 1, flammable = 2},
+	groups = {seed = 2, food_vanilla = 1, flammable = 2, ch_food = 1},
 	on_place = function(itemstack, placer, pointed_thing)
 		return farming.place_seed(itemstack, placer, pointed_thing, "farming:vanilla_1")
 	end,

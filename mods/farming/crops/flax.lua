@@ -119,7 +119,7 @@ minetest.register_node("farming:flax_seed_oil", {
 		type = "fixed",
 		fixed = {-0.25, -0.5, -0.25, 0.25, 0.5, 0.25},
 	},
-	groups = {dig_immediate = 3, food = 1, food_oil = 1, eatable = 1, vessel = 1},
+	groups = {dig_immediate = 3, food = 1, food_oil = 1, eatable = 1, vessel = 1, ch_food = 2},
 	sounds = default.node_sound_glass_defaults(),
 })
 

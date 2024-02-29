@@ -83,15 +83,15 @@ mobs:alias_mob("animalworld:snail", "animalworld:snail") -- compatibility
 minetest.register_craftitem(":animalworld:escargots", {
 	description = S("Escargots"),
 	inventory_image = "animalworld_escargots.png",
-	on_use = minetest.item_eat(2),
-	groups = {food_meat_raw = 1, flammable = 2},
+	on_use = ch_core.item_eat(),
+	groups = {food_meat_raw = 1, flammable = 2, ch_food = 2},
 })
 
 
 minetest.register_craft({
 	output = "animalworld:escargots",
 	type = "shapeless",
-	recipe = 
+	recipe =
 		{"animalworld:snail", "farming:garlic_clove", "mobs:butter", "farming:bread"}
 })
 

@@ -17,7 +17,8 @@ minetest.register_craftitem("farming:blueberries", {
 minetest.register_craftitem("farming:muffin_blueberry", {
 	description = S("Blueberry Muffin"),
 	inventory_image = "farming_blueberry_muffin.png",
-	on_use = minetest.item_eat(2)
+	on_use = minetest.item_eat(2),
+	groups = {ch_food = 2},
 })
 
 minetest.register_craft({

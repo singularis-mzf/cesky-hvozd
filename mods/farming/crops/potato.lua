@@ -10,7 +10,7 @@ local S = farming.intllib
 minetest.register_craftitem("farming:potato", {
 	description = S("Potato"),
 	inventory_image = "farming_potato.png",
-	groups = {seed = 2, food_potato = 1, flammable = 2},
+	groups = {seed = 2, food_potato = 1, flammable = 2, ch_food = 1, ch_poison = 1},
 	on_place = function(itemstack, placer, pointed_thing)
 		return farming.place_seed(itemstack, placer, pointed_thing, "farming:potato_1")
 	end,
@@ -30,7 +30,8 @@ minetest.register_craftitem("farming:potato", {
 minetest.register_craftitem("farming:baked_potato", {
 	description = S("Baked Potato"),
 	inventory_image = "farming_baked_potato.png",
-	on_use = minetest.item_eat(6)
+	on_use = minetest.item_eat(6),
+	groups = {ch_food = 6},
 })
 
 minetest.register_craft({
@@ -44,7 +45,8 @@ minetest.register_craft({
 minetest.register_craftitem("farming:potato_salad", {
 	description = S("Cucumber and Potato Salad"),
 	inventory_image = "farming_potato_salad.png",
-	on_use = minetest.item_eat(10, "farming:bowl")
+	on_use = minetest.item_eat(10, "farming:bowl"),
+	groups = {ch_food = 10},
 })
 
 minetest.register_craftitem("farming:cucumber_zalivka", {

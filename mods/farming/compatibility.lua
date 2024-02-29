@@ -36,7 +36,7 @@ else
 			type = "fixed",
 			fixed = {-0.2, -0.5, -0.2, 0.2, 0.2, 0.2}
 		},
-		groups = {food_banana = 1, fleshy = 3, dig_immediate = 3, flammable = 2},
+		groups = {food_banana = 1, fleshy = 3, dig_immediate = 3, flammable = 2, ch_food = 2},
 		on_use = minetest.item_eat(2),
 		sounds = default.node_sound_leaves_defaults(),
 		on_place = function(itemstack, placer, pointed_thing)
@@ -103,7 +103,7 @@ else
 			type = "fixed",
 			fixed = {-0.2, -0.3, -0.2, 0.2, 0.2, 0.2}
 		},
-		groups = {food_orange = 1, fleshy = 3, dig_immediate = 3, flammable = 2},
+		groups = {food_orange = 1, fleshy = 3, dig_immediate = 3, flammable = 2, ch_food = 4},
 		on_use = minetest.item_eat(4),
 		sounds = default.node_sound_leaves_defaults()
 	})
@@ -132,7 +132,7 @@ else
 		},
 		groups = {
 			food_lemon = 1, fleshy = 3, dig_immediate = 3, flammable = 2,
-			leafdecay = 3, leafdecay_drop = 1
+			leafdecay = 3, leafdecay_drop = 1, ch_food = 3,
 		},
 		-- drop = "farming:lemon",
 		on_use = minetest.item_eat(3),

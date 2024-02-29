@@ -225,7 +225,6 @@ function ts_furniture.register_furniture(recipe, description, tiles)
 			local new_desc
 			if recipe:sub(1, 10) == "bakedclay:" then
 				new_desc = S(description.." "..def.description)
-				print("DEBUG: "..dump2({description = description, def_description = def.description, recipe = recipe, new_desc = new_desc, new_desc_source = description.." "..def.description}))
 			else
 				new_desc = (recipe_def.description or "neznámý materiál")..": "..S(def.description)
 			end

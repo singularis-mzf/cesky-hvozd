@@ -143,8 +143,16 @@ local function cooking(pos, itemstack, is_creative)
 	local cookable = cooked.time ~= 0
 
 	if cookable and new_campfire.cooking then
-		local eat_y = ItemStack(cooked.item:to_table().name):get_definition().on_use
-		if string.find(minetest.serialize(eat_y), "do_item_eat") and meta:get_int("cooked_time") == 0 then
+		local result_stack = ItemStack(cooked.item:to_table().name)
+		local result_name = result_stack:get_name()
+		local eat_y = result_stack:get_definition().on_use
+		if
+			(minetest.get_item_group(result_name, "ch_food") ~= 0 or
+			minetest.get_item_group(result_name, "drink") ~= 0 or
+			minetest.get_item_group(result_name, "ch_poison") ~= 0 or
+			string.find(minetest.serialize(eat_y), "do_item_eat")) and
+			meta:get_int("cooked_time") == 0
+		then
 			meta:set_int('cooked_time', cooked.time);
 			meta:set_int('cooked_cur_time', 0);
 			local name = itemstack:get_name()

@@ -89,7 +89,7 @@ local function spray_can_on_place(item, player)
 end
 
 minetest.register_craftitem(shared.spray_can_empty, { -- stackable
-    description = S("Empty Spray Can"),
+    description = S("Empty Spray Can").." [EXPERIMENTÁLNÍ]",
     inventory_image = "ggraffiti_spray_can.png",
 
     range = shared.MAX_SPRAY_DISTANCE,
@@ -97,7 +97,7 @@ minetest.register_craftitem(shared.spray_can_empty, { -- stackable
 	_ch_help_group = "spray_empty_xp",
 	_ch_help = "Prázdný sprej můžete recyklovat roztavením na železné ingoty.",
 
-    groups = { ggraffiti_spray_can = 1, tool = shared.game == "mtg" and 1 or nil },
+    groups = { ggraffiti_spray_can = 1, tool = shared.game == "mtg" and 1 or nil, experimental = 1 },
 })
 
 function shared.get_colored_can_texmod(color)
@@ -123,7 +123,7 @@ for _, dye in ipairs(shared.game_dyes) do
 		_ch_help_group = "spray_xp",
 		_ch_help = "Barevný sprej:\nLevým klikem kreslí, pravým klikem se přepíná velikosti stopy (1, 2, 3).\nPrázdný sprej budete moci recyklovat roztavením na železné ingoty.",
 
-        groups = { ggraffiti_spray_can = 1 },
+        groups = { ggraffiti_spray_can = 1, experimental = 1 },
     })
 
     minetest.register_craft({
@@ -137,7 +137,7 @@ for _, dye in ipairs(shared.game_dyes) do
 end
 
 minetest.register_tool(shared.spray_can_rgb, {
-    description = S("RGB Graffiti Spray Can") .. "\n" ..
+    description = S("RGB Graffiti Spray Can") .. " [EXPERIMENTÁLNÍ]\n" ..
         -- S("Left-click to spray, right-click to configure.") .. "\n\n" ..
         S("No color set.") .. " " ..
         S("Size: @1", 1),
@@ -153,7 +153,7 @@ minetest.register_tool(shared.spray_can_rgb, {
 	_ch_help_group = "spray_rgb_xp",
 	_ch_help = "Vícebarevný sprej lze nastavit na libovolnou barvu.\nLevým klikem kreslí, pravým klikem otevře okno pro nastavení barvy a velikosti stopy.",
 
-    groups = { ggraffiti_spray_can = 1 },
+    groups = { ggraffiti_spray_can = 1, experimental = 1 },
 })
 
 minetest.register_craft({
@@ -192,7 +192,7 @@ minetest.register_tool(shared.spray_can_remover, {
 	_ch_help_group = "spray_anti_xp",
 	_ch_help = "Odstraňovač maleb sprejem.\nLevým klikem odstraňuje, pravým klikem se přepíná velikosti stopy (1, 2, 3).",
 
-    groups = { ggraffiti_spray_can = 1 },
+    groups = { ggraffiti_spray_can = 1, experimental = 1 },
 })
 
 minetest.register_alias("ggraffiti:spray_can_anti", shared.spray_can_remover)

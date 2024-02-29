@@ -97,7 +97,7 @@ function wine:add_drink(name, desc, has_bottle, num_hunger, num_thirst, alcoholi
 		},
 		groups = {
 			vessel = 1, dig_immediate = 3,
-			attached_node = 1, drink = 1, alcohol = alcoholic
+			attached_node = 1, drink = math.max(1, num_hunger), alcohol = alcoholic
 		},
 		sounds = snd_g,
 
@@ -113,7 +113,8 @@ function wine:add_drink(name, desc, has_bottle, num_hunger, num_thirst, alcoholi
 				if string.find(itemstack:get_name(), "beer") then
 					vessel = "vessels:large_drinking_glass"
 				end
-				return minetest.do_item_eat(num_hunger, vessel, itemstack, user, pointed_thing)
+				local f = ch_core.item_eat(vessel)
+				return f(itemstack, user, pointed_thing)
 			end
 		end
 	})

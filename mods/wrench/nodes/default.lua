@@ -42,6 +42,7 @@ for _,name in pairs({"default:furnace", "default:furnace_active"}) do
 end
 ]]
 
+--[[
 wrench.register_node("default:sign_wall_wood", {
 	metas = {
 		infotext = wrench.META_TYPE_STRING,
@@ -57,3 +58,4 @@ wrench.register_node("default:sign_wall_steel", {
 		formspec = wrench.META_TYPE_IGNORE,
 	},
 })
+]]

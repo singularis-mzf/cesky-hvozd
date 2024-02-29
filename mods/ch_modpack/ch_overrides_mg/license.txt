@@ -404,8 +404,8 @@ default_glass.png
 default_glass_alt.png
 default_glass_detail.png
 default_junglewood.png
-default_mese_block.png
 default_pine_wood.png
+default_mese_block.png
 default_wood.png
 gui_hotbar.png
 gui_hotbar_selected.png
@@ -469,8 +469,7 @@ dfcaverns_glow_mese.png
 	Source: https://github.com/FaceDeer/dfcaverns
 	License: MIT
 
-default_acacia_wood.png
-default_wood.png
+(zatím nic)
 	Author: Singularis
 	License: CC BY-SA 3.0
 	Used source:

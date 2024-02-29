@@ -63,7 +63,7 @@ minetest.register_node("farming:soy_milk", {
 	on_use = minetest.item_eat(2, "vessels:drinking_glass"),
 	groups = {
 		vessel = 1, food_milk_glass = 1, dig_immediate = 3,
-		attached_node = 1, drink = 1
+		attached_node = 1, drink = 2
 	},
 	sounds = default.node_sound_glass_defaults()
 })
@@ -84,7 +84,7 @@ minetest.register_craft( {
 minetest.register_craftitem("farming:tofu", {
 	description = S("Tofu"),
 	inventory_image = "farming_tofu.png",
-	groups = {food_tofu = 1, food_meat_raw = 1, flammable = 2},
+	groups = {food_tofu = 1, food_meat_raw = 1, flammable = 2, ch_food = 3},
 	on_use = minetest.item_eat(3)
 })
 
@@ -101,7 +101,7 @@ minetest.register_craft({
 minetest.register_craftitem("farming:tofu_cooked", {
 	description = S("Cooked Tofu"),
 	inventory_image = "farming_tofu_cooked.png",
-	groups = {food_meat = 1, flammable = 2},
+	groups = {food_meat = 1, flammable = 2, ch_food = 6},
 	on_use = minetest.item_eat(6)
 })
 

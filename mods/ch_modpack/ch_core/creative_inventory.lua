@@ -263,6 +263,10 @@ function ch_core.overridable.is_other_shape(item_name, groups)
 		item_name:sub(1, 8) == "pillars:"
 end
 
+local function is_experimental(name, groups)
+	return name:sub(1, 8) == "ch_test:" or (groups.experimental or 0) > 0
+end
+
 local function is_streets_signs(name, groups)
 	return name:sub(1, 8) == "streets:" and (groups.streets_tool or groups.sign)
 end
@@ -277,6 +281,7 @@ local categories = {
 				not o.is_stairsplus_shape(name, def) and
 				not o.is_cnc_shape(name, def) and
 				not o.is_other_shape(name, groups) and
+				not is_experimental(name, groups) and
 				not is_streets_signs(name, groups) and
 				(not groups.dye or groups.basic_dye) and
 				not groups.platform and
@@ -312,6 +317,12 @@ local categories = {
 		end,
 	},
 	{
+		description = "jídlo a pití",
+		condition = function(itemstring, name, def, groups, palette_index)
+			return groups.ch_food ~= nil or groups.drink ~= nil or groups.ch_poison ~= nil
+		end,
+	},
+	{
 		description = "látky (na šaty)",
 		condition = function(itemstring, name, def, groups, palette_index)
 			return name:sub(1, 16) == "clothing:fabric_"
@@ -333,6 +344,12 @@ local categories = {
 		description = "všechny předměty",
 		condition = function(itemstring, name, ndef, groups, palette_index)
 			return true
+		end,
+	},
+	{
+		description = "experimentální předměty",
+		condition = function(itemstring, name, ndef, groups, palette_index)
+			return is_experimental(name, groups)
 		end,
 	},
 	{
@@ -486,7 +503,7 @@ local function sort_items(itemstrings, group_by_mod)
 
 	local result = table.copy(itemstrings)
 	table.sort(result, function(a, b) return itemstring_to_key[a] < itemstring_to_key[b] end)
-	minetest.log("info", "sort_items() stats: "..counter_diff.." differents, "..counter_same.." same, "..counter_nil.." nil, "..(counter_diff + counter_same + counter_nil).." total, count = "..#result..".")
+	-- minetest.log("info", "sort_items() stats: "..counter_diff.." differents, "..counter_same.." same, "..counter_nil.." nil, "..(counter_diff + counter_same + counter_nil).." total, count = "..#result..".")
 	return result
 end
 

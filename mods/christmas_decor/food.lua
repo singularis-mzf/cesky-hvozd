@@ -392,9 +392,9 @@ for color, hex in pairs({
 		paramtype = "light",
 		sunlight_propagates = true,
 		paramtype2 = "facedir", ]]
-		groups = {snappy = 3},
+		groups = {snappy = 3, ch_food = 2},
 		-- sounds = default_sounds("node_sound_leaves_defaults"),
-		on_use = minetest.item_eat(2),
+		on_use = ch_core.item_eat(),
 	})
 
 	if depends.farming_redo and depends.dye then

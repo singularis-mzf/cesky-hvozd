@@ -222,14 +222,14 @@ minetest.register_node("bamboo:sprout", {
 	walkable = false,
 	groups = {
 		snappy = 3, attached_node = 1, flammable = 2,
-		dig_immediate = 3, sapling = 1
+		dig_immediate = 3, sapling = 1, ch_food = 2,
 	},
 	sounds = default.node_sound_defaults(),
 	selection_box = {
 		type = "fixed",
 		fixed = {-4 / 16, -0.5, -4 / 16, 4 / 16, 0, 4 / 16}
 	},
-	on_use = minetest.item_eat(2),
+	on_use = ch_core.item_eat(),
 	grown_height = 11,
 	on_timer = grow_new_bambootree_tree,
 	on_construct = function(pos)

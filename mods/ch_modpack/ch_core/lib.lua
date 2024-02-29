@@ -465,6 +465,60 @@ function ch_core.count_empty_stacks(stacks)
 end
 
 --[[
+Serializuje pole dávek do řetězce. Pokud některá z dávek překročí
+stanovený limit velikosti, vrátí nil.
+Jako druhou návratovou hodnotu v případě úspěchu vrací pole
+délek jednotlivých itemstringů před kompresí.
+]]
+function ch_core.serialize_stacklist(stacks, single_stack_limit, disallow_nested)
+	if single_stack_limit == nil then
+		single_stack_limit = 65535
+	end
+	local data = {}
+	local lengths = {}
+	for i, stack in ipairs(stacks) do
+		if stack:is_empty(stack) then
+			data[i] = ""
+			lengths[i] = 0
+		else
+			if disallow_nested then
+				-- does not contain a nested inventory?
+				local itemdef = minetest.registered_items[stack:get_name()]
+				if itemdef ~= nil and itemdef._ch_nested_inventory_meta ~= nil and stack:get_meta():get_string(itemdef._ch_nested_inventory_meta) ~= "" then
+					minetest.log("action", "Stacklist not serialized because of a nested inventory in "..stack:get_name()..".")
+					return nil
+				end
+			end
+			local s = stack:to_string()
+			if #s > single_stack_limit then
+				minetest.log("action", "Stacklist not serialized because of a single stack limit: "..#s.." > "..single_stack_limit..".")
+				return nil
+			end
+			data[i] = s
+			lengths[i] = #s
+		end
+	end
+	local str = minetest.encode_base64(minetest.compress(minetest.serialize(data), "deflate"))
+	minetest.log("action", "Stacklist serialized, resulting length = "..#str..".")
+	-- print("DEBUG: stacklist serialized: "..dump2({str = str, lengths = lengths, str_length = #str}))
+	return str, lengths
+end
+
+--[[
+Deserializuje řetězec serializovaný pomocí funkce ch_core.serialize_stacklist().
+V případě neúspěchu vrátí nil.
+]]
+function ch_core.deserialize_stacklist(str)
+	local result = minetest.deserialize(minetest.decompress(minetest.decode_base64(str), "deflate"))
+	if result ~= nil then
+		for i = 1, #result do
+			result[i] = ItemStack(result[i])
+		end
+	end
+	return result
+end
+
+--[[
 Spočítá a / b a vrátí celočíselný výsledek a zbytek.
 ]]
 function ch_core.divrem(a, b)
@@ -685,6 +739,48 @@ function ch_core.ifthenelse(condition, true_result, false_result)
 	else
 		return false_result
 	end
+end
+
+--[[
+	Vrací funkci function(itemstack, user, pointed_thing),
+	která zavolá do_item_eat() podle hodnoty skupiny ch_food,
+	drink nebo ch_poison u daného předmětu. Není-li předmět v těchto
+	skupinách, vrátí nil.
+]]
+local item_eat_cache = {}
+function ch_core.item_eat(replace_with_item)
+	if replace_with_item == nil then
+		replace_with_item = ""
+	elseif type(replace_with_item) ~= "string" then
+		error("replace_with_item must be string or nil")
+	end
+	local result = item_eat_cache[replace_with_item]
+	if result == nil then
+		result = function(itemstack, user, pointed_thing)
+			local name = itemstack:get_name()
+			if name == nil or name == "" or minetest.registered_items[name] == nil then return end
+			local food = minetest.get_item_group(name, "ch_food")
+			local drink = minetest.get_item_group(name, "drink")
+			local poison = minetest.get_item_group(name, "ch_poison")
+			local health
+			if poison ~= 0 then
+				local normal = math.max(food, drink)
+				if normal ~= 0 and math.random(5) ~= 3 then
+					health = normal
+				else
+					health = -poison
+				end
+			else
+				health = math.max(food, drink)
+				if health <= 0 then
+					return
+				end
+			end
+			return minetest.do_item_eat(health, replace_with_item, itemstack, user, pointed_thing)
+		end
+		item_eat_cache[replace_with_item] = result
+	end
+	return result
 end
 
 --[[

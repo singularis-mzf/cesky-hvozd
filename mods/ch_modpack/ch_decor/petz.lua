@@ -54,8 +54,8 @@ def = {
 	description = "cukrová špejle",
 	inventory_image = "petz_candy_cane.png",
 	wield_image = "petz_candy_cane.png",
-	on_use = minetest.item_eat(4),
-	groups = {food = 1, food_sugar = 1},
+	on_use = ch_core.item_eat(),
+	groups = {food = 1, food_sugar = 1, ch_food = 4},
 }
 minetest.register_craftitem(":petz:candy_cane", def)
 

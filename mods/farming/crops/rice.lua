@@ -18,7 +18,7 @@ minetest.register_craftitem("farming:rice_bread", {
 	description = S("Rice Bread"),
 	inventory_image = "farming_rice_bread.png",
 	on_use = minetest.item_eat(5),
-	groups = {food_rice_bread = 1, flammable = 2}
+	groups = {food_rice_bread = 1, flammable = 2, ch_food = 5}
 })
 
 minetest.register_craftitem("farming:rice_flour", {

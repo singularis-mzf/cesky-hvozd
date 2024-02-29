@@ -101,16 +101,16 @@ mobs:alias_mob("mobs:pumba", "mobs_animal:pumba") -- compatibility
 minetest.register_craftitem(":mobs:pork_raw", {
 	description = S("Raw Porkchop"),
 	inventory_image = "mobs_pork_raw.png",
-	on_use = minetest.item_eat(4),
-	groups = {food_meat_raw = 1, food_pork_raw = 1, flammable = 2}
+	on_use = ch_core.item_eat(),
+	groups = {food_meat_raw = 1, food_pork_raw = 1, flammable = 2, ch_food = 4}
 })
 
 -- cooked porkchop
 minetest.register_craftitem(":mobs:pork_cooked", {
 	description = S("Cooked Porkchop"),
 	inventory_image = "mobs_pork_cooked.png",
-	on_use = minetest.item_eat(8),
-	groups = {food_meat = 1, food_pork = 1, flammable = 2}
+	on_use = ch_core.item_eat(),
+	groups = {food_meat = 1, food_pork = 1, flammable = 2, ch_food = 8}
 })
 
 minetest.register_craft({

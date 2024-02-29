@@ -5,7 +5,7 @@ local S = farming.intllib
 minetest.register_craftitem("farming:rhubarb", {
 	description = S("Rhubarb"),
 	inventory_image = "farming_rhubarb.png",
-	groups = {seed = 2, food_rhubarb = 1, flammable = 2},
+	groups = {seed = 2, food_rhubarb = 1, flammable = 2, ch_food = 1},
 	on_place = function(itemstack, placer, pointed_thing)
 		return farming.place_seed(itemstack, placer, pointed_thing, "farming:rhubarb_1")
 	end,
@@ -16,7 +16,8 @@ minetest.register_craftitem("farming:rhubarb", {
 minetest.register_craftitem("farming:rhubarb_pie", {
 	description = S("Rhubarb Pie"),
 	inventory_image = "farming_rhubarb_pie.png",
-	on_use = minetest.item_eat(6)
+	on_use = minetest.item_eat(6),
+	groups = {ch_food = 6},
 })
 
 minetest.register_craft({
