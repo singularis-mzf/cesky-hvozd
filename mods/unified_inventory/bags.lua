@@ -399,17 +399,29 @@ local function pack_bag(stack, inv, listname)
 	local meta = stack:get_meta()
 	local s = meta:get_string("contents")
 	if s ~= "" then
-		return 0 -- a bag is already packed
+		return 0, nil -- a bag is already packed
 	end
 	if inv:is_empty(listname) then
 		s = ""
 	else
 		local list = inv:get_list(listname)
-		s = ch_core.serialize_stacklist(list, pack_limit_per_stack)
+		local serialize_result = ch_core.serialize_stacklist(list, pack_limit_per_stack, true)
+		if serialize_result.success then
+			s = assert(serialize_result.result)
+			if #s > pack_limit_per_bag then
+				return 0, "sundání batohu selhalo, protože obsahuje dávky s příliš mnoha metadaty (velikost: "..#s..")"
+			end
+		elseif serialize_result.reason == "single_stack_limit" then
+			local desc = list[serialize_result.overlimit_index]:get_description() or ""
+			return 0, "sundání batohu selhalo, protože obsahuje dávku s příliš mnoha metadaty: "..desc
+		elseif serialize_result.reason == "disallow_nested" then
+			local desc = list[serialize_result.nested_index]:get_description() or ""
+			return 0, "sundání batohu selhalo, protože obsahuje dávku s vnořeným inventářem: "..desc
+		else
+			return 0, "sundání batohu selhalo z neznámého důvodu"
+		end
 	end
-	if s == nil or #s > pack_limit_per_bag then
-		return 0 -- cannot pack
-	end
+	local bag_id = math.random(1, 2147483647)
 	local bag_description = minetest.registered_items[stack:get_name()].description
 	inv:set_list(listname, {}) -- no item duplication
 	local title = meta:get_string("title")
@@ -418,7 +430,6 @@ local function pack_bag(stack, inv, listname)
 		meta:set_string("title", title)
 	end
 	meta:set_string("contents", s)
-	local bag_id = math.random(1, 2147483647)
 	meta:set_int("bag_id", bag_id)
 	return bag_id
 end
@@ -464,7 +475,12 @@ local function bags_on_put(inv, listname, index, stack, player)
 end
 
 local function bags_allow_put(inv, listname, index, stack, player)
-	return 1
+	local stack_name = stack:get_name()
+	if minetest.registered_tools[stack_name] ~= nil and minetest.get_item_group(stack_name, "bagslots") ~= 0 then
+		return 1
+	else
+		return 0
+	end
 end
 
 local function check_bag_after_allow_take(player_name, bag_i, expected_bag_id)
@@ -485,14 +501,18 @@ local function check_bag_after_allow_take(player_name, bag_i, expected_bag_id)
 end
 
 local function bags_allow_take(inv, listname, index, stack, player)
+	local player_name = player:get_player_name()
 	local player_inv = player:get_inventory()
-	local bag_id = pack_bag(stack, player_inv, listname.."contents", player:get_meta():get_string(listname.."_title"))
+	local bag_id, pack_message = pack_bag(stack, player_inv, listname.."contents", player:get_meta():get_string(listname.."_title"))
 	if bag_id == 0 then
+		if pack_message ~= nil and pack_message ~= "" then
+			ch_core.systemovy_kanal(player_name, "CHYBA: "..pack_message)
+		end
 		-- cannot pack the bag
 		return 0
 	end
 	inv:set_stack(listname, index, stack)
-	minetest.after(0.1, check_bag_after_allow_take, player:get_player_name(), listname:sub(-1, -1), bag_id)
+	minetest.after(0.1, check_bag_after_allow_take, player_name, listname:sub(-1, -1), bag_id)
 	return 1
 end
 

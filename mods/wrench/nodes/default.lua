@@ -8,6 +8,7 @@ wrench.register_node("default:chest", {
 	lists = {"main"},
 	metas = {
 		splitstacks = splitstacks,
+		placer = wrench.META_TYPE_STRING,
 		formspec = formspec,
 		infotext = wrench.META_TYPE_IGNORE,
 	}
@@ -17,6 +18,7 @@ wrench.register_node("default:chest_locked", {
 	lists = {"main"},
 	metas = {
 		owner = wrench.META_TYPE_STRING,
+		placer = wrench.META_TYPE_STRING,
 		infotext = wrench.META_TYPE_STRING,
 		splitstacks = splitstacks,
 		formspec = formspec,

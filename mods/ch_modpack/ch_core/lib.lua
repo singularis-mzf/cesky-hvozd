@@ -465,10 +465,22 @@ function ch_core.count_empty_stacks(stacks)
 end
 
 --[[
-Serializuje pole dávek do řetězce. Pokud některá z dávek překročí
-stanovený limit velikosti, vrátí nil.
-Jako druhou návratovou hodnotu v případě úspěchu vrací pole
-délek jednotlivých itemstringů před kompresí.
+Serializuje pole dávek do řetězce.
+Vrací tabulku:
+{
+	success = bool, -- true v případě úspěchu, false v případě selhání
+
+	-- v případě úspěchu:
+	result = string, -- výsledný řetězec (pro prázdný inventář je to prázdný řetězec)
+	lengths = {int, ...}, -- délky itemstringů jednotlivých stacků
+	orig_result_length = int, -- délka výsledného řetězce před kompresí
+
+	-- v případě selhání:
+	reason = "single_stack_limit" or "disallow_nested", -- typ selhání
+	overlimit_index = int or nil, -- v případě selhání "single_stack_limit" index dávky, která překročila limit
+	overlimit_length = int or nil, -- v případě selhání "single_stack_limit" délku řetězce vráceného to_string()
+	nested_index = int or nil, -- v případě selhání "disallow_nested" index (první) dávky, která obsahuje vnořený inventář
+}
 ]]
 function ch_core.serialize_stacklist(stacks, single_stack_limit, disallow_nested)
 	if single_stack_limit == nil then
@@ -486,22 +498,36 @@ function ch_core.serialize_stacklist(stacks, single_stack_limit, disallow_nested
 				local itemdef = minetest.registered_items[stack:get_name()]
 				if itemdef ~= nil and itemdef._ch_nested_inventory_meta ~= nil and stack:get_meta():get_string(itemdef._ch_nested_inventory_meta) ~= "" then
 					minetest.log("action", "Stacklist not serialized because of a nested inventory in "..stack:get_name()..".")
-					return nil
+					return {
+						success = false,
+						reason = "disallow_nested",
+						nested_index = i,
+					}
 				end
 			end
 			local s = stack:to_string()
 			if #s > single_stack_limit then
 				minetest.log("action", "Stacklist not serialized because of a single stack limit: "..#s.." > "..single_stack_limit..".")
-				return nil
+				return {
+					success = false,
+					reason = "single_stack_limit",
+					overlimit_index = i,
+					overlimit_length = #s,
+				}
 			end
 			data[i] = s
 			lengths[i] = #s
 		end
 	end
-	local str = minetest.encode_base64(minetest.compress(minetest.serialize(data), "deflate"))
+	local orig_str = minetest.serialize(data)
+	local str = minetest.encode_base64(minetest.compress(orig_str, "deflate"))
 	minetest.log("action", "Stacklist serialized, resulting length = "..#str..".")
-	-- print("DEBUG: stacklist serialized: "..dump2({str = str, lengths = lengths, str_length = #str}))
-	return str, lengths
+	return {
+		success = true,
+		result = str,
+		lengths = lengths,
+		orig_result_length = #orig_str,
+	}
 end
 
 --[[
