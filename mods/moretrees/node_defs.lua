@@ -323,10 +323,13 @@ for i in ipairs(moretrees.treelist) do
 	end
 
 	-- the default game provides jungle tree and pine trunk/planks nodes.
-	if treename ~= "pine" and treename ~= "beech" then
+	if treename ~= "pine" then
 
-		if treename ~= "jungletree" then
-
+		if treename == "beech" then
+			saptex = "moretrees_beech_sapling.png"
+		elseif treename == "jungletree" then
+			saptex = "default_junglesapling.png"
+		else
 			saptex = "moretrees_"..treename.."_sapling.png"
 
 			minetest.register_node("moretrees:"..treename.."_trunk", {
@@ -350,8 +353,6 @@ for i in ipairs(moretrees.treelist) do
 				groups = {choppy=2,oddly_breakable_by_hand=2,flammable=3,wood=1},
 				sounds = default.node_sound_wood_defaults(),
 			})
-		else
-			saptex = "default_junglesapling.png"
 		end
 
 		minetest.register_node("moretrees:"..treename.."_sapling", {
