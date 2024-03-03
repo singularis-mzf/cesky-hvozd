@@ -4,7 +4,7 @@ local S = minetest.get_translator("ch_overrides")
 -- LOCAL FUNCTIONS
 local function can_dig_without_inventory_check(pos, player)
 	local pinfo = ch_core.normalize_player(player)
-|	if pinfo.role == "none" then
+	if pinfo.role == "none" then
 		return false
 	end
 	if minetest.is_protected(pos, pinfo.player_name) then
