@@ -399,9 +399,9 @@ def = {
 	sounds = default.node_sound_metal_defaults(),
 	_ch_help = "Soukromá světová kotva umožňuje dělnickým i kouzelnickým postavám dočasně ukotvit\n"..
 		"mapový blok (16x16 bloků) v paměti serveru, takže ten zůstane aktivní i poté,\n"..
-		"co z něj odejdou hráčské postavy a všechny stroje v něm poběží normálně.\n"..
+		"co z něj odejdou hráčské postavy, a všechny stroje v něm poběží normálně.\n"..
 		"Časový limit své kotvy můžete kdykoliv opakovaně prodlužovat (nebo zkracovat),\n"..
-		"ale ne na víc než na 48 hodin. Jedna postav může mít až "..wa_anchors_per_player_limit.." současně aktivních kotev.",
+		"ale ne na víc než na 48 hodin. Jedna postava může mít až "..wa_anchors_per_player_limit.." současně aktivních kotev.",
 	after_place_node = function(pos, placer, itemstack, pointed_thing)
 		local meta = minetest.get_meta(pos)
 		local player_name = (placer and placer:get_player_name()) or ""

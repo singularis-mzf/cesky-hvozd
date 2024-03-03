@@ -276,7 +276,7 @@ minetest.register_node("darkage:box", {
 				"size[8,8]"..
 				"list[current_name;main;0,0;8,3;]"..
 				"list[current_player;main;0,4;8,4;]")
-		meta:set_string("infotext", "Box")
+		meta:set_string("infotext", S("Box"))
 		local inv = meta:get_inventory()
 		inv:set_size("main", 16)
 	end,

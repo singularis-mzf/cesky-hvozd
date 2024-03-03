@@ -235,7 +235,7 @@ homedecor.register("cardboard_box_big", {
 	},
 	use_texture_alpha = "clip",
 	groups = { snappy = 3 },
-	infotext=S("Cardboard box"),
+	infotext=S("Cardboard box (big)"),
 	inventory = {
 		size=24,
 	},

@@ -39,7 +39,7 @@ minetest.register_craftitem("moretrees:coconut_milk", {
 	inventory_image = "moretrees_coconut_milk_inv.png",
 	wield_image = "moretrees_coconut_milk.png",
 	on_use = ch_core.item_eat("vessels:drinking_glass"),
-	groups = {vessel = 1, drink = 2},
+	groups = {vessel = 1, drink = 2, food_coconut_milk = 1},
 })
 
 minetest.register_craftitem("moretrees:raw_coconut", {

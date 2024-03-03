@@ -1,17 +1,41 @@
 # textdomain: bushes_classic
 
-# Copyright (C) 2022 Singularis
+# Copyright (C) 2022, 2024 Singularis
 # This file is distributed under the same license as the Plantlife Modpack.
 #
 
 Strawberry=jahoda
 Strawberry Bush=okrasný keř s jahodami
+Cooked Strawberry Pie=jahodový koláč
+Raw Strawberry Pie=jahodový koláč (syrový)
+Slice of Strawberry Pie=díl jahodového koláče
+
 Blackberry=ostružina
 Blackberry Bush=okrasný keř s ostružinami
+Cooked Blackberry Pie=ostružinový koláč
+Raw Blackberry Pie=ostružinový koláč (syrový)
+Slice of Blackberry Pie=díl ostružinového koláče
+
 Blueberry=borůvka
 Blueberry Bush=okrasný keř s borůvkami
+Cooked Blueberry Pie=borůvkový koláč
+Raw Blueberry Pie=borůvkový koláč (syrový)
+Slice of Blueberry Pie=díl borůvkového koláče
+
 Raspberry=malina
 Raspberry Bush=okrasný keř s malinami
+Cooked Raspberry Pie=malinový koláč
+Raw Raspberry Pie=malinový koláč (syrový)
+Slice of Raspberry Pie=díl malinového koláče
+
 Gooseberry=angrešt
-Gooseberry Bush=okrasný keř s angrešty
+Gooseberry Bush=keř s angrešty
+Cooked Gooseberry Pie=angreštový koláč
+Raw Gooseberry Pie=angreštový koláč (syrový)
+Slice of Gooseberry Pie=díl angreštového koláče
+
 Currently fruitless Bush=okrasný keř bez plodů
+
+Cooked Mixed Berry Pie=koláč s lesními plody
+Raw Mixed Berry Pie=koláč s lesními plody (syrový)
+Slice of Mixed Berry Pie=díl koláče s lesními plody

@@ -10,7 +10,6 @@ function wrench.register_node(name, def)
 	if node_def then
 		wrench.registered_nodes[name] = table.copy(def)
 		minetest.override_item(name, registered_node_override)
-		print("DEBUG: Wrench registered: "..name)
 	else
 		minetest.log("warning", "[wrench] Attempt to register unknown node: "..name)
 	end

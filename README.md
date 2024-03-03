@@ -411,6 +411,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: GPLv3
 * Licence úprav: GPLv3
 
+## Cheese (cheese)
+
+* Zdroj: [https://github.com/AnnalysaTheMinetester/cheese](https://github.com/AnnalysaTheMinetester/cheese), revize 2f79610a641a9188a666c89c76cca016ea92ed43
+* Původní licence: kód LGPLv2.1, textury CC BY-SA-3.0, zvuky CC0.
+* Licence úprav: LGPLv2.1
+* [ContentDB](https://content.minetest.net/packages/Annalysa/cheese/)
+
 ## Chess Mod (chess\_mod)
 
 * Zdroj: [https://github.com/bas080/chess-mod](https://github.com/bas080/chess-mod), revize 9d9e032f1be3c4e24a42751ccd8a8bf4f2d6c8d3 (textury z revize 9fc9ac2ded011b6ec834f015ea389a85cda3fc81, viz ostatní-zdroje/chess-mod-textures)
