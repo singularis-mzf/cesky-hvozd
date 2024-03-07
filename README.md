@@ -829,6 +829,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPLv2.1+ pro kód, CC-BY-SA 3.0 pro ostatní
 * [ContentDB](https://content.minetest.net/packages/VanessaE/new\_campfire/)
 
+## Not Wuzzy Dice (not\_wuzzy\_dice)
+
+* Zdroj: [https://github.com/TumeniNodes/not\_wuzzy\_dice](https://github.com/TumeniNodes/not\_wuzzy\_dice), revize 6c2f5eb71297634a09e33ec1254017d404649def
+* Původní licence: CC0 pro kód, CC BY-SA 4.0 pro textury
+* Licence úprav: CC0 pro kód, CC BY-SA 4.0 pro textury
+
 ## Orienteering (minetest\_orienteering)
 
 * Zdroj: [https://repo.or.cz/minetest\_orienteering.git](https://repo.or.cz/minetest\_orienteering.git), revize 986b776c90f24f463dc8f88f80344d033826256d
