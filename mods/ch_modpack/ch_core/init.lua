@@ -237,6 +237,11 @@ local function globalstep(dtime)
 					local s = zluta.."Nápověda k předmětu „"..zelena..(help_def.description or ""):gsub("\n", "\n  "..zelena)..zluta.."“:\n  "..zluta..(help_def._ch_help or ""):gsub("\n", "\n  "..zluta)
 					ch_core.systemovy_kanal(player_name, s)
 				end
+
+				-- periskop:
+				if online_charinfo.periskop ~= nil and player_wielded_item_name ~= "ch_extras:periskop" then
+					online_charinfo.periskop.cancel()
+				end
 			end
 
 			-- ZRUŠIT /pryč:

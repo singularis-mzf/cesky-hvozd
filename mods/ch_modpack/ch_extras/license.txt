@@ -50,6 +50,7 @@ ch_extras_rohlik_testo.png
 ch_extras_parekvrohliku.png
 ch_extras_parekvrohliku_h.png
 ch_extras_parekvrohliku_k.png
+ch_extras_periskop.png
 ch_extras_skakadlo.png
 ch_extras_switch_arrow.png
 ch_extras_switch_off.png
