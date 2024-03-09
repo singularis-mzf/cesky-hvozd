@@ -105,9 +105,13 @@ end
 -- Add category GUI elements (top right)
 local function formspec_add_categories(player, formspec, ui_peruser)
 	local n = #formspec + 1
-	local x, y = ui_peruser.page_x, ui_peruser.page_y - 1.0
+	local x, y = ui_peruser.page_x, ui_peruser.page_y - 1.5
 	local category_descs = ch_core.creative_inventory.categories.descriptions
+	local category_icons = ch_core.creative_inventory.categories.icons
+	local category_count = #category_descs
+	assert(#category_descs == #category_icons)
 
+	--[[
 	formspec[n] = "dropdown["..x..","..y..";6.75,0.5;ui_category;"
 	n = n + 1
 	formspec[n] = minetest.formspec_escape(category_descs[1])
@@ -117,7 +121,21 @@ local function formspec_add_categories(player, formspec, ui_peruser)
 		n = n + 1
 	end
 	formspec[n] = ";"..(ui.current_category[player:get_player_name()] or "1")..";true]"
-	return nil
+	]]
+
+	formspec[n] = "tablecolumns[image"
+	for i = 1, category_count do
+		formspec[n + i] = ","..(i - 1).."="..minetest.formspec_escape(category_icons[i])
+	end
+	n = n + category_count + 1
+	formspec[n] = ";text]"
+	formspec[n + 1] = "table["..x..","..y..";6.7,1.4;ui_category;0,"..minetest.formspec_escape(category_descs[1])
+	for i = 2, category_count do
+		formspec[n + i] = ","..(i - 1)..","..minetest.formspec_escape(category_descs[i])
+	end
+	n = n + category_count + 1
+	formspec[n] = ";"..(ui.current_category[player:get_player_name()] or "1").."]"
+	-- return nil
 --[[
 	local player_name = player:get_player_name()
 	local n = #formspec + 1
@@ -191,11 +209,11 @@ local function formspec_add_search_box(player, formspec, ui_peruser)
 		ui_peruser.btn_size, ui_peruser.btn_size)
 	formspec[n+5] = "tooltip[searchresetbutton;"..F(S("Reset search and display everything")).."]"
 
-	if ui.activefilter[player_name] ~= "" then
+	--[[ if ui.activefilter[player_name] ~= "" then
 		formspec[n+6] = string.format("label[%f,%f;%s: %s]",
 			ui_peruser.page_x, ui_peruser.page_y - 0.25,
 			F(S("Filter")), F(ui.activefilter[player_name]))
-	end
+	end ]]
 end
 
 local function formspec_add_item_browser(player, formspec, ui_peruser)
@@ -296,10 +314,14 @@ local function formspec_add_item_browser(player, formspec, ui_peruser)
 			end
 		end
 	end
-	formspec[n] = string.format("label[%f,%f;%s: %s]",
+	local label_text = S("Page").." "..S("@1 of @2",page2,pagemax)
+	if ui.activefilter[player_name] ~= "" then
+		label_text = label_text.." ("..S("Filter")..": "..ui.activefilter[player_name]..")"
+	end
+	formspec[n] = string.format("label[%f,%f;%s]",
 		ui_peruser.page_buttons_x + ui_peruser.btn_spc * (ui_peruser.is_lite_mode and 1 or 2),
 		ui_peruser.page_buttons_y + 0.1 + ui_peruser.btn_spc * 2,
-		F(S("Page")), S("@1 of @2",page2,pagemax))
+		F(label_text))
 end
 
 function ui.get_formspec(player, page)

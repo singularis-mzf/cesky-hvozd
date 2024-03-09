@@ -84,9 +84,14 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		dirty_search_filter = true
 	end
 
-
-	local clicked_category = tonumber(fields.ui_category) or 1
-	if clicked_category and clicked_category ~= unified_inventory.current_category[player_name] then
+	local clicked_category
+	if fields.ui_category ~= nil then
+		local event = minetest.explode_table_event(fields.ui_category)
+		if (event.type == "CHG" or event.type == "DCL") and tonumber(event.row) ~= unified_inventory.current_category[player_name] then
+			clicked_category = tonumber(event.row)
+		end
+	end
+	if clicked_category ~= nil --[[ and clicked_category ~= unified_inventory.current_category[player_name] ]] then
 		unified_inventory.current_category[player_name] = clicked_category
 		unified_inventory.apply_filter(player, unified_inventory.current_searchbox[player_name], "nochange")
 		unified_inventory.set_inventory_formspec(player, unified_inventory.current_page[player_name])

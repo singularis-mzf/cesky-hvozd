@@ -11,8 +11,8 @@ local function gllstep(dtime)
 	local new_us_time = get_us_time()
 	local ustime = (new_us_time - last_us_time) / 1000000.0
 	counter = counter + 1
-	if counter > 100 and ustime > 0.7 and new_us_time - last_warning_ustime > 5000000.0 and minetest.get_player_by_name("Administrace") ~= nil then
-		ch_core.systemovy_kanal("Administrace", minetest.get_color_escape_sequence("#ff0000") .. "Varování: hodnota ustime dosáhla hodnoty "..ustime.." (dtime = "..dtime.."). Zvažte zahájení protokolování příkazem /jps !")
+	if counter > 100 and dtime > 0.5 and new_us_time - last_warning_ustime > 5000000.0 and minetest.get_player_by_name("Administrace") ~= nil then
+		ch_core.systemovy_kanal("Administrace", minetest.get_color_escape_sequence("#ff0000") .. "Varování: hodnota dtime dosáhla hodnoty "..dtime.." (ustime = "..ustime.."). Zvažte zahájení protokolování příkazem /jps !")
 		last_warning_ustime = new_us_time
 	end
 	table.insert(dtimes, string.format("%.3f", dtime))

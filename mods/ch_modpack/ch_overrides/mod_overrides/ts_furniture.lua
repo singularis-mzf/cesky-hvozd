@@ -163,14 +163,16 @@ for _, node_config in ipairs(sitting_nodes) do
 	}
 	if node_config.name_args == nil then
 		-- single node override
-		if minetest.registered_nodes[node_config.name] then
+		local ndef = minetest.registered_nodes[node_config.name]
+		if ndef then
 			minetest.override_item(node_config.name, override)
 		end
 	else
 		-- multi-node override
 		for _, arg in ipairs(node_config.name_args) do
 			local name = node_config.name:gsub("%*", arg)
-			if minetest.registered_nodes[name] then
+			local ndef = minetest.registered_nodes[name]
+			if ndef then
 				minetest.override_item(name, override)
 			end
 		end

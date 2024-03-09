@@ -18,7 +18,7 @@ elseif minetest.get_modpath("unified_inventory") and
   local S = clothing.translator
   local F = minetest.formspec_escape
   local ui = unified_inventory
-  
+
 	clothing.inv_mod = "unified_inventory"
 	unified_inventory.register_button("clothing", {
 		type = "image",
@@ -185,7 +185,28 @@ minetest.register_on_joinplayer(function(player)
 	end, name)
 end)
 
--- custom API method
+-- custom API methods
+
+function clothing.add_clothing(self, player, stack)
+	local name = player:get_player_name()
+	local item = stack:get_name()
+	if not is_clothing(item) then
+		return stack
+	end
+	local clothing_inv = minetest.get_inventory({type = "detached", name = name.."_clothing"})
+	local list_size = clothing_inv:get_size("clothing")
+	for index = 1, list_size do
+		if clothing_inv:get_stack("clothing", index):is_empty() then
+			clothing_inv:set_stack("clothing", index, stack)
+			save_clothing_metadata(player, clothing_inv)
+			clothing:run_callbacks("on_equip", player, index, stack)
+			clothing:set_player_clothing(player)
+			return ItemStack()
+		end
+	end
+	return stack
+end
+
 -- self: clothing; player: player ObjectRef; inv: clothing inventory (detached)
 function clothing.update_player_skin_from_inv(self, player, inv)
 	save_clothing_metadata(player, inv)

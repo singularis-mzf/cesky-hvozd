@@ -288,6 +288,9 @@ local categories = {
 				not (name:sub(1, 16) == "clothing:fabric_") and
 				not (name:sub(1, 15) == "letters:letter_")
 		end,
+		icon = {
+			{image = "ui_category_all.png^[resize:24x24", item = "unified_inventory:bag_large"},
+		},
 	},
 	{
 		description = "tvary",
@@ -297,81 +300,129 @@ local categories = {
 				o.is_cnc_shape(name, def) or
 				o.is_other_shape(name, groups)
 		end,
+		icon = {
+			{image = "[combine:120x120:-4,-4=technic_cnc_bannerstone.png^[resize:20x20", item = "technic:cnc"},
+		},
 	},
 	{
 		description = "barvitelné předměty",
 		condition = function(itemstring, name, def, groups, palette_index)
 			return (groups.ud_param2_colorable or 0) > 0
 		end,
+		icon = {
+			{image = "lrfurn_armchair_inv.png^[resize:24x24", item = "lrfurn:armchair"},
+		},
 	},
 	{
 		description = "barviva",
 		condition = function(itemstring, name, def, groups, palette_index)
 			return groups.dye ~= nil
 		end,
+		icon = {
+			{image = "dye_green.png^[resize:24x24", item = "dye:green"},
+		},
 	},
 	{
 		description = "dopravní značení",
 		condition = function(itemstring, name, def, groups, palette_index)
 			return is_streets_signs(name, groups) or name == "streets:smallpole" or name == "streets:bigpole" or name == "streets:bigpole_short"
 		end,
+		icon = {
+			{image = "streets_sign_eu_50.png^[resize:24x24", item = "streets:sign_eu_50"},
+		},
 	},
 	{
 		description = "jídlo a pití",
 		condition = function(itemstring, name, def, groups, palette_index)
 			return groups.ch_food ~= nil or groups.drink ~= nil or groups.ch_poison ~= nil
 		end,
+		icon = {
+			{image = "ch_extras_parekvrohliku.png^[resize:24x24", item = "ch_extras:parekvrohliku"},
+		},
 	},
 	{
 		description = "látky (na šaty)",
 		condition = function(itemstring, name, def, groups, palette_index)
 			return name:sub(1, 16) == "clothing:fabric_"
 		end,
+		icon = {
+			{
+				image = "(clothing_fabric.png^[multiply:#f8f7f3)^(((clothing_fabric.png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#00b4e8)^[resize:24x24",
+				item = "clothing:fabric_white",
+			},
+		},
 	},
 	{
 		description = "oblečení a obuv",
 		condition = function(itemstring, name, def, groups, palette_index)
 			return ch_core.overridable.is_clothing(name)
 		end,
+		icon = {
+			{image = "(clothing_inv_shirt.png^[multiply:#98cd61)^[resize:24x24", item = "clothing:shirt_green"},
+		},
 	},
 	{
 		description = "nástupiště",
 		condition = function(itemstring, name, def, groups, palette_index)
 			return (groups.platform or 0) > 0
 		end,
+		icon = {
+			{image = "default_acacia_wood.png^[resize:128x128^advtrains_platform.png^[resize:16x16", item = "advtrains:platform_low_acacia_wood"}
+		},
 	},
 	{
 		description = "všechny předměty",
 		condition = function(itemstring, name, ndef, groups, palette_index)
 			return true
 		end,
+		icon = {
+			{image = "[combine:40x40:-11,-3=letters_pattern.png\\^letters_star_overlay.png\\^[makealpha\\:255,126,126^[resize:16x16", item = "letters:letter_star"},
+		},
 	},
 	{
 		description = "experimentální předměty",
 		condition = function(itemstring, name, ndef, groups, palette_index)
 			return is_experimental(name, groups)
 		end,
+		icon = {
+			{image = "ch_test_4dir_1.png^[resize:16x16", item = "ch_test:test_color"},
+		},
 	},
 	{
 		description = "test: svítící bloky",
 		condition = function(itemstring, name, def, groups, palette_index)
 			return minetest.registered_nodes[name] ~= nil and def.paramtype == "light" and (def.light_source or 0) > 0
 		end,
+		icon = {
+			{image = "default_fence_pine_wood.png^default_mese_post_light_side.png^[makealpha:0,0,0^[resize:16x16", item = "default:mese_post_light_pine_wood"},
+		},
+	},
+	{
+		description = "test: nástroje",
+		condition = function(itemstring, name, def, groups, palette_index)
+			return minetest.registered_tools[name] ~= nil
+		end,
+		icon = {
+			{image = "moreores_tool_mithrilpick.png^[resize:24x24", item = "moreores:pick_mithril"},
+			{image = "default_tool_mesepick.png", item = "default:pick_mese"},
+		},
 	},
 }
 
 local function get_default_categories()
-	local descriptions = {}
+	local descriptions, icons = {}, {}
 	for i, category_def in ipairs(categories) do
 		descriptions[i] = category_def.description.." [0]"
+		icons[i] = "unknown_item.png^[resize:16x16"
 	end
-	return { descriptions = descriptions, filter = {} }
+	return { descriptions = descriptions, filter = {}, icons = icons }
 end
 
 local function compute_categories(itemstrings)
 	local counts = {}
 	local descriptions = {}
 	local filter = {}
+	local icons = {}
 	local itemstrings_set = {}
 	local registered_items = minetest.registered_items
 	local string_cache = {}
@@ -412,8 +463,15 @@ local function compute_categories(itemstrings)
 	end
 	for i, category_def in ipairs(categories) do
 		descriptions[i] = category_def.description.." ["..counts[i].."]"
+		icons[i] = "unknown_item.png^[resize:16x16"
+		for _, icon_def in ipairs(category_def.icon) do
+			if icon_def.item == nil or minetest.registered_items[icon_def.item] ~= nil then
+				icons[i] = assert(icon_def.image)
+				break
+			end
+		end
 	end
-	return { descriptions = descriptions, filter = filter }
+	return { descriptions = descriptions, filter = filter, icons = icons }
 end
 
 ch_core.creative_inventory = {
@@ -424,6 +482,7 @@ ch_core.creative_inventory = {
 			filter = {
 				[itemstring] = "00100[...]", -- maska kategorií pro každý itemstring
 			},
+			icons[index] = textura, -- ikona kategorie (obrázek)
 		}
 	]]
 	items_by_order = {},

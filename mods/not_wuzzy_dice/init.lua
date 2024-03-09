@@ -49,6 +49,19 @@ local function after_place_node(pos, placer, itemstack, pointed_thing)
 	end
 end
 
+local function on_use(itemstack, user, pointed_thing)
+	local player_name = user and user:get_player_name()
+	if player_name == nil then return end
+	local pos = user:get_pos()
+	local value = assert(facedir_to_value[math.random(0, 23)])
+	local message = ch_core.prihlasovaci_na_zobrazovaci(player_name).." hodil/a na kostce číslo "..value
+	for _, player in ipairs(minetest.get_connected_players()) do
+		if vector.distance(pos, player:get_pos()) < 50 then
+			ch_core.systemovy_kanal(player:get_player_name(), message)
+		end
+	end
+end
+
 local def = {
 	description = "hrací kostka",
 	tiles = {
@@ -70,6 +83,7 @@ local def = {
 
 	after_place_node = after_place_node,
 	on_punch = on_punch,
+	on_use = on_use,
 }
 minetest.register_node("not_wuzzy_dice:dice", def)
 
