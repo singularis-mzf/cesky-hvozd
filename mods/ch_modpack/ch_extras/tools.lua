@@ -869,3 +869,11 @@ def = {
 	end,
 }
 minetest.register_tool("ch_extras:periskop", def)
+minetest.register_craft{
+	output = "ch_extras:periskop",
+	recipe = {
+		{"", "default:copper_ingot", "default:copper_ingot"},
+		{"", "default:copper_ingot", ""},
+		{"default:copper_ingot", "default:copper_ingot", ""},
+	},
+}

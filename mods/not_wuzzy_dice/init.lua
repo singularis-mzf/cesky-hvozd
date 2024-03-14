@@ -86,6 +86,14 @@ local def = {
 	on_use = on_use,
 }
 minetest.register_node("not_wuzzy_dice:dice", def)
+minetest.register_craft{
+	output = "not_wuzzy_dice:dice 6",
+	recipe = {
+		{"bakedclay:white", "bakedclay:white", "bakedclay:white"},
+		{"bakedclay:white", "default:mese_crystal", "bakedclay:white"},
+		{"bakedclay:white", "bakedclay:white", "bakedclay:white"},
+	},
+}
 
 --[[
 for i = 1, 6 do

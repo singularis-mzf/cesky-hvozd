@@ -931,6 +931,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: EUPL-1.2+ (kód)
 * [ContentDB](https://content.minetest.net/packages/Hamlet/round\_trunks/)
 
+## Sandwiches (sandwiches)
+
+* Zdroj: [https://notabug.org/Annalysa/sandwiches.git](https://notabug.org/Annalysa/sandwiches.git), revize 399d79ef1052f9caec75bdf4abe3f33b2472322c
+* Původní licence: LGPLv2.1+ (kód), CC BY-SA 3.0 (textury)
+* Licence úprav: LGPLv2.1+ (kód), CC BY-SA 3.0 (textury)
+* [ContentDB](https://content.minetest.net/packages/Annalysa/sandwiches/)
+
 ## Sausages (sausages)
 
 * Zdroj: [https://github.com/C-C-Minetest-Server/sausages](https://github.com/C-C-Minetest-Server/sausages), revize c7157db243bddf8ec180e0190179c2153cc86de1

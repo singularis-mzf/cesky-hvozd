@@ -95,19 +95,25 @@ local partition_defs = {
 			"pkarcs:acacia_wood_arc",
 			"pkarcs:acacia_wood_inner_arc",
 			"pkarcs:acacia_wood_outer_arc",
+			"pkarcs:acacia_wood_with_arc",
 			"pkarcs:aspen_wood_arc",
 			"pkarcs:aspen_wood_inner_arc",
 			"pkarcs:aspen_wood_outer_arc",
+			"pkarcs:aspen_wood_with_arc",
 			"pkarcs:junglewood_arc",
 			"pkarcs:junglewood_inner_arc",
 			"pkarcs:junglewood_outer_arc",
+			"pkarcs:junglewood_with_arc",
 			"pkarcs:pine_wood_arc",
 			"pkarcs:pine_wood_inner_arc",
 			"pkarcs:pine_wood_outer_arc",
+			"pkarcs:pine_wood_with_arc",
 			"pkarcs:wood_arc",
 			"pkarcs:wood_inner_arc",
 			"pkarcs:wood_outer_arc",
+			"pkarcs:wood_with_arc",
 		},
+		-- not_in_mods = {"pkarcs"},
 		-- not_in_mods = {"cottages", "moreblocks", "pkarcs"},
 	},
 	{
@@ -117,6 +123,7 @@ local partition_defs = {
 		mods = none,
 		exclude_items = {"cottages:water_gen", "bamboo:trunk"},
 	},
+	--[[
 	{
 		name = "barvy",
 		groups = {"basic_dye"},
@@ -129,7 +136,7 @@ local partition_defs = {
 		items = none,
 		mods = none,
 		exclude_items = {"technic:insulator_clip_fencepost"},
-	},
+	}, ]]
 	{
 		name = "mesesloupky",
 		groups = {"mesepost_light"},
@@ -203,7 +210,8 @@ local partition_defs = {
 		items = {"basic_materials:brass_ingot", "default:bronze_ingot", "default:tin_ingot", "default:copper_ingot", "default:gold_ingot", "default:steel_ingot",
                  "moreores:mithril_ingot", "moreores:silver_ingot", "technic:chromium_ingot", "technic:cast_iron_ingot", "technic:stainless_steel_ingot",
                  "technic:lead_ingot", "technic:carbon_steel_ingot", "technic:mixed_metal_ingot", "technic:zinc_ingot", "technic:uranium0_ingot",
-                 "technic:uranium_ingot", "technic:uranium35_ingot"},
+                 "technic:uranium_ingot", "technic:uranium35_ingot",
+                 "aloz:aluminum_ingot"},
 		mods = none,
 	},
 	{
@@ -213,7 +221,8 @@ local partition_defs = {
                  "default:stone_with_gold", "default:stone_with_iron", "denseores:large_tin_ore", "denseores:large_diamond_ore", "denseores:large_mese_ore",
                  "denseores:large_copper_ore", "denseores:large_mithril_ore", "denseores:large_silver_ore", "denseores:large_coal_ore",
                  "denseores:large_gold_ore", "denseores:large_iron_ore", "moreores:mineral_mithril", "moreores:mineral_silver",
-                 "technic:mineral_chromium", "technic:mineral_lead", "technic:mineral_sulfur", "technic:mineral_uranium", "technic:mineral_zinc"},
+                 "technic:mineral_chromium", "technic:mineral_lead", "technic:mineral_sulfur", "technic:mineral_uranium", "technic:mineral_zinc",
+                 "aloz:stone_with_bauxite"},
 		mods = none,
 	},
 	{
@@ -231,6 +240,43 @@ local partition_defs = {
 		mods = {"comboblock"},
 	},
 	{
+		name = "clothing_singlecolor",
+		groups = {"clothing_singlecolor", "cape_singlecolor"},
+		items = none,
+		mods = none,
+	},
+	{
+		name = "clothing_stripy",
+		groups = {"clothing_stripy", "cape_stripy"},
+		items = none,
+		mods = none,
+	},
+	{
+		name = "clothing_squared",
+		groups = {"clothing_squared", "cape_squared"},
+		items = none,
+		mods = none,
+	},
+	{
+		name = "clothing_fabric_singlecolor",
+		groups = {"clothing_fabric_singlecolor"},
+		items = none,
+		mods = none,
+	},
+	{
+		name = "clothing_fabric_stripy",
+		groups = {"clothing_fabric_stripy"},
+		items = none,
+		mods = none,
+	},
+	{
+		name = "clothing_fabric_squared",
+		groups = {"clothing_fabric_squared"},
+		items = none,
+		mods = none,
+	},
+	--[[
+	{
 		name = "trojdesky",
 		groups = {"slab"},
 		items = none,
@@ -241,7 +287,7 @@ local partition_defs = {
 		groups = {"slope"},
 		items = none,
 		mods = none,
-	},
+	}, ]]
 }
 
 function ch_core.overridable.is_clothing(item_name)
@@ -258,7 +304,9 @@ function ch_core.overridable.is_cnc_shape(item_name, item_def)
 end
 
 function ch_core.overridable.is_other_shape(item_name, groups)
-	return groups.fence or groups.gravestone or
+	return
+		(groups.fence and item_name ~= "technic:insulator_clip_fencepost") or
+		groups.gravestone or
 		item_name:sub(1, 7) == "pkarcs:" or
 		item_name:sub(1, 8) == "pillars:"
 end
@@ -307,7 +355,7 @@ local categories = {
 	{
 		description = "barvitelné předměty",
 		condition = function(itemstring, name, def, groups, palette_index)
-			return (groups.ud_param2_colorable or 0) > 0
+			return (groups.ud_param2_colorable or 0) > 0 and not is_experimental(name, groups)
 		end,
 		icon = {
 			{image = "lrfurn_armchair_inv.png^[resize:24x24", item = "lrfurn:armchair"},
@@ -542,7 +590,6 @@ local function sort_items(itemstrings, group_by_mod)
 		else
 			if tdesc == desc then
 				counter_same = counter_same + 1
-				minetest.log("info", "a description \""..desc.."\" not changed in the translation") -- DEBUG
 			else
 				counter_diff = counter_diff + 1
 			end

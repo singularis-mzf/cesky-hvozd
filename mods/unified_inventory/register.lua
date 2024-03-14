@@ -197,7 +197,7 @@ ui.register_button("clear_inv", {
 ]]
 
 ui.register_page("craft", {
-	
+
 	get_formspec = function(player, perplayer_formspec)
 
 		local formheaderx = perplayer_formspec.form_header_x
@@ -334,7 +334,7 @@ ui.register_page("craftguide", {
 			"listcolors[#00000000;#00000000]"
 		}
 
-		local item_name = ui.current_item[player_name]
+		local item_name = ui.get_current_item(player_name, false)
 		if not item_name then
 			return { formspec = table.concat(formspec) }
 		end
@@ -513,19 +513,20 @@ local function craftguide_giveme(player, formname, fields)
 	amount = tonumber(amount) or 0
 	if amount == 0 then return end
 
-	local output = ui.current_item[player_name]
-	if (not output) or (output == "") then return end
+	local output = ui.get_current_item(player_name, true)
+	if (not output) or output:is_empty() then return end
 
-	local stack_max = ItemStack(output):get_stack_max()
+	local stack_max = output:get_stack_max()
 	if stack_max < amount then
 		amount = stack_max
 	end
+	output:set_count(amount)
 
 	local player_inv = player:get_inventory()
 
-	minetest.log("action", player_name.." gived themself "..output.." "..amount.." using craft guide")
+	minetest.log("action", player_name.." gived themself "..output:get_name().." "..amount.." using craft guide")
 
-	player_inv:add_item("main", {name = output, count = amount})
+	player_inv:add_item("main", output)
 end
 
 local function craftguide_craft(player, formname, fields)

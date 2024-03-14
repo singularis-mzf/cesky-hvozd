@@ -5,9 +5,17 @@ local hood_mask_load = nil
 local hood_mask_equip = nil
 local hood_mask_unequip = nil
 
+local function ifthenelse(c, t, f)
+	if c then
+		return t
+	else
+		return f
+	end
+end
+
 if minetest.settings:get_bool("clothing_enable_hood_mask", true) then
   local have_hidename = minetest.get_modpath("hidename")
-    
+
   hood_mask_equip = function(player, index, stack)
     player:set_nametag_attributes({color = {a = 0, r = 255, g = 255, b = 255}})
   end
@@ -25,13 +33,11 @@ if minetest.settings:get_bool("clothing_enable_hood_mask", true) then
   hood_mask_load = hood_mask_equip
 end
 
-local groups_clothing_in_ci = {clothing = 1}
-local groups_clothing_not_in_ci = groups_clothing_in_ci -- {clothing = 1, not_in_creative_inventory = 1}
-local groups_cape_in_ci = {cape = 1}
-local groups_cape_not_in_ci = groups_cape_in_ci -- {cape = 1, not_in_creative_inventory = 1}
-
--- groups_cape_in_ci = groups_cape_not_in_ci
--- groups_clothing_in_ci = groups_clothing_not_in_ci
+local groups_clothing_single_color = {clothing = 1, clothing_singlecolor = 1}
+local groups_clothing_squared = {clothing = 1, clothing_squared = 1}
+local groups_clothing_stripy = {clothing = 1, clothing_stripy = 1}
+local groups_cape_single_color = {cape = 1, cape_singlecolor = 1}
+local groups_cape_squared = {cape = 1, cape_squared = 1}
 
 local clothing_types = {
 	-- required keys: cloth_desc, color_suffix
@@ -130,13 +136,6 @@ end
 for color, data in pairs(clothing.colors) do
 	local desc, groups_clothing, groups_cape
 	desc = data.color
-	if data.in_creative_inventory > 0 then
-		groups_clothing = groups_clothing_in_ci
-		groups_cape = groups_cape_in_ci
-	else
-		groups_clothing = groups_clothing_not_in_ci
-		groups_cape = groups_cape_not_in_ci
-	end
 
 	for cloth_type, cloth_def in pairs(clothing_types) do
 		local inv_img = "(clothing_inv_"..cloth_type..".png^[multiply:#"..data.hex..")"
@@ -154,7 +153,7 @@ for color, data in pairs(clothing.colors) do
 				description = data.color..cloth_def.color_suffix.." "..cloth_def.cloth_desc,
 				inventory_image = inv_img,
 				uv_image = uv_img,
-				groups = groups,
+				groups = ifthenelse(cloth_def.cape, groups_cape_single_color, groups_clothing_single_color),
 				on_load = cloth_def.on_load,
 				on_equip = cloth_def.on_equip,
 				on_unequip = cloth_def.on_unequip,
@@ -176,7 +175,7 @@ for color, data in pairs(clothing.colors) do
 					description = data.color..cloth_def.color_suffix.." "..cloth_def.cloth_desc,
 					inventory_image = inv_img.."^(((clothing_inv_"..cloth_type..".png^clothing_inv_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")",
 					uv_image = uv_img.."^(((clothing_uv_"..cloth_type..".png^"..clothing_uv_second_color..")^[makealpha:0,0,0)^[multiply:#"..data.hex2..")",
-					groups = groups,
+					groups = ifthenelse(cloth_def.cape, groups_cape_squared, groups_clothing_squared),
 					on_load = cloth_def.on_load,
 					on_equip = cloth_def.on_equip,
 					on_unequip = cloth_def.on_unequip,
@@ -190,7 +189,7 @@ for color, data in pairs(clothing.colors) do
 					description = "pruhovan"..cloth_def.color_suffix.." "..data.color..cloth_def.color_suffix.." "..cloth_def.cloth_desc,
 					inventory_image = inv_img.."^(((clothing_inv_"..cloth_type..".png^clothing_inv_stripy_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")",
 					uv_image = uv_img.."^(((clothing_uv_"..cloth_type..".png^clothing_uv_stripy_second_color.png)^[makealpha:0,0,0)^[multiply:#"..data.hex2..")",
-					groups = groups,
+					groups = groups_clothing_stripy,
 					on_load = cloth_def.on_load,
 					on_equip = cloth_def.on_equip,
 					on_unequip = cloth_def.on_unequip,
@@ -220,7 +219,7 @@ for color, data in pairs(clothing.colors) do
     if data.alias then
       minetest.register_alias("clothing:shirt_"..data.alias.."_picture_"..picture, "clothing:shirt_"..color.."_picture_"..picture)
     end
-    
+
     -- cape
     local inv_img = "(clothing_inv_cape.png^[multiply:#"..data.hex..")";
     local uv_img = "(clothing_uv_cape.png^[multiply:#"..data.hex..")";

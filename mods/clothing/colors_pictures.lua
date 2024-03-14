@@ -120,8 +120,26 @@ local basic_colors = {
 }
 
 local colors = table.copy(basic_colors);
-local colors2 = table.copy(basic_colors);
 
+for color, data in pairs(basic_colors) do
+	for color2, data2 in pairs(basic_colors) do
+		if color < color2 then
+			key = color.."_"..color2
+			colors[key] = {
+				color = data.color.."o"..data2.color;
+				alias = color2.."_"..color;
+				color1 = data.color,
+				color2 = data2.color,
+				key1 = color,
+				key2 = color2,
+				hex = data.hex,
+				hex2 = data2.hex,
+			}
+		end
+	end
+end
+
+--[[
 for color, data in pairs(basic_colors) do
   colors2[color] = nil;
   for color2, data2 in pairs(colors2) do
@@ -150,6 +168,7 @@ if tmp then
 	tmp.in_creative_inventory = 1
 end
 colors.black.in_creative_inventory = 1
+]]
 
 local pictures = {
   minetest = {

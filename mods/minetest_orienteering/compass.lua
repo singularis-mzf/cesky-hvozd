@@ -29,6 +29,7 @@ local waypoint_offset = {x = 0, y = 30, z = 0}
 local default_player_form = {abbr = "", pos = vector.zero()}
 local item_description_unset = "Builder Compass (unset)"
 local item_description_set = "Builder Compass"
+local item_description_locked = "Locked Builder Compass"
 local ch_help = "Je-li na výběrové liště, ukazuje směr do jednoho nebo více uložených cílů.\nLevým kliknutím vyvoláte formulář pro změnu názvu či pozice cíle."
 local ch_help_group = "o:bc"
 
@@ -466,19 +467,11 @@ local def = {
 	on_use = bc_on_use,
 	groups = {builder_compass = 1},
 }
-
-for i = 1, 9 do
-	minetest.register_tool("orienteering:builder_compass_"..i, table.copy(def))
-	if i == 1 then
-		def.groups = table.copy(def.groups)
-		def.groups.not_in_creative_inventory = 1
-	end
-	minetest.register_craft({
-		output = "orienteering:builder_compass_1",
-		recipe = {{"orienteering:builder_compass_"..i}},
-	})
+minetest.register_tool("orienteering:builder_compass_1", table.copy(def))
+for i = 2, 9 do
+	minetest.register_alias("orienteering:builder_compass_"..i, "orienteering:builder_compass_1")
 end
-def.description = S(item_description_set)
+def.description = S(item_description_locked)
 minetest.register_tool("orienteering:builder_compass_locked", def)
 
 -- CRAFT

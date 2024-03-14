@@ -6,11 +6,11 @@ clothing.sewing_table = appliances.appliance:new(
     {
       node_name_inactive = "clothing:sewing_table",
       node_name_active = "clothing:sewing_table_active",
-      
+
       node_description = S("Sewing table"),
       node_help = S("Sewing clothes from fabric and yarn.").."\n"..
                   S("Powered by punching."),
-      
+
       input_stack = "input",
       input_stack_size = 9,
       input_stack_width = 3,
@@ -40,7 +40,7 @@ function sewing_table:get_formspec(meta, production_percent, consumption_percent
             (production_percent) ..
             ":appliances_production_progress_bar_full.png^[transformR270]]";
   end
-  
+
   local formspec =  "formspec_version[3]" .. "size[12.75,9.5]" ..
                     "background[-1.25,-1.25;15,11;appliances_appliance_formspec.png]" ..
                     progress..
@@ -248,13 +248,13 @@ for color, data in pairs(clothing.colors) do
 		if fabric_stripy and registered_items["clothing:shirt_"..color.."_stripy"] then
 			def.outputs = {{"clothing:shirt_"..color.."_stripy","clothing:yarn_spool_empty"}}
 			def.inputs = {
-				fabric_stripy, "clothing:undershirt_"..color, fabric_stripy,
+				fabric_stripy, "clothing:undershirt_"..color.."_stripy", fabric_stripy,
 				fabric_stripy, yarn, fabric_stripy,
 				"", "", "",
 			}
 			sewing_table:recipe_register_input("", table.copy(def))
 			def.inputs = {
-				fabric_stripy, "clothing:undershirt_"..color, fabric_stripy,
+				fabric_stripy, "clothing:undershirt_"..color.."_stripy", fabric_stripy,
 				fabric_stripy, yarn2, fabric_stripy,
 				"", "", "",
 			}
@@ -426,7 +426,7 @@ for color, data in pairs(clothing.colors) do
     local inputs = {};
     local cloth_index = 2;
     local spools = 0;
-    
+
     for r_i, r_v in pairs(pic_data.recipe) do
       if (r_v=="CLOTH") then
         cloth_index = r_i;
@@ -440,9 +440,9 @@ for color, data in pairs(clothing.colors) do
         inputs[r_i] = "";
       end
     end
-    
+
     spools = ItemStack("clothing:yarn_spool_empty "..spools):to_string();
-    
+
     inputs[cloth_index] = "clothing:shirt_"..color;
     sewing_table:recipe_register_input(
       "",
@@ -452,7 +452,7 @@ for color, data in pairs(clothing.colors) do
         production_time = pic_data.production_time,
         consumption_step_size = 1,
       });
-    
+
     inputs[2] = "clothing:cape_"..color;
     sewing_table:recipe_register_input(
       "",

@@ -13,6 +13,7 @@ Binoculars=dalekohled
 Builder Compass (unset)=stavitelský kompas (nenastavený)
 Builder Compass=stavitelský kompas
 Builder Compass @1=stavitelský kompas @1
+Locked Builder Compass=zamknutý stavitelský kompas
 
 Yaw: @1° (@2), pitch: @3°=Směr: @1° (@2), sklon: @3°
 Yaw: @1° (@2)=Směr: @1° (@2)

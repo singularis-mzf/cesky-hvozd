@@ -195,6 +195,29 @@ if sfinv then
 	sfinv.enabled = false
 end
 
+function ui.get_current_item(player_name, as_stack)
+	local result = ui.current_item[player_name]
+	if as_stack then
+		if result ~= nil then
+			return ItemStack(result)
+		else
+			return ItemStack()
+		end
+	else
+		if result ~= nil then
+			return result:get_name()
+		end
+	end
+end
+
+function ui.set_current_item(player_name, stack)
+	if stack:is_empty() then
+		ui.current_item[player_name] = nil
+	else
+		ui.current_item[player_name] = ItemStack(stack)
+	end
+end
+
 dofile(modpath.."/group.lua")
 dofile(modpath.."/category.lua")
 dofile(modpath.."/default-categories.lua")

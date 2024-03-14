@@ -273,7 +273,7 @@ local function formspec_add_item_browser(player, formspec, ui_peruser)
 				local name = stack:get_name()
 				local item = minetest.registered_items[name]
 				-- Clicked on current item: Flip crafting direction
-				if name == ui.current_item[player_name] then
+				if name == ui.get_current_item(player_name, false) then
 					local cdir = ui.current_craft_direction[player_name]
 					if cdir == "recipe" then
 						dir = "usage"

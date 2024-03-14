@@ -105,7 +105,7 @@ stairsplus:register_all("darkage", "ors_cobble", "darkage:ors_cobble", {
 		sounds = default.node_sound_stone_defaults(),
 		sunlight_propagates = true,
 	})
-	
+
 	stairsplus:register_all("darkage", "gneiss_brick", "darkage:gneiss_brick", {
 		description = S("Gneiss Brick"),
 		tiles = {"darkage_gneiss_brick.png"},
@@ -121,7 +121,7 @@ stairsplus:register_all("darkage", "ors_cobble", "darkage:ors_cobble", {
 		sounds = default.node_sound_stone_defaults(),
 		sunlight_propagates = true,
 	})
-	
+
 	stairsplus:register_all("darkage", "basalt_brick", "darkage:basalt_brick", {
 			description = S("Basalt Brick"),
 			tiles = {"darkage_basalt_brick.png"},
@@ -172,6 +172,7 @@ stairsplus:register_all("darkage", "ors_cobble", "darkage:ors_cobble", {
 		sunlight_propagates = true,
 	})
 
+	--[[
 	stairsplus:register_all("darkage", "reinforced_chalk", "darkage:reinforced_chalk", {
 		description = S("Reinforced Chalk"),
 		tiles = {"darkage_chalk.png^darkage_reinforce.png"},
@@ -179,6 +180,7 @@ stairsplus:register_all("darkage", "ors_cobble", "darkage:ors_cobble", {
 		sounds = default.node_sound_stone_defaults(),
 		sunlight_propagates = true,
 	})
+	]]
 
 	stairsplus:register_all("darkage", "glass", "darkage:glass", {
 		description = S("Medieval Glass"),
@@ -200,6 +202,7 @@ stairsplus:register_all("darkage", "ors_cobble", "darkage:ors_cobble", {
 		sunlight_propagates = true,
 	})
 
+	--[[
 	stairsplus:register_all("darkage", "reinforced_wood", "darkage:reinforced_wood", {
 		description = S("Reinforced Wood"),
 		tiles = {"default_wood.png^darkage_reinforce.png"},
@@ -207,6 +210,7 @@ stairsplus:register_all("darkage", "ors_cobble", "darkage:ors_cobble", {
 		sounds = default.node_sound_stone_defaults(),
 		sunlight_propagates = true,
 	})
+	]]
 
 elseif minetest.get_modpath("stairs") then
 
@@ -281,7 +285,7 @@ elseif minetest.get_modpath("stairs") then
 		S("Slate Cobble Slab"),
 		default.node_sound_stone_defaults()
 	)
-	
+
 	stairs.register_stair_and_slab("slate_brick", "darkage:slate_brick",
 		{cracky=2},
 		{"darkage_slate_brick.png"},
@@ -305,7 +309,7 @@ elseif minetest.get_modpath("stairs") then
 		S("Old Red Sandstone Brick Slab"),
 		default.node_sound_stone_defaults()
 	)
-	
+
 	stairs.register_stair_and_slab("gneiss_cobble", "darkage:gneiss_cobble",
 		{crumbly=2,cracky=2},
 		{"darkage_gneiss_cobble.png"},
@@ -313,7 +317,7 @@ elseif minetest.get_modpath("stairs") then
 		S("Gneiss Cobble Slab"),
 		default.node_sound_stone_defaults()
 	)
-	
+
 	stairs.register_stair_and_slab("gneiss_brick", "darkage:gneiss_brick",
 		{crumbly=2,cracky=2},
 		{"darkage_gneiss_brick.png"},
@@ -329,7 +333,7 @@ elseif minetest.get_modpath("stairs") then
 		S("Basalt Cobble Slab"),
 		default.node_sound_stone_defaults()
 	)
-	
+
 	stairs.register_stair_and_slab("basalt_brick", "darkage:basalt_brick",
 		{cracky=3},
 		{"darkage_basalt_brick.png"},
@@ -404,6 +408,7 @@ elseif minetest.get_modpath("stairs") then
 		default.node_sound_stone_defaults()
 	)
 
+	--[[
 	stairs.register_stair_and_slab("reinforced_wood", "darkage:reinforced_wood",
 		{snappy=2,choppy=3,oddly_breakable_by_hand=3,flammable=3},
 		{"default_wood.png^darkage_reinforce.png"},
@@ -411,4 +416,5 @@ elseif minetest.get_modpath("stairs") then
 		S("Reinforced Wood Slab"),
 		default.node_sound_stone_defaults()
 	)
+	]]
 end

@@ -26,7 +26,8 @@ minetest.register_on_joinplayer(function(player)
 	unified_inventory.current_category[player_name] = 1
 	unified_inventory.current_category_scroll[player_name] = 0
 	unified_inventory.alternate[player_name] = 1
-	unified_inventory.current_item[player_name] = nil
+	unified_inventory.set_current_item(player_name, ItemStack())
+	-- unified_inventory.current_item[player_name] = nil
 	unified_inventory.current_craft_direction[player_name] = "recipe"
 
 	-- Refill slot
@@ -190,7 +191,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		end
 		if page == "craftguide" then
 			local stack = ItemStack(clicked_item)
-			unified_inventory.current_item[player_name] = stack:get_name()
+			unified_inventory.set_current_item(player_name, stack)
+			-- unified_inventory.current_item[player_name] = stack:get_name()
 			unified_inventory.alternate[player_name] = 1
 			unified_inventory.set_inventory_formspec(player, "craftguide")
 		elseif player_creative then
@@ -215,7 +217,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				unified_inventory.last_giveme_per_player[player_name] = { time = now, item = clicked_item, count = 1 }
 			end
 			if inv:room_for_item("main", stack) then
-				minetest.log("action", player_name.." gived theirself "..stack:to_string().." [counter="..count.."]")
+				minetest.log("action", player_name.." gived themself "..stack:to_string().." [counter="..count.."]")
 				inv:add_item("main", stack)
 			end
 		end
@@ -283,7 +285,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 	minetest.sound_play("click",
 			{to_player=player_name, gain = 0.1})
-	local item_name = unified_inventory.current_item[player_name]
+	local item_name = unified_inventory.get_current_item(player_name, false)
 	if not item_name then
 		return
 	end

@@ -213,5 +213,13 @@ local def = {
 }
 
 minetest.register_node("ch_beauty:nastavec", def)
+minetest.register_craft{
+	output = "ch_beauty:nastavec",
+	recipe = {
+		{"moreblocks:slab_pine_wood_three_sides", "", ""},
+		{"moreblocks:slab_pine_wood_1", "", ""},
+		{"moreblocks:slab_pine_wood_1", "", ""},
+	},
+}
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

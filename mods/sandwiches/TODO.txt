@@ -1,0 +1,9 @@
+X picnic basket (little storage for group:food_sandwiches)
+
+cheese support (add bruschetta then?)
+"mozzarella", "tomato", "olive_oil",
+"garlic_bread", "garlic_bread", "garlic_bread",
+
+X ketchup and maionesse -- what is their purpose ???
+im not adding them until they have multiple purposes
+

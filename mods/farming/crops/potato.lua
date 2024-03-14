@@ -31,7 +31,7 @@ minetest.register_craftitem("farming:baked_potato", {
 	description = S("Baked Potato"),
 	inventory_image = "farming_baked_potato.png",
 	on_use = minetest.item_eat(6),
-	groups = {ch_food = 6},
+	groups = {ch_food = 6, food_baked_potato = 1},
 })
 
 minetest.register_craft({

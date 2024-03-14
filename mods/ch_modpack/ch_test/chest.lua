@@ -1,15 +1,32 @@
+--[[
+
+Dokumentace metadat:
+
+inventory main — hlavní inventář truhly, může mít libovolnou velikost; výchozí velikost je 8*4
+inventory qmove — speciální inventář sloužící k rychlému přesunu dávek stejného typu, velikost 1
+
+int width — šířka inventáře pro zobrazení; >= 1
+int height — výška inventáře pro zobrazení; >= 1
+int splitstacks — pro mód pipeworks: dovolí dělení dávek při vstupu z rour
+int autosort — je povoleno automatické řazení? 0 = ne, 1 = ano
+int sort_mode — režim řazení (0 = výchozí režim)
+int ch_given — 0 = truhla není darovaná; 1 = truhla je darovaná neanonymně; 2 = darovaná anonymně
+string owner — postava s plnými právy k truhle; v případě darované truhly obdarovaná postava
+string agroup_raw — seznam postav ve skupině, jak ho zadal vlastník/ice
+string agroup — seznam postav ve skupině v normalizovaném tvaru (|postava1|postava2|)
+string uuid — jedinečné ID truhly (textové)
+string rights — řetězec, kde jednotlivé znaky reprezentují přístupová práva
+string title — název truhly
+string infotext
+string ch_given_by — u darované truhly obsahuje jméno darující postavy
+string ch_given_to — u darované truhly obsahuje jméno obdarované postavy
+
+pořadí práv:
+—
+
+]]
 local ifthenelse = ch_core.ifthenelse
 local has_pipeworks = minetest.get_modpath("pipeworks")
-
-local ACCESS_PUBLIC = 0 -- všichni mají plný přístup (tzn. včetně možnosti truhlu vytěžit)
-local ACCESS_SERVICE = 1 -- všichni mohou vkládat/brát předměty, jen vlastník/ice může měnit nastavení
-local ACCESS_PUTONLY = 2 -- všichni mohou vkládat předměty, ostatní může jen vlastník/ice
-local ACCESS_TAKEONLY = 3 -- všichni mohou brát předměty, ostatní může jen vlastník/ice
-local ACCESS_VIEWONLY = 4 -- všichni mohou zobrazit obsah, ostatní může jen vlastník/ice
-local ACCESS_PRIVATE = 5 -- přístup jen pro vlastníka/ici (jmenované osoby mohou vkládat/brát)
-local ACCESS_GIFT = 6 -- přístup jen pro vlastníka/ici a obdarovanou osobu
--- obdarovaná osoba může truhlu zvednout a tím se stane jejím vlastníkem/icí
-local ACCESS_SHARED = 7 -- jako ACCESS_PRIVATE, ale jmenované osoby mají plný přístup k nastavení včetně možnosti truhlu vytěžit
 
 local function on_construct(pos)
 	local node = minetest.get_node(pos)

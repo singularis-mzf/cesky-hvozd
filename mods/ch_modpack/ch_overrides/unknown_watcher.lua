@@ -25,7 +25,7 @@ local function on_mods_loaded()
 	local old_items = load_names()
 	local new_items = {}
 	local changes_added, changes_changed, changes_removed = {}, {}, {}
-	local craftitems, tools, nodes, others, unknowns = 0, 0, 0, 0, 0
+	local craftitems, tools, nodes, others, aliases, unknowns = 0, 0, 0, 0, 0, 0
 	local first_run = next(old_items) == nil
 
 	for name, def in pairs(minetest.registered_items) do
@@ -50,6 +50,18 @@ local function on_mods_loaded()
 			end
 		end
 	end
+	for name, _ in pairs(minetest.registered_aliases) do
+		new_items[name] = "alias"
+		aliases = aliases + 1
+		if old_items[name] == nil then
+			table.insert(changes_added, "- added: "..name.." = alias")
+		else
+			if old_items[name] ~= "alias" then
+				table.insert(changes_changed, "- changed: "..name..": "..old_items[name].." => alias")
+			end
+			old_items[name] = nil
+		end
+	end
 	for name, t in pairs(old_items) do
 		new_items[name] = "unknown"
 		unknowns = unknowns + 1
@@ -57,7 +69,7 @@ local function on_mods_loaded()
 			table.insert(changes_removed, "- removed: "..name.." (was "..t..")")
 		end
 	end
-	minetest.log("action", "[ch_overrides/unknown_watcher] "..nodes.." nodes, "..craftitems.." craftitems, "..tools.." tools, "..others.." others, "..unknowns.." unknowns")
+	minetest.log("action", "[ch_overrides/unknown_watcher] "..nodes.." nodes, "..craftitems.." craftitems, "..tools.." tools, "..others.." others, "..aliases.." aliases, "..unknowns.." unknowns")
 	if not first_run and #changes_added > 0 then
 		minetest.log("action", #changes_added.." items added:\n"..table.concat(changes_added, "\n"))
 	end
