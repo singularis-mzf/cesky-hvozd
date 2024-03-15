@@ -27,7 +27,7 @@ local function material_fallback(list)
 end
 
 local body = material_fallback({
-  'homedecor:plastic_sheeting',
+  'basic_materials:plastic_sheet',
   'default:steel_ingot',
 })
 
@@ -37,6 +37,7 @@ local glass = material_fallback({
 })
 
 local electronic = material_fallback({
+  'technic:control_logic_unit',
   'mesecons_microcontroller:microcontroller0000',
   'mesecons_luacontroller:luacontroller0000',
   'default:copper_ingot',
@@ -47,7 +48,7 @@ local button = material_fallback({
   'default:stone',
 })
 
-local wire = 'digilines:wire_std_00000000'
+local wire = 'mesecons:wire_00000000_off'
 
 minetest.register_craft({
 	output = "digiterms:lcd_monitor 1",

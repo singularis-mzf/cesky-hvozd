@@ -66,15 +66,16 @@ digiterms.register_monitor('digiterms:lcd_monitor', {
 	collision_box = lcd_collision_box,
 	selection_box = lcd_collision_box,
 	display_entities = {
-		["digiterms:screen"] = {
-				on_display_update = font_api.on_display_update,
-				depth = 7/16 - display_api.entity_spacing,
-				top = -1/128, right = 1/128,
-				size = { x = 12/16, y = 12/16 },
-				columns = 12, lines = 6,
-				color = "#203020", font_name = digiterms.font, halign="left", valing="top",
+		["signs:display_text"] = { -- ["digiterms:screen"] = {
+			on_display_update = font_api.on_display_update,
+			depth = 7/16 - display_api.entity_spacing,
+			top = -1/128, right = 1/128,
+			size = { x = 12/16, y = 12/16 },
+			columns = 12, lines = 6,
+			color = "#203020", font_name = digiterms.font, halign="left", valign="top",
 		},
 	},
+	on_place = display_api.on_place,
 }, {
 	tiles = { "digiterms_lcd_sides.png", "digiterms_lcd_sides.png",
 						"digiterms_lcd_sides.png", "digiterms_lcd_sides.png",
@@ -84,8 +85,9 @@ digiterms.register_monitor('digiterms:lcd_monitor', {
 						"digiterms_lcd_sides.png", "digiterms_lcd_sides.png",
 						"digiterms_lcd_back.png",  "digiterms_lcd_front_off.png" },
 })
+
 digiterms.register_monitor('digiterms:cathodic_beige_monitor', {
-	description = "Beige cathodic monitor with amber screen",
+	description = "béžový monitor se žlutou písmem",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	sunlight_propagates = false,
@@ -95,7 +97,7 @@ digiterms.register_monitor('digiterms:cathodic_beige_monitor', {
 	collision_box = cathodic_collision_box,
 	selection_box = cathodic_collision_box,
 	display_entities = {
-		["digiterms:screen"] = {
+		["signs:display_text"] = {
 				on_display_update = font_api.on_display_update,
 				depth = -7/16 - display_api.entity_spacing,
 				top = -1/16,
@@ -117,7 +119,7 @@ minetest.register_alias('digiterms:cathodic_amber_monitor', 'digiterms:cathodic_
 minetest.register_alias('digiterms:cathodic_amber_monitor_off', 'digiterms:cathodic_beige_monitor_off')
 
 digiterms.register_monitor('digiterms:cathodic_white_monitor', {
-	description = "White cathodic monitor with green screen",
+	description = "bílý monitor se zelenou písmem",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	sunlight_propagates = false,
@@ -127,7 +129,7 @@ digiterms.register_monitor('digiterms:cathodic_white_monitor', {
 	collision_box = cathodic_collision_box,
 	selection_box = cathodic_collision_box,
 	display_entities = {
-		["digiterms:screen"] = {
+		["signs:display_text"] = {
 				on_display_update = font_api.on_display_update,
 				depth = -7/16 - display_api.entity_spacing,
 				top = -1/16,
@@ -149,7 +151,7 @@ minetest.register_alias('digiterms:cathodic_green_monitor', 'digiterms:cathodic_
 minetest.register_alias('digiterms:cathodic_green_monitor_off', 'digiterms:cathodic_white_monitor_off')
 
 digiterms.register_monitor('digiterms:cathodic_black_monitor', {
-	description = "Black cathodic monitor with white screen",
+	description = "černý monitor s bílou písmem",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	sunlight_propagates = false,
@@ -159,7 +161,7 @@ digiterms.register_monitor('digiterms:cathodic_black_monitor', {
 	collision_box = cathodic_collision_box,
 	selection_box = cathodic_collision_box,
 	display_entities = {
-		["digiterms:screen"] = {
+		["signs:display_text"] = {
 				on_display_update = font_api.on_display_update,
 				depth = -7/16 - display_api.entity_spacing,
 				top = -1/16,
@@ -180,75 +182,8 @@ digiterms.register_monitor('digiterms:cathodic_black_monitor', {
 
 -- KEYBOARDS
 
-local keyboard_on_rightclick = function(pos, node, player, itemstack, pointed_thing)
-	if not minetest.is_player(player) then
-		return
-	end
-	local name = player:get_player_name()
-	local context = digiterms.get_player_context(name)
-	context.formname = 'digiterms:keyboard'
-	context.pos = pos
-
-	local owned = not minetest.is_protected(context.pos, name)
-	local protected = minetest.is_protected(context.pos, '')
-	local meta = minetest.get_meta(pos)
-	local channel = meta:get_string('channel')
-	local public = meta:get_string('public')
-
-	if owned then
-		local fs = "size[8,5]"..
-			default.gui_bg..default.gui_bg_img..default.gui_slots..
-			"field[1,1;3,1;channel;Channel;"..channel.."]"..
-			"field[1,3;6.5,1;text;Type text:;]"..
-			"field_close_on_enter[text;true]button_exit[2.5,4;3,1;send;Send]"
-		if protected then
-			fs = fs.."checkbox[4,0.6;public;Public keyboard;"..public.."]"
-		end
-		minetest.show_formspec(name, context.formname, fs)
-	else
-		if public == 'true' and channel ~= '' then
-			minetest.show_formspec(name, context.formname, "size[8,3]"..
-				default.gui_bg..default.gui_bg_img..default.gui_slots..
-				"field[1,1;6.5,1;text;Type text:;]"..
-				"field_close_on_enter[text;true]button_exit[2.5,2;3,1;send;Send]")
-		end
-	end
-end
-
-minetest.register_on_player_receive_fields(function(player, formname, fields)
-		if formname ~= 'digiterms:keyboard' or not minetest.is_player(player) then
-			return
-		end
-		local name = player:get_player_name()
-		local context = digiterms.get_player_context(name)
-		if context.formname ~= formname then
-			return
-		end
-
-		local owned = not minetest.is_protected(context.pos, name)
-		local protected = minetest.is_protected(context.pos, '')
-		local meta = minetest.get_meta(context.pos)
-		if owned then
-			if fields.channel ~= nil and fields.channel ~= '' then
-				meta:set_string("channel", fields.channel)
-			end
-			if fields.public ~= nil and protected then
-				meta:set_string("public", fields.public)
-			end
-		end
-
-		local channel = meta:get_string("channel")
-
-		if fields.text and channel ~= '' and
-			(owned or meta:get_string("public") == 'true') then
-			digiline:receptor_send(context.pos, digiline.rules.default, channel, fields.text)
-		end
-		return true
-	end)
-
-
 minetest.register_node('digiterms:beige_keyboard', {
-	description = "Beige keyboard",
+	description = "béžová klávesnice",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	sunlight_propagates = false,
@@ -264,15 +199,10 @@ minetest.register_node('digiterms:beige_keyboard', {
 			{-7/16,  -12/32, 0, 7/16, -11/32, 6/16},
 		}
 	},
-	on_rightclick = keyboard_on_rightclick,
-	digiline =
-	{
-		receptor = {}
-	},
 })
 
 minetest.register_node('digiterms:white_keyboard', {
-	description = "White keyboard",
+	description = "bílá klávesnice",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	sunlight_propagates = false,
@@ -288,15 +218,10 @@ minetest.register_node('digiterms:white_keyboard', {
 			{-7/16,  -12/32, 0, 7/16, -11/32, 6/16},
 		}
 	},
-	on_rightclick = keyboard_on_rightclick,
-	digiline =
-	{
-		receptor = {}
-	},
 })
 
 minetest.register_node('digiterms:black_keyboard', {
-	description = "Black keyboard",
+	description = "černá klávesnice",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	sunlight_propagates = false,
@@ -312,9 +237,5 @@ minetest.register_node('digiterms:black_keyboard', {
 			{-7/16,  -12/32, 0, 7/16, -11/32, 6/16},
 		}
 	},
-	on_rightclick = keyboard_on_rightclick,
-	digiline =
-	{
-		receptor = {}
-	},
 })
+

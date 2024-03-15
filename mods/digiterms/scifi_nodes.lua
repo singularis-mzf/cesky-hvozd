@@ -17,8 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
+local scifi_nodes_black = "ch_core_white_pixel.png^[multiply:#303030"
+local scifi_nodes_keyboard = "ch_core_white_pixel.png^[multiply:#303030^[resize:32x32^(digiterms_black_keyboard_top.png^[transformR180^[makealpha:255,255,255)"
+
 digiterms.register_monitor("digiterms:scifi_glassscreen", {
-  description = "Digiline glassscreen",
+  description = "digitální promítací sklo",
 	paramtype = "light",
 	paramtype2 = "facedir",
   use_texture_alpha = true,
@@ -43,7 +46,7 @@ digiterms.register_monitor("digiterms:scifi_glassscreen", {
   sounds = default.node_sound_glass_defaults(),
 	groups = {choppy = 1, oddly_breakable_by_hand = 1},
 	display_entities = {
-		["digiterms:screen"] = {
+		["signs:display_text"] = {
 				on_display_update = font_api.on_display_update,
 				depth = -1/32,
 				top = -5/32,
@@ -55,13 +58,13 @@ digiterms.register_monitor("digiterms:scifi_glassscreen", {
 })
 
 digiterms.register_monitor("digiterms:scifi_widescreen", {
-	description = "Digiline widescreen",
+	description = "digitální obrazovka na šířku",
 	tiles = {
-		"scifi_nodes_black.png",
-		"scifi_nodes_black.png",
-		"scifi_nodes_black.png",
-		"scifi_nodes_black.png",
-		"scifi_nodes_black.png",
+		scifi_nodes_black,
+		scifi_nodes_black,
+		scifi_nodes_black,
+		scifi_nodes_black,
+		scifi_nodes_black,
 		"digiterms_scifi_widescreen.png"
 	},
 	drawtype = "nodebox",
@@ -83,7 +86,7 @@ digiterms.register_monitor("digiterms:scifi_widescreen", {
 	},
 	groups = {cracky=1, oddly_breakable_by_hand=1},
   display_entities = {
-		["digiterms:screen"] = {
+		["signs:display_text"] = {
 				on_display_update = font_api.on_display_update,
         depth = 7/16 - display_api.entity_spacing,
 				size = { x = 11/16, y = 8/16 },
@@ -94,13 +97,13 @@ digiterms.register_monitor("digiterms:scifi_widescreen", {
 })
 
 digiterms.register_monitor("digiterms:scifi_tallscreen", {
-	description = "Digiline tallscreen",
+	description = "digitální obrazovka na výšku",
 	tiles = {
-		"scifi_nodes_black.png",
-		"scifi_nodes_black.png",
-		"scifi_nodes_black.png",
-		"scifi_nodes_black.png",
-		"scifi_nodes_black.png",
+		scifi_nodes_black,
+		scifi_nodes_black,
+		scifi_nodes_black,
+		scifi_nodes_black,
+		scifi_nodes_black,
 		"digiterms_scifi_tallscreen.png"
 	},
 	drawtype = "nodebox",
@@ -122,7 +125,7 @@ digiterms.register_monitor("digiterms:scifi_tallscreen", {
 	},
 	groups = {cracky=1, oddly_breakable_by_hand=1},
   display_entities = {
-    ["digiterms:screen"] = {
+    ["signs:display_text"] = {
         on_display_update = font_api.on_display_update,
         depth = 7/16 - display_api.entity_spacing,
         size = { x = 7/16, y = 12/16 },
@@ -133,13 +136,13 @@ digiterms.register_monitor("digiterms:scifi_tallscreen", {
 })
 
 digiterms.register_monitor("digiterms:scifi_keysmonitor", {
-	description = "Digiline keyboard and monitor",
+	description = "klávesnice a monitor",
 	tiles = {
-		"scifi_nodes_keyboard.png",
-		"scifi_nodes_black.png",
-		"scifi_nodes_black.png",
-		"scifi_nodes_black.png",
-		"scifi_nodes_black.png",
+		scifi_nodes_keyboard,
+		scifi_nodes_black,
+		scifi_nodes_black,
+		scifi_nodes_black,
+		scifi_nodes_black,
 		"digiterms_scifi_monitor.png"
 	},
 	drawtype = "nodebox",
@@ -157,13 +160,13 @@ digiterms.register_monitor("digiterms:scifi_keysmonitor", {
 	},
 	groups = {cracky=1, oddly_breakable_by_hand=1},
   display_entities = {
-		["digiterms:screen"] = {
+		["signs:display_text"] = {
 				on_display_update = font_api.on_display_update,
 				depth = 4/16 - display_api.entity_spacing,
 				top = -5/32,
 				size = { x = 10/16, y = 7/16 },
 				columns = 16, lines = 3,
-				color = "#B4F1EC", font_name = digiterms.font, halign="left", valing="top",
+				color = "#0B0F0F", font_name = digiterms.font, halign="left", valing="top",
 		},
 	},
 })

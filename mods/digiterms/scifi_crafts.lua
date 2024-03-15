@@ -18,28 +18,46 @@
 	along with signs.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
-local wire = 'digilines:wire_std_00000000'
+-- local wire = 'mesecons:wire_00000000_off'
 
 minetest.register_craft({
-  output = "digiterms:scifi_glassscreen",
-  type = "shapeless",
-  recipe = { "scifi_nodes:glassscreen", "digilines:wire_std_00000000" }
+	output = "digiterms:scifi_glassscreen",
+	recipe = {
+		{"ch_extras:colorable_glass", "ch_extras:colorable_glass"},
+		{'technic:control_logic_unit', 'technic:control_logic_unit'},
+	},
 })
 
 minetest.register_craft({
-  output = "digiterms:scifi_widescreen",
-  type = "shapeless",
-  recipe = { "scifi_nodes:widescreen", "digilines:wire_std_00000000" }
+	output = "digiterms:scifi_widescreen 2",
+	recipe = {
+		{"digiterms:lcd_monitor", "digiterms:lcd_monitor"},
+		{"", ""}
+	},
 })
 
 minetest.register_craft({
-  output = "digiterms:scifi_tallscreen",
-  type = "shapeless",
-  recipe = { "scifi_nodes:tallscreen", "digilines:wire_std_00000000" }
+	output = "digiterms:scifi_tallscreen 2",
+	recipe = {
+		{"digiterms:lcd_monitor", ""},
+		{"digiterms:lcd_monitor", ""},
+	},
 })
 
 minetest.register_craft({
-  output = "digiterms:scifi_keysmonitor",
-  type = "shapeless",
-  recipe = { "scifi_nodes:keysmonitor", "digilines:wire_std_00000000" }
+	output = "digiterms:scifi_widescreen",
+	recipe = {{"digiterms:scifi_tallscreen"}},
+})
+
+minetest.register_craft({
+	output = "digiterms:scifi_tallscreen",
+	recipe = {{"digiterms:scifi_widescreen"}},
+})
+
+minetest.register_craft({
+	output = "digiterms:scifi_keysmonitor",
+	recipe = {
+		{"digiterms:cathodic_black_monitor",""},
+		{"digiterms:black_keyboard",""},
+	},
 })

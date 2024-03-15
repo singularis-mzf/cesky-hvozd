@@ -30,8 +30,8 @@ dofile(digiterms.path.."/functions.lua")
 dofile(digiterms.path.."/nodes.lua")
 dofile(digiterms.path.."/crafts.lua")
 
-if minetest.get_modpath("scifi_nodes") then
-  print ('[digiterms] scifi_nodes mod present, adding some more nodes')
+-- if minetest.get_modpath("scifi_nodes") then
+  -- print ('[digiterms] scifi_nodes mod present, adding some more nodes')
   dofile(digiterms.path.."/scifi_nodes.lua")
   dofile(digiterms.path.."/scifi_crafts.lua")
-end
+-- end

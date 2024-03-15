@@ -504,8 +504,8 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 ## Digiterms (digiterms)
 
 * Zdroj: [https://github.com/pyrollo/digiterms](https://github.com/pyrollo/digiterms), revize 04d32581d37cb5ff060f93228059e57cfc96b653
-* Původní licence: LGPLv3 pro kód, CC BY-SA 3.0 pro textury
-* Licence úprav: LGPLv3 pro kód, CC BY-SA 3.0 pro textury
+* Původní licence: LGPLv3+ pro kód, CC BY-SA 3.0 pro textury
+* Licence úprav: LGPLv3+ pro kód, CC BY-SA 3.0 pro textury
 * [ContentDB](https://content.minetest.net/packages/Pyrollo/digiterms/)
 
 ## Digtron (digtron)
