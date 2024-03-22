@@ -4,7 +4,7 @@ local has_pipeworks = minetest.get_modpath("pipeworks")
 local has_unifieddyes = minetest.get_modpath("unifieddyes")
 
 local def = {
-	"moderní kovová truhla",
+	description = "moderní kovová truhla [EXPERIMENTÁLNÍ]",
 	drawtype = "normal",
 	tiles = {
 		{name = "ch_chest_material.png", backface_culling = true},
@@ -30,6 +30,8 @@ local def = {
 		ud_param2_colorable = 1,
 		chest = 1,
 		ch_chest = 1,
+
+		experimental = 1,
 	},
 
 	on_construct = internal.on_construct,
@@ -54,7 +56,7 @@ if has_pipeworks then
 		remove_items = internal.remove_items,
 		input_inventory = "main",
 		connect_sides = {left = 1, right = 1, front = 1, back = 1, top = 1, bottom = 1},
-	},
+	}
 end
 
 if has_unifieddyes then

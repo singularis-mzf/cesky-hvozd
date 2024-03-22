@@ -187,3 +187,9 @@ ch_extras_scorched_tree_top.png
 			random-geek
 			Extex101
 			An0n3m0us
+
+ch_extras_otisky.png
+	Author: Singularis
+	License: CC BY-SA 3.0
+	Used sources:
+		- https://commons.wikimedia.org/wiki/File:Fingerprint_picture.svg (author: User:The Photographersehh/info ; license: CC BY-SA 3.0)

@@ -393,6 +393,24 @@ local function player_node_state(player, pointed_thing)
 	result.faced_side = quadrant_to_facing_map[string.format("%d,%d",hquadrant,vquadrant)]
 
 	-- Compute the nearest side of the node
+	if math.abs(player_pos.x - node_pos.x) <= 0.5 and math.abs(player_pos.z - node_pos.z) <= 0.5 then
+		local eye_offset = player:get_eye_offset()
+		if eye_offset.y >= node_pos.y then
+			result.pointed_side = "up"
+		else
+			result.pointed_side = "down"
+		end
+	else
+		local dpos = vector.subtract(player_pos, node_pos)
+		if math.abs(dpos.x) >= math.abs(dpos.z) then
+			result.pointed_side = dpos_to_pointing_map[string.format("%d,0,0", math.sign(dpos.x))]
+		elseif dpos.z ~= 0 then
+			result.pointed_side = dpos_to_pointing_map[string.format("0,0,%d", math.sign(dpos.z))]
+		else
+			result.pointed_side = "up"
+		end
+	end
+	--[[
 	local eye_offset = vector.zero() -- player:get_eye_offset()
 	local dpos = vector.subtract(vector.add(player_pos, eye_offset), node_pos)
 	if math.abs(dpos.x) >= math.max(math.abs(dpos.y), math.abs(dpos.z)) then
@@ -402,6 +420,7 @@ local function player_node_state(player, pointed_thing)
 	else
 		result.pointed_side = dpos_to_pointing_map[string.format("0,%d,0", math.sign(dpos.y))]
 	end
+	]]
 
 	return result
 end
@@ -864,7 +883,7 @@ local function register_wrench_rotating(wrench_mod_name, material, material_desc
 		-- descr_extra = ""
 	end
 	known_wrenches[wrench_mod_name .. ":wrench_" .. material .. sep .. mode] = true
-	
+
 	local function on_use(itemstack, player, pointed_thing)
 		if mode == "" then
 			minetest.chat_send_player(player:get_player_name(), S("ALERT: Wrench is not configured yet. Right-click to set / cycle modes"))

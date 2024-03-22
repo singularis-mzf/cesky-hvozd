@@ -288,6 +288,15 @@ local partition_defs = {
 		items = none,
 		mods = none,
 	}, ]]
+	{
+		name = "vypocetni_technika",
+		groups = none,
+		items = {
+			"homedecor:alarm_clock", "homedecor:digital_clock", "homedecor:dvd_vcr",
+			"homedecor:stereo", "homedecor:tv_stand",
+		},
+		mods = {"computers", "digiterms", "home_workshop_machines"},
+	},
 }
 
 function ch_core.overridable.is_clothing(item_name)

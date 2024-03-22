@@ -7,7 +7,7 @@ local default_timer_bar_bar = "hudbars_bar_timer.png"
 
 -- timer_def - podporované klíče:
 --  - label -- textový popis pro HUD, může být prázdný řetězec (volitelná)
---  - func -- funkce bez parametrů, která má být spušŧěna po vypršení časovače; může být nil
+--  - func -- funkce bez parametrů, která má být spuštěna po vypršení časovače; může být nil
 --  - hudbar_icon -- ikona pro HUD (volitelná)
 --  - hudbar_bgicon -- ikona pro HUD na pozadí (volitelná)
 --  - hudbar_bar -- textura pro HUD (volitelná)

@@ -34,3 +34,20 @@ if type(dirt_drop) == "table" then
 else
 	minetest.log("warning", "Drop of default:dirt not overriden, because it's not a table!")
 end
+
+-- Grass selection box
+
+local grass_prefixes = {"default:dry_grass_", "default:grass_"}
+
+for i = 1, 5 do
+	local t = ((i - 1) / 4 + 1) * (2 / 16)
+	local override = {
+		selection_box = {
+			type = "fixed",
+			fixed = {-t, -8/16, -t, t, -6/16, t},
+		},
+	}
+	for _, prefix in pairs(grass_prefixes) do
+		minetest.override_item(prefix..i, override)
+	end
+end

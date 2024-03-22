@@ -139,12 +139,6 @@ local function step_2(player_name, pos, pos_below, hair_item)
 	end
 
 	ch_core.start_ch_timer(online_charinfo, "ch_beauty", 180, {
---  - label -- textový popis pro HUD, může být prázdný řetězec (volitelná)
---  - func -- funkce bez parametrů, která má být spušŧěna po vypršení časovače; může být nil
---  - hudbar_icon -- ikona pro HUD (volitelná)
---  - hudbar_bgicon -- ikona pro HUD na pozadí (volitelná)
---  - hudbar_bar -- textura pro HUD (volitelná)
---  - hudbar_text_color -- barva textu pro HUD (volitelná)
 		label = "úprava vlasů",
 		func = get_finish_func(player_name),
 		hudbar_icon = hair_def.inventory_image,

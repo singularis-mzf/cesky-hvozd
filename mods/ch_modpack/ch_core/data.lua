@@ -509,7 +509,7 @@ end
 --[[
 	Otestuje, zda podle online_charinfo má dané postavě být zobrazený
 	v četu návod k položce daného názvu. Pokud ano, nastaví příznak, aby se
-	to znovu již nestalo, a vráŧí definici daného předmětu,
+	to znovu již nestalo, a vrátí definici daného předmětu,
 	z níž lze z položek description a _ch_help sestavit text k zobrazení.
 ]]
 function ch_core.should_show_help(player, online_charinfo, item_name)

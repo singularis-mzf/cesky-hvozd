@@ -33,11 +33,30 @@ local internal = {
 			height = 10,
 		},
 	},
+	-- mod_storage = minetest.get_mod_storage(),
+	player_to_current_inventory = { --[[
+		[player_name] = {
+			inv = InvRef,
+			listname = string,
+			location = string, -- for formspec only
+		}...
+	]] },
+	-- tempinv = minetest.create_detached_inventory("ch_chest_tempinv", {}),
+	NOT_GIVEN = 0,
+	GIVEN_OPENLY = 1,
+	GIVEN_ANONYMOUSLY = 2,
 }
+
+local fun = loadfile(modpath.."/formspec.lua")
+if fun == nil then
+	error("!")
+end
 
 local function mydofile(filename)
 	local f = loadfile(modpath.."/"..filename)
-	assert(f)
+	if f == nil then
+		error("Cannot load: "..modpath.."/"..filename.."!")
+	end
 	return f(internal)
 end
 
