@@ -121,7 +121,7 @@ travelnet.allow_travel = function(player_name, owner_name, station_network, stat
 			ch_core.systemovy_kanal(player_name, ch_core.colors.red.."Tato síť cestovních budek je zabezpečená a vyhrazená pro postavu: "..ch_core.prihlasovaci_na_zobrazovaci(owner_name).."!")
 			result = false
 		end
-		if result and not travelnet.is_free and not minetest.is_creative_enabled(player_name) then
+		if result and not travelnet.is_free and not pinfo.role == "new" and not minetest.is_creative_enabled(player_name) then
 			-- payment
 			if current_pos ~= nil and target_pos ~= nil then
 				price = travelnet.get_price(current_pos, target_pos)
