@@ -135,10 +135,15 @@ local function on_joinplayer(player, last_login)
 	player:set_nametag_attributes(ch_core.compute_player_nametag(online_charinfo, offline_charinfo))
 	player:hud_set_flags({minimap = false, minimap_radar = false})
 
-	-- Reset the creative priv
+	-- Reset the creative priv (set for the new characters)
 	local privs = minetest.get_player_privs(player_name)
-	if privs.creative then
-		privs.creative = nil
+	if privs.ch_registered_player then
+		if privs.creative then
+			privs.creative = nil
+			minetest.set_player_privs(player_name, privs)
+		end
+	elseif not privs.creative then
+		privs.creative = true
 		minetest.set_player_privs(player_name, privs)
 	end
 
