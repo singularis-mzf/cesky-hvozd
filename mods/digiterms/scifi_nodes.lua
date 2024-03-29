@@ -24,9 +24,9 @@ digiterms.register_monitor("digiterms:scifi_glassscreen", {
   description = "digitální promítací sklo",
 	paramtype = "light",
 	paramtype2 = "facedir",
-  use_texture_alpha = true,
+  use_texture_alpha = "clip",
 	sunlight_propagates = true,
-  light_source = 15,
+  light_source = 14,
   tiles = {
     "digiterms_scifi_glscrn.png",
     "digiterms_scifi_glscrn.png",

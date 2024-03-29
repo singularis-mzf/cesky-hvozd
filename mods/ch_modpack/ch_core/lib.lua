@@ -1107,6 +1107,40 @@ function ch_core.register_nodes(common_def, nodes, crafts)
 end
 
 --[[
+Smaže data týkající se dané postavy.
+]]
+function ch_core.remove_player(player_name, options)
+	if options == nil then
+		options = {}
+	end
+	player_name = ch_core.jmeno_na_prihlasovaci(player_name)
+	if not minetest.player_exists(player_name) then
+		return false, player_name.." neexistuje!"
+	end
+	local results = {player_name.." odstraněn/a:"}
+	-- remove player data
+	if options.player_data ~= false then
+		if minetest.remove_player(player_name) == 0 then
+			table.insert(results, "player_data")
+		end
+	end
+	-- remove offline charinfo
+	local f = ch_core.delete_offline_charinfo
+	if options.offline_charinfo ~= false and f ~= nil then
+		if f(player_name) then
+			table.insert(results, "offline_charinfo")
+		end
+	end
+	-- remove auth data
+	if options.player_auth ~= false then
+		if minetest.remove_player_auth(player_name) then
+			table.insert(results, "player_auth")
+		end
+	end
+	return true, table.concat(results, " ")
+end
+
+--[[
 Otočí axis-aligned bounding box o zadané otočení. Nejde-li o pravoúhlé
 otočení, výsledný kvádr bude větší. <zatím nezkoušeno>
 ]]
