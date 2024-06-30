@@ -1268,12 +1268,6 @@ Prohlášení autora/ky na [fóru](https://forum.minetest.net/viewtopic.php?f=4&
 * Původní licence: MIT (zvuky zvířat pod „Creative Commons“ — CC-BY-SA-NC-??)
 * [ContentDB](https://content.minetest.net/packages/Liil/people/)
 
-## Petz (petz)
-
-* Zdroj: [https://github.com/runsy/petz](https://github.com/runsy/petz), revize 91b212c79986f999fddfabaa15cd4de04e15440c
-* Původní licence: kód GPLv3, textury CC BY-SA 4.0, zvuky různé, modely ?
-* [ContentDB](https://content.minetest.net/packages/runs/petz/)
-
 ## Polygonia (Polygonia\_64px)
 
 * Zdroj: [https://github.com/Lokrates/Polygonia\_64px](https://github.com/Lokrates/Polygonia\_64px), revize f28901e5e990aee6f78fca80dce03129b90d4d6a

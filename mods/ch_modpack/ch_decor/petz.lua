@@ -1,3 +1,4 @@
+--[[
 local S = minetest.get_translator("ch_decor")
 local def
 
@@ -112,3 +113,4 @@ minetest.register_craft({
 		{"butterflies:bufferfly_red", "butterflies:bufferfly_violet", "butterflies:bufferfly_white"},
 	},
 })
+]]
