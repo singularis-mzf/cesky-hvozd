@@ -565,13 +565,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/farming/)
 * Implantovány jahody z módu Ethereal NG (licence: MIT) a banány a len z módu Cucina Vegana (licence textur: LGPLv3).
 
-## Fireworkz (fireworkz)
-
-* Zdroj: [https://github.com/runsy/fireworkz](https://github.com/runsy/fireworkz), revize e5b1c06bbb3048645a5fea4e8f6709a9bbfa3345
-* Původní licence: LGPL 2.1 pro kód, textury CC BY-SA-4.0, zvuky různé svobodné
-* Licence úprav: LGPL 2.1 pro kód, CC-BY-SA-4.0 pro textury
-* [ContentDB](https://content.minetest.net/packages/runs/fireworkz/)
-
 ## Fumo Plushies (fumoplushies)
 
 * Zdroj: [https://git.minetest.land/aSliceOfCake/Plushfumos](https://git.minetest.land/aSliceOfCake/Plushfumos), revize daf783e473637868e48fa416f9e2b76902d2da38
