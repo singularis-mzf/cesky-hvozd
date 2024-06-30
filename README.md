@@ -438,13 +438,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: WTFPL
 * [ContentDB](https://content.minetest.net/packages/ExeterDad/christmastree/)
 
-## Climatez (climatez)
-
-* Zdroj: [https://github.com/runsy/climatez](https://github.com/runsy/climatez), revize 57d7f4ea41fcede9e4435e3521c3ece94cab559d
-* Původní licence: GPLv3 pro kód, CC BY-SA-4.0 pro textury, CC0 pro zvuky.
-* Licence úprav: GPLv3
-* [ContentDB](https://content.minetest.net/packages/runs/climatez/)
-
 ## Clothing 2 (clothing)
 
 * Zdroj: [https://github.com/sfence/clothing](https://github.com/sfence/clothing), revize 3e27fdbf737f02eb20f66d0a9a009e415e50e584
