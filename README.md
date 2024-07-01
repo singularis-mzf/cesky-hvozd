@@ -65,13 +65,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: AGPL v3
 * [ContentDB](https://content.minetest.net/packages/orwell/basic\_trains/)
 
-## Beauty Pack (beauty\_pack)
-
-* Zdroj: [https://github.com/runsy/beauty\_pack](https://github.com/runsy/beauty\_pack), revize 9df3ce21d1c4af542d589ce1c324da188522c451
-* Původní licence: GPL v3 (kód), CC-BY-SA-4.0 (textury), ? (modely)
-* Licence úprav: GPL v3
-* Použity jen vybrané módy
-
 ## Church Modpack (church)
 
 * Zdroj: [https://github.com/mootpoint/church](https://github.com/mootpoint/church), revize 066001b8586f25edb609fb166ef582ac963ae23f

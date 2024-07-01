@@ -79,6 +79,11 @@ ch_extras_lupa.png
 	Source: https://commons.wikimedia.org/wiki/File:Magnifying_glass_icon_mgx2.svg
 	Modified by Singularis
 
+ch_extras_mirror.jpg
+	License: CC BY-SA 3.0
+	Source: https://commons.wikimedia.org/wiki/File:Mirror.jpg (Author: Cgs, License: CC BY-SA 3.0 or GFDLv1.2)
+	Modified and adapted by: Singularis
+
 ch_extras_particle_board.png
 	License: CC BY-SA 3.0 Austria
 	Author: D-Kuru/Wikimedia Commons <https://commons.wikimedia.org/wiki/User:D-Kuru>

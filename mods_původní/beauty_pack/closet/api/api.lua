@@ -1,3 +1,0 @@
-local modpath = ...
-
-assert(loadfile(modpath .. "/api/api_container.lua"))()
