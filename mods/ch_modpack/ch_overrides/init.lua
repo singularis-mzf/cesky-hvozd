@@ -25,6 +25,7 @@ for _, mod in ipairs(mods) do
 	end
 end
 
+dofile(modpath.."/aliases.lua")
 dofile(modpath.."/chests.lua")
 dofile(modpath.."/colorable_glass.lua")
 dofile(modpath.."/extra_recipes.lua")
