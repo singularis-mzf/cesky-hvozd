@@ -17,6 +17,7 @@ moretrees.treelist = {
 	{"rubber_tree",  S("Rubber Tree")},
 	{"fir",          S("Douglas Fir"),    "fir_cone",              S("Fir Cone"), {-0.2, -0.5, -0.2, 0.2, 0, 0.2}, 0.8 },
 	{"jungletree",   S("Jungle Tree"),     nil,                    nil, nil, nil, "default_junglesapling.png"  },
+	{"cherrytree",   S("Cherry Tree"),    "cherry",                S("Cherry"), {-0.2, -0.5, -0.2, 0.2, 0, 0.2}, 0.8 },
 }
 
 -- Beech aliases
@@ -263,6 +264,23 @@ moretrees.treedesc = {
 		fence_rail = S("Jungle Tree Fence Rail"),
 		fence_gate = S("Jungle Tree Fence Gate"),
 		grow_function = moretrees.grow_jungletree,
+	},
+	cherrytree = {
+		trunk = S("Cherry Tree Trunk"),
+		planks = S("Cherry Tree Planks"),
+		sapling = S("Cherry Tree Sapling"),
+		leaves = S("Cherry Tree Leaves"),
+		trunk_stair = S("Cherry Tree Trunk Stair"),
+		trunk_slab = S("Cherry Tree Trunk Slab"),
+		planks_stair = S("Cherry Tree Planks Stair"),
+		planks_slab = S("Cherry Tree Planks Slab"),
+		fence = S("Cherry Tree Fence"),
+		fence_rail = S("Cherry Tree Fence Rail"),
+		fence_gate = S("Cherry Tree Fence Gate"),
+		mesepost_light = S("Cherry Tree Mese Post Light"),
+		grow_function = function(pos)
+			minetest.spawn_tree(pos,moretrees.cherry_tree_model)
+		end,
 	},
 }
 
@@ -593,12 +611,16 @@ for i in ipairs(moretrees.treelist) do
 	local fruitname = nil
 	if fruit then
 		fruitname = "moretrees:"..fruit
+		local inv_image = "moretrees_"..fruit..".png^[transformR180"
+		if treename == "cherrytree" then
+			inv_image = "moretrees_"..fruit..".png"
+		end
 		minetest.register_node(fruitname, {
 			description = fruitdesc,
 			drawtype = "plantlike",
 			tiles = { "moretrees_"..fruit..".png" },
-			inventory_image = "moretrees_"..fruit..".png^[transformR180",
-			wield_image = "moretrees_"..fruit..".png^[transformR180",
+			inventory_image = inv_image,
+			wield_image = inv_image,
 			visual_scale = vscale,
 			paramtype = "light",
 			sunlight_propagates = true,

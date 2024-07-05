@@ -273,3 +273,18 @@ moretrees.fir_model={
 	fruit="moretrees:fir_cone",
 	fruit_chance=8
 }
+
+moretrees.cherry_tree_model={
+	axiom="FFFFFAFFBF",
+	rules_a="[&&&FFFFF&&FFFF][&&&++++FFFFF&&FFFF][&&&----FFFFF&&FFFF]",
+	rules_b="[&&&++FFFFF&&FFFF][&&&--FFFFF&&FFFF][&&&------FFFFF&&FFFF]",
+	trunk="moretrees:cherrytree_trunk",
+	leaves="moretrees:cherrytree_leaves",
+	angle=30,
+	iterations=2,
+	random_level=0,
+	trunk_type="single",
+	thin_branches=true,
+	fruit="moretrees:cherry",
+	fruit_chance=15,
+}

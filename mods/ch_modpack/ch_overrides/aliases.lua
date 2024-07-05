@@ -1,5 +1,43 @@
 -- ALIASES
 
+if minetest.get_modpath("moretrees") and not minetest.get_modpath("cherrytree") then
+	local list = {
+		["cherrytree:trunk"] = "moretrees:cherrytree_trunk",
+		["cherrytree:wood"] = "moretrees:cherrytree_planks",
+		["cherrytree:trunk_noface"] = "moretrees:cherrytree_trunk_noface",
+		["cherrytree:trunk_allfaces"] = "moretrees:cherrytree_trunk_allfaces",
+		["cherrytree:mese_post_light"] = "moretrees:cherrytree_mese_post_light",
+		["cherrytree:blossom_leaves"] = "moretrees:cherrytree_leaves",
+		["cherrytree:sapling"] = "moretrees:cherrytree_sapling",
+		["cherrytree:sapling_ongen"] = "moretrees:cherrytree_sapling_ongen",
+		["cherrytree:gate_open"] = "moretrees:cherrytree_gate_open",
+		["cherrytree:gate_closed"] = "moretrees:cherrytree_gate_closed",
+		["cherrytree:fence"] = "moretrees:cherrytree_fence",
+		["cherrytree:fence_rail"] = "moretrees:cherrytree_fence_rail",
+		["cherrytree:cherries"] = "moretrees:cherry",
+	}
+	for alias, name in pairs(list) do
+		if minetest.registered_items[name] ~= nil then
+			minetest.register_alias(alias, name)
+		end
+	end
+
+	-- stairsplus shapes
+	local name
+	for category, alternates in pairs(stairsplus.defs) do
+		for alternate, _ in pairs(alternates) do
+			name = stairsplus:get_shape("moretrees:cherrytree_planks", category, alternate)
+			if name ~= nil then
+				minetest.register_alias("cherrytree:"..category.."_wood"..alternate, name)
+			end
+			name = stairsplus:get_shape("moretrees:cherrytree_trunk_noface", category, alternate)
+			if name ~= nil then
+				minetest.register_alias("cherrytree:"..category.."_trunk_noface"..alternate, name)
+			end
+		end
+	end
+end
+
 if minetest.get_modpath("moretrees") and not minetest.get_modpath("willow") then
 	local list = {
 		["willow:trunk"] = "moretrees:willow_trunk",
