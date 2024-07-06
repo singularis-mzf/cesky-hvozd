@@ -1,5 +1,16 @@
 -- ALIASES
 
+-- Remove bamboo
+minetest.register_lbm({
+	label = "Remove legacy bamboo nodes",
+	name = "ch_overrides:remove_bamboo_nodes",
+	nodenames = {"bamboo:leaves", "bamboo:sprout", "bamboo:trunk"},
+	run_at_every_load = true,
+	action = function(pos, node, dtime_s)
+		minetest.remove_node(pos)
+	end,
+})
+
 if minetest.get_modpath("moretrees") and not minetest.get_modpath("chestnuttree") then
 	local list = {
 		["chestnuttree:trunk"] = "moretrees:chestnut_tree_trunk",
