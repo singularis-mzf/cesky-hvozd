@@ -18,6 +18,7 @@ moretrees.treelist = {
 	{"fir",          S("Douglas Fir"),    "fir_cone",              S("Fir Cone"), {-0.2, -0.5, -0.2, 0.2, 0, 0.2}, 0.8 },
 	{"jungletree",   S("Jungle Tree"),     nil,                    nil, nil, nil, "default_junglesapling.png"  },
 	{"cherrytree",   S("Cherry Tree"),    "cherry",                S("Cherry"), {-0.2, -0.5, -0.2, 0.2, 0, 0.2}, 0.8 },
+	{"chestnut_tree", S("Chestnut Tree"), "bur",                   S("Bur"), {-0.2, -0.5, -0.2, 0.2, 0, 0.2}, 0.6 },
 }
 
 -- Beech aliases
@@ -280,6 +281,23 @@ moretrees.treedesc = {
 		mesepost_light = S("Cherry Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.cherry_tree_model)
+		end,
+	},
+	chestnut_tree = {
+		trunk = S("Chestnut Tree Trunk"),
+		planks = S("Chestnut Tree Planks"),
+		sapling = S("Chestnut Tree Sapling"),
+		leaves = S("Chestnut Tree Leaves"),
+		trunk_stair = S("Chestnut Tree Trunk Stair"),
+		trunk_slab = S("Chestnut Tree Trunk Slab"),
+		planks_stair = S("Chestnut Tree Planks Stair"),
+		planks_slab = S("Chestnut Tree Planks Slab"),
+		fence = S("Chestnut Tree Fence"),
+		fence_rail = S("Chestnut Tree Fence Rail"),
+		fence_gate = S("Chestnut Tree Fence Gate"),
+		mesepost_light = S("Chestnut Tree Mese Post Light"),
+		grow_function = function(pos)
+			minetest.spawn_tree(pos,moretrees.chestnut_tree_model)
 		end,
 	},
 }
@@ -787,6 +805,18 @@ minetest.register_abm({
 			local nfdir = dirs2[fdir+1]
 		minetest.add_node(pos, {name = "moretrees:rubber_tree_trunk_empty", param2 = nfdir})
 	end,
+})
+
+-- chestnut fruit
+minetest.register_craftitem("moretrees:chestnut", {
+	description = S("Chestnut"),
+	inventory_image = "moretrees_chestnut.png",
+	groups = {flammable = 2, ch_food = 2},
+	on_use = ch_core.item_eat(),
+})
+minetest.register_craft({
+	output = "moretrees:chestnut",
+	recipe = {{"moretrees:bur"}},
 })
 
 -- For compatibility with old nodes, recently-changed nodes, and default nodes

@@ -1,5 +1,44 @@
 -- ALIASES
 
+if minetest.get_modpath("moretrees") and not minetest.get_modpath("chestnuttree") then
+	local list = {
+		["chestnuttree:trunk"] = "moretrees:chestnut_tree_trunk",
+		["chestnuttree:wood"] = "moretrees:chestnut_tree_planks",
+		["chestnuttree:trunk_noface"] = "moretrees:chestnut_tree_trunk_noface",
+		["chestnuttree:trunk_allfaces"] = "moretrees:chestnut_tree_trunk_allfaces",
+		["chestnuttree:mese_post_light"] = "moretrees:chestnut_tree_mese_post_light",
+		["chestnuttree:leaves"] = "moretrees:chestnut_tree_leaves",
+		["chestnuttree:sapling"] = "moretrees:chestnut_tree_sapling",
+		["chestnuttree:sapling_ongen"] = "moretrees:chestnut_tree_sapling_ongen",
+		["chestnuttree:gate_open"] = "moretrees:chestnut_tree_gate_open",
+		["chestnuttree:gate_closed"] = "moretrees:chestnut_tree_gate_closed",
+		["chestnuttree:fence"] = "moretrees:chestnut_tree_fence",
+		["chestnuttree:fence_rail"] = "moretrees:chestnut_tree_fence_rail",
+		["chestnuttree:bur"] = "moretrees:bur",
+		["chestnuttree:fruit"] = "moretrees:chestnut",
+	}
+	for alias, name in pairs(list) do
+		if minetest.registered_items[name] ~= nil then
+			minetest.register_alias(alias, name)
+		end
+	end
+
+	-- stairsplus shapes
+	local name
+	for category, alternates in pairs(stairsplus.defs) do
+		for alternate, _ in pairs(alternates) do
+			name = stairsplus:get_shape("moretrees:chestnut_tree_planks", category, alternate)
+			if name ~= nil then
+				minetest.register_alias("chestnuttree:"..category.."_wood"..alternate, name)
+			end
+			name = stairsplus:get_shape("moretrees:chestnut_tree_trunk_noface", category, alternate)
+			if name ~= nil then
+				minetest.register_alias("chestnuttree:"..category.."_trunk_noface"..alternate, name)
+			end
+		end
+	end
+end
+
 if minetest.get_modpath("moretrees") and not minetest.get_modpath("cherrytree") then
 	local list = {
 		["cherrytree:trunk"] = "moretrees:cherrytree_trunk",

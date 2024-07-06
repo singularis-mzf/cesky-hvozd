@@ -288,3 +288,18 @@ moretrees.cherry_tree_model={
 	fruit="moretrees:cherry",
 	fruit_chance=15,
 }
+
+moretrees.chestnut_tree_model={
+	axiom="FFFFFAFFBF",
+	rules_a="[&&&FFFFF&&FFFF][&&&++++FFFFF&&FFFF][&&&----FFFFF&&FFFF]",
+	rules_b="[&&&++FFFFF&&FFFF][&&&--FFFFF&&FFFF][&&&------FFFFF&&FFFF]",
+	trunk="moretrees:chestnut_tree_trunk",
+	leaves="moretrees:chestnut_tree_leaves",
+	angle=30,
+	iterations=2,
+	random_level=0,
+	trunk_type="single",
+	thin_branches=true,
+	fruit="moretrees:bur",
+	fruit_chance=15,
+}
