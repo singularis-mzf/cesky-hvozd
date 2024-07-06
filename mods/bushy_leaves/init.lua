@@ -68,6 +68,7 @@ local leaves_nodes = {
 	["moretrees:jungletree_leaves_yellow"] = "cheap",
 	["moretrees:cherrytree_leaves"] = "cheap",
 	["moretrees:chestnut_tree_leaves"] = "cheap",
+	["moretrees:ebony_leaves"] = "cheap",
 
 	-- Ethereal
 	["ethereal:bananaleaves"] = "plantlike_nostick",

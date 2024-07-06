@@ -303,3 +303,19 @@ moretrees.chestnut_tree_model={
 	fruit="moretrees:bur",
 	fruit_chance=15,
 }
+
+-- taken from poplar_small_model
+moretrees.ebony_model={
+	axiom="TT[T]BCCCCccBBff",
+	rules_a="T",
+	rules_b="[[f]&&G++f++Gf++Gf++Gf++G--]G",
+	rules_c="[[T]&&G++f++[d]Gf++[d]Gf++[d]Gf++[d]G--]G",
+	rules_d="f",
+	trunk="moretrees:ebony_trunk",
+	leaves="moretrees:ebony_leaves",
+	angle=45,
+	iterations=0,
+	random_level=0,
+	trunk_type="single",
+	thin_branches=false,
+}

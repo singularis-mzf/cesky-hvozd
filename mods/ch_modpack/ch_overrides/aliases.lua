@@ -77,6 +77,54 @@ if minetest.get_modpath("moretrees") and not minetest.get_modpath("cherrytree") 
 	end
 end
 
+if minetest.get_modpath("moretrees") and not minetest.get_modpath("ebony") then
+	local list = {
+		["ebony:trunk"] = "moretrees:ebony_trunk",
+		["ebony:wood"] = "moretrees:ebony_planks",
+		["ebony:trunk_noface"] = "moretrees:ebony_trunk_noface",
+		["ebony:trunk_allfaces"] = "moretrees:ebony_trunk_allfaces",
+		["ebony:mese_post_light"] = "moretrees:ebony_mese_post_light",
+		["ebony:leaves"] = "moretrees:ebony_leaves",
+		["ebony:sapling"] = "moretrees:ebony_sapling",
+		["ebony:sapling_ongen"] = "moretrees:ebony_sapling_ongen",
+		["ebony:gate_open"] = "moretrees:ebony_gate_open",
+		["ebony:gate_closed"] = "moretrees:ebony_gate_closed",
+		["ebony:fence"] = "moretrees:ebony_fence",
+		["ebony:fence_rail"] = "moretrees:ebony_fence_rail",
+	}
+	for alias, name in pairs(list) do
+		if minetest.registered_items[name] ~= nil then
+			minetest.register_alias(alias, name)
+		end
+	end
+
+	-- stairsplus shapes
+	local name
+	for category, alternates in pairs(stairsplus.defs) do
+		for alternate, _ in pairs(alternates) do
+			name = stairsplus:get_shape("moretrees:ebony_planks", category, alternate)
+			if name ~= nil then
+				minetest.register_alias("ebony:"..category.."_wood"..alternate, name)
+			end
+			name = stairsplus:get_shape("moretrees:ebony_trunk_noface", category, alternate)
+			if name ~= nil then
+				minetest.register_alias("ebony:"..category.."_trunk_noface"..alternate, name)
+			end
+		end
+	end
+
+	-- nodes to remove
+	minetest.register_lbm({
+		label = "Remove legacy ebony nodes",
+		name = "ch_overrides:remove_ebony_nodes",
+		nodenames = {"ebony:persimmon", "ebony:creeper", "ebony:creeper_leaves", "ebony:liana"},
+		run_at_every_load = true,
+		action = function(pos, node, dtime_s)
+			minetest.remove_node(pos)
+		end,
+	})
+end
+
 if minetest.get_modpath("moretrees") and not minetest.get_modpath("willow") then
 	local list = {
 		["willow:trunk"] = "moretrees:willow_trunk",

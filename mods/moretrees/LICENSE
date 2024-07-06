@@ -58,6 +58,11 @@ Chestnut tree sapling texture (textures/moretrees_chestnut_tree_sapling.png)
 	Author: Singularis
 	License: CC BY-SA 4.0
 
+Ebony textures (textures/moretrees_ebony_*.png)
+	Author: TenPlus1
+	License: MIT
+	Taken from Ethereal NG mod (redwood tree textures)
+
 All other sapling textures (textures/*_sapling.png):
 	© 2013, Tim Huppertz <mitroman@naturalnet.de>
 All other textures:

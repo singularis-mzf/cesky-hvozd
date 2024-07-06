@@ -19,6 +19,7 @@ moretrees.treelist = {
 	{"jungletree",   S("Jungle Tree"),     nil,                    nil, nil, nil, "default_junglesapling.png"  },
 	{"cherrytree",   S("Cherry Tree"),    "cherry",                S("Cherry"), {-0.2, -0.5, -0.2, 0.2, 0, 0.2}, 0.8 },
 	{"chestnut_tree", S("Chestnut Tree"), "bur",                   S("Bur"), {-0.2, -0.5, -0.2, 0.2, 0, 0.2}, 0.6 },
+	{"ebony",        S("Ebony Tree")},
 }
 
 -- Beech aliases
@@ -298,6 +299,23 @@ moretrees.treedesc = {
 		mesepost_light = S("Chestnut Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.chestnut_tree_model)
+		end,
+	},
+	ebony = {
+		trunk = S("Ebony Trunk"),
+		planks = S("Ebony Planks"),
+		sapling = S("Ebony Tree Sapling"),
+		leaves = S("Ebony Tree Leaves"),
+		trunk_stair = S("Ebony Trunk Stair"),
+		trunk_slab = S("Ebony Trunk Slab"),
+		planks_stair = S("Ebony Planks Stair"),
+		planks_slab = S("Ebony Planks Slab"),
+		fence = S("Ebony Tree Fence"),
+		fence_rail = S("Ebony Tree Fence Rail"),
+		fence_gate = S("Ebony Tree Fence Gate"),
+		mesepost_light = S("Ebony Tree Mese Post Light"),
+		grow_function = function(pos)
+			minetest.spawn_tree(pos,moretrees.ebony_model)
 		end,
 	},
 }
