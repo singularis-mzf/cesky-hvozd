@@ -185,6 +185,12 @@ function moretrees.grow_fir_snow(pos)
 	minetest.spawn_tree(pos,moretrees.fir_model)
 end
 
+function moretrees.grow_cherrytree(pos)
+	local schema = assert(moretrees.sakura_tree)
+	minetest.remove_node(pos)
+	minetest.place_schematic(vector.offset(pos, -4, 0, -3), schema, 0, nil, false)
+end
+
 dofile(modpath.."/tree_models.lua")
 dofile(modpath.."/node_defs.lua")
 dofile(modpath.."/date_palm.lua")
@@ -192,5 +198,6 @@ dofile(modpath.."/cocos_palm.lua")
 -- dofile(modpath.."/biome_defs.lua")
 -- dofile(modpath.."/saplings.lua")
 dofile(modpath.."/crafts.lua")
+dofile(modpath.."/schematics/sakura.lua")
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

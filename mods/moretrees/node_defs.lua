@@ -280,9 +280,7 @@ moretrees.treedesc = {
 		fence_rail = S("Cherry Tree Fence Rail"),
 		fence_gate = S("Cherry Tree Fence Gate"),
 		mesepost_light = S("Cherry Tree Mese Post Light"),
-		grow_function = function(pos)
-			minetest.spawn_tree(pos,moretrees.cherry_tree_model)
-		end,
+		grow_function = assert(moretrees.grow_cherrytree),
 	},
 	chestnut_tree = {
 		trunk = S("Chestnut Tree Trunk"),
@@ -836,6 +834,7 @@ minetest.register_craft({
 	output = "moretrees:chestnut",
 	recipe = {{"moretrees:bur"}},
 })
+
 
 -- For compatibility with old nodes, recently-changed nodes, and default nodes
 
