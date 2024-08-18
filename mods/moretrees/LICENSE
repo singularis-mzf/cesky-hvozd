@@ -60,6 +60,28 @@ Ebony textures (textures/moretrees_ebony_*.png)
 	License: MIT
 	Taken from Ethereal NG mod (redwood tree textures)
 
+Plumtree trunk textures (textures/moretrees_plumtree_trunk*.png)
+	Author: Singularis
+	License: CC BY-SA 4.0
+	Used sources:
+	- ethereal_olive_trunk.png (Author: TenPlus1; License: MIT; Source: Ethereal NG mod)
+	- ethereal_olive_trunk_top.png (Author: TenPlus1; License: MIT; Source: Ethereal NG mod)
+
+Plumtree leaves textures (textures/moretrees_plumtree_leaves.png)
+	© 2013, Vanessa Ezekowitz <vanessaezekowitz@gmail.com>
+	Recolored version of moretrees_willow_leaves.png; modified by Singularis
+
+Plumtree sapling textures (textures/moretrees_plumtree_sapling.png)
+	Author: Singularis
+	License: CC BY-SA 4.0
+
+Plumtree wood textures (textures/moretrees_plumtree_wood.png)
+	Author: Singularis
+	License: CC BY-SA 4.0
+	Used sources:
+	- https://commons.wikimedia.org/wiki/File:Plum_wood_(with_olive_oil,_polished)_1.jpg
+	  (Author: christian noll; License: CC BY-SA 3.0; Source: own work)
+
 All other sapling textures (textures/*_sapling.png):
 	© 2013, Tim Huppertz <mitroman@naturalnet.de>
 All other textures:

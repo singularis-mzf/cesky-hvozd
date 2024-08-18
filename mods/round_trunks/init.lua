@@ -61,6 +61,7 @@ round_trunks.trunks_overrider('moretrees:date_palm_ffruit_trunk')
 round_trunks.trunks_overrider('moretrees:fir_trunk')
 round_trunks.trunks_overrider('moretrees:palm_trunk')
 round_trunks.trunks_overrider('moretrees:poplar_trunk')
+round_trunks.trunks_overrider('moretrees:plumtree_trunk')
 round_trunks.trunks_overrider('plumtree:trunk')
 
 

@@ -468,7 +468,7 @@ drinks.add_drink("plum", "švestková šťáva", "#8e4585", {
 	drink_desc2 = "švestkové šťávy",
 	drink_desc4 = "švestkovou šťávu",
 })
-drinks.add_fruit("plum", "plumtree:plum", 1)
+drinks.add_fruit("plum", "moretrees:plum", 1)
 
 drinks.add_drink("coconut", "kokosové mléko", "#ffffff", {
 	drink_desc2 = "kokosového mléka",

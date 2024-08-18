@@ -1,7 +1,0 @@
-# textdomain: pineapple
-
-
-### init.lua ###
-
-Pineapple=
-Pineapple Sapling=

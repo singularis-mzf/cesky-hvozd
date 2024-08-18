@@ -317,7 +317,7 @@ local default_lib_nodes = {
 		sounds = default.node_sound_wood_defaults(),
 	},
 	ebony = {
-		basenode = "ebony:wood",
+		basenode = "moretrees:ebony_planks",
 		description = "pilíř z ebenového dřeva",
 		sounds = default.node_sound_wood_defaults(),
 	},
@@ -327,7 +327,7 @@ local default_lib_nodes = {
 		sounds = default.node_sound_wood_defaults(),
 	},
 	plumtree = {
-		basenode = "plumtree:wood",
+		basenode = "moretrees:plumtree_planks",
 		description = "pilíř ze švestkového dřeva",
 		sounds = default.node_sound_wood_defaults(),
 	},

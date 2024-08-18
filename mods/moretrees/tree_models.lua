@@ -319,3 +319,19 @@ moretrees.ebony_model={
 	trunk_type="single",
 	thin_branches=false,
 }
+
+moretrees.plumtree_model={
+	axiom="FFFFFAFFBFCF",
+	rules_a="[&&&FF&&FF][&&&++++F&&FF][&&&----FF&&FF]",
+	rules_b="[&&&++FF&&FF][&&&--F&&FF][&&&------FF&&FF]",
+	rules_c="[&&&++F][&&&--F][&&&------F]",
+	trunk="moretrees:plumtree_trunk",
+	leaves="moretrees:plumtree_leaves",
+	angle=30,
+	iterations=2,
+	random_level=0,
+	trunk_type="single",
+	thin_branches=true,
+	fruit="moretrees:plum",
+	fruit_chance=15,
+}

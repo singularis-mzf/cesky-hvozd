@@ -20,6 +20,7 @@ moretrees.treelist = {
 	{"cherrytree",   S("Cherry Tree"),    "cherry",                S("Cherry"), {-0.2, -0.5, -0.2, 0.2, 0, 0.2}, 0.8 },
 	{"chestnut_tree", S("Chestnut Tree"), "bur",                   S("Bur"), {-0.2, -0.5, -0.2, 0.2, 0, 0.2}, 0.6 },
 	{"ebony",        S("Ebony Tree")},
+	{"plumtree",     S("Plum Tree"),      "plum",                  S("Plum"), {-0.2, -0.5, -0.2, 0.2, 0, 0.2}, 0.6 },
 }
 
 -- Beech aliases
@@ -316,6 +317,23 @@ moretrees.treedesc = {
 			minetest.spawn_tree(pos,moretrees.ebony_model)
 		end,
 	},
+	plumtree = {
+		trunk = S("Plum Tree Trunk"),
+		planks = S("Plum Tree Planks"),
+		sapling = S("Plum Tree Sapling"),
+		leaves = S("Plum Tree Leaves"),
+		trunk_stair = S("Plum Tree Trunk Stair"),
+		trunk_slab = S("Plum Tree Trunk Slab"),
+		planks_stair = S("Plum Tree Planks Stair"),
+		planks_slab = S("Plum Tree Planks Slab"),
+		fence = S("Plum Tree Fence"),
+		fence_rail = S("Plum Tree Fence Rail"),
+		fence_gate = S("Plum Tree Fence Gate"),
+		mesepost_light = S("Plum Tree Mese Post Light"),
+		grow_function = function(pos)
+			minetest.spawn_tree(pos,moretrees.plumtree_model)
+		end,
+	},
 }
 
 
@@ -490,7 +508,7 @@ for i in ipairs(moretrees.treelist) do
 
 	--			stairsplus:register_all(modname, subname, recipeitem, {fields})
 				local allfaces_options = nil
-				if treename == "poplar" then
+				if treename == "poplar" or treename == "ebony" then
 					allfaces_options = {stairsplus = "slopes"}
 				end
 
@@ -646,7 +664,7 @@ for i in ipairs(moretrees.treelist) do
 	if fruit then
 		fruitname = "moretrees:"..fruit
 		local inv_image = "moretrees_"..fruit..".png^[transformR180"
-		if treename == "cherrytree" then
+		if treename == "cherrytree" or treename == "plumtree" then
 			inv_image = "moretrees_"..fruit..".png"
 		end
 		minetest.register_node(fruitname, {

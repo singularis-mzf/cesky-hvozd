@@ -11,6 +11,22 @@ minetest.register_lbm({
 	end,
 })
 
+if minetest.get_modpath("moretrees") then
+	local name
+	for category, alternates in pairs(stairsplus.defs) do
+		for alternate, _ in pairs(alternates) do
+			name = stairsplus:get_shape("default:wood", category, alternate)
+			if name ~= nil then
+				minetest.register_alias("moretrees:"..category.."_beech_planks"..alternate, name)
+			end
+			name = stairsplus:get_shape("moreblocks:tree_noface", category, alternate)
+			if name ~= nil then
+				minetest.register_alias("moretrees:"..category.."_beech_trunk_noface"..alternate, name)
+			end
+		end
+	end
+end
+
 if minetest.get_modpath("moretrees") and not minetest.get_modpath("chestnuttree") then
 	local list = {
 		["chestnuttree:trunk"] = "moretrees:chestnut_tree_trunk",
@@ -117,6 +133,10 @@ if minetest.get_modpath("moretrees") and not minetest.get_modpath("ebony") then
 			if name ~= nil then
 				minetest.register_alias("ebony:"..category.."_wood"..alternate, name)
 			end
+			name = stairsplus:get_shape("moretrees:ebony_trunk_allfaces", category, alternate)
+			if name ~= nil then
+				minetest.register_alias("ebony:"..category.."_trunk_allfaces"..alternate, name)
+			end
 			name = stairsplus:get_shape("moretrees:ebony_trunk_noface", category, alternate)
 			if name ~= nil then
 				minetest.register_alias("ebony:"..category.."_trunk_noface"..alternate, name)
@@ -134,6 +154,45 @@ if minetest.get_modpath("moretrees") and not minetest.get_modpath("ebony") then
 			minetest.remove_node(pos)
 		end,
 	})
+end
+
+if minetest.get_modpath("moretrees") and not minetest.get_modpath("plumtree") then
+	local list = {
+		["plumtree:trunk"] = "moretrees:plumtree_trunk",
+		["plumtree:wood"] = "moretrees:plumtree_planks",
+		["plumtree:leaves"] = "moretrees:plumtree_leaves",
+		["plumtree:trunk_noface"] = "moretrees:plumtree_trunk_noface",
+		["plumtree:trunk_allfaces"] = "moretrees:plumtree_trunk_allfaces",
+		["plumtree:mese_post_light"] = "moretrees:plumtree_mese_post_light",
+		["plumtree:blossom_leaves"] = "moretrees:plumtree_leaves",
+		["plumtree:sapling"] = "moretrees:plumtree_sapling",
+		["plumtree:sapling_ongen"] = "moretrees:plumtree_sapling_ongen",
+		["plumtree:gate_open"] = "moretrees:plumtree_gate_open",
+		["plumtree:gate_closed"] = "moretrees:plumtree_gate_closed",
+		["plumtree:fence"] = "moretrees:plumtree_fence",
+		["plumtree:fence_rail"] = "moretrees:plumtree_fence_rail",
+		["plumtree:plum"] = "moretrees:plum",
+	}
+	for alias, name in pairs(list) do
+		if minetest.registered_items[name] ~= nil then
+			minetest.register_alias(alias, name)
+		end
+	end
+
+	-- stairsplus shapes
+	local name
+	for category, alternates in pairs(stairsplus.defs) do
+		for alternate, _ in pairs(alternates) do
+			name = stairsplus:get_shape("moretrees:plumtree_planks", category, alternate)
+			if name ~= nil then
+				minetest.register_alias("plumtree:"..category.."_wood"..alternate, name)
+			end
+			name = stairsplus:get_shape("moretrees:plumtree_trunk_noface", category, alternate)
+			if name ~= nil then
+				minetest.register_alias("plumtree:"..category.."_trunk_noface"..alternate, name)
+			end
+		end
+	end
 end
 
 if minetest.get_modpath("moretrees") and not minetest.get_modpath("willow") then

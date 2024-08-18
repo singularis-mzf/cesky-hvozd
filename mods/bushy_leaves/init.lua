@@ -25,29 +25,7 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 --		"bushy" => use drawtype = "mesh" and a full bushy model
 
 local leaves_nodes = {
-	-- Cool Trees
-	["baldcypress:leaves"] = "cheap",
-	["bamboo:leaves"] = "cheap",
-	["birch:leaves"] = "cheap",
-	["cacaotree:leaves"] = "cheap",
-	["cherrytree:leaves"] = "cheap",
-	["cherrytree:blossom_leaves"] = "plantlike",
-	["chestnuttree:leaves"] = "cheap",
-	["clementinetree:leaves"] = "cheap",
 	["darkage:dry_leaves"] = "cheap_nostick", -- special (no sticks!)
-	["ebony:leaves"] = "cheap",
-	["hollytree:leaves"] = "cheap",
-	["jacaranda:blossom_leaves"] = "cheap",
-	["larch:leaves"] = "cheap",
-	["lemontree:leaves"] = "cheap",
-	["mahogany:leaves"] = "cheap",
-	["maple:leaves"] = "cheap",
-	["oak:leaves"] = "cheap",
-	["palm:leaves"] = "cheap",
-	["plumtree:leaves"] = "cheap",
-	["pomegranate:leaves"] = "cheap",
-	["sequoia:leaves"] = "cheap",
-	["willow:leaves"] = "plantlike",
 
 	-- More Trees
 	["moretrees:apple_tree_leaves"] = "cheap",
@@ -69,6 +47,7 @@ local leaves_nodes = {
 	["moretrees:cherrytree_leaves"] = "cheap",
 	["moretrees:chestnut_tree_leaves"] = "cheap",
 	["moretrees:ebony_leaves"] = "cheap",
+	["moretrees:plumtree_leaves"] = "cheap",
 
 	-- Ethereal
 	["ethereal:bananaleaves"] = "plantlike_nostick",
