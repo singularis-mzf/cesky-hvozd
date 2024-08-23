@@ -616,7 +616,7 @@ for i in ipairs(moretrees.treelist) do
 		description = S("@1 (fast growth)", moretrees.treedesc[treename].sapling),
 		drawtype = "plantlike",
 		tiles = {saptex},
-		inventory_image = saptex,
+		inventory_image = saptex.."^[resize:32x32^[fill:32x2:0,30:#cccc00",
 		paramtype = "light",
 		paramtype2 = "waving",
 		walkable = false,
