@@ -1,5 +1,19 @@
 -- ALIASES
 
+-- Remove aloz
+if not minetest.get_modpath("aloz") then
+	minetest.register_alias("aloz:aluminum_ingot", "default:steel_ingot")
+	minetest.register_alias("aloz:stone_with_bauxite", "default:stone_with_iron")
+	minetest.register_alias("aloz:trapdoor_aluminum", "xpanes:trapdoor_steel_bar")
+	minetest.register_alias("aloz:aluminum_block", "default:steelblock")
+	minetest.register_alias("aloz:aluminum_beam", "default:steelblock")
+	minetest.register_alias("aloz:bauxite_lump", "default:iron_lump")
+	minetest.register_alias("xpanes:aluminum_railing", "streets:fence_chainlink")
+	minetest.register_alias("xpanes:aluminum_railing_flat", "streets:fence_chainlink")
+	minetest.register_alias("xpanes:aluminum_barbed_wire", "streets:fence_chainlink")
+	minetest.register_alias("xpanes:aluminum_barbed_wire_flat", "streets:fence_chainlink")
+end
+
 -- Remove bamboo
 minetest.register_lbm({
 	label = "Remove legacy bamboo nodes",

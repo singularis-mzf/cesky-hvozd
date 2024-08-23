@@ -254,12 +254,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/FaceDeer/airtanks/)
 
-## Aloz (aloz)
-
-* Zdroj: [https://github.com/runsy/aloz](https://github.com/runsy/aloz), revize 5a02b2316bc2e4775cfeb57d9d74805756b77eda
-* Původní licence: GPLv3 pro kód, CC BY-SA 4.0 pro textury (k projektu je přiložena také CC0, ale údaje v README ji nezmiňují)
-* Licence úprav: GPLv3
-
 ## Ambience Lite (minetest-mod-ambience)
 
 * Zdroj: [https://notabug.org/minenux/minetest-mod-ambience](https://notabug.org/minenux/minetest-mod-ambience), revize e6ed64b1e518ba6bdd33c306895634b2c9622413 (odnož původního repozitáře)
