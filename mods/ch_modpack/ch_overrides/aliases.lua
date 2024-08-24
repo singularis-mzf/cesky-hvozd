@@ -88,6 +88,7 @@ if minetest.get_modpath("moretrees") and not minetest.get_modpath("cherrytree") 
 		["cherrytree:trunk_allfaces"] = "moretrees:cherrytree_trunk_allfaces",
 		["cherrytree:mese_post_light"] = "moretrees:cherrytree_mese_post_light",
 		["cherrytree:blossom_leaves"] = "moretrees:cherrytree_leaves",
+		["cherrytree:leaves"] = "moretrees:cherrytree_leaves",
 		["cherrytree:sapling"] = "moretrees:cherrytree_sapling",
 		["cherrytree:sapling_ongen"] = "moretrees:cherrytree_sapling_ongen",
 		["cherrytree:gate_open"] = "moretrees:cherrytree_gate_open",
