@@ -1139,6 +1139,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Zdroj: [https://gitlab.com/tunnelers-abyss/chess](https://gitlab.com/tunnelers-abyss/chess), revize 2f518972f9fee3c2cb0efc16ece5069b99226c44
 * Původní licence: CC0 (kód a textury), CC-BY-4.0 (modely)
 
+## Extended Circular Saw (circular\_saw\_ext)
+
+* Zdroj: [https://github.com/Andrey2470T/circular\_saw\_ext](https://github.com/Andrey2470T/circular\_saw\_ext), revize 9b97572501b7e6215dc1bd60e4bd994a0da48b29
+* Původní licence: zlib
+* [ContentDB](https://content.minetest.net/packages/Andrey01/circular\_saw\_ext/)
+
 ## Cucina Vegana (cucina\_vegana)
 
 * Zdroj: [https://github.com/acmgit/cucina\_vegana](https://github.com/acmgit/cucina\_vegana), revize 8be3c946ea99d32b2f25a517d938fba26084b930

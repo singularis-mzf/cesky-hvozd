@@ -3,6 +3,8 @@
 More Blocks for [Minetest](https://www.minetest.net/), a free and open source infinite
 world block sandbox game.
 
+This is a version altered for Český hvozd server.
+
 [**Forum topic**](https://forum.minetest.net/viewtopic.php?f=11&t=509)
 
 ## Installation

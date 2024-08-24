@@ -80,11 +80,16 @@ circular_saw.names = {
 
 	{"slope", "_outer_cut_half", 1},
 	{"slab", "_two_sides", 1},
+	{"slab", "_two_sides_half", 1},
 	{"slab", "_three_sides", 2},
+	{"slab", "_three_sides_half", 2},
 	{"slab", "_three_sides_u", 2},
 	{"slope", "_slab", 1},
 	{"panel", "_l1", 2},
-	--
+
+	-- {"slab", "_pit", 3},
+	-- {"slab", "_pit_half", 2},
+	{"slope", "_cut2", 4},
 
 	-- {"slope", "_outer_cut_half_raised", 3},
 	-- {"slope", "_slab_half", 2},
@@ -498,7 +503,7 @@ local function get_formspec()
 		fancy_inv = default.gui_bg..default.gui_bg_img..default.gui_slots
 	end
 		--FIXME Not work with @n in this part bug in minetest/minetest#7450.
-	return "size[11,11]"..fancy_inv..
+	return "size[11,12]"..fancy_inv..
 		"label[0,0;" ..S("Input material").. "]" ..
 		"list[current_name;input;1.7,0;1,1;]" ..
 		"label[0,1;" ..F(S("Left-over")).. "]" ..
@@ -508,10 +513,10 @@ local function get_formspec()
 		"field[0.3,3.5;1,1;max_offered;" ..F(S("Max")).. ":;${max_offered}]" ..
 		"button[1,3.2;1.7,1;Set;" ..F(S("Set")).. "]" ..
 		"button[0.5,3.75;2,2;Clear;" .. F(S("Discard All")) .. "]" ..
-		"label[0,6;" .. F(S("Trash")).. "]" ..
-		"list[current_name;trash;1.5,6;1,1;]" ..
-		"list[current_name;output;2.8,0;8,7;]" ..
-		"list[current_player;main;1.5,7.25;8,4;]" ..
+		"label[0,7;" .. F(S("Trash")).. "]" ..
+		"list[current_name;trash;1.5,7;1,1;]" ..
+		"list[current_name;output;2.8,0;8,8;]" ..
+		"list[current_player;main;1.5,8.25;8,4;]" ..
 		"listring[current_name;output]" ..
 		"listring[current_player;main]" ..
 		"listring[current_name;input]" ..
@@ -536,7 +541,7 @@ function circular_saw.on_construct(pos)
 	inv:set_size("input", 1)    -- Input slot for full blocks of material x.
 	inv:set_size("micro", 1)    -- Storage for 1-7 surplus microblocks.
 	inv:set_size("recycle", 1)  -- Surplus partial blocks can be placed here.
-	inv:set_size("output", 7*8) -- 7x8 versions of stair-parts of material x.
+	inv:set_size("output", 8*8) -- 7x8 versions of stair-parts of material x.
 	inv:set_size("trash", 1)    -- Trash list
 
 	circular_saw:reset(pos)
@@ -551,7 +556,9 @@ minetest.register_lbm({
 		local meta = minetest.get_meta(pos)
 		if meta:get_string("formspec") ~= circular_saw_formspec then
 			meta:set_string("formspec", circular_saw_formspec)
-			meta:get_inventory():set_size("trash", 1)
+			local inv = meta:get_inventory()
+			inv:set_size("output", 8*8)
+			inv:set_size("trash", 1)
 			minetest.log("action", "Circular Saw formspec updated at "..minetest.pos_to_string(pos))
 		end
 	end
