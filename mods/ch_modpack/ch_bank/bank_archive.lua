@@ -304,7 +304,7 @@ local function get_today_transactions(player_name)
 	-- načten starý den
 	local bank_month = result.bank_day:sub(1,7)
 	local day = tonumber(result.bank_day:sub(9,10))
-	local history = get_bank_month_history(player_name, bank_month)
+	local history = get_bank_month_history(player_name, bank_month) or {}
 	local state_after = get_amount_from_storage(player_key.."/state")
 	history[day] = {
 		state_before = result.state_before,
