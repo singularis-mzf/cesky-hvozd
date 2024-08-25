@@ -452,6 +452,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPLv2.1
 * [ContentDB](https://content.minetest.net/packages/MikeRedwood/craftable\_lava/)
 
+## Cucina Vegana (cucina\_vegana)
+
+* Zdroj: [https://github.com/acmgit/cucina\_vegana](https://github.com/acmgit/cucina\_vegana), revize a456da616bbd17ccf3736b8f8cf771c32affe093
+* Původní licence: LGPLv3
+* Licence úprav: LGPLv3
+* [ContentDB](https://content.minetest.net/packages/Clyde/cucina\_vegana/)
+
 ## Currency (currency)
 
 * Zdroj: [https://github.com/mt-mods/currency](https://github.com/mt-mods/currency), revize f74ee653b8f8c60ea4f78e7dd827dcc568649dee
@@ -542,7 +549,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: MIT a další (včetně CC-BY-ND-SA)
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/farming/)
-* Implantovány jahody z módu Ethereal NG (licence: MIT) a banány a len z módu Cucina Vegana (licence textur: LGPLv3).
+* Implantovány jahody z módu Ethereal NG (licence: MIT) a další plodiny z módu Cucina Vegana (licence textur: LGPLv3).
 
 ## Fumo Plushies (fumoplushies)
 
@@ -1144,12 +1151,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Zdroj: [https://github.com/Andrey2470T/circular\_saw\_ext](https://github.com/Andrey2470T/circular\_saw\_ext), revize 9b97572501b7e6215dc1bd60e4bd994a0da48b29
 * Původní licence: zlib
 * [ContentDB](https://content.minetest.net/packages/Andrey01/circular\_saw\_ext/)
-
-## Cucina Vegana (cucina\_vegana)
-
-* Zdroj: [https://github.com/acmgit/cucina\_vegana](https://github.com/acmgit/cucina\_vegana), revize 8be3c946ea99d32b2f25a517d938fba26084b930
-* Původní licence: LGPLv3
-* [ContentDB](https://content.minetest.net/packages/Clyde/cucina\_vegana/)
 
 ## Cutepie (cutepie)
 

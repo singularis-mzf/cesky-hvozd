@@ -135,11 +135,18 @@ minetest.register_craft({
 
 -- ch_extras:carp_...
 ---------------------------------------------------------------
+def = minetest.registered_items["animalworld:carp"]
+if def ~= nil then
+	def = {groups = def.groups or {}}
+	def.groups.fish_raw = 1
+	minetest.override_item("animalworld:carp", def)
+end
+
 def = {
 	description = "kapří hlava",
 	inventory_image = "ch_extras_kapr_hlava.png",
 	wield_image = "ch_extras_kapr_hlava.png",
-	groups = {food = 1, ch_food = 1},
+	groups = {food = 1, ch_food = 1, fish_raw = 1},
 	on_use = ch_core.item_eat(),
 }
 minetest.register_craftitem("ch_extras:carp_head", def)
@@ -148,6 +155,7 @@ def = {
 	description = "kapří maso (syrové)",
 	inventory_image = "ch_extras_kapr_telo.png",
 	wield_image = "ch_extras_kapr_telo.png",
+	groups = {fish_raw = 1},
 	-- groups = {food = 1, ch_food = 1},
 	-- on_use = ch_core.item_eat(),
 }
@@ -157,7 +165,7 @@ def = {
 	description = "pečený kapr",
 	inventory_image = "ch_extras_kapr_peceny.png",
 	wield_image = "ch_extras_kapr_peceny.png",
-	groups = {food = 12, ch_food = 12},
+	groups = {food = 12, ch_food = 12, fish_cooked = 1},
 	on_use = ch_core.item_eat(),
 }
 minetest.register_craftitem("ch_extras:carp_cooked", def)

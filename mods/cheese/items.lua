@@ -46,10 +46,12 @@ if minetest.get_modpath("mobs") then
 		recipe = {"mobs:cheeseblock"},
 	})
 end
+--[[
 if cheese.cv then
 	minetest.clear_craft({output = "cucina_vegana:imitation_butter"})
 	minetest.clear_craft({output = "cucina_vegana:imitation_cheese"})
 end
+]]
 
 if minetest.get_modpath("petz") then -- petz hard-depens on farming
 	minetest.clear_craft({output = "petz:cheese"})

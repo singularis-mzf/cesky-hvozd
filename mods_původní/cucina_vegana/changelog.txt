@@ -1,0 +1,83 @@
+Rice-Starch added.
+Support for Signs_bot added.
+Support for aqua_farming added.
+Fixed Replacement at Flour-Recipes.
+hunger_ng support added.
+Lines of Settings shortened.
+Recipes for Blueberry-Jam extended.
+Fixed Recipe for Molasses.
+Added new Recipe for salad_hollandaise.
+Fixed Replacement for Soy-Milk.
+Better Support for mod Pizza.
+Honey added to group:food_sugar.
+Honey from Petz added to group:food_sugar.
+Setting for germlaunch added.
+Fixed settings for turning on or off the crops.
+
+*** Version 2.4
+Fix replacement #s in recipes #3 by fluxionary.
+Ingame Translation-Support added.
+Changed flax to flax_roasted, fixed Problem in default with flax.
+Added recipe for edamame.
+Changed recipes for oils with groups.
+Changed the recipes for plates (prevent recipe-collisions).
+Support for dreamcatcher (petz) added.
+Ducky-Feather (petz) craftable.
+Added more support for homedecor with recipes of blinds.
+Fixed recipe-collision between buildingblocks:towel and cottages:rope.
+Fixed typo with farming-default-mode.
+default:blueberries added to group food_blueberry and food_blueberries.
+bushes:blueberries added to group food_blueberries.
+Function add_group is doing nothing if the item is unknown.
+
+*** Version 2.3
+Recipe for cotton added.
+Mushroom_light added.
+Spreading for Asparagus changed.
+Support for Petz added.
+Function group_add available to better support foreign nodes.
+Replaced function minetest.override_item with cucina_vegana.add_group for better compatibility.
+Settings now configurable about Main-Menu or minetest.conf.
+Rice grows on default:dirt_with_grass too.
+
+*** Version 2.2:
+Peanut added.
+Peanutbutter and Peanut Oil added.
+Fixed Recipes for Oil.
+
+*** Version 2.1:
+Lower rarity of rice.
+Flag dig_immediate added to all plants.
+Flag attached_node to all plants.
+
+*** Version 2.0:
+Support for Hunger and Diet added.
+Blueberry jam added. Blueberrys accepted in bushes, farming and default (5.x).
+Chiabatta bread added.
+
+*** Version 1.9:
+Support for bonemeal from Tenplus added.
+Changelog.txt added.
+
+*** Version 1.8:
+Flex = Flax.
+Settingstypes added.
+
+*** Version 1.7:
+Flex added to cucina-vegana.
+Use and eatable as oil.
+Support for wool, ropes and more.
+
+*** Version 1.4:
+Prepared for 5.x.x.
+New Recipes for Pizza, and Fryer added.
+Recipe for Imitation Poultry added.
+Fixed support for farming_redo. Now the plants have different needs of light like it was without farming_redo.
+
+*** Version 1.2:
+Support for farming_nextgen.
+Translation added.
+Better Translation, easier to add new plants and uses the interface from Farming-nextGen from Gundul (https://github.com/berengma/farming_nextgen).
+
+*** Version 1.0:
+Support for farming_redo.

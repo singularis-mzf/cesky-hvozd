@@ -1,0 +1,330 @@
+# textdomain: cucina_vegana
+
+
+### asparagus_default.lua ###
+### asparagus_redo.lua ###
+### banana_default.lua ###
+### banana_redo.lua ###
+### carrot_default.lua ###
+### carrot_redo.lua ###
+### chili_default.lua ###
+### chili_redo.lua ###
+### chives_default.lua ###
+### chives_redo.lua ###
+### corn_default.lua ###
+### corn_redo.lua ###
+### cucumber_default.lua ###
+### cucumber_redo.lua ###
+### flax_default.lua ###
+### flax_redo.lua ###
+### garlic_default.lua ###
+### garlic_redo.lua ###
+### kohlrabi_default.lua ###
+### kohlrabi_redo.lua ###
+### lettuce_default.lua ###
+### lettuce_redo.lua ###
+### onion_default.lua ###
+### onion_redo.lua ###
+### parsley_default.lua ###
+### parsley_redo.lua ###
+### peanut_default.lua ###
+### peanut_redo.lua ###
+### potato_default.lua ###
+### potato_redo.lua ###
+### rice_default.lua ###
+### rice_redo.lua ###
+### rosemary_default.lua ###
+### rosemary_redo.lua ###
+### soy_default.lua ###
+### soy_redo.lua ###
+### strawberry_default.lua ###
+### strawberry_redo.lua ###
+### sunflower_default.lua ###
+### sunflower_redo.lua ###
+### tomato_default.lua ###
+### tomato_redo.lua ###
+
+Seed=
+
+### asparagus_default.lua ###
+### asparagus_redo.lua ###
+### items.lua ###
+
+# textdomain: cucina_vegana
+Asparagus=
+
+### asparagus_default.lua ###
+### banana_default.lua ###
+### carrot_default.lua ###
+### chili_default.lua ###
+### chives_default.lua ###
+### coffee_def.lua ###
+### corn_default.lua ###
+### cucumber_default.lua ###
+### flax_default.lua ###
+### garlic_default.lua ###
+### kohlrabi_default.lua ###
+### lettuce_default.lua ###
+### onion_default.lua ###
+### parsley_default.lua ###
+### peanut_default.lua ###
+### potato_default.lua ###
+### rice_default.lua ###
+### rosemary_default.lua ###
+### soy_default.lua ###
+### strawberry_default.lua ###
+### sunflower_default.lua ###
+### tomato_default.lua ###
+### vine_def.lua ###
+
+Wild=
+
+### asparagus_redo.lua ###
+### banana_redo.lua ###
+### carrot_redo.lua ###
+### chili_redo.lua ###
+### chives_redo.lua ###
+### corn_redo.lua ###
+### cucumber_redo.lua ###
+### flax_redo.lua ###
+### garlic_redo.lua ###
+### kohlrabi_redo.lua ###
+### lettuce_redo.lua ###
+### onion_redo.lua ###
+### parsley_redo.lua ###
+### peanut_redo.lua ###
+### potato_redo.lua ###
+### rice_redo.lua ###
+### rosemary_redo.lua ###
+### soy_redo.lua ###
+### strawberry_redo.lua ###
+### sunflower_redo.lua ###
+### tomato_redo.lua ###
+
+Wild =
+
+### banana_default.lua ###
+### banana_redo.lua ###
+### items.lua ###
+
+Banana=
+
+### carrot_default.lua ###
+### carrot_redo.lua ###
+### items.lua ###
+
+Carrot=
+
+### chili_default.lua ###
+### chili_redo.lua ###
+### items.lua ###
+
+Chili=
+
+### chives_default.lua ###
+### chives_redo.lua ###
+### items.lua ###
+
+Chives=
+
+### coffee_def.lua ###
+
+Coffee Plant=
+
+### coffee_def.lua ###
+### items.lua ###
+
+Coffee Beans raw=zrnka kávy (surová)
+
+### coffee_def.lua ###
+### vine_def.lua ###
+
+Leaves=
+Sapling=
+Stem=
+
+### corn_default.lua ###
+### corn_redo.lua ###
+
+Corn=
+
+### cucumber_default.lua ###
+### cucumber_redo.lua ###
+### items.lua ###
+
+Cucumber=
+
+### flax_default.lua ###
+### flax_redo.lua ###
+### items.lua ###
+
+Flax=
+
+### garlic_default.lua ###
+### garlic_redo.lua ###
+### items.lua ###
+
+Garlic=
+
+### items.lua ###
+
+Blueberry pot=borůvkový hrnec
+Blueberry pot (cooked)=borůvkový hrnec (vařený)
+Blueberry puree=borůvkové pyré
+Ciabatta dough=ciabata (těsto)
+Coffee Beans=
+Coffee Powder=mletá káva
+Corncob=
+Dandelion Honey=pampeliškový med
+Dandelion Suds=květ pampelišky ve vodě
+Dandelion Suds (cooking)=pampeliškový vývar
+Flax (raw)=
+Imitation Butter=imitace másla
+Imitation Cheese=imitace sýra
+Imitation Fish=imitace ryby
+Imitation Meat=imitace červeného masa
+Imitation poultry=imitace drůbežího masa
+Molasses=melasa
+Pizzadough=těsto na pizzu
+Rice Flour=rýžová mouka
+Rice Starch=rýžový škrob
+Roasted Kohlrabi=pečený kedluben
+Roasted Sunflower Seeds=pražená slunečnicová semínka
+Rosemary Twig=rozmarýn
+Soy Bean=
+Soy Milk=
+Sunflower Seeds=
+Sunflower Seeds Bread=slunečnicový chléb
+Sunflower Seeds Dough=těsto na slunečnicový chléb
+Sunflower Seeds Flour=slunečnicová mouka
+Tofu=pečené tofu
+Tofu (raw)=tofu
+Vegan Strawberry Milk=veganské mléko jahodové
+Vegan Sushi=suši
+
+### items.lua ###
+### kohlrabi_default.lua ###
+### kohlrabi_redo.lua ###
+
+Kohlrabi=
+
+### items.lua ###
+### lettuce_default.lua ###
+### lettuce_redo.lua ###
+
+Lettuce=
+
+### items.lua ###
+### onion_default.lua ###
+### onion_redo.lua ###
+
+Onion=
+
+### items.lua ###
+### parsley_default.lua ###
+### parsley_redo.lua ###
+
+Parsley=
+
+### items.lua ###
+### peanut_default.lua ###
+### peanut_redo.lua ###
+
+Peanut=
+
+### items.lua ###
+### potato_default.lua ###
+### potato_redo.lua ###
+
+Potato=
+
+### items.lua ###
+### rice_default.lua ###
+### rice_redo.lua ###
+
+Rice=
+
+### items.lua ###
+### strawberry_default.lua ###
+### strawberry_redo.lua ###
+
+Strawberry=
+
+### items.lua ###
+### sunflower_default.lua ###
+### sunflower_redo.lua ###
+
+Sunflower=
+
+### items.lua ###
+### tomato_default.lua ###
+### tomato_redo.lua ###
+
+Tomato=
+
+### lib.lua ###
+
+@1 Seconds left.=
+Coffeespeed. @1 Seconds left.=
+You move normal again.=
+
+### nodes.lua ###
+
+Asparagus Hollandaise=chřest s majonézou
+Asparagus Hollandaise (raw)=chřest s majonézou (syrový)
+Asparagus Soup=chřestová polévka
+Asparagus Soup (raw)=chřestová polévka (syrová)
+Asparagus on Rice=chřest s rýží
+Asparagus on Rice (raw)=chřest s rýží (syrový)
+Blueberry Jam=
+Bottle of Corn Oil=kukuřičný olej
+Bottle of Flaxseed Oil=
+Bottle of Peanut Oil=arašídový olej
+Bottle of Sunflower Seeds Oil=slunečnicový olej
+Bowl of Rice=mísa rýže
+Bowl of Rice (raw)=mísa rýže (syrové)
+Ciabatta Bread=ciabata
+Cucumber in Glass=nakládané okurky
+Cup of Coffee cold=
+Cup of Coffee hot=
+Edamame=edamame
+Edamame (raw)=edamame (syrové)
+Fish on Parsley and Rosemary=ryba s petrželkou a rozmarýnem
+Fish on Parsley and Rosemary (raw)=ryba s petrželkou a rozmarýnem (syrové)
+Fryer=pečené kuře
+Fryer (raw)=pečené kuře (syrové)
+Glass Bowl=skleněná mísa
+Glass Salad Bowl=velká mísa salátu
+Kohlrabi Soup=zeleninová polévka z kedlubny
+Kohlrabi Soup (raw)=zeleninová polévka z kedlubny (syrová)
+Mushroomlight Glass=
+Peanut Butter=
+Pizza Funghi=pizza funghi (houbová)
+Pizza Funghi (raw)=pizza funghi (houbová, syrová)
+Pizza Vegana=zeleninová pizza
+Pizza Vegana (raw)=zeleninová pizza (syrová)
+Plate=talíř
+Popcorn=popkorn
+Salad Bowl Hollandaise=salátová mísa s majonézou
+Salad Oil=salátový olej (?)
+Sauce Hollandaise=majonéza
+Sea Salad Bowl=zeleninový salát
+Soy Soup=sójová polévka
+Soy Soup (raw)=sójová polévka (syrová)
+Tofu on Chives and Rosemary=tofu s pažitkou a rozmarýnem
+Tofu on Chives and Rosemary (raw)=tofu s pažitkou a rozmarýnem (syrové)
+
+### rosemary_default.lua ###
+### rosemary_redo.lua ###
+
+Rosemary=
+
+### soy_default.lua ###
+### soy_redo.lua ###
+
+Soy=
+
+### vine_def.lua ###
+
+Grape=
+Vine=

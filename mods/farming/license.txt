@@ -248,3 +248,27 @@ Created by Atlante (AFL-1.1)
   farming_spinach_2.png
   farming_spinach_3.png
   farming_spinach_4.png
+
+Created by TenPlus1 (LGPLv3, from Cucina Vegana mod)
+  cucina_vegana_chives.png
+  cucina_vegana_chives_1.png
+  cucina_vegana_chives_2.png
+  cucina_vegana_chives_3.png
+  cucina_vegana_chives_4.png
+  cucina_vegana_chives_5.png
+  cucina_vegana_kohlrabi_1.png
+  cucina_vegana_kohlrabi_2.png
+  cucina_vegana_kohlrabi_3.png
+  cucina_vegana_kohlrabi_4.png
+  cucina_vegana_rosemary.png
+  cucina_vegana_rosemary_1.png
+  cucina_vegana_rosemary_2.png
+  cucina_vegana_rosemary_3.png
+  cucina_vegana_rosemary_4.png
+  cucina_vegana_rosemary_5.png
+  cucina_vegana_rosemary_6.png
+
+Created by TenPlus1, modified by Singularis (LGPLv3, from Cucina Vegana mod)
+  cucina_vegana_kohlrabi.png
+  cucina_vegana_kohlrabi_5.png
+  cucina_vegana_kohlrabi_6.png

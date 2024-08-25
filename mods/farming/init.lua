@@ -682,6 +682,10 @@ farming.strawberry = true
 farming.flax = true
 farming.banana = true
 farming.rarety = 0.002
+farming.chives = true
+farming.spinach = true
+farming.kohlrabi = true
+farming.rosemary = true
 
 
 -- Load new global settings if found inside mod folder
@@ -759,7 +763,11 @@ ddoo("flax.lua", farming.flax)
 ddoo("banana.lua", farming.banana)
 ddoo("asparagus.lua", farming.asparagus)
 ddoo("eggplant.lua", farming.eggplant)
-ddoo("spinach.lua", farming.eggplant)
+ddoo("spinach.lua", farming.spinach)
+ddoo("chives.lua", farming.chives)
+ddoo("kohlrabi.lua", farming.kohlrabi)
+ddoo("rosemary.lua", farming.rosemary)
+ddoo("coffee.lua", farming.coffee)
 
 dofile(farming.path .. "/food.lua")
 dofile(farming.path .. "/mapgen.lua")
