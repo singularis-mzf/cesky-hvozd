@@ -370,7 +370,7 @@ minetest.register_craft({
 })
 minetest.register_alias("ch_core:railway_gravel", "ch_extras:railway_gravel")
 
-stairsplus:register_slabs_and_slopes("ch_extras", "railway_gravel", "ch_extras:railway_gravel", minetest.registered_nodes["ch_extras:railway_gravel"])
+stairsplus:register_all("ch_extras", "railway_gravel", "ch_extras:railway_gravel", minetest.registered_nodes["ch_extras:railway_gravel"])
 stairsplus:register_alias_all("ch_core", "railway_gravel", "ch_extras", "railway_gravel")
 
 -- ch_extras:bright_gravel
@@ -389,7 +389,7 @@ minetest.register_craft({
 	recipe = {"default:gravel", "default:gravel", "default:silver_sand", "default:silver_sand"},
 })
 
-stairsplus:register_slabs_and_slopes("ch_extras", "bright_gravel", "ch_extras:bright_gravel", minetest.registered_nodes["ch_extras:bright_gravel"])
+stairsplus:register_all("ch_extras", "bright_gravel", "ch_extras:bright_gravel", minetest.registered_nodes["ch_extras:bright_gravel"])
 
 -- ch_extras:noise
 ---------------------------------------------------------------

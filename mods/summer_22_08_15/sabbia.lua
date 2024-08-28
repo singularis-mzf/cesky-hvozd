@@ -18,7 +18,7 @@ minetest.register_craft({
 })
 
 if minetest.get_modpath("moreblocks") then
-	stairsplus:register_slabs_and_slopes("summer", "sabbia_mare", "summer:sabbia_mare", {
+	stairsplus:register_all("summer", "sabbia_mare", "summer:sabbia_mare", {
 		description = "plážový písek",
 		tiles = {"sabbia_mare_2.png"},
 		groups = {crumbly = 3, falling_node = 1},

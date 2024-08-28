@@ -89,7 +89,7 @@ if minetest.get_modpath("default") then
 
 		mod = "moreblocks"
 		if default_nodes_limited[name] then
-			stairsplus:register_slabs_and_slopes(mod, name, nodename, ndef)
+			stairsplus:register_all(mod, name, nodename, ndef)
 		else
 			stairsplus:register_all(mod, name, nodename, ndef)
 			minetest.register_alias_force("stairs:stair_" .. name, mod .. ":stair_" .. name)
@@ -123,7 +123,7 @@ if minetest.get_modpath("farming") then
 			ndef.sunlight_propagates = true
 
 			mod = "moreblocks"
-			stairsplus:register_slabs_and_slopes(mod, name, nodename, ndef)
+			stairsplus:register_all(mod, name, nodename, ndef)
 			minetest.register_alias_force("stairs:stair_" .. name, mod .. ":stair_" .. name)
 			minetest.register_alias_force("stairs:stair_outer_" .. name, mod .. ":stair_" .. name .. "_outer")
 			minetest.register_alias_force("stairs:stair_inner_" .. name, mod .. ":stair_" .. name .. "_inner")
@@ -178,7 +178,8 @@ if minetest.get_modpath("wool") then
 		ndef.sunlight_propagates = true
 
 		-- stairsplus:register_slabs_and_slopes(mod, name, nodename, ndef)
-		stairsplus:register_custom_subset(wool_shapes, mod, name, nodename, ndef)
+		-- stairsplus:register_custom_subset(wool_shapes, mod, name, nodename, ndef)
+		stairsplus:register_all(mod, name, nodename, ndef)
 	end
 end
 

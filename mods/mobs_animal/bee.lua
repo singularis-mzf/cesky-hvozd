@@ -151,7 +151,7 @@ minetest.register_node(":mobs:honey_block", {
 })
 
 if minetest.get_modpath("moreblocks") then
-	stairsplus:register_slabs_and_slopes("mobs", "honey_block", "mobs:honey_block", {
+	stairsplus:register_all("mobs", "honey_block", "mobs:honey_block", {
 		description = S("Honey Block"),
 		tiles = {"mobs_honey_block.png"},
 		groups = {snappy = 3, flammable = 2},

@@ -115,6 +115,11 @@ local function preprocess_tiles(tiles)
 end
 
 function stairsplus:register_all(modname, subname, recipeitem, fields)
+	local subset = ch_core.get_stairsplus_custom_shapes(recipeitem)
+	if subset ~= nil then
+		stairsplus:register_custom_subset(subset, modname, subname, recipeitem, fields)
+	end
+--[[
 	fields.tiles = preprocess_tiles(fields.tiles)
 
 	self:register_stair(modname, subname, recipeitem, fields)
@@ -124,13 +129,16 @@ function stairsplus:register_all(modname, subname, recipeitem, fields)
 	self:register_micro(modname, subname, recipeitem, fields)
 
 	stairsplus.recipeitems_list[recipeitem] = modname .. ":" .. subname
+	]]
 end
 
+--[[
 function stairsplus:register_slabs_and_slopes(modname, subname, recipeitem, fields)
 	fields.tiles = preprocess_tiles(fields.tiles)
 
 	return self:register_custom_subset(slabs_and_slopes_subset, modname, subname, recipeitem, fields)
 end
+]]
 
 function stairsplus:register_alias_all(modname_old, subname_old, modname_new, subname_new)
 	self:register_stair_alias(modname_old, subname_old, modname_new, subname_new)
@@ -204,10 +212,10 @@ function stairsplus:register_allfaces_trunk(modname, subname, original_node_name
 	minetest.register_node(":"..modname..":"..subname, def)
 	def = table.copy(def)
 	def.sunlight_propagates = true
-	if stairsplus_level == "all" then
+	if stairsplus_level == "all" or stairsplus_level == "slopes" then
 		stairsplus:register_all(modname, subname, modname..":"..subname, def)
-	elseif stairsplus_level == "slopes" then
-		stairsplus:register_slabs_and_slopes(modname, subname, modname..":"..subname, def)
+	--[[ elseif stairsplus_level == "slopes" then
+		stairsplus:register_slabs_and_slopes(modname, subname, modname..":"..subname, def) ]]
 	end
 
 	local recipe_row = {original_node_name, original_node_name, original_node_name}
@@ -252,6 +260,9 @@ end
 -- minetest.register_on_mods_loaded(on_mods_loaded)
 
 dofile(modpath .. "/defs.lua")
+
+ch_core.init_stairsplus_custom_shapes(stairsplus.defs)
+
 dofile(modpath .. "/recipes.lua")
 dofile(modpath .. "/common.lua")
 dofile(modpath .. "/stairs.lua")
