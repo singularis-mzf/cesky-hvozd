@@ -167,7 +167,7 @@ local platform_materials = {
 	"default:wood",
 	"moretrees:cedar_planks",
 	"moretrees:cherrytree_planks",
-	"moretrees:chestnuttree_planks",
+	"moretrees:chestnut_tree_planks",
 	"moretrees:date_palm_planks",
 	"moretrees:birch_planks",
 	-- "moretrees:beech_planks",

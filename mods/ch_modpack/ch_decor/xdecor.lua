@@ -1,5 +1,6 @@
 local S = minetest.get_translator("ch_decor")
 local has_moreblocks = minetest.get_modpath("moreblocks")
+local has_unifieddyes = minetest.get_modpath("unifieddyes")
 local def
 
 def = {
@@ -24,3 +25,19 @@ minetest.register_craft{
 		{"", "", ""},
 	},
 }
+
+if has_unifieddyes then
+	def = {
+		description = "barvitelné linoleum",
+		drawtype = "normal",
+		tiles = {"ch_decor_colorable_wood_tile.png"},
+		is_ground_content = false,
+		paramtype2 = "color",
+		palette = "unifieddyes_palette_extended.png",
+		groups = {cracky = 3, ud_param2_colorable = 1},
+		sounds = default.node_sound_stone_defaults(),
+		on_construct = unifieddyes.on_construct,
+		on_dig = unifieddyes.on_dig,
+	}
+	minetest.register_node("ch_decor:wood_tile", def)
+end

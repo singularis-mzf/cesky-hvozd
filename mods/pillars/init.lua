@@ -248,7 +248,7 @@ local default_lib_nodes = {
 		description = "pilíř z bílého mramoru",
 	},
 	jz_marble = {
-		basenode = "jonez:marble",
+		basenode = "ch_extras:marble",
 		description = "pilíř z nehodivského mramoru",
 	},
 	tc_marble = {

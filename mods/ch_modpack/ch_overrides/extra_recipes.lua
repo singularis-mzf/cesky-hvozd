@@ -234,7 +234,7 @@ if minetest.get_modpath("moretrees") and minetest.get_modpath("technic") then
 		"moretrees:date_palm_planks",
 		"moretrees:fir_planks",
 		"moretrees:oak_planks",
-		"moretrees:chestnuttree_planks",
+		"moretrees:chestnut_tree_planks",
 		"moretrees:rubber_tree_planks",
 		"moretrees:rubber_tree_planks_empty",
 		"moretrees:palm_planks",

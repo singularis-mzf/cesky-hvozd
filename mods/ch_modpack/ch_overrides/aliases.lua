@@ -57,6 +57,16 @@ if minetest.get_modpath("moretrees") and not minetest.get_modpath("chestnuttree"
 		["chestnuttree:fence_rail"] = "moretrees:chestnut_tree_fence_rail",
 		["chestnuttree:bur"] = "moretrees:bur",
 		["chestnuttree:fruit"] = "moretrees:chestnut",
+		["doors:door_chestnut_wood"] = "doors:door_luxury_wood",
+		["doors:door_chestnut_wood_a"] = "doors:door_luxury_wood_a",
+		["doors:door_chestnut_wood_b"] = "doors:door_luxury_wood_b",
+		["doors:door_chestnut_wood_c"] = "doors:door_luxury_wood_c",
+		["doors:door_chestnut_wood_cd"] = "doors:door_luxury_wood_cd",
+		["doors:door_chestnut_wood_cd_a"] = "doors:door_luxury_wood_cd_a",
+		["doors:door_chestnut_wood_cd_b"] = "doors:door_luxury_wood_cd_b",
+		["doors:door_chestnut_wood_cd_c"] = "doors:door_luxury_wood_cd_c",
+		["doors:door_chestnut_wood_cd_d"] = "doors:door_luxury_wood_cd_d",
+		["doors:door_chestnut_wood_d"] = "doors:door_luxury_wood_d",
 	}
 	for alias, name in pairs(list) do
 		if minetest.registered_items[name] ~= nil then
@@ -170,6 +180,49 @@ if minetest.get_modpath("moretrees") and not minetest.get_modpath("ebony") then
 		end,
 	})
 end
+
+-- Remove jonez
+if not minetest.get_modpath("jonez") and minetest.get_modpath("darkage") then
+	local lbm_replacements = {
+		["jonez:blossom_pavement"] = {name = "solidcolor:stoneblock_block"},
+		["jonez:carthaginian_pavement"] = {name = "moreblocks:iron_stone_bricks", param2 = 0},
+		["jonez:climbing_rose"] = {name = "air"},
+		["jonez:diamond_pavement"] = {name = "ch_decor:wood_tile"},
+		["jonez:industrial_base"] = {name = "darkage:ors_brick", param2 = 0},
+		["jonez:industrial_shaft"] = {name = "darkage:ors_brick", param2 = 0},
+		["jonez:minoan_shaft"] = {name = "ch_extras:shaft"},
+		["jonez:mosaic_pavement"] = {name = "moreblocks:iron_stone_bricks", param2 = 0},
+		["jonez:pompeiian_capital"] = {name = "solidcolor:stoneblock_block", param2 = 194},
+		["jonez:pompeiian_pavement"] = {name = "ch_decor:wood_tile"},
+		["jonez:romantic_shaft"] = {name = "ch_extras:shaft"},
+		["jonez:ruin_creeper"] = {name = "air"},
+		["jonez:ruin_vine"] = {name = "air"},
+		["jonez:swedish_ivy"] = {name = "air"},
+		["jonez:tuscan_architrave"] = {name = "solidcolor:stoneblock_block"},
+		["jonez:versailles_architrave"] = {name = "default:obsidian_block", param2 = 0},
+		["jonez:versailles_base"] = {name = "ch_extras:shaft"},
+		["jonez:versailles_capital"] = {name = "ch_extras:shaft"},
+		["jonez:versailles_shaft"] = {name = "ch_extras:shaft"},
+	}
+	local nodenames = {}
+	for k, _ in pairs(lbm_replacements) do
+		table.insert(nodenames, k)
+	end
+
+	minetest.register_lbm({
+		label = "Upgrade jonez 1",
+		name = "ch_overrides:upgrade_jonez_1",
+		nodenames = nodenames,
+		run_at_every_load = true,
+		action = function(pos, node)
+			local r = lbm_replacements[node.name]
+			node.name = r.name
+			node.param2 = r.param2 or node.param2
+			minetest.set_node(pos, node)
+		end,
+	})
+end
+
 
 if minetest.get_modpath("moretrees") and not minetest.get_modpath("plumtree") then
 	local list = {

@@ -42,7 +42,7 @@ local materials = {
 	["default:stone"] = {color = color_gold},
 	["default:mossycobble"] = {color = color_white, map64 = true},
 	["default:wood"] = {color = color_white},
-	["jonez:marble"] = true,
+	["ch_extras:marble"] = true,
 	["moreblocks:copperpatina"] = true,
 	-- ["technic:blast_resistant_concrete"] = true,
 	["technic:granite"] = {color = color_white},

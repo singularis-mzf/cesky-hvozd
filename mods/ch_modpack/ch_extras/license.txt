@@ -198,3 +198,16 @@ ch_extras_otisky.png
 	License: CC BY-SA 3.0
 	Used sources:
 		- https://commons.wikimedia.org/wiki/File:Fingerprint_picture.svg (author: User:The Photographersehh/info ; license: CC BY-SA 3.0)
+
+ch_extras_shaft.png
+ch_extras_shaft_top.png
+	Author: Singularis
+	License: CC BY 4.0
+	Used sources:
+		- https://commons.wikimedia.org/wiki/File:Light_brown_stone_texture.jpg (author unknown, released to public domain by Public Domain Images)
+
+ch_extras_marble.png
+	Author: Singularis
+	License: CC BY-SA 4.0
+	Used sources:
+		- https://commons.wikimedia.org/wiki/File:Neho.jpg (author: Lysippos; license: CC BY-SA 2.0 Germany)
