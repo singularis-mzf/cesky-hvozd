@@ -198,7 +198,17 @@ local update_xp_hud
 
 if minetest.get_modpath("hudbars") then
 	update_xp_hud = function(player, player_name, offline_charinfo)
-		local player_role = ch_core.get_player_role(player_name)
+		local pinfo = ch_core.normalize_player(player)
+		local player_role = pinfo.role
+		local has_creative_priv = false
+		if pinfo.privs.creative then
+			local online_charinfo = ch_core.online_charinfo[pinfo.player_name]
+			if online_charinfo ~= nil then
+				-- a creative priv icon can only appear after a second after login
+				has_creative_priv = minetest.get_us_time() - online_charinfo.join_timestamp > 1000000
+			end
+		end
+		local role_icon = ch_core.player_role_to_image(player_role, has_creative_priv, 16)
 		local skryt_body = player_role == "new" or offline_charinfo.skryt_body == 1
 
 		if skryt_body then
@@ -211,7 +221,7 @@ if minetest.get_modpath("hudbars") then
 				level, xp, max_xp = 1, 0, ch_core.ap_get_level(1).count
 			end
 			hb.unhide_hudbar(player, "ch_xp")
-			hb.change_hudbar(player, "ch_xp", math.min(xp, max_xp), max_xp, nil, nil, nil, level, nil)
+			hb.change_hudbar(player, "ch_xp", math.min(xp, max_xp), max_xp, role_icon, nil, nil, level, nil)
 		end
 	end
 else
@@ -274,9 +284,15 @@ function ch_core.ap_init(player, online_charinfo, offline_charinfo)
 end
 
 function ch_core.ap_add(player_name, offline_charinfo, points_to_add, debug_coef_changes)
-	if points_to_add == 0 then
+	local player = minetest.get_player_by_name(player_name)
+
+	if points_to_add == nil or points_to_add == 0 then
+		if player ~= nil then
+			update_xp_hud(player, player_name, offline_charinfo)
+		end
 		return 0
 	end
+
 	local player_role = ch_core.get_player_role(player_name)
 	local old_level, old_xp = offline_charinfo.ap_level, offline_charinfo.ap_xp
 	local new_level = old_level
@@ -314,8 +330,7 @@ function ch_core.ap_add(player_name, offline_charinfo, points_to_add, debug_coef
 	ch_core.save_offline_charinfo(player_name, keys_to_update)
 
 	-- je-li postava online, aktualizovat HUD
-	local player = minetest.get_player_by_name(player_name)
-	if player and player_role ~= "new" then
+	if player ~= nil then
 		update_xp_hud(player, player_name, offline_charinfo)
 	end
 
@@ -510,11 +525,7 @@ function ch_core.showhide_ap_hud(player_name, show)
 	ch_core.save_offline_charinfo(player_name, "skryt_body")
 	local player = minetest.get_player_by_name(player_name)
 	if player ~= nil then
-		if show then
-			update_xp_hud(player, player_name, offline_charinfo)
-		else
-			hb.hide_hudbar(player, "ch_xp")
-		end
+		update_xp_hud(player, player_name, offline_charinfo)
 	end
 	return true
 end
@@ -531,18 +542,17 @@ if minetest.get_modpath("hudbars") then
 	}
 	hb.register_hudbar("ch_xp", 0xFFFFFF, "*", hudbar_defaults, 0, 100, true, hudbar_formatstring, hudbar_formatstring_config)
 	minetest.register_on_joinplayer(function(player, last_login)
-		local offline_charinfo = ch_core.get_offline_charinfo(player:get_player_name())
+		local pinfo = ch_core.normalize_player(player)
+		local offline_charinfo = ch_core.get_offline_charinfo(pinfo.player_name)
 		local level, xp, max_xp = offline_charinfo.ap_level, offline_charinfo.ap_xp
 		if level and xp then
 			max_xp = ch_core.ap_get_level(level).count
 		else
 			level, xp, max_xp = 1, 0, ch_core.ap_get_level(1).count
 		end
-		local skryt_body = offline_charinfo.skryt_body == 1
+		local skryt_body = pinfo.role == "new" or offline_charinfo.skryt_body == 1
 		hb.init_hudbar(player, "ch_xp", 0, 10, skryt_body)
-		if not skryt_body then
-			hb.change_hudbar(player, "ch_xp", math.min(xp, max_xp), max_xp, nil, nil, nil, level, nil)
-		end
+		update_xp_hud(player, pinfo.player_name, offline_charinfo)
 	end)
 
 	def = {

@@ -258,6 +258,13 @@ local cccccc = minetest.get_color_escape_sequence("#cccccc")
 function ch_bank.get_zustatek_formspec(player_name, x_base, y_base, width, id_penize, id_hcs, id_kcs, id_zcs)
 	local zustatek, color = ch_bank.zustatek(player_name, true)
 	if zustatek == nil then
+		if ch_core.get_player_role(player_name) == "new" then
+			return "image["..(x_base + 3.4)..","..(y_base + 0.7-1)..";0.7,0.7;"..minetest.formspec_escape(ch_core.player_role_to_image("new", false, 16)).."]"..
+				"label["..(x_base + 4.25)..","..(y_base + 1.05-1)..";turistická postava]"..
+				"tooltip["..(x_base + 0.2)..","..(y_base + 0.5-1)..";10,1;Turistické postavy mohou cestovat a prohlížet si svět a komunikovat"..
+				" s ostatními hráči/kami\\,\nne však stavět\\, těžit\\, obchodovat či bydlet.\n"..
+				"Chcete-li se v Českém hvozdu „usadit“ a hrát plnohodnotně\\, navštivte\nhttps://ceskyhvozd.svita.cz/jaksepripojit.html pro další instrukce.]"
+		end
 		return ""
 	end
 	return "label["..(x_base + 0.05)..","..(y_base + 0.25)..";"..cccccc.."zůstatek na bankovním účtu:  "..minetest.get_color_escape_sequence(color)..minetest.formspec_escape(zustatek)..cccccc.." Kčs]"..

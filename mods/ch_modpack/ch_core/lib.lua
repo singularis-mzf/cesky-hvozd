@@ -352,6 +352,15 @@ local entity_properties_list = {
 	"show_on_minimap",
 }
 
+local player_role_to_image = {
+	admin = "ch_core_koruna.png",
+	creative = "ch_core_kouzhul.png",
+	new = "ch_core_slunce.png",
+	none = "ch_core_empty.png",
+	survival = "ch_core_kladivo.png",
+}
+
+
 -- KEŠ
 -- ===========================================================================
 local utf8_sort_cache = {
@@ -1011,6 +1020,25 @@ function ch_core.odstranit_diakritiku(s)
 		end
 	end
 	return res
+end
+
+--[[
+K zadané roli postavy vrátí odpovídající ikonu.
+]]
+function ch_core.player_role_to_image(player_role, has_creative_priv, image_height)
+	if image_height ~= nil and image_height ~= 32 and image_height ~= 16 then
+		error("ch_core.player_role_to_image(): image height "..image_height.." is unsupported!")
+	end
+	local result = assert(player_role_to_image[player_role] or player_role_to_image["none"])
+	if player_role ~= "new" and has_creative_priv then
+		result = "[combine:48x32:0,0="..result..":16,0="..player_role_to_image.creative
+		if image_height == 16 then
+			result = result.."^[resize:24x16"
+		end
+	elseif image_height == 16 then
+		result = result.."^[resize:16x16"
+	end
+	return result
 end
 
 --[[

@@ -517,6 +517,10 @@ local function magic_wand_on_use(itemstack, user, pointed_thing)
 		minetest.set_player_privs(player_info.player_name, player_info.privs)
 		ch_core.systemovy_kanal(player_info.player_name, "Režim usnadnění zapnut")
 	end
+	local offline_charinfo = ch_core.offline_charinfo[player_info.player_name]
+	if offline_charinfo ~= nil then
+		ch_core.ap_add(player_info.player_name, offline_charinfo) -- update AP HUD
+	end
 	if not was_creative then
 		itemstack:add_wear_by_uses(64)
 		return itemstack
