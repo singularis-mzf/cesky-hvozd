@@ -98,6 +98,33 @@ local function get_date_after_n_days(n)
 	return dfmt:format(t.year, t.month, t.day)
 end
 
+local function can_add_bulletin(player, board)
+	-- returns:
+	-- a) ItemStack(item) -- the player can add a bulletin; returns a stack that should be removed from the player's inventory after the bulletin is added
+	-- b) ItemStack() -- the player can add a bulleting without paying
+	-- c) nil -- the player can not add a bulletin, because they don't have a required item
+	-- d) false -- the player is not allowed to add a bulletin
+	local player_name = player:get_player_name()
+	local player_role = ch_core.get_player_role(player_name)
+	local board_def = assert(bulletin_boards.board_def[board])
+	if player_role == "new" then
+		return false -- not allowed
+	end
+	if player_role == "admin" then
+		return ItemStack() -- no payment required from an admin
+	end
+	if minetest.is_creative_enabled(player_name) then
+		return ItemStack() -- no payment required because of a creative priv
+	end
+	local inv = player:get_inventory()
+	local cost = ItemStack(board_def.cost)
+	if inv:contains_item("main", cost) then
+		return cost -- the player has an item
+	else
+		return nil -- the player doesn't have an item
+	end
+end
+
 local function save_boards()
 	local file, e = io.open(path, "w");
 	if not file then
@@ -293,7 +320,7 @@ local function show_board(player_name, board_name)
 		"item_image[0.2,0.2;1,1;"..F(board_name).."]"..
 		"label[1.4,0.75;"..F(desc).."]",
 	}
-	if player_role ~= nil and player_role ~= "new" then
+	if can_add_bulletin(minetest.get_player_by_name(player_name), board_name) then
 		table.insert(formspec, "button[10,0.25;5.75,1;pridat;přidat příspěvek]")
 	end
 	table.insert(formspec, "tablecolumns[image,0=ch_core_empty.png")
@@ -500,18 +527,13 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		return
 	end
 
-	local player_inventory = minetest.get_inventory({type="player", name=player_name})
-	local has_cost = true
-	local is_creative = minetest.is_creative_enabled(player_name)
-	if def.cost and not is_creative then
-		has_cost = player_inventory:contains_item("main", def.cost)
-	end
+	local cost_to_take = can_add_bulletin(player, state.board)
 	for icon_index = 1, #def.icons do
 		if fields.text ~= "" and fields["save_"..icon_index] then
 			if player_role == "new" then
 				ch_core.systemovy_kanal(player_name, "Nově založené postavy nemohou psát na nástěnky!")
 				break
-			elseif not (has_cost or is_creative) then
+			elseif cost_to_take == nil then
 				ch_core.systemovy_kanal(player_name, "K vyvěšení příspěvku vám chybí nástěnkou požadovaná platba!")
 				break
 			else
@@ -539,8 +561,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 					valid_until = validity,
 				}
 				board[state.index] = bulletin
-				if def.cost and not is_creative then
-					player_inventory:remove_item("main", def.cost)
+				if not cost_to_take:is_empty() then
+					player:get_inventory():remove_item("main", cost_to_take)
 				end
 				metadata.color_index = metadata.color_index + 1
 				metadata.update_timestamp = minetest.get_gametime()
