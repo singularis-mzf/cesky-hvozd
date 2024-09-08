@@ -677,6 +677,121 @@ function ch_core.get_player_role(player_or_player_name)
 end
 
 --[[
+Vygeneruje šablonu pro stránku formspecu pro unified_inventory.
+id -- string, required -- rozlišující textové ID pro připojení za prvky ch_scrollbar[12]_
+player_viewname -- string, optional -- jméno postavy pro zobrazení v záhlaví (může být barevné)
+title -- string, optional -- nadpis pro zobrazení v záhlaví
+scrollbars -- table, required -- definuje maxima pro posuvníky oblastí a současně také rozložení oblastí;
+	tato verze podporuje jen rozložení {left = ..., right = ...} a {top = ..., bottom = ...}
+perplayer_formspec -- odpovídající parametr z rozhraní unified_inventory; definuje rozložení formuláře
+
+Výstup má formát:
+	{
+		fs_begin, fs_middle, fs_end -- string; řetězce pro použití jako formspec; vlastní obsah vložte kolem fs_middle
+		form1, form2 = {x, y, w, h, key, scrollbar_max} -- udává pozice a velikost podformulářů v okně unified_inventory;
+			v praxi jsou podstatné především 'w' a 'h' (šířka a výška podoblasti)
+	}
+]]
+function ch_core.get_ui_form_template(id, player_viewname, title, scrollbars, perplayer_formspec)
+    local fs = assert(perplayer_formspec)
+    local fs_begin, fs_middle, fs_end = {fs.standard_inv_bg}, {}, {}
+    local form1, form2 = {}, {}
+    local sbar_width = 0.5
+
+    local style
+    if scrollbars.left ~= nil and scrollbars.right ~= nil then
+        style = "left_right"
+    elseif scrollbars.top ~= nil and scrollbars.bottom ~= nil then
+        style = "top_bottom"
+    else
+        error("Unsupported UI formspec style!")
+    end
+
+    if scrollbars.left ~= nil then
+        form1.x = fs.std_inv_x
+        form1.y = fs.form_header_y + 0.5
+        form1.w = 10.0
+        form1.h = fs.std_inv_y - fs.form_header_y - 1.25
+        form1.key = "left"
+        form1.scrollbar_max = scrollbars.left
+    elseif scrollbars.top ~= nil then
+        form1.x = fs.std_inv_x
+        form1.y = fs.form_header_y + 0.5
+        form1.w = 17.25
+        form1.h = fs.std_inv_y - fs.form_header_y - 1.25
+        form1.key = "top"
+        form1.scrollbar_max = scrollbars.top
+    else
+        error("not implemented yet")
+    end
+    if scrollbars.right ~= nil then
+        form2.x = fs.page_x - 0.25
+        form2.y = 0.5
+        form2.w = fs.pagecols - 1
+        form2.h = fs.pagerows - 1 + fs.page_y
+        form2.key = "right"
+        form2.scrollbar_max = scrollbars.right
+    elseif scrollbars.bottom ~= nil then
+        form2.x = fs.page_x - 0.25
+        form2.y = fs.std_inv_y - 0.5
+        form2.w = fs.pagecols - 1
+        form2.h = 5.5 + 0.5
+        form2.scrollbar_max = scrollbars.bottom
+    else
+        error("not implemented yet")
+    end
+
+    if title ~= nil then
+        table.insert(fs_begin, "label["..(form1.x + 0.05)..","..(form1.y - 0.3)..";")
+        if player_viewname ~= nil then
+            table.insert(fs_begin, minetest.formspec_escape(ch_core.colors.light_green..player_viewname..ch_core.colors.white.." — "))
+        end
+        table.insert(fs_begin, minetest.formspec_escape(title))
+        table.insert(fs_begin, "]")
+    end
+
+    if (form1.scrollbar_max or 0) > 0 then
+        table.insert(fs_begin, "scroll_container["..form1.x..","..form1.y..";"..form1.w..","..form1.h..";ch_scrollbar1_"..id..";vertical]")
+        -- CONTENT will be inserted here
+        table.insert(fs_middle, "scroll_container_end[]")
+        -- insert a scrollbar
+        if (form1.scrollbar_max or 0) > 0 then
+            table.insert(fs_middle,
+                "scrollbaroptions[max="..form1.scrollbar_max..";arrows=show]"..
+                "scrollbar["..(form1.x + form1.w - sbar_width)..","..form1.y..";"..sbar_width..","..form1.h..";vertical;ch_scrollbar1_"..id..";]")
+        end
+    else
+        table.insert(fs_begin, "container["..form1.x..","..form1.y.."]")
+        -- CONTENT will be inserted here
+        table.insert(fs_middle, "container_end[]")
+    end
+
+    if (form2.scrollbar_max or 0) > 0 then
+        table.insert(fs_middle, "scroll_container["..form2.x..","..form2.y..";"..form2.w..","..form2.h..";ch_scrollbar1_"..id..";vertical]")
+        -- CONTENT will be inserted here
+        table.insert(fs_end, "scroll_container_end[]")
+        -- insert a scrollbar
+        if (form2.scrollbar_max or 0) > 0 then
+            table.insert(fs_end,
+                "scrollbaroptions[max="..form2.scrollbar_max..";arrows=show]"..
+                "scrollbar["..(form2.x + form2.w - sbar_width)..","..form2.y..";"..sbar_width..","..form2.h..";vertical;ch_scrollbar1_"..id..";]")
+        end
+    else
+        table.insert(fs_middle, "container["..form2.x..","..form2.y.."]")
+        -- CONTENT will be inserted here
+        table.insert(fs_end, "container_end[]")
+    end
+
+    return {
+        fs_begin = table.concat(fs_begin),
+        fs_middle = table.concat(fs_middle),
+        fs_end = table.concat(fs_end),
+        form1 = form1,
+        form2 = form2,
+    }
+end
+
+--[[
 	Vrátí herní čas ve struktuře:
 	{timeofday, hodina, minuta, sekunda, daynight_ratio, natural_light}
 	Pokud hra neběží, vrátí nil.

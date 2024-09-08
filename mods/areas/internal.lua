@@ -283,11 +283,11 @@ function areas:canPlayerAddArea(pos1, pos2, name)
 end
 
 -- Given a id returns a string in the format:
--- "name [id]: owner (x1, y1, z1) (x2, y2, z2) -> children"
+-- "name [id]<type>: owner (x1, y1, z1) (x2, y2, z2) -> children"
 function areas:toString(id)
 	local area = self.areas[id]
-	local message = ("%s [%d]: %s %s %s"):format(
-		area.name, id, area.owner,
+	local message = ("%s [%d]<%s>: %s %s %s"):format(
+		area.name, id, area.type or "nil", area.owner,
 		minetest.pos_to_string(area.pos1),
 		minetest.pos_to_string(area.pos2))
 

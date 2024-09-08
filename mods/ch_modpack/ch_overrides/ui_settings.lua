@@ -324,25 +324,16 @@ local function get_formspec(player, perplayer_formspec)
 	}
 	local right_form = {
 		x = fs.page_x - 0.25,
-		y = fs.page_y + 0.5,
+		y = 0.5,
 		w = fs.pagecols - 1,
-		h = fs.pagerows - 1,
+		h = fs.pagerows - 1 + fs.page_y,
 	}
 	local sbar_width = 0.5
 	local tooltip
 
-	local formspec = {
-		fs.standard_inv_bg,
-		"label["..(left_form.x + 0.05)..","..(left_form.y - 0.3)..";"..light_green..ch_core.prihlasovaci_na_zobrazovaci(player_name, true)..white.." — nastavení]",
-		--[[
-		"tableoptions[background=#00000000;highlight=#00000000;border=false]",
-		"tablecolumns[color;text;color;text]",
-		"table["..(left_form.x - 0.1)..","..(left_form.y - 0.5)..";"..left_form.w..",0.5;;#00ff00,"..F(player_viewname)..",#ffffff,— nastavení]", ]]
-	}
+	local formspec1, formspec2
 
-	-- LEFT FORM:
-	table.insert(formspec, "scroll_container["..left_form.x..","..left_form.y..";"..left_form.w..","..left_form.h..";chs_left;vertical]")
-	--
+	-- LEFT FORM (formspec1):
 	tooltip = "V pravém panelu jsou nastavení Vaší postavy. Kde je tlačítko, "..
 		"nastavení se uplatní po kliknutí na něj. Ostatní typy nastavení "..
 		"(rozbalovací seznamy, zaškrtávací podle apod.) se uplatní okamžitě "..
@@ -350,24 +341,11 @@ local function get_formspec(player, perplayer_formspec)
 		"a přetrvá i po Vašem příštím připojení do hry. Nastavení se značkou (*) "..
 		"budou platit, jen dokud se neodpojíte. Podrobnější vysvětlení "..
 		"k jednotlivým volbám se zobrazí po najetí kurzoru myši nad ovládací prvek."
-	table.insert(formspec,
-		"textarea[0,0;"..left_form.w..","..left_form.h..";;;"..F(tooltip).."]")
-	--
-	table.insert(formspec, "scroll_container_end[]")
+	formspec1 = "textarea[0,0;"..left_form.w..","..left_form.h..";;;"..F(tooltip).."]"
 	local sbar_left_max = 0 -- math.max(0, math.ceil(10 * (fsgen.y - left_form.h + 0.5)))
 
-	if sbar_left_max > 0 then
-		table.insert(formspec,
-			"scrollbaroptions[max="..sbar_left_max..";arrows=show]"..
-			"scrollbar["..(left_form.x + left_form.w - sbar_width)..","..left_form.y..";"..sbar_width..","..left_form.h..";vertical;chs_left;]")
-	else
-		table.insert(formspec,
-			"scrollbar[1000,0;0,0;vertical;chs_left;0]")
-	end
-
-	-- RIGHT FORM:
-	table.insert(formspec, "scroll_container["..right_form.x..","..right_form.y..";"..right_form.w..","..right_form.h..";chs_right;vertical]")
-	--
+	-- RIGHT FORM (formspec => formspec2):
+	local formspec = {}
 	local fsgen = fsgen_class:new()
 
 	-- Target player selection [admin only]
@@ -619,22 +597,17 @@ local function get_formspec(player, perplayer_formspec)
 			fsgen:button("domu", "pozice pro /domů: "..domov, "nastavit sem "..minetest.pos_to_string(player_pos), tooltip))
 ]]
 	--
-	table.insert(formspec, "scroll_container_end[]")
+	formspec2 = table.concat(formspec)
 	local sbar_right_max = math.max(0, math.ceil(10 * (fsgen.y - right_form.h + 0.5)))
 
-	if sbar_right_max > 0 then
-		table.insert(formspec,
-			"scrollbaroptions[max="..sbar_right_max..";arrows=show]"..
-			"scrollbar["..(right_form.x + right_form.w - sbar_width)..","..right_form.y..";"..sbar_width..","..right_form.h..";vertical;chs_right;"..math.min(online_charinfo.ui_settings_rscroll or 0, sbar_right_max).."]")
-	else
-		table.insert(formspec,
-			"scrollbaroptions[max=1]"..
-			"scrollbar[1000,0;0,0;vertical;chs_right;0]")
-	end
+	-- function ch_core.get_ui_form_template(id, player_viewname, title, scrollbars, perplayer_formspec)
+	local template = ch_core.get_ui_form_template("settings", player_viewname, "nastavení", {left = 0, right = sbar_right_max}, perplayer_formspec)
+
+	formspec = template.fs_begin..formspec1..template.fs_middle..formspec2..template.fs_end
 
 	return {
 		draw_item_list = false,
-		formspec = table.concat(formspec),
+		formspec = formspec,
 	}
 end
 
@@ -665,8 +638,8 @@ local function on_player_receive_fields(player, formname, fields)
 	local tplayer_index, tplayer_name = get_tplayer_index_and_name(player_name, player_role)
 	local tplayer_info
 
-	if fields.chs_right then
-		local event = minetest.explode_scrollbar_event(fields.chs_right)
+	if fields.ch_scrollbar2_settings then
+		local event = minetest.explode_scrollbar_event(fields.ch_scrollbar2_settings)
 		if event.type == "CHG" then
 			online_charinfo.ui_settings_rscroll = tonumber(event.value) or 0
 			return

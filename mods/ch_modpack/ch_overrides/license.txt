@@ -636,6 +636,20 @@ ch_overrides_ui_settings.png
 	License: CC BY-SA 3.0
 	Adapted and modified by Singularis (modifications under CC BY-SA 3.0)
 
+ch_overrides_ui_stavby.png
+	Authors: flamurai, Dsmurat, User:Srhat
+	Source: https://commons.wikimedia.org/wiki/File:Under_construction_icon-green.svg
+	Used works:
+		- https://commons.wikimedia.org/wiki/File:Nuvola_apps_important_yellow.svg
+			Author: flamurai
+			License: LGPLv2.1+
+		- https://commons.wikimedia.org/wiki/File:Under_construction_icon-blue.svg
+			Author: Dsmurat
+			License: LGPLv2.1+
+		- derivative work (https://commons.wikimedia.org/wiki/File:Under_construction_icon-green.svg)
+			Author: User:Srhat
+			License: LGPLv2.1+
+
 wine_rum_bottle.png
 	Author: Singularis
 	License: CC BY-SA 3.0

@@ -28,6 +28,7 @@ The area list item is a table containing a list of tables with the following fie
  * `id` - An identifier for the area. This should be a unique string in the format `mod:id`.
  * `name` - The name of the area.
  * `owner` - The player name of the region owner, if any.
+ * `type` - Numeric type of the area.
 
 All of the fields are optional but at least one of them must be set.
 
