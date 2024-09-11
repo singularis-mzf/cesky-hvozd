@@ -36,13 +36,12 @@ ch_core = {
 	},
 	overridable = {
 		-- funkce a proměnné, které mohou být přepsány z ostatních módů
+		time_speed_day = 26, -- 24,
+		time_speed_night = 132, -- 48,
 		trash_all_sound = "", -- zvuk k přehrání při mazání více předmětů
 		trash_one_sound = "", -- zvuk k přehrání při mazání jednoho předmětu
 	},
 }
-
-local time_speed_day = 24
-local time_speed_night = 48
 
 function ch_core.open_submod(submod, required_submods)
 	for s, c in pairs(required_submods or {}) do
@@ -151,11 +150,11 @@ local function globalstep(dtime)
 	if byla_noc and not je_noc then
 		-- Ráno
 		minetest.sound_play("birds", gain_1)
-		minetest.settings:set("time_speed", tostring(time_speed_day))
+		minetest.settings:set("time_speed", tostring(ch_core.overridable.time_speed_day))
 	elseif not byla_noc and je_noc then
 		-- Noc
 		minetest.sound_play("owl", gain_1)
-		minetest.settings:set("time_speed", tostring(time_speed_night))
+		minetest.settings:set("time_speed", tostring(ch_core.overridable.time_speed_night))
 	end
 	last_timeofday = tod
 

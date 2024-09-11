@@ -792,9 +792,17 @@ function ch_core.get_ui_form_template(id, player_viewname, title, scrollbars, pe
 end
 
 --[[
-	Vrátí herní čas ve struktuře:
-	{timeofday, hodina, minuta, sekunda, daynight_ratio, natural_light}
-	Pokud hra neběží, vrátí nil.
+Vrátí herní čas ve struktuře:
+{
+	day_count = int -- návratová hodnota funkce minetest.get_day_count()
+	timeofday = float -- hodnota podle funkce minetest.get_timeofday()
+	hodina = int (0..23) -- hodina ve hře (celá)
+	minuta = int (0..59) -- minuta ve hře (celá)
+	sekunda = int (0..59) -- sekunda ve hře (celá)
+	daynight_ratio = float
+	natural_light = int (0..15)
+	time_speed = float -- návratová hodnota minetest.settings:get("time_speed")
+}
 ]]
 function ch_core.herni_cas()
 	local timeofday = minetest.get_timeofday()
@@ -803,11 +811,16 @@ function ch_core.herni_cas()
 	local minuty_celkem = math.floor(sekundy_celkem / 60)
 	local hodiny_celkem = math.floor(minuty_celkem / 60)
 	local result = {
+		day_count = minetest.get_day_count(),
 		timeofday = timeofday,
 		hodina = hodiny_celkem,
 		minuta = minuty_celkem % 60,
 		sekunda = sekundy_celkem % 60,
+		time_speed = tonumber(minetest.settings:get("time_speed")),
 	}
+	if type(result.time_speed) ~= "number" then
+		minetest.log("warning", "ch_core.herni_cas(): invalid type of time_speed!")
+	end
 
 	if 367 < minuty_celkem and minuty_celkem < 1072 then
 		-- den
@@ -877,6 +890,38 @@ function ch_core.herni_cas()
 		end
 	end
 	return result
+end
+
+--[[
+Nastaví herní čas na hodnotu uvedenou ve formátu hodin, minut a sekund.
+]]
+function ch_core.herni_cas_nastavit(h, m, s)
+	assert(h)
+	assert(m)
+	assert(s)
+	local novy_timeofday = (3600 * h + 60 * m + s) / 86400.0
+	if novy_timeofday < 0 then
+		novy_timeofday = 0.0
+	elseif novy_timeofday > 1 then
+		novy_timeofday = 1.0
+	end
+	local puvodni = ch_core.herni_cas()
+	local puvodni_timeofday = puvodni.timeofday
+	minetest.set_timeofday(novy_timeofday)
+	local byla_noc = puvodni_timeofday < 0.2292 or puvodni_timeofday > 0.791666
+	local je_noc = novy_timeofday < 0.2292 or novy_timeofday > 0.791666
+	if byla_noc and not je_noc then
+		-- Ráno
+		minetest.settings:set("time_speed", tostring(ch_core.overridable.time_speed_day))
+	elseif not byla_noc and je_noc then
+		-- Noc
+		minetest.settings:set("time_speed", tostring(ch_core.overridable.time_speed_night))
+	end
+	local novy = ch_core.herni_cas()
+	minetest.log("action", string.format("Time of day set from ((%d):%d:%d:%d => (%d):%d:%d:%d); speed: %f => %f\n",
+		puvodni.day_count, puvodni.hodina, puvodni.minuta, puvodni.sekunda, novy.day_count, novy.hodina, novy.minuta, novy.sekunda,
+		puvodni.time_speed or 0.0, novy.time_speed or 0.0))
+	return novy
 end
 
 --[[

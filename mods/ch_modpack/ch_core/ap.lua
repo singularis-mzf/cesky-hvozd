@@ -279,6 +279,7 @@ function ch_core.ap_init(player, online_charinfo, offline_charinfo)
 	online_charinfo.ap = table.copy(ap)
 	online_charinfo.ap1 = ap
 	online_charinfo.ap2 = ap
+	online_charinfo.ap_modify_timestamp = minetest.get_us_time()
 
 	return true
 end
@@ -346,6 +347,12 @@ function ch_core.ap_add(player_name, offline_charinfo, points_to_add, debug_coef
 		elseif new_level < old_level then
 			ch_core.systemovy_kanal("", "Postava "..ch_core.prihlasovaci_na_zobrazovaci(player_name).." klesla na úroveň "..new_level)
 		end
+	end
+
+	-- je-li postava online, aktualizovat online_charinfo.ap_modify_timestamp
+	local online_charinfo = ch_core.online_charinfo[player_name]
+	if online_charinfo ~= nil then
+		online_charinfo.ap_modify_timestamp = minetest.get_us_time()
 	end
 
 	return new_xp, new_level

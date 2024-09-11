@@ -211,7 +211,13 @@ function ch_core.get_joining_online_charinfo(player_name)
 			player_name = player_name,
 		}
 		ch_core.online_charinfo[player_name] = result
-		old_online_charinfo[player_name] = nil
+		local prev_online_charinfo = old_online_charinfo[player_name]
+		if prev_online_charinfo ~= nil then
+			old_online_charinfo[player_name] = nil
+			if prev_online_charinfo.leave_timestamp ~= nil then
+				result.prev_leave_timestamp = prev_online_charinfo.leave_timestamp
+			end
+		end
 		minetest.log("action", "JOIN PLAYER(" .. player_name ..") at "..now.." with lang_code \""..result.lang_code.."\", formspec_version = "..result.formspec_version.." and protocol_version = "..result.protocol_version)
 
 		-- local player = minetest.get_player_by_name(player_name)
@@ -241,9 +247,9 @@ end
 function ch_core.get_leaving_online_charinfo(player_name)
 	local result = ch_core.online_charinfo[player_name]
 	if result then
+		result.leave_timestamp = minetest.get_us_time()
 		old_online_charinfo[player_name] = result
 		ch_core.online_charinfo[player_name] = nil
-		print("LEAVE PLAYER(" .. player_name ..") at "..ch_core.cas)
 		return result
 	else
 		return old_online_charinfo[player_name] or {}

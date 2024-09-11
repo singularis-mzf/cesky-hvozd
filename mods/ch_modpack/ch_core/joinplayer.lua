@@ -108,6 +108,34 @@ local function after_joinplayer(player_name)
 	end
 end
 
+local function on_joinplayer_pomodoro(player, player_name, online_charinfo)
+	local oc = ch_core.online_charinfo
+	local now = minetest.get_us_time()
+	local priv = {ch_registered_player = true}
+	local prev_leave_timestamp = online_charinfo.prev_leave_timestamp
+	if prev_leave_timestamp ~= nil and now - prev_leave_timestamp < 3600000000 then
+		minetest.log("warning", "on_joinplayer_pomodoro() not activated, because the player "..player_name.." has returned after "..math.floor((now - prev_leave_timestamp) / 1000000).." seconds")
+		return false -- relogin too early
+	end
+	if not minetest.check_player_privs(player_name, priv) then
+		minetest.log("warning", "on_joinplayer_pomodoro() not activated, because the player "..player_name.." is not registered")
+		return false -- the new player is not registered
+	end
+	for k, other_online_charinfo in pairs(oc) do
+		if k ~= player_name and minetest.check_player_privs(player_name, priv) then
+			local ap_modify_timestamp = other_online_charinfo.ap_modify_timestamp
+			if ap_modify_timestamp == nil or now - ap_modify_timestamp < 600000000 then
+				minetest.log("warning", "on_joinplayer_pomodoro() not activated, because of already online player "..k)
+				return false -- the new player is not alone
+			else
+				minetest.log("warning", "on_joinplayer_pomodoro() not broken, because the online player "..k.." has been inactive for "..math.floor((now - ap_modify_timestamp) / 1000000).."seconds.")
+			end
+		end
+	end
+	ch_core.herni_cas_nastavit(6, 0, 0)
+	return true
+end
+
 local function on_joinplayer(player, last_login)
 	local player_name = player:get_player_name()
 	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
@@ -146,6 +174,10 @@ local function on_joinplayer(player, last_login)
 		privs.creative = true
 		minetest.set_player_privs(player_name, privs)
 	end
+
+	-- Pomodoro functionality for single-players:
+	on_joinplayer_pomodoro(player, player_name, online_charinfo)
+	--
 
 	minetest.after(0.5, function() ch_core.set_pryc(player_name, {no_hud = true, silently = true}) end)
 	minetest.after(2, after_joinplayer, player_name)

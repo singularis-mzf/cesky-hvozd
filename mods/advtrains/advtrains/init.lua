@@ -147,7 +147,7 @@ end
 atwarn=function(t, ...)
 	local text=advtrains.print_concat_table({t, ...})
 	minetest.log("warning", "[advtrains]"..text)
-	minetest.chat_send_all("[advtrains] -!- "..text)
+	ch_core.systemovy_kanal("Administrace", "[advtrains] -!- "..text)
 end
 sid=function(id) if id then return string.sub(id, -6) end end
 
@@ -156,7 +156,7 @@ sid=function(id) if id then return string.sub(id, -6) end end
 atdebug=function(t, ...)
 	local text=advtrains.print_concat_table({t, ...})
 	minetest.log("action", "[advtrains]"..text)
-	minetest.chat_send_all("[advtrains]"..text)
+	ch_core.systemovy_kanal("Administrace", "[advtrains] "..text)
 end
 
 if minetest.settings:get_bool("advtrains_enable_debugging") then

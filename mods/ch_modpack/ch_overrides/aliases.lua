@@ -67,6 +67,8 @@ if minetest.get_modpath("moretrees") and not minetest.get_modpath("chestnuttree"
 		["doors:door_chestnut_wood_cd_c"] = "doors:door_luxury_wood_cd_c",
 		["doors:door_chestnut_wood_cd_d"] = "doors:door_luxury_wood_cd_d",
 		["doors:door_chestnut_wood_d"] = "doors:door_luxury_wood_d",
+		["advtrains:platform_high_chestnuttree_wood"] = "advtrains:platform_high_chestnut_tree_planks",
+		["advtrains:platform_low_chestnuttree_wood"] = "advtrains:platform_low_chestnut_tree_planks",
 	}
 	for alias, name in pairs(list) do
 		if minetest.registered_items[name] ~= nil then
@@ -204,6 +206,11 @@ if not minetest.get_modpath("jonez") and minetest.get_modpath("darkage") then
 		["jonez:versailles_capital"] = {name = "ch_extras:shaft"},
 		["jonez:versailles_shaft"] = {name = "ch_extras:shaft"},
 	}
+	for i = 1, 14 do
+		for j = 0, 1 do
+			lbm_replacements["tombs:jonez_marble_"..i.."_"..j] = {name = "tombs:ch_extras_marble_"..i.."_"..j}
+		end
+	end
 	local nodenames = {}
 	for k, _ in pairs(lbm_replacements) do
 		table.insert(nodenames, k)
