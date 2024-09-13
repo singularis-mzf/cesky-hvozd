@@ -1299,6 +1299,12 @@ Prohlášení autora/ky na [fóru](https://forum.minetest.net/viewtopic.php?f=4&
 * Původní licence: kód MIT, textury postav všechny CC-BY-SA-3.0
 * [ContentDB](https://content.minetest.net/packages/AntumDeluge/wardrobe\_outfits/)
 
+## Wilhelmines Texture Pack (Wilhelmines-Texture-Pack)
+
+* Zdroj: [https://github.com/Skandarella/Wilhelmines-Texture-Pack](https://github.com/Skandarella/Wilhelmines-Texture-Pack), revize dd89baf4bfb66a4c249cc18f5f75df0065a6130a
+* Původní licence: GPL-3
+* [ContentDB](https://content.minetest.net/packages/Liil/12345/)
+
 ## X-Decor Libre (xdecor-libre)
 
 * Zdroj: [https://codeberg.org/Wuzzy/xdecor-libre](https://codeberg.org/Wuzzy/xdecor-libre), revize 902674e8db4f324e14e68cb9d9a1eba954220d78
