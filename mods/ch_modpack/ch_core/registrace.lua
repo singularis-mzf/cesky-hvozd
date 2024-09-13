@@ -16,7 +16,7 @@ local default_privs_to_reg_type = {
 	train_operator = survival_creative,
 }
 local reg_types = {
-	new = "nová postava",
+	new = "turistická postava",
 	survival = "dělnický styl hry",
 	creative = "kouzelnický styl hry",
 }
@@ -106,6 +106,11 @@ function ch_core.registrovat(player_name, reg_type, extra_privs)
 		if priv_setting == true or (type(priv_setting) == "table" and priv_setting[reg_type]) then
 			extra_privs[priv] = true
 		end
+	end
+
+	-- reset the bank account
+	if reg_type == "new" and ch_core.get_player_role(player_name) ~= "new" then
+		ch_core.overridable.reset_bank_account(player_name)
 	end
 
 	print("Will compute initial inventory for reg_type \""..(reg_type or "nil").."\"")

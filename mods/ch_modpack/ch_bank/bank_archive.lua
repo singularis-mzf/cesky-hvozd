@@ -458,6 +458,20 @@ function utils.get_bank_history_strlist(player_name)
 	return table.concat(result, ",")
 end
 
+function utils.reset_bank_history(player_name)
+	for _, month_records in pairs(bank_history) do
+		month_records[player_name] = nil
+	end
+	local month = get_current_bank_day():sub(1,7)
+	for i = 1, 3 do
+		os.remove(worldpath.."/bank/"..month.."/"..player_name)
+		month = prev_bank_month(month)
+	end
+	local player_key = player_name..#player_name
+	storage:set_string(player_key.."/transactions", "")
+	today_transactions[player_name] = nil
+end
+
 local function get_formspec(player, perplayer_formspec)
 	local fs = perplayer_formspec
 	local player_info = ch_core.normalize_player(player)

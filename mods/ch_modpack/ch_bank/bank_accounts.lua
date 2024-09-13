@@ -238,6 +238,14 @@ function ch_bank.platba(def)
 	return success, warning_message
 end
 
+function ch_bank.reset(player_name)
+	-- smaže historii i aktuální stav u daného účtu
+	minetest.log("warning", "[ch_bank] Will reset the bank account for player "..player_name.."!")
+	set_amount_to_storage(player_name..#player_name.."/state", 0)
+	utils.reset_bank_history(player_name)
+end
+ch_core.overridable.reset_bank_account = ch_bank.reset
+
 function ch_bank.zustatek(player_name, as_string)
 	local player_role = ch_core.get_player_role(player_name)
 	if player_role == nil then

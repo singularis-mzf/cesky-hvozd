@@ -36,6 +36,7 @@ ch_core = {
 	},
 	overridable = {
 		-- funkce a proměnné, které mohou být přepsány z ostatních módů
+		reset_bank_account = function(player_name) return end,
 		time_speed_day = 26, -- 24,
 		time_speed_night = 132, -- 48,
 		trash_all_sound = "", -- zvuk k přehrání při mazání více předmětů
