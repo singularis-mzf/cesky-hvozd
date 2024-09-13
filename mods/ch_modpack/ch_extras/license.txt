@@ -211,3 +211,9 @@ ch_extras_marble.png
 	License: CC BY-SA 4.0
 	Used sources:
 		- https://commons.wikimedia.org/wiki/File:Neho.jpg (author: Lysippos; license: CC BY-SA 2.0 Germany)
+
+ch_extras_colorable_fence.png
+	Author: Singularis
+	License: CC BY-SA 4.0
+	Used source:
+	- "Polygonia_64px texture pack" by Lukas Reichlin (license CC BY-SA 4.0) (default_fence_pine_wood.png used)

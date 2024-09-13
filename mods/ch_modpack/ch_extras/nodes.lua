@@ -1246,7 +1246,7 @@ stairsplus:register_allfaces_trunk("ch_extras", "scorched_tree_allfaces", "ch_ex
 
 def = {
 	description = "barvitelný plot",
-	texture = "ch_npc_colorable_fence.png",
+	texture = "ch_extras_colorable_fence.png",
 	material = "solidcolor:noise_block",
 	groups = {choppy = 2, oddly_breakable_by_hand = 2, flammable = 2, ud_param2_colorable = 1},
 	sounds = default.node_sound_wood_defaults(),
