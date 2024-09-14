@@ -70,6 +70,106 @@ local function invalid_locale_formspec_callback(custom_state, player, formname, 
 	end
 end
 
+local new_player_texts = {
+	{
+		title = "Vítejte na serveru Český hvozd!",
+		formspec_text = F("V nabídce vlevo si zvolte téma, které vás zajímá. Kliknutím na tlačítko „X“ toto okno zavřte a vstoupíte do herního světa."..
+			" Později ho můžete znovu otevřít příkazem „/novinky“ nebo tím, že se odpojíte a znovu připojíte.\n\n"..
+			"Při objevování světa se vám mohou hodit přemísťovací příkazy „/začátek“, „/doma“ a „/domů“ a možnost běhat rychle "..
+			"(pokud to neumíte, doporučuji nejdřív navštívit areál „Úvod do Minetestu“). "..
+			"Další informace o serveru, včetně mapy herního světa a instrukcí, jak získat práva potřebná "..
+			"pro plnohodnotnou hru, najdete na webu:\n\nhttps://ceskyhvozd.svita.cz\n\n"..
+			"Přeji příjemnou a zajímavou hru!\n-- Administrace\n"),
+	}, {
+		title = "Co je Český hvozd za server?",
+		formspec_text = F("Český hvozd je dělnicko-kouzelnický server s československou tematikou, plně lokalizovaný do češtiny, "..
+			"který nabízí relativně civilizované prostředí pro dospělé české a slovenské hráče/ky "..
+			"a spoustu mírových činností, které zde budete moci dělat.\n\nServer spravuje Singularis "..
+			"prostřednictvím postavy jménem Administrace.\n\n"..
+			"Český hvozd byl otevřen pro veřejnost 3. prosince 2022 po zruba šesti měsících vývoje. "..
+			"Nikdy na něm nebylo mnoho hráčů/ek, takže hra zde většinou připomíná spíš "..
+			"hru v režimu jednoho hráče/ky, jen s občasným setkáním s druhým hráčem/kou.\n\n"..
+			"Kromě lokalizace (která vám snad umožní cítit se tu jako doma) je hlavní předností "..
+			"spousta technických vylepšení a úprav implementovaných speciálně pro tento server, s nimiž se během hry setkáte "..
+			"(např. ovládání herního četu)."),
+	}, {
+		title = "Jaká tu platí pravidla?",
+		formspec_text = F("Nejdůležitější pravidla lze shrnout takto:\n\n"..
+			"• Snaž se jít ostatním dobrým příkladem.\n\n"..
+			"• Snaž se, aby sis hru co nejlépe užil jak ty, tak všichni ostatní, kdo tu hrají.\n\n"..
+			"• Respektuj pokyny Administrace a zaměření serveru.\n\n"..
+			"Toto jsou nejdůležitější pravidla, která platí pro celý server. "..
+			"Pro jednotlivá místa a činnosti platí další pravidla, která se ovšem dozvíš postupně, např. na cedulích ve hře."),
+	}, {
+		title = "Co mám teď dělat?",
+		formspec_text = F("Záleží na tom, jak dobře ovládáte Minetest jako takový.\n\nPokud jste začátečník/ice, "..
+			"nejlépe uděláte, když nejprve navštívíte výukový areál Úvod do Minetestu (hned vedle Začátku), "..
+			"tam se naučíte ovládání hry, což vám ušetří spoustu potíží později. Přinejmenším byste se měli naučit "..
+			"ovládání herního četu\n\n"..
+			"Pokud ovládání hry zvládáte, začněte průzkumem herního světa — můžete tu cestovat (pěšky, pomocí cestovní budky, "..
+			"vlakem, tramvají či na kole), "..
+			"a pokud potkáte nějakého dalšího hráče/ku, můžete s ní/m komunikovat. V okně inventáře si prohlédněte paletu "..
+			"předmětů a ostatní karty (zejména Nastavení).\n\n"..
+			"K návštěvě určitě doporučuji Výstaviště, kde jsou vystaveny různé bloky a tvary, které lze na tomto serveru používat ke stavění.\n\n"..
+			"Stavět, těžit, obchodovat nebo se usadit budete moci, teprve až si zvolíte dělnický nebo kouzelnický styl hry a až "..
+			"Administrace vaši postavu schválí (podrobnější informace na webu)."),
+	}, {
+		title = "Ovládání četu (chatu)",
+		formspec_text = F("Okno četu otevřete klávesou T (pro napsání jedné zprávy) nebo klávesou F10 (zůstane otevřeno do dalšího stisku F10).\n\n"..
+			"Normální zprávy, které do četu zadáte, uvidí převážně jen postavy v okolí 50 metrů kolem vás. "..
+			"Pokud má vaše zpráva dojít všem hráčským postavám ve hře, musíte před ni napsat znak „!“, jedná se o takzvaný celoserverový kanál. "..
+			"Normální zprávy (základní kanál) slouží primárně pro komunikaci na krátkou vzdálenost.\n\n"..
+			"Soukromou zprávu na jinou postavu ve hře zašlete tak, že před text zprávy vložíte uvozovku a jednoznačnou předponu jména postavy. "..
+			"Např. zprávu Administraci můžete poslat zadáním:\n\n\"Adm ahoj\n\n"..
+			"Pokud vámi zadaná předpona nebude jednoznačná, systém zprávu neodešle a zobrazí vám varování, takže budete moci svoji chybu napravit.\n\n"..
+			"Pokud vámi zadaná zpráva začíná znakem „/“, pochopí ji server jako příkaz a tento příkaz vykoná. "..
+			"Příkazy v četu slouží k vyvolání různých akcí ve hře.\n\nChcete-li napsat zprávu na postavu, která není zrovna ve hře, "..
+			"použijte herní poštu (dostupnou příkazem „/pošta“ nebo tlačítkem v inventáři). "..
+			"Herní pošta má ovládání podobné jednoduchému e-mailovému klientovi."),
+	}, {
+		title = "Nefungují mi háčky a čárky, co s tím?",
+		formspec_text = F("Máte-li problém s psaním diakritiky, pište bez ní. Všechny příkazy, jména postav a většinou i parametry příkazů "..
+			"lze zadat bez diakritiky a systém si s tím poradí (tzn. např. místo /začátek stačí psát /zacatek)."),
+	}, {
+		title = "Jsou dostupné zdrojové kódy módů?",
+		formspec_text = F("Ano, aktuální a úplný zdrojový kód všech módů je dostupný v repozitáři:\n\nhttps://github.com/singularis-mzf/cesky-hvozd\n\n"..
+			"Veškerý zdrojový kód je svobodný, takže ho (v případě zájmu) můžete v mezích svých technických dovedností využít na vlastních serverech.\n\n"..
+			"Server používá upravené verze módů podléhajících licenci AGPLv3 a jiným svobodným licencím."),
+	}
+}
+
+local function get_new_player_formspec(custom_state)
+	local formspec = {
+		ch_core.formspec_header({formspec_version = 5, size = {18, 10}, auto_background = true}),
+		"button_exit[16.8,0.25;0.8,0.8;zavrit;X]"..
+		"style_type[table;font=italic]"..
+		"tablecolumns[text]"..
+		"table[0.5,0.5;8,9.1;volba;",
+		F(new_player_texts[1].title),
+	}
+	local volba = custom_state.volba
+	local heading_color = minetest.get_color_escape_sequence("#00FF00")
+	for i = 2, #new_player_texts do
+		table.insert(formspec, ","..F(new_player_texts[i].title))
+	end
+	table.insert(formspec, ";"..volba.."]"..
+		"label[9,0.75;"..heading_color..F(new_player_texts[volba].title).."]"..
+		"box[8.9,1.15;8.7,8.45;#00000099]"..
+		"textarea[9,1.25;8.5,8.25;;;"..new_player_texts[volba].formspec_text.."\n]")
+	return table.concat(formspec)
+end
+
+local function new_player_formspec_callback(custom_state, player, formname, fields)
+	if fields.quit then return end
+	if fields.volba then
+		local event = minetest.explode_table_event(fields.volba)
+		if event.type == "CHG" or event.type == "DCL" then
+			custom_state.volba = assert(tonumber(event.row))
+			return get_new_player_formspec(custom_state)
+		end
+	end
+end
+
 local function on_newplayer(player)
 	local player_name = player:get_player_name()
 	minetest.log("action", "[ch_core] New player '"..player_name.."'");
@@ -140,14 +240,14 @@ local function on_joinplayer(player, last_login)
 	local player_name = player:get_player_name()
 	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
 	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
+	local news_role = assert(online_charinfo.news_role)
 
-	if online_charinfo.formspec_version < 6 then
+	if news_role == "disconnect" then
 		minetest.disconnect_player(player_name, "Váš klient je příliš starý. Pro připojení k tomuto serveru prosím použijte Minetest 5.7.0 nebo novější. Verze 5.6.0 a 5.6.1 budou fungovat s omezeními.")
 		return true
 	end
 	local lang_code = online_charinfo.lang_code
-	if not ch_core.supported_lang_codes[lang_code] then
-		local protocol_version = online_charinfo.protocol_version
+	if news_role == "invalid_locale" then
 		if minetest.check_player_privs(player_name, "server") then
 			minetest.after(0.2, function()
 				minetest.chat_send_player(player_name, "VAROVÁNÍ: U vašeho klienta byla detekována nepodporovaná lokalizace '"..lang_code.."'!")
@@ -158,6 +258,11 @@ local function on_joinplayer(player, last_login)
 			end)
 			return true
 		end
+	elseif news_role == "new_player" then
+		minetest.after(0.2, function()
+			local custom_state = {volba = 1}
+			ch_core.show_formspec(player_name, "ch_core:uvitani", get_new_player_formspec(custom_state), new_player_formspec_callback, custom_state, {})
+		end)
 	end
 
 	player:set_nametag_attributes(ch_core.compute_player_nametag(online_charinfo, offline_charinfo))
@@ -179,7 +284,7 @@ local function on_joinplayer(player, last_login)
 	on_joinplayer_pomodoro(player, player_name, online_charinfo)
 	--
 
-	minetest.after(0.5, function() ch_core.set_pryc(player_name, {no_hud = true, silently = true}) end)
+	-- minetest.after(0.5, function() ch_core.set_pryc(player_name, {no_hud = true, silently = true}) end)
 	minetest.after(2, after_joinplayer, player_name)
 	return true
 end

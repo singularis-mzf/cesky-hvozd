@@ -77,7 +77,6 @@ function ch_core.set_player_areas(player_name, player_areas)
 	end
 	local old_player_areas = assert(online_charinfo.areas)
 	online_charinfo.areas = player_areas
-	print("DEBUG: "..dump2({old_player_areas = old_player_areas, new_player_areas = player_areas}))
 	local changes = 0
 	if #old_player_areas == player_areas then
 		for i = 1, #old_player_areas do

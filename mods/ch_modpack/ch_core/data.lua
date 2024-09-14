@@ -212,9 +212,23 @@ function ch_core.get_joining_online_charinfo(player_name)
 			protocol_version = player_info.protocol_version or 0,
 			-- tabulka již zobrazených nápověd (bude deserializována níže)
 			navody = {},
+			-- co udělat těsně po připojení
+			news_role = "new_player",
 			-- přihlašovací jméno
 			player_name = player_name,
 		}
+
+		-- news_role:
+		if result.formspec_version < 6 then
+			result.news_role = "disconnect"
+		elseif not ch_core.supported_lang_codes[result.lang_code] then
+			result.news_role = "invalid_locale"
+		elseif minetest.check_player_privs(player, "ch_registered_player") then
+			result.news_role = "player"
+		else
+			result.news_role = "new_player"
+		end
+
 		ch_core.online_charinfo[player_name] = result
 		local prev_online_charinfo = old_online_charinfo[player_name]
 		if prev_online_charinfo ~= nil then
@@ -223,7 +237,8 @@ function ch_core.get_joining_online_charinfo(player_name)
 				result.prev_leave_timestamp = prev_online_charinfo.leave_timestamp
 			end
 		end
-		minetest.log("action", "JOIN PLAYER(" .. player_name ..") at "..now.." with lang_code \""..result.lang_code.."\", formspec_version = "..result.formspec_version.." and protocol_version = "..result.protocol_version)
+		minetest.log("action", "JOIN PLAYER(" .. player_name ..") at "..now.." with lang_code \""..result.lang_code..
+			"\", formspec_version = "..result.formspec_version..", protocol_version = "..result.protocol_version..", news_role = "..result.news_role)
 
 		-- local player = minetest.get_player_by_name(player_name)
 		if player then

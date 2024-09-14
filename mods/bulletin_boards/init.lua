@@ -321,9 +321,11 @@ local function show_board(player_name, board_name)
 		"label[1.4,0.75;"..F(desc).."]",
 	}
 	if can_add_bulletin(minetest.get_player_by_name(player_name), board_name) then
-		table.insert(formspec, "button[10,0.25;5.75,1;pridat;přidat příspěvek]")
+		table.insert(formspec, "button[10,0.25;4,1;pridat;přidat příspěvek]")
 	end
-	table.insert(formspec, "tablecolumns[image,0=ch_core_empty.png")
+	table.insert(formspec,
+		"button_exit[14.25,0.25;1.5,1;zavrit;zavřít]"..
+		"tablecolumns[image,0=ch_core_empty.png")
 	for i, icon in ipairs(def.icons) do
 		table.insert(formspec, ","..i.."="..F(icon))
 	end
@@ -713,3 +715,21 @@ minetest.register_abm{
 	catch_up = true,
 	action = update_board,
 }
+
+-- Show on joinplayer:
+
+local function after_joinplayer(player_name)
+	if minetest.get_player_by_name(player_name) ~= nil then
+		show_board(player_name, "bulletin_boards:bulletin_board_basic")
+		ch_core.set_pryc(player_name, {no_hud = true, silently = true})
+	end
+end
+
+local function on_joinplayer(player, last_login)
+	local player_name = player:get_player_name()
+	if ch_core.get_joining_online_charinfo(player_name).news_role == "player" then
+		minetest.after(0.4, after_joinplayer, player_name)
+	end
+end
+
+minetest.register_on_joinplayer(on_joinplayer)
