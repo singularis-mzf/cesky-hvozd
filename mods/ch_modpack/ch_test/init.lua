@@ -3,6 +3,7 @@ local modpath = minetest.get_modpath("ch_test")
 
 -- dofile(modpath.."/dynamic_liquids.lua")
 dofile(modpath.."/area_storages.lua")
+-- dofile(modpath.."/areas_test.lua")
 --dofile(modpath.."/clothinggen.lua")
 -- dofile(modpath.."/colored_stone.lua")
 -- dofile(modpath.."/chest.lua")

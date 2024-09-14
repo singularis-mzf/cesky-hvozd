@@ -193,6 +193,11 @@ function ch_core.get_joining_online_charinfo(player_name)
 		local now = minetest.get_us_time()
 		local player = minetest.get_player_by_name(player_name)
 		result = {
+			areas = {{
+				id = 0,
+				name = "Český hvozd",
+				type = 1,
+			}},
 			-- nejvyšší verze formspec podporovaná klientem; 0, pokud údaj není k dispozici
 			formspec_version = player_info.formspec_version or 0,
 			-- časová známka vytvoření online_charinfo (vstupu postavy do hry)

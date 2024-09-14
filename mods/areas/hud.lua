@@ -3,6 +3,8 @@ local S = minetest.get_translator("areas")
 areas.hud = {}
 areas.hud.refresh = 0
 
+local area_types_number_to_name = areas.area_types_number_to_name
+
 minetest.register_globalstep(function(dtime)
 	areas.hud.refresh = areas.hud.refresh + dtime
 	if areas.hud.refresh > areas.config["tick"] then
@@ -14,6 +16,7 @@ minetest.register_globalstep(function(dtime)
 	for _, player in pairs(minetest.get_connected_players()) do
 		local name = player:get_player_name()
 		local player_is_admin = minetest.check_player_privs(name, "areas")
+		local player_areas = {}
 		local pos = vector.round(player:get_pos())
 		pos = vector.apply(pos, function(p)
 			return math.max(math.min(p, 2147483), -2147483)
@@ -25,6 +28,12 @@ minetest.register_globalstep(function(dtime)
 			if not area then
 				error("Internal error: area ID "..id.." is invalid!")
 			end
+			table.insert(player_areas, {
+				id = tonumber(id),
+				name = area.name or "",
+				type = area_types_number_to_name[area.type] or "normal",
+				def = area,
+			})
 			if player_is_admin or ch_core.objem_oblasti(area.pos1, area.pos2) < 125000000000000 then
 				local str_parts = {
 					area.name, -- 1
@@ -81,6 +90,8 @@ minetest.register_globalstep(function(dtime)
 			player:hud_change(hud.areasId, "text", areaString)
 			hud.oldAreas = areaString
 		end
+
+		ch_core.set_player_areas(name, player_areas)
 	end
 end)
 

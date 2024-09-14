@@ -71,7 +71,7 @@ dofile(modpath .. "/penize.lua") -- : lib
 dofile(modpath .. "/ch_wm_nodes.lua") -- : lib
 dofile(modpath .. "/localize_chatcommands.lua") -- : privs, data, lib
 dofile(modpath .. "/formspecs.lua") -- : data, lib
-dofile(modpath .. "/areas.lua") -- : lib
+dofile(modpath .. "/areas.lua") -- : data, lib
 dofile(modpath .. "/nametag.lua") -- : data, lib
 dofile(modpath .. "/chat.lua") -- : data, lib, privs, nametag
 dofile(modpath .. "/stavby.lua") -- : chat, lib

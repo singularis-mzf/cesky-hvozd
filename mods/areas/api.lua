@@ -1,5 +1,4 @@
 local hudHandlers = {
-	ch_core.areas_hud_handler
 }
 
 areas.registered_on_adds = {}
