@@ -676,13 +676,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: zlib license pro kód a CC BY-SA pro textury
 * [ContentDB](https://content.minetest.net/packages/Amaz/letters/)
 
-## Localized Server News (minenews)
-
-* Zdroj: [https://github.com/ronoaldo/minenews](https://github.com/ronoaldo/minenews), revize e4346dc6c666a52039c33bb2c62ee9ad85655820
-* Původní licence: MIT
-* Licence úprav: MIT
-* [ContentDB](https://content.minetest.net/packages/ronoaldo/minenews/)
-
 ## Mail Mod (mail)
 
 * Zdroj: [https://github.com/mt-mods/mail](https://github.com/mt-mods/mail), revize 721d882c26b2d026289c4f9c30f46b8c83511c41
