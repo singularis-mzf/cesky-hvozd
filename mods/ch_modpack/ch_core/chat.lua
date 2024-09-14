@@ -1,4 +1,4 @@
-ch_core.open_submod("chat", {privs = true, data = true, lib = true, nametag = true})
+ch_core.open_submod("chat", {areas = true, privs = true, data = true, lib = true, nametag = true, udm = true})
 
 local ifthenelse = ch_core.ifthenelse
 
@@ -267,6 +267,15 @@ local function on_chat_message(jmeno, zprava)
 	local pryc_func = online_charinfo.pryc
 	if pryc_func then
 		pryc_func(info, online_charinfo)
+	end
+
+	local area = online_charinfo.areas
+	if area ~= nil then
+		area = area[1]
+		area = ch_core.areas[area.id]
+		if area ~= nil and area.udm_catch_chat and ch_core.udm_catch_chat(jmeno, zprava) then
+			return true
+		end
 	end
 
 	local c = zprava:sub(1, 1)
