@@ -718,9 +718,12 @@ minetest.register_abm{
 
 -- Show on joinplayer:
 
-local function after_joinplayer(player_name)
-	if minetest.get_player_by_name(player_name) ~= nil then
-		show_board(player_name, "bulletin_boards:bulletin_board_basic")
+function bulletin_boards.show_welcome_formspec(player_name, set_pryc)
+	if minetest.get_player_by_name(player_name) == nil then
+		return false
+	end
+	show_board(player_name, "bulletin_boards:bulletin_board_basic")
+	if set_pryc then
 		ch_core.set_pryc(player_name, {no_hud = true, silently = true})
 	end
 end
@@ -728,7 +731,7 @@ end
 local function on_joinplayer(player, last_login)
 	local player_name = player:get_player_name()
 	if ch_core.get_joining_online_charinfo(player_name).news_role == "player" then
-		minetest.after(0.4, after_joinplayer, player_name)
+		minetest.after(0.4, bulletin_boards.show_welcome_formspec, player_name, true)
 	end
 end
 

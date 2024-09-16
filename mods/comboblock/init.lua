@@ -35,6 +35,7 @@ local allowed_combos = {
 	[18] = "technic:slab_concrete+building_blocks:slab_Tar",
 	[19] = "technic:slab_concrete+streets:slab_asphalt_red",
 	[20] = "technic:slab_concrete+streets:slab_asphalt_blue",
+	[21] = "default:slab_silver_sandstone_block+solidcolor:slab_plaster_medium_amber_s50",
 }
 local allowed_combos_tmp = {}
 for i, v in ipairs(allowed_combos) do

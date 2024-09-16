@@ -237,6 +237,14 @@ local function on_joinplayer_pomodoro(player, player_name, online_charinfo)
 	return true
 end
 
+function ch_core.show_new_player_formspec(player_name)
+	if minetest.get_player_by_name(player_name) == nil then
+		return false
+	end
+	local custom_state = {volba = 1}
+	ch_core.show_formspec(player_name, "ch_core:uvitani", get_new_player_formspec(custom_state), new_player_formspec_callback, custom_state, {})
+end
+
 local function on_joinplayer(player, last_login)
 	local player_name = player:get_player_name()
 	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
@@ -260,10 +268,7 @@ local function on_joinplayer(player, last_login)
 			return true
 		end
 	elseif news_role == "new_player" then
-		minetest.after(0.2, function()
-			local custom_state = {volba = 1}
-			ch_core.show_formspec(player_name, "ch_core:uvitani", get_new_player_formspec(custom_state), new_player_formspec_callback, custom_state, {})
-		end)
+		minetest.after(0.2, ch_core.show_new_player_formspec, player_name)
 	end
 
 	player:set_nametag_attributes(ch_core.compute_player_nametag(online_charinfo, offline_charinfo))
