@@ -566,6 +566,42 @@ minetest.register_chatcommand("info", {
 	end,
 })
 
+local function vypsat_cas(player_name, param)
+	local result, cas
+	if param == "utc" then
+		cas = ch_core.aktualni_cas()
+		result = string.format("%02d:%02d UTC", cas.utc_hodina, cas.utc_minuta)
+	elseif param == "utc+" then
+		cas = ch_core.aktualni_cas()
+		result = string.format("%04d-%02d-%02d %02d:%02d:%02d UTC", cas.utc_rok, cas.utc_mesic, cas.utc_den, cas.utc_hodina, cas.utc_minuta, cas.utc_sekunda)
+	elseif param == "místní" or param == "mistni" or param == "m" then
+		cas = ch_core.aktualni_cas()
+		result = string.format("%02d:%02d:%02d %s", cas.hodina, cas.minuta, cas.sekunda, cas.posun_text)
+	elseif param == "místní+" or param == "mistni+" or param == "m+" then
+		cas = ch_core.aktualni_cas()
+		result = string.format("%04d-%02d-%02d %02d:%02d:%02d %s", cas.rok, cas.mesic, cas.den, cas.hodina, cas.minuta, cas.sekunda, cas.posun_text)
+	elseif param == "h+" or param == "herní+" or param == "herni+" then
+		cas = ch_core.herni_cas()
+		result = string.format("%02d:%02d:%02d herního času (herní den %d)", cas.hodina, cas.minuta, cas.sekunda, cas.day_count)
+	elseif param == "h" or param == "herni" or param == "" then
+		cas = ch_core.herni_cas()
+		result = string.format("%02d:%02d herního času", cas.hodina, cas.minuta)
+	else
+		return false, "Nerozpoznaný parametr: "..param
+	end
+	ch_core.systemovy_kanal(player_name, result)
+	return true
+end
+
+local def = {
+	params = "[utc|utc+|m[ístní]|m[ístní]+|h[erní]|h[erní]+]",
+	description = "Vypíše požadovaný druh času (a případně data). Výchozí je „h“ (herní čas).",
+	privs = {},
+	func = vypsat_cas,
+}
+minetest.register_chatcommand("čas", def)
+minetest.register_chatcommand("cas", def)
+
 -- log all chatcommands except /msg
 
 minetest.register_on_chatcommand(function(name, command, params)
