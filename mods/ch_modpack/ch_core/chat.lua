@@ -18,7 +18,8 @@ local color_mistni = minetest.get_color_escape_sequence("#fff297")
 local color_mistni_zblizka = minetest.get_color_escape_sequence("#64f231") -- 54cc29
 local color_soukromy = minetest.get_color_escape_sequence("#ff4cf3")
 local color_sepot = minetest.get_color_escape_sequence("#fff297cc")
-local color_systemovy = minetest.get_color_escape_sequence("#cccccc")
+local color_systemovy = minetest.get_color_escape_sequence("#ffffff") -- #cccccc
+local color_systemovy_tichy = minetest.get_color_escape_sequence("#cccccc")
 local color_reset = minetest.get_color_escape_sequence("#ffffff")
 
 -- NASTAVENÍ
@@ -40,12 +41,12 @@ function ch_core.systemovy_kanal(komu, zprava, volby)
 	local is_alert = volby ~= nil and volby.alert
 	local color = ifthenelse(is_alert, color_soukromy, color_systemovy)
 	if not komu or komu == "" then -- je-li komu "", rozeslat všem
-		minetest.chat_send_all(color .. "SERVER: " .. zprava .. color_reset)
+		minetest.chat_send_all(color .. zprava .. color_reset)
 		if is_alert then
 			minetest.sound_play("chat3_bell", {gain = 1.0}, true)
 		end
 	else
-		minetest.chat_send_player(komu, color .. "SERVER: " .. zprava .. color_reset)
+		minetest.chat_send_player(komu, color .. zprava .. color_reset)
 		if is_alert then
 			minetest.sound_play("chat3_bell", {to_player = komu, gain = 1.0}, true)
 		end
@@ -86,7 +87,7 @@ function ch_core.chat(rezim, odkoho, zprava, pozice)
 		barva_zpravy, -- [5] // mění se
 		zprava, -- [6]
 		"", -- [7]
-		color_systemovy, -- [8]
+		color_systemovy_tichy, -- [8]
 		" (", -- [9]
 		0, -- [10] // mění se
 		" m)", -- [11]
