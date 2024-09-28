@@ -1,4 +1,5 @@
 local F = minetest.formspec_escape
+local FHE = ch_core.formspec_hypertext_escape
 local has_areas = minetest.get_modpath("areas")
 local ifthenelse = ch_core.ifthenelse
 local ui = assert(unified_inventory)
@@ -16,6 +17,11 @@ local stav_to_color = {
 local color_me = "#00ff00"
 local color_admin = "#aa66aa"
 local color_other_players = "#cccccc"
+
+local htnadp_escape_sequence = minetest.get_color_escape_sequence("#00ff00")
+local function htnadp(t)
+	return "<style color=#00ff00>"..t.."</style>"
+end
 
 local function filter_all()
 	return true
@@ -79,47 +85,43 @@ end
 
 -- Unified Inventory page
 -- ==============================================================================
-local ui_help_text = ""..
-	"# Proč evidovat svoje stavby?\n"..
-	"=============================\n"..
+local ui_help_fhtext = htnadp("Proč evidovat svoje stavby?")..
+	"\n"..FHE(
 	"- Jen zaevidované stavby můžete považovat za „svoje“; nezaevidované stavby jsou anonymní, takže je může kdokoliv převzít a upravit, jak bude chtít.\n"..
 	"- Systém vás předem upozorní, pokud se pokusíte založit stavbu na nevhodném či zakázaném místě.\n"..
 	"- Ostatní hráči/ky získají jasnou představu o tom, co stavíte, že to stavíte vy a v jaké je výstavba fázi.\n"..
-	"- I v případě, že server opustíte a stavba bude předána ke správě jinému hráči/ce, zůstane tu záznam o tom, že jste stavbu založil/a a postavil/a.\n\n"..
-	"# Jaký je rozdíl mezi soukromou a veřejnou stavbou?\n"..
-	"=============================\n"..
-	"Soukromá stavba má sloužit především vám a hráčům/kám, které na ni sám/a pozvete. Nedostane se vám takové pozornosti jako u veřejné stavby "..
+	"- I v případě, že server opustíte a stavba bude předána ke správě jinému hráči/ce, zůstane tu záznam o tom, že jste stavbu založil/a a postavil/a.\n")..
+	htnadp("Jaký je rozdíl mezi soukromou a veřejnou stavbou?")..
+	FHE("\nSoukromá stavba má sloužit především vám a hráčům/kám, které na ni sám/a pozvete. Nedostane se vám takové pozornosti jako u veřejné stavby "..
 	"a stavba vám téměř jistě zůstane, i když se delší dobu nepřipojíte do hry a nebudete se o ni starat. Může to být třeba zákoutí, které si chcete "..
-	"upravit podle svého vkusu a chodit tam odpočívat, vlastní dílna nebo soukromý sklad materiálu. Nestane se však součástí infrastruktury světa"..
-	"a nedostanete za ni odměnu nad rámec samotné možnosti ji v herním světě mít a využívat.\n\n"..
+	"upravit podle svého vkusu a chodit tam odpočívat, vlastní dílna nebo soukromý sklad materiálu. Nestane se však součástí infrastruktury světa "..
+	"a nedostanete za ni odměnu nad rámec samotné možnosti ji v herním světě mít a využívat.\n"..
 	"Oproti tomu veřejná je taková stavba, "..
 	"která má sloužit především cizím hráčům/kám nebo jako součást světové infrastruktury. Může to být veřejná dílna, hřbitov, cesta, "..
 	"obchod, restaurace, zoologická zahrada apod. Ačkoliv u veřejné stavby rozhodujete vy, jak má vypadat a jakou funkci má plnit, "..
 	"Administrace se bude snažit dohlédnout, aby tuto funkci opravdu plnila, což znamená, že bude stavbu posuzovat a bude moci požadovat "..
 	"nějaké důvodné úpravy. Pokud se o veřejnou stavbu nebudete delší dobu starat, "..
 	"může být předána do správy jiné/mu hráči/ce nebo ji do správy převezme přímo Administrace. Za dokončení veřejné stavby užitečné pro herní svět "..
-	" můžete dostat individuální odměnu ve formě herních peněz (jen dělnické postavy) nebo bodů aktivity (ovlivňují úroveň postavy).\n\n"..
-	"# Co znamená stav stavby?\n"..
-	"=============================\n"..
-	"Stav především rozlišuje stavby dokončené (hotové) od nedokončených (rozestavěných či v rekonstrukci). Pokud se o stavbu již nechcete starat "..
-	"a nezáleží vám na ni, přepněte ji do stavu „opuštěná“. Takovou stavbu si bude moci vzít do správy někdo jiný a přestavět.\n\n"..
-	"# Systém mi nedovolí něco změnit. Co mám dělat?\n"..
-	"=============================\n"..
-	"Pro jakoukoliv změnu nad rámec toho, co vám systém dovolí, kontaktujte Administraci a domlute se s ní. Je možná např. "..
-	"změna soukromé stavby na veřejnou či naopak nebo přesunutí evidenčního bodu stavby na příhodnější místo.\n\n"..
-	"# Moje stavba je rozlehlá/dlouhá. Jak ji mám zaevidovat?\n"..
-	"=============================\n"..
-	"Obecně platí, že veřejné liniové stavby jako železniční tratě, stezky, elektrická vedení, silnice apod. se samostatně neevidují. "..
-	"Evidují se však místní stavby na nich jako např. nádraží, mosty, zastávky, čekárny, elektrárny apod. "..
+	" můžete dostat individuální odměnu ve formě herních peněz (jen dělnické postavy) nebo bodů aktivity (ovlivňují úroveň postavy).\n")..
+	htnadp("Co znamená stav stavby?")..
+	FHE("\nStav především rozlišuje stavby dokončené (hotové) od nedokončených (rozestavěných či v rekonstrukci). Pokud se o stavbu již nechcete starat "..
+	"a nezáleží vám na ni, přepněte ji do stavu „opuštěná“. Takovou stavbu si bude moci vzít do správy někdo jiný a přestavět.\n")..
+	htnadp("Systém mi nedovolí něco změnit. Co mám dělat?")..
+	FHE("\nPro jakoukoliv změnu nad rámec toho, co vám systém dovolí, kontaktujte Administraci a domluvte se s ní. Je možná např. "..
+	"změna soukromé stavby na veřejnou či naopak nebo přesunutí evidenčního bodu stavby na příhodnější místo. "..
+	"Celkově platí, že jakákoliv snaha hráče/ky o oboustranně výhodnou domluvu se cení.\n")..
+	htnadp("Moje stavba je rozlehlá/dlouhá. Jak ji mám zaevidovat?")..
+	FHE("\nObecně platí, že veřejné liniové stavby jako železniční tratě, stezky, elektrická vedení, silnice apod. se samostatně neevidují. "..
+	"Evidují se však jedinečné místní stavby na nich, jako např. nádraží, mosty, zastávky, čekárny, elektrárny apod. "..
 	"Dále platí, že systém neeviduje rozsah stavby, jen přibližnou polohu. Rozsah stavby je pak určen neformálně "..
-	"podle skutečně zastavěné (nebo ohrazené) plochy a logiky věci.\n"..
+	"podle skutečně zastavěné (nebo ohrazené) plochy a logiky věci. Proto, pokud máte v plánu stavbu postupně rozšiřovat, "..
+	"je dobrý nápad si předem ohradit přiměřeně velký prostor (ale zase to nepřehánějte).\n"..
 	"Na přesné poloze evidenčního bodu tedy příliš nezáleží, snažte se však stavbu zaevidovat přibližně v místě jejího prostředka, "..
-	"na mapě to pak vypadá lépe.\n\n"..
-	"# Jak evidovat město a stavby v něm?\n"..
-	"=============================\n"..
-	"Je-li menší stavba logickou součástí větší stavby (např. dům ve městě nebo byt v panelovém domě), záznam o větší stavbě se týká jen těch "..
+	"na mapě to pak bude vypadat lépe.\n")..
+	htnadp("Jak evidovat město a stavby v něm, resp. panelový dům a byty v něm?")..
+	FHE("\nJe-li menší stavba logickou součástí větší stavby (např. dům ve městě nebo byt v panelovém domě), záznam o větší stavbě se týká jen těch "..
 	"vnořených staveb, které nemají svůj vlastní. Vnořenou stavbu je tedy třeba zaevidovat zvlášť, jen pokud se má lišit např. stavem nebo tím, "..
-	"kdo ji spravuje. V ostatních případech záleží to, zda vnořené stavby zaevidujete samostatně, nebo ne, na vás."
+	"kdo ji spravuje. V ostatních případech záleží to, zda vnořené stavby zaevidujete samostatně, nebo ne, na vás.")
 
 local function get_ui_formspec(player, perplayer_formspec)
 	local player_info = ch_core.normalize_player(player)
@@ -207,38 +209,36 @@ local function get_ui_formspec(player, perplayer_formspec)
 
     table.insert(formspec, template.fs_middle)
 	-- BOTTOM form:
-	table.insert(formspec, "textarea[0,0;7,5.5;;;")
-
-	--
-	table.insert(formspec, "ZKUŠEBNÍ PROVOZ!\nSystém evidence staveb je do odvolání ve zkušebním provozu. Systém zatím můžete zkoušet\\, "..
-		"s vážně míněnou evidencí staveb však počkejte na oficiální uvedení do plného provozu.\n\n")
-	--
-
+	-- table.insert(formspec, "textarea[0,0;7,5.5;;;")
 	if selected_record ~= nil then
 		local st_pos = assert(selected_record.pos)
-		table.insert(formspec, "Název: "..F(selected_record.nazev).."\nDruh: "..F(selected_record.druh).."\nPozice: "..
-			string.format("%d\\,%d\\,%d\nVzdálenost: %d m\nStav: ",
-			st_pos.x, st_pos.y, st_pos.z, math.round(vector.distance(player_pos, st_pos)))..
-			F(ch_core.stavy_staveb[selected_record.stav] or "???")..
-			"\nSpravuje: "..F(ch_core.prihlasovaci_na_zobrazovaci(selected_record.spravuje)).."\n\nZáměr/poznámka:")
+		table.insert(formspec,
+			string.format("label[0.01,0.26;%sPozice stavby:]textarea[2.5,0.09;4.5,0.5;;;%d\\,%d\\,%d]",
+				htnadp_escape_sequence, st_pos.x, st_pos.y, st_pos.z)..
+			"hypertext[0,0.5;7,5;;"..
+			htnadp("Název:").." "..FHE(selected_record.nazev).."\n"..
+			htnadp("Druh:").." "..FHE(selected_record.druh).."\n"..
+			-- htnadp("Pozice:").." "..string.format("%d\\,%d\\,%d", ).."\n"..
+			htnadp("Vzdálenost:").." "..string.format("%d m", math.round(vector.distance(player_pos, st_pos))).."\n"..
+			htnadp("Stav:").." "..FHE(ch_core.stavy_staveb[selected_record.stav] or "???").."\n"..
+			htnadp("Spravuje:").." "..FHE(ch_core.prihlasovaci_na_zobrazovaci(selected_record.spravuje)).."\n"..
+			htnadp("Záměr/poznámka:"))
 		if selected_record.zamer ~= "" then
-			table.insert(formspec, "\n"..selected_record.zamer)
+			table.insert(formspec, "\n"..FHE(selected_record.zamer))
 		end
-		table.insert(formspec, "\n\nHistorie:")
+		table.insert(formspec, "\n"..htnadp("Historie:"))
 		for i = #selected_record.historie, 1, -1 do
-			table.insert(formspec, "\n- "..F(selected_record.historie[i]))
+			table.insert(formspec, "\n- "..FHE(selected_record.historie[i]))
 		end
-	else
-		table.insert(formspec, F(ui_help_text))
-	end
-	table.insert(formspec, "\n]")
-	if selected_record ~= nil then
+		table.insert(formspec, "\n]")
 		if is_admin and selected_record.stav == "k_smazani" then
 			table.insert(formspec, "button[0,5.5;6,0.5;ch_stavby_upravit;upravit]"..
 				"button[6,5.5;1,0.5;ch_stavby_smazat;smazat]")
 		elseif is_admin or selected_record.spravuje == player_name then
 			table.insert(formspec, "button[0,5.5;7,0.5;ch_stavby_upravit;upravit]")
 		end
+	else
+		table.insert(formspec, "hypertext[0,0.5;7,5;;"..ui_help_fhtext.."\n]")
 	end
 
     ----
@@ -298,17 +298,21 @@ local function get_new_formspec(custom_state)
 		if i > 1 then table.insert(formspec, ",") end
 		table.insert(formspec, F(ch_core.urceni_staveb[id]))
 	end
+	local function nadpis(t)
+		return "<style color=#00ff00>"..t.."</style>\n"
+	end
 	table.insert(formspec, ";"..custom_state.urceni..";true]"..
 		"field[0.5,4;7.5,0.5;nazev;název stavby;"..F(custom_state.nazev).."]"..
 		"field[0.5,5;4,0.5;druh;druh stavby;"..F(custom_state.druh).."]"..
 		"textarea[0.5,6;7.5,4;zamer;záměr stavby/poznámka:;"..F(custom_state.zamer).."]"..
-		"textarea[8.35,2;8,8;;Nápověda:;\n"..
+		"hypertext[8.35,2;8,8;napoveda;"..
+		nadpis("<big>Nápověda:</big>")..
 		"Pozice stavby je přibližná. Její přesný rozsah bude určen víceméně tím\\, kolik toho postavíte.\n\n"..
-		"Určení stavby:\n"..
+		nadpis("Určení stavby:")..
 		"- Soukromá stavba má sloužit především vám a hráčům/kám\\, které na ni sami pozvete\\; Administrace ji nebude posuzovat\\, "..
 		"pokud nebudete chtít\\, a když přestanete na delší dobu hrát\\, zůstane vám a zůstane netknutá\\, "..
 		"až na případné úpravy nutné ve veřejném zájmu. Administrace ji nebude cíleně prezentovat při prezentaci serveru "..
-		"na internetu a nebude jí zřizovat veřejné dopravní spojení.\n"..
+		"na internetu a nebude jí zřizovat veřejné dopravní spojení. Koho na ni pozvete, bude na vás.\n"..
 		"- Veřejná stavba má sloužit především ostatním hráčům/kám a nabízet jim buď krásu\\, symboliku\\, užitečné služby nebo cokoliv\\, "..
 		"díky čemuž se jim návštěva stavby vyplatí. Až ji označíte za dokončenou (ke schválení)\\, "..
 		"Administrace ji posoudí a může mít připomínky a požadovat důvodné úpravy. "..
@@ -317,8 +321,18 @@ local function get_new_formspec(custom_state)
 		"popř. ji převezme přímo Administrace. Pokud se nedomluvíte s Administrací jinak\\, "..
 		"této stavbě může být zřízeno veřejné dopravní spojení a po dokončení bude moci "..
 		"být prezentována při prezentaci serveru na internetu.\n\n"..
-		"Druh stavby: např. rodinný dům\\, sklad\\, restaurace\\, hřbitov\\, vodopád\\, nádraží\\, výzkumná stanice apod.\n\n"..
-		"Záměr stavby: viz výchozí text v poli. Pro veřejné stavby je povinný\\, pro soukromé je jen doporučený. Záměr budete moci během stavby měnit.\n"..
+		nadpis("Druh stavby")..
+		"Např. rodinný dům\\, sklad\\, restaurace\\, hřbitov\\, vodopád\\, nádraží\\, výzkumná stanice apod. "..
+		"Pokud druh stavby vyplývá již z jejího názvu, může toto pole zůstat nevyplněné.\n\n"..
+		nadpis("Záměr stavby")..
+		"Pro veřejné stavby je povinný\\, pro soukromé je jen doporučený. Má především odpovědět na otázky, "..
+		"proč se do stavby pouštíte a (pokud již víte) k čemu bude daná stavba užitečná. Každá stavba má určitě nějaký důvod, "..
+		"i kdyby to mělo být jen to, že vás baví takové stavby stavět. Ale lepší samozřejmě je, pokud se snažíte doplnit něco, "..
+		"co podle vás v Českém hvozdu chybí.\n"..
+		"Do záměru můžete rovněž zaznamenat svoje plány a další zajímavosti vztahující se ke stavbě, např.:\n"..
+		"- Hlavní účel stavby (krása, funkce, odpočinek, ...)\n"..
+		"- Jak má stavba vypadat? („v přírodním stylu“, „nástupiště z borového dřeva“, „inspirace Eiffelovou věží“).\n"..
+		"- Zajímavosti z historie stavby\\; další hráči/ky, kteří na stavbě spolupracovali apod.\n"..
 		"]"..
 		"button[4,10.5;4,1;zalozit;Založit stavbu]"..
 		"button_exit[8.5,10.5;4,1;zrusit;Zrušit]")
@@ -362,7 +376,7 @@ local function new_formspec_callback(custom_state, player, formname, fields)
 			end
 
 			if player_name ~= area_owner then
-				ch_core.systemovy_kanal(player_name, "VAROVÁNÍ: Založil/a jste stavbu v chráněné oblasti „"..area_name.."“! "..
+				ch_core.systemovy_kanal(player_name, "VAROVÁNÍ: Založil/a jste stavbu v rezervované oblasti „"..area_name.."“! "..
 					"Před zahájením stavebních prací vyčkejte na vyjádření od „"..area_owner_viewname.."“ (mělo by dojít herní poštou). "..
 					"Pokud o stavbu mezitím ztratíte zájem, nastavte jí stav „ke zrušení“.")
 			end
@@ -390,11 +404,8 @@ local function nova_stavba(player_info)
 		nazev = "",
 		druh = "",
 		spravuje = player_info.player_name,
-		zamer = "Pro veřejné stavby povinný, pro soukromé doporučený.\n"..
-			"- Proč se do stavby pouštíte?\n- Čím by měla být stavba po dokončení užitečná (krása, funkce, odpočinek, ...)?\n"..
-			"- Jak má stavba vypadat? Stručně charakterizujte. (např. „v přírodním stylu“ nebo „inspirace Eiffelovou věží“).\n"..
-			"- Pokud záměr aktualizujete, můžete také doplnit zajímavosti z historie stavby, a pokud na stavbě "..
-			"mezitím spolupracovali další hráči/ky, je vhodné je zmínit.",
+		zamer = "*Proč se do stavby pouštíte? Pokud víte, uveďte i jakékoliv další zajímavosti. "..
+			"Obsah tohoto pole budete moci měnit, doplňovat a aktualizovat v průběhu stavby i po jejím dokončení.*",
 	}
 	local vyzaduje_povoleni = false
 	if has_areas then

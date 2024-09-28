@@ -19,6 +19,7 @@ Datová struktura záznamu o stavbě:
     } -- postupná historie změn
     zamer = string, -- záměr stavby (text)
     heslo = string || nil, -- do budoucna: vygenerované heslo u staveb nabízených k převzetí; kdo heslo zadá, dostane stavbu do správy
+    mapa = {x1, z1, [w, h]}, -- volitelné pole; definuje místo zobrazení na mapě (buď jen bod, nebo zónu)
 }
 ]]
 
@@ -211,6 +212,11 @@ function ch_core.stavby_remove(key_or_pos)
     return true
 end
 
+local stavby_html_transtable = {
+    ["-"] = "m",
+    [","] = "x",
+}
+
 function ch_core.stavby_save()
     local json, error_message = minetest.write_json(data)
     if json == nil then
@@ -218,6 +224,80 @@ function ch_core.stavby_save()
     end
     minetest.safe_file_write(worldpath.."/ch_stavby.json", json)
     minetest.log("info", "ch_core/stavby: "..#data.." records saved ("..#json.." bytes).")
+    local html = {}
+    for key, stavba in pairs(data) do
+        local html_key = "st_"..key:gsub("[-,]", stavby_html_transtable)
+        local nazev = stavba.nazev
+        if stavba.druh ~= "" then
+            nazev = stavba.nazev.." ("..stavba.druh..")"
+        end
+        nazev = ch_core.formspec_hypertext_escape(nazev)
+        local mapa = stavba.mapa
+
+        table.insert(html, "<div class=\""..stavba.stav.." "..stavba.urceni)
+        if mapa ~= nil and #mapa == 4 then
+            table.insert(html, " zona")
+        end
+        table.insert(html, "\" id=\""..html_key.."\" style=\"")
+        if mapa == nil then
+            table.insert(html, string.format("left:%dpx;top:%dpx;", stavba.pos.x, -stavba.pos.z))
+        elseif #mapa == 2 then
+            table.insert(html, string.format("left:%dpx;top:%dpx;", mapa[1], -mapa[2]))
+        else
+            table.insert(html, string.format("left:%dpx;top:%dpx;width:%dpx;height:%dpx;", mapa[1], -(mapa[2] + mapa[4]), mapa[3], mapa[4]))
+        end
+        table.insert(html, "\" title=\"")
+        if stavba.urceni == "soukroma" then
+            table.insert(html, "&lt;soukromá stavba&gt;&#13;")
+        elseif stavba.urceni == "chranena_oblast" then
+            table.insert(html, "&lt;rezervovaná oblast&gt;&#13;")
+        end
+        table.insert(html, nazev.."&#13;spravuje: "..ch_core.prihlasovaci_na_zobrazovaci(stavba.spravuje)..
+            "&#13;stav: "..assert(ch_core.stavy_staveb[stavba.stav]).."\">"..nazev.."</div>\n")
+    end
+    minetest.safe_file_write(worldpath.."/ch_stavby.html", table.concat(html))
 end
+
+local function stavba_na_mape(admin_name, param)
+    local params = string.split(param, " ")
+    if #params ~= 1 and #params ~= 3 and #params ~= 5 then
+        return false, "Neplatný počet parametrů!"
+    end
+    local stavba = data[params[1]]
+    if stavba == nil then
+        return false, "Stavba s klíčem <"..params[1].."> nenalezena!"
+    end
+    if #params == 1 then
+        stavba.mapa = nil
+    else
+        local x1, z1 = tonumber(params[2]), tonumber(params[3])
+        if x1 == nil or z1 == nil then
+            return false, "Neplatné zadání!"
+        end
+        if #params == 3 then
+            stavba.mapa = {x1, z1}
+        elseif #params == 5 then
+            local x2, z2 = tonumber(params[4]), tonumber(params[5])
+            if x2 == nil or z2 == nil then
+                return false, "Neplatné zadání!"
+            end
+            if x2 < x1 then x1, x2 = x2, x1 end
+            if z2 < z1 then z1, z2 = z2, z1 end
+            stavba.mapa = {x1, z1, x2 - x1 + 1, z2 - z1 + 1}
+        end
+    end
+    ch_core.stavby_save()
+    return true, "Nastaveno."
+end
+
+local def = {
+    params = "<pozice,stavby> [<x1> <z1> [<x2> <z2>]]",
+    description = "Pro správce/yni staveb: nastaví zobrazení stavby na mapě nebo toto nastavení zruší.",
+    privs = {ch_stavby_admin = true},
+    func = stavba_na_mape,
+}
+
+minetest.register_chatcommand("stavbanamapě", def)
+minetest.register_chatcommand("stavbanamape", def)
 
 ch_core.close_submod("stavby")
