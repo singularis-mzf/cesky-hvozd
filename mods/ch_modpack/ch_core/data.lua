@@ -141,6 +141,38 @@ ch_core.online_charinfo = {}
 ch_core.offline_charinfo = {}
 local old_online_charinfo = {}
 
+local function is_acceptable_name(player_name)
+	local types = {}
+	for i = 1, #player_name do
+		local b = string.byte(player_name, i)
+		if b == 0x2d or b == 0x5f then
+			types[i] = '_'
+		elseif 0x30 <= b and b <= 0x39 then
+			types[i] = '0'
+		elseif b < 0x61 then
+			types[i] = 'A'
+		else
+			types[i] = 'a'
+		end
+	end
+	local digits, dashes = 0, 0
+	for i = 1, #player_name do
+		if types[i] == '0' then
+			digits = digits + 1
+		elseif digits > 0 then
+			-- číslice jsou dovoleny jen na konci jména
+			return false
+		elseif types[i] == '_' then
+			dashes = dashes + 1
+			-- pomlčky a podtržítka jsou dovoleny jen mezi písmeny
+			if i == 1 or i == #player_name or string.lower(types[i - 1]) ~= 'a' or string.lower(types[i + 1]) ~= 'a' then
+				return false
+			end
+		end
+	end
+	return digits <= 4 and dashes <= 5 -- omezení počtu
+end
+
 local function is_invalid_player_name(player_name)
 	if type(player_name) == "number" then
 		player_name = tostring(player_name)
@@ -221,10 +253,12 @@ function ch_core.get_joining_online_charinfo(player_name)
 		-- news_role:
 		if result.formspec_version < 6 then
 			result.news_role = "disconnect"
-		elseif not ch_core.supported_lang_codes[result.lang_code] then
+		elseif not ch_core.supported_lang_codes[result.lang_code] and not minetest.check_player_privs(player, "server") then
 			result.news_role = "invalid_locale"
 		elseif minetest.check_player_privs(player, "ch_registered_player") then
 			result.news_role = "player"
+		elseif not is_acceptable_name(player_name) then
+			result.news_role = "invalid_name"
 		else
 			result.news_role = "new_player"
 		end

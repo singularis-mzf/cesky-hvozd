@@ -183,8 +183,9 @@ end
 
 minetest.register_on_joinplayer(function(player, last_login)
 	local player_name = player:get_player_name()
+	local online_charinfo = ch_core.get_joining_online_charinfo(player_name) or {}
 	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
-	if offline_charinfo.pending_registration_type ~= "" then
+	if offline_charinfo.pending_registration_type ~= "" and online_charinfo.news_role ~= "disconnect" and online_charinfo.news_role ~= "invalid_name" then
 		minetest.after(0.5, on_joinplayer, player_name)
 	end
 end)

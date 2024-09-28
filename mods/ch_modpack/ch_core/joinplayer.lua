@@ -73,7 +73,7 @@ end
 local new_player_texts = {
 	{
 		title = "Vítejte na serveru Český hvozd!",
-		formspec_text = F("V nabídce vlevo si zvolte téma, které vás zajímá. Kliknutím na tlačítko „X“ toto okno zavřte a vstoupíte do herního světa."..
+		formspec_text = F("V nabídce vlevo si zvolte téma, které vás zajímá. Kliknutím na tlačítko „X“ toto okno zavřete a vstoupíte do herního světa."..
 			" Později ho můžete znovu otevřít příkazem „/novinky“ nebo tím, že se odpojíte a znovu připojíte.\n\n"..
 			"Při objevování světa se vám mohou hodit přemísťovací příkazy „/začátek“, „/doma“ a „/domů“ a možnost běhat rychle "..
 			"(pokud to neumíte, doporučuji nejdřív navštívit areál „Úvod do Minetestu“). "..
@@ -253,6 +253,9 @@ local function on_joinplayer(player, last_login)
 
 	if news_role == "disconnect" then
 		minetest.disconnect_player(player_name, "Váš klient je příliš starý. Pro připojení k tomuto serveru prosím použijte Minetest 5.7.0 nebo novější. Verze 5.6.0 a 5.6.1 budou fungovat s omezeními.")
+		return true
+	elseif news_role == "invalid_name" then
+		minetest.disconnect_player(player_name, "Neplatné přihlašovací jméno '"..player_name.."'. Seznamte se, prosím, s pravidly serveru pro jména, nebo použijte jen písmena anglické abecedy.")
 		return true
 	end
 	local lang_code = online_charinfo.lang_code
