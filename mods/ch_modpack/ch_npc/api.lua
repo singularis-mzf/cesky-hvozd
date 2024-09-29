@@ -12,6 +12,14 @@ function ch_npc.update_npc(pos, node, meta)
 	local old_entity_pos = vector.add(pos, (old_npc or default_npc).offset)
 	local inv = meta:get_inventory()
 
+	-- clothes inventory
+	if inv:get_size("clothes") ~= internal.clothes_inv_size then
+		inv:set_size("clothes", internal.clothes_inv_size)
+	end
+
+	-- remove legacy text
+	meta:set_string("npc_text", "")
+
 	-- search for existing objects
 	local found_objects = {}
 	if old_npc ~= nil then
@@ -46,6 +54,9 @@ function ch_npc.update_npc(pos, node, meta)
 		local npc_name = meta:get_string("npc_name")
 		local npc_dialog = meta:get_string("npc_dialog")
 		local npc_infotext = meta:get_string("npc_infotext")
+		if npc_infotext == "" then
+			npc_infotext = npc_name
+		end
 
 		local textures = table.copy(new_npc.textures)
 		if has_clothing and not inv:is_empty("clothes") then

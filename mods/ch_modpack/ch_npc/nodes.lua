@@ -40,7 +40,7 @@ local function on_construct(pos)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
 	meta:set_string("infotext", "pozice pro nehráčskou postavu")
-	inv:set_size("clothes", 12)
+	inv:set_size("clothes", internal.clothes_inv_size)
 end
 
 local function on_punch(pos, node, clicker, itemstack)

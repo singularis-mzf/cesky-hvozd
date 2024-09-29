@@ -3,7 +3,9 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 -- local S = minetest.get_translator("ch_npc")
 
 local modpath = minetest.get_modpath(minetest.get_current_modname())
-local internal = {}
+local internal = {
+	clothes_inv_size = 12,
+}
 
 -- API OBJECT
 ch_npc = {}
