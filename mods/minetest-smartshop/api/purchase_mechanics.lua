@@ -313,12 +313,12 @@ api.register_purchase_mechanic({
 		if give_money ~= nil then
 			local lsuccess = ch_core.pay_to(player_name, give_money, {label = "platba z obchodního terminálu"})
 			player_remaining = ifthenelse(lsuccess, empty_stack, give_stack)
-		elseif pay_money ~= nil and shop:allow_returns() and shop_removed:get_count() == 1 and (minetest.get_item_group(shop_removed:get_name(), "clothing") ~= 0 or minetest.get_item_group(shop_removed:get_name(), "cape") ~= 0) then
+		elseif (pay_money ~= nil or player_removed:is_empty()) and shop:allow_returns() and shop_removed:get_count() == 1 and (minetest.get_item_group(shop_removed:get_name(), "clothing") ~= 0 or minetest.get_item_group(shop_removed:get_name(), "cape") ~= 0) then
 			-- clothing:
 			local meta = shop_removed:get_meta()
 			meta:set_int("ch_buy_timestamp", assert(ch_core.aktualni_cas().znamka32))
 			meta:set_int("ch_buy_id", math.random(1, 2147483647))
-			meta:set_int("ch_buy_price", math.min(pay_money, 2147483647))
+			meta:set_int("ch_buy_price", math.min(pay_money or 0, 2147483647))
 			meta:set_string("count_meta", "#")
 			meta:set_string("description", (shop_removed:get_description() or "").."\n"..minetest.get_color_escape_sequence("#00ff00").."(na vyzkoušení: potvrďte nákup u pokladny, nebo vraťte do 10 minut)")
 			player_remaining = player_inv:add_item(shop_removed)
