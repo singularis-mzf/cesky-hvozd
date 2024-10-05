@@ -1,0 +1,36 @@
+# Copyright (C) 2021  Jude Melton-Houghton
+#
+# This file is part of area_containers. It specifies the mod settings.
+#
+# area_containers is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# area_containers is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with area_containers. If not, see <https://www.gnu.org/licenses/>.
+
+
+# Whether to enable crafting of the mod's items.
+area_containers_enable_crafts (Enable crafts) bool true
+
+# The Y coordinate of the bottom face of all inside chambers (chambers linked to area containers,) measured in multiples of the block size (16.) There is a layer of protected nodes from one block above this to one block below. This cannot be changed once the world is generated.
+area_containers_y_level_blocks (Inside Y-level) int 1931 -1932 1931
+
+# The maximum size of the container position cache used to quickly relate inside chambers to container nodes.
+area_containers_max_cache_size (Maximum container cache size) int 256 1 65536
+
+# The level of light the walls of inside chambers emit, from 0 to 14. 0 means that no light is emitted. Changing this with preexisting containers will cause incorrect lighting.
+area_containers_wall_light (Wall light) int 14 0 14
+
+# The level of protection around inside chambers:
+# - none: Protect nothing.
+# - walls: Protect the walls of the chambers only.
+# - around: Protect the walls and the 26 blocks around the inside chamber block.
+# - layer: Protect the walls and all outside blocks from one block below the inside layer to one above.
+area_containers_protection (Protection) enum layer none,walls,around,layer

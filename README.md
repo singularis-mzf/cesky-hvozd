@@ -1116,6 +1116,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 # Ostatní použité zdroje
 
+## Area Containers
+
+* Zdroj: [https://github.com/TurkeyMcMac/area\_containers](https://github.com/TurkeyMcMac/area\_containers), revize 13e0337da7a31da565b9beb4cec1af45072c6f0e
+* Původní licence: LGPLv3+ (kód), CC-BY-SA-3.0 (vše ostatní)
+* [ContentDB](https://content.minetest.net/packages/jwmhjwmh/area\_containers/)
+
 ## Your Dad's BBQ Mod (BBQ)
 
 * Zdroj: [https://github.com/Grizzly-Adam/BBQ](https://github.com/Grizzly-Adam/BBQ), revize 1a72f7c2baacc6798033a7973545ab74cc52341e
