@@ -25,8 +25,92 @@ pkarcs = {}
 
 -- convert integer coordinates to nodebox coordinates
 
-function nb(n)
+local function nb(n)
 	return n/16-1/2
+end
+
+local arc_nodebox = {
+	type = "fixed",
+	fixed = {
+		{ nb(0),  nb(0),  nb(0),     nb(1),  nb(16), nb(16) },
+		{ nb(1),  nb(4),  nb(0),     nb(2),  nb(16), nb(16) },
+		{ nb(2),  nb(7),  nb(0),     nb(3),  nb(16), nb(16) },
+		{ nb(3),  nb(8),  nb(0),     nb(4),  nb(16), nb(16) },
+		{ nb(4),  nb(10), nb(0),     nb(5),  nb(16), nb(16) },
+		{ nb(5),  nb(11), nb(0),     nb(6),  nb(16), nb(16) },
+		{ nb(6),  nb(12), nb(0),     nb(8),  nb(16), nb(16) },
+		{ nb(8),  nb(13), nb(0),     nb(9),  nb(16), nb(16) },
+		{ nb(9),  nb(14), nb(0),     nb(12), nb(16), nb(16) },
+		{ nb(12), nb(15), nb(0),     nb(16), nb(16), nb(16) },
+	}
+}
+
+local outer_arc_nodebox = {
+	type = "fixed",
+	fixed = {
+		{ nb(0),  nb(0),  nb(16),     nb(1),  nb(16), nb(16-1)  },
+		{ nb(0),  nb(4),  nb(16),     nb(2),  nb(16), nb(16-2)  },
+		{ nb(0),  nb(7),  nb(16),     nb(3),  nb(16), nb(16-3)  },
+		{ nb(0),  nb(8),  nb(16),     nb(4),  nb(16), nb(16-4)  },
+		{ nb(0),  nb(10), nb(16),     nb(5),  nb(16), nb(16-5)  },
+		{ nb(0),  nb(11), nb(16),     nb(6),  nb(16), nb(16-6)  },
+		{ nb(0),  nb(12), nb(16),     nb(8),  nb(16), nb(16-8)  },
+		{ nb(0),  nb(13), nb(16),     nb(9),  nb(16), nb(16-9)  },
+		{ nb(0),  nb(14), nb(16),     nb(12), nb(16), nb(16-12) },
+		{ nb(0),  nb(15), nb(16),     nb(16), nb(16), nb(16-16) },
+	}
+}
+
+local inner_arc_nodebox = {
+	type = "fixed",
+	fixed = {
+		{ nb(0),  nb(0),  nb(16),     nb(1),  nb(16), nb(0)    },
+		{ nb(0),  nb(0),  nb(16),     nb(16), nb(16), nb(16-1) },
+
+		{ nb(0),  nb(4),  nb(16),     nb(2),  nb(16), nb(0)    },
+		{ nb(0),  nb(4),  nb(16),     nb(16), nb(16), nb(16-2) },
+
+		{ nb(0),  nb(7),  nb(16),     nb(3),  nb(16), nb(0)    },
+		{ nb(0),  nb(7),  nb(16),     nb(16), nb(16), nb(16-3) },
+
+		{ nb(0),  nb(8),  nb(16),     nb(4),  nb(16), nb(0)    },
+		{ nb(0),  nb(8),  nb(16),     nb(16), nb(16), nb(16-4) },
+
+		{ nb(0),  nb(10), nb(16),     nb(5),  nb(16), nb(0)    },
+		{ nb(0),  nb(10), nb(16),     nb(16), nb(16), nb(16-5) },
+
+		{ nb(0),  nb(11), nb(16),     nb(6),  nb(16), nb(0)    },
+		{ nb(0),  nb(11), nb(16),     nb(16), nb(16), nb(16-6) },
+
+		{ nb(0),  nb(12), nb(16),     nb(8),  nb(16), nb(0)    },
+		{ nb(0),  nb(12), nb(16),     nb(16), nb(16), nb(16-8) },
+
+		{ nb(0),  nb(13), nb(16),     nb(9),  nb(16), nb(0)    },
+		{ nb(0),  nb(13), nb(16),     nb(16), nb(16), nb(16-9) },
+
+		{ nb(0),  nb(14), nb(16),     nb(12), nb(16), nb(0)     },
+		{ nb(0),  nb(14), nb(16),     nb(16), nb(16), nb(16-12) },
+
+		{ nb(0),  nb(15), nb(16),     nb(16), nb(16), nb(16-16) },
+	}
+}
+
+local groups_to_inherit = {
+	"cracky",
+	"crumbly",
+	"flamable",
+	"oddly_breakable_by_hands",
+	"snappy",
+}
+
+local function process_groups(groups)
+	local result = {}
+	for _, group in ipairs(groups_to_inherit) do
+		if groups[group] ~= nil then
+			result[group] = groups[group]
+		end
+	end
+	return result
 end
 
 -- define nodes
@@ -45,21 +129,7 @@ function pkarcs.register_all(nodename, desc, tile, sound, group, craftmaterial)
 		paramtype2 = "facedir",
 		tiles = tile_collection,
 		drawtype = "nodebox",
-		node_box = {
-			type = "fixed",
-			fixed = {
-				{ nb(0),  nb(0),  nb(0),     nb(1),  nb(16), nb(16) },
-				{ nb(1),  nb(4),  nb(0),     nb(2),  nb(16), nb(16) },
-				{ nb(2),  nb(7),  nb(0),     nb(3),  nb(16), nb(16) },
-				{ nb(3),  nb(8),  nb(0),     nb(4),  nb(16), nb(16) },
-				{ nb(4),  nb(10), nb(0),     nb(5),  nb(16), nb(16) },
-				{ nb(5),  nb(11), nb(0),     nb(6),  nb(16), nb(16) },
-				{ nb(6),  nb(12), nb(0),     nb(8),  nb(16), nb(16) },
-				{ nb(8),  nb(13), nb(0),     nb(9),  nb(16), nb(16) },
-				{ nb(9),  nb(14), nb(0),     nb(12), nb(16), nb(16) },
-				{ nb(12), nb(15), nb(0),     nb(16), nb(16), nb(16) },
-			}
-		},
+		node_box = arc_nodebox,
 		groups = group,
 		sounds = sound,
 
@@ -146,21 +216,7 @@ function pkarcs.register_all(nodename, desc, tile, sound, group, craftmaterial)
 		paramtype2 = "facedir",
 		tiles = tile_collection,
 		drawtype = "nodebox",
-		node_box = {
-			type = "fixed",
-			fixed = {
-				{ nb(0),  nb(0),  nb(16),     nb(1),  nb(16), nb(16-1)  },
-				{ nb(0),  nb(4),  nb(16),     nb(2),  nb(16), nb(16-2)  },
-				{ nb(0),  nb(7),  nb(16),     nb(3),  nb(16), nb(16-3)  },
-				{ nb(0),  nb(8),  nb(16),     nb(4),  nb(16), nb(16-4)  },
-				{ nb(0),  nb(10), nb(16),     nb(5),  nb(16), nb(16-5)  },
-				{ nb(0),  nb(11), nb(16),     nb(6),  nb(16), nb(16-6)  },
-				{ nb(0),  nb(12), nb(16),     nb(8),  nb(16), nb(16-8)  },
-				{ nb(0),  nb(13), nb(16),     nb(9),  nb(16), nb(16-9)  },
-				{ nb(0),  nb(14), nb(16),     nb(12), nb(16), nb(16-12) },
-				{ nb(0),  nb(15), nb(16),     nb(16), nb(16), nb(16-16) },
-			}
-		},
+		node_box = outer_arc_nodebox,
 		groups = group,
 		sounds = sound,
 
@@ -222,39 +278,7 @@ function pkarcs.register_all(nodename, desc, tile, sound, group, craftmaterial)
 		paramtype2 = "facedir",
 		tiles = tile_collection,
 		drawtype = "nodebox",
-		node_box = {
-			type = "fixed",
-			fixed = {
-				{ nb(0),  nb(0),  nb(16),     nb(1),  nb(16), nb(0)    },
-				{ nb(0),  nb(0),  nb(16),     nb(16), nb(16), nb(16-1) },
-
-				{ nb(0),  nb(4),  nb(16),     nb(2),  nb(16), nb(0)    },
-				{ nb(0),  nb(4),  nb(16),     nb(16), nb(16), nb(16-2) },
-
-				{ nb(0),  nb(7),  nb(16),     nb(3),  nb(16), nb(0)    },
-				{ nb(0),  nb(7),  nb(16),     nb(16), nb(16), nb(16-3) },
-
-				{ nb(0),  nb(8),  nb(16),     nb(4),  nb(16), nb(0)    },
-				{ nb(0),  nb(8),  nb(16),     nb(16), nb(16), nb(16-4) },
-
-				{ nb(0),  nb(10), nb(16),     nb(5),  nb(16), nb(0)    },
-				{ nb(0),  nb(10), nb(16),     nb(16), nb(16), nb(16-5) },
-
-				{ nb(0),  nb(11), nb(16),     nb(6),  nb(16), nb(0)    },
-				{ nb(0),  nb(11), nb(16),     nb(16), nb(16), nb(16-6) },
-
-				{ nb(0),  nb(12), nb(16),     nb(8),  nb(16), nb(0)    },
-				{ nb(0),  nb(12), nb(16),     nb(16), nb(16), nb(16-8) },
-
-				{ nb(0),  nb(13), nb(16),     nb(9),  nb(16), nb(0)    },
-				{ nb(0),  nb(13), nb(16),     nb(16), nb(16), nb(16-9) },
-
-				{ nb(0),  nb(14), nb(16),     nb(12), nb(16), nb(0)     },
-				{ nb(0),  nb(14), nb(16),     nb(16), nb(16), nb(16-12) },
-
-				{ nb(0),  nb(15), nb(16),     nb(16), nb(16), nb(16-16) },
-			}
-		},
+		node_box = inner_arc_nodebox,
 		groups = group,
 		sounds = sound,
 
@@ -327,7 +351,7 @@ function pkarcs.register_node(name)
 		node_def.tile_images = nil
 	end
 
-	pkarcs.register_all(node_name, node_def.description, node_def.tiles, node_def.sounds, node_def.groups, name)
+	pkarcs.register_all(node_name, node_def.description, node_def.tiles, node_def.sounds, process_groups(node_def.groups), name)
 end
 
 

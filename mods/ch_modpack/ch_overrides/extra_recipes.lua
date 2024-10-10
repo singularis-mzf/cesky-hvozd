@@ -300,3 +300,72 @@ if minetest.get_modpath("farming") and minetest.get_modpath("wine") then
 		minetest.register_craft(def)
 	end
 end
+
+if minetest.get_modpath("solidcolor") then
+	local plaster_colors = {
+		"blue", "cyan", "dark_green", "dark_grey", "green", "grey", "medium_amber_s50", "orange", "pink", "red", "white", "yellow"
+	}
+	local source_items = {
+		"darkage:ors_brick",
+		"darkage:stone_brick",
+		"default:desert_sandstone_brick",
+		"default:desert_stonebrick",
+		"default:sandstonebrick",
+		"default:silver_sandstone_brick",
+		"default:stonebrick",
+		"moreblocks:cactus_brick",
+		"moreblocks:coal_stone_bricks",
+		"moreblocks:grey_bricks",
+		"moreblocks:iron_stone_bricks"
+	}
+	local plaster_source_items = {
+		"default:brick",
+	}
+	local brick_row = {"default:brick", "default:brick", "default:brick"}
+	local has_moreblocks = minetest.get_modpath("moreblocks")
+	for _, name in ipairs(source_items) do
+		if minetest.registered_nodes[name] ~= nil then
+			local def = {
+				output = "default:brick",
+				recipe = {{name}},
+			}
+			minetest.register_craft({
+				output = "default:brick",
+				recipe = {{name}},
+			})
+		end
+	end
+	if has_moreblocks then
+		minetest.register_craft({
+			output = "moreblocks:cactus_brick 8",
+			recipe = {
+				brick_row,
+				{"default:brick", "dye:green", "default:brick"},
+				brick_row,
+			},
+		})
+		minetest.register_craft({
+			output = "moreblocks:grey_bricks 8",
+			recipe = {
+				brick_row,
+				{"default:brick", "dye:grey", "default:brick"},
+				brick_row,
+			},
+		})
+		table.insert(plaster_source_items, "moreblocks:cactus_brick")
+		table.insert(plaster_source_items, "moreblocks:grey_bricks")
+	end
+	for _, name in ipairs(plaster_source_items) do
+		brick_row = {name, name, name}
+		for _, color in ipairs(plaster_colors) do
+			minetest.register_craft({
+				output = "solidcolor:plaster_"..color.." 3",
+				recipe = {
+					{"", "dye:"..color, ""},
+					brick_row,
+					{"", "", ""},
+				}
+			})
+		end
+	end
+end

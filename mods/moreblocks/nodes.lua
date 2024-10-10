@@ -113,7 +113,7 @@ local nodes = {
 		sounds = sound_stone,
 	},
 	["grey_bricks"] = {
-		description = S("Stone Bricks"),
+		description = S("Grey Bricks"),
 		paramtype2 = "facedir",
 		place_param2 = 0,
 		groups = {cracky = 3},

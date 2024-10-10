@@ -3,6 +3,14 @@
 
 local S = technic_cnc.getter
 
+local fileds_to_inherit = {
+	"light_source",
+	"sounds",
+	"sunlight_propagates",
+	"use_texture_alpha",
+	"walkable",
+}
+
 -- Generic function for registering all the different node types
 function technic_cnc.register_program(recipeitem, suffix, model, groups, images, description, cbox, sbox)
 
@@ -51,21 +59,18 @@ function technic_cnc.register_program(recipeitem, suffix, model, groups, images,
 		else
 			minetest.log("warning", "Description of a node "..recipeitem.." not found!")
 		end
-		if node_def.use_texture_alpha then
-			def.use_texture_alpha = node_def.use_texture_alpha
-		elseif node_def.drawtype == "allfaces_optional" then
+		-- inherit fields:
+		for _, key in ipairs(fileds_to_inherit) do
+			if node_def[key] ~= nil then
+				def[key] = node_def[key]
+			end
+		end
+		if not node_def.use_texture_alpha and node_def.drawtype == "allfaces_optional" then
 			def.use_texture_alpha = "clip" --leaves
 		end
 		if node_def.drawtype == "glasslike_framed_optional" then
 			def.visual_scale = 0.995
 		end
-		if node_def.walkable ~= nil then
-			def.walkable = node_def.walkable
-		end
-		if node_def.light_source ~= nil then
-			def.light_source = node_def.light_source
-		end
-		def.sounds = node_def.sounds
 	else
 		minetest.log("error", "A recipe item "..recipeitem.." for CNC not found!")
 	end
