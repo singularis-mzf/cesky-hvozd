@@ -1,5 +1,7 @@
 ch_core.open_submod("hud", {chat = true, data = true, lib = true})
 
+local ifthenelse = ch_core.ifthenelse
+
 -- PLAYER LIST
 local base_y_offset = 90
 local y_scale = 20
@@ -88,13 +90,149 @@ function ch_core.hide_player_list(player, online_charinfo)
 	return true
 end
 
+local has_hudbars = minetest.get_modpath("hudbars")
+
+-- GAME TIME HUDBAR
+if has_hudbars then
+	local icon_day = "ch_core_slunce.png^[resize:20x20"
+	local icon_night = "moon.png^[resize:20x20"
+	local bar_day = "hudbars_bar_day.png"
+	local bar_night = "hudbars_bar_night.png"
+
+	hb.register_hudbar("ch_gametime", 0xCCCCCC, "", {icon = icon_day, bgicon = nil, bar = bar_day},
+		0, 100, true, "@1 min.", {order = {"value"}, textdomain = "hudbars"})
+
+	local function on_joinplayer(player, last_login)
+		local offline_charinfo = ch_core.offline_charinfo[player:get_player_name()]
+		hb.init_hudbar(player, "ch_gametime")
+		if offline_charinfo ~= nil and offline_charinfo.skryt_zbyv ~= 1 then
+			hb.unhide_hudbar(player, "ch_gametime")
+		end
+	end
+	minetest.register_on_joinplayer(on_joinplayer)
+
+	function ch_core.show_gametime_hudbar(player_name)
+		local offline_charinfo = ch_core.offline_charinfo[player_name]
+		if offline_charinfo ~= nil and offline_charinfo.skryt_zbyv ~= 0 then
+			offline_charinfo.skryt_zbyv = 0
+			ch_core.save_offline_charinfo(player_name, "skryt_zbyv")
+			local player = minetest.get_player_by_name(player_name)
+			if player ~= nil then
+				hb.unhide_hudbar(player, "ch_gametime")
+				ch_core.update_gametime_hudbar({player})
+			end
+			return true
+		end
+		return false
+	end
+
+	function ch_core.hide_gametime_hudbar(player_name)
+		local offline_charinfo = ch_core.offline_charinfo[player_name]
+		if offline_charinfo ~= nil and offline_charinfo.skryt_zbyv ~= 1 then
+			offline_charinfo.skryt_zbyv = 1
+			ch_core.save_offline_charinfo(player_name, "skryt_zbyv")
+			local player = minetest.get_player_by_name(player_name)
+			if player ~= nil then
+				hb.hide_hudbar(player, "ch_gametime")
+			end
+			return true
+		end
+		return false
+	end
+
+	function ch_core.is_gametime_hudbar_shown(player_name)
+		local offline_charinfo = ch_core.offline_charinfo[player_name]
+		return offline_charinfo ~= nil and offline_charinfo.skryt_zbyv ~= 1
+	end
+
+	local cache_time_speed = 0
+	local cache_is_night
+	local cache_value = -1
+	local dawn = 330
+	local dusk = 1140
+
+	function ch_core.update_gametime_hudbar(players, timeofday)
+		if players == nil then
+			players = {}
+			for _, player in ipairs(minetest.get_connected_players()) do
+				local player_name = player:get_player_name()
+				local offline_charinfo = ch_core.offline_charinfo[player_name] or {}
+				if offline_charinfo.skryt_zbyv ~= 1 then
+					table.insert(players, player)
+				end
+			end
+		end
+		if #players == 0 then
+			return -- no players
+		end
+
+		local tod = timeofday or minetest.get_timeofday()
+		if tod == nil then return end
+		tod = tod * 1440 -- převést na počet herních minut
+		local is_night = tod < dawn or tod >= dusk
+		local time_speed = tonumber(minetest.settings:get("time_speed"))
+		if time_speed == nil then
+			minetest.log("warning", "[ch_core/hud] Cannot determine time_speed!")
+			time_speed = 72
+		end
+
+		local new_value, new_max_value, new_icon, new_bar
+		if is_night then
+			new_value = math.ceil((ifthenelse(tod >= dusk, 1440 + dawn, dawn) - tod) / time_speed)
+			if time_speed ~= cache_time_speed or cache_is_night ~= is_night then
+				new_icon, new_bar = icon_night, bar_night
+				new_max_value = math.ceil((1440 - (dusk - dawn)) / time_speed)
+				cache_is_night, cache_time_speed = is_night, time_speed -- update cache
+			end
+		else
+			new_value = math.ceil((dusk - tod) / time_speed)
+			if time_speed ~= cache_time_speed or cache_is_night then
+				new_icon, new_bar = icon_day, bar_day
+				new_max_value = math.ceil((dusk - dawn) / time_speed)
+				cache_is_night, cache_time_speed = is_night, time_speed -- update cache
+			end
+		end
+		if new_value ~= cache_value then
+			cache_value = new_value
+		else
+			if new_max_value == nil and new_icon == nil then
+				return true -- nothing to update
+			end
+			new_value = nil -- don't update value if not necesarry
+		end
+		for _, player in ipairs(players) do
+			print("DEBUG: will change ch_gametime hudbar for "..player:get_player_name()..": "..dump2({player, "ch_gametime", new_value, new_max_value, new_icon,
+				new_bar = new_bar,
+				cache_is_night = cache_is_night, cache_time_speed = cache_time_speed, cache_value = cache_value}))
+
+			hb.change_hudbar(player, "ch_gametime", new_value, new_max_value, new_icon, nil, new_bar)
+		end
+		return true
+	end
+else
+	function ch_core.show_gametime_hudbar(player_name)
+		return
+	end
+
+	function ch_core.hide_gametime_hudbar(player_name)
+		return
+	end
+
+	function ch_core.update_gametime_hudbar(players, tod)
+		return
+	end
+
+	function ch_core.is_gametime_hudbar_shown(player_name)
+		return false
+	end
+end
+
 -- CH_HUDBARS
 
-local has_hudbars = minetest.get_modpath("hudbars")
 if not has_hudbars then
 	ch_core.count_of_ch_hudbars = 0
 else
-	ch_core.count_of_ch_hudbars = 4
+	ch_core.count_of_ch_hudbars = 2
 
 	local hudbar_formatstring = "@1: @2"
 	local hudbar_formatstring_config = {

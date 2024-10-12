@@ -411,6 +411,15 @@ local function get_formspec(player, perplayer_formspec)
 			fsgen:checkbox("skrythlad", "skrýt a ignorovat hlad", toffline_charinfo.skryt_hlad == 1, tooltip))
 	end
 
+	-- Zobrazit ukazatel zbývajícího času?
+	if tplayer_role ~= "none" then
+		tooltip =
+			"Je-li tato volba zapnutá, ukazatel ve spodní části obrazovky\n"..
+			"ukazuje počet reálných minut zbývajících do herního soumraku/úsvitu."
+		table.insert(formspec,
+			fsgen:checkbox("zobrazzbyv", "ukazatel času zbývajícího do soumraku/úsvitu", toffline_charinfo.skryt_zbyv ~= 1, tooltip))
+	end
+
 	if tplayer ~= nil then
 		-- Osobní osvětlení světa [all players in game]
 		tooltip =
@@ -753,6 +762,12 @@ local function on_player_receive_fields(player, formname, fields)
 		update_formspec = true
 		if has_stamina and tplayer ~= nil then
 			stamina.change(tplayer)
+		end
+	elseif fields.chs_zobrazzbyv then
+		if fields.chs_zobrazzbyv == "true" then
+			ch_core.show_gametime_hudbar(tplayer_name)
+		else
+			ch_core.hide_gametime_hudbar(tplayer_name)
 		end
 
 	-- 3. FIELDS WITH BUTTONS

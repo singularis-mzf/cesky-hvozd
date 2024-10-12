@@ -106,6 +106,7 @@ local head_bone_position = vector.new(0, 6.35, 0)
 local head_bone_angle = vector.new(0, 0, 0)
 local emoting = (minetest.get_modpath("emote") and emote.emoting) or {}
 local globstep_dtime_accumulated = 0.0
+local hud_dtime_accumulated = 0.0
 local get_us_time = minetest.get_us_time
 local has_wielded_light = minetest.get_modpath("wielded_light")
 local custom_globalsteps = {}
@@ -163,6 +164,12 @@ local function globalstep(dtime)
 	local process_ap = us_time - last_ap_timestamp >= ch_core.ap_interval * 1000000
 	if process_ap then
 		last_ap_timestamp = us_time
+	end
+
+	hud_dtime_accumulated = hud_dtime_accumulated + dtime
+	if hud_dtime_accumulated > 1 then
+		hud_dtime_accumulated = 0
+		ch_core.update_gametime_hudbar(nil, tod)
 	end
 
 	-- PRO KAŽDÉHO HRÁČE/KU:

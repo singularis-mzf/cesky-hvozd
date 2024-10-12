@@ -117,6 +117,7 @@ local offline_charinfo_data_types = {
 	rezim_plateb = "int", -- >= 0, význam podle módu ch_bank
 	skryt_body = "int", -- 0 => zobrazit, 1 => skrýt
 	skryt_hlad = "int", -- 0 => zobrazovat (výchozí), 1 => skrýt
+	skryt_zbyv = "int", -- 0 => zobrazovat (výchozí), 1 => skrýt
 	zacatek_kam = "int", -- 1 => Začátek, 2 => Masarykovo náměstí, 3 => Hlavní nádraží
 
 	trest = "int",
