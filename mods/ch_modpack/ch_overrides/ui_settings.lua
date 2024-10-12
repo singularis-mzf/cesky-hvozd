@@ -8,7 +8,7 @@ local has_ch_bank = minetest.get_modpath("ch_bank")
 local has_ch_extras = minetest.get_modpath("ch_extras")
 local has_emoji = minetest.get_modpath("emoji")
 local has_emote = minetest.get_modpath("emote")
-local has_minenews = minetest.get_modpath("minenews")
+local has_stamina = minetest.get_modpath("stamina")
 local has_woodcutting = minetest.get_modpath("woodcutting")
 --
 -- fsgen_class
@@ -230,7 +230,7 @@ local function invoke_chat_command(player_name, player, command, args)
 		return
 	end
 	if def.privs ~= nil and not minetest.check_player_privs(player_name, def.privs) then
-		minenews.log("warning", "Player "..player_name.." tried to invoke command /"..command.." with insufficient privs!")
+		minetest.log("warning", "Player "..player_name.." tried to invoke command /"..command.." with insufficient privs!")
 		return
 	end
 	local result, message = f(player_name, args)
@@ -400,6 +400,15 @@ local function get_formspec(player, perplayer_formspec)
 			"z výběrové lišty. Pokud však budete chtít něco hodit na zem, budete toto nastavení muset dočasně vypnout."
 		table.insert(formspec,
 			fsgen:checkbox("predmetydokose", "předměty vyhazovat do koše místo na zem", toffline_charinfo.discard_drops == 1, tooltip))
+	end
+
+	-- Skrýt ukazatel hladu?
+	if tplayer_role ~= "new" and tplayer_role ~= "none" then
+		tooltip =
+			"Zapnete-li tuto volbu, ukazatel sytosti/hladu se nebude zobrazovat a hlad postavy vás nebude nijak omezovat ve hře.\n"..
+			"V případě otravy nebo opilosti se však ukazatel stejně zobrazí."
+		table.insert(formspec,
+			fsgen:checkbox("skrythlad", "skrýt a ignorovat hlad", toffline_charinfo.skryt_hlad == 1, tooltip))
 	end
 
 	if tplayer ~= nil then
@@ -575,7 +584,7 @@ local function get_formspec(player, perplayer_formspec)
 		table.insert(formspec,
 			fsgen:field_with_button("prava", "/práva (vaše, nebo jiné postavy)", "", "vypíše vaše práva (pokud nic nezadáte) nebo práva jiné postavy", "vypsat"))
 
-		if has_minenews then
+		if minetest.registered_chatcommands["novinky"] ~= nil then
 			-- /novinky
 			table.insert(formspec,
 				fsgen:button("novinky", "/novinky", "zobrazit novinky na serveru\n(otevře jiné okno)"))
@@ -738,6 +747,13 @@ local function on_player_receive_fields(player, formname, fields)
 		toffline_charinfo.discard_drops = ifthenelse(fields.chs_predmetydokose == "true", 1, 0)
 		ch_core.save_offline_charinfo(tplayer_name, "discard_drops")
 		update_formspec = true
+	elseif fields.chs_skrythlad then
+		toffline_charinfo.skryt_hlad = ifthenelse(fields.chs_skrythlad == "true", 1, 0)
+		ch_core.save_offline_charinfo(tplayer_name, "skryt_hlad")
+		update_formspec = true
+		if has_stamina and tplayer ~= nil then
+			stamina.change(tplayer)
+		end
 
 	-- 3. FIELDS WITH BUTTONS
 	elseif fields.chs_adoslech_set and tonumber(fields.chs_adoslech) ~= nil then

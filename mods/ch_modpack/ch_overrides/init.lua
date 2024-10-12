@@ -2,6 +2,8 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 
 local modpath = minetest.get_modpath("ch_overrides")
 
+ch_overrides = {}
+
 local mods = {
 	"books",
 	"cavestuff",
@@ -40,7 +42,7 @@ dofile(modpath.."/shelves.lua")
 dofile(modpath.."/trash_cans.lua")
 dofile(modpath.."/tool_breaking.lua")
 dofile(modpath.."/ui_appearance.lua")
-dofile(modpath.."/ui_settings.lua")
+dofile(modpath.."/ui_settings.lua") -- : news
 dofile(modpath.."/ui_stavby.lua")
 dofile(modpath.."/underwater_dig.lua")
 dofile(modpath.."/unknown_watcher.lua")

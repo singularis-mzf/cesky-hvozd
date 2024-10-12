@@ -156,7 +156,8 @@ local function stamina_update_hud(player, stamina_level)
 	else
 		result = false
 	end
-	if not is_stamina_enabled(player_name) then
+	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	if not is_stamina_enabled(player_name) or (hud_status == "normal" and offline_charinfo and offline_charinfo.skryt_hlad == 1) then
 		hb.hide_hudbar(player, "hlad")
 	elseif hud_status ~= "normal" or hud_value > 5 then
 		hb.unhide_hudbar(player, "hlad")
@@ -204,7 +205,11 @@ stamina.change = function(player, change)
 
 	local name = player:get_player_name()
 
-	if not name or not change or change == 0 then
+	if not name then
+		return false
+	end
+	if not change or change == 0 then
+		stamina_update_hud(player, get_int_attribute(player) or 0)
 		return false
 	end
 

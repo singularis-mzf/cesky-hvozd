@@ -1,6 +1,6 @@
 local has_bulletin_boards = minetest.get_modpath("bulletin_boards")
 
-local function novinky(player_name, param)
+function ch_overrides.novinky(player_name, param)
     local online_charinfo = ch_core.online_charinfo[player_name]
     local oc_role = online_charinfo and online_charinfo.news_role
     if oc_role == nil then
@@ -19,7 +19,7 @@ local def = {
     params = "",
     description = "Zobrazí úvodní obrazovku, která se vám zobrazila při vstupu do hry.",
     privs = {},
-    func = novinky,
+    func = ch_overrides.novinky,
 }
 
 minetest.register_chatcommand("novinky", def)
