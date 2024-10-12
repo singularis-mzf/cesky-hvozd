@@ -1,0 +1,2 @@
+confetti.cooldown_delay (Cooldown in seconds after confetti use [per player]) float 0.3 0 600
+confetti.particle_amount (Number of particles per one confetti use) int 110 1 100000

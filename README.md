@@ -438,6 +438,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: GPLv3 pro kód, CC-BY-SA-3.0 pro média
 * [ContentDB](https://content.minetest.net/packages/alerikaisattera/compactor/)
 
+## Confetti (confetti)
+
+* Zdroj: [https://github.com/Krunegan/confetti](https://github.com/Krunegan/confetti), revize 77f4c684cbbb353b3978251448b87fa3b9752ae5
+* Původní licence: MIT pro kód, CC-BY-4.0 pro textury
+* Licence úprav: MIT pro kód, CC-BY-4.0 pro textury
+* [ContentDB](https://content.minetest.net/packages/Krunegan/confetti/)
+
 ## Cottages (cottages)
 
 * Zdroj: [https://github.com/Sokomine/cottages](https://github.com/Sokomine/cottages), revize 2b10e6f6791198edb9ad0fd3b2e12ce3a00a1142

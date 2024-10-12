@@ -201,10 +201,6 @@ if has_hudbars then
 			new_value = nil -- don't update value if not necesarry
 		end
 		for _, player in ipairs(players) do
-			print("DEBUG: will change ch_gametime hudbar for "..player:get_player_name()..": "..dump2({player, "ch_gametime", new_value, new_max_value, new_icon,
-				new_bar = new_bar,
-				cache_is_night = cache_is_night, cache_time_speed = cache_time_speed, cache_value = cache_value}))
-
 			hb.change_hudbar(player, "ch_gametime", new_value, new_max_value, new_icon, nil, new_bar)
 		end
 		return true
