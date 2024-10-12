@@ -7,7 +7,7 @@ local internal = {
 	default_width = 8,
 	default_height = 4,
 	base = vector.new(-3840, 3744, -3840),
-	offset = vector.new(96, -96, 96),
+	offset = vector.new(96, -256, 96),
 	limit = vector.new(80, 2, 80),
 	storage = minetest.get_mod_storage(),
 }
