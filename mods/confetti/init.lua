@@ -23,37 +23,95 @@ DEALINGS IN THE SOFTWARE.
 
 local modname = minetest.get_current_modname()
 
-minetest.log("action", "[MOD] " .. modname .. " loading...")
+print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local modpath = minetest.get_modpath(modname)
 
 confetti = {}
 confetti.particle_amount = tonumber(minetest.settings:get(modname .. ".particle_amount")) or 110
 confetti.cooldown = tonumber(minetest.settings:get(modname .. ".cooldown_delay")) or 0.3
+local recipe_output_amount = 8
 
--- needed for the cooldown, stores last time player used confetti
-local player_last_use = {}
+local tex_base = "ch_core_white_pixel.png^[resize:8x8"
+local item_base = "confetti_item.png"
 
-
-minetest.register_craft({
-    output = "confetti:confetti_rainbow",
-    recipe = {
-        { "",              "dye:blue",      "dye:yellow" },
-        { "",              "default:stick", "dye:red" },
-        { "default:stick", "",              "" },
-    }
-})
-
+print("DEBUG: A")
 local confetti_colors = {
-    "red", "blue", "green", "white", "yellow", "black", "violet", "pink", "orange", "cyan", "brown"
+    red = {
+        description = "červené konfety",
+        color = "#990000",
+    },
+    blue = {
+        description = "modré konfety",
+        color = "#1867ce",
+    },
+    green = {
+        description = "zelené konfety",
+        color = "#008200",
+    },
+    white = {
+        description = "bílé konfety",
+        color = "#dddddd",
+    },
+    grey = {
+        description = "šedé konfety",
+        color = "#a0a0a0",
+    },
+    yellow = {
+        description = "žluté konfety",
+        color = "#9e9e00",
+    },
+    black = {
+        description = "černé konfety",
+        color = "#000000",
+    },
+    violet = {
+        description = "fialové konfety",
+        color = "#812396",
+    },
+    pink = {
+        description = "růžové konfety",
+        color = "#ff5dc2",
+    },
+    orange = {
+        description = "oranžové konfety",
+        color = "#c16700",
+    },
+    cyan = {
+        description = "tyrkysové konfety",
+        color = "#60c4c2",
+    },
+    brown = {
+        description = "hnědé konfety",
+        color = "#823528",
+    },
 }
 
+-- texpool preprocessing:
 local rainbow_texpool = {}
-for _, color in ipairs(confetti_colors) do
-    if color ~= "black" then -- don't like that one
-        table.insert(rainbow_texpool, "confetti_" .. color .. ".png")
+for color, cdef in pairs(confetti_colors) do
+    local texpool = cdef.texpool
+    if texpool == nil then
+        texpool = {tex_base.."^[multiply:"..assert(cdef.color)}
+        cdef.texpool = texpool
+    end
+    if color ~= "black" then
+        table.insert(rainbow_texpool, cdef.texpool[1])
     end
 end
+
+confetti_colors.rainbow = {
+    description = "různobarevné konfety",
+    inventory_image = "confetti_rainbow.png",
+    texpool = rainbow_texpool,
+    recipe = {
+        { "",              "dye:blue",      "dye:green" },
+        { "",              "default:stick", "dye:red" },
+        { "default:stick", "",              "" },
+    },
+}
+
+print("DEBUG: B")
 
 -- get actual eye_pos of the player (including eye_offset)
 local function player_get_rel_eye_pos(player)
@@ -67,7 +125,9 @@ local function player_get_rel_eye_pos(player)
     return p_eye_pos
 end
 
-local create_confetti = function(itemstack, user, _pointed_thing, texpool)
+print("DEBUG: C")
+
+local function create_confetti(itemstack, user, _pointed_thing, texpool)
     if not user or not user:is_player() then
         return
     end
@@ -100,7 +160,7 @@ local create_confetti = function(itemstack, user, _pointed_thing, texpool)
             origin = origin,
         },
         acc = { x = 0, y = -4, z = 0 },
-        exptime = 5,
+        exptime = 10,
         size = particle_size,
         collisiondetection = true,
         collision_removal = true,
@@ -120,77 +180,52 @@ local create_confetti = function(itemstack, user, _pointed_thing, texpool)
     minetest.add_particlespawner(def)
 
     -- sound_name = "mesecons_button_pop"
-    -- minetest.sound_play(sound_name, {
-    --     pos = sound_pos,
-    --     max_hear_distance = 40,
-    --     gain = 1.0,
-    --     pitch = 6.0,
-    -- })
+    minetest.sound_play("default_grass_footstep", {
+        pos = sound_pos,
+        max_hear_distance = 40,
+        gain = 1.0,
+        pitch = 6.0,
+    })
 
-    itemstack:take_item(1)
+    if not minetest.is_creative_enabled(user:get_player_name()) then
+        itemstack:take_item(1)
+    end
     return itemstack
 end
 
-for _, color in ipairs(confetti_colors) do
-    minetest.register_craft({
-        output = "confetti:" .. color,
-        recipe = {
-            { "",              "dye:" .. color, "dye:" .. color },
-            { "",              "default:stick", "dye:" .. color },
-            { "default:stick", "",              "" },
-        }
-    })
+print("DEBUG: D")
 
-    local texpool = { "confetti_" .. color .. ".png" }
-
+for color, cdef in pairs(confetti_colors) do
+    local texpool = assert(cdef.texpool)
     minetest.register_craftitem("confetti:" .. color, {
-        description = color:gsub("^%l", string.upper) .. " Confetti",
-        inventory_image = "confetti_" .. color .. "_item.png",
-        stack_max = 99,
+        description = assert(cdef.description),
+        inventory_image = cdef.inventory_image or (item_base.."^[multiply:"..assert(cdef.color)),
         on_use = function(itemstack, user, pointed_thing)
             if user and type(user) == "userdata" and user:is_player() then
                 local player_name = user:get_player_name()
-
-                local current_time = minetest.get_us_time()/1000000
-                local last_time = player_last_use[player_name]
-                if last_time and current_time - last_time < confetti.cooldown then
-                    --minetest.chat_send_player(player_name, ("Don't spam, wait %fs."):format(confetti.cooldown - (current_time - last_time)))
-                    return
+                local online_charinfo = ch_core.online_charinfo[player_name]
+                if online_charinfo ~= nil then
+                    local current_time = minetest.get_us_time()/1000000
+                    local last_time = online_charinfo.last_confetti_use
+                    if last_time and current_time - last_time < confetti.cooldown then
+                        --minetest.chat_send_player(player_name, ("Don't spam, wait %fs."):format(confetti.cooldown - (current_time - last_time)))
+                        return
+                    end
+                    online_charinfo.last_confetti_use = current_time
                 end
-                player_last_use[player_name] = current_time
             end
 
             return create_confetti(itemstack, user, pointed_thing, texpool)
         end,
     })
+    minetest.register_craft({
+        output = "confetti:" .. color.." "..recipe_output_amount,
+        recipe = cdef.recipe or {
+            { "",              "dye:" .. color, "dye:" .. color },
+            { "",              "default:stick", "dye:" .. color },
+            { "default:stick", "",              "" },
+        }
+    })
 end
 
-minetest.register_craftitem("confetti:confetti_rainbow", {
-    description = "Confetti",
-    inventory_image = "confetti_rainbow.png",
-    stack_max = 99,
-    on_use = function(itemstack, user, pointed_thing)
-        -- FIXME check if user is a player
-        if user and type(user) == "userdata" and user:is_player() then
-            local player_name = user:get_player_name()
-
-            local current_time = minetest.get_us_time()/1000000
-            local last_time = player_last_use[player_name]
-            if last_time and current_time - last_time < confetti.cooldown then
-                --minetest.chat_send_player(player_name, ("Don't spam, wait %fs."):format(confetti.cooldown - (current_time - last_time)))
-                return
-            end
-            player_last_use[player_name] = current_time
-        end
-
-        return create_confetti(itemstack, user, pointed_thing, rainbow_texpool)
-    end,
-})
-
-minetest.register_on_leaveplayer(
-    function(player_obj, _)
-        player_last_use[player_obj:get_player_name()] = nil
-    end
-)
-
-minetest.log("action", "[MOD] " .. modname .. " loaded.")
+print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
