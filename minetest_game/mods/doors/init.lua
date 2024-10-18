@@ -239,7 +239,7 @@ function doors.update_infotext(pos, node, meta)
 	local nazev = meta:get_string("nazev")
 	local owner = meta:get_string("owner")
 	if owner ~= "" then
-		table.insert(result, "<zamykatelné dveře>")
+		table.insert(result, "<soukromé dveře>")
 	elseif meta:get_int("hes") ~= 0 then
 		table.insert(result, "<hotelové dveře>")
 	end
@@ -298,3 +298,10 @@ function doors.register_custom_door(node_name, methods)
 	doors.registered_custom_doors[node_name] = methods
 	return true
 end
+
+minetest.register_lbm({
+	label = "Update door infotext",
+	name = "doors:update_infotext_v1",
+	nodenames = {"group:door"},
+	action = function(pos, node, dtime_s) return doors.update_infotext(pos, node, minetest.get_meta(pos)) end,
+})

@@ -1,8 +1,8 @@
 # textdomain: technic_chests
 
 @1 Chest=@1 truhla
-@1 Locked Chest=@1 zamykatelná truhla
-@1 Locked Chest (owned by @2)=@1 zamykatelná truhla (vlastník/ice: @2)
+@1 Locked Chest=@1 soukromá truhla
+@1 Locked Chest (owned by @2)=@1 soukromá truhla (vlastník/ice: @2)
 Color Filter: @1=Barevná značka: @1
 Edit chest description:=Upravit popisek:
 

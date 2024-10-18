@@ -63,7 +63,7 @@ function doors.show_control_panel(player, door_pos)
 		"field[11.0,0.25;0.5,0.5;ignore;;]",
 		"label[0.375,0.5;Ovládací panel dveří]",
 		"label[0.375,1.0;", t_vlastnik_ice, ": ", vlastnik_ice, "]",
-		"label[0.375,1.5;Zamykatelné: ", owner_type == "owner" and "ano" or "ne", "]",
+		"label[0.375,1.5;Soukromé: ", owner_type == "owner" and "ano" or "ne", "]",
 		"label[0.375,2.0;Hotelové: ", t_hotelove, "]",
 		"label[0.375,2.5;(pro zapnutí musí vlastník/ice použít na dveře nenastavený klíč ke dveřím)]",
 		"label[0.375,3.0;Zavírá samo: ", t_zavirasamo, "]",

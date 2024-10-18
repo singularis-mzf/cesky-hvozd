@@ -1,8 +1,8 @@
 # textdomain: default
-Locked Chest=zamykatelná dřevěná truhla
-Locked Chest (owned by @1)=zamykatelná dřevěná truhla (vlastník/ice: @1)
+Locked Chest=soukromá dřevěná truhla
+Locked Chest (owned by @1)=soukromá dřevěná truhla (vlastník/ice: @1)
 You do not own this chest.=Truhla je zamčená a patří někomu jinému.
-a locked chest=zamykatelná truhla
+a locked chest=soukromá truhla
 Chest=dřevěná truhla
 Title:=Název:
 Contents:=Obsah:

@@ -358,7 +358,7 @@ ambience.add_set("day", {
 	frequency = 40,
 
 	sounds = {
-		{name = "cardinal", length = 3, ephemeral = true},
+		-- {name = "cardinal", length = 3, ephemeral = true},
 		{name = "craw", length = 3, ephemeral = true},
 		{name = "bluejay", length = 6, ephemeral = true},
 		{name = "robin", length = 4, ephemeral = true},

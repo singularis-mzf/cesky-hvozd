@@ -12,27 +12,27 @@ function ch_core.udm_catch_chat(player_name, message)
     local pinfo = ch_core.normalize_player(player_name)
     if message == "test" then
         minetest.chat_send_player(player_name, color_mistni..pinfo.viewname..": test "..color_systemovy.."[0 post.]")
-        minetest.chat_send_player(player_name, "* Správně! Takto byste napsali zprávu postavám ve vašem okolí. Za zprávou se vypsalo „[0 post.]“, "..
-            "což znamená, že ve skutečnosti nikomu nedošla. Kdyby došla, řekněme, na dva další herní klienty, bylo by tam „[2 post.]“.\nNyní zkuste zadat: !test")
-    elseif message == "!test" then
-        minetest.chat_send_player(player_name, color_celoserverovy..pinfo.viewname..": test "..color_systemovy.."[1 post.]")
-        minetest.chat_send_player(player_name, color_celoserverovy.."Fiktivní postava: odpověď "..color_systemovy.."(563 m)")
-        minetest.chat_send_player(player_name, "* Správně! Takto byste napsali zprávu na všechny herní klienty připojené k serveru. A rovněž vám odpověděla "..
+        minetest.after(1, minetest.chat_send_player, player_name, "* Správně! Takto byste napsali zprávu postavám ve vašem okolí. Za zprávou se vypsalo „[0 post.]“, "..
+            "což znamená, že ve skutečnosti nikomu nedošla. Kdyby došla, řekněme, na dva další herní klienty, bylo by tam „[2 post.]“.\nMůžete pokročit k další ceduli.")
+    elseif message == "!ahoj" then
+        minetest.chat_send_player(player_name, color_celoserverovy..pinfo.viewname..": ahoj "..color_systemovy.."[1 post.]")
+        minetest.after(1, minetest.chat_send_player, player_name, color_celoserverovy.."Fiktivní postava: zdravím! "..color_systemovy.."(563 m)")
+        minetest.after(2, minetest.chat_send_player, player_name, "* Správně! Takto byste napsali zprávu na všechny herní klienty připojené k serveru. A rovněž vám odpověděla "..
             "Fiktivní postava (která ve skutečnosti neexistuje, je to jen ukázka). Za její zprávou se ukázalo (563 m), což by znamenalo, že se nachází "..
-            "563 metrů od vás.\nNyní zkuste zadat: \"Fik test")
+            "563 metrů od vás.\nNyní můžete pokročit k další ceduli.") -- Nyní zkuste zadat: \"Fik test
     elseif message == "\"Fik test" or message == "\"Fiktivní_postava test" or message == "\"Fiktivni_postava test" then
         minetest.chat_send_player(player_name, color_soukromy.."-> Fiktivní postava: test")
-        minetest.chat_send_player(player_name, color_soukromy.."Fiktivní postava: odpověď 1")
-        minetest.chat_send_player(player_name, "* Správně! Právě jste (jako) napsali Fiktivní postavě soukromou zprávu a ona vám odpověděla. "..
+        minetest.after(1, minetest.chat_send_player, player_name, color_soukromy.."Fiktivní postava: zpráva dorazila")
+        minetest.after(2, minetest.chat_send_player, player_name, "* Správně! Právě jste (jako) napsali Fiktivní postavě soukromou zprávu a ona vám odpověděla. "..
             "U další zprávy už můžete předponu jména vynechat, protože systém si pamatuje, komu jste psali soukromou zprávu naposledy.\n"..
-            "Nyní tedy zkuste zadat: \" test 2")
+            "Nyní tedy zkuste zadat: \" test 2\nA nezapomeňte na mezeru mezi \" a t!")
     elseif message == "\" test 2" then
         minetest.chat_send_player(player_name, color_soukromy.."-> Fiktivní postava: test 2")
-        minetest.chat_send_player(player_name, color_soukromy.."Fiktivní postava: odpověď 2")
-        minetest.chat_send_player(player_name, "* Správně!\n"..
-            "To je vše, co zatím potřebujete vědět o ovládání četu. Můžete pokročit k dalšímu tématu.")
+        minetest.after(1, minetest.chat_send_player, player_name, color_soukromy.."Fiktivní postava: i tato zpráva dorazila")
+        minetest.after(2, minetest.chat_send_player, player_name, "* Správně!\n"..
+            "To je vše, co zatím potřebujete vědět o ovládání četu. Můžete pokračovat k další ceduli.")
     else
-        minetest.chat_send_player(player_name, "* Napsali jste: „"..message.."“, což není to, co jste měli. Zkuste to, prosím, znovu, nebo opusťte zelený čtverec.")
+        minetest.chat_send_player(player_name, "* Napsali jste: „"..message.."“, což není to, co jste měli. Zkuste to, prosím, znovu, nebo opusťte zelenou plochu na podlaze.")
     end
     minetest.log("action", "UDM chat catched a message: >"..message.."<")
     return true

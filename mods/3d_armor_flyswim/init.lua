@@ -259,7 +259,6 @@ minetest.register_globalstep(function()
 	--       Swim Cases        --
 	-----------------------------	
 		elseif swim_anim == true and
-			   controls_wasd and
 			   node_down_fsable(pos,2,"s") and								--Node player standing in and 1 below must be swimmable
 			   not attached_to then
 			   

@@ -186,7 +186,7 @@ function simple_dialogs.show_dialog_formspec(playername,npcself,topic)
 			"anchor[0,0]",
 			"no_prepend[]",        --must be present for below transparent setting to work
 			"bgcolor[;neither;]",  --make the formspec background transparent
-			get_background_box(0.370, 0.4, 9.6, 8.4), --draws a box background behind our text area
+			get_background_box(0.370, 0.4, 10.5, 8.4), --draws a box background behind our text area
 			simple_dialogs.dialog_to_formspec(playername,npcself,topic)
 		}
 		formspec=table.concat(formspec,"")
@@ -604,22 +604,23 @@ function simple_dialogs.dialog_to_formspec_inner(playername,npcself)
 	--
 	local x=0.8
 	local y=0.5
-	local w=9.0
-	formspec={
-		"textarea["..x..","..y..";"..w..",8;;;".."\n"..minetest.formspec_escape(say).."]",
-		get_background_box(0.37, 9.3, 15.0, 5.4),
-		"scroll_container[0.57,9.5;13.9,5.0;scbar;vertical]",
+	local w=18.0
+	local ibh=0.75
+	formspec={ "",
+		"textarea["..x..","..y..";9.5,8;;;".."\n"..minetest.formspec_escape(say).."]",
+		get_background_box(0.37, 9.3, w + 0.25, 5.4),
+		"scroll_container[0.57,9.5;"..(w - 1.1)..",5.0;scbar;vertical]",
 		"style_type[image_button:focused,image_button:hovered;fgimg=ch_core_white_pixel.png^\\[multiply:#204020]",
 		-- "textlist["..x2..","..y2..";27,5;reply;"..replies..";0;true]"  --note that replies were escaped as they were added
 	}
 	for i, reply in ipairs(replies) do
-		table.insert(formspec, "image_button[0.15,"..(0.5 * (i - 1) + 0.05)..";200,0.5;;reply;"..i..";false;false;]label[0.2,"..(0.5 * (i - 1) + 0.275)..";"..reply.."]")
+		table.insert(formspec, "image_button[0.15,"..(ibh * (i - 1) + 0.05)..";200,"..ibh..";;reply;"..i..";false;false;]label[0.2,"..(ibh * (i - 1 + 0.5) + 0.05)..";"..reply.."]")
 	end
 	table.insert(formspec, "scroll_container_end[]")
-	local scrollbar_max = math.floor(5 * (#replies - 9))
+	local scrollbar_max = math.floor(8 * (#replies - 7))
 	if scrollbar_max > 0 then
 		table.insert(formspec, "scrollbaroptions[max="..scrollbar_max..";arrows=show]"..
-			"scrollbar[14.6,9.5;0.5,5.0;vertical;scbar;0]")
+			"scrollbar["..(w - 0.4)..",9.5;0.5,5.0;vertical;scbar;0]")
 	end
 
 	--store the topic and subtopic in context as well
