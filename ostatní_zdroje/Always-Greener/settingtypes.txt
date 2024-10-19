@@ -1,0 +1,109 @@
+
+[Grass]
+
+[*Colors]
+
+# When enabled, the apparent local temperature for calculating grass color will be reduced by 0.5° per meter above y=80
+# Boolean (true/false); default: true
+awg.grass_alt_chill (Altitude Cooling Effect) bool true
+
+# When enabled, the apparent local humidity for calculating grass color will be reduced by 0.75° per meter above y=80
+# Boolean (true/false); default: true
+awg.grass_alt_dry (Altitude Drying Effect) bool true
+
+# When enabled, the apparent local humidity for calculating grass color will increase towards nearby water nodes within 8m,
+#reaching max wetness when immediately adjacent to water.
+# Boolean (true/false); default: true
+awg.grass_water_prox (Water Proximity Effect) bool true
+
+[*Dead Grass]
+
+# Enable or disable the dead grass mechanism, which causes grass to be replaced by a patchy dead version when
+# a solid node is placed above it rather than converting directly into dirt.
+# Boolean (true/false); default: true
+awg.dead_grass (Enable Dead Grass) bool true
+
+[Water]
+
+# When enabled, water color will be affected by the local biome.
+# Humidity makes the water greener, and heat makes the water bluer and less saturated.
+# Boolean (true/false); default: true
+awg.water_color (Biome-Based Water Coloration) bool true
+
+# When enabled, water colors will be applied less toward flowing water, as an attempt to blend them.
+# Disabling this will reduce the necessary calculations somewhat, but will leave a jarring edge between
+# source and flowing water.
+# Boolean (true/false); default: true
+awg.water_blend_flowing (Blend Flowing Water) bool true
+
+# When enabled, the apparent local humidity for calculating water color will be reduced by 0.25° per meter below y=-15
+# Boolean (true/false); default: true
+awg.water_depth_dry (Depth Drying Effect) bool true
+
+# When enabled, the apparent local temperature for calculating water color will be reduced by 0.75° per meter above y=90
+# Boolean (true/false); default: true
+awg.water_alt_chill (Altitude Cooling Effect) bool true
+
+# When enabled, a different, less intense colormap will be used for water.
+# Boolean (true/false); default: false
+awg.water_color_dull (Alternative Water Colormap) bool false
+
+[Cuttings]
+
+# Enable or disable the cuttings system and related items.
+# Boolean (true/false); default: true
+awg.cuttings (Enable Cuttings System) bool true
+
+# When enabled players will have the ability to craft 'Dirt With Grass' nodes with grass cuttings and dirt nodes.
+# Boolean (true/false); default: true
+awg.craft_grass_blocks (Allow Crafting Dirt With Grass) bool true
+
+# How many times the secateurs can be used.
+# Integer (0-1000); default: 300
+awg.secateurs_num_uses (Secateur Durability) int 300 0 1000
+
+# Show all available cuttings in the creative inventory. May cause clutter.
+# Boolean (true/false); default: false
+awg.cuttings_list (Show Cuttings in Creative Inventory) bool false
+
+[Trees]
+
+# Enable or disable the bushier tree leaves meshes.
+# Boolean (true/false); default: true
+awg.tree_leaves (Enable Tree Leaves Mesh) bool true
+
+# Make tree leaves climbable rather than solid.
+# Boolean (true/false); default: true
+awg.tree_leaves_climbable (Climbable Tree Leaves) bool true
+
+# Enable or disable the bushier bush leaves meshes.
+# Boolean (true/false); default: true
+awg.bushes (Enable Bush Leaves Mesh) bool true
+
+[Biomes]
+
+# Turn off to completely disable the sub-biome terrain layer, preventing sub-biome generation entirely.
+# Boolean (true/false); default: true
+awg.sub_biomes (Sub-Biomes Master Toggle) bool true
+
+# Enable or disable the tundra biome overhaul.
+# Boolean (true/false); default: true
+awg.load_module_tundra (Tundra Overhaul) bool true
+
+# Enable or disable the grassland biome overhaul.
+# Boolean (true/false); default: true
+awg.load_module_grassland (Grassland Overhaul) bool true
+
+# Enable or disable the marsh sub-biome for grasslands. Depends on the grassland biome overhaul.
+# Boolean (true/false); default: true
+awg.grassland_marsh (Grassland Sub-Biome: Marsh) bool true
+
+[Mod Support]
+
+# Enable or disable support for the More Trees mod.
+# Boolean (true/false); default: true
+awg.load_module_moretrees (More Trees Support) bool true
+
+# Enable or disable support for the Extra Biomes mod.
+# Boolean (true/false); default: true
+awg.load_module_ebiomes (Extra Biomes Support) bool true

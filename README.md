@@ -1123,6 +1123,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 # Ostatní použité zdroje
 
+## Always Greener (Always-Greener)
+
+* Zdroj: [https://github.com/Sneglium/Always-Greener/](https://github.com/Sneglium/Always-Greener/), revize 8d3fee4deda4341784d92cb78d75a4964531d87b
+* Původní licence: Apache-2.0 (kód), CC-BY-SA-4.0 International (média a ostatní)
+* [ContentDB](https://content.minetest.net/packages/Hagatha/always_greener/)
+
 ## Area Containers
 
 * Zdroj: [https://github.com/TurkeyMcMac/area\_containers](https://github.com/TurkeyMcMac/area\_containers), revize 13e0337da7a31da565b9beb4cec1af45072c6f0e
