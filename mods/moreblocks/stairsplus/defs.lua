@@ -505,7 +505,7 @@ stairsplus.defs = {
 			description = "trojitá deska",
 			node_box = {
 				type = "fixed",
-				fixed = { -1.5, -0.5, -0.5, 1.5, -7/16, 0.5},
+				fixed = { -1.5, -0.5, -0.5, 1.5, -0.5 + 1/16, 0.5},
 			},
 			not_blocking_trains = true,
 		},

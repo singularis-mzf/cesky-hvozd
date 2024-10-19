@@ -183,16 +183,28 @@ for paramtype2, ptdef in pairs(paramtypes) do
 end
 
 local def = {
-	description = "test: plazma [EXPERIMENTÁLNÍ]",
-	drawtype = "normal",
-	tiles = {{name = "ch_test_plasma.png", backface_culling = true}},
+	description = "test: kryt na železniční přejezd [EXPERIMENTÁLNÍ]",
+	drawtype = "nodebox",
+	tiles = {{name = "default_wood.png", align_style = "world", backface_culling = true}},
 	paramtype = "light",
-	paramtype2 = "facedir",
+	paramtype2 = "degrotate",
 	groups = {oddly_breakable_by_hand = 3},
 	is_ground_content = false,
+	node_box = {
+		type = "fixed",
+		fixed = {-0.5, -0.5, -0.5, 1.5, -0.5 + 1/16, 0.5},
+	},
+	on_punch = function(pos, node, puncher, pointed_thing)
+		node.param2 = ifthenelse(node.param2 < 239, node.param2 + 1, 0)
+		minetest.swap_node(pos, node)
+	end,
+	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		node.param2 = ifthenelse(node.param2 > 0, node.param2 - 1, 239)
+		minetest.swap_node(pos, node)
+	end,
 }
 
-minetest.register_node("ch_test:plasma", def)
+minetest.register_node("ch_test:kryt", def)
 
 --[[
 if minetest.get_modpath("unifieddyes") then

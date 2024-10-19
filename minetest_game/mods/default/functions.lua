@@ -510,9 +510,10 @@ end
 -- Prevent decay of placed leaves
 
 default.after_place_leaves = function(pos, placer, itemstack, pointed_thing)
+	print("DEBUG: default.after_place_leaves() called at "..minetest.pos_to_string(pos))
 	if placer and placer:is_player() then
 		local node = minetest.get_node(pos)
-		node.param2 = 1
+		node.param2 = bit.bor(node.param2, 1)
 		minetest.set_node(pos, node)
 	end
 end
@@ -523,7 +524,7 @@ local function leafdecay_after_destruct(pos, oldnode, def)
 			vector.add(pos, def.radius), def.leaves)) do
 		local node = minetest.get_node(v)
 		local timer = minetest.get_node_timer(v)
-		if node.param2 ~= 1 and not timer:is_started() then
+		if bit.band(node.param2, 1) ~= 1 and not timer:is_started() then
 			timer:start(math.random(20, 120) / 10)
 		end
 	end

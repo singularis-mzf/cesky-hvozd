@@ -371,13 +371,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT pro kód, různé pro média
 * [ContentDB](https://content.minetest.net/packages/FaceDeer/bulletin\_boards/)
 
-## Bushy Leaves (bushy\_leaves)
-
-* Zdroj: [https://git.minetest.land/erlehmann/bushy\_leaves](https://git.minetest.land/erlehmann/bushy\_leaves), revize 9be33ef9c37836414fac7a9dd78125efed77b581
-* Původní licence: AGPLv3+
-* Licence úprav: AGPLv3+
-* [ContentDB](https://content.minetest.net/packages/erlehmann/bushy\_leaves/)
-
 ## Canned Food (canned\_food)
 
 * Zdroj: [https://github.com/mazes-80/canned\_food](https://github.com/mazes-80/canned\_food), revize 443549a3300b942e8324e1e168a17e18c4f6fb78

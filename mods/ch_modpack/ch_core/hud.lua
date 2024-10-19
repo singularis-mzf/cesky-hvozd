@@ -102,12 +102,20 @@ if has_hudbars then
 	hb.register_hudbar("ch_gametime", 0xCCCCCC, "", {icon = icon_day, bgicon = nil, bar = bar_day},
 		0, 100, true, "@1 min.", {order = {"value"}, textdomain = "hudbars"})
 
-	local function on_joinplayer(player, last_login)
-		local offline_charinfo = ch_core.offline_charinfo[player:get_player_name()]
-		hb.init_hudbar(player, "ch_gametime")
-		if offline_charinfo ~= nil and offline_charinfo.skryt_zbyv ~= 1 then
-			hb.unhide_hudbar(player, "ch_gametime")
+	local function after_joinplayer(player_name)
+		local player = minetest.get_player_by_name(player_name)
+		if player ~= nil then
+			local offline_charinfo = ch_core.offline_charinfo[player_name]
+			if offline_charinfo ~= nil and offline_charinfo.skryt_zbyv ~= 1 then
+				hb.unhide_hudbar(player, "ch_gametime")
+				ch_core.update_gametime_hudbar({player})
+			end
 		end
+	end
+
+	local function on_joinplayer(player, last_login)
+		hb.init_hudbar(player, "ch_gametime")
+		minetest.after(1, after_joinplayer, player:get_player_name())
 	end
 	minetest.register_on_joinplayer(on_joinplayer)
 
@@ -152,6 +160,7 @@ if has_hudbars then
 	local dusk = 1140
 
 	function ch_core.update_gametime_hudbar(players, timeofday)
+		local skip_cache = players ~= nil
 		if players == nil then
 			players = {}
 			for _, player in ipairs(minetest.get_connected_players()) do
@@ -179,20 +188,20 @@ if has_hudbars then
 		local new_value, new_max_value, new_icon, new_bar
 		if is_night then
 			new_value = math.ceil((ifthenelse(tod >= dusk, 1440 + dawn, dawn) - tod) / time_speed)
-			if time_speed ~= cache_time_speed or cache_is_night ~= is_night then
+			if skip_cache or time_speed ~= cache_time_speed or cache_is_night ~= is_night then
 				new_icon, new_bar = icon_night, bar_night
 				new_max_value = math.ceil((1440 - (dusk - dawn)) / time_speed)
 				cache_is_night, cache_time_speed = is_night, time_speed -- update cache
 			end
 		else
 			new_value = math.ceil((dusk - tod) / time_speed)
-			if time_speed ~= cache_time_speed or cache_is_night then
+			if skip_cache or time_speed ~= cache_time_speed or cache_is_night then
 				new_icon, new_bar = icon_day, bar_day
 				new_max_value = math.ceil((dusk - dawn) / time_speed)
 				cache_is_night, cache_time_speed = is_night, time_speed -- update cache
 			end
 		end
-		if new_value ~= cache_value then
+		if skip_cache or new_value ~= cache_value then
 			cache_value = new_value
 		else
 			if new_max_value == nil and new_icon == nil then

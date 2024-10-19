@@ -667,3 +667,8 @@ wine_rum_bottle.png
 		- https://cs.wikipedia.org/wiki/Soubor:Appleton_Estate_V-X_Jamaica_Rum-with_glass.jpg
 		  Author: Nebrot
 		  License: CC BY-SA 3.0
+
+awg_tree_leaves.obj
+	License: CC BY-SA 4.0 International
+        Source: Always-Greener mod (https://github.com/Sneglium/Always-Greener/)
+        Unmodified.
