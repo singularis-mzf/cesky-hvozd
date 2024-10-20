@@ -306,3 +306,63 @@ if minetest.get_modpath("moretrees") and not minetest.get_modpath("willow") then
 		end
 	end
 end
+
+-- LBM to upgrade roofs:
+
+local old_roof_materials = {
+	"bakedclay:black",
+	"bakedclay:blue",
+	"cottages:black",
+	"cottages:brown",
+	"cottages:red",
+	"cottages:reet",
+	"darkage:slate_tile",
+	"default:acacia_wood",
+	"default:aspen_wood",
+	"default:copperblock",
+	"default:junglewood",
+	"default:obsidian_glass",
+	"default:pine_wood",
+	"default:steelblock",
+	"default:wood",
+	"farming:straw",
+	"moreblocks:cactus_checker",
+	"moreblocks:copperpatina",
+	"technic:cast_iron_block",
+	"technic:zinc_block"
+}
+
+-- Upgrade old roofs:
+
+local old_roof_translation_table = {}
+local old_roof_nodenames = {}
+
+for i, name in ipairs(old_roof_materials) do
+	local modname, itemname = name:match("([^:]*):([^:]*)")
+	if modname == nil or itemname == nil then error("Invalid item name: "..name) end
+	local old_name = modname..":"..itemname.."_technic_cnc_d45_slope_216"
+	if modname == "default" then modname = "moreblocks" end
+	local new_name = modname..":slope_"..itemname.."_roof45"
+	table.insert(old_roof_nodenames, old_name)
+	table.insert(old_roof_nodenames, old_name.."_3")
+	old_roof_translation_table[old_name] = new_name
+	old_roof_translation_table[old_name.."_3"] = new_name.."_3"
+end
+
+local lbm_def = {
+	label = "Upgrade old roof nodes",
+	name = "ch_overrides:upgrade_roofs",
+	nodenames = old_roof_nodenames,
+	action = function(pos, node, dtime_s)
+		local debug_old_name, debug_old_param2 = node.name, node.param2
+		node.name = old_roof_translation_table[node.name]
+		if node.name ~= nil then
+			node.param2 = bit.bor(bit.band(node.param2, 255 - 3), bit.band(node.param2 + 3, 3))
+			minetest.swap_node(pos, node)
+			-- minetest.log("action", "[DEBUG] would upgrade "..debug_old_name.."/"..debug_old_param2.." to "..node.name.."/"..node.param2)
+		else
+			error("Update roof called on unsupported node at "..minetest.pos_to_string(pos).."!")
+		end
+	end,
+}
+minetest.register_lbm(lbm_def)

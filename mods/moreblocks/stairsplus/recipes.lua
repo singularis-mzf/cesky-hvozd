@@ -6,6 +6,8 @@ Licensed under the zlib license. See LICENSE.md for more information.
 --]]
 
 
+-- THIS FUNCTION IS DISABLED COMPLETELY!!!
+
 stairsplus.register_recipes = function(category, alternate, modname, subname, recipeitem)
 	if category == "micro" and alternate == "" then
 		minetest.register_craft({
@@ -463,4 +465,8 @@ stairsplus.register_recipes = function(category, alternate, modname, subname, re
 			})
 		end
 	end
+end
+
+-- DISABLE this function (recipes will be registered by ch_overrides mod)
+stairsplus.register_recipes = function(category, alternate, modname, subname, recipeitem)
 end

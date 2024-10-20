@@ -80,18 +80,17 @@ end
 
 local cnc_recipe_items = {}
 
-if minetest.get_modpath("ch_core") then
-	ch_core.create_private_vgroup("na_cnc", cnc_recipe_items)
-	function ch_core.overridable.is_cnc_shape(item_name, item_def)
-		return item_def._technic_cnc_recipeitem ~= nil
-	end
+ch_core.create_private_vgroup("na_cnc", cnc_recipe_items)
+function ch_core.overridable.is_cnc_shape(item_name, item_def)
+	return item_def._technic_cnc_recipeitem ~= nil
 end
 
 -- function to iterate over all the programs the CNC machine knows
 function technic_cnc.register_all(recipeitem, groups, images, description)
 	for _, data in ipairs(technic_cnc.programs) do
 		-- Disable node creation for disabled node types for some material
-		local do_register = true
+		local do_register = ch_core.is_shape_allowed(recipeitem, "cnc", data.suffix)
+		--[[
 		if technic_cnc.programs_disable[recipeitem] ~= nil then
 			for __, disable in ipairs(technic_cnc.programs_disable[recipeitem]) do
 				if disable == data.suffix then
@@ -99,6 +98,7 @@ function technic_cnc.register_all(recipeitem, groups, images, description)
 				end
 			end
 		end
+		]]
 
 		-- Create the node if it passes the test
 		if do_register then

@@ -187,7 +187,7 @@ local def = {
 	drawtype = "nodebox",
 	tiles = {{name = "default_wood.png", align_style = "world", backface_culling = true}},
 	paramtype = "light",
-	paramtype2 = "degrotate",
+	paramtype2 = "facedir",
 	groups = {oddly_breakable_by_hand = 3},
 	is_ground_content = false,
 	node_box = {

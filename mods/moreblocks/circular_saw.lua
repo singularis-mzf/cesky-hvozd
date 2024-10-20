@@ -90,6 +90,12 @@ circular_saw.names = {
 	-- {"slab", "_pit", 3},
 	-- {"slab", "_pit_half", 2},
 	{"slope", "_cut2", 4},
+	{"slope", "_roof22", 2},
+	{"slope", "_roof22_raised", 2},
+	{"slope", "_roof22_3", 6},
+	{"slope", "_roof22_raised_3", 6},
+	{"slope", "_roof45", 2},
+	{"slope", "_roof45_3", 6},
 
 	-- {"slope", "_outer_cut_half_raised", 3},
 	-- {"slope", "_slab_half", 2},
@@ -260,9 +266,9 @@ function circular_saw:update_inventory(pos, amount, craftitem_hint)
 	-- print("circular_saw set to " .. modname .. " : "
 	--	.. material .. " with " .. (amount) .. " microblocks.")
 
-	-- 0-7 microblocks may remain left-over:
+	-- 0-7 microblocks (slab_*_1) may remain left-over:
 	inv:set_list("micro", {
-		modname .. ":micro_" .. material .. " " .. (amount % 8)
+		modname .. ":slab_" .. material .. "_1 " .. (amount % 8)
 	})
 	-- Display:
 	inv:set_list("output",
@@ -370,7 +376,7 @@ function circular_saw.allow_metadata_inventory_put(
 			end
 		end
 		if not inv:is_empty("micro") then
-			local microstackname = inv:get_stack("micro", 1):get_name():gsub("^.+:micro_", "", 1)
+			local microstackname = inv:get_stack("micro", 1):get_name():gsub("^.+:slab_", "", 1):gsub("_1$", "", 1)
 			local cutstackname = stackname:gsub("^.+:", "", 1)
 			if microstackname ~= cutstackname then
 				return 0

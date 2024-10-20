@@ -1,0 +1,13 @@
+License for code: GPLv2+
+
+License for media:
+
+moreblocks_roof22.obj
+moreblocks_roof22_3.obj
+moreblocks_roof22_raised.obj
+moreblocks_roof22_raised_3.obj
+moreblocks_roof45.obj
+moreblocks_roof45_3.obj
+	Source: https://github.com/mt-mods/technic (Technic Plus)
+    Modified by: Singularis
+	License: LGPLv2+

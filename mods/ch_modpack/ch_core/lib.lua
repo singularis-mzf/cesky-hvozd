@@ -370,6 +370,10 @@ local lc_to_player_name = ch_core.lc_to_player_name
 
 -- LOKÁLNÍ FUNKCE
 -- ===========================================================================
+local function cmp_oci(a, b)
+	return (ch_core.offline_charinfo[a].last_login or -1) < (ch_core.offline_charinfo[b].last_login or -1)
+end
+
 local function get_player_role_by_privs(privs)
 	if privs.protection_bypass then
 		return "admin"
@@ -616,6 +620,75 @@ function ch_core.get_all_players(as_map, include_privs)
 		return ch_core.utf8_mensi_nez(a.zobrazovaci, b.zobrazovaci, true)
 	end)
 	return list
+end
+
+--[[
+Vrátí seznam všech/jen registrovaných postav, seřazený podle času posledního přihlášení,
+od nejčerstvějšího po nejstarší.
+
+registered_only - je-li true, počítá pouze registrované postavy
+name_to_skip - je-li nastaveno, postava s daným přihl. jménem se nepočítá
+
+Výsledkem je seznam struktur ve formátu:
+	{
+		player_name = STRING, -- přihl. jméno postavy
+		last_login_before = INT, -- před kolika dny se postava přihlásila; -1, není-li k dispozici
+		played_hours_total = FLOAT, -- hodiny ve hře
+		played_hours_actively = FLOAT, -- aktivně odehrané hodiny ve hře
+		is_in_game = BOOL, -- je postava aktuálně ve hře?
+		pending_registration_type = STRING or nil,
+		is_registered = BOOL,
+	}
+]]
+function ch_core.get_last_logins(registered_only, name_to_skip)
+	local new_players = {} -- new players
+	local reg_players = {} -- registered players
+	local shifted_now = os.time() - 946684800
+
+	for other_player_name, _ in pairs(ch_core.offline_charinfo) do
+		if other_player_name ~= name_to_skip then
+			if minetest.check_player_privs(other_player_name, "ch_registered_player") then
+				table.insert(reg_players, other_player_name)
+			elseif not registered_only then
+				table.insert(new_players, other_player_name)
+			end
+		end
+	end
+	if registered_only then
+		new_players = reg_players
+		table.sort(new_players, cmp_oci)
+	else
+		table.sort(new_players, cmp_oci)
+		table.sort(reg_players, cmp_oci)
+		table.insert_all(new_players, reg_players)
+	end
+	local result = {}
+	for i = #new_players, 1, -1 do
+		local other_player_name = new_players[i]
+		local offline_charinfo = ch_core.offline_charinfo[other_player_name]
+		local info = {
+			player_name = other_player_name
+		}
+		local last_login = offline_charinfo.last_login
+		if last_login == 0 then
+			info.last_login_before = -1
+		else
+			info.last_login_before = math.floor((shifted_now - last_login) / 86400)
+		end
+		info.played_hours_total = math.round(offline_charinfo.past_playtime / 36) / 100
+		info.played_hours_actively = math.round(offline_charinfo.past_ap_playtime / 36) / 100
+		info.is_in_game = ch_core.online_charinfo[other_player_name] ~= nil
+		if (offline_charinfo.pending_registration_type or "") ~= "" then
+			info.pending_registration_type = offline_charinfo.pending_registration_type or ""
+		end
+		if minetest.check_player_privs(other_player_name, "ch_registered_player") then
+			info.is_registered = true
+		else
+			info.is_registered = false
+		end
+		table.insert(result, info)
+	end
+	return result
 end
 
 --[[
@@ -1983,48 +2056,28 @@ doors.login_to_viewname = ch_core.prihlasovaci_na_zobrazovaci
 
 -- PŘÍKAZY
 -- ===========================================================================
-local function cmp_oci(a, b)
-	return (ch_core.offline_charinfo[a].last_login or -1) < (ch_core.offline_charinfo[b].last_login or -1)
-end
-
 def = {
 	description = "Vypíše seznam neregistrovaných postav seřazený podle času posledního přihlášení.",
 	privs = {server = true},
 	func = function(player_name, param)
-		local new_players = {} -- new players
-		local reg_players = {} -- registered players
-		local shifted_now = os.time() - 946684800
-
-		for other_player_name, _ in pairs(ch_core.offline_charinfo) do
-			if minetest.check_player_privs(other_player_name, "ch_registered_player") then
-				table.insert(reg_players, other_player_name)
-			else
-				table.insert(new_players, other_player_name)
-			end
-		end
-		table.sort(new_players, cmp_oci)
-		table.sort(reg_players, cmp_oci)
-		table.insert_all(new_players, reg_players)
+		local last_logins = ch_core.get_last_logins(false)
 		local result = {}
-		for i, other_player_name in ipairs(new_players) do
-			local offline_charinfo = ch_core.offline_charinfo[other_player_name]
-			local s2 = offline_charinfo.last_login
-			if s2 == 0 then
-				s2 = "???"
-			else
-				s2 = math.floor((shifted_now - s2) / 86400)
+
+		for i = #last_logins, 1, -1 do
+			local info = last_logins[i]
+			local viewname = ch_core.prihlasovaci_na_zobrazovaci(info.player_name)
+			local s = "- "..viewname.." (posl. přihl. před "..info.last_login_before.." dny, odehráno "..info.played_hours_total..
+				" hodin, z toho "..info.played_hours_actively.." aktivně)"
+			if info.is_in_game then
+				s = s.." <je ve hře>"
 			end
-			s2 = " (posl. přihl. před "..s2.." dny, odehráno "..(math.round(offline_charinfo.past_playtime / 36) / 100).." hodin, z toho "..(math.round(offline_charinfo.past_ap_playtime / 36) / 100).." aktivně)"
-			if ch_core.online_charinfo[other_player_name] then
-				s2 = s2.." <je ve hře>"
+			if info.pending_registration_type ~= nil then
+				s = s.." <plánovaná registrace: "..info.pending_registration_type..">"
 			end
-			if (offline_charinfo.pending_registration_type or "") ~= "" then
-				s2 = s2.." <plánována registrace: "..(offline_charinfo.pending_registration_type or "")..">"
+			if info.is_registered then
+				s = s.." <registrovaná postava>"
 			end
-			if minetest.check_player_privs(other_player_name, "ch_registered_player") then
-				s2 = s2.." <registrovaná postava>"
-			end
-			result[i] = "- "..other_player_name..s2
+			table.insert(result, s)
 		end
 
 		result = table.concat(result, "\n")

@@ -61,6 +61,7 @@ local subset = {
 }
 --]]
 
+--[[
 -- luacheck: no unused
 local function register_custom_subset(subset, modname, subname, recipeitem, groups, images, description, drop, light)
 	stairsplus:register_custom_subset(subset, modname, subname, recipeitem, {
@@ -73,6 +74,7 @@ local function register_custom_subset(subset, modname, subname, recipeitem, grou
 	})
 	stairsplus.recipeitems_list[recipeitem] = modname .. ":" .. subname
 end
+]]
 
 function stairsplus:register_custom_subset_alias(subset, modname_old, subname_old, modname_new, subname_new)
 	local subset_copy = table.copy(subset)
@@ -98,5 +100,6 @@ function stairsplus:register_custom_subset(subset, modname, subname, recipeitem,
 		stairsplus.register_single(v[1], v[2], info, modname, subname, recipeitem, fields)
 	end
 
+	stairsplus.recipeitems_list[recipeitem] = modname .. ":" .. subname
 	circular_saw.known_nodes[recipeitem] = {modname, subname}
 end

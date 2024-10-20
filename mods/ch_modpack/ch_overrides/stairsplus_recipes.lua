@@ -1,0 +1,150 @@
+local recipeitems = stairsplus:get_recipeitems()
+local shapes = assert(ch_core.get_stairsplus_custom_shapes(nil))
+local empty_row = {"", "", ""}
+local from, from2, from3, to
+
+if #recipeitems == 0 then
+    error("No recipeitems gathered from staisplus!")
+end
+
+for _, recipeitem in ipairs(recipeitems) do
+    local shape_to_node = {}
+    for _, shape in ipairs(shapes) do
+        shape_to_node[shape[1].."/"..shape[2]] = stairsplus:get_shape(recipeitem, shape[1], shape[2])
+    end
+
+    -- složit/rozložit trojitý díl
+    for _, p in ipairs({
+        {"slab/_1", "slab/_triplet"},
+        {"slope/_roof22", "slope/_roof22_3"},
+        {"slope/_roof22_raised", "slope/_roof22_raised_3"},
+        {"slope/_roof45", "slope/_roof45_3"},
+    }) do
+        from, to = shape_to_node[p[1]], shape_to_node[p[2]]
+        if from ~= nil and to ~= nil then
+            minetest.register_craft({
+                output = to,
+                recipe = {
+                    {from, from, from},
+                    empty_row,
+                    empty_row,
+                },
+            })
+            minetest.register_craft({
+                output = from.." 3",
+                recipe = {{to}},
+            })
+        end
+    end
+
+    -- složit celý blok z protilehlých desek či svahů
+    for _, p in ipairs({
+        {"slab/_1", "slab/_15"},
+        {"slab/_2", "slab/_14"},
+        {"slab/_quarter", "slab/_three_quarter"},
+        {"slab/", "slab/"},
+        {"slope/", "slope/"},
+        {"slope/_half", "slope/_half_raised"},
+    }) do
+        from, from2 = shape_to_node[p[1]], shape_to_node[p[2]]
+        if from ~= nil and from2 ~= nil then
+            minetest.register_craft({output = recipeitem, type = "shapeless", recipe = {from, from2}})
+        end
+    end
+
+    -- podložit nízký blok na vyšší
+    from2 = shape_to_node["slab/"]
+    if from2 ~= nil then
+        local bottom_row = {from2, ""}
+        for _, p in ipairs({
+            {"slope/_half", "slope/_half_raised"},
+            {"slope/_inner_half", "slope/_inner_half_raised"},
+            {"slope/_inner_cut_half", "slope/_inner_cut_half_raised"},
+            {"slope/_outer_half", "slope/_outer_half_raised"},
+        }) do
+            from, to = shape_to_node[p[1]], shape_to_node[p[2]]
+            if from ~= nil and from2 ~= nil and to ~= nil then
+                minetest.register_craft({
+                    output = to,
+                    recipe = {{from, ""}, bottom_row},
+                })
+            end
+        end
+    end
+
+    -- složit trojitý svah
+    from, from2, from3 = shape_to_node["slope/_half"], shape_to_node["slab/"], shape_to_node["slope/_half_raised"]
+    to = shape_to_node["slope/_tripleslope"]
+    if from ~= nil and from2 ~= nil and from3 ~= nil and to ~= nil then
+        minetest.register_craft({
+            output = to,
+            recipe = {
+                {from, from2, from3},
+                empty_row,
+                empty_row,
+            }
+        })
+        minetest.register_craft({
+            output = to,
+            recipe = {
+                {from3, from2, from},
+                empty_row,
+                empty_row,
+            }
+        })
+    end
+
+    -- složit dvě stejné desky/panely/mikrobloky na desku/panel/mikroblok dvojnásobné tloušťky
+    for _, p in ipairs({
+        {"micro/_1", "micro/_2"},
+        {"micro/_2", "micro/_4"},
+        {"micro/_4", "micro/"},
+        {"slab/_1", "slab/_2"},
+        {"slab/_2", "slab/_quarter"},
+        {"slab/_quarter", "slab/"},
+        {"panel/_1", "panel/_2"},
+        {"panel/_2", "panel/_4"},
+        {"panel/_4", "panel/"}
+    }) do
+        from, to = shape_to_node[p[1]], shape_to_node[p[2]]
+        if from ~= nil and to ~= nil then
+            minetest.register_craft({
+                output = to,
+                recipe = {{from, ""}, bottom_row},
+            })
+        end
+    end
+
+    -- složit široký panel
+    from, to = shape_to_node["panel/"], shape_to_node["panel/_wide"]
+    if from ~= nil and to ~= nil then
+        minetest.register_craft({
+            output = to,
+            recipe = {{from, from}, {"", ""}},
+        })
+    end
+
+    -- složit k sobě dvě vychýlené tyče / rozložit
+    from, to = shape_to_node["panel/_special"], shape_to_node["panel/_l"]
+    if from ~= nil and to ~= nil then
+        minetest.register_craft({
+            output = to,
+            recipe = {{from, from}, {"", ""}},
+        })
+        minetest.register_craft({
+            output = to,
+            recipe = {{from, ""}, {from, ""}},
+        })
+        minetest.register_craft({
+            output = from.." 2",
+            recipe = {{to}},
+        })
+    end
+
+    -- přepnout zvýšené/nezvýšené střešní díly 22°
+    from, to = shape_to_node["slope/_roof22"], shape_to_node["slope/_roof22_raised"]
+    if from ~= nil and to ~= nil then
+        minetest.register_craft({output = to, recipe = {{from}}})
+        minetest.register_craft({output = from, recipe = {{to}}})
+    end
+end

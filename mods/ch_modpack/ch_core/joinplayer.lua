@@ -1,4 +1,4 @@
-ch_core.open_submod("joinplayer", {data = true, formspecs = true, lib = true, nametag = true, pryc = true})
+ch_core.open_submod("joinplayer", {chat = true, data = true, formspecs = true, lib = true, nametag = true, pryc = true})
 
 local F = minetest.formspec_escape
 
@@ -206,6 +206,31 @@ local function after_joinplayer(player_name)
 			end
 			ch_core.systemovy_kanal(player_name, minetest.get_color_escape_sequence("#cc5257").."VAROVÁNÍ: Váš klient je zastaralý! Zdá se, že používáte klienta Minetest "..client_version..", který nepodporuje některé moderní vlastnosti hry využívané na Českém hvozdu. Hra vám bude fungovat, ale některé bloky se nemusejí zobrazit správně. Pro správné zobrazení doporučujeme přejít na Minetest 5.7.0 nebo novější, máte-li tu možnost.")
 		end
+
+		-- Vypsat posledních 5 přihlášených registrovaných postav:
+		local last_logins = ch_core.get_last_logins(true, player_name)
+		if #last_logins > 0 then
+			local last_players = {}
+			for i, info in ipairs(last_logins) do
+				local viewname = ch_core.prihlasovaci_na_zobrazovaci(info.player_name)
+				local kdy = info.last_login_before
+				if kdy < 0 then
+					kdy = "???"
+				elseif kdy == 0 then
+					kdy = "dnes"
+				elseif kdy == 1 then
+					kdy = "včera"
+				else
+					kdy = "před "..kdy.." dny"
+				end
+				table.insert(last_players, viewname.." ("..kdy..")")
+				if i == 5 then break end
+			end
+			ch_core.systemovy_kanal(player_name,
+				ch_core.colors.light_green..
+				"INFORMACE: Poslední přihlášení ostatních hráčů/ek (max. 5, turistické postavy se nepočítají):\n"..
+				ch_core.colors.light_green..">> "..table.concat(last_players, ", "))
+		end
 	end
 end
 
@@ -283,10 +308,12 @@ local function on_joinplayer(player, last_login)
 		if privs.creative then
 			privs.creative = nil
 			minetest.set_player_privs(player_name, privs)
+			minetest.log("action", "creative priv reset on join for "..player_name)
 		end
 	elseif not privs.creative then
 		privs.creative = true
 		minetest.set_player_privs(player_name, privs)
+		minetest.log("action", "creative priv set on join for "..player_name)
 	end
 
 	-- Pomodoro functionality for single-players:
@@ -298,14 +325,18 @@ local function on_joinplayer(player, last_login)
 	return true
 end
 
---[[
 local function on_leaveplayer(player)
 	local player_name = player:get_player_name()
+	local privs = minetest.get_player_privs(player_name)
+	if privs.ch_registered_player and privs.creative then
+		privs.creative = nil
+		minetest.set_player_privs(player_name, privs)
+		minetest.log("action", "creative priv reset on leave for "..player_name)
+	end
 end
-]]
 
 minetest.register_on_newplayer(on_newplayer)
 minetest.register_on_joinplayer(on_joinplayer)
--- minetest.register_on_leaveplayer(on_leaveplayer)
+minetest.register_on_leaveplayer(on_leaveplayer)
 
 ch_core.close_submod("joinplayer")

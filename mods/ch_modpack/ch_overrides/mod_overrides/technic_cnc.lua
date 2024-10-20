@@ -1,3 +1,4 @@
+--[[
 local box = {
 	type = "fixed",
 	fixed = {
@@ -54,3 +55,4 @@ for _, recipeitem in ipairs(recipeitems) do
 		minetest.log("warning", "Expected node "..recipeitem.."_technic_cnc_d45_slope_216 does not exist for an extra shape!")
 	end
 end
+]]

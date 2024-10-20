@@ -119,7 +119,7 @@ local box_slope_outer = {
 	}
 }
 
-local function generate_box_slope_outer_cut()
+local function f()
 	local result = {}
 
 	for i, data in ipairs(box_slope_outer.fixed) do
@@ -152,16 +152,13 @@ local function generate_box_slope_outer_cut()
 			data[6],
 		})
 	end
-	return result
+	return {type = "fixed", fixed = result}
 end
 
 
-local box_slope_outer_cut = {
-	type = "fixed",
-	fixed = generate_box_slope_outer_cut(),
-}
+local box_slope_outer_cut = f()
 
-local function generate_box_slope_outer_cut_half()
+local function f()
 	local result = {}
 
 	for i, data in ipairs(box_slope_outer_cut.fixed) do
@@ -170,13 +167,10 @@ local function generate_box_slope_outer_cut_half()
 		new_data[2] = (data[2] - 0.5) / 2
 		new_data[5] = (data[5] - 0.5) / 2
 	end
-	return result
+	return {type = "fixed", fixed = result}
 end
 
-local box_slope_outer_half_cut = {
-	type = "fixed",
-	fixed = generate_box_slope_outer_cut_half(),
-}
+local box_slope_outer_half_cut = f()
 
 local box_slope_outer_half = {
 	type = "fixed",
@@ -217,7 +211,6 @@ local box_slope_triple = {
 	}
 }
 
-
 --==============================================================
 
 local box_slope_cut2 = {
@@ -248,6 +241,53 @@ local box_slab_three_sides_half = {
 }
 ]]
 
+--==============================================================
+local t = 16/16
+
+local box_roof22 = {
+      type = "fixed",
+      fixed = {
+		{-0.5, -0.5,   -0.5,  0.5, -0.375, -0.2},
+		{-0.5, -0.375, -0.25, 0.5, -0.25,  0.05},
+		{-0.5, -0.25,  0,    0.5, -0.125, 0.3},
+		{-0.5, -0.125, 0.25, 0.5,  0,     0.5},
+      },
+}
+
+local function f()
+	local result = {}
+	for i, box in ipairs(box_roof22.fixed) do
+		result[i] = {box[1], box[2] + 0.5, box[3], box[4], box[5] + 0.5, box[6]}
+	end
+	return {type = "fixed", fixed = result}
+end
+
+local box_roof22_raised = f()
+
+local function f(b)
+	local result = {}
+	for i, box in ipairs(b.fixed) do
+		result[i] = {-1.5, box[2], box[3], 1.5, box[5], box[6]}
+	end
+	 return {type = "fixed", fixed = result}
+end
+
+local box_roof22_3 = f(box_roof22)
+local box_roof22_raised_3 = f(box_roof22_raised)
+
+local box_roof45 = {
+	type = "fixed",
+	fixed = {
+		{-0.5, -0.5, -0.5, 0.5, -0.25, -0.25},
+		{-0.5, -0.25, -0.25, 0.5, 0, 0},
+		{-0.5, 0, 0, 0.5, 0.25, 0.25},
+		{-0.5, 0.25, 0.25, 0.5, 0.5, 0.5},
+	}
+}
+
+local box_roof45_3 = f(box_roof45)
+
+--==============================================================
 
 stairsplus.defs = {
 	["micro"] = {
@@ -725,6 +765,47 @@ stairsplus.defs = {
 			selection_box = box_slope_cut2,
 		},
 
+		["_roof22"] = {
+			description = "střecha 22°, spodní díl",
+			mesh = "moreblocks_roof22.obj",
+			collision_box = box_roof22,
+			selection_box = box_roof22,
+		},
+
+		["_roof22_raised"] = {
+			description = "střecha 22°, horní díl",
+			mesh = "moreblocks_roof22_raised.obj",
+			collision_box = box_roof22_raised,
+			selection_box = box_roof22_raised,
+		},
+
+		["_roof22_3"] = {
+			description = "střecha 22°, spodní díl trojitý",
+			mesh = "moreblocks_roof22_3.obj",
+			collision_box = box_roof22_3,
+			selection_box = box_roof22_3,
+		},
+
+		["_roof22_raised_3"] = {
+			description = "střecha 22°, horní díl trojitý",
+			mesh = "moreblocks_roof22_raised_3.obj",
+			collision_box = box_roof22_raised_3,
+			selection_box = box_roof22_raised_3,
+		},
+
+		["_roof45"] = {
+			description = "střecha 45°",
+			mesh = "moreblocks_roof45.obj",
+			collision_box = box_roof45,
+			selection_box = box_roof45,
+		},
+
+		["_roof45_3"] = {
+			description = "střecha 45°, trojitý díl",
+			mesh = "moreblocks_roof45_3.obj",
+			collision_box = box_roof45_3,
+			selection_box = box_roof45_3,
+		},
 	},
 	["stair"] = {
 		[""] = {
