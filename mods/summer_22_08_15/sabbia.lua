@@ -24,7 +24,6 @@ if minetest.get_modpath("moreblocks") then
 		groups = {crumbly = 3, falling_node = 1},
 		sounds = default.node_sound_sand_defaults(),
 	})
-	stairsplus:register_bank_slopes("summer:sabbia_mare")
 end
 
 local function get_new_node_name(old_node_name)

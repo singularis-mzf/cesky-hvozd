@@ -166,7 +166,7 @@ read_globals = {
 		"get_shape",
 		"shapes_list",
 		"register_all",
-		"register_bank_slopes",
+		"register_bank_slopes_internal",
 		"rotate_node_aux",
 	}},
 	string = {fields = {"find", "match", "split", "sub"}},

@@ -138,8 +138,12 @@ local chest_default_locked = {
 local chest_pickable = {
 	pickable = true,
 }
+local chest_nonpickable = {
+	pickable = false,
+}
 
 local chests = {
+	["clothing:mannequin_stand"] = chest_nonpickable,
 	["darkage:box"] = chest_pickable,
 	["default:chest"] = chest_default,
 	["default:chest_open"] = chest_default,

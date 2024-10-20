@@ -33,11 +33,13 @@ if(minetest.global_exists("circular_saw") and circular_saw.names) then
 	-- we build this table replacer.saw_prefixes for faster lookup because
 	-- many shapes share the same prefix
 	for i, v in ipairs(circular_saw.names) do
-		local prefix = v[1].."_"
-		if(not(replacer.saw_prefixes[ prefix ])) then
-			replacer.saw_prefixes[ prefix ] = {v[2]}
-		else
-			table.insert(replacer.saw_prefixes[ prefix ], v[2])
+		if v[1] ~= nil then
+			local prefix = v[1].."_"
+			if(not(replacer.saw_prefixes[ prefix ])) then
+				replacer.saw_prefixes[ prefix ] = {v[2]}
+			else
+				table.insert(replacer.saw_prefixes[ prefix ], v[2])
+			end
 		end
 	end
 end

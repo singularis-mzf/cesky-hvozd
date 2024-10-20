@@ -331,6 +331,14 @@ local materials_cnc = set(
 "technic:zinc_block"
 )
 
+local materials_for_bank_slopes = set(
+	"basic_materials:cement_block",
+	"default:dirt",
+	"default:gravel",
+	"default:sand",
+	"summer:sabbia_mare"
+)
+
 local materials_roof = set(
 	"bakedclay:black",
 	"bakedclay:blue",
@@ -440,6 +448,10 @@ local wool_slopes = set("", "_half", "_half_raised", "_slab")
 
 local roof_slopes = set("_roof22", "_roof22_raised", "_roof22_3", "_roof22_raised_3", "_roof45", "_roof45_3")
 
+local bank_slopes = set("", "_cut", "_half", "_half_raised",
+"_inner", "_inner_half", "_inner_half_raised", "_inner_cut", "_inner_cut_half", "_inner_cut_half_raised",
+"_outer", "_outer_half", "_outer_half_raised")
+
 -- ============================================================================
 local rules = {
 	-- {materials, categories, alternates, true/false [, comment]}
@@ -460,6 +472,7 @@ local rules = {
 	{materials_wool, "slab", wool_slabs, true},
 	{materials_wool, "slope", wool_slopes, true},
 	{materials_roof, "slope", roof_slopes, true}, -- roofs
+	{materials_for_bank_slopes, "bank_slope", bank_slopes, true},
 
 -- CNC:
 	{"default:dirt", "cnc",
@@ -468,7 +481,7 @@ local rules = {
 		false}, -- zakázat vybrané tvary z hlíny
 	{materials_cnc, "cnc", alts_cnc, true}, -- výchozí pravidlo pro CNC
 -- catch-all rules:
-	{materials_all, set("micro", "panel", "slab", "slope", "stair", "cnc"), "*", false},
+	{materials_all, set("micro", "panel", "slab", "slope", "stair", "cnc", "bank_slope"), "*", false},
 }
 -- ============================================================================
 
@@ -551,8 +564,8 @@ function ch_core.is_shape_allowed(recipeitem, category, alternate)
 	end
 	if result == nil then
 		result = true
-		-- error("Shapes DB resolution failed for "..recipeitem.."/"..category.."/"..alternate.."!")
-		minetest.log("warning", "Shapes DB resolution failed for "..recipeitem.."/"..category.."/"..alternate.."! Will allow the shape.")
+		error("Shapes DB resolution failed for "..recipeitem.."/"..category.."/"..alternate.."!")
+		-- minetest.log("warning", "Shapes DB resolution failed for "..recipeitem.."/"..category.."/"..alternate.."! Will allow the shape.")
 	end
 	if shapeinfo == nil then
 		shapeinfo = {}

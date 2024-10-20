@@ -108,10 +108,7 @@ for _, recipeitem in ipairs(recipeitems) do
     }) do
         from, to = shape_to_node[p[1]], shape_to_node[p[2]]
         if from ~= nil and to ~= nil then
-            minetest.register_craft({
-                output = to,
-                recipe = {{from, ""}, bottom_row},
-            })
+            minetest.register_craft({output = to, type = "shapeless", recipe = {from, from}})
         end
     end
 

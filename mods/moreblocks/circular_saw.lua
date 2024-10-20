@@ -8,6 +8,9 @@ Licensed under the zlib license. See LICENSE.md for more information.
 local S = moreblocks.S
 local F = minetest.formspec_escape
 
+local output_inv_size = (8 + 2) * 8
+local separator = {}
+
 circular_saw = {}
 
 circular_saw.known_stairs = setmetatable({}, {
@@ -92,10 +95,16 @@ circular_saw.names = {
 	{"slope", "_cut2", 4},
 	{"slope", "_roof22", 2},
 	{"slope", "_roof22_raised", 2},
+	{"slope", "_roof45", 2},
+	separator,
+	separator,
+	separator,
+	separator,
+
 	{"slope", "_roof22_3", 6},
 	{"slope", "_roof22_raised_3", 6},
-	{"slope", "_roof45", 2},
 	{"slope", "_roof45_3", 6},
+	{"slab", "_triplet", 3},
 
 	-- {"slope", "_outer_cut_half_raised", 3},
 	-- {"slope", "_slab_half", 2},
@@ -105,7 +114,7 @@ circular_saw.names = {
 local function extract_cost_in_microblocks(names)
 	local result = {}
 	for i, v in ipairs(names) do
-		result[i] = v[3]
+		result[i] = v[3] or 0
 		v[3] = nil
 	end
 	return result
@@ -143,16 +152,21 @@ function circular_saw:get_output_inv(modname, material, amount, max)
 
 	for i = 1, #circular_saw.names do
 		local t = circular_saw.names[i]
-		local nodename = modname .. ":" .. t[1] .. "_" .. material .. t[2]
-		local cost, balance
-		if minetest.registered_nodes[nodename] then
-			cost = circular_saw.cost_in_microblocks[i]
-			balance = math.min(math.floor(amount/cost), max)
+		if t[1] ~= nil then
+			local nodename = modname .. ":" .. t[1] .. "_" .. material .. t[2]
+			local cost, balance
+			if minetest.registered_nodes[nodename] then
+				cost = circular_saw.cost_in_microblocks[i]
+				balance = math.min(math.floor(amount/cost), max)
+			else
+				balance = 0
+			end
+			pos = pos + 1
+			list[pos] = nodename .. " " .. balance
 		else
-			balance = 0
+			pos = pos + 1
+			list[pos] = ""
 		end
-		pos = pos + 1
-		list[pos] = nodename .. " " .. balance
 	end
 	return list
 end
@@ -509,7 +523,7 @@ local function get_formspec()
 		fancy_inv = default.gui_bg..default.gui_bg_img..default.gui_slots
 	end
 		--FIXME Not work with @n in this part bug in minetest/minetest#7450.
-	return "size[11,12]"..fancy_inv..
+	return "size[13,12]"..fancy_inv..
 		"label[0,0;" ..S("Input material").. "]" ..
 		"list[current_name;input;1.7,0;1,1;]" ..
 		"label[0,1;" ..F(S("Left-over")).. "]" ..
@@ -522,6 +536,7 @@ local function get_formspec()
 		"label[0,7;" .. F(S("Trash")).. "]" ..
 		"list[current_name;trash;1.5,7;1,1;]" ..
 		"list[current_name;output;2.8,0;8,8;]" ..
+		"list[current_name;output;11,0;2,8;64]" ..
 		"list[current_player;main;1.5,8.25;8,4;]" ..
 		"listring[current_name;output]" ..
 		"listring[current_player;main]" ..
@@ -547,7 +562,7 @@ function circular_saw.on_construct(pos)
 	inv:set_size("input", 1)    -- Input slot for full blocks of material x.
 	inv:set_size("micro", 1)    -- Storage for 1-7 surplus microblocks.
 	inv:set_size("recycle", 1)  -- Surplus partial blocks can be placed here.
-	inv:set_size("output", 8*8) -- 7x8 versions of stair-parts of material x.
+	inv:set_size("output", output_inv_size)
 	inv:set_size("trash", 1)    -- Trash list
 
 	circular_saw:reset(pos)
@@ -563,7 +578,7 @@ minetest.register_lbm({
 		if meta:get_string("formspec") ~= circular_saw_formspec then
 			meta:set_string("formspec", circular_saw_formspec)
 			local inv = meta:get_inventory()
-			inv:set_size("output", 8*8)
+			inv:set_size("output", output_inv_size)
 			inv:set_size("trash", 1)
 			minetest.log("action", "Circular Saw formspec updated at "..minetest.pos_to_string(pos))
 		end

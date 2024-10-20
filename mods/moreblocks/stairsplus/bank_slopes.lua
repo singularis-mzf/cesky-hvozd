@@ -1,7 +1,7 @@
 --[[
 More Blocks: bank slope definitions
 
-Copyright © 2022 Singularis and contributors
+Copyright © 2022,2024 Singularis and contributors
 Licensed under the zlib license. See LICENSE.md for more information.
 --]]
 
@@ -72,22 +72,17 @@ local function process_box(box)
 	return { type = "fixed", fixed = result }
 end
 
-function stairsplus:register_bank_slopes(recipeitem)
+
+function stairsplus:register_bank_slopes_internal(recipeitem, modname, subname)
 	local recipeitem_def = minetest.registered_nodes[recipeitem]
 	if not recipeitem_def then
 		error("stairsplus:register_bank_slopes() called on unknown node "..recipeitem)
 	end
-	local circular_saw_def = circular_saw.known_nodes[recipeitem]
-	if not circular_saw_def then
-		error("stairsplus:register_bank_slopes() called on the node "..recipeitem.." that is not registered for the circular saw")
-	end
-	local modname = circular_saw_def[1]
-	local subname = circular_saw_def[2]
 
 	for alternate, slopedef in pairs(defs) do
 		local original_slope = modname..":slope_"..subname..alternate
 		local orig_slope_def = minetest.registered_nodes[original_slope]
-		if orig_slope_def then
+		if ch_core.is_shape_allowed(recipeitem, "bank_slope", alternate) and orig_slope_def then
 			local new_def = table.copy(orig_slope_def)
 			new_def.name = nil
 			new_def.mod_origin = nil
@@ -107,6 +102,7 @@ function stairsplus:register_bank_slopes(recipeitem)
 				end
 			end
 			new_def.paramtype = "none"
+			new_def.paramtype2 = "4dir"
 			new_def._transparency = 0 -- for mod shadows
 
 			local groups = new_def.groups or {}
@@ -129,8 +125,6 @@ function stairsplus:register_bank_slopes(recipeitem)
 					{modname..":bank_slope_"..subname..alternate, recipeitem},
 				},
 			})
-		else
-			minetest.log("warning", "Expected slope node "..original_slope.." is not defined!")
 		end
 	end
 end

@@ -118,6 +118,7 @@ function stairsplus:register_all(modname, subname, recipeitem, fields)
 	local subset = ch_core.get_stairsplus_custom_shapes(recipeitem)
 	if subset ~= nil then
 		stairsplus:register_custom_subset(subset, modname, subname, recipeitem, fields)
+		stairsplus:register_bank_slopes_internal(recipeitem, modname, subname)
 	end
 --[[
 	fields.tiles = preprocess_tiles(fields.tiles)
