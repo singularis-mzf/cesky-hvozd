@@ -362,7 +362,12 @@ local materials_roof = set(
 	"technic:zinc_block"
 )
 
-local materials_all = union(materials_cnc, materials_kp, materials_sns, materials_wool, materials_roof)
+local materials_zdlazba = set(
+	"ch_extras:cervzdlazba",
+	"ch_extras:zdlazba"
+)
+
+local materials_all = union(materials_cnc, materials_kp, materials_sns, materials_wool, materials_roof, materials_zdlazba)
 
 local alts_micro = set("", "_1", "_2", "_4", "_12", "_15")
 
@@ -472,6 +477,11 @@ local rules = {
 	{materials_wool, "slab", wool_slabs, true},
 	{materials_wool, "slope", wool_slopes, true},
 	{materials_roof, "slope", roof_slopes, true}, -- roofs
+	{materials_zdlazba, "micro", set("_1", "_2", "", "_15"), true },
+	{materials_zdlazba, "panel", set("_1", "_special", "_wide_1"), true},
+	{materials_zdlazba, "slab", sns_slabs, true },
+	{materials_zdlazba, "slope", alts_slope, true },
+	{materials_zdlazba, "stair", "_alt_1", true },
 	{materials_for_bank_slopes, "bank_slope", bank_slopes, true},
 
 -- CNC:
@@ -556,15 +566,15 @@ function ch_core.is_shape_allowed(recipeitem, category, alternate)
 	end
 	-- perform full resolution:
 	for _, rule in ipairs(rules) do
-		if is_match(recipeitem, rule[1]) and is_match(category, rule[2]) and is_match(alternate, rule[3]) then
+		if is_match(category, rule[2]) and is_match(recipeitem, rule[1]) and is_match(alternate, rule[3]) then
 			-- match
 			result = ifthenelse(rule[4], true, false)
 			break
 		end
 	end
 	if result == nil then
-		result = true
 		error("Shapes DB resolution failed for "..recipeitem.."/"..category.."/"..alternate.."!")
+		-- result = true
 		-- minetest.log("warning", "Shapes DB resolution failed for "..recipeitem.."/"..category.."/"..alternate.."! Will allow the shape.")
 	end
 	if shapeinfo == nil then

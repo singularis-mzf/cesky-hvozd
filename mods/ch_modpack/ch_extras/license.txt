@@ -62,6 +62,7 @@ ch_extras_pile_mask64.png
 ch_extras_pile_overlay_top.png
 ch_extras_pile_overlay_middle.png
 ch_extras_pile_overlay_side.png
+ch_extras_zdlazba.png
 	License: CC BY-SA 4.0
 	Author: Singularis
 
