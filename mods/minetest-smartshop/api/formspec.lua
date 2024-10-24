@@ -159,91 +159,91 @@ function api.build_client_formspec(shop, player_name)
 	local zustatek_fs
 
 	if smartshop.has.ch_bank then
-		zustatek_fs = ch_bank.get_zustatek_formspec(player_name, 2.85, 3.25, 12.7, "penize", "hcs", "kcs", "zcs")
+		zustatek_fs = ch_bank.get_zustatek_formspec(player_name, 6.25, 5.75, 15.7, "penize", "hcs", "kcs", "zcs")
 	end
 
 	local fs_parts = {
-		"formspec_version[3]",
-		"size[15.5,9]",
+		"formspec_version[4]",
+		"size[16.5,13.25]",
 		zustatek_fs or "",
 		"style_type[image_button;bgcolor=#00000000;bgimg=blank.png;border=false]",
-		"list[current_player;main;2.875,3.75;8,4;]",
-		("label[0.375,0.625;%s]"):format(FS("for sale:")),
-		("label[0.375,1.875;%s]"):format(FS("price:")),
+		"style_type[label;font_size=26]",
+		"list[current_player;main;6.25,6.5;8,4;]",
+		"box[0.4,0.4;5.5,12.4;#AAAAAA99]",
+		-- ("label[0.375,0.625;%s]"):format(FS("for sale:")),
+		-- ("label[0.375,1.875;%s]"):format(FS("price:")),
 	}
 
 	local function give_i(i)
-		if shop:can_exchange(i) then
-			local give_stack = shop:get_give_stack(i)
-			local give_parts = {
-				("list[nodemeta:%s;give%i;%f,0.375;1,1;]"):format(fpos, i, (i + 1) * (5 / 4) + (3 / 8)),
-				("image_button[%f,0.375;1,1;blank.png;buy%ia;]"):format((i + 1) * (5 / 4) + (3 / 8), i),
-			}
+		local give_stack = shop:get_give_stack(i)
+		local give_parts = {
+			("list[nodemeta:%s;give%i;2.5,%f;1,1;]"):format(fpos, i, 0.5 + (i - 1) * 1.25),
+			("image_button[2.5,%f;1,1;blank.png;buy%ia;]"):format(0.75 + (i - 1) * 1.25, i),
+		}
 
-			if strict_meta then
-				table.insert(give_parts, ("tooltip[buy%ia;%s\n%s]"):format(
-					i, F(get_short_description(give_stack)), F(truncate(give_stack:to_string(), 50))
-				))
+		if strict_meta then
+			table.insert(give_parts, ("tooltip[buy%ia;%s\n%s]"):format(
+				i, F(get_short_description(give_stack)), F(truncate(give_stack:to_string(), 50))
+			))
 
+		else
+			local item_name = give_stack:get_name()
+			local def = minetest.registered_items[item_name]
+			local description
+			if def then
+				description = def.short_description or def.description or def.name
 			else
-				local item_name = give_stack:get_name()
-				local def = minetest.registered_items[item_name]
-				local description
-				if def then
-					description = def.short_description or def.description or def.name
-				else
-					description = item_name
-				end
-
-				table.insert(give_parts, ("tooltip[buy%ia;%s\n%s]"):format(
-					i, F(description), F(item_name)
-				))
+				description = item_name
 			end
 
-			return table.concat(give_parts, "")
-		else
-			return ""
+			table.insert(give_parts, ("tooltip[buy%ia;%s\n%s]"):format(
+				i, F(description), F(item_name)
+			))
 		end
+
+		return table.concat(give_parts, "")
 	end
 
 	local function buy_i(i)
-		if shop:can_exchange(i) then
-			local pay_stack = shop:get_pay_stack(i)
-			local pay_parts = {
-				("list[nodemeta:%s;pay%i;%f,1.625;1,1;]"):format(fpos, i, (i + 1) * (5 / 4) + (3 / 8)),
-				("image_button[%f,1.625;1,1;blank.png;buy%ib;]"):format((i + 1) * (5 / 4) + (3 / 8), i),
-			}
+		local pay_stack = shop:get_pay_stack(i)
+		local pay_parts = {
+			("label[1.75,%f;⇒]"):format(0.975 + (i - 1) * 1.25),
+			("list[nodemeta:%s;pay%i;0.5,%f;1,1;]"):format(fpos, i, 0.5 + (i - 1) * 1.25),
+			("image_button[0.5,%f;1,1;blank.png;buy%ib;]"):format(0.5 + (i - 1) * 1.25, i),
+		}
 
-			if strict_meta then
-				table.insert(pay_parts, ("tooltip[buy%ib;%s\n%s]"):format(
-					i, F(get_short_description(pay_stack)), F(truncate(pay_stack:to_string(), 50))
-				))
+		if strict_meta then
+			table.insert(pay_parts, ("tooltip[buy%ib;%s\n%s]"):format(
+				i, F(get_short_description(pay_stack)), F(truncate(pay_stack:to_string(), 50))
+			))
 
+		else
+			local item_name = pay_stack:get_name()
+			local def = minetest.registered_items[item_name]
+			local description
+			if def then
+				description = def.short_description or def.description or def.name
 			else
-				local item_name = pay_stack:get_name()
-				local def = minetest.registered_items[item_name]
-				local description
-				if def then
-					description = def.short_description or def.description or def.name
-				else
-					description = item_name
-				end
-
-				table.insert(pay_parts, ("tooltip[buy%ib;%s\n%s]"):format(
-					i, F(description), F(item_name)
-				))
+				description = item_name
 			end
 
-			return table.concat(pay_parts, "")
-		else
-			return ""
+			table.insert(pay_parts, ("tooltip[buy%ib;%s\n%s]"):format(
+				i, F(description), F(item_name)
+			))
 		end
+
+		return table.concat(pay_parts, "")
 	end
 
 	for i = 1, 10 do
-		table.insert(fs_parts, give_i(i))
-		table.insert(fs_parts, buy_i(i))
+		if shop:can_exchange(i) then
+			table.insert(fs_parts, give_i(i))
+			table.insert(fs_parts, buy_i(i))
+			table.insert(fs_parts, ("button[3.75,%f;1,1;buy%ic;x1]"):format(0.5 + (i - 1) * 1.25, i))
+			-- table.insert(fs_parts, ("button[4.85,%f;1,1;buy%id;x10]"):format(0.5 + (i - 1) * 1.25, i)) -- TODO
+		end
 	end
+	table.concat(fs_parts, "style_type[label;font_size=*1]")
 
 	return table.concat(fs_parts, "")
 end

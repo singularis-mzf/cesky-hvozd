@@ -1,6 +1,7 @@
 
 local phash = elevator.phash
 local get_node = elevator.get_node
+local ifthenelse = ch_core.ifthenelse
 
 local homedecor_path = minetest.get_modpath("homedecor")
 local mineclone_path = core.get_modpath("mcl_core") and mcl_core
@@ -204,6 +205,69 @@ minetest.register_node("elevator:elevator_box", {
     _mcl_hardness = 5, -- mineclone2 specific
 })
 
+local function elevator_on_rightclick(pos, node, sender, itemstack, pointed_thing)
+    local player_name = sender and sender:is_player() and sender:get_player_name()
+    if not player_name then
+        return
+    end
+    local nodename = node.name
+    -- When the player is holding elevator components, just place them instead of opening the formspec.
+    if ({
+      ["elevator:elevator_off"] = true,
+      ["elevator:shaft"] = true,
+      ["elevator:motor"] = true,
+    })[sender:get_wielded_item():get_name()] then
+        return core.item_place_node(itemstack, sender, pointed_thing)
+    end
+    local formspec = {"size[4,5.75]"}
+    local meta = minetest.get_meta(pos)
+    elevator.formspecs[sender:get_player_name()] = {pos}
+    local motorhash = meta:get_string("motor")
+    local is_protected = minetest.is_protected(pos, player_name)
+    if node.name == "elevator:elevator_on" and elevator.motors[motorhash] then
+        -- aktivní výtah s motorem:
+        -- ========================
+        if vector.distance(sender:get_pos(), pos) > 1 or minetest.get_node(sender:get_pos()).name ~= nodename then
+            ch_core.systemovy_kanal(player_name, "Nestojíte uvnitř kabiny!")
+            return
+        end
+        -- Build the formspec from the motor table.
+        local tpnames = {}
+        local tpnames_l = {}
+        local motor = elevator.motors[motorhash]
+        for ji,jv in ipairs(motor.pnames) do
+            if tonumber(jv) ~= pos.y then
+                table.insert(tpnames, jv)
+                table.insert(tpnames_l, (motor.labels[ji] and motor.labels[ji] ~= "") and (jv.." - "..minetest.formspec_escape(motor.labels[ji])) or jv)
+            end
+        end
+        elevator.formspecs[player_name] = {pos, tpnames}
+        if #tpnames > 0 then
+            table.insert(formspec, "label[0,0;Zvolte cílové patro:]"..
+                "textlist[-0.1,0.5;4,4;target;"..table.concat(tpnames_l, ",").."]")
+        else
+            table.insert(formspec, "label[0,0;Žádné cílové stanice.]")
+        end
+        table.insert(formspec, "label[0,4.6;ZDE: >"..minetest.formspec_escape(meta:get_string("label")).."<]")
+    elseif not elevator.motors[motorhash] then
+        -- výtah bez motoru
+        table.insert(formspec, "label[0,0;Výtah je mimo provoz.]")
+    elseif elevator.boxes[motorhash] then
+        table.insert(formspec, "label[0,0;Tato šachta je již obsazena.]")
+    else
+        formspec = nil
+    end
+
+    if formspec ~= nil then
+        if not is_protected then
+            table.insert(formspec, "button[-0.05,5.0;4,1;edit;Přejmenovat patro...]")
+        end
+        formspec = table.concat(formspec)
+        minetest.show_formspec(player_name, "elevator:elevator", formspec)
+    end
+end
+
+
 for _,mode in ipairs({"on", "off"}) do
     local nodename = "elevator:elevator_"..mode
     local on = (mode == "on")
@@ -313,86 +377,7 @@ for _,mode in ipairs({"on", "off"}) do
             return minetest.item_place(itemstack, placer, pointed_thing)
         end,
 
-        on_rightclick = function(pos, node, sender, itemstack, pointed_thing)
-            if not sender or not sender:is_player() then
-                return
-            end
-            -- When the player is holding elevator components, just place them instead of opening the formspec.
-            if ({
-              ["elevator:elevator_off"] = true,
-              ["elevator:shaft"] = true,
-              ["elevator:motor"] = true,
-            })[sender:get_wielded_item():get_name()] then
-                return core.item_place_node(itemstack, sender, pointed_thing)
-            end
-            local formspec
-            local meta = minetest.get_meta(pos)
-            elevator.formspecs[sender:get_player_name()] = {pos}
-            local motorhash = meta:get_string("motor")
-            if on and elevator.motors[motorhash] then
-                if vector.distance(sender:get_pos(), pos) > 1 or minetest.get_node(sender:get_pos()).name ~= nodename then
-                    ch_core.systemovy_kanal(sender:get_player_name(), "Nestojíte uvnitř kabiny!")
-                    return
-                end
-                -- Build the formspec from the motor table.
-                local tpnames = {}
-                local tpnames_l = {}
-                local motor = elevator.motors[motorhash]
-                for ji,jv in ipairs(motor.pnames) do
-                    if tonumber(jv) ~= pos.y then
-                        table.insert(tpnames, jv)
-                        table.insert(tpnames_l, (motor.labels[ji] and motor.labels[ji] ~= "") and (jv.." - "..minetest.formspec_escape(motor.labels[ji])) or jv)
-                    end
-                end
-                elevator.formspecs[sender:get_player_name()] = {pos, tpnames}
-                if #tpnames > 0 then
-                    if not minetest.is_protected(pos, sender:get_player_name()) then
-                        formspec = "size[4,6]"
-                        .."label[0,0;Zvolte cílové patro:]"
-                        .."textlist[-0.1,0.5;4,4;target;"..table.concat(tpnames_l, ",").."]"
-                        .."field[0.25,5.25;4,0;label;;"..minetest.formspec_escape(meta:get_string("label")).."]"
-                        .."button_exit[-0.05,5.5;4,1;setlabel;Nazvat patro]"
-                    else
-                        formspec = "size[4,4.4]"
-                        .."label[0,0;Zvolte cílové patro:]"
-                        .."textlist[-0.1,0.5;4,4;target;"..table.concat(tpnames_l, ",").."]"
-                    end
-                else
-                    if not minetest.is_protected(pos, sender:get_player_name()) then
-                        formspec = "size[4,2]"
-                        .."label[0,0;Žádné cílové stanice.]"
-                        .."field[0.25,1.25;4,0;label;;"..minetest.formspec_escape(meta:get_string("label")).."]"
-                        .."button_exit[-0.05,1.5;4,1;setlabel;Nazvat patro]"
-                    else
-                        formspec = "size[4,0.4]"
-                        .."label[0,0;Žádné cílové stanice.]"
-                    end
-                end
-                minetest.show_formspec(sender:get_player_name(), "elevator:elevator", formspec)
-            elseif not elevator.motors[motorhash] then
-                if not minetest.is_protected(pos, sender:get_player_name()) then
-                    formspec = "size[4,2]"
-                    .."label[0,0;Výtah je mimo provoz.]"
-                    .."field[0.25,1.25;4,0;label;;"..minetest.formspec_escape(meta:get_string("label")).."]"
-                    .."button_exit[-0.05,1.5;4,1;setlabel;Set label]"
-                else
-                    formspec = "size[4,0.4]"
-                    .."label[0,0;Výtah je mimo provoz.]"
-                end
-                minetest.show_formspec(sender:get_player_name(), "elevator:elevator", formspec)
-            elseif elevator.boxes[motorhash] then
-                if not minetest.is_protected(pos, sender:get_player_name()) then
-                    formspec = "size[4,2]"
-                    .."label[0,0;Tato šachta je již obsazena.]"
-                    .."field[0.25,1.25;4,0;label;;"..minetest.formspec_escape(meta:get_string("label")).."]"
-                    .."button_exit[-0.05,1.5;4,1;setlabel;Set label]"
-                else
-                    formspec = "size[4,0.4]"
-                    .."label[0,0;Tato šachta je již obsazena.]"
-                end
-                minetest.show_formspec(sender:get_player_name(), "elevator:elevator", formspec)
-            end
-        end,
+        on_rightclick = elevator_on_rightclick,
 
         on_destruct = function(pos)
             local p = vector.add(pos, {x=0, y=1, z=0})

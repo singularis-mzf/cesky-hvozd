@@ -549,7 +549,7 @@ end
 
 local function get_buy_index(pressed)
     for i = 1, 10 do
-        if pressed["buy" .. i .. "a"] or pressed["buy" .. i .. "b"] then
+        if pressed["buy"..i.."a"] or pressed["buy"..i.."b"] or pressed["buy"..i.."c"] or pressed["buy"..i.."d"] then
             return i
         end
     end

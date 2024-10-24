@@ -10,6 +10,14 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
         return true
     end
     local meta = minetest.get_meta(pos)
+    if fields.edit then
+        local formspec =
+            "size[4,3]"..
+            "field[0.25,1.25;4,0;label;;"..minetest.formspec_escape(meta:get_string("label")).."]"..
+            "button_exit[-0.05,1.5;4,1;setlabel;Nazvat patro]"
+        minetest.show_formspec(sender:get_player_name(), formname, formspec)
+        return true
+    end
     if fields.setlabel then
         if minetest.is_protected(pos, sender:get_player_name()) then
             return true

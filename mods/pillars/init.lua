@@ -3,6 +3,9 @@
 -- outside the terms of this license.
 
 print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+
+local ifthenelse = ch_core.ifthenelse
+
 local basic_shape = {
 	{-0.5, 0.25, -0.5, 0.5, 0.5, 0.5}, -- top
 	{-0.5, -0.5, -0.5, 0.5, -0.25, 0.5}, -- bot
@@ -29,162 +32,318 @@ local middle_shape = {
 	{-0.25, -0.5, -0.25, 0.25, 0.5, 0.25}, -- body
 }
 
-local function is_pillar(pos)
-	return minetest.get_item_group(minetest.get_node(pos).name, "pillar") > 0
+local function make_half_shape(box)
+	local newbox = {}
+	for i, b in ipairs(box) do
+		newbox[i] = {b[1], b[2], b[3] + 0.5, b[4], b[5], 0.5}
+	end
+	return newbox
 end
 
-local function connected(pos, name, top)
-    local v_dir = vector.new(0,-1,0)
-    
-    if top == true then
-        v_dir = vector.new(0,1,0)
-    end
+local basic_shape_half = make_half_shape(basic_shape)
+local bottom_shape_half = make_half_shape(bottom_shape)
+local top_shape_half = make_half_shape(top_shape)
+local middle_shape_half = make_half_shape(middle_shape)
 
-    local aside = vector.add(pos, v_dir)
-	if is_pillar(aside) then
-		return true
+local basic_shapes = {[""] = "", T = "_bot", TB = "_mid", B = "_top"}
+local half_shapes = {[""] = "_half", T = "_hbot", TB = "_hmid", B = "_htop"}
+
+local shapes = {
+	{
+		suffix = "",
+		box = basic_shape,
+		groups_override = {pillar = 1},
+		sides = {},
+		alt_shapes = basic_shapes,
+		drop_suffix = "",
+		description = "pilíř",
+	}, {
+		suffix = "_bot",
+		box = bottom_shape,
+		groups_override = {pillar = 2, not_in_creative_inventory = 1},
+		sides = { "top" },
+		alt_shapes = basic_shapes,
+		drop_suffix = "",
+		description = "pilíř (spodní díl)",
+	}, {
+		suffix = "_mid",
+		box = middle_shape,
+		groups_override = {pillar = 3, not_in_creative_inventory = 1},
+		sides = { "top", "bottom" },
+		alt_shapes = basic_shapes,
+		drop_suffix = "",
+		description = "pilíř (střední díl)",
+	}, {
+		suffix = "_top",
+		box = top_shape,
+		groups_override = {pillar = 4, not_in_creative_inventory = 1},
+		sides = { "bottom" },
+		alt_shapes = basic_shapes,
+		drop_suffix = "",
+		description = "pilíř (horní díl)",
+	}, {
+		suffix = "_half",
+		box = basic_shape_half,
+		groups_override = {pillar = 5},
+		sides = {},
+		alt_shapes = half_shapes,
+		drop_suffix = "_half",
+		description = "pilíř poloviční",
+	}, {
+		suffix = "_hbot",
+		box = bottom_shape_half,
+		groups_override = {pillar = 6, not_in_creative_inventory = 1},
+		sides = { "top" },
+		alt_shapes = half_shapes,
+		drop_suffix = "_half",
+		description = "pilíř poloviční (spodní díl)",
+	}, {
+		suffix = "_hmid",
+		box = middle_shape_half,
+		groups_override = {pillar = 7, not_in_creative_inventory = 1},
+		sides = { "top", "bottom" },
+		alt_shapes = half_shapes,
+		drop_suffix = "_half",
+		description = "pilíř poloviční (střední díl)",
+	}, {
+		suffix = "_htop",
+		box = top_shape_half,
+		groups_override = {pillar = 8, not_in_creative_inventory = 1},
+		sides = { "bottom" },
+		alt_shapes = half_shapes,
+		drop_suffix = "_half",
+		description = "pilíř poloviční (horní díl)",
+	}
+}
+
+local group_to_shapedef = {}
+local suffix_to_shapedef = {}
+
+for _, shape_def in ipairs(shapes) do
+	local i = assert(shape_def.groups_override.pillar)
+	if group_to_shapedef[i] ~= nil then
+		error("Duplicity in pillar groups!")
 	end
-
-	return false
+	group_to_shapedef[i] = shape_def
+	if suffix_to_shapedef[shape_def.suffix] ~= nil then
+		error("Duplicity in pillar suffixes!")
+	end
+	suffix_to_shapedef[shape_def.suffix] = shape_def
 end
 
-local function swap(pos, node, name)
-	if node.name == name then
-		return
+-- => (recipeitem, shape_def) or (nil, nil)
+local function analyze_shape(node_name)
+	local ndef = minetest.registered_nodes[node_name]
+	if ndef ~= nil then
+		local groups = ndef.groups
+		if groups ~= nil then
+			local pillar = groups.pillar
+			if pillar ~= nil then
+				local recipeitem = ndef._ch_pillar_recipeitem
+				local shape_def = group_to_shapedef[ndef.groups.pillar]
+				if recipeitem ~= nil and shape_def ~= nil then
+					return recipeitem, shape_def
+				end
+			end
+		end
 	end
+	return nil, nil
+end
 
-	minetest.set_node(pos, {name = name})
+local function is_pillar(node_name)
+	return group_to_shapedef[minetest.get_item_group(node_name, "pillar")] ~= nil
+end
+
+--[[
+	[recipeitem] = STRING, -- základ jména (tzn. pillars:XXX<suffix>)
+]]
+local registered_pillars = {}
+
+local function get_shape(recipeitem, suffix)
+	local pname = registered_pillars[recipeitem]
+	if pname ~= nil and suffix_to_shapedef[suffix] ~= nil then
+		local result = "pillars:"..pname..suffix
+		if minetest.registered_nodes[result] ~= nil then
+			return result
+		end
+	end
 end
 
 local function update_pillar(pos)
-	if not is_pillar(pos) then
-		return
-	end
 	local node = minetest.get_node(pos)
-	local name = node.name
-	
-	if name:sub(-4) == "_top" or
-	   name:sub(-4) == "_bot" or
-	   name:sub(-4) == "_mid" then
-		name = name:sub(1, -5)
-	end
+	local recipeitem, shape_def = analyze_shape(node.name)
 
-	local any = node.param2
-	
-	local on_top = connected(pos, name, true)
-	local on_bot = connected(pos, name, false)
+	if recipeitem == nil then
+		return -- not a pillar
+	end
+	local on_top = is_pillar(minetest.get_node(vector.offset(pos, 0, 1, 0)).name)
+	local on_bot = is_pillar(minetest.get_node(vector.offset(pos, 0, -1, 0)).name)
+	local expected_shape
 	
 	if on_top and on_bot then
-	    swap(pos, node, name .. "_mid", any)
+		expected_shape = shape_def.alt_shapes.TB
 	elseif on_top then
-	    swap(pos, node, name .. "_bot", any)
+		expected_shape = shape_def.alt_shapes.T
 	elseif on_bot then
-	    swap(pos, node, name .. "_top", any)
+		expected_shape = shape_def.alt_shapes.B
 	else
-	    swap(pos, node, name, any)
+		expected_shape = shape_def.alt_shapes[""]
+	end
+	if expected_shape ~= nil then
+		local expected_node = get_shape(recipeitem, expected_shape)
+		if expected_node ~= nil and expected_node ~= node.name then
+			minetest.swap_node(pos, {name = expected_node})
+		end
 	end
 end
 
-minetest.register_on_placenode(function(pos, node)
-	if minetest.get_item_group(node, "pillar") then
+local function after_place_node(pos, placer, itemstack, pointed_thing)
+	local node = minetest.get_node(pos)
+	if is_pillar(node.name) then
 		update_pillar(pos)
 	end
-	update_pillar(vector.add(pos, vector.new(0,-1,0)))
-	update_pillar(vector.add(pos, vector.new(0,1,0)))
-end)
+	update_pillar(vector.offset(pos, 0,-1,0))
+	update_pillar(vector.offset(pos, 0,1,0))
+end
 
-minetest.register_on_dignode(function(pos)
-	update_pillar(vector.add(pos, vector.new(0,-1,0)))
-	update_pillar(vector.add(pos, vector.new(0,1,0)))
-end)
+local function after_dig_node(pos, oldnode, oldmetadata, digger)
+	update_pillar(vector.offset(pos, 0,-1,0))
+	update_pillar(vector.offset(pos, 0,1,0))
+end
 
 pillars = {}
 
-local function join_groups(a, b)
-	local result = table.copy(a)
-	for g, v in pairs(b) do
-		result[g] = v
+local function formspec_callback(custom_state, player, formname, fields)
+	local player_name = player:get_player_name()
+	local pos = custom_state.pos
+	local node = minetest.get_node(pos)
+	local recipeitem = analyze_shape(node.name)
+	if recipeitem ~= nil then
+		for _, shape_def in pairs(shapes) do
+			local node_name = get_shape(recipeitem, shape_def.suffix)
+			if fields["chg_"..node_name:sub(9, -1)] ~= nil then
+				if minetest.is_protected(pos, player_name) then
+					minetest.record_protection_violation(pos, player_name)
+				elseif node.name ~= node_name then
+					node.name = node_name
+					minetest.swap_node(pos, node)
+					fields.quit = "true"
+					minetest.close_formspec(player_name, formname)
+				end
+				return
+			end
+		end
 	end
-	return result
 end
 
+local function on_rightclick(pos, node, clicker, itemstack, pointed_thing)
+	local player_name = clicker and clicker:get_player_name()
+	if player_name ~= nil and not minetest.is_protected(pos, player_name) then
+		local recipeitem = analyze_shape(node.name)
+		if recipeitem == nil then return end
+		local formspec = {
+			ch_core.formspec_header({formspec_version = 4, size = {5.75, 4}, auto_background = true}),
+			"label[0.5,0.5;Změnit tvar]",
+			"button_exit[4.775,0.25;0.5,0.5;close;X]",
+		}
+		for row = 1, 2 do
+			for col = 1, 4 do
+				local i = (row - 1) * 4 + col
+				local shape_def = group_to_shapedef[i]
+				if shape_def ~= nil then
+					local node_name = get_shape(recipeitem, shape_def.suffix)
+					table.insert(formspec, ("item_image_button[%f,%f;1,1;%s;%s;]"):format(1.25 * col - 0.75, 1.25 * row - 0.25, node_name, "chg_"..node_name:sub(9, -1)))
+				end
+			end
+		end
+		ch_core.show_formspec(player_name, "pillars:change_pillar", table.concat(formspec), formspec_callback, {pos = pos}, {})
+	end
+end
+
+local groups_to_inherit = {"cracky", "crumbly", "snappy", "oddly_breakable_by_hand"}
+local keys_to_inherit = {"sounds", "sunlight_propagates", "use_texture_alpha"}
+
 function pillars.register_pillar(name, def)
-	assert(def.basenode)
-	local basenode_def = minetest.registered_nodes[def.basenode]
+	local recipeitem = assert(def.basenode)
+	local basenode_def = minetest.registered_nodes[recipeitem]
 	if basenode_def == nil then
 		error(basenode_def.." not defined!")
 	end
-    local groups = table.copy(def.groups)
-	groups.pillar = 1
-	
-	local no_inv_groups = table.copy(groups)
-	no_inv_groups.not_in_creative_inventory = 1
-
-	local shapes_def = {
-		{"", basic_shape, join_groups(def.groups, {pillar = 4})},
-		{"_top", top_shape, join_groups(def.groups, {pillar = 3, not_in_creative_inventory = 1})},
-		{"_bot", bottom_shape, join_groups(def.groups, {pillar = 1, not_in_creative_inventory = 1})},
-		{"_mid", middle_shape, join_groups(def.groups, {pillar = 2, not_in_creative_inventory = 1})}}
-
-	for k, v in pairs(shapes_def) do
-        local sides = { "top", "bottom" }
-
-        if v[1] == "_top" then
-            sides = { "bottom" }
-        elseif v[1] == "_bot" then
-            sides = { "top" }
-        elseif v[1] == "" then
-            sides = {}
-        end
-
-	    minetest.register_node(":pillars:" .. name .. v[1], {
-		    description = (basenode_def.description or "neznámý materiál")..": pilíř",
-		    drawtype = "nodebox",
-		    paramtype = "light",
-			paramtype2 = "facedir",
-		    is_ground_content = false,
-		    sunlight_propagates = def.sunlight_propagates,
-		    inventory_image = def.inventory_image,
-		    wield_image = def.wield_image,
-		    tiles = def.textures,
-		    use_texture_alpha = def.use_texture_alpha or "opaque",
-		    groups = v[3],
-		    drop = "pillars:" .. name,
-		    sounds = def.sounds,
-
-		    node_box = {
-			    type = "fixed",
-			    fixed = v[2]
-		    },
-		    selection_box = {
-			    type = "fixed",
-			    fixed = v[2]
-		    },
-		    connect_sides = sides,
-			on_punch = function(pos, node, puncher)
-				local player_name = puncher and puncher:get_player_name()
-				if player_name and puncher:get_player_control().aux1 then
-					if minetest.is_protected(pos, player_name) then
-						minetest.record_protection_violation(pos, player_name)
-					else
-						node.name = "pillars:"..name..(shapes_def[k + 1] or shapes_def[1])[1]
-						minetest.swap_node(pos, node)
-					end
-				end
-			end,
-	    })
+	if registered_pillars[def.basenode] ~= nil then
+		error("Pillars from "..def.basenode.." are already defined!")
 	end
+	local is_base_allowed = ch_core.is_shape_allowed(recipeitem, "pillar", "")
+	local is_half_allowed = ch_core.is_shape_allowed(recipeitem, "pillar", "_half")
+	if not is_base_allowed and not is_half_allowed then
+		return -- no allowed shapes of this material
+	end
+	for _, sd in ipairs(shapes) do
+		local drop_suffix = assert(sd.drop_suffix)
+		if (is_base_allowed and drop_suffix == "") or (is_half_allowed and drop_suffix == "_half") then
+			local groups = {}
+			local def = {
+				description = (basenode_def.description or "neznámý materiál")..": "..(sd.description or "pilíř"),
+				drawtype = "nodebox",
+				paramtype = "light",
+				paramtype2 = "facedir",
+				is_ground_content = false,
+				tiles = assert(basenode_def.tiles),
+				groups = groups,
+				node_box = {type = "fixed", fixed = assert(sd.box)},
+				-- selection_box = ...,
+				connect_sides = assert(sd.sides),
+				after_dig_node = after_dig_node,
+				after_place_node = after_place_node,
+				on_rightclick = on_rightclick,
+				_ch_pillar_recipeitem = recipeitem,
+			}
+			for _, key in ipairs(keys_to_inherit) do
+				if basenode_def[key] ~= nil then
+					def[key] = basenode_def[key]
+				end
+			end
+			for _, group in ipairs(groups_to_inherit) do
+				if basenode_def.groups[group] ~= nil then
+					groups[group] = basenode_def.groups[group]
+				end
+			end
+			for g, v in pairs(sd.groups_override) do
+				groups[g] = v
+			end
+			if sd.drop_suffix ~= sd.suffix then
+				def.drop = "pillars:"..name..sd.drop_suffix
+			end
 
-	minetest.register_craft({
-		output = "pillars:" .. name .. " 7",
-		recipe = {{def.basenode, def.basenode, def.basenode},
-			  {"",def.basenode,""},
-			  {def.basenode, def.basenode, def.basenode}}
-	})
-	minetest.register_craft({
-		output = def.basenode .. " 1",
-		recipe = {{"pillars:" .. name}}
-	})
+			local new_node_name = "pillars:"..name..sd.suffix
+		    minetest.register_node(new_node_name, def)
+		end
+	end
+	if is_base_allowed then
+		minetest.register_craft({
+			output = "pillars:" .. name .. " 7",
+			recipe = {
+				{recipeitem, recipeitem, recipeitem},
+				  {"", recipeitem, ""},
+				  {recipeitem, recipeitem, recipeitem},
+			}
+		})
+		minetest.register_craft({output = recipeitem .. " 1", recipe = {{"pillars:" .. name}}})
+		if is_half_allowed then
+			minetest.register_craft({output = "pillars:"..name.."_half 2", recipe = {{"pillars:"..name, "pillars:"..name}, {"", ""}}})
+			minetest.register_craft({output = "pillars:"..name, recipe = {{"pillars:"..name.."_half"}}})
+		end
+	elseif is_half_allowed then
+		minetest.register_craft({
+			output = "pillars:" .. name .. "_half 7",
+			recipe = {
+				{recipeitem, recipeitem, recipeitem},
+				  {"", recipeitem, ""},
+				  {recipeitem, recipeitem, recipeitem},
+			}
+		})
+		minetest.register_craft({output = recipeitem .. " 1", recipe = {{"pillars:" .. name.."_half"}}})
+	end
+	registered_pillars[def.basenode] = name
 end
 
 -- Create Pillar from nodes defined in default mod
@@ -432,10 +591,10 @@ for k, v in pairs(default_lib_nodes) do
 
 	if ndef then
 		pillars.register_pillar(k, {
-			description = v.description or "pilíř",
+			--[[ description = v.description or "pilíř",
 			textures = ndef.tiles, -- v.tiles or ndef.tiles,
 			sounds = v.sounds or default.node_sound_stone_defaults(),
-			groups = {snappy=2, cracky=3, oddly_breakable_by_hand=3},
+			groups = {snappy=2, cracky=3, oddly_breakable_by_hand=3}, ]]
 			basenode = v.basenode,
 		})
 	else

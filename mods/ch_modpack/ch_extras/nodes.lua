@@ -1449,6 +1449,14 @@ def = {
 
 minetest.register_node("ch_extras:shaft", def)
 
+minetest.register_craft({
+	output = "ch_extras:shaft 2",
+	recipe = {
+		{"pillars:stone", ""},
+		{"pillars:stone", ""},
+	}
+})
+
 -- ch_extras:vystavni_ram
 ---------------------------------------------------------------
 --[[
@@ -1489,6 +1497,16 @@ def = {
 	on_dig = unifieddyes.on_dig,
 }
 minetest.register_node("ch_extras:vystavni_ram", def)
+
+for _, glass in ipairs({"building_blocks:smoothglass", "building_blocks:woodglass"}) do
+	minetest.register_craft({
+		output = "ch_extras:vystavni_ram",
+		recipe = {
+			{"default:mese_crystal_fragment", ""},
+			{glass, ""},
+		}
+	})
+end
 
 -- ch_extras:zdlazba
 ---------------------------------------------------------------
@@ -1531,3 +1549,49 @@ def.node_box = {
 def.groups = {cracky = 2, ud_param2_colorable = 1}
 
 minetest.register_node("ch_extras:colorable_zdlazba_1", def)
+
+minetest.register_craft({
+	output = "ch_extras:zdlazba 5",
+	recipe = {
+		{"default:cobble", "", "default:cobble"},
+		{"", "default:cobble", ""},
+		{"default:cobble", "", "default:cobble"},
+	},
+})
+
+minetest.register_craft({
+	output = "ch_extras:cervzdlazba 5",
+	recipe = {
+		{"default:desert_cobble", "", "default:desert_cobble"},
+		{"", "default:desert_cobble", ""},
+		{"default:desert_cobble", "", "default:desert_cobble"},
+	},
+})
+minetest.register_craft({
+	output = "ch_extras:colorable_zdlazba 2",
+	recipe = {
+		{"ch_extras:zdlazba", "ch_extras:zdlazba"},
+		{"", ""},
+	},
+})
+minetest.register_craft({
+	output = "ch_extras:colorable_zdlazba_1 2",
+	recipe = {
+		{"ch_extras:slab_zdlazba_1", "ch_extras:slab_zdlazba_1"},
+		{"", ""},
+	},
+})
+minetest.register_craft({
+	output = "ch_extras:zdlazba 4",
+	type = "shapeless",
+	recipe = {"moreblocks:sweeper", "ch_extras:colorable_zdlazba", "ch_extras:colorable_zdlazba",
+	 	"ch_extras:colorable_zdlazba", "ch_extras:colorable_zdlazba"},
+})
+minetest.register_craft({
+	output = "ch_extras:colorable_zdlazba_1",
+	type = "shapeless",
+	recipe = {
+		"ch_extras:colorable_zdlazba_1", "ch_extras:colorable_zdlazba_1", "ch_extras:colorable_zdlazba_1", "ch_extras:colorable_zdlazba_1",
+		"ch_extras:colorable_zdlazba_1", "ch_extras:colorable_zdlazba_1", "ch_extras:colorable_zdlazba_1", "ch_extras:colorable_zdlazba_1",
+	},
+})
