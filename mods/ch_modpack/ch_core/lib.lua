@@ -567,6 +567,33 @@ function ch_core.divrem(a, b)
 end
 
 --[[
+Spustí soubor jazyka LUA jako funkci, předá parametry a vrátí vrácené výsledky.
+	options = {
+		name = STRING, -- název souboru ke spuštění (relativně vůči cestě)
+		path = STRING || nil, -- cesta k souboru; nil => dovoleno jen při inicializaci módu, vezme modpath
+		nofail = BOOL || nil, -- je-li true a soubor neexistuje, neselže, ale vrátí prázdný výsledek
+	}
+]]
+function ch_core.dofile(options, ...)
+	assert(options.name)
+	local path = options.path
+	if path == nil then
+		local modname = minetest.get_current_modname()
+		if modname == nil then
+			error("options.path must be set unless a mod is loading!")
+		end
+		path = minetest.get_modpath(modname)
+		assert(path)
+	end
+	local f = loadfile(path.."/"..options.name)
+	if f ~= nil then
+		return f(...)
+	elseif not options.nofail then
+		error("dofile(): "..path.."/"..options.name.." not found!")
+	end
+end
+
+--[[
 Pro zadanou hodnotu facedir vrátí rotační vektor symbolizující rotaci
 z výchozího otočení (facedir = 0) do otočení cílového.
 ]]
