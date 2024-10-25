@@ -1,0 +1,8 @@
+This file holds a couple of editors notes regarding the mod.
+
+Todo's can be noted here, known issues, the path to ressources or general annotations.
+
+How to generate the JSON file from yl_canned_food_mtg.default_recipes:
+
+local content = minetest.write_json(yl_canned_food_mtg.default_recipes)
+minetest.safe_file_write(yl_canned_food_mtg.worldpath .. "yl_canned_food_mtg.json", content)

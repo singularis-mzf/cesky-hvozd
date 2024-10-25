@@ -1,0 +1,31 @@
+[category]
+
+# Debug
+# Set this to true to enable debug mode, it will output some more values to log
+# Optional, default is false
+yl_canned_food.debug (Debug mode) bool false
+
+# Freeze mode
+# Set this to true to enable freeze mode, which will prevent the nodes from changing into their next_stages
+# Optional, default is false
+yl_canned_food.freeze (Freeze mode) bool false
+
+# Enables legacy naming mode
+# Set to true if you need drop-in replacement for canned_food. Set to false if you want uniform naming
+# Optional, default false
+yl_canned_food.legacy (Enables legacy naming mode) bool false
+
+# Duration
+# Set this to a time in seconds. This time is necessary to go from the first to the second stage.
+# Optional, default 600
+yl_canned_food.duration (Duration) float 600 1
+
+# Maximum light
+# Set this to a light level between 0 and 15, above which the canned_food cannot enter second stage.
+# Optional, default 5
+yl_canned_food.max_light (Maximum light) int 5 0 15
+
+# Chance
+# Set this to a chance in percent. Example: chance of 33 means one in three will go to the next stage, the remaining restart their timer.
+# Optional, default 33
+yl_canned_food.chance (Chance) float 33 1 100

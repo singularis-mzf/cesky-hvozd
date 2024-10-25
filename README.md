@@ -371,12 +371,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT pro kód, různé pro média
 * [ContentDB](https://content.minetest.net/packages/FaceDeer/bulletin\_boards/)
 
-## Canned Food (canned\_food)
-
-* Zdroj: [https://github.com/mazes-80/canned\_food](https://github.com/mazes-80/canned\_food), revize 443549a3300b942e8324e1e168a17e18c4f6fb78
-* Původní licence: AGPLv3
-* Licence úprav: AGPLv3
-
 ## Charcoal (charcoal)
 
 * Zdroj: [https://content.minetest.net/packages/X17/charcoal/](https://content.minetest.net/packages/X17/charcoal/), verze 0.2
@@ -1113,6 +1107,18 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: BSD-2-Clause (podle bower.json)
 * Licence úprav: BSD-2-Clause
 * [ContentDB](https://content.minetest.net/packages/kaeza/xban2/)
+
+## YL Canned Food (yl\_canned\_food)
+
+* Zdroj: [https://gitea.your-land.de/your-land/yl\_canned\_food.git](https://gitea.your-land.de/your-land/yl\_canned\_food.git), revize 944c1b5d13dceb88b2aa8bbb9e040ed7ebc05d10
+* Původní licence: MIT pro kód, CC0 pro média
+* Licence úprav: MIT pro kód, CC0 pro média
+
+## YL Canned Food MTG (yl\_canned\_food\_mtg)
+
+* Zdroj: [https://gitea.your-land.de/your-land/yl\_canned\_food\_mtg.git](https://gitea.your-land.de/your-land/yl\_canned\_food\_mtg.git), revize 5fbda3589ff9d49d13c38bcf11eb58ce69ae1a14
+* Původní licence: MIT pro kód, CC0 pro média
+* Licence úprav: MIT pro kód, CC0 pro média
 
 # Ostatní použité zdroje
 

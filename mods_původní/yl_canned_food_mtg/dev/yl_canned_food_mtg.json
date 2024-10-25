@@ -1,0 +1,278 @@
+[
+    {
+        "additives": null,
+        "base_amount": 5.0,
+        "base_item": "mushroom_brown",
+        "base_mod": "flowers",
+        "nutrition": 6.0,
+        "out": "yl_canned_food:canned_mushrooms"
+    },
+    {
+        "additives": null,
+        "base_amount": 4.0,
+        "base_item": "honey",
+        "base_mod": "mobs",
+        "nutrition": 20.0,
+        "out": "yl_canned_food:honey_jar"
+    },
+    {
+        "additives": null,
+        "base_amount": 5.0,
+        "base_item": "potato",
+        "base_mod": "farming",
+        "nutrition": 6.0,
+        "out": "yl_canned_food:canned_potato"
+    },
+    {
+        "additives": null,
+        "base_amount": 5.0,
+        "base_item": "beetroot",
+        "base_mod": "farming",
+        "nutrition": 6.0,
+        "out": "yl_canned_food:canned_beetroot"
+    },
+    {
+        "additives": null,
+        "base_amount": 5.0,
+        "base_item": "pineapple_ring",
+        "base_mod": "farming",
+        "nutrition": 6.0,
+        "out": "yl_canned_food:canned_pineapple"
+    },
+    {
+        "additives": null,
+        "base_amount": 3.0,
+        "base_item": "cucumber",
+        "base_mod": "farming",
+        "nutrition": 15.0,
+        "out": "yl_canned_food:canned_cucumber"
+    },
+    {
+        "additives": null,
+        "base_amount": 8.0,
+        "base_item": "pine_nuts",
+        "base_mod": "ethereal",
+        "nutrition": 10.0,
+        "out": "yl_canned_food:pine_nuts_jar"
+    },
+    {
+        "additives": null,
+        "base_amount": 4.0,
+        "base_item": "onion",
+        "base_mod": "farming",
+        "nutrition": 5.0,
+        "out": "yl_canned_food:canned_onion"
+    },
+    {
+        "additives": [
+            "group:food_sugar"
+        ],
+        "base_amount": 5.0,
+        "base_item": "strawberry",
+        "base_mod": "ethereal",
+        "nutrition": 7.0,
+        "out": "yl_canned_food:strawberry_jam"
+    },
+    {
+        "additives": null,
+        "base_amount": 3.0,
+        "base_item": "tomato",
+        "base_mod": "farming",
+        "nutrition": 15.0,
+        "out": "yl_canned_food:canned_tomato"
+    },
+    {
+        "additives": null,
+        "base_amount": 8.0,
+        "base_item": "garlic_clove",
+        "base_mod": "farming",
+        "nutrition": 5.0,
+        "out": "yl_canned_food:canned_garlic_cloves"
+    },
+    {
+        "additives": null,
+        "base_amount": 6.0,
+        "base_item": "blueberries",
+        "base_mod": "default",
+        "nutrition": 8.0,
+        "out": "yl_canned_food:blueberry_jam"
+    },
+    {
+        "additives": [
+            "group:food_sugar"
+        ],
+        "base_amount": 6.0,
+        "base_item": "blueberries",
+        "base_mod": "farming",
+        "nutrition": 8.0,
+        "out": "yl_canned_food:blueberry_jam"
+    },
+    {
+        "additives": null,
+        "base_amount": 3.0,
+        "base_item": "pumpkin_slice",
+        "base_mod": "farming",
+        "nutrition": 7.0,
+        "out": "yl_canned_food:canned_pumpkin"
+    },
+    {
+        "additives": null,
+        "base_amount": 3.0,
+        "base_item": "corn",
+        "base_mod": "farming",
+        "nutrition": 11.0,
+        "out": "yl_canned_food:canned_corn"
+    },
+    {
+        "additives": [
+            "group:food_sugar"
+        ],
+        "base_amount": 6.0,
+        "base_item": "blackberry",
+        "base_mod": "farming",
+        "nutrition": 8.0,
+        "out": "yl_canned_food:blackberry_jam"
+    },
+    {
+        "additives": null,
+        "base_amount": 8.0,
+        "base_item": "peas",
+        "base_mod": "farming",
+        "nutrition": 10.0,
+        "out": "yl_canned_food:canned_peas"
+    },
+    {
+        "additives": null,
+        "base_amount": 6.0,
+        "base_item": "beans",
+        "base_mod": "farming",
+        "nutrition": 7.0,
+        "out": "yl_canned_food:canned_beans"
+    },
+    {
+        "additives": [
+            "group:food_sugar"
+        ],
+        "base_amount": 6.0,
+        "base_item": "raspberries",
+        "base_mod": "farming",
+        "nutrition": 8.0,
+        "out": "yl_canned_food:raspberry_jam"
+    },
+    {
+        "additives": null,
+        "base_amount": 3.0,
+        "base_item": "apple",
+        "base_mod": "default",
+        "nutrition": 7.0,
+        "out": "yl_canned_food:apple_jam"
+    },
+    {
+        "additives": null,
+        "base_amount": 6.0,
+        "base_item": "chili_pepper",
+        "base_mod": "farming",
+        "nutrition": 7.0,
+        "out": "yl_canned_food:canned_chili_pepper"
+    },
+    {
+        "additives": [
+            "group:food_sugar"
+        ],
+        "base_amount": 4.0,
+        "base_item": "grapes",
+        "base_mod": "farming",
+        "nutrition": 11.0,
+        "out": "yl_canned_food:grape_jam"
+    },
+    {
+        "additives": null,
+        "base_amount": 5.0,
+        "base_item": "coconut_slice",
+        "base_mod": "ethereal",
+        "nutrition": 6.0,
+        "out": "yl_canned_food:canned_coconut"
+    },
+    {
+        "additives": null,
+        "base_amount": 3.0,
+        "base_item": "carrot",
+        "base_mod": "farming",
+        "nutrition": 15.0,
+        "out": "yl_canned_food:canned_carrot"
+    },
+    {
+        "additives": [
+            "group:food_sugar"
+        ],
+        "base_amount": 6.0,
+        "base_item": "rhubarb",
+        "base_mod": "farming",
+        "nutrition": 8.0,
+        "out": "yl_canned_food:rhubarb_jam"
+    },
+    {
+        "additives": [
+            "group:food_sugar"
+        ],
+        "base_amount": 5.0,
+        "base_item": "banana",
+        "base_mod": "ethereal",
+        "nutrition": 7.0,
+        "out": "yl_canned_food:banana_jam"
+    },
+    {
+        "additives": null,
+        "base_amount": 5.0,
+        "base_item": "dandelion_yellow",
+        "base_mod": "flowers",
+        "nutrition": 6.0,
+        "out": "yl_canned_food:dandelion_jam"
+    },
+    {
+        "additives": [
+            "group:food_sugar"
+        ],
+        "base_amount": 3.0,
+        "base_item": "melon_slice",
+        "base_mod": "farming",
+        "nutrition": 8.0,
+        "out": "yl_canned_food:melon_jam"
+    },
+    {
+        "additives": null,
+        "base_amount": 5.0,
+        "base_item": "rose",
+        "base_mod": "flowers",
+        "nutrition": 6.0,
+        "out": "yl_canned_food:rose_jam"
+    },
+    {
+        "additives": [
+            "group:food_sugar"
+        ],
+        "base_amount": 3.0,
+        "base_item": "orange",
+        "base_mod": "ethereal",
+        "nutrition": 8.0,
+        "out": "yl_canned_food:orange_jam"
+    },
+    {
+        "additives": null,
+        "base_amount": 5.0,
+        "base_item": "cabbage",
+        "base_mod": "farming",
+        "nutrition": 6.0,
+        "out": "yl_canned_food:canned_cabbage"
+    },
+    {
+        "additives": [
+            "group:food_sugar"
+        ],
+        "base_amount": 6.0,
+        "base_item": "lemon",
+        "base_mod": "ethereal",
+        "nutrition": 6.0,
+        "out": "yl_canned_food:lemon_jam"
+    }
+]
