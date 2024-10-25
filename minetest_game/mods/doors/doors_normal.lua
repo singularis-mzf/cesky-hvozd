@@ -66,7 +66,8 @@ function doors.door_toggle(pos, node, clicker)
 		state = state + 1
 	end
 
-	local dir = node.param2
+	local dir = node.param2 % 4
+	local param2_remains = node.param2 - dir
 
 	-- It's possible param2 is messed up, so, validate before using
 	-- the input data. This indicates something may have rotated
@@ -93,7 +94,7 @@ function doors.door_toggle(pos, node, clicker)
 
 	minetest.swap_node(pos, {
 		name = name .. transform[state + 1][dir+1].v,
-		param2 = transform[state + 1][dir+1].param2
+		param2 = transform[state + 1][dir+1].param2 + param2_remains
 	})
 	meta:set_int("state", state)
 
@@ -387,7 +388,9 @@ function doors.register(name, def)
 
 	def.drawtype = "mesh"
 	def.paramtype = "light"
-	def.paramtype2 = "facedir"
+	if def.paramtype2 == nil then
+		def.paramtype2 = "4dir"
+	end
 	def.sunlight_propagates = true
 	def.walkable = true
 	def.is_ground_content = false

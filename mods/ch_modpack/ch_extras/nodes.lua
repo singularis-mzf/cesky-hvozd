@@ -1595,3 +1595,44 @@ minetest.register_craft({
 		"ch_extras:colorable_zdlazba_1", "ch_extras:colorable_zdlazba_1", "ch_extras:colorable_zdlazba_1", "ch_extras:colorable_zdlazba_1",
 	},
 })
+
+-- doors:colorable
+---------------------------------------------------------------
+
+doors.register( "door_colorable", {
+	-- Cambridge Style (2 panel)
+	tiles = { { name = "ch_core_white_pixel.png^[resize:38x32", backface_culling = true } },
+	use_texture_alpha = "clip",
+	description = "barvitelné dveře",
+	inventory_image = "doors_item_woodglass1.png",
+	groups = {choppy = 2, flammable = 2, oddly_breakable_by_hand = 2, ud_param2_colorable = 1},
+
+	paramtype2 = "color4dir",
+	palette = "unifieddyes_palette_color4dir.png",
+	overlay_tiles = {{name = "ch_extras_cdoor_overlay.png", color = "white", backface_culling = true}},
+
+	recipe = {
+		{"solidcolor:solid_block", "", ""},
+		{"solidcolor:solid_block", "", ""},
+		{"solidcolor:solid_block", "", ""},
+	},
+} )
+
+
+doors.register("door_colorable", {
+	tiles = {{name = "ch_core_white_pixel.png^[resize:38x32", backface_culling = true}},
+	use_texture_alpha = "clip",
+	description = "barvitelné dveře",
+	inventory_image = "ch_extras_cdoor_item.png",
+	groups = {choppy = 2, flammable = 2, oddly_breakable_by_hand = 2, ud_param2_colorable = 1},
+
+	paramtype2 = "color4dir",
+	palette = "unifieddyes_palette_color4dir.png",
+	overlay_tiles = {{name = "ch_extras_cdoor_overlay.png", color = "white", backface_culling = true}},
+
+	recipe = {
+		{"solidcolor:solid_block", "", ""},
+		{"solidcolor:solid_block", "", ""},
+		{"solidcolor:solid_block", "", ""},
+	},
+})
