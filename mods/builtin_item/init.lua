@@ -583,7 +583,7 @@ core.register_entity(":__builtin:item", {
 		end
 	end,
 
-	on_step = function(self, dtime, moveresult)
+	on_step = ch_core.object_on_step(function(self, dtime, moveresult)
 
 		-- reset acceleration
 		self.accel = {x = 0, y = 0, z = 0}
@@ -617,7 +617,7 @@ core.register_entity(":__builtin:item", {
 		if math.random(1, 64) == 1 then -- performance optimization
 			self:step_try_collect() -- merge
 		end
-	end,
+	end),
 
 	on_punch = function(self, hitter)
 		if not minetest.is_player(hitter) then

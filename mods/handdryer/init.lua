@@ -109,11 +109,7 @@ minetest.register_abm({
 	nodenames = {"handdryer:xa5"},
 	action = function(pos)
 		local posbelow = vector.add(pos,vector.new(0,-1,0))
-		local objects = minetest.get_objects_inside_radius(posbelow,1)
-		local player = false
-		for _,obj in pairs(objects) do
-			if obj:is_player() then player = true end
-		end
+		local player = next(ch_core.get_active_objects_inside_radius("player", posbelow, 1)) ~= nil
 		local hash = minetest.hash_node_position(pos)
 		local handle = sounds[hash]
 		local meta = minetest.get_meta(pos)

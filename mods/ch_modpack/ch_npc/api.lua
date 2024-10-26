@@ -23,12 +23,8 @@ function ch_npc.update_npc(pos, node, meta)
 	-- search for existing objects
 	local found_objects = {}
 	if old_npc ~= nil then
-		local objects_inside_radius = minetest.get_objects_inside_radius(old_entity_pos, 0.45)
-		for _, obj in ipairs(objects_inside_radius) do
-			local entity = obj and obj:get_luaentity()
-			if entity and entity.name == "ch_npc:npc" then
-				table.insert(found_objects, obj)
-			end
+		for _, obj in pairs(ch_core.get_active_objects_inside_radius("ch_npc:npc", old_entity_pos, 0.45)) do
+			table.insert(found_objects, obj)
 		end
 	end
 
@@ -97,7 +93,7 @@ function ch_npc.update_npc(pos, node, meta)
 			obj:set_pos(new_entity_pos)
 			mobkit.remember(entity, "node_pos", vector.new(pos.x, pos.y, pos.z))
 			meta:set_string("shown_model", new_model)
-			minetest.log("action", "NPC at "..minetest.pos_to_string(old_pos).." => "..minetest.pos_to_string(new_entity_pos).." updated.")
+			-- minetest.log("action", "NPC at "..minetest.pos_to_string(old_pos).." => "..minetest.pos_to_string(new_entity_pos).." updated.")
 		end
 	end
 

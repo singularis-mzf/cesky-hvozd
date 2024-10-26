@@ -73,9 +73,8 @@ end
 
 local function vacuum(pos, radius)
 	radius = radius + 0.5
-	for _, object in pairs(minetest.get_objects_inside_radius(pos, math.sqrt(3) * radius)) do
+	for _, object in pairs(ch_core.get_active_objects_inside_radius("__builtin:item", pos, math.sqrt(3) * radius)) do
 		local lua_entity = object:get_luaentity()
-		if not object:is_player() and lua_entity and lua_entity.name == "__builtin:item" then
 			local obj_pos = object:get_pos()
 			local minpos = vector.subtract(pos, radius)
 			local maxpos = vector.add(pos, radius)
@@ -88,7 +87,6 @@ local function vacuum(pos, radius)
 				end
 				object:remove()
 			end
-		end
 	end
 end
 

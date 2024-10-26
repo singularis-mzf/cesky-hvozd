@@ -102,6 +102,11 @@ local function sednout(zidle_pos, zidle_node, player, config)
 	-- else
 		-- zidle_dir = vector.new(0, 0, 1)
 	end
+	if rotation.x ~= 0 or rotation.z ~= 0 then
+		minetest.log("warning", "Sitting attempt failed for node "..zidle_node.name.."/"..zidle_node.param2.."!")
+		ch_core.systemovy_kanal(player_name, "*** Otočení bloku není vhodné sezení.")
+		return false
+	end
 	if config.rotation then
 		rotation.y = rotation.y + config.rotation
 	end
@@ -140,6 +145,17 @@ end
 local summer_colors = {
 	"red", "orange", "black", "yellow", "green", "blue", "violet"
 }
+local stair_items = {}
+
+for _, name in ipairs(stairsplus:get_recipeitems()) do
+	for _, alternate in ipairs({"", "_alt"}) do
+		local node = stairsplus:get_shape(name, "stair", alternate)
+		if node ~= nil then
+			table.insert(stair_items, node)
+		end
+	end
+end
+
 local sitting_nodes = {
 	{ name = "cottages:bench", x = 0, y = 0, z = -0.3 },
 	{ name = "homedecor:deckchair", x = 0, y = -0.2, z = -0.4, look_vertical = -math.pi / 8 },
@@ -153,6 +169,7 @@ local sitting_nodes = {
 	{ name = "lrfurn:sofa", x = -1, y = -0.05, z = 0, x_max = 0, rotation = math.pi / 2 },
 	{ name = "lrfurn:longsofa", x = -1.7, y = -0.05, z = 0, x_max = 0, rotation = math.pi / 2 },
 	{ name = "summer:sdraia_*", name_args = summer_colors, x = 0, y = -0.1, z = -0.2 },
+	{ name = "*", name_args = stair_items, x = -0.25, x_max = 0.25, y = 0, z = 0.2 },
 }
 
 for _, node_config in ipairs(sitting_nodes) do
