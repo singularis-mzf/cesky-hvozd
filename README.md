@@ -636,6 +636,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: GPLv3
 * [ContentDB](https://content.minetest.net/packages/Can202/icecream/)
 
+## Item Physics (item\_physics)
+
+* Zdroj: [https://codeberg.org/SumianVoice/item\_physics](https://codeberg.org/SumianVoice/item\_physics), revize e44d1d4dde22dd071d4d97038418cc303063151d
+* Původní licence: 0BSD
+* Licence úprav: 0BSD
+* [ContentDB](https://content.minetest.net/packages/Sumianvoice/item\_physics/)
+
 ## Itemshelf (itemshelf)
 
 * Zdroj: [https://github.com/hkzorman/itemshelf](https://github.com/hkzorman/itemshelf), revize 8d4e24717cc1392cd370bc700dae56dae29afb42
