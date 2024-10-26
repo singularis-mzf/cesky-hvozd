@@ -126,7 +126,7 @@ local active_node = {
       "default_junglewood.png",
       "wool_white.png",
       {
-        image = "clothing_spinning_machine_wheel_active.png",
+        name = "clothing_spinning_machine_wheel_active.png",
         backface_culling = true,
         animation = {
           type = "vertical_frames",

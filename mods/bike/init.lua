@@ -155,6 +155,7 @@ end
 -- Custom hand
 minetest.register_node("bike:hand", {
 	description = "",
+        tiles = {"bike_blank.png"},
 	-- No interaction on a bike :)
 	range = 0,
 	on_place = function(itemstack, placer, pointed_thing)

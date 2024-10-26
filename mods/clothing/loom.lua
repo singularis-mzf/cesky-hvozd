@@ -121,7 +121,7 @@ local active_node = {
       "clothing_loom_wood.png",
       "clothing_loom_black.png",
       {
-        image = "clothing_loom_front_active.png",
+        name = "clothing_loom_front_active.png",
         backface_culling = true,
         animation = {
           type = "vertical_frames",
@@ -131,7 +131,7 @@ local active_node = {
         }
       },
       {
-        image = "clothing_loom_top_active.png",
+        name = "clothing_loom_top_active.png",
         backface_culling = true,
         animation = {
           type = "vertical_frames",
