@@ -350,13 +350,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPL-2.1
 * [ContentDB](https://content.minetest.net/packages/Hume2/bucket\_wooden/)
 
-## Builtin Item (builtin\_item)
-
-* Zdroj: [https://notabug.org/TenPlus1/builtin\_item](https://notabug.org/TenPlus1/builtin\_item), revize 2bdcdb930ec27134b32ac4b55ebca5f814c28b52
-* Původní licence: LGPL-2.1+
-* Licence úprav: LGPL-2.1+
-* [ContentDB](https://content.minetest.net/packages/TenPlus1/builtin\_item/)
-
 ## Builtin Overrides (minetest-builtin\_overrides)
 
 * Zdroj: [https://github.com/fluxionary/minetest-builtin\_overrides](https://github.com/fluxionary/minetest-builtin\_overrides), revize aa99c681e6adb964bb5ff7dbb2767f11b8e8e4b7

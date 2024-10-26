@@ -1,8 +1,3 @@
-
-minetest.register_on_mods_loaded(function()
-
-local builtin_item = minetest.registered_entities["__builtin:item"]
-
 item_physics = {}
 item_physics.settings = {
     item_scale = tonumber(minetest.settings:get("item_physics_item_scale")) or nil,
@@ -20,6 +15,12 @@ local flat_node_types = {
     torchlike = true,
     plantlike = true,
 }
+
+minetest.register_on_mods_loaded(function()
+
+local builtin_item = minetest.registered_entities["__builtin:item"]
+local old_on_punch = assert(builtin_item.on_punch)
+
 -- rot = vector.new(0,0,1):rotate(rot)
 local new_item_ent = {
     _get_is_node = function(self, itemname)
@@ -104,7 +105,7 @@ local new_item_ent = {
         rot = vector.new(0, rot.y - amount * self._spin_dir, 0)
         self.object:set_rotation(rot)
     end,
-    on_step = function(self, dtime, moveresult, ...)
+    on_step = ch_core.object_on_step(function(self, dtime, moveresult, ...)
         -- if not self.itemstring then return end
         local pos = self.object:get_pos()
         -- prevent unloaded nil errors just in case
@@ -130,6 +131,11 @@ local new_item_ent = {
         end
 
         builtin_item.on_step(self, dtime, moveresult, ...)
+    end),
+    on_punch = function(self, hitter, ...)
+        if minetest.is_player(hitter) then
+            return old_on_punch(self, hitter, ...)
+        end
     end,
 }
 
