@@ -175,7 +175,7 @@ local function get_formspec(player_name, pos, node, meta, do_edit, message)
 			if not item:is_empty() and minetest.get_item_group(item:get_name(), "book") ~= 0 then
 				local book_info = books.get_book_metadata(item:get_meta())
 				if book_info ~= nil and book_info.ick ~= nil then
-					book_data[i] = "#0cf107,"..F(book_info.author or "")..",#ffff00,"..F(book_info.title)..","
+					book_data[i] = "#0cf107,"..F(book_info.author or "")..",#ffffff,"..F(book_info.title)..","
 					book_count = book_count + 1
 				else
 					book_data[i] = empty_slot
@@ -199,9 +199,7 @@ local function get_formspec(player_name, pos, node, meta, do_edit, message)
 			"button[15.5,0.3;2.25,0.5;ulozit;uložit titulek]")
 	else
 		table.insert(formspec,
-			"tableoptions[background=#00000000;highlight=#00000000;border=false]"..
-			"tablecolumns[color;text]"..
-			"table[0.25,0.25;15.5,0.75;;"..title_color..","..F(title)..";]")
+			"textlist[0.25,0.25;15,0.75;title;"..title_color..F(title)..";;true]")
 		if has_owner_rights then
 			table.insert(formspec,
 				"button[15.5,0.3;2.25,0.5;upravit;upravit titulek]")
