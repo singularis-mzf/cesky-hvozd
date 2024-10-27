@@ -164,6 +164,24 @@ function books.analyze_book(name, meta)
 	return result
 end
 
+local function nil_if_empty(str)
+	if str ~= "" then return str else return nil end
+end
+
+--[[
+	Vrací metadata knihy podle metadat z objektu "meta".
+]]
+function books.get_book_metadata(meta)
+	local result = {
+		author = nil_if_empty(meta:get_string("author")),
+		ick = nil_if_empty(meta:get_string("ick")),
+		owner = nil_if_empty(meta:get_string("owner")),
+		title = meta:get_string("title"),
+		lastedit = nil_if_empty(meta:get_string("lastedit")),
+	}
+	return result
+end
+
 function books.announce_book_copy(itemstack)
 	local meta = itemstack:get_meta()
 	local ick = meta:get_string("ick")

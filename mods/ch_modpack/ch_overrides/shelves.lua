@@ -5,7 +5,8 @@ SHELVES
 local F = minetest.formspec_escape
 
 local empty_shelf_texture = "moreblocks_empty_shelf.png" -- 32x32
-local shelf_width = 10
+local has_books = minetest.get_modpath("books")
+local shelf_width = 14
 local MODE_NORMAL = 0
 local MODE_LIBRARY = 1
 local MODE_PRIVATE = 2
@@ -141,8 +142,8 @@ local function get_infotext(pos, node, meta)
 end
 
 local formspec_header = ch_core.formspec_header({
-	formspec_version = 5,
-	size = {13, 10.25},
+	formspec_version = 6,
+	size = {18, 11.25},
 	auto_background = true,
 })
 
@@ -164,19 +165,46 @@ local function get_formspec(player_name, pos, node, meta, do_edit, message)
 		formspec_header,
 	}
 
+	-- books
+	if has_books and mode == MODE_LIBRARY then
+		local book_data = {}
+		local book_count = 0
+		local empty_slot = "#ffffff,,#ffffff,,"
+		for i = 1, #invlist do
+			local item = invlist[i]
+			if not item:is_empty() and minetest.get_item_group(item:get_name(), "book") ~= 0 then
+				local book_info = books.get_book_metadata(item:get_meta())
+				if book_info ~= nil and book_info.ick ~= nil then
+					book_data[i] = "#0cf107,"..F(book_info.author or "")..",#ffff00,"..F(book_info.title)..","
+					book_count = book_count + 1
+				else
+					book_data[i] = empty_slot
+				end
+			else
+				book_data[i] = empty_slot
+			end
+		end
+		if book_count ~= 0 then
+			table.insert(formspec, "tablecolumns[color,span=1;text;color,span=1;text;text]"..
+				"table[10.25,4.5;7.45,6.45;book;")
+			table.insert(formspec, table.concat(book_data, ","))
+			table.insert(formspec, ";]")
+		end
+	end
+
 	-- shelf title
 	if do_edit then
 		table.insert(formspec,
-			"field[0.375,0.3;10,0.5;title;;"..F(title).."]"..
-			"button[10.5,0.3;2.25,0.5;ulozit;uložit titulek]")
+			"field[0.375,0.3;15,0.5;title;;"..F(title).."]"..
+			"button[15.5,0.3;2.25,0.5;ulozit;uložit titulek]")
 	else
 		table.insert(formspec,
 			"tableoptions[background=#00000000;highlight=#00000000;border=false]"..
 			"tablecolumns[color;text]"..
-			"table[0.25,0.25;12.5,0.5;;"..title_color..","..F(title)..";]")
+			"table[0.25,0.25;15.5,0.75;;"..title_color..","..F(title)..";]")
 		if has_owner_rights then
 			table.insert(formspec,
-				"button[10.5,0.3;2.25,0.5;upravit;upravit titulek]")
+				"button[15.5,0.3;2.25,0.5;upravit;upravit titulek]")
 		end
 	end
 
@@ -206,17 +234,17 @@ local function get_formspec(player_name, pos, node, meta, do_edit, message)
 			"label[0.375,1.5;Tato skříňka je v soukromém režimu. Obsah je přístupný jen vlastníkovi/ici skříňky či Administraci.]")
 	elseif mode == MODE_LIBRARY then
 		table.insert(formspec,
-			"label[0.375,1.5;Tato skříňka je v knihovním režimu. Knihy z ní si mohou brát všechny postavy včetně nových, dostanou kopii.]")
+			"label[0.375,1.5;Tato skříňka je v knihovním režimu. Knihy z ní si mohou brát všechny postavy včetně turistických, dostanou kopii.]")
 	end
 
 	-- player inventory:
 	table.insert(formspec,
-		"list[current_player;main;1.625,5;8,1;]" ..
-		"list[current_player;main;1.625,6.25;8,3;8]")
+		"list[current_player;main;0.375,6;8,1;]" ..
+		"list[current_player;main;0.375,7.25;8,3;8]")
 	-- shelf inventory:
 	if mode ~= MODE_PRIVATE or has_owner_rights then
 		local context = "nodemeta:"..pos.x.."\\,"..pos.y.."\\,"..pos.z
-		table.insert(formspec, "list["..context..";items;0.375,2;10,2;]"..
+		table.insert(formspec, "list["..context..";items;0.375,2;"..shelf_width..",2;]"..
 			"listring["..context..";items]"..
 			"listring[current_player;main]")
 		-- shelf icons:
@@ -261,7 +289,7 @@ local function on_construct(pos)
 	local node = minetest.get_node(pos)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
-	inv:set_size("items", 10 * 2)
+	inv:set_size("items", shelf_width * 2)
 	inv:set_size("returns", 1)
 	local infotext = get_infotext(pos, node, meta)
 	meta:set_string("infotext", infotext)
@@ -673,16 +701,21 @@ end
 local function on_lbm(pos, node, dtime_s)
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
-	if inv:get_size("items") == 8 * 2 then
+	local inv_size = inv:get_size("items")
+	if inv_size == 8 * 2 then
 		-- perform upgrade
 		meta:set_string("formspec", "")
-		inv:set_size("items", 20)
+		inv:set_size("items", shelf_width * 2)
 		local list = inv:get_list("items")
-		for i = 20, 11, -1 do
-			list[i] = list[i - 2]
+		for i = 20, 15, -1 do
+			list[i] = list[i - 6]
 		end
 		list[9] = ItemStack()
 		list[10] = ItemStack()
+		list[11] = ItemStack()
+		list[12] = ItemStack()
+		list[13] = ItemStack()
+		list[14] = ItemStack()
 		inv:set_list("items", list)
 		if meta:get_int("locked") ~= 0 then
 			meta:set_int("mode", MODE_PRIVATE)
@@ -693,17 +726,29 @@ local function on_lbm(pos, node, dtime_s)
 		end
 		meta:set_int("locked", 0)
 		meta:set_int("library", 0)
+	elseif inv_size == 10 * 2 then
+		-- 2*10 => 2*14
+		inv:set_size("items", shelf_width * 2)
+		local list = inv:get_list("items")
+		for i = 24, 15, -1 do
+			list[i] = list[i - 4]
+		end
+		list[11] = ItemStack()
+		list[12] = ItemStack()
+		list[13] = ItemStack()
+		list[14] = ItemStack()
+		inv:set_list("items", list)
 	end
 	if inv:get_size("returns") == 0 then
 		-- perform upgrade
 		inv:set_size("returns", 1)
-		minetest.log("action", "A shelf "..node.name.." at "..minetest.pos_to_string(pos).." upgraded to version 3.")
+		minetest.log("action", "A shelf "..node.name.." at "..minetest.pos_to_string(pos).." upgraded to version 4.")
 	end
 end
 
 minetest.register_lbm({
-	label = "Upgrade shelves 3",
-	name = "ch_overrides:shelves_upgrade_3",
+	label = "Upgrade shelves 4",
+	name = "ch_overrides:shelves_upgrade_4",
 	nodenames = shelves_names,
 	run_at_every_load = false,
 	action = on_lbm,
