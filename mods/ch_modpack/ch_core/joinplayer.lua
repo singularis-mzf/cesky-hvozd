@@ -333,7 +333,7 @@ local function on_leaveplayer(player)
 	local player_name = player:get_player_name()
 	local privs = minetest.get_player_privs(player_name)
 
-	ch_core.add_event("leaveplayer", nil, player_name)
+	ch_core.add_event("leaveplayer_for_admin", nil, player_name)
 
 	if privs.ch_registered_player and privs.creative then
 		privs.creative = nil

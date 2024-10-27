@@ -1,4 +1,4 @@
-ch_core.open_submod("stavby", {chat = true, lib = true})
+ch_core.open_submod("stavby", {chat = true, events = true, lib = true})
 
 --[[
 Datová struktura záznamu o stavbě:

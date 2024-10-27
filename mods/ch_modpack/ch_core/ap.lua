@@ -1,4 +1,4 @@
-ch_core.open_submod("ap", {chat = true, data = true, hud = true, lib = true})
+ch_core.open_submod("ap", {chat = true, data = true, events = true, hud = true, lib = true})
 
 -- Systém „Activity Points“
 
@@ -15,6 +15,16 @@ local levels = {
 }
 
 local ifthenelse = ch_core.ifthenelse
+
+ch_core.register_event_type("level_up", {
+	description = "zvýšení úrovně",
+	access = "public",
+})
+
+ch_core.register_event_type("level_down", {
+	description = "snížení úrovně",
+	access = "public",
+})
 
 local function add_level(level, count)
 	local last_level_number = #levels
@@ -344,8 +354,10 @@ function ch_core.ap_add(player_name, offline_charinfo, points_to_add, debug_coef
 	if player_role ~= "new" then
 		if new_level > old_level then
 			ch_core.systemovy_kanal("", "Postava "..ch_core.prihlasovaci_na_zobrazovaci(player_name).." dosáhla úrovně "..new_level)
+			ch_core.add_event("level_up", "Postava {PLAYER} dosáhla úrovně "..new_level, player_name)
 		elseif new_level < old_level then
 			ch_core.systemovy_kanal("", "Postava "..ch_core.prihlasovaci_na_zobrazovaci(player_name).." klesla na úroveň "..new_level)
+			ch_core.add_event("level_down", "Postava {PLAYER} klesla na úroveň "..new_level, player_name)
 		end
 	end
 

@@ -83,6 +83,16 @@ local function get_stavby_online_charinfo(player_name)
 	return result
 end
 
+ch_core.register_event_type("stavba_new", {
+	description = "založení stavby",
+	access = "players",
+})
+
+ch_core.register_event_type("stavba_finished", {
+	description = "dokončení stavby",
+	access = "public",
+})
+
 -- Unified Inventory page
 -- ==============================================================================
 local ui_help_fhtext = htnadp("Proč evidovat svoje stavby?")..
@@ -362,6 +372,7 @@ local function new_formspec_callback(custom_state, player, formname, fields)
 		ui.set_inventory_formspec(player, "ch_stavby") -- update inventory formspec
 		ch_core.systemovy_kanal("", ch_core.prihlasovaci_na_zobrazovaci(player_name).." založil/a novou stavbu „"..
 			result.nazev.."“ na pozici ("..result.key..")")
+		ch_core.add_event("stavba_new", "{PLAYER} založil/a novou stavbu „"..result.nazev.."“ na pozici ("..result.key..")")
 		if stav == "k_povoleni" and not custom_state.is_admin then
 			local area_name, area_owner, area_owner_viewname = "???", "Administrace", "Administrace"
 			if has_areas then
@@ -534,6 +545,7 @@ local function edit_formspec_callback(custom_state, player, formname, fields)
 		local player_name = player:get_player_name()
 		local player_viewname = ch_core.prihlasovaci_na_zobrazovaci(player_name)
 		local record = ch_core.stavby_get(custom_state.key)
+		local je_dokonceni = false
 		if record == nil then
 			return -- chybějící záznam (stavba byla pravděpodobně mezitím odstraněna)
 		end
@@ -566,6 +578,7 @@ local function edit_formspec_callback(custom_state, player, formname, fields)
 			table.insert(record.historie, datum.." "..player_viewname.." změnil/a stav: „"..(ch_core.stavy_staveb[record.stav] or "???").."“ => „"..
 				(ch_core.stavy_staveb[stav] or "???").."“")
 			record.stav = stav
+			je_dokonceni = stav == "hotovo"
 			pocet_zmen = pocet_zmen + 1
 		end
 		-- urceni
@@ -619,6 +632,8 @@ local function edit_formspec_callback(custom_state, player, formname, fields)
 		end
 
 		ch_core.systemovy_kanal(player_name, pocet_zmen.." "..word.." stavby uloženo.")
+		ch_core.add_event("stavba_finished", "{PLAYER} dokončil/a stavbu „"..record.name.."“ na pozici ("..record.key..")", record.spravuje)
+
 		fields.quit = "true"
 		return
 	end

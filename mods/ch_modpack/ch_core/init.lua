@@ -90,12 +90,12 @@ dofile(modpath .. "/privs.lua")
 dofile(modpath .. "/localize_chatcommands.lua") -- : privs, data, lib
 dofile(modpath .. "/udm.lua") -- : areas, data, lib
 dofile(modpath .. "/chat.lua") -- : areas, data, lib, privs, nametag, udm
-dofile(modpath .. "/stavby.lua") -- : chat, lib
+dofile(modpath .. "/stavby.lua") -- : chat, events, lib
 -- dofile(modpath .. "/inv_inspector.lua") -- : data, formspecs, lib, chat
 dofile(modpath .. "/podnebi.lua") -- : privs, chat
 dofile(modpath .. "/dennoc.lua") -- : privs, chat
 dofile(modpath .. "/hud.lua") -- : data, lib, chat
-dofile(modpath .. "/ap.lua") -- : data, chat, hud, lib
+dofile(modpath .. "/ap.lua") -- : chat, data, events, hud, lib
 dofile(modpath .. "/registrace.lua") -- : chat, data, lib, nametag
 dofile(modpath .. "/pryc.lua") -- : data, lib, chat, privs
 dofile(modpath .. "/joinplayer.lua") -- : chat, data, formspecs, lib, nametag, pryc, events

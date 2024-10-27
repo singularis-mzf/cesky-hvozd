@@ -79,17 +79,21 @@ local function assert_not_nil(x)
 	return x
 end
 
-local function ifthenelse(condition, true_result, false_result)
-	if condition then
-		return true_result
-	else
-		return false_result
-	end
-end
+local ifthenelse = ch_core.ifthenelse
 
 local description_to_style = {
 	[books.styles.default.description] = "default",
 }
+
+ch_core.register_event_type("book_cancelled", {
+	description = "stažení knihy",
+	access = "public",
+})
+
+ch_core.register_event_type("book_published", {
+	description = "vydání knihy",
+	access = "public",
+})
 
 function books.register_book_style(name, def)
 	if name == nil or name == "" or name == "default" then
@@ -209,6 +213,7 @@ function shared.cancel_published_book(ick)
 	-- 3. Oznámit
 	minetest.log("action", "[books] Publishing a book under ICK "..ick.." was cancelled.")
 	ch_core.systemovy_kanal("", "Oznámení Knihovny Českého hvozdu: kniha vydaná nedávno pod IČK "..ick.." byla stažena.")
+	ch_core.add_event("book_cancelled", "Oznámení Knihovny Českého hvozdu: kniha vydaná nedávno pod IČK "..ick.." byla stažena.")
 
 	new_books[tostring(ick)] = nil
 
@@ -845,6 +850,9 @@ function shared.publish_book(book_item, edition) -- => IČK, error_message
 	-- Oznámit:
 	minetest.log("action", "[books] "..owner.." published a book '"..title.."' (edition="..edition..") under ICK "..ick)
 	ch_core.systemovy_kanal("", "Oznámení Knihovny Českého hvozdu: "..ch_core.prihlasovaci_na_zobrazovaci(owner).." vydal/a knihu '"..title.."' ("..edition..", autorství: "..author..") pod IČK "..ick..".")
+	ch_core.add_event("book_published",
+		"Oznámení Knihovny Českého hvozdu: {PLAYER} vydal/a knihu '"..title.."' ("..edition..", autorství: "..author..") pod IČK "..ick..".",
+		owner)
 	return ick, nil
 end
 
