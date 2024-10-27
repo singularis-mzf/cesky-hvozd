@@ -163,7 +163,7 @@ local function after_newplayer(player_name)
 				skins.set_player_skin(player, skinlist[skinlist_index[new_skin]])
 				break
 			else
-				minetest.log("warning", "new skin not found["..i.."]: <"..new_skin..">")
+				minetest.log("info", "new skin not found["..i.."]: <"..new_skin..">")
 			end
 		end
 	end

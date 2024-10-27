@@ -188,10 +188,9 @@ local function after_joinplayer(player_name)
 		end
 		player:set_clouds({density = 0}) -- disable clouds
 		--[[
-			5.5.0 => formspec_version = 5, protocol_version = 40
-			5.6.0 => formspec_version = 6, protocol_version = 41
-			5.6.1 => formspec_version = 6, protocol_version = 41
-			5.7.0 => formspec_version = 6, protocol_version = 42
+			5.5.x => formspec_version = 5, protocol_version = 40
+			5.6.x => formspec_version = 6, protocol_version = 41
+			5.7.x => formspec_version = 6, protocol_version = 42
 			5.8.0 => formspec_version = 7, protocol_version = 43
 		]]
 		local online_charinfo = ch_core.online_charinfo[player_name]
@@ -284,6 +283,7 @@ local function on_joinplayer(player, last_login)
 		return true
 	end
 	local lang_code = online_charinfo.lang_code
+	local protocol_version = online_charinfo.protocol_version
 	if news_role == "invalid_locale" then
 		if minetest.check_player_privs(player_name, "server") then
 			minetest.after(0.2, function()
