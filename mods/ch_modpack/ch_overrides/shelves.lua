@@ -594,11 +594,16 @@ end
 
 local def = {
 	description = "skříňka na knihy a nádoby",
-	paramtype2 = "4dir",
+	drawtype = "nodebox",
+	paramtype2 = "facedir",
 	is_ground_content = false,
 	groups = {choppy = 3, oddly_breakable_by_hand = 2, flammable = 3, shelf = 1, not_in_creative_inventory = 1},
 	drop = "", -- preserve_metadata will fill the drops
 	sounds = default.node_sound_wood_defaults(),
+	node_box = {
+		type = "fixed",
+		fixed = {-0.5, -0.5, 0.0, 0.5, 0.5, 0.5},
+	},
 
 	on_construct = on_construct,
 	after_place_node = after_place_node,
@@ -612,6 +617,8 @@ local def = {
 	on_metadata_inventory_put = on_metadata_inventory_put,
 	on_metadata_inventory_take = on_metadata_inventory_take,
 }
+def.selection_box = def.node_box
+def.collision_box = def.node_box
 
 for type1, tab in pairs(types_to_shelf) do
 	for type2, name in pairs(tab) do
@@ -619,7 +626,7 @@ for type1, tab in pairs(types_to_shelf) do
 		local texture = "("..empty_shelf_texture..")^[resize:64x64^(("..shelf_types[type1].texture_upper..")^[resize:64x64)^(("..shelf_types[type2].texture_lower..")^[resize:64x64)"
 		ndef.tiles = {
 			"default_wood.png", "default_wood.png", "default_wood.png",
-			"default_wood.png", texture, texture
+			"default_wood.png", "default_wood.png", texture
 		}
 		if minetest.registered_nodes[name] then
 			minetest.override_item(name, ndef)
