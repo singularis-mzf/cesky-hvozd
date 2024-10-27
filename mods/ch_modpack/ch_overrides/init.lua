@@ -1,6 +1,7 @@
 print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local modpath = minetest.get_modpath("ch_overrides")
+local dofile = ch_core.dofile
 
 ch_overrides = {}
 
@@ -23,31 +24,33 @@ local mods = {
 
 for _, mod in ipairs(mods) do
 	if minetest.get_modpath(mod) then
-		dofile(modpath.."/mod_overrides/"..mod..".lua")
+		dofile({name = "mod_overrides/"..mod..".lua"})
 	end
 end
 
-dofile(modpath.."/aliases.lua")
-dofile(modpath.."/bushy_leaves.lua")
-dofile(modpath.."/chests.lua")
-dofile(modpath.."/colorable_glass.lua")
-dofile(modpath.."/extra_recipes.lua")
-dofile(modpath.."/falling_nodes.lua")
-dofile(modpath.."/flowers.lua")
-dofile(modpath.."/liquid_physics.lua")
-dofile(modpath.."/news.lua")
-dofile(modpath.."/ores.lua")
-dofile(modpath.."/poles.lua")
-dofile(modpath.."/security.lua")
-dofile(modpath.."/shelves.lua")
-dofile(modpath.."/stairsplus_recipes.lua")
-dofile(modpath.."/trash_cans.lua")
-dofile(modpath.."/tool_breaking.lua")
-dofile(modpath.."/ui_appearance.lua")
-dofile(modpath.."/ui_settings.lua") -- : news
-dofile(modpath.."/ui_stavby.lua")
-dofile(modpath.."/underwater_dig.lua")
-dofile(modpath.."/unknown_watcher.lua")
+
+dofile({name = "aliases.lua"})
+dofile({name = "bushy_leaves.lua"})
+dofile({name = "chests.lua"})
+dofile({name = "colorable_glass.lua"})
+dofile({name = "extra_recipes.lua"})
+dofile({name = "falling_nodes.lua"})
+dofile({name = "flowers.lua"})
+dofile({name = "liquid_physics.lua"})
+dofile({name = "news.lua"})
+dofile({name = "nutrition.lua"})
+dofile({name = "ores.lua"})
+dofile({name = "poles.lua"})
+dofile({name = "security.lua"})
+dofile({name = "shelves.lua"})
+dofile({name = "stairsplus_recipes.lua"})
+dofile({name = "trash_cans.lua"})
+dofile({name = "tool_breaking.lua"})
+dofile({name = "ui_appearance.lua"})
+dofile({name = "ui_settings.lua"}) -- : news
+dofile({name = "ui_stavby.lua"})
+dofile({name = "underwater_dig.lua"})
+dofile({name = "unknown_watcher.lua"})
 
 -- log giveme
 
