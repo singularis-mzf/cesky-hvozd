@@ -1,4 +1,4 @@
-ch_core.open_submod("joinplayer", {chat = true, data = true, formspecs = true, lib = true, nametag = true, pryc = true})
+ch_core.open_submod("joinplayer", {chat = true, data = true, events = true, formspecs = true, lib = true, nametag = true, pryc = true})
 
 local F = minetest.formspec_escape
 
@@ -320,6 +320,10 @@ local function on_joinplayer(player, last_login)
 	on_joinplayer_pomodoro(player, player_name, online_charinfo)
 	--
 
+	ch_core.add_event("joinplayer", "{PLAYER} se připojil/a do hry", player_name)
+	ch_core.add_event("joinplayer_for_admin", "{PLAYER} se připojil/a do hry (protocol_version="..protocol_version..", news_role = "..news_role..")",
+		player_name)
+
 	-- minetest.after(0.5, function() ch_core.set_pryc(player_name, {no_hud = true, silently = true}) end)
 	minetest.after(2, after_joinplayer, player_name)
 	return true
@@ -328,6 +332,9 @@ end
 local function on_leaveplayer(player)
 	local player_name = player:get_player_name()
 	local privs = minetest.get_player_privs(player_name)
+
+	ch_core.add_event("leaveplayer", nil, player_name)
+
 	if privs.ch_registered_player and privs.creative then
 		privs.creative = nil
 		minetest.set_player_privs(player_name, privs)
@@ -338,5 +345,21 @@ end
 minetest.register_on_newplayer(on_newplayer)
 minetest.register_on_joinplayer(on_joinplayer)
 minetest.register_on_leaveplayer(on_leaveplayer)
+
+ch_core.register_event_type("joinplayer", {
+	description = "vstup do hry",
+	access = "players",
+	default_text = "{PLAYER} se připojil/a do hry",
+})
+
+ch_core.register_event_type("joinplayer_for_admin", {
+	description = "vstup do hry*",
+	access = "admin"
+})
+
+ch_core.register_event_type("leaveplayer_for_admin", {
+	description = "odchod ze hry*",
+	access = "admin",
+})
 
 ch_core.close_submod("joinplayer")

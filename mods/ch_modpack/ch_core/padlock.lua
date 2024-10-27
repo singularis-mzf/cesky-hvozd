@@ -1,4 +1,4 @@
-ch_core.open_submod("zacatek", {data = true, lib = true})
+ch_core.open_submod("padlock", {data = true, lib = true})
 
 --[[
 

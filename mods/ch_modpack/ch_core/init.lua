@@ -44,15 +44,27 @@ ch_core = {
 	},
 }
 
+local current_submod
+
 function ch_core.open_submod(submod, required_submods)
+	if current_submod ~= nil then
+		error("[ch_core/"..current_submod.."] modul nebyl uzavřen!")
+	end
 	for s, c in pairs(required_submods or {}) do
 		if c and not ch_core.submods_loaded[s] then
 			error("ch_core submodule '"..s.."' is required to be loaded before '"..submod.."'!")
 		end
 	end
+	current_submod = submod
 	return true
 end
 function ch_core.close_submod(submod)
+	if current_submod == nil then
+		error("Vícenásobné volání ch_core.close_submod()!")
+	elseif current_submod ~= submod then
+		error("[ch_core/"..current_submod.."] modul chybně uzavřen jako "..submod.."!")
+	end
+	current_submod = nil
 	ch_core.submods_loaded[submod] = true
 	return true
 end
@@ -66,6 +78,7 @@ dofile(modpath .. "/hotbar.lua")
 dofile(modpath .. "/vgroups.lua")
 dofile(modpath .. "/data.lua")
 dofile(modpath .. "/lib.lua") -- : data
+dofile(modpath .. "/events.lua") -- : lib
 dofile(modpath .. "/interiors.lua") -- : lib
 dofile(modpath .. "/shapes_db.lua") -- : lib
 dofile(modpath .. "/penize.lua") -- : lib
@@ -85,7 +98,7 @@ dofile(modpath .. "/hud.lua") -- : data, lib, chat
 dofile(modpath .. "/ap.lua") -- : data, chat, hud, lib
 dofile(modpath .. "/registrace.lua") -- : chat, data, lib, nametag
 dofile(modpath .. "/pryc.lua") -- : data, lib, chat, privs
-dofile(modpath .. "/joinplayer.lua") -- : chat, data, formspecs, lib, nametag, pryc
+dofile(modpath .. "/joinplayer.lua") -- : chat, data, formspecs, lib, nametag, pryc, events
 dofile(modpath .. "/padlock.lua") -- : data, lib
 dofile(modpath .. "/vezeni.lua") -- : privs, data, lib, chat, hud
 dofile(modpath .. "/timers.lua") -- : data, chat, hud
