@@ -354,12 +354,13 @@ ch_core.register_event_type("joinplayer", {
 
 ch_core.register_event_type("joinplayer_for_admin", {
 	description = "vstup do hry*",
-	access = "admin"
+	access = "admin",
 })
 
 ch_core.register_event_type("leaveplayer_for_admin", {
 	description = "odchod ze hry*",
 	access = "admin",
+	default_text = "{PLAYER} se odpojil/a ze hry",
 })
 
 ch_core.close_submod("joinplayer")

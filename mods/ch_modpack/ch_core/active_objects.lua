@@ -19,16 +19,20 @@ end
 
 local function try_append(dst, src)
     for k, v in pairs(src) do
-        if dst[k] == nil then
+        if dst[k] == nil and v:get_pos() ~= nil then
             dst[k] = v
         end
     end
 end
 
 local function try_append_if_in_radius(dst, src, pos, radius)
+    assert(pos)
     for k, v in pairs(src) do
-        if dst[k] == nil and vector.distance(pos, v:get_pos()) <= radius then
-            dst[k] = v
+        if dst[k] == nil then
+            local v_pos = v:get_pos()
+            if v_pos ~= nil and vector.distance(pos, v_pos) <= radius then
+                dst[k] = v
+            end
         end
     end
 end

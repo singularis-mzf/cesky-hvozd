@@ -8,15 +8,17 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 
 local modname = minetest.get_current_modname()
 local modpath = minetest.get_modpath(modname)
-ch_smooth = {
+local dofile = ch_core.dofile
+
+local ch_smooth = {
 	rollback_log = {},
 }
 
-dofile(modpath.."/data.lua")
-dofile(modpath.."/lib.lua")
-dofile(modpath.."/precompute.lua")
-dofile(modpath.."/analyze.lua")
-dofile(modpath.."/compute.lua")
+dofile({name = "data.lua"}, ch_smooth)
+dofile({name = "lib.lua"}, ch_smooth)
+dofile({name = "precompute.lua"}, ch_smooth)
+dofile({name = "analyze.lua"}, ch_smooth)
+dofile({name = "compute.lua"}, ch_smooth)
 
 local vyhladit = ch_smooth.vyhladit
 

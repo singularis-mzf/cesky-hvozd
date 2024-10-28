@@ -1,3 +1,5 @@
+local ch_smooth = ...
+
 -- Definice materiálů, které bude možno vyhlazovat.
 -- Každá položka bude doplněna o ["prefix"] a ["name"]
 ch_smooth.materials = {

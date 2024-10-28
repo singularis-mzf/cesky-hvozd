@@ -63,7 +63,7 @@ local function register_food(itemstring, itemdesc, origin)
     })
     def.description = itemdesc[1]
     minetest.register_node(":"..origin..":"..itemstring[1], def)
-    minetest.register_alias(":"..origin..":"..itemstring[2], origin..":"..itemstring[1])
+    minetest.register_alias(origin..":"..itemstring[2], origin..":"..itemstring[1])
     return true
 end
 
