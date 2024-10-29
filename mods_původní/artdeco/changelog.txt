@@ -1,0 +1,6 @@
+2017-03-02:
+chg-01: Updated with new code and texture for estate door from 0.04.14 default doors mod
+chg-02: Update version to 1.1
+
+2019-09-27:
+flux: took over mod for bls

@@ -289,6 +289,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPL 2.1+
 * [ContentDB](https://content.minetest.net/packages/ShadowNinja/areas/)
 
+## Art Deco (artdeco)
+
+* Zdroj: [https://github.com/mt-historical/artdeco](https://github.com/mt-historical/artdeco), revize 530485093cdbd721cf173387958e2691b97696f3
+* Původní licence: Unlicense
+* Licence úprav: Unlicense
+* [ContentDB](https://content.minetest.net/packages/TumeniNodes/artdeco/)
+
 ## Baked Clay (bakedclay)
 
 * Zdroj: [https://notabug.org/tenplus1/bakedclay](https://notabug.org/tenplus1/bakedclay), revize 975bee989893aa25d5627a45be3801c658905f1d
