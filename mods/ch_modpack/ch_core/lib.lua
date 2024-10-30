@@ -567,30 +567,50 @@ function ch_core.divrem(a, b)
 end
 
 --[[
-Spustí soubor jazyka LUA jako funkci, předá parametry a vrátí vrácené výsledky.
-	options = {
-		name = STRING, -- název souboru ke spuštění (relativně vůči cestě)
-		path = STRING || nil, -- cesta k souboru; nil => dovoleno jen při inicializaci módu, vezme modpath
-		nofail = BOOL || nil, -- je-li true a soubor neexistuje, neselže, ale vrátí prázdný výsledek
+	Vrátí funkci, která přijme jako první parametr název souboru (či cestu) a pokusí
+	se ho načíst a spustit jako funkci Lua a vrátit výsledky.
+	args = table || nil, -- pole parametrů, které mají být předávány volanému souboru,
+							pokud nejsou žádné parametry specifikovány v rámci volání; žádný z parametrů nesmí být nil!
+	options = nil || {
+		path = string || bool || nil,
+			-- je-li nil nebo true, funkce se pokusí první parametr doplnit o cestu módu, který byl načítán v momentě její konstrukce
+			-- je-li false, funkce se pokusí použít cestu tak, jak je
+			-- je-li string, daný řetězec se připojí před zadaný parametr a oddělí "/"
+		nofail = bool || nil, -- je-li true, funkce bude tiše ignorovat selhání při načítání souboru
 	}
 ]]
-function ch_core.dofile(options, ...)
-	assert(options.name)
-	local path = options.path
-	if path == nil then
-		local modname = minetest.get_current_modname()
-		if modname == nil then
-			error("options.path must be set unless a mod is loading!")
+function ch_core.compile_dofile(args, options)
+	if args == nil then args = {} end
+	if options == nil then options = {} end
+	local modname = minetest.get_current_modname()
+	local modpath = modname and minetest.get_modpath(modname)
+	local result = function(name, ...)
+		local filepath
+		assert(name)
+		if options.path == nil or options.path == true then
+			if modpath == nil then
+				error("no mod is loading now!")
+			end
+			filepath = modpath.."/"..name
+		elseif options.path == false then
+			filepath = name
+		else
+			filepath = options.path.."/"..name
 		end
-		path = minetest.get_modpath(modname)
-		assert(path)
+		local largs = {...}
+		if #largs == 0 then
+			largs = args
+		end
+		local f = loadfile(filepath)
+		if f ~= nil then
+			return f(unpack(args))
+		elseif options.nofail == true then
+			return
+		else
+			error("dofile("..filepath..") failed! probably syntax error or missing file")
+		end
 	end
-	local f = loadfile(path.."/"..options.name)
-	if f ~= nil then
-		return f(...)
-	elseif not options.nofail then
-		error("dofile(): "..path.."/"..options.name.." not found!")
-	end
+	return result
 end
 
 --[[

@@ -6,6 +6,7 @@ ch_extras = {}
 
 dofile(modpath.."/3dprint.lua")
 dofile(modpath.."/anchor.lua")
+dofile(modpath.."/arcades.lua")
 -- dofile(modpath.."/balikovna.lua") -- rozepsáno
 dofile(modpath.."/covers.lua")
 dofile(modpath.."/craftitems.lua")

@@ -1,10 +1,9 @@
 minetest.register_node("artdeco:arch2a", {
-	description = "Limestone Arch",
+	description = "vápencový oblouk (na vestavěná okna)",
 	tiles = {"artdeco_2a.png"},
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	legacy_facedir_simple = true,
 	is_ground_content = false,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
 	sounds = default.node_sound_stone_defaults(),
@@ -27,12 +26,11 @@ minetest.register_node("artdeco:arch2a", {
 })
 
 minetest.register_node("artdeco:arch1a", {
-	description = "Limestone Top Arch",
+	description = "vápencový oblouk se světlým obkladem (na vestavěná okna)",
 	tiles = {"artdeco_2a.png", "artdeco_2a.png", "artdeco_2b.png"},
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	legacy_facedir_simple = true,
 	is_ground_content = false,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
 	sounds = default.node_sound_stone_defaults(),
@@ -55,12 +53,11 @@ minetest.register_node("artdeco:arch1a", {
 })
 
 minetest.register_node("artdeco:arch1b", {
-	description = "Limestone Arch Walls",
+	description = "vápencové boční díly (na vestavěná okna)",
 	tiles = {"artdeco_2a.png"},
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	legacy_facedir_simple = true,
 	is_ground_content = false,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
 	sounds = default.node_sound_stone_defaults(),
@@ -75,12 +72,11 @@ minetest.register_node("artdeco:arch1b", {
 
 
 minetest.register_node("artdeco:arch1c", {
-	description = "Limestone Plinth",
+	description = "vápencový podstavec",
 	tiles = {"artdeco_2a.png"},
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	legacy_facedir_simple = true,
 	is_ground_content = false,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
 	sounds = default.node_sound_stone_defaults(),
@@ -94,12 +90,11 @@ minetest.register_node("artdeco:arch1c", {
 })
 
 minetest.register_node("artdeco:arch1d", {
-	description = "Limestone Bottom Plinth",
+	description = "vápencový podstavec s tmavým obkladem",
 	tiles = {"artdeco_2a.png", "artdeco_2a.png", "artdeco_2d.png"},
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	legacy_facedir_simple = true,
 	is_ground_content = false,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
 	sounds = default.node_sound_stone_defaults(),
@@ -113,12 +108,11 @@ minetest.register_node("artdeco:arch1d", {
 })
 
 minetest.register_node("artdeco:arch1e", {
-	description = "Limestone Top Plinth",
+	description = "vápencový podstavec se světlým obkladem",
 	tiles = {"artdeco_2a.png", "artdeco_2a.png", "artdeco_2b.png"},
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	legacy_facedir_simple = true,
 	is_ground_content = false,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
 	sounds = default.node_sound_stone_defaults(),
@@ -132,12 +126,11 @@ minetest.register_node("artdeco:arch1e", {
 })
 
 minetest.register_node("artdeco:dblarch1a", {
-	description = "Half Arch Top",
+	description = "mramorový půloblouk se světlým obkladem",
 	tiles = {"artdeco_2a.png", "artdeco_2a.png", "artdeco_2b.png"},
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	legacy_facedir_simple = true,
 	is_ground_content = false,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
 	sounds = default.node_sound_stone_defaults(),
@@ -157,12 +150,11 @@ minetest.register_node("artdeco:dblarch1a", {
 })
 
 minetest.register_node("artdeco:dblarchslab", {
-	description = "Limestone Arch Bridge",
+	description = "vápencový převis",
 	tiles = {"artdeco_2a.png", "artdeco_2a.png", "artdeco_2b.png"},
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	legacy_facedir_simple = true,
 	is_ground_content = false,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
 	sounds = default.node_sound_stone_defaults(),
@@ -175,7 +167,7 @@ minetest.register_node("artdeco:dblarchslab", {
 })
 
 minetest.register_node("artdeco:archwin1a", {
-	description = "Silver Window Top",
+	description = "vestavěné stříbrné okno (horní díl)",
 	drawtype = "nodebox",
 	tiles = {"artdeco_archwin3.png^[transformR90","artdeco_archwin3.png^[transformR90",
 	"artdeco_archwin3.png","artdeco_archwin3.png","artdeco_archwin1a.png"},
@@ -185,7 +177,6 @@ minetest.register_node("artdeco:archwin1a", {
 	sunlight_propogates = true,
 	use_texture_alpha = "blend",
 	paramtype2 = "facedir",
-	legacy_facedir_simple = true,
 	is_ground_content = false,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
 	sounds = default.node_sound_glass_defaults(),
@@ -209,7 +200,7 @@ minetest.register_node("artdeco:archwin1a", {
 })
 
 minetest.register_node("artdeco:archwin1b", {
-	description = "Silver Window Middle",
+	description = "vestavěné stříbrné okno (střední díl)",
 	drawtype = "nodebox",
 	tiles = {"artdeco_archwin3.png^[transformR90","artdeco_archwin3.png^[transformR90",
 	"artdeco_archwin3.png","artdeco_archwin3.png","artdeco_archwin1b.png"},
@@ -219,7 +210,6 @@ minetest.register_node("artdeco:archwin1b", {
 	sunlight_propogates = true,
 	use_texture_alpha = "blend",
 	paramtype2 = "facedir",
-	legacy_facedir_simple = true,
 	is_ground_content = false,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
 	sounds = default.node_sound_glass_defaults(),
@@ -233,7 +223,7 @@ minetest.register_node("artdeco:archwin1b", {
 	}
 })
 minetest.register_node("artdeco:archwin1c", {
-	description = "Silver Window Bottom",
+	description = "vestavěné stříbrné okno (spodní díl)",
 	drawtype = "nodebox",
 	tiles = {"artdeco_archwin3.png^[transformR90","artdeco_archwin3.png^[transformR90",
 	"artdeco_archwin3.png","artdeco_archwin3.png","artdeco_archwin1c.png"},
@@ -243,7 +233,6 @@ minetest.register_node("artdeco:archwin1c", {
 	sunlight_propogates = true,
 	use_texture_alpha = "blend",
 	paramtype2 = "facedir",
-	legacy_facedir_simple = true,
 	is_ground_content = false,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
 	sounds = default.node_sound_glass_defaults(),
@@ -259,7 +248,7 @@ minetest.register_node("artdeco:archwin1c", {
 })
 
 minetest.register_node("artdeco:archwin2a", {
-	description = "Copper Window Top",
+	description = "vestavěné měděné okno (horní díl)",
 	drawtype = "nodebox",
 	tiles = {"artdeco_archwin3.png^[transformR90","artdeco_archwin3.png^[transformR90",
 	"artdeco_archwin3.png","artdeco_archwin3.png","artdeco_archwin2a.png"},
@@ -269,7 +258,6 @@ minetest.register_node("artdeco:archwin2a", {
 	sunlight_propogates = true,
 	use_texture_alpha = "blend",
 	paramtype2 = "facedir",
-	legacy_facedir_simple = true,
 	is_ground_content = false,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
 	sounds = default.node_sound_glass_defaults(),
@@ -293,7 +281,7 @@ minetest.register_node("artdeco:archwin2a", {
 })
 
 minetest.register_node("artdeco:archwin2b", {
-	description = "Copper Window Middle",
+	description = "vestavěné měděné okno (střední díl)",
 	drawtype = "nodebox",
 	tiles = {"artdeco_archwin3.png^[transformR90","artdeco_archwin3.png^[transformR90",
 	"artdeco_archwin3.png","artdeco_archwin3.png","artdeco_archwin2b.png"},
@@ -303,7 +291,6 @@ minetest.register_node("artdeco:archwin2b", {
 	sunlight_propogates = true,
 	use_texture_alpha = "blend",
 	paramtype2 = "facedir",
-	legacy_facedir_simple = true,
 	is_ground_content = false,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
 	sounds = default.node_sound_glass_defaults(),
@@ -318,7 +305,7 @@ minetest.register_node("artdeco:archwin2b", {
 })
 
 minetest.register_node("artdeco:archwin2c", {
-	description = "Copper Window Bottom",
+	description = "vestavěné měděné okno (spodní díl)",
 	drawtype = "nodebox",
 	tiles = {"artdeco_archwin3.png^[transformR90","artdeco_archwin3.png^[transformR90",
 	"artdeco_archwin3.png","artdeco_archwin3.png","artdeco_archwin2c.png"},
@@ -328,7 +315,6 @@ minetest.register_node("artdeco:archwin2c", {
 	sunlight_propogates = true,
 	use_texture_alpha = "blend",
 	paramtype2 = "facedir",
-	legacy_facedir_simple = true,
 	is_ground_content = false,
 	groups = {cracky=3,oddly_breakable_by_hand=3},
 	sounds = default.node_sound_glass_defaults(),
@@ -343,7 +329,7 @@ minetest.register_node("artdeco:archwin2c", {
 	}
 })
 minetest.register_node("artdeco:wincross1a", {
-	description = "Corbel",
+	description = "mramorová konzola",
 	drawtype = "nodebox",
 	tiles = {"artdeco_wincross_1a.png", "artdeco_wincross_1a.png",
 		"artdeco_wincross_1b.png", "artdeco_wincross_1b.png",
@@ -351,7 +337,6 @@ minetest.register_node("artdeco:wincross1a", {
 	paramtype = "light",
 	use_texture_alpha = "blend",
 	paramtype2 = "facedir",
-	legacy_facedir_simple = true,
 	is_ground_content = false,
 	groups = {choppy=2,oddly_breakable_by_hand=2},
 	sounds = default.node_sound_stone_defaults(),
@@ -370,7 +355,7 @@ minetest.register_node("artdeco:wincross1a", {
 })
 
 minetest.register_node("artdeco:wincross1b", {
-	description = "Windowsill",
+	description = "mramorový parapet",
 	drawtype = "nodebox",
 	tiles = {"artdeco_wincross_1a.png", "artdeco_wincross_1a.png",
 		"artdeco_wincross_1c.png", "artdeco_wincross_1c.png",
@@ -378,7 +363,6 @@ minetest.register_node("artdeco:wincross1b", {
 	paramtype = "light",
 	use_texture_alpha = "blend",
 	paramtype2 = "facedir",
-	legacy_facedir_simple = true,
 	is_ground_content = false,
 	groups = {choppy=2,oddly_breakable_by_hand=2},
 	sounds = default.node_sound_stone_defaults(),
@@ -394,7 +378,7 @@ minetest.register_node("artdeco:wincross1b", {
 })
 
 minetest.register_node("artdeco:lightwin1", {
-	description = "Light Window Top",
+	description = "světlé okno (horní díl)",
 	drawtype = "nodebox",
 	tiles = {"artdeco_lightwin4.png","artdeco_lightwin1.png",
 	"artdeco_lightwin4.png","artdeco_lightwin4.png","artdeco_lightwin1.png"},
@@ -415,7 +399,7 @@ minetest.register_node("artdeco:lightwin1", {
 })
 
 minetest.register_node("artdeco:lightwin2", {
-	description = "Light Window Middle",
+	description = "světlé okno (střední díl)",
 	drawtype = "nodebox",
 	tiles = {"artdeco_lightwin2.png", "artdeco_lightwin2.png",
 	"artdeco_lightwin4.png","artdeco_lightwin4.png","artdeco_lightwin2.png"},
@@ -436,7 +420,7 @@ minetest.register_node("artdeco:lightwin2", {
 })
 
 minetest.register_node("artdeco:lightwin3", {
-	description = "Light Window Bottom",
+	description = "světlé okno (spodní díl)",
 	drawtype = "nodebox",
 	tiles = {"artdeco_lightwin3.png","artdeco_lightwin4.png",
 	"artdeco_lightwin4.png","artdeco_lightwin4.png","artdeco_lightwin3.png"},
@@ -456,7 +440,27 @@ minetest.register_node("artdeco:lightwin3", {
 	},
 })
 
-minetest.register_node("artdeco:irongrating", {
+xpanes.register_pane("irongrating", {
+	description = "umělecká kovová mříž",
+	textures = {"artdeco_irongrating.png", "", "artdeco_lightwin4.png"},
+	use_texture_alpha = "blend",
+	inventory_image = "artdeco_irongrating.png",
+	wield_image = "artdeco_irongrating.png",
+	groups = {snappy=2,cracky=3,oddly_breakable_by_hand=3},
+	sounds = default.node_sound_glass_defaults(),
+	recipe = {
+		{"default:obsidian_glass", "default:obsidian_glass", "default:obsidian_glass"},
+		{"default:obsidian_glass", "default:obsidian_glass", "default:obsidian_glass"}
+	}
+})
+
+--[[
+use_texture_alpha = "blend",
+	sunlight_propagates = true,
+]]
+
+--[[
+minetest.register_node("artdeco:", {
 	description = "Iron Grating",
 	drawtype = "nodebox",
 	tiles = {"artdeco_lightwin4.png","artdeco_lightwin4.png",
@@ -464,7 +468,6 @@ minetest.register_node("artdeco:irongrating", {
 	use_texture_alpha = "blend",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	sunlight_propagates = true,
 	is_ground_content = false,
 	groups = {snappy=2,cracky=3,oddly_breakable_by_hand=3},
 	sounds = default.node_sound_glass_defaults(),
@@ -475,9 +478,10 @@ minetest.register_node("artdeco:irongrating", {
 		},
 	},
 })
+]]
 
 minetest.register_node("artdeco:column1a", {
-	description = "Column Top",
+	description = "mramorový sloup (dřík se světlým obkladem)",
 	drawtype = "nodebox",
 	tiles = {"artdeco_2a.png", "artdeco_2a.png", "artdeco_column1a.png"},
 	paramtype = "light",
@@ -498,7 +502,7 @@ minetest.register_node("artdeco:column1a", {
 	})
 
 minetest.register_node("artdeco:column1b", {
-	description = "Column Moulding",
+	description = "mramorový sloup (dřík se středním obkladem)",
 	drawtype = "nodebox",
 	tiles = {"artdeco_2a.png", "artdeco_2a.png", "artdeco_column1b.png"},
 	paramtype = "light",
@@ -519,7 +523,7 @@ minetest.register_node("artdeco:column1b", {
 	})
 
 minetest.register_node("artdeco:column1c", {
-	description = "Column Bottom",
+	description = "mramorový sloup (dřík s tmavým obkladem)",
 	drawtype = "nodebox",
 	tiles = {"artdeco_2a.png", "artdeco_2a.png", "artdeco_column1c.png"},
 	paramtype = "light",
@@ -540,7 +544,7 @@ minetest.register_node("artdeco:column1c", {
 	})
 
 minetest.register_node("artdeco:column1d", {
-	description = "Column",
+	description = "mramorový sloup (dřík)",
 	drawtype = "nodebox",
 	tiles = {"artdeco_2a.png", "artdeco_2a.png", "artdeco_column1d.png"},
 	paramtype = "light",
@@ -561,7 +565,7 @@ minetest.register_node("artdeco:column1d", {
 	})
 
 minetest.register_node("artdeco:column_base", {
-	description = "Column Base",
+	description = "mramorový sloup (podstavec)",
 	drawtype = "nodebox",
 	tiles = {"artdeco_2a.png", "artdeco_2a.png", "artdeco_column1d.png"},
 	paramtype = "light",
@@ -617,18 +621,20 @@ minetest.register_node("artdeco:column_base", {
 })
 
 minetest.register_node("artdeco:thinstonewall", {
-	description = "Thin Stone Wall",
+	description = "kamenná zídka",
 	tiles = {"artdeco_stonewall.png"},
 	drawtype = "nodebox",
 	node_box = {
 		type = "connected",
-		fixed = {{-0.1875, -0.5, -0.1875, 0.1875, 0.5, 0.1875}},
-		connect_front = {{-0.1875, -0.5, -0.5,  0.1875, 0.5, -0.1875}},
-		connect_left = {{-0.5, -0.5, -0.1875, -0.1875, 0.5,  0.1875}},
-		connect_back = {{-0.1875, -0.5,  0.1875,  0.1875, 0.5,  0.5}},
-		connect_right = {{ 0.1875, -0.5, -0.1875,  0.5, 0.5,  0.1875}},
+		-- -0.501 is here to avoid a rendering bug
+		fixed = {{-0.1875, -0.501, -0.1875, 0.1875, 0.5, 0.1875}},
+		connect_front = {{-0.1875, -0.501, -0.5,  0.1875, 0.5, -0.1875}},
+		connect_left = {{-0.5, -0.501, -0.1875, -0.1875, 0.5,  0.1875}},
+		connect_back = {{-0.1875, -0.501,  0.1875,  0.1875, 0.5,  0.5}},
+		connect_right = {{ 0.1875, -0.501, -0.1875,  0.5, 0.5,  0.1875}},
 	},
 	connects_to = { "group:wall", "group:stone" },
+	connect_sides = {"front", "back", "left", "right"},
 	paramtype = "light",
 	is_ground_content = false,
 	walkable = true,

@@ -1,32 +1,38 @@
+local italianmarble = "darkage:marble"
+local limestone = "artdeco:2d"
+local marble1e = "ch_extras:marble"
+local stone = "default:stone"
+local screwdriver = "unifieddyes:airbrush"
+
 minetest.register_craft({
 	output = "artdeco:1a",
 	recipe = {
-		{"group:stone"},
-		{"artdeco:1e"},
+		{stone},
+		{marble1e},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:1b",
 	recipe = {
-		{"",            "group:stone"},
-		{"group:stone", "artdeco:1e"},
+		{"",            stone},
+		{stone, marble1e},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:1c",
 	recipe = {
-		{"",            "group:stone", ""},
-		{"group:stone", "artdeco:1e",  "group:stone"},
+		{"",            stone, ""},
+		{stone, marble1e,  stone},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:1d",
 	recipe = {
-		{"group:stone", "artdeco:1c",  "group:stone"},
+		{stone, "artdeco:1c",  stone},
 	},
 })
 minetest.register_craft({
-	output = "artdeco:1e",
+	output = marble1e,
 	recipe = {
 		{"group:marble"},
 	},
@@ -34,80 +40,80 @@ minetest.register_craft({
 minetest.register_craft({
 	output = "artdeco:1f",
 	recipe = {
-		{"group:stone", "artdeco:1e"},
+		{stone, marble1e},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:1g",
 	recipe = {
-		{"group:stone", "artdeco:1e", "group:stone"},
+		{stone, marble1e, stone},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:1h",
 	recipe = {
-		{"group:stone", "artdeco:1g", "group:stone"},
+		{stone, "artdeco:1g", stone},
     },
 })
 minetest.register_craft({
 	output = "artdeco:1i",
 	recipe = {
-		{"artdeco:1e"},
-		{"group:stone"},
+		{marble1e},
+		{stone},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:1j",
 	recipe = {
-		{"group:stone", "artdeco:1e"},
-		{"",            "group:stone"},
+		{stone, marble1e},
+		{"",            stone},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:1k",
 	recipe = {
-		{"group:stone", "artdeco:1e",  "group:stone"},
-		{"",            "group:stone", ""},
+		{stone, marble1e,  stone},
+		{"",            stone, ""},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:1l",
 	recipe = {
-		{"group:stone", "artdeco:1k",  "group:stone"},
+		{stone, "artdeco:1k",  stone},
 	},
 })
 
 minetest.register_craft({
-    type="cooking",
-    output="artdeco:2d",
-    recipe="default:coral_skeleton",
+    output = limestone,
+	type = "shapeless",
+    recipe = {"darkage:chalk_powder", "darkage:chalk_powder"},
 })
 
 minetest.register_craft({
 	output = "artdeco:2a",
 	recipe = {
-		{"group:stone"},
-		{"artdeco:2d"},
+		{stone},
+		{limestone},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:2b",
 	recipe = {
-		{"artdeco:2d", "group:stone"},
+		{limestone, stone},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:2c",
 	recipe = {
-		{"artdeco:2d"},
-		{"group:stone"},
+		{limestone},
+		{stone},
 	},
 })
 
 minetest.register_craft({
     type="cooking",
-    output="artdeco:italianmarble",
-    recipe="artdeco:1e",
+    output=italianmarble,
+    recipe=marble1e,
 })
 
 
@@ -144,82 +150,81 @@ minetest.register_craft({
 	},
 })
 minetest.register_craft({
-	output = "artdeco:tile5 5",
+	output = "artdeco:tile5 2",
 	recipe = {
-		{"",                       "default:sandstonebrick", ""},
-		{"default:sandstonebrick", "default:obsidianbrick",  "default:sandstonebrick"},
-		{"",                       "default:sandstonebrick", ""},
+		{"bakedclay:slab_orange_2", "bakedclay:slab_orange_2", "bakedclay:slab_orange_2"},
+		{"bakedclay:slab_orange_2", "artdeco:brownwalltile", "bakedclay:slab_orange_2"},
+		{"bakedclay:slab_orange_2", "bakedclay:slab_orange_2", "bakedclay:slab_orange_2"},
 	},
 })
 minetest.register_craft({
-	output = "artdeco:brownwalltile",
+	output = "artdeco:brownwalltile 4",
 	recipe = {
-		{"default:desert_stone",     "default:desert_sandstone", "default:desert_stone"},
-		{"default:desert_sandstone", "default:desert_stone",     "default:desert_sandstone"},
-		{"default:desert_stone",     "default:desert_sandstone", "default:desert_stone"},
+		{"bakedclay:orange",     "bakedclay:brown", ""},
+		{"bakedclay:brown",     "bakedclay:orange", ""},
 	},
 })
 minetest.register_craft({
-	output = "artdeco:greenwalltile",
+	output = "artdeco:greenwalltile 4",
 	recipe = {
-		{"default:sandstone", "default:stone",     "default:sandstone"},
-		{"default:stone",     "default:sandstone", "default:stone"},
-		{"default:sandstone", "default:stone",     "default:sandstone"},
+		{"bakedclay:green", "bakedclay:white"},
+		{"bakedclay:white", "bakedclay:green"},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:ceilingtile",
 	recipe = {
-		{"default:silver_sandstone", "screwdriver:screwdriver"},
+		{italianmarble, ""},
+		{screwdriver, ""},
 	},
-    replacements = {{"screwdriver:screwdriver", "screwdriver:screwdriver"}},
+    replacements = {{screwdriver, screwdriver}},
 })
 minetest.register_craft({
 	output = "artdeco:decoblock1",
 	recipe = {
-        {"screwdriver:screwdriver"},
-		{"artdeco:2d"},
+        {screwdriver},
+		{limestone},
 	},
-    replacements = {{"screwdriver:screwdriver", "screwdriver:screwdriver"}},
+    replacements = {{screwdriver, screwdriver}},
 })
 minetest.register_craft({
 	output = "artdeco:decoblock2",
 	recipe = {
-        {"", "screwdriver:screwdriver"},
-		{"artdeco:2d", ""},
+        {"", screwdriver},
+		{limestone, ""},
 	},
-    replacements = {{"screwdriver:screwdriver", "screwdriver:screwdriver"}},
+    replacements = {{screwdriver, screwdriver}},
 })
 minetest.register_craft({
 	output = "artdeco:decoblock3",
 	recipe = {
-		{"artdeco:2d", "screwdriver:screwdriver"},
+		{limestone, screwdriver},
 	},
-    replacements = {{"screwdriver:screwdriver", "screwdriver:screwdriver"}},
+    replacements = {{screwdriver, screwdriver}},
 })
 minetest.register_craft({
 	output = "artdeco:decoblock4",
 	recipe = {
-		{"artdeco:2d", ""},
-        {"", "screwdriver:screwdriver"},
+		{limestone, ""},
+        {"", screwdriver},
 	},
-    replacements = {{"screwdriver:screwdriver", "screwdriver:screwdriver"}},
+    replacements = {{screwdriver, screwdriver}},
 })
 minetest.register_craft({
 	output = "artdeco:decoblock5",
 	recipe = {
-		{"artdeco:2d"},
-        {"screwdriver:screwdriver"},
+		{limestone},
+        {screwdriver},
 	},
-    replacements = {{"screwdriver:screwdriver", "screwdriver:screwdriver"}},
+    replacements = {{screwdriver, screwdriver}},
 })
 minetest.register_craft({
 	output = "artdeco:decoblock6",
 	recipe = {
-		{"", "artdeco:2d"},
-        {"screwdriver:screwdriver", ""},
+		{"", limestone},
+        {screwdriver, ""},
 	},
-    replacements = {{"screwdriver:screwdriver", "screwdriver:screwdriver"}},
+    replacements = {{screwdriver, screwdriver}},
 })
 
 minetest.register_craft({
@@ -228,44 +233,39 @@ minetest.register_craft({
 	recipe = {"default:gravel", "dye:white"},
 })
 minetest.register_craft({
-	output = "artdeco:stonewall",
-    type = "shapeless",
-	recipe = {"default:gravel", "dye:brown", "basic_materials:wet_cement"},
-})
-minetest.register_craft({
 	output = "artdeco:lionheart",
 	recipe = {
-		{"screwdriver:screwdriver", "artdeco:2d"},
+		{screwdriver, limestone},
 	},
-    replacements = {{"screwdriver:screwdriver", "screwdriver:screwdriver"}},
+    replacements = {{screwdriver, screwdriver}},
 })
 
 minetest.register_craft({
 	output = "artdeco:arch2a 10",
 	recipe = {
-		{"artdeco:2d", "artdeco:2d", "artdeco:2d"},
-		{"artdeco:2d", "",           "artdeco:2d"},
+		{limestone, limestone, limestone},
+		{limestone, "",           limestone},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:arch1a 10",
 	recipe = {
 		{"artdeco:2a", "artdeco:2a", "artdeco:2a"},
-		{"artdeco:2d", "",           "artdeco:2d"},
+		{limestone, "",           limestone},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:arch1b 12",
 	recipe = {
-		{"artdeco:2d", "",           "artdeco:2d"},
-		{"artdeco:2d", "",           "artdeco:2d"},
-		{"artdeco:2d", "",           "artdeco:2d"},
+		{limestone, "",           limestone},
+		{limestone, "",           limestone},
+		{limestone, "",           limestone},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:arch1c",
 	recipe = {
-		{"artdeco:2d"},
+		{limestone},
 	},
 })
 minetest.register_craft({
@@ -284,8 +284,8 @@ minetest.register_craft({
 	output = "artdeco:dblarch1a 10",
 	recipe = {
 		{"artdeco:2a", "artdeco:2a", "artdeco:2a"},
-		{"artdeco:2d", "",           ""},
-		{"artdeco:2d", "",           ""},
+		{limestone, "",           ""},
+		{limestone, "",           ""},
 	},
 })
 
@@ -298,7 +298,7 @@ minetest.register_craft({
 minetest.register_craft({
 	output = "artdeco:archwin1a",
 	recipe = {
-		{"artdeco:italianmarble",},
+		{italianmarble,},
         {"default:glass",        },
         {"moreores:silver_lump",}
 	},
@@ -306,7 +306,7 @@ minetest.register_craft({
 minetest.register_craft({
 	output = "artdeco:archwin1b",
 	recipe = {
-        {"moreores:silver_lump", "default:glass", "artdeco:italianmarble",},
+        {"moreores:silver_lump", "default:glass", italianmarble,},
 	},
 })
 minetest.register_craft({
@@ -314,13 +314,13 @@ minetest.register_craft({
 	recipe = {
         {"moreores:silver_lump",},
         {"default:glass",        },
-		{"artdeco:italianmarble",},
+		{italianmarble,},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:archwin2a",
 	recipe = {
-		{"artdeco:italianmarble",},
+		{italianmarble,},
         {"default:glass",        },
         {"default:copper_lump",}
 	},
@@ -328,7 +328,7 @@ minetest.register_craft({
 minetest.register_craft({
 	output = "artdeco:archwin2b",
 	recipe = {
-        {"default:copper_lump", "default:glass", "artdeco:italianmarble",},
+        {"default:copper_lump", "default:glass", italianmarble,},
 	},
 })
 minetest.register_craft({
@@ -336,22 +336,22 @@ minetest.register_craft({
 	recipe = {
         {"default:copper_lump",},
         {"default:glass",        },
-		{"artdeco:italianmarble",},
+		{italianmarble,},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:wincross1a",
 	recipe = {
-		{"screwdriver:screwdriver", "artdeco:italianmarble"},
+		{screwdriver, italianmarble},
 	},
-    replacements = {{"screwdriver:screwdriver", "screwdriver:screwdriver"}},
+    replacements = {{screwdriver, screwdriver}},
 })
 minetest.register_craft({
 	output = "artdeco:wincross1b",
 	recipe = {
-		{"artdeco:italianmarble", "screwdriver:screwdriver"},
+		{italianmarble, screwdriver},
 	},
-    replacements = {{"screwdriver:screwdriver", "screwdriver:screwdriver"}},
+    replacements = {{screwdriver, screwdriver}},
 })
 minetest.register_craft({
 	output = "artdeco:lightwin1",
@@ -406,30 +406,31 @@ minetest.register_craft({
 minetest.register_craft({
 	output = "artdeco:column1d",
 	recipe = {
-		{"artdeco:2d"},
-		{"artdeco:2d"},
-		{"artdeco:2d"},
+		{limestone},
+		{limestone},
+		{limestone},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:column_base 2",
 	recipe = {
-		{"artdeco:2d"},
+		{limestone},
 		{"artdeco:column1d"},
 	},
 })
 minetest.register_craft({
-	output = "artdeco:thinstonewall 6",
+	output = "artdeco:thinstonewall 3",
 	recipe = {
-		{"artdeco:stonewall", "artdeco:stonewall", "artdeco:stonewall", },
-		{"artdeco:stonewall", "artdeco:stonewall", "artdeco:stonewall", },
+		{"default:cobble", "", ""},
+		{"default:cobble", "", ""},
+		{"default:cobble", "", ""},
 	},
 })
 minetest.register_craft({
 	output = "artdeco:estatedoor 2",
 	recipe = {
-		{"building_blocks:hardwood", "building_blocks:hardwood"},
-		{"default:glass",            "artdeco:irongrating"},
-		{"building_blocks:hardwood", "building_blocks:hardwood"},
+		{"building_blocks:hardwood", "building_blocks:hardwood", ""},
+		{"default:glass",            "default:glass", ""},
+		{"building_blocks:hardwood", "building_blocks:hardwood", ""},
 	},
 })

@@ -138,6 +138,18 @@ local new_player_texts = {
 	}
 }
 
+local function dump_privs(privs)
+	local names = {}
+	for k, v in pairs(privs) do
+		if v then
+			table.insert(names, k)
+		end
+	end
+	table.sort(names, function(a, b) return a < b end)
+	return "["..#names.."]("..table.concat(names, ",")..")"
+end
+
+
 local function get_new_player_formspec(custom_state)
 	local formspec = {
 		ch_core.formspec_header({formspec_version = 5, size = {18, 10}, auto_background = true}),
@@ -230,6 +242,8 @@ local function after_joinplayer(player_name)
 				"INFORMACE: Poslední přihlášení ostatních hráčů/ek (max. 5, turistické postavy se nepočítají):\n"..
 				ch_core.colors.light_green..">> "..table.concat(last_players, ", "))
 		end
+
+		minetest.log("action", "Player "..player_name.." after_joinplayer privs = "..dump_privs(minetest.get_player_privs(player_name)))
 	end
 end
 
@@ -304,6 +318,7 @@ local function on_joinplayer(player, last_login)
 
 	-- Reset the creative priv (set for the new characters)
 	local privs = minetest.get_player_privs(player_name)
+	minetest.log("action", "Player "..player_name.." joined with privs = "..dump_privs(privs))
 	if privs.ch_registered_player then
 		if privs.creative then
 			privs.creative = nil
@@ -339,7 +354,10 @@ local function on_leaveplayer(player)
 		privs.creative = nil
 		minetest.set_player_privs(player_name, privs)
 		minetest.log("action", "creative priv reset on leave for "..player_name)
+
+		privs = minetest.get_player_privs(player_name) -- update variable
 	end
+	minetest.log("action", "Player "..player_name.." leaved with privs = "..dump_privs(privs))
 end
 
 minetest.register_on_newplayer(on_newplayer)

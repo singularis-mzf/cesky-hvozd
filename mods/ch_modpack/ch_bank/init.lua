@@ -2,7 +2,6 @@ print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. "
 
 local modname = minetest.get_current_modname()
 local modpath = minetest.get_modpath(modname)
-local dofile = ch_core.dofile
 ch_bank = {
 	icon = "default_gold_block.png",
 }
@@ -18,14 +17,15 @@ local utils = {
 }
 
 assert(utils.storage ~= nil)
+local dofile = ch_core.compile_dofile({assert(tinv), assert(utils)})
 
-dofile({name = "trade_inv.lua"}, tinv, utils)
-dofile({name = "bank_archive.lua"}, tinv, utils)
-dofile({name = "bank_accounts.lua"}, tinv, utils)
-dofile({name = "formspec.lua"}, tinv, utils)
-dofile({name = "formspec_callback.lua"}, tinv, utils)
-dofile({name = "trade.lua"}, tinv, utils)
-dofile({name = "payment_method.lua"}, tinv, utils)
+dofile("trade_inv.lua")
+dofile("bank_archive.lua")
+dofile("bank_accounts.lua")
+dofile("formspec.lua")
+dofile("formspec_callback.lua")
+dofile("trade.lua")
+dofile("payment_method.lua")
 
 unified_inventory.ch_bank = ch_bank
 
