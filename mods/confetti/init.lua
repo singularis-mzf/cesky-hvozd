@@ -35,7 +35,6 @@ local recipe_output_amount = 8
 local tex_base = "ch_core_white_pixel.png^[resize:8x8"
 local item_base = "confetti_item.png"
 
-print("DEBUG: A")
 local confetti_colors = {
     red = {
         description = "červené konfety",
@@ -111,8 +110,6 @@ confetti_colors.rainbow = {
     },
 }
 
-print("DEBUG: B")
-
 -- get actual eye_pos of the player (including eye_offset)
 local function player_get_rel_eye_pos(player)
     local p_pos = vector.zero()
@@ -124,8 +121,6 @@ local function player_get_rel_eye_pos(player)
     p_eye_pos = vector.add(p_eye_pos, vector.rotate_around_axis(p_eye_offset, { x = 0, y = 1, z = 0 }, yaw))
     return p_eye_pos
 end
-
-print("DEBUG: C")
 
 local function create_confetti(itemstack, user, _pointed_thing, texpool)
     if not user or not user:is_player() then
@@ -192,8 +187,6 @@ local function create_confetti(itemstack, user, _pointed_thing, texpool)
     end
     return itemstack
 end
-
-print("DEBUG: D")
 
 for color, cdef in pairs(confetti_colors) do
     local texpool = assert(cdef.texpool)
