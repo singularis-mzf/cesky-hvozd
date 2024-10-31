@@ -145,6 +145,7 @@ function doors.register_fencegate(name, def)
 	})
 end
 
+--[[
 doors.register_fencegate("doors:gate_wood", {
 	description = S("Apple Wood Fence Gate"),
 	texture = "default_wood.png",
@@ -179,3 +180,4 @@ doors.register_fencegate("doors:gate_aspen_wood", {
 	material = "default:aspen_wood",
 	groups = {choppy = 3, oddly_breakable_by_hand = 2, flammable = 3}
 })
+]]

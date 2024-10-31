@@ -2679,6 +2679,7 @@ minetest.register_node("default:ladder_steel", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
+--[[
 default.register_fence("default:fence_wood", {
 	description = S("Apple Wood Fence"),
 	texture = "default_fence_wood.png",
@@ -2798,6 +2799,7 @@ default.register_fence_rail("default:fence_rail_aspen_wood", {
 	groups = {choppy = 3, oddly_breakable_by_hand = 2, flammable = 2},
 	sounds = default.node_sound_wood_defaults()
 })
+]]
 
 minetest.register_node("default:glass", {
 	description = S("Glass"),
@@ -2853,11 +2855,13 @@ minetest.register_node("default:meselamp", {
 	light_source = default.LIGHT_MAX,
 })
 
+--[[
 default.register_mesepost("default:mese_post_light", {
 	description = S("Apple Wood Mese Post Light"),
 	texture = "default_fence_wood.png",
 	material = "default:wood",
 })
+
 
 default.register_mesepost("default:mese_post_light_acacia_wood", {
 	description = S("Acacia Wood Mese Post Light"),
@@ -2882,6 +2886,7 @@ default.register_mesepost("default:mese_post_light_aspen_wood", {
 	texture = "default_fence_aspen_wood.png",
 	material = "default:aspen_wood",
 })
+]]
 
 --
 -- Misc

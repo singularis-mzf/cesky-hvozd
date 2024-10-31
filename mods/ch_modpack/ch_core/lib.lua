@@ -408,6 +408,63 @@ function ch_core.add_wear(player, itemstack, wear_to_add)
 end
 
 --[[
+	Sestaví nové pole "groups" následujícím způsobem:
+	Vezme dvojice z "base"; přepíše je dvojicemi z "inherit" (případně pouze dvojicemi vybranými pomocí "inherit_list")
+	a nakonec výsledek přepíše dvojicemi z "override". Přitom dodržuje, že pokud nějaké dvojici vyjde hodnota 0,
+	tato dvojice se na výstupu vůbec neobjeví. Kterýkoliv parametr může být nil; u parametrů base, inherit a override
+	se to interpretuje jako prázdná tabulka. Je-li inherit_list == nil, pak se z "inherit" vezmou všechny dvojice.
+
+	base = table or nil, -- základ, ze kterého se vychází (dvojice s nejnižší prioritou)
+	override = table or nil, -- dvojice s nejvyšší prioritou (přepíšou vše ostatní)
+	inherit = table or nil, -- přidat/přepsat tyto hodnoty do base
+	inherit_list = {string, ...} or nil -- je-li nastaveno, pak se z inherit budou brát pouze klíče z tohoto seznamu a v uvedeném pořadí, jinak všechny klíče
+]]
+function ch_core.assembly_groups(default, override, inherit, inherit_list)
+	local result = {}
+	if default ~= nil then
+		for k, v in pairs(default) do
+			if v ~= 0 then
+				result[k] = v
+				-- result je prázdný, takže zde není třeba nastavovat nil
+			end
+		end
+	end
+	if inherit ~= nil then
+		if inherit_list ~= nil then
+			for _, group in ipairs(inherit_list) do
+				local value = inherit[group]
+				if value ~= nil then
+					if value ~= 0 then
+						result[group] = value
+					else
+						result[group] = nil
+					end
+				end
+			end
+		else
+			for group, value in pairs(inherit) do
+				if value ~= 0 then
+					result[group] = value
+				else
+					result[group] = nil
+				end
+			end
+		end
+	end
+	if override ~= nil then
+		for group, value in pairs(override) do
+			if value ~= 0 then
+				result[group] = value
+			else
+				result[group] = nil
+			end
+		end
+	end
+	return result
+end
+
+
+--[[
 Určí typ postavy (admin|creative|new|survival) a zkontroluje,
 zda je to jeden z akceptovaných.
 player_or_player_name může být PlayerRef nebo přihlašovací jméno postavy.
@@ -1201,31 +1258,11 @@ end
 Vytvoří kopii vstupu (input) a zapíše do ní nové hodnoty skupin podle
 parametru override. Skupiny s hodnotou 0 v override z tabulky odstraní.
 Je-li některý z parametrů nil, je interpretován jako prázdná tabulka.
+
+ZASTARALÁ: použijte raději ch_core.assembly_groups().
 ]]
 function ch_core.override_groups(input, override)
-	local result
-	if input ~= nil then
-		result = table.copy(input)
-		if override ~= nil then
-			for k, v in pairs(override) do
-				if v ~= 0 then
-					result[k] = v
-				else
-					result[k] = nil
-				end
-			end
-		end
-	elseif override ~= nil then
-		result = table.copy(override)
-		for k, v in pairs(override) do
-			if v == 0 then
-				result[k] = nil
-			end
-		end
-	else
-		result = {}
-	end
-	return result
+	return ch_core.assembly_groups(input, override)
 end
 
 --[[

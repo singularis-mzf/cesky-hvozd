@@ -1,5 +1,6 @@
 ch_core.open_submod("shapes_db", {lib = true})
 
+local assembly_groups = ch_core.assembly_groups
 local ifthenelse = ch_core.ifthenelse
 
 local function set(...)
@@ -525,6 +526,8 @@ local alts_cnc = set(
 "technic_cnc_bannerstone"
 )
 
+local alts_fence = set("fence", "rail", "mesepost", "fencegate")
+
 local wool_panels = set("", "_1", "_2", "_4", "_l", "_special")
 
 local wool_slabs = set("", "_quarter", "_three_quarter", "_1", "_2", "_14", "_15")
@@ -580,6 +583,8 @@ local rules = {
 		"technic_cnc_slope_edge_upsdown", "technic_cnc_slope_inner_edge_upsdown", "technic_cnc_stick", "technic_cnc_cylinder_horizontal"),
 		false}, -- zakázat vybrané tvary z hlíny
 	{materials_cnc, "cnc", alts_cnc, true}, -- výchozí pravidlo pro CNC
+-- fence:
+	{"*", "fence", alts_fence, true}, -- [ ] TODO
 -- catch-all rules:
 	{materials_all, set("micro", "panel", "slab", "slope", "stair", "cnc", "bank_slope"), "*", false},
 }
@@ -678,5 +683,166 @@ end
 function ch_core.get_comboblock_index(v1, v2)
 	error("not implemented yet")
 end
+
+local function get_single_texture(tiles)
+	if type(tiles) == "string" then
+		return tiles
+	elseif type(tiles) == "table" then
+		tiles = tiles[1]
+		if type(tiles) == "string" then
+			return tiles
+		elseif type(tiles) == "table" then
+			return tiles.name or tiles.image or "blank.png"
+		end
+	end
+	return "blank.png"
+end
+
+local function get_six_textures(tiles)
+	if type(tiles) == "string" then
+		return {tiles, tiles, tiles, tiles, tiles, tiles}
+	elseif type(tiles) == "table" then
+		tiles = table.copy(tiles)
+		for i = 1, #tiles do
+			if type(tiles[i]) ~= "table" then
+				tiles[i] = {name = tiles[i]}
+			end
+		end
+		if #tiles < 6 then
+			for i = #tiles, 5 do
+				tiles[i + 1] = table.copy(tiles[i])
+			end
+		end
+		return tiles
+	end
+	return {
+		{name = "blank.png"},
+		{name = "blank.png"},
+		{name = "blank.png"},
+		{name = "blank.png"},
+		{name = "blank.png"},
+		{name = "blank.png"},
+	}
+end
+
+local groups_to_inherit = {"choppy", "crumbly", "snappy", "oddly_breakable_by_hand", "flammable"}
+
+local default_fence_defs = {
+	fence = true,
+	rail = true,
+	mesepost = false,
+	fencegate = true,
+}
+
+local function assembly_name(matmod, prefix, matname, def, foreign_names)
+	if type(def) == "table" and def.name ~= nil then
+		return def.name
+	end
+	return ifthenelse(foreign_names, ":"..matmod, matmod)..":"..prefix..matname
+end
+
+function ch_core.register_fence(material, defs)
+	local matmod, matname = string.match(material, "([^:]+):([^:]+)$")
+	local ndef = minetest.registered_nodes[material]
+	if ndef == nil then
+		error("Fence material "..material.." is not a registered node!")
+	end
+	if matmod == nil or matname == nil then
+		error("Invalid material syntax: "..material.."!")
+	end
+	if defs == nil then
+		defs = default_fence_defs
+	end
+
+	local tiles = ndef.tiles or {{name = "blank.png"}}
+	local texture = get_single_texture(tiles)
+
+
+
+	local groups = assembly_groups(nil, nil, ndef.groups, groups_to_inherit)
+
+	if defs.fence ~= nil and ch_core.is_shape_allowed(material, "fence", "fence") then
+		-- fence block ('fence')
+		-- example: default:fence_wood
+		local name = assembly_name(matmod, "fence_", matname, defs.fence, defs.foreign_names)
+		local icon = "default_fence_overlay.png^"..texture.."^default_fence_overlay.png^[makealpha:255,126,126"
+		default.register_fence(name, {
+			material = material,
+			tiles = tiles,
+			inventory_image = icon,
+			wield_image = icon,
+			groups = table.copy(groups),
+			sounds = ndef.sounds,
+			texture = "",
+		})
+	end
+	if defs.rail ~= nil and ch_core.is_shape_allowed(material, "fence", "rail") then
+		-- fence rail ('rail')
+		-- example: default:fence_rail_wood
+		local name = assembly_name(matmod, "fence_rail_", matname, defs.rail, defs.foreign_names)
+		local icon = "default_fence_rail_overlay.png^"..texture.."^default_fence_rail_overlay.png^[makealpha:255,126,126"
+		default.register_fence_rail(name, {
+			material = material,
+			tiles = tiles,
+			inventory_image = icon,
+			wield_image = icon,
+			groups = table.copy(groups),
+			sounds = ndef.sounds,
+			texture = "",
+		})
+	end
+	if defs.mesepost ~= nil and ch_core.is_shape_allowed(material, "fence", "mesepost") then
+		-- post_light ('post_light')
+		-- example: default:mese_post_light
+		local name = assembly_name(matmod, "mese_post_light_", matname, defs.mesepost, defs.foreign_names)
+		local tiles = get_six_textures(ndef.tiles)
+		for i = 3, 4 do
+			tiles[i].name = tiles[i].name.."^default_mese_post_light_side.png^[makealpha:0,0,0"
+		end
+		for i = 5, 6 do
+			tiles[i].name = tiles[i].name.."^default_mese_post_light_side_dark.png^[makealpha:0,0,0"
+		end
+		default.register_mesepost(name, {
+			material = material,
+			texture = texture,
+			description = (ndef.description or "neznámý materiál")..": sloupek s meseovým světlem",
+			tiles = tiles,
+			groups = table.copy(groups),
+			sounds = ndef.sounds,
+		})
+	end
+	if defs.fencegate ~= nil and ch_core.is_shape_allowed(material, "fence", "fencegate") then
+		-- fence gate ('gate')
+		-- example: doors:gate_wood_closed
+		local name
+		if type(defs.fencegate) == "table" and defs.fencegate.name ~= nil then
+			name = defs.fencegate.name
+		else
+			name = "doors:gate_"..matname
+		end
+		doors.register_fencegate(name, {
+			material = material,
+			texture = texture,
+			groups = ch_core.assembly_groups({}, {oddly_breakable_by_hand = 2}, ndef.groups, groups_to_inherit),
+		})
+	end
+end
+
+ch_core.register_fence("default:wood", {
+	fence = true,
+	rail = true,
+	mesepost = {name = ":default:mese_post_light"},
+	fencegate = true,
+	foreign_names = true,
+})
+
+local defs = {
+	fence = true, rail = true, mesepost = true, fencegate = true, foreign_names = true
+}
+
+ch_core.register_fence("default:acacia_wood", defs)
+ch_core.register_fence("default:junglewood", defs)
+ch_core.register_fence("default:aspen_wood", defs)
+ch_core.register_fence("default:pine_wood", defs)
 
 ch_core.close_submod("shapes_db")
