@@ -632,7 +632,7 @@ local function edit_formspec_callback(custom_state, player, formname, fields)
 		end
 
 		ch_core.systemovy_kanal(player_name, pocet_zmen.." "..word.." stavby uloženo.")
-		ch_core.add_event("stavba_finished", "{PLAYER} dokončil/a stavbu „"..record.name.."“ na pozici ("..record.key..")", record.spravuje)
+		ch_core.add_event("stavba_finished", "{PLAYER} dokončil/a stavbu „"..assert(record.nazev).."“ na pozici ("..assert(record.key)..")", assert(record.spravuje))
 
 		fields.quit = "true"
 		return
