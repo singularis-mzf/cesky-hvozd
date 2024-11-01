@@ -409,6 +409,7 @@ stairsplus.defs = {
 				type = "fixed",
 				fixed = {-16/32, -16/32, -16/32, -9/32, 16/32, -9/32},
 			},
+			align_style = "world",
 			not_blocking_trains = true,
 		},
 		["_l"] = {
@@ -427,6 +428,7 @@ stairsplus.defs = {
 					{-16/32, -16/32, -16/32, 16/32, -9/32, -9/32},
 				},
 			},
+			align_style = "world",
 			not_blocking_trains = true,
 		},
 		["_l1"] = {
@@ -438,6 +440,7 @@ stairsplus.defs = {
 					{-0.5, -0.5, -0.5, -0.25, -0.4375, 0.25},
 				},
 			},
+			align_style = "world",
 		},
 		["_wide"] = {
 			description = "široký panel 8/16",
@@ -452,6 +455,7 @@ stairsplus.defs = {
 				type = "fixed",
 				fixed = {-0.5, -0.5, 0, 0.5, -0.46875, 0.5},
 			},
+			not_blocking_trains = true,
 		},
 	},
 	["slab"] = {
@@ -479,8 +483,12 @@ stairsplus.defs = {
 			},
 		},
 		["_1"] = {
-			description = "deska 1/16",
+			description = "deska 1/64",
 			node_box = {
+				type = "fixed",
+				fixed = {-0.5, -0.5, -0.5, 0.5, 1/64 - 0.5, 0.5},
+			},
+			selection_box = {
 				type = "fixed",
 				fixed = {-0.5, -0.5, -0.5, 0.5, 1/16 - 0.5, 0.5},
 			},
@@ -542,8 +550,12 @@ stairsplus.defs = {
 			},
 		},
 		["_triplet"] = {
-			description = "trojitá deska",
+			description = "trojitá deska 1/64",
 			node_box = {
+				type = "fixed",
+				fixed = { -1.5, -0.5, -0.5, 1.5, -0.5 + 1/64, 0.5},
+			},
+			selection_box = {
 				type = "fixed",
 				fixed = { -1.5, -0.5, -0.5, 1.5, -0.5 + 1/16, 0.5},
 			},
@@ -607,6 +619,15 @@ stairsplus.defs = {
 					{ -0.5, -0.5, -0.5, -7/16, 0.0, 0.5 }
 				},
 			},
+		},
+		["_rcover"] = {
+			description = "kryt na koleje",
+			node_box = {
+				type = "fixed",
+				fixed = { -0.5, -0.5, -0.5, 1.5, -0.5 + 1/16, 0.5},
+			},
+			align_style = "world",
+			not_blocking_trains = true,
 		},
 	},
 	["slope"] = {

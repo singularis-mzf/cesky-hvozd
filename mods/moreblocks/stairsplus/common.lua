@@ -249,12 +249,14 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 	end
 
 	-- world-aligned textures
-	if category == "stair" or (category == "panel" and (alternate == "_special" or alternate == "_l" or alternate == "_l1")) then
+	if category == "stair" or info.align_style == "world" then
 		local new_tiles = {}
 		for i, v in ipairs(def.tiles) do
 			if type(v) == "table" then
 				new_tiles[i] = table.copy(v)
 				new_tiles[i].align_style = "world"
+			elseif type(v) == "string" then
+				new_tiles[i] = {name = v, align_style = "world"}
 			else
 				new_tiles[i] = v
 			end

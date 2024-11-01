@@ -103,9 +103,12 @@ circular_saw.names = {
 
 	{"slope", "_roof22_3", 6},
 	{"slope", "_roof22_raised_3", 6},
+
 	{"slope", "_roof45_3", 6},
-	{"slab", "_triplet", 3},
 	{"slope", "_tripleslope", 12},
+
+	{"slab", "_rcover", 2},
+	{"slab", "_triplet", 3},
 
 	-- {"slope", "_outer_cut_half_raised", 3},
 	-- {"slope", "_slab_half", 2},

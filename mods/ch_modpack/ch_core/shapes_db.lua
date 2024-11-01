@@ -476,7 +476,9 @@ local alts_slab = set("", "_quarter", "_three_quarter", "_1", "_2", "_14", "_15"
 	"_triplet", -- trojitá deska
 	"_cube", -- kvádr
 	"_two_sides_half", -- deska L (dvě strany, seříznutá)
-	"_three_sides_half") -- deska rohová (tři strany, seříznutá)
+	"_three_sides_half", -- deska rohová (tři strany, seříznutá)
+	"_rcover" -- kryt na koleje
+)
 
 local alts_slope = set("", "_half", "_half_raised",
 	"_inner", "_inner_half", "_inner_half_raised", "_inner_cut", "_inner_cut_half", "_inner_cut_half_raised",
