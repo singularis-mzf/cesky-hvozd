@@ -219,11 +219,15 @@ local function after_joinplayer(player_name)
 		end
 
 		-- Vypsat posledních 5 přihlášených registrovaných postav:
-		local last_logins = ch_core.get_last_logins(true, player_name)
+		-- (přeskočit vlastní postavu a předváděcí postavy)
+		local last_logins = ch_core.get_last_logins(true, {[player_name] = true, Jan_Rimbaba = true, Zofia_Slivka = true})
 		if #last_logins > 0 then
-			local last_players = {}
+			local output = {
+				"INFORMACE: Registrované postavy objevivší se ve hře v poslední době: ",
+			}
+			-- local last_players = {}
 			for i, info in ipairs(last_logins) do
-				local viewname = ch_core.prihlasovaci_na_zobrazovaci(info.player_name)
+				local viewname = ch_core.prihlasovaci_na_zobrazovaci(info.player_name, true)
 				local kdy = info.last_login_before
 				if kdy < 0 then
 					kdy = "???"
@@ -234,13 +238,12 @@ local function after_joinplayer(player_name)
 				else
 					kdy = "před "..kdy.." dny"
 				end
-				table.insert(last_players, viewname.." ("..kdy..")")
+				table.insert(output, ch_core.colors.light_green..viewname..ch_core.colors.white.." ("..kdy..")")
+				table.insert(output, ", ")
 				if i == 5 then break end
 			end
-			ch_core.systemovy_kanal(player_name,
-				ch_core.colors.light_green..
-				"INFORMACE: Poslední přihlášení ostatních hráčů/ek (max. 5, turistické postavy se nepočítají):\n"..
-				ch_core.colors.light_green..">> "..table.concat(last_players, ", "))
+			output[#output] = ""
+			ch_core.systemovy_kanal(player_name, table.concat(output))
 		end
 
 		minetest.log("action", "Player "..player_name.." after_joinplayer privs = "..dump_privs(minetest.get_player_privs(player_name)))

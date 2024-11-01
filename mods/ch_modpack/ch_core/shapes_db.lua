@@ -250,6 +250,8 @@ local materials_kp = set(
 "xdecor:wood_tile"
 )
 
+local materials_for_thin_shapes = materials_kp
+
 local materials_sns = set(
 "ch_extras:bright_gravel",
 "ch_extras:railway_gravel",
@@ -575,6 +577,7 @@ local rules = {
 	{materials_zdlazba, "slope", alts_slope, true },
 	{materials_zdlazba, "stair", "_alt_1", true },
 	{materials_for_bank_slopes, "bank_slope", bank_slopes, true},
+	{materials_for_thin_shapes, "slab", "_thin", true}, -- thin slabs and triple slabs
 	{materials_pillars, "pillar", "*", true },
 
 -- CNC:

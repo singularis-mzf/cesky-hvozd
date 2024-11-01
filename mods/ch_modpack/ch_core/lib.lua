@@ -736,7 +736,7 @@ name_to_skip - je-li nastaveno, postava s daným přihl. jménem se nepočítá
 Výsledkem je seznam struktur ve formátu:
 	{
 		player_name = STRING, -- přihl. jméno postavy
-		last_login_before = INT, -- před kolika dny se postava přihlásila; -1, není-li k dispozici
+		last_login_before = INT, -- před kolika (kalendářními) dny se postava přihlásila; -1, není-li k dispozici
 		played_hours_total = FLOAT, -- hodiny ve hře
 		played_hours_actively = FLOAT, -- aktivně odehrané hodiny ve hře
 		is_in_game = BOOL, -- je postava aktuálně ve hře?
@@ -744,13 +744,22 @@ Výsledkem je seznam struktur ve formátu:
 		is_registered = BOOL,
 	}
 ]]
-function ch_core.get_last_logins(registered_only, name_to_skip)
+function ch_core.get_last_logins(registered_only, names_to_skip)
 	local new_players = {} -- new players
 	local reg_players = {} -- registered players
-	local shifted_now = os.time() - 946684800
+	local shifted_eod = os.time() - 946684800 -- EOD = end of day
+	shifted_eod = shifted_eod + 86400 - (shifted_eod % 86400)
+
+	if names_to_skip == nil then
+		names_to_skip = {}
+	elseif type(names_to_skip) == "string" then
+		names_to_skip = {[names_to_skip] = true}
+	elseif type(names_to_skip) ~= "table" then
+		error("names_to_skip: invalid type of argument!")
+	end
 
 	for other_player_name, _ in pairs(ch_core.offline_charinfo) do
-		if other_player_name ~= name_to_skip then
+		if not names_to_skip[other_player_name] then
 			if minetest.check_player_privs(other_player_name, "ch_registered_player") then
 				table.insert(reg_players, other_player_name)
 			elseif not registered_only then
@@ -777,7 +786,7 @@ function ch_core.get_last_logins(registered_only, name_to_skip)
 		if last_login == 0 then
 			info.last_login_before = -1
 		else
-			info.last_login_before = math.floor((shifted_now - last_login) / 86400)
+			info.last_login_before = math.floor((shifted_eod - last_login) / 86400)
 		end
 		info.played_hours_total = math.round(offline_charinfo.past_playtime / 36) / 100
 		info.played_hours_actively = math.round(offline_charinfo.past_ap_playtime / 36) / 100

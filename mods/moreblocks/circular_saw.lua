@@ -52,7 +52,7 @@ circular_saw.names = {
 	{"slab", "_three_quarter", 6},
 	{"slab", "_14", 7},
 	{"slab", "_15", 8},
-	{"slab", "_cube", 4},
+	separator,
 
 	{"stair", "", 6},
 	{"stair", "_triple", 6},
@@ -96,7 +96,7 @@ circular_saw.names = {
 	{"slope", "_roof22", 2},
 	{"slope", "_roof22_raised", 2},
 	{"slope", "_roof45", 2},
-	separator,
+	{"slab", "_cube", 4},
 	separator,
 	separator,
 	separator,
@@ -105,6 +105,7 @@ circular_saw.names = {
 	{"slope", "_roof22_raised_3", 6},
 	{"slope", "_roof45_3", 6},
 	{"slab", "_triplet", 3},
+	{"slope", "_tripleslope", 12},
 
 	-- {"slope", "_outer_cut_half_raised", 3},
 	-- {"slope", "_slab_half", 2},
