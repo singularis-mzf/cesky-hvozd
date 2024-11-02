@@ -60,8 +60,9 @@ minetest.register_alias("moreblocks:junglestick", "moreblocks:jungle_stick")
 minetest.register_alias("moreblocks:splitstonesquare","moreblocks:split_stone_tile")
 minetest.register_alias("moreblocks:allfacestree","moreblocks:all_faces_tree")
 minetest.register_alias("moreblocks:empty_bookshelf","moreblocks:empty_shelf")
-minetest.register_alias("moreblocks:split_stone_tile_alt","moreblocks:checker_stone_tile")
+-- minetest.register_alias("moreblocks:split_stone_tile_alt","moreblocks:checker_stone_tile")
 
+--[[
 -- ABM for horizontal trees (fix facedir):
 local horizontal_tree_convert_facedir = {7, 12, 9, 18}
 
@@ -105,3 +106,4 @@ minetest.register_lbm({
 			" at " .. minetest.pos_to_string(pos))
 	end,
 })
+]]
