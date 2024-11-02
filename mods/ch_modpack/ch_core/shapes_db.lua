@@ -169,7 +169,6 @@ local materials_kp = set(
 "moreblocks:jungletree_noface",
 "moreblocks:pine_tree_noface",
 "moreblocks:plankstone",
-"moreblocks:split_stone_tile",
 "moreblocks:stone_tile",
 "moreblocks:tree_allfaces",
 "moreblocks:tree_noface",
@@ -294,7 +293,8 @@ local materials_wool = set(
 "wool:red",
 "wool:violet",
 "wool:white",
-"wool:yellow"
+"wool:yellow",
+"moreblocks:split_stone_tile" -- the same shapes as wool
 )
 
 local materials_cnc = set(
@@ -575,16 +575,19 @@ local rules = {
 		slope = {alts_slope, true},
 		stair = {alts_stair, true},
 	}},
-	{materials_wool, "panel", wool_panels, true},
-	{materials_wool, "slab", wool_slabs, true},
-	{materials_wool, "slope", wool_slopes, true},
-	{materials_wool, "stair", "", true},
-	{materials_zdlazba, "micro", set("_1", "_2", "", "_15"), true },
-	{materials_zdlazba, "panel", set("_1", "_special", "_wide_1"), true},
-	{materials_zdlazba, "slab", sns_slabs, true },
-	{materials_zdlazba, "slope", alts_slope, true },
-	{materials_zdlazba, "stair", "_alt_1", true },
-
+	{materials_wool, {
+		panel = {wool_panels, true},
+		slab = {wool_slabs, true},
+		slope = {wool_slopes, true},
+		stair = {"", true},
+	}},
+	{materials_zdlazba, {
+		micro = {set("_1", "_2", "", "_15"), true},
+		panel = {set("_1", "_special", "_wide_1"), true},
+		slab = {sns_slabs, true},
+		slope = {alts_slope, true},
+		stair = {"_alt_1", true},
+	}},
 	{materials_kp, {
 		micro = {alts_micro, true},
 		panel = {alts_panel, true},
@@ -592,12 +595,14 @@ local rules = {
 		slope = {alts_slope, true},
 		stair = {alts_stair, true},
 	}},
-	{materials_sns, "slab", sns_slabs, true},
-	{materials_sns, "slope", sns_slopes, true},
+	{materials_sns, {
+		slab = {sns_slabs, true},
+		slope = {sns_slopes, true},
+	}},
 	{materials_roof, "slope", roof_slopes, true}, -- roofs
 	{materials_for_bank_slopes, "bank_slope", bank_slopes, true},
 	{materials_for_thin_shapes, "slab", "_thin", true}, -- thin slabs and triple slabs
-	{materials_pillars, "pillar", "*", true },
+	{materials_pillars, "pillar", "*", true }, -- zatím bez omezení
 
 -- CNC:
 	{"default:dirt", "cnc",
