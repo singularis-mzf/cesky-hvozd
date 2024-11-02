@@ -1,11 +1,12 @@
 -- FALLING NODES
 local falling_nodes = {
 	"building_blocks:fakegrass",
-	"charcoal:charcoal_block",
+--	"charcoal:charcoal_block",
 	"darkage:darkdirt",
 	"darkage:mud",
 	"darkage:silt",
 	"default:clay",
+--	"default:coalblock",
 	"default:dirt",
 	"default:dirt_with_grass",
 	"default:dirt_with_dry_grass",

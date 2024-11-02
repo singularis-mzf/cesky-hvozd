@@ -257,8 +257,10 @@ local materials_for_thin_shapes = union(materials_kp, materials_glass)
 
 
 local materials_sns = set(
+"charcoal:charcoal_block",
 "ch_extras:bright_gravel",
 "ch_extras:railway_gravel",
+"default:coalblock",
 "default:desert_sand",
 "default:dirt_with_coniferous_litter",
 "default:dirt_with_grass",

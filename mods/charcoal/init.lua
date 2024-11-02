@@ -40,12 +40,27 @@ minetest.register_craftitem("charcoal:charcoal", {
 -- Charcoal Block
 minetest.register_node("charcoal:charcoal_block", {
   description = S("Charcoal Block"),
-  inventory_image = minetest.inventorycube("charcoal_charcoal_block.png"),
-  tiles = {"charcoal_charcoal_block.png"},
-  groups = {cracky=3, oddly_breakalbe_by_hand=1},
-  sounds = default.node_sound_stone_defaults(),
+  -- inventory_image = minetest.inventorycube("charcoal_charcoal_block.png"),
+  tiles = {{name = "default_gravel.png^[multiply:#443333", backface_culling = true}},
+  -- tiles = {"charcoal_charcoal_block.png"},
+  groups = {cracky = 2, crumbly = 2, oddly_breakable_by_hand = 1, falling_node = 1},
+  sounds = default.node_sound_gravel_defaults(),
+  drop = "charcoal:charcoal 10",
 })
 
+stairsplus:register_all("charcoal", "charcoal_block", "charcoal:charcoal_block", minetest.registered_nodes["charcoal:charcoal_block"])
+
+-- Override and register default Coal Block as well
+
+minetest.override_item("default:coalblock", {
+  description = "uhlí",
+	tiles = {{name = "default_gravel.png^[multiply:#333333"}},
+	groups = {cracky = 2, crumbly = 2, falling_node = 1},
+	sounds = default.node_sound_gravel_defaults(),
+  drop = "default:coal_lump 10",
+})
+
+stairsplus:register_all("moreblocks", "coalblock", "default:coalblock", minetest.registered_nodes["default:coalblock"])
 
 -- Use Charcoal as fuel
 minetest.register_craft({
