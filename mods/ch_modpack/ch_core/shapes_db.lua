@@ -85,8 +85,6 @@ local materials_kp = set(
 "building_blocks:Tar",
 "building_blocks:fakegrass",
 "building_blocks:grate",
-"building_blocks:smoothglass",
-"building_blocks:woodglass",
 "ch_extras:marble",
 "ch_extras:particle_board_grey",
 "ch_extras:scorched_tree",
@@ -132,14 +130,12 @@ local materials_kp = set(
 "default:desert_stonebrick",
 "default:diamondblock",
 "default:dirt",
-"default:glass",
 "default:goldblock",
 "default:ice",
 "default:junglewood",
 "default:meselamp",
 "default:obsidian",
 "default:obsidian_block",
-"default:obsidian_glass",
 "default:obsidianbrick",
 "default:pine_wood",
 "default:sandstone",
@@ -159,20 +155,14 @@ local materials_kp = set(
 "moreblocks:cactus_checker",
 "moreblocks:checker_stone_tile",
 "moreblocks:circle_stone_bricks",
-"moreblocks:clean_glass",
-"moreblocks:clean_glow_glass",
-"moreblocks:clean_super_glow_glass",
 "moreblocks:coal_checker",
-"moreblocks:coal_glass",
 "moreblocks:coal_stone",
 "moreblocks:coal_stone_bricks",
 "moreblocks:cobble_compressed",
 "moreblocks:copperpatina",
 "moreblocks:desert_cobble_compressed",
-"moreblocks:glow_glass",
 "moreblocks:grey_bricks",
 "moreblocks:iron_checker",
-"moreblocks:iron_glass",
 "moreblocks:iron_stone",
 "moreblocks:iron_stone_bricks",
 "moreblocks:jungletree_allfaces",
@@ -181,7 +171,6 @@ local materials_kp = set(
 "moreblocks:plankstone",
 "moreblocks:split_stone_tile",
 "moreblocks:stone_tile",
-"moreblocks:super_glow_glass",
 "moreblocks:tree_allfaces",
 "moreblocks:tree_noface",
 "moreblocks:wood_tile",
@@ -250,7 +239,22 @@ local materials_kp = set(
 "xdecor:wood_tile"
 )
 
-local materials_for_thin_shapes = materials_kp
+local materials_glass = set(
+	"building_blocks:smoothglass",
+	"building_blocks:woodglass",
+	"default:glass",
+	"default:obsidian_glass",
+	"moreblocks:clean_glass",
+	"moreblocks:clean_glow_glass",
+	"moreblocks:clean_super_glow_glass",
+	"moreblocks:coal_glass",
+	"moreblocks:glow_glass",
+	"moreblocks:iron_glass",
+	"moreblocks:super_glow_glass"
+)
+
+local materials_for_thin_shapes = union(materials_kp, materials_glass)
+
 
 local materials_sns = set(
 "ch_extras:bright_gravel",
@@ -458,7 +462,7 @@ local materials_zdlazba = set(
 	"ch_extras:zdlazba"
 )
 
-local materials_all = union(materials_cnc, materials_kp, materials_sns, materials_wool, materials_roof, materials_zdlazba)
+local materials_all = union(materials_cnc, materials_kp, materials_glass, materials_sns, materials_wool, materials_roof, materials_zdlazba)
 
 local alts_micro = set("", "_1", "_2", "_4", "_12", "_15")
 
@@ -561,23 +565,34 @@ local rules = {
 	--  c) "*" (always match)
 	{"*", "slab", "_1", true}, -- "slab/_1 pro všechny materiály"
 	{"default:wood", "*", "*", true}, -- dřevo je referenční materiál, musí podporovat všechny tvary
-	{materials_kp, "micro", alts_micro, true},
-	{materials_kp, "panel", alts_panel, true},
-	{materials_kp, "slab", alts_slab, true},
-	{materials_kp, "slope", alts_slope, true},
-	{materials_kp, "stair", alts_stair, true},
-	{materials_sns, "slab", sns_slabs, true},
-	{materials_sns, "slope", sns_slopes, true},
+
+	{materials_glass, {
+		micro = {alts_micro, true},
+		panel = {alts_panel, true},
+		slab = {alts_slab, true},
+		slope = {alts_slope, true},
+		stair = {alts_stair, true},
+	}},
 	{materials_wool, "panel", wool_panels, true},
 	{materials_wool, "slab", wool_slabs, true},
 	{materials_wool, "slope", wool_slopes, true},
 	{materials_wool, "stair", "", true},
-	{materials_roof, "slope", roof_slopes, true}, -- roofs
 	{materials_zdlazba, "micro", set("_1", "_2", "", "_15"), true },
 	{materials_zdlazba, "panel", set("_1", "_special", "_wide_1"), true},
 	{materials_zdlazba, "slab", sns_slabs, true },
 	{materials_zdlazba, "slope", alts_slope, true },
 	{materials_zdlazba, "stair", "_alt_1", true },
+
+	{materials_kp, {
+		micro = {alts_micro, true},
+		panel = {alts_panel, true},
+		slab = {alts_slab, true},
+		slope = {alts_slope, true},
+		stair = {alts_stair, true},
+	}},
+	{materials_sns, "slab", sns_slabs, true},
+	{materials_sns, "slope", sns_slopes, true},
+	{materials_roof, "slope", roof_slopes, true}, -- roofs
 	{materials_for_bank_slopes, "bank_slope", bank_slopes, true},
 	{materials_for_thin_shapes, "slab", "_thin", true}, -- thin slabs and triple slabs
 	{materials_pillars, "pillar", "*", true },
@@ -666,10 +681,25 @@ function ch_core.is_shape_allowed(recipeitem, category, alternate)
 	end
 	-- perform full resolution:
 	for _, rule in ipairs(rules) do
-		if is_match(category, rule[2]) and is_match(recipeitem, rule[1]) and is_match(alternate, rule[3]) then
-			-- match
-			result = ifthenelse(rule[4], true, false)
-			break
+		if #rule == 4 then
+			-- starší formát pravidla
+			if is_match(category, rule[2]) and is_match(recipeitem, rule[1]) and is_match(alternate, rule[3]) then
+				-- match
+				result = ifthenelse(rule[4], true, false)
+				break
+			end
+		elseif #rule == 2 and type(rule[2]) == "table" then
+			-- novější formát pravidla
+			local subrule = rule[2][category]
+			if subrule ~= nil and is_match(recipeitem, rule[1]) then
+				if #subrule ~= 2 then
+					error("Invalid subrule found:"..dump2(rule))
+				end
+				if is_match(alternate, subrule[1]) then
+					result = ifthenelse(subrule[2], true, false)
+					break
+				end
+			end
 		end
 	end
 	if result == nil then
@@ -739,16 +769,27 @@ local default_fence_defs = {
 	fencegate = true,
 }
 
-local function assembly_name(matmod, prefix, matname, def, foreign_names)
-	if type(def) == "table" and def.name ~= nil then
-		return def.name
+local function assembly_name(matmod, prefix, matname, info, foreign_names)
+	if type(info) == "table" and info.name ~= nil then
+		return info.name
 	end
 	return ifthenelse(foreign_names, ":"..matmod, matmod)..":"..prefix..matname
+end
+
+local function set_tiles(info, tiles, def)
+	if type(info) == "table" and info.texture ~= nil then
+		def.texture = info.texture
+	else
+		def.texture = ""
+		def.tiles = tiles
+	end
+	return def
 end
 
 function ch_core.register_fence(material, defs)
 	local matmod, matname = string.match(material, "([^:]+):([^:]+)$")
 	local ndef = minetest.registered_nodes[material]
+	local empty_table = {}
 	if ndef == nil then
 		error("Fence material "..material.." is not a registered node!")
 	end
@@ -759,47 +800,65 @@ function ch_core.register_fence(material, defs)
 		defs = default_fence_defs
 	end
 
+	local info, def
+	local name
 	local tiles = ndef.tiles or {{name = "blank.png"}}
 	local texture = get_single_texture(tiles)
-
-
-
 	local groups = assembly_groups(nil, nil, ndef.groups, groups_to_inherit)
 
+	-- FENCE
+	-- ===============================================================================
 	if defs.fence ~= nil and ch_core.is_shape_allowed(material, "fence", "fence") then
 		-- fence block ('fence')
 		-- example: default:fence_wood
-		local name = assembly_name(matmod, "fence_", matname, defs.fence, defs.foreign_names)
-		local icon = "default_fence_overlay.png^"..texture.."^default_fence_overlay.png^[makealpha:255,126,126"
-		default.register_fence(name, {
+		info = ifthenelse(type(defs.fence) == "table", defs.fence, empty_table)
+		name = assembly_name(matmod, "fence_", matname, info, defs.foreign_names)
+		def = {
 			material = material,
-			tiles = tiles,
-			inventory_image = icon,
-			wield_image = icon,
 			groups = table.copy(groups),
 			sounds = ndef.sounds,
-			texture = "",
-		})
+		}
+		if info.texture ~= nil then
+			def.texture = defs.fence.texture
+		else
+			def.texture = ""
+			def.tiles = tiles
+			def.inventory_image = "default_fence_overlay.png^"..texture.."^default_fence_overlay.png^[makealpha:255,126,126"
+			def.wield_image = def.inventory_image
+		end
+		default.register_fence(name, def)
 	end
+
+	-- FENCE RAIL
+	-- ===============================================================================
 	if defs.rail ~= nil and ch_core.is_shape_allowed(material, "fence", "rail") then
 		-- fence rail ('rail')
 		-- example: default:fence_rail_wood
-		local name = assembly_name(matmod, "fence_rail_", matname, defs.rail, defs.foreign_names)
-		local icon = "default_fence_rail_overlay.png^"..texture.."^default_fence_rail_overlay.png^[makealpha:255,126,126"
-		default.register_fence_rail(name, {
+		info = ifthenelse(type(defs.rail) == "table", defs.rail, empty_table)
+		name = assembly_name(matmod, "fence_rail_", matname, info, defs.foreign_names)
+		def = {
 			material = material,
-			tiles = tiles,
-			inventory_image = icon,
-			wield_image = icon,
 			groups = table.copy(groups),
 			sounds = ndef.sounds,
-			texture = "",
-		})
+		}
+		if info.texture ~= nil then
+			def.texture = info.texture
+		else
+			def.texture = ""
+			def.tiles = tiles
+			def.inventory_image = "default_fence_rail_overlay.png^"..texture.."^default_fence_rail_overlay.png^[makealpha:255,126,126"
+			def.wield_image = def.inventory_image
+		end
+		default.register_fence_rail(name, def)
 	end
+
+	-- MESE POST LIGHT
+	-- ===============================================================================
 	if defs.mesepost ~= nil and ch_core.is_shape_allowed(material, "fence", "mesepost") then
 		-- post_light ('post_light')
 		-- example: default:mese_post_light
-		local name = assembly_name(matmod, "mese_post_light_", matname, defs.mesepost, defs.foreign_names)
+		info = ifthenelse(type(defs.mesepost) == "table", defs.mesepost, empty_table)
+		name = assembly_name(matmod, "mese_post_light_", matname, defs.mesepost, defs.foreign_names)
 		local tiles = get_six_textures(ndef.tiles)
 		for i = 3, 4 do
 			tiles[i].name = tiles[i].name.."^default_mese_post_light_side.png^[makealpha:0,0,0"
@@ -807,29 +866,27 @@ function ch_core.register_fence(material, defs)
 		for i = 5, 6 do
 			tiles[i].name = tiles[i].name.."^default_mese_post_light_side_dark.png^[makealpha:0,0,0"
 		end
-		default.register_mesepost(name, {
+		def = {
 			material = material,
-			texture = texture,
+			texture = info.texture or texture,
 			description = (ndef.description or "neznámý materiál")..": sloupek s meseovým světlem",
 			tiles = tiles,
 			groups = table.copy(groups),
 			sounds = ndef.sounds,
-		})
+		}
+		default.register_mesepost(name, def)
 	end
 	if defs.fencegate ~= nil and ch_core.is_shape_allowed(material, "fence", "fencegate") then
 		-- fence gate ('gate')
 		-- example: doors:gate_wood_closed
-		local name
-		if type(defs.fencegate) == "table" and defs.fencegate.name ~= nil then
-			name = defs.fencegate.name
-		else
-			name = "doors:gate_"..matname
-		end
-		doors.register_fencegate(name, {
+		info = ifthenelse(type(defs.fencegate) == "table", defs.fencegate, empty_table)
+		name = info.name or "doors:gate_"..matname
+		def = {
 			material = material,
-			texture = texture,
+			texture = info.texture or texture,
 			groups = ch_core.assembly_groups({}, {oddly_breakable_by_hand = 2}, ndef.groups, groups_to_inherit),
-		})
+		}
+		doors.register_fencegate(name, def)
 	end
 end
 
