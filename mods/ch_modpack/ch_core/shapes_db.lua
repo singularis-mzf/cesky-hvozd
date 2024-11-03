@@ -193,7 +193,6 @@ local materials_kp = set(
 "moretrees:fir_trunk_noface",
 "moretrees:oak_planks",
 "moretrees:oak_trunk_noface",
-"moretrees:palm_planks",
 "moretrees:palm_trunk_noface",
 "moretrees:plumtree_planks",
 "moretrees:plumtree_trunk_noface",
@@ -236,6 +235,10 @@ local materials_kp = set(
 "technic:warning_block",
 "technic:zinc_block",
 "xdecor:wood_tile"
+)
+
+local materials_no_kp = set(
+	"moretrees:palm_planks"
 )
 
 local materials_glass = set(
@@ -464,7 +467,7 @@ local materials_zdlazba = set(
 	"ch_extras:zdlazba"
 )
 
-local materials_all = union(materials_cnc, materials_kp, materials_glass, materials_sns, materials_wool, materials_roof, materials_zdlazba)
+local materials_all = union(materials_cnc, materials_kp, materials_no_kp, materials_glass, materials_sns, materials_wool, materials_roof, materials_zdlazba)
 
 local alts_micro = set("", "_1", "_2", "_4", "_12", "_15")
 
@@ -565,7 +568,8 @@ local rules = {
 	--	a) string (exact match)
 	--  b) table (query)
 	--  c) "*" (always match)
-	{"*", "slab", "_1", true}, -- "slab/_1 pro všechny materiály"
+	{materials_no_kp, set("micro", "panel", "slab", "slope", "stair"), "*", false},
+	{materials_all, "slab", "_1", true}, -- "slab/_1 pro všechny materiály kromě zakázaných"
 	{"default:wood", "*", "*", true}, -- dřevo je referenční materiál, musí podporovat všechny tvary
 
 	{materials_glass, {
@@ -639,7 +643,7 @@ function ch_core.get_stairsplus_custom_shapes(recipeitem)
 		end
 	end
 	-- print("ch_core.get_stairsplus_custom_shapes(): "..#result.." shapes generated for "..recipeitem)
-	return result
+	return ifthenelse(#result > 0, result, nil) -- return nil when no shapes are allowed
 end
 
 function ch_core.init_stairsplus_custom_shapes(defs)

@@ -214,6 +214,7 @@ if minetest.get_modpath("basic_materials") then
 
 end
 
+--[[
 -- Alias cuts of split_stone_tile_alt which was renamed checker_stone_tile.
 stairsplus:register_alias_all("moreblocks", "split_stone_tile_alt", "moreblocks", "checker_stone_tile")
 
@@ -233,3 +234,4 @@ minetest.register_lbm({
 				" at " .. minetest.pos_to_string(pos))
 	end,
 })
+]]

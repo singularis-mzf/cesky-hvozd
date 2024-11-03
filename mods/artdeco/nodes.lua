@@ -89,7 +89,7 @@ minetest.register_node("artdeco:1i", {
 })
 
 minetest.register_node("artdeco:1j", {
-	description = "venkovním mramor s obkladem dole a na jedné hraně",
+	description = "venkovní mramor s obkladem dole a na jedné hraně",
 	tiles = {"artdeco_1c.png", "artdeco_1a.png",
 	"artdeco_1j.png", "artdeco_1h.png^[transformFX.png",
 	"artdeco_1j.png", "artdeco_1h.png"},
@@ -100,7 +100,7 @@ minetest.register_node("artdeco:1j", {
 })
 
 minetest.register_node("artdeco:1k", {
-	description = "venkovním mramor s obkladem dole a na dvou hranách",
+	description = "venkovní mramor s obkladem dole a na dvou hranách",
 	tiles = {"artdeco_1c.png", "artdeco_1a.png",
 		"artdeco_1h.png","artdeco_1h.png^[transformFX",
 		"artdeco_1j.png", "artdeco_1i.png"},
