@@ -235,15 +235,11 @@ function ch_core.add_event(event_type, text, player_name)
     end
 
     -- send to chat
-    print("DEBUG: "..dump2({type_def = type_def, event_type = event_type}))
     if type_def.chat_access ~= nil then
         local players_to_send = {}
         if type_def.chat_access == "player_only" then
             if player_name ~= nil and ch_core.online_charinfo[player_name] ~= nil then
                 table.insert(players_to_send, player_name)
-                print("DEBUG: Will send message to "..player_name)
-            else
-                print("DEBUG: player "..(player_name or "nil").." not online!!!!!!!!!!!!!!!!!!!!!!")
             end
         elseif type_def.chat_access == "players" then
             for _, oplayer in ipairs(minetest.get_connected_players()) do
@@ -270,7 +266,6 @@ function ch_core.add_event(event_type, text, player_name)
         table.insert(message_to_send, get_event_text(event, type_def).." "..ch_core.colors.light_gray.."<"..type_def.description..">")
         message_to_send = table.concat(message_to_send)
         for _, oplayer_name in ipairs(players_to_send) do
-            print("DEBUG: will call systemovy_kanal: "..dump2({oplayer_name = oplayer_name, message_to_send = message_to_send}))
             ch_core.systemovy_kanal(oplayer_name, message_to_send)
         end
     end

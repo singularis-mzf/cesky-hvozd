@@ -255,9 +255,6 @@ local materials_glass = set(
 	"moreblocks:super_glow_glass"
 )
 
-local materials_for_thin_shapes = union(materials_kp, materials_glass)
-
-
 local materials_sns = set(
 "charcoal:charcoal_block",
 "ch_extras:bright_gravel",
@@ -545,6 +542,45 @@ local wool_panels = set("", "_1", "_2", "_4", "_l", "_special")
 
 local wool_slabs = set("", "_quarter", "_three_quarter", "_1", "_2", "_14", "_15")
 
+local glass_micro = set("_1", "_2")
+
+local glass_panel = set("_1", "_2",
+	"_special", -- vychýlená tyč I
+	"_l", -- vychýlená tyč L
+	"_wide_1")
+
+local glass_slab = set("_1", "_2",  "_two_sides", "_three_sides", "_three_sides_u", "_triplet", "_two_sides_half", "_three_sides_half")
+
+local glass_slope = set("", "_half", "_half_raised", "_outer", "_outer_half", "_outer_half_raised",
+	"_tripleslope",
+	"_cut2", -- šikmá hradba
+	"_roof22", "_roof22_raised", "_roof22_3", "_roof22_raised_3", "_roof45", "_roof45_3" -- roof slopes
+)
+
+local glass_no_cnc = set(
+	"technic_cnc_circle",
+	"technic_cnc_cylinder_half_corner",
+	"technic_cnc_diagonal_truss",
+	"technic_cnc_diagonal_truss_cross",
+	"technic_cnc_oblate_spheroid",
+	"technic_cnc_peek",
+	"technic_cnc_spike",
+	"technic_cnc_pyramid",
+	"technic_cnc_sphere_half",
+	"technic_cnc_sphere",
+	"technic_cnc_stick",
+	"technic_cnc_element_end_double",
+	"technic_cnc_element_cross_double",
+	"technic_cnc_element_t_double",
+	"technic_cnc_element_edge_double",
+	"technic_cnc_element_straight_double",
+	"technic_cnc_element_end",
+	"technic_cnc_element_cross",
+	"technic_cnc_element_t",
+	"technic_cnc_element_edge",
+	"technic_cnc_element_straight"
+)
+
 local sns_slabs = wool_slabs
 
 local sns_slopes = set("", "_half", "_half_raised",
@@ -573,24 +609,25 @@ local rules = {
 	{"default:wood", "*", "*", true}, -- dřevo je referenční materiál, musí podporovat všechny tvary
 
 	{materials_glass, {
-		micro = {alts_micro, true},
-		panel = {alts_panel, true},
-		slab = {alts_slab, true},
-		slope = {alts_slope, true},
-		stair = {alts_stair, true},
+		micro = {glass_micro, true},
+		panel = {glass_panel, true},
+		slab = {glass_slab, true},
+		slope = {glass_slope, true},
+		stair = {"*", false}, -- no stairs...
+		cnc = {glass_no_cnc, false},
 	}},
 	{materials_wool, {
 		panel = {wool_panels, true},
 		slab = {wool_slabs, true},
 		slope = {wool_slopes, true},
-		stair = {"", true},
+		stair = {"", true}, -- single shape only
 	}},
 	{materials_zdlazba, {
 		micro = {set("_1", "_2", "", "_15"), true},
 		panel = {set("_1", "_special", "_wide_1"), true},
 		slab = {sns_slabs, true},
 		slope = {alts_slope, true},
-		stair = {"_alt_1", true},
+		stair = {"_alt_1", true}, -- single shape only
 	}},
 	{materials_kp, {
 		micro = {alts_micro, true},
@@ -605,7 +642,6 @@ local rules = {
 	}},
 	{materials_roof, "slope", roof_slopes, true}, -- roofs
 	{materials_for_bank_slopes, "bank_slope", bank_slopes, true},
-	{materials_for_thin_shapes, "slab", "_thin", true}, -- thin slabs and triple slabs
 	{materials_pillars, "pillar", "*", true }, -- zatím bez omezení
 
 -- CNC:
