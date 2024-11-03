@@ -672,3 +672,9 @@ awg_tree_leaves.obj
 	License: CC BY-SA 4.0 International
         Source: Always-Greener mod (https://github.com/Sneglium/Always-Greener/)
         Unmodified.
+
+ch_overrides_ui_events.png
+	Author: Jazzman
+	Source: https://commons.wikimedia.org/wiki/File:P_newspaper.svg
+	License: CC BY-SA 3.0
+	Adapted and modified by Singularis (modifications under CC BY-SA 3.0)

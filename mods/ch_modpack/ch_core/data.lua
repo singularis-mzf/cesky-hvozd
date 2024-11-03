@@ -118,6 +118,7 @@ local offline_charinfo_data_types = {
 	skryt_body = "int", -- 0 => zobrazit, 1 => skrýt
 	skryt_hlad = "int", -- 0 => zobrazovat (výchozí), 1 => skrýt
 	skryt_zbyv = "int", -- 0 => zobrazovat (výchozí), 1 => skrýt
+	ui_event_filter = "string",
 	zacatek_kam = "int", -- 1 => Začátek, 2 => Masarykovo náměstí, 3 => Hlavní nádraží
 
 	trest = "int",

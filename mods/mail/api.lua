@@ -40,7 +40,7 @@ function mail.send(m)
 		for name in pairs(undeliverable) do
 			undeliverable_names[#undeliverable_names + 1] = '"' .. name .. '"'
 		end
-		return false, f("recipients %s don't exist; cannot send mail.", table.concat(undeliverable_names, ", "))
+		return false, f("adresáti/ky %s neexistují; nemohu odeslat zprávu.", table.concat(undeliverable_names, ", "))
 	end
 
 	local extra = {}

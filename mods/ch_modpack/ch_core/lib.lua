@@ -870,6 +870,7 @@ title -- string, optional -- nadpis pro zobrazení v záhlaví
 scrollbars -- table, required -- definuje maxima pro posuvníky oblastí a současně také rozložení oblastí;
 	tato verze podporuje jen rozložení {left = ..., right = ...} a {top = ..., bottom = ...}
 perplayer_formspec -- odpovídající parametr z rozhraní unified_inventory; definuje rozložení formuláře
+online_charinfo -- table, optional -- je-li zadáno, stavy posuvníků se nastaví podle stejně pojmenovaných polí v dané tabulce, budou-li přítomna
 
 Výstup má formát:
 	{
@@ -878,7 +879,7 @@ Výstup má formát:
 			v praxi jsou podstatné především 'w' a 'h' (šířka a výška podoblasti)
 	}
 ]]
-function ch_core.get_ui_form_template(id, player_viewname, title, scrollbars, perplayer_formspec)
+function ch_core.get_ui_form_template(id, player_viewname, title, scrollbars, perplayer_formspec, online_charinfo)
     local fs = assert(perplayer_formspec)
     local fs_begin, fs_middle, fs_end = {fs.standard_inv_bg}, {}, {}
     local form1, form2 = {}, {}
@@ -942,9 +943,16 @@ function ch_core.get_ui_form_template(id, player_viewname, title, scrollbars, pe
         table.insert(fs_middle, "scroll_container_end[]")
         -- insert a scrollbar
         if (form1.scrollbar_max or 0) > 0 then
+			local scrollbar_state = online_charinfo ~= nil and online_charinfo["ch_scrollbar1_"..id]
+			if scrollbar_state ~= nil then
+				scrollbar_state = tostring(scrollbar_state)
+			else
+				scrollbar_state = ""
+			end
             table.insert(fs_middle,
                 "scrollbaroptions[max="..form1.scrollbar_max..";arrows=show]"..
-                "scrollbar["..(form1.x + form1.w - sbar_width)..","..form1.y..";"..sbar_width..","..form1.h..";vertical;ch_scrollbar1_"..id..";]")
+                "scrollbar["..(form1.x + form1.w - sbar_width)..","..form1.y..";"..sbar_width..","..form1.h..";vertical;ch_scrollbar1_"..id..";"..
+				scrollbar_state.."]")
         end
     else
         table.insert(fs_begin, "container["..form1.x..","..form1.y.."]")
@@ -953,14 +961,21 @@ function ch_core.get_ui_form_template(id, player_viewname, title, scrollbars, pe
     end
 
     if (form2.scrollbar_max or 0) > 0 then
-        table.insert(fs_middle, "scroll_container["..form2.x..","..form2.y..";"..form2.w..","..form2.h..";ch_scrollbar1_"..id..";vertical]")
+        table.insert(fs_middle, "scroll_container["..form2.x..","..form2.y..";"..form2.w..","..form2.h..";ch_scrollbar2_"..id..";vertical]")
         -- CONTENT will be inserted here
         table.insert(fs_end, "scroll_container_end[]")
         -- insert a scrollbar
         if (form2.scrollbar_max or 0) > 0 then
+			local scrollbar_state = online_charinfo ~= nil and online_charinfo["ch_scrollbar2_"..id]
+			if scrollbar_state ~= nil then
+				scrollbar_state = tostring(scrollbar_state)
+			else
+				scrollbar_state = ""
+			end
             table.insert(fs_end,
                 "scrollbaroptions[max="..form2.scrollbar_max..";arrows=show]"..
-                "scrollbar["..(form2.x + form2.w - sbar_width)..","..form2.y..";"..sbar_width..","..form2.h..";vertical;ch_scrollbar1_"..id..";]")
+                "scrollbar["..(form2.x + form2.w - sbar_width)..","..form2.y..";"..sbar_width..","..form2.h..";vertical;ch_scrollbar2_"..id..";"..
+				scrollbar_state.."]")
         end
     else
         table.insert(fs_middle, "container["..form2.x..","..form2.y.."]")

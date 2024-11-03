@@ -487,20 +487,6 @@ minetest.register_chatcommand("kdojsem", {
 	end,
 })
 
-minetest.send_join_message = function(player_name)
-	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
-	local supported_lang_code = ch_core.supported_lang_codes[online_charinfo.lang_code or ""]
-	local message = "Připojila se postava: "..ch_core.prihlasovaci_na_zobrazovaci(player_name)
-	if not supported_lang_code then
-		message = message.." [*klient postavy má nastaven nepodporovaný jazyk, bude odpojen*]"
-	end
-
-	return ch_core.systemovy_kanal("", message)
-end
-minetest.send_leave_message = function(player_name, is_timedout)
-	return ch_core.systemovy_kanal("", "Odpojila se postava: "..ch_core.prihlasovaci_na_zobrazovaci(player_name))
-end
-
 local typy_postavy = {
 	admin = "správa serveru",
 	creative = "kouzelnická",

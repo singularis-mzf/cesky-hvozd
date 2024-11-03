@@ -14,6 +14,7 @@ local mods = {
 	"farming",
 	"homedecor_kitchen",
 	"homedecor_misc",
+	"mail",
 	"moreblocks",
 	"moretrees",
 	"sandwiches",
@@ -48,6 +49,7 @@ dofile("stairsplus_recipes.lua")
 dofile("trash_cans.lua")
 dofile("tool_breaking.lua")
 dofile("ui_appearance.lua")
+dofile("ui_events.lua")
 dofile("ui_settings.lua") -- : news
 dofile("ui_stavby.lua")
 dofile("underwater_dig.lua")

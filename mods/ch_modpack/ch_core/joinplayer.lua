@@ -2,6 +2,45 @@ ch_core.open_submod("joinplayer", {chat = true, data = true, events = true, form
 
 local F = minetest.formspec_escape
 
+ch_core.register_event_type("joinplayer", {
+	-- ignoruje postavy, které budou odpojeny, a turistické postavy
+	description = "vstup do hry",
+	access = "players",
+	default_text = "Připojila se postava: {PLAYER}",
+	chat_access = "public",
+})
+
+ch_core.register_event_type("joinplayer_new", {
+	-- jen turistické postavy, kromě těch, které budou odpojeny
+	description = "vstup do hry (tur.p.)",
+	access = "players",
+	default_text = "Připojila se turistická postava: {PLAYER}",
+	chat_access = "public",
+})
+
+ch_core.register_event_type("joinplayer_for_admin", {
+	-- všechny postavy
+	description = "vstup do hry*",
+	access = "admin",
+	chat_access = "admin",
+})
+
+ch_core.register_event_type("leaveplayer", {
+	-- ignoruje postavy, které budou odpojeny
+	description = "odchod ze hry",
+	access = "admin",
+	default_text = "Odpojila se postava: {PLAYER}",
+	chat_access = "public",
+})
+
+ch_core.register_event_type("leaveplayer_for_admin", {
+	-- všechny postavy
+	description = "odchod ze hry*",
+	access = "admin",
+	chat_access = "admin",
+	default_text = "{PLAYER} se odpojil/a ze hry",
+})
+
 local function get_invalid_locale_formspec(invalid_locale, protocol_version)
 	if invalid_locale == nil or invalid_locale == "" then
 		invalid_locale = "en"
@@ -291,6 +330,10 @@ local function on_joinplayer(player, last_login)
 	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
 	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
 	local news_role = assert(online_charinfo.news_role)
+	local lang_code = online_charinfo.lang_code
+	local protocol_version = online_charinfo.protocol_version
+
+	ch_core.add_event("joinplayer_for_admin", "{PLAYER} se připojil/a do hry (NR="..news_role..", PV="..protocol_version..")", player_name)
 
 	if news_role == "disconnect" then
 		minetest.disconnect_player(player_name, "Váš klient je příliš starý. Pro připojení k tomuto serveru prosím použijte Minetest 5.7.0 nebo novější. Verze 5.6.0 a 5.6.1 budou fungovat s omezeními.")
@@ -299,8 +342,6 @@ local function on_joinplayer(player, last_login)
 		minetest.disconnect_player(player_name, "Neplatné přihlašovací jméno '"..player_name.."'. Seznamte se, prosím, s pravidly serveru pro jména, nebo použijte jen písmena anglické abecedy.")
 		return true
 	end
-	local lang_code = online_charinfo.lang_code
-	local protocol_version = online_charinfo.protocol_version
 	if news_role == "invalid_locale" then
 		if minetest.check_player_privs(player_name, "server") then
 			minetest.after(0.2, function()
@@ -338,12 +379,24 @@ local function on_joinplayer(player, last_login)
 	on_joinplayer_pomodoro(player, player_name, online_charinfo)
 	--
 
-	ch_core.add_event("joinplayer", "{PLAYER} se připojil/a do hry", player_name)
-	ch_core.add_event("joinplayer_for_admin", "{PLAYER} se připojil/a do hry (protocol_version="..protocol_version..", news_role = "..news_role..")",
-		player_name)
-
 	-- minetest.after(0.5, function() ch_core.set_pryc(player_name, {no_hud = true, silently = true}) end)
 	minetest.after(2, after_joinplayer, player_name)
+	return true
+end
+
+minetest.send_join_message = function(player_name)
+	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
+	-- local lang_code = assert(online_charinfo.lang_code)
+	local news_role = assert(online_charinfo.news_role)
+	-- local protocol_version = assert(online_charinfo.protocol_version)
+
+	if news_role ~= "disconnect" and news_role ~= "invalid_name" and news_role ~= "invalid_locale" then
+		if news_role ~= "new_player" then
+			ch_core.add_event("joinplayer", nil, player_name)
+		else
+			ch_core.add_event("joinplayer_new", nil, player_name)
+		end
+	end
 	return true
 end
 
@@ -363,25 +416,18 @@ local function on_leaveplayer(player)
 	minetest.log("action", "Player "..player_name.." leaved with privs = "..dump_privs(privs))
 end
 
+minetest.send_leave_message = function(player_name, is_timedout)
+	local online_charinfo = ch_core.get_leaving_online_charinfo(player_name)
+	local news_role = assert(online_charinfo.news_role)
+
+	if news_role ~= "disconnect" and news_role ~= "invalid_name" and news_role ~= "invalid_locale" then
+		ch_core.add_event("leaveplayer", nil, player_name)
+	end
+	return true
+end
+
 minetest.register_on_newplayer(on_newplayer)
 minetest.register_on_joinplayer(on_joinplayer)
 minetest.register_on_leaveplayer(on_leaveplayer)
-
-ch_core.register_event_type("joinplayer", {
-	description = "vstup do hry",
-	access = "players",
-	default_text = "{PLAYER} se připojil/a do hry",
-})
-
-ch_core.register_event_type("joinplayer_for_admin", {
-	description = "vstup do hry*",
-	access = "admin",
-})
-
-ch_core.register_event_type("leaveplayer_for_admin", {
-	description = "odchod ze hry*",
-	access = "admin",
-	default_text = "{PLAYER} se odpojil/a ze hry",
-})
 
 ch_core.close_submod("joinplayer")

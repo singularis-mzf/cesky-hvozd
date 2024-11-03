@@ -88,11 +88,13 @@ local description_to_style = {
 ch_core.register_event_type("book_cancelled", {
 	description = "stažení knihy",
 	access = "public",
+        chat_access = "public",
 })
 
 ch_core.register_event_type("book_published", {
 	description = "vydání knihy",
 	access = "public",
+        chat_access = "public",
 })
 
 function books.register_book_style(name, def)

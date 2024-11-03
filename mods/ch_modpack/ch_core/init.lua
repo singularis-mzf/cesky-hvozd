@@ -78,7 +78,6 @@ dofile(modpath .. "/hotbar.lua")
 dofile(modpath .. "/vgroups.lua")
 dofile(modpath .. "/data.lua")
 dofile(modpath .. "/lib.lua") -- : data
-dofile(modpath .. "/events.lua") -- : lib
 dofile(modpath .. "/interiors.lua") -- : lib
 dofile(modpath .. "/shapes_db.lua") -- : lib
 dofile(modpath .. "/penize.lua") -- : lib
@@ -90,6 +89,7 @@ dofile(modpath .. "/privs.lua")
 dofile(modpath .. "/localize_chatcommands.lua") -- : privs, data, lib
 dofile(modpath .. "/udm.lua") -- : areas, data, lib
 dofile(modpath .. "/chat.lua") -- : areas, data, lib, privs, nametag, udm
+dofile(modpath .. "/events.lua") -- : chat, data, lib, privs
 dofile(modpath .. "/stavby.lua") -- : chat, events, lib
 -- dofile(modpath .. "/inv_inspector.lua") -- : data, formspecs, lib, chat
 dofile(modpath .. "/podnebi.lua") -- : privs, chat
