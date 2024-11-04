@@ -605,8 +605,9 @@ local rules = {
 	--  b) table (query)
 	--  c) "*" (always match)
 	{materials_no_kp, set("micro", "panel", "slab", "slope", "stair"), "*", false},
+	{"*", "cnc", "technic_cnc_d45_slope_216", false}, -- vypnutý tvar (nesmí se generovat pro žádný materiál)
 	{materials_all, "slab", "_1", true}, -- "slab/_1 pro všechny materiály kromě zakázaných"
-	{"default:wood", "*", "*", true}, -- dřevo je referenční materiál, musí podporovat všechny tvary
+	{"default:stone", "*", "*", true}, -- dřevo je referenční materiál, musí podporovat všechny tvary
 
 	{materials_glass, {
 		micro = {glass_micro, true},

@@ -52,7 +52,7 @@ shared.spray_can_empty = "ggraffiti:spray_can_empty_experimental"
 shared.spray_can_rgb = "ggraffiti:spray_can_rgb_experimental"
 shared.spray_can_prefix = "ggraffiti:spray_can_experimental_"
 shared.spray_can_remover = "ggraffiti:spray_can_remover_experimental"
-shared.mushroom_red_extract = "ggraffiti:mushroom_red_extract_experimental"
+shared.mushroom_red_extract = "ggraffiti:mushroom_red_extract"
 
 if shared.game == "mtg" then
     -- Creative inventory concept:
