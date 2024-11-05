@@ -125,7 +125,7 @@ end
 
 --[[
     event_def = {
-        access = "public" or "admin" or "players" or "player_only",
+        access = "public" or "admin" or "players" or "player_only" or "discard",
         description = string, -- popis typu události pro zobrazení ve formspecech a v četu
 
         color = "#RRGGBB" or nil, -- barva pro zobrazení události
@@ -143,7 +143,7 @@ function ch_core.register_event_type(event_type, event_def)
         error("Event type "..event_type.." is already registered.")
     end
     local access = event_def.access
-    if access ~= "public" and access ~= "admin" and access ~= "players" and access ~= "player_only" then
+    if access ~= "public" and access ~= "admin" and access ~= "players" and access ~= "player_only" and access ~= "discard" then
         error("Invalid event access keyword: "..event_def.access)
     end
     local def = {
@@ -199,36 +199,38 @@ function ch_core.add_event(event_type, text, player_name)
     if text == nil and type_def.default_text == nil then
         minetest.log("warning", "Event of type "..event_type.." added with no text!")
     end
-    local current_events = assert(access_events(month_id))
+    if type_def.access ~= "discard" then
+        local current_events = assert(access_events(month_id))
 
-    -- Check safety limit:
-    if #current_events >= safety_limit then
-        local count = 0
-        for i = #current_events, 1, -1 do
-            if current_events[i].type == event_type then
-                count = count + 1
-                if count >= safety_limit then
-                    minetest.log("warning", "Event NOT added, because the security limit "..safety_limit.." was achieved: "..
-                        timestamp.." <"..event_type.."> "..(get_event_text(event, type_def) or "nil"))
-                    return
+        -- Check safety limit:
+        if #current_events >= safety_limit then
+            local count = 0
+            for i = #current_events, 1, -1 do
+                if current_events[i].type == event_type then
+                    count = count + 1
+                    if count >= safety_limit then
+                        minetest.log("warning", "Event NOT added, because the security limit "..safety_limit.." was achieved: "..
+                            timestamp.." <"..event_type.."> "..(get_event_text(event, type_def) or "nil"))
+                        return
+                    end
                 end
             end
         end
-    end
 
-    table.insert(current_events, event)
-    save_events()
-    minetest.log("action", "Event #"..#current_events.." added: "..timestamp.." <"..event_type.."> "..(get_event_text(event, type_def) or "nil"))
+        table.insert(current_events, event)
+        save_events()
+        minetest.log("action", "Event #"..#current_events.." added: "..timestamp.." <"..event_type.."> "..(get_event_text(event, type_def) or "nil"))
 
-    -- remove from sendable events cache:
-    if player_name ~= nil and is_events_admin(ch_core.normalize_player(player_name)) then
-        local cache = sendable_event_types_cache[timestamp_to_date(timestamp)]
-        if cache ~= nil then
-            cache = cache[player_name]
+        -- remove from sendable events cache:
+        if player_name ~= nil and is_events_admin(ch_core.normalize_player(player_name)) then
+            local cache = sendable_event_types_cache[timestamp_to_date(timestamp)]
             if cache ~= nil then
-                local i = table.indexof(cache, event_type)
-                if i ~= -1 then
-                    table.remove(cache, i)
+                cache = cache[player_name]
+                if cache ~= nil then
+                    local i = table.indexof(cache, event_type)
+                    if i ~= -1 then
+                        table.remove(cache, i)
+                    end
                 end
             end
         end
@@ -286,6 +288,7 @@ function ch_core.get_event_types_for_player(player_name_or_player, negative_set)
         players = pinfo.role ~= "new",
         admin = is_events_admin(pinfo),
         player_only = true,
+        discard = false,
     }
     local result = {}
     for event_type, type_def in pairs(event_types) do
@@ -364,6 +367,7 @@ function ch_core.get_events_for_player(player_name_or_player, allowed_event_type
         players = pinfo.role ~= "new",
         admin = is_events_admin(pinfo),
         player_only = true, -- bude testováno samostatně
+        discard = false,
     }
     local event_types_filtered = {}
     if allowed_event_types ~= nil then

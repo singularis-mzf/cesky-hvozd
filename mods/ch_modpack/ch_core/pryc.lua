@@ -1,4 +1,18 @@
-ch_core.open_submod("pryc", {chat = true, data = true, lib = true, privs = true})
+ch_core.open_submod("pryc", {data = true, events = true, lib = true, privs = true})
+
+ch_core.register_event_type("pryc", {
+	description = "pryč od počítače",
+	access = "discard",
+	chat_access = "public",
+	default_text = "{PLAYER} jde pryč od počítače",
+})
+
+ch_core.register_event_type("zpet", {
+	description = "zpět u počítače",
+	access = "discard",
+	chat_access = "public",
+	default_text = "{PLAYER} je zpět u počítače",
+})
 
 local empty_table = {}
 
@@ -25,7 +39,7 @@ end
 local disrupt_pryc = function(player, online_charinfo)
 	if disrupt_pryc_silent(player, online_charinfo) then
 		-- announce
-		ch_core.systemovy_kanal("", ch_core.prihlasovaci_na_zobrazovaci(online_charinfo.player_name).." je zpět u počítače")
+		ch_core.add_event("zpet", nil, online_charinfo.player_name)
 		return true
 	else
 		return false
@@ -82,7 +96,7 @@ function ch_core.set_pryc(player_name, options)
 
 	-- announce
 	if not silently then
-		ch_core.systemovy_kanal("", ch_core.prihlasovaci_na_zobrazovaci(player_name).." jde pryč od počítače")
+		ch_core.add_event("pryc", nil, player_name)
 	end
 
 	return true

@@ -45,8 +45,6 @@ local cz_sk = {cz = true, sk = true}
 
 local holidays = {
 	["01-01"] = cz_sk, -- Nový rok, Deň vzniku Slovenskej republiky
-	["01-28"] = cz_sk, -- DOČASNĚ (kvůli ladění)
-	["01-29"] = cz_sk, -- DOČASNĚ (kvůli ladění)
 	-- ["05-01"] = cz, -- Svátek práce
 	["05-08"] = cz, -- Den vítězství
 	["07-05"] = cz_sk, -- Den slovanských věrozvěstů Cyrila a Metoděje, Sviatok svätého Cyrila a svätého Metoda
@@ -55,8 +53,8 @@ local holidays = {
 	["09-01"] = sk, -- Deň Ústavy Slovenskej republiky
 	["09-28"] = cz, -- Den české státnosti
 	["10-28"] = cz_sk, -- Den vzniku samostatného československého státu, Deň vzniku samostatného česko-slovenského štátu
-	["11-03"] = cz_sk, -- (výročí otevření Českého hvozdu)
 	["11-17"] = cz_sk, -- Den boje za svobodu a demokracii a Mezinárodní den studentstva, Deň boja za slobodu a demokraciu
+	["12-03"] = cz_sk, -- (výročí otevření Českého hvozdu)
 	-- ["12-24"] = cz, -- Štědrý den
 	-- ["12-25"] = cz, -- 1. svátek vánoční
 	-- ["12-26"] = cz, -- 2. svátek vánoční
