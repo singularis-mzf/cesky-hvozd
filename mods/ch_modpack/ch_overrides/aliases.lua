@@ -366,3 +366,20 @@ local lbm_def = {
 	end,
 }
 minetest.register_lbm(lbm_def)
+
+-- Change panel_palm_planks_{l,special} to oak planks
+
+local lbm_def = {
+	label = "CHange palm planks shapes to oak planks",
+	name = "ch_overrides:change_palm_to_oak",
+	nodenames = {"moretrees:panel_palm_planks_l", "moretrees:panel_palm_planks_special"},
+	action = function(pos, node)
+		if node.name == "moretrees:panel_palm_planks_l" then
+			node.name = "moretrees:panel_oak_planks_l"
+		else
+			node.name = "moretrees:panel_oak_planks_special"
+		end
+		minetest.swap_node(pos, node)
+	end,
+}
+minetest.register_lbm(lbm_def)
