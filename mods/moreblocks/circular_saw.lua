@@ -8,7 +8,7 @@ Licensed under the zlib license. See LICENSE.md for more information.
 local S = moreblocks.S
 local F = minetest.formspec_escape
 
-local output_inv_size = (8 + 2) * 8
+local output_inv_size = 8 * 8 + 2 * 12
 local separator = {}
 
 circular_saw = {}
@@ -548,7 +548,7 @@ local function get_formspec()
 		"label[0,7;" .. F(S("Trash")).. "]" ..
 		"list[current_name;trash;1.5,7;1,1;]" ..
 		"list[current_name;output;2.8,0;8,8;]" ..
-		"list[current_name;output;11,0;2,8;64]" ..
+		"list[current_name;output;11,0;2,12;64]" ..
 		"list[current_player;main;1.5,8.25;8,4;]" ..
 		"listring[current_name;output]" ..
 		"listring[current_player;main]" ..
@@ -568,7 +568,6 @@ function circular_saw.on_construct(pos)
 
 	meta:set_int("anz", 0) -- No microblocks inside yet.
 	meta:set_string("max_offered", 10) -- How many items of this kind are offered by default?
-	-- meta:set_string("infotext", S("Circular Saw is empty"))
 
 	local inv = meta:get_inventory()
 	inv:set_size("input", 1)    -- Input slot for full blocks of material x.

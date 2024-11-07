@@ -104,7 +104,8 @@ for _, recipeitem in ipairs(recipeitems) do
         {"slab/_quarter", "slab/"},
         {"panel/_1", "panel/_2"},
         {"panel/_2", "panel/_4"},
-        {"panel/_4", "panel/"}
+        {"panel/_4", "panel/"},
+        {"panel/_element", "panel/_wall"},
     }) do
         from, to = shape_to_node[p[1]], shape_to_node[p[2]]
         if from ~= nil and to ~= nil then
@@ -143,5 +144,14 @@ for _, recipeitem in ipairs(recipeitems) do
     if from ~= nil and to ~= nil then
         minetest.register_craft({output = to, recipe = {{from}}})
         minetest.register_craft({output = from, recipe = {{to}}})
+    end
+
+    -- přepínání spojujících se a přímých tvarů
+    for _, shape in ipairs({"panel/_wall", "panel/_element", "panel/_pole", "slab/_arcade"}) do
+        from, to = shape_to_node[shape], shape_to_node[shape.."_flat"]
+        if from ~= nil and to ~= nil then
+            minetest.register_craft({output = to, recipe = {{from}}})
+            minetest.register_craft({output = from, recipe = {{to}}})
+        end
     end
 end
