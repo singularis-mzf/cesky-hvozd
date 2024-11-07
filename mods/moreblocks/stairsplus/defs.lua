@@ -289,6 +289,11 @@ local box_roof45_3 = f(box_roof45)
 
 --==============================================================
 
+local sides_xy = {"front", "back", "left", "right"}
+local sides_xyz = {"front", "back", "left", "right", "top", "bottom"}
+
+--==============================================================
+
 stairsplus.defs = {
 	["micro"] = {
 		[""] = {
@@ -457,6 +462,71 @@ stairsplus.defs = {
 			},
 			not_blocking_trains = true,
 		},
+		["_wall"] = {
+			description = "zeď (spojující se)",
+			node_box = {
+				type = "connected",
+				fixed = {-0.125, -0.5, -0.125, 0.125, 0.5, 0.125},
+				connect_front = {-0.125, -0.5, -0.5, 0.125, 0.5, -0.125}, -- -Z
+				connect_left = {-0.5, -0.5, -0.125, -0.125, 0.5, 0.125}, -- -X
+				connect_back = {-0.125, -0.5, 0.125, 0.125, 0.5, 0.5}, -- +Z
+				connect_right = {0.125, -0.5, -0.125, 0.5, 0.5, 0.125}, -- +X
+			},
+			wall = true,
+			connect_sides = sides_xy,
+		},
+		["_wall_flat"] = {
+			description = "zeď (přímá)",
+			node_box = {
+				type = "fixed",
+				fixed = {-0.5, -0.5, -0.125, 0.5, 0.5, 0.125},
+			},
+			wall = true,
+		},
+		["_element"] = {
+			description = "nízká zeď (spojující se)",
+			node_box = {
+				type = "connected",
+				fixed = {-0.125, -0.5, -0.125, 0.125, 0.0, 0.125},
+				connect_front = {-0.125, -0.5, -0.5, 0.125, 0.0, -0.125}, -- -Z
+				connect_left = {-0.5, -0.5, -0.125, -0.125, 0.0, 0.125}, -- -X
+				connect_back = {-0.125, -0.5, 0.125, 0.125, 0.0, 0.5}, -- +Z
+				connect_right = {0.125, -0.5, -0.125, 0.5, 0.0, 0.125}, -- +X
+			},
+			connect_sides = sides_xy,
+			wall = true,
+		},
+		["_element_flat"] = {
+			description = "nízká zeď (přímá)",
+			node_box = {
+				type = "fixed",
+				fixed = {-0.5, -0.5, -0.125, 0.5, 0.0, 0.125},
+			},
+			wall = true,
+		},
+		["_pole"] = {
+			description = "tyč (spojující se)",
+			node_box = {
+				type = "connected",
+				fixed = {-0.125, -0.125, -0.125, 0.125, 0.125, 0.125},
+				connect_top = {-0.125, 0.125, -0.125, 0.125, 0.5, 0.125}, -- +Y
+				connect_bottom = {-0.125, -0.5, -0.125, 0.125, -0.125, 0.125}, -- -Y
+				connect_front = {-0.125, -0.125, -0.5, 0.125, 0.125, -0.125}, -- -Z
+				connect_left = {-0.5, -0.125, -0.125, -0.125, 0.125, 0.125}, -- -X
+				connect_back = {-0.125, -0.125, 0.125, 0.125, 0.125, 0.5}, -- +Z
+				connect_right = {0.125, -0.125, -0.125, 0.5, 0.125, 0.125}, -- +X
+			},
+			connect_sides = sides_xyz,
+			wall = true,
+		},
+		["_pole_flat"] = {
+			description = "tyč (přímá)",
+			node_box = {
+				type = "fixed",
+				fixed = {-0.125, -0.5, -0.125, 0.125, 0.5, 0.125},
+			},
+			wall = true,
+		}
 	},
 	["slab"] = {
 		[""] = {
@@ -628,6 +698,28 @@ stairsplus.defs = {
 			},
 			align_style = "world",
 			not_blocking_trains = true,
+		},
+		["_arcade"] = {
+			description = "překlad přes zeď (spojující se)",
+			node_box = {
+				type = "connected",
+				fixed = {-3/16, -17/32, -3/16, 3/16, -15/32, 3/16},
+				connect_front = {-3/16, -17/32, -1/2, 3/16, -15/32, 3/16},
+				connect_left = {-1/2, -17/32, -3/16, -3/16, -15/32, 3/16},
+				connect_back = {-3/16, -17/32, 3/16, 3/16, -15/32, 1/2},
+				connect_right = {3/16, -17/32, -3/16, 1/2, -15/32, 3/16},
+			},
+			align_style = "world",
+			connect_sides = sides_xy,
+			wall = true,
+		},
+		["_arcade_flat"] = {
+			description = "překlad přes zeď (přímý)",
+			node_box = {
+				type = "fixed",
+				fixed = {-1/2, -3/16, -17/32, 1/2, 3/16, -15/32},
+			},
+			wall = true,
 		},
 	},
 	["slope"] = {

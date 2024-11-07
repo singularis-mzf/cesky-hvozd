@@ -3,120 +3,120 @@ local display_entity_name = "tombs:text"
 display_api.register_display_entity(display_entity_name)
 
 local shapes = { --mesh identifier, shape, col
-	{
-		id = 10,
-		name = "_10",
-		description  = "kulatý",
-		center_box = tombs.colbox_0_0,
-		offset_box = tombs.colbox_0_1,
-		text = true,
-		text_top = 1/32,
-		text_maxlines = 4,
-	},
-	{
-		id = 2,
-		name = "_2",
-		description = "špičatý",
-		center_box = tombs.colbox_0_0,
-		offset_box = tombs.colbox_0_1,
-		text = true,
-		text_top = 1/32,
-		text_maxlines = 4,
-	},
-	{
-		id = 20,
-		name ="_0",
-		description = "kvádr",
-		center_box = tombs.colbox_0_0,
-		offset_box = tombs.colbox_0_1,
-		text = true,
-		text_top = 0/32,
-		text_maxlines = 4,
-	},
-	{
-		id = 8,
-		name = "_8",
-		description = "obelisk",
-		center_box = tombs.colbox_8_0,
-		offset_box = tombs.colbox_8_1,
-		text = true,
-		text_top = -1/32,
-		text_maxlines = 5,
-		text_size = {x = 8/16, y = 12/16},
-		text_pitch = -0.085,
-		text_depth_shift = 0.023,
-	},
-	{
-		id = 9,
-		name = "_9",
-		description = "hromada",
-		center_box = tombs.colbox_9_0,
-		offset_box = tombs.colbox_9_0,
-		text = false,
-	},
-	{
-		id = 1,
-		name = "_1",
-		description = "kříž",
-		center_box = tombs.colbox_1_0,
-		offset_box = tombs.colbox_1_1,
-		text = true,
-		text_top = -7/32,
-		text_size = {x = 8/16, y = 3/16},
-	},
-	-- {'_3', 'Short Slanted', tombs.colbox_3_0, tombs.colbox_3_1},
-	-- {'_4', 'Short Flat', tombs.colbox_4_0, tombs.colbox_4_1},
-	{
-		id = 5,
-		name = "_5",
-		description = "kříž s podstavcem",
-		center_box = tombs.colbox_5_0,
-		offset_box = tombs.colbox_5_1,
-		text = true,
-		text_top = 10/32,
-		text_size = {x = 8/16, y = 3/16},
-	},
-	-- {'_6', 'Staggered', tombs.colbox_6_0, tombs.colbox_6_1},
-	{
-		id = 7,
-		name = "_7",
-		description = "keltský kříž",
-		center_box = tombs.colbox_7_0,
-		offset_box = tombs.colbox_7_1,
-		text = true,
-		text_top = -4/32,
-		text_size = {x = 8/16, y = 3/16},
-	},
-	-- {'_11', 'Sam', tombs.colbox_11_0, tombs.colbox_11_1},
-	{
-		id = 12,
-		name = "_12",
-		description = "pěticípá hvězda",
-		center_box = tombs.colbox_12_0,
-		offset_box = tombs.colbox_12_1,
-		text = true,
-		text_top = 1/16,
-		text_maxlines = 2,
-		text_size = {x = 8/16, y = 4/16},
-	},
-	{
-		id = 13,
-		name = "_13",
-		description = "šesticípá hvězda",
-		center_box = tombs.colbox_12_0,
-		offset_box = tombs.colbox_12_1,
-		text = true,
-		text_top = 0,
-		text_maxlines = 3,
-		text_size = {x = 8/16, y = 6/16},
-	},
-	{
-		id = 14,
-		name = "_14",
-		description = "mříž",
-		center_box = tombs.colbox_14_0,
-		offset_box = tombs.colbox_14_1,
-	},
+{
+	id = 20,
+	name ="_0",
+	description = "kvádr",
+	center_box = tombs.colbox_0_0,
+	offset_box = tombs.colbox_0_1,
+	text = true,
+	text_top = 0/32,
+	text_maxlines = 4,
+},
+{
+	id = 1,
+	name = "_1",
+	description = "kříž",
+	center_box = tombs.colbox_1_0,
+	offset_box = tombs.colbox_1_1,
+	text = true,
+	text_top = -7/32,
+	text_size = {x = 8/16, y = 3/16},
+},
+{
+	id = 2,
+	name = "_2",
+	description = "špičatý",
+	center_box = tombs.colbox_0_0,
+	offset_box = tombs.colbox_0_1,
+	text = true,
+	text_top = 1/32,
+	text_maxlines = 4,
+},
+-- {'_3', 'Short Slanted', tombs.colbox_3_0, tombs.colbox_3_1},
+-- {'_4', 'Short Flat', tombs.colbox_4_0, tombs.colbox_4_1},
+{
+	id = 5,
+	name = "_5",
+	description = "kříž s podstavcem",
+	center_box = tombs.colbox_5_0,
+	offset_box = tombs.colbox_5_1,
+	text = true,
+	text_top = 10/32,
+	text_size = {x = 8/16, y = 3/16},
+},
+-- {'_6', 'Staggered', tombs.colbox_6_0, tombs.colbox_6_1},
+{
+	id = 7,
+	name = "_7",
+	description = "keltský kříž",
+	center_box = tombs.colbox_7_0,
+	offset_box = tombs.colbox_7_1,
+	text = true,
+	text_top = -4/32,
+	text_size = {x = 8/16, y = 3/16},
+},
+{
+	id = 8,
+	name = "_8",
+	description = "obelisk",
+	center_box = tombs.colbox_8_0,
+	offset_box = tombs.colbox_8_1,
+	text = true,
+	text_top = -1/32,
+	text_maxlines = 5,
+	text_size = {x = 8/16, y = 12/16},
+	text_pitch = -0.085,
+	text_depth_shift = 0.023,
+},
+{
+	id = 9,
+	name = "_9",
+	description = "hromada",
+	center_box = tombs.colbox_9_0,
+	offset_box = tombs.colbox_9_0,
+	text = false,
+},
+{
+	id = 10,
+	name = "_10",
+	description  = "kulatý",
+	center_box = tombs.colbox_0_0,
+	offset_box = tombs.colbox_0_1,
+	text = true,
+	text_top = 1/32,
+	text_maxlines = 4,
+},
+-- {'_11', 'Sam', tombs.colbox_11_0, tombs.colbox_11_1},
+{
+	id = 12,
+	name = "_12",
+	description = "pěticípá hvězda",
+	center_box = tombs.colbox_12_0,
+	offset_box = tombs.colbox_12_1,
+	text = true,
+	text_top = 1/16,
+	text_maxlines = 2,
+	text_size = {x = 8/16, y = 4/16},
+},
+{
+	id = 13,
+	name = "_13",
+	description = "šesticípá hvězda",
+	center_box = tombs.colbox_12_0,
+	offset_box = tombs.colbox_12_1,
+	text = true,
+	text_top = 0,
+	text_maxlines = 3,
+	text_size = {x = 8/16, y = 6/16},
+},
+{
+	id = 14,
+	name = "_14",
+	description = "mříž",
+	center_box = tombs.colbox_14_0,
+	offset_box = tombs.colbox_14_1,
+},
 }
 
 local tombstone_common_def = {
@@ -211,6 +211,8 @@ function tombs.register_stones(recipe, name, desc, textures, material_def)
 local groups = {oddly_breakable_by_hand=2, cracky=3}
 -- end
 
+	local valid_shapes = 0
+
 for i, shape_def in ipairs(shapes) do
 	local mesh = shape_def.name
 	local shape = shape_def.description
@@ -272,12 +274,16 @@ for i, shape_def in ipairs(shapes) do
 	end
 	def.groups = ch_core.override_groups(groups, {gravestone = shape_def.id, gravestone_normal = shape_def.id})
 
-	minetest.register_node('tombs:'..string.lower(name)..mesh..'_1', def)
+	if ch_core.is_shape_allowed(recipe, "tombs", shape_def.name) then
+		minetest.register_node('tombs:'..string.lower(name)..mesh..'_1', def)
+		valid_shapes = valid_shapes + 1
+	end
 end
 
-   tombs.nodes[recipe] = true
-   tombs.recipes[recipe] = string.lower(name)
-
+	if valid_shapes > 0 then
+   		tombs.nodes[recipe] = true
+   		tombs.recipes[recipe] = string.lower(name)
+	end
 end
 
 function tombs.crafting(input, var)
@@ -285,8 +291,10 @@ function tombs.crafting(input, var)
 	local output = {}
 	for _, tdef in ipairs(shapes) do
 		local oname = "tombs:"..name..tdef.name.."_"..var
+		if minetest.registered_nodes[oname] == nil then
+			oname = ""
+		end
 		table.insert(output, oname)
 	end
 	return output
 end
-

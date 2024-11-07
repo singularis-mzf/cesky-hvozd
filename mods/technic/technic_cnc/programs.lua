@@ -381,6 +381,7 @@ technic_cnc.onesize_products = {
 	valley                   = 1,
 }
 
+--[[
 technic_cnc.twosize_products = {
 	element_straight         = 2,
 	element_end              = 2,
@@ -393,4 +394,5 @@ technic_cnc.twosize_products = {
 technic_cnc.products = {}
 for key, size in pairs(technic_cnc.onesize_products) do technic_cnc.products[key] = size end
 for key, size in pairs(technic_cnc.twosize_products) do technic_cnc.products[key] = size end
-
+]]
+technic_cnc.products = technic_cnc.onesize_products

@@ -40,7 +40,6 @@ local materials_kp = set(
 "artdeco:2b",
 "artdeco:2c",
 "artdeco:2d",
-"artdeco:italianmarble",
 "artdeco:tile1",
 "artdeco:tile2",
 "artdeco:tile3",
@@ -55,7 +54,6 @@ local materials_kp = set(
 "artdeco:decoblock4",
 "artdeco:decoblock5",
 "artdeco:decoblock6",
-"artdeco:whitegardenstone",
 "artdeco:stonewall",
 "bakedclay:black",
 "bakedclay:blue",
@@ -138,9 +136,6 @@ local materials_kp = set(
 "default:obsidian_block",
 "default:obsidianbrick",
 "default:pine_wood",
-"default:sandstone",
-"default:sandstone_block",
-"default:sandstonebrick",
 "default:silver_sandstone",
 "default:silver_sandstone_block",
 "default:silver_sandstone_brick",
@@ -256,6 +251,7 @@ local materials_glass = set(
 )
 
 local materials_sns = set(
+"artdeco:whitegardenstone",
 "charcoal:charcoal_block",
 "ch_extras:bright_gravel",
 "ch_extras:railway_gravel",
@@ -346,9 +342,6 @@ local materials_cnc = set(
 "default:obsidian_block",
 "default:obsidian_glass",
 "default:pine_wood",
-"default:sandstone",
-"default:sandstone_block",
-"default:sandstonebrick",
 "default:silver_sandstone",
 "default:silver_sandstone_block",
 "default:silver_sandstone_brick",
@@ -398,8 +391,6 @@ local materials_pillars = set(
 "default:junglewood",
 "default:obsidian",
 "default:pine_wood",
-"default:sandstone",
-"default:sandstonebrick",
 "default:silver_sandstone",
 "default:silver_sandstone_brick",
 "default:steelblock",
@@ -426,6 +417,70 @@ local materials_pillars = set(
 "solidcolor:plaster_yellow",
 "technic:cast_iron_block",
 "technic:marble"
+)
+
+local materials_for_arcades = set("bakedclay:black",
+"bakedclay:blue",
+"bakedclay:brown",
+"bakedclay:cyan",
+"bakedclay:dark_green",
+"bakedclay:dark_grey",
+"bakedclay:green",
+"bakedclay:grey",
+"bakedclay:magenta",
+"bakedclay:natural",
+"bakedclay:orange",
+"bakedclay:pink",
+"bakedclay:red",
+"bakedclay:violet",
+"bakedclay:white",
+"bakedclay:yellow",
+"basic_materials:cement_block",
+"basic_materials:concrete_block",
+"bridger:block_green",
+"bridger:block_red",
+"bridger:block_steel",
+"bridger:block_white",
+"bridger:block_yellow",
+"ch_extras:marble",
+"cottages:black",
+"cottages:brown",
+"cottages:red",
+"cottages:reet",
+"darkage:marble",
+"default:acacia_wood",
+"default:aspen_wood",
+"default:copperblock",
+"default:desert_stone",
+"default:goldblock",
+"default:ice",
+"default:junglewood",
+"default:meselamp",
+"default:pine_wood",
+"default:silver_sandstone",
+"default:steelblock",
+"default:stone",
+"default:wood",
+"solidcolor:plaster_blue",
+"solidcolor:plaster_cyan",
+"solidcolor:plaster_dark_green",
+"solidcolor:plaster_dark_grey",
+"solidcolor:plaster_green",
+"solidcolor:plaster_grey",
+"solidcolor:plaster_medium_amber_s50",
+"solidcolor:plaster_orange",
+"solidcolor:plaster_pink",
+"solidcolor:plaster_red",
+"solidcolor:plaster_white",
+"solidcolor:plaster_yellow",
+"summer:granite",
+"summer:graniteA",
+"summer:graniteB",
+"summer:graniteBC",
+"summer:graniteP",
+"summer:graniteR",
+"technic:marble",
+"technic:warning_block"
 )
 
 local materials_for_bank_slopes = set(
@@ -464,7 +519,35 @@ local materials_zdlazba = set(
 	"ch_extras:zdlazba"
 )
 
-local materials_all = union(materials_cnc, materials_kp, materials_no_kp, materials_glass, materials_sns, materials_wool, materials_roof, materials_zdlazba)
+local materials_tombs = set(
+	"bakedclay:black",
+	"bakedclay:blue",
+	"bakedclay:cyan",
+	"bakedclay:dark_green",
+	"bakedclay:dark_grey",
+	"bakedclay:green",
+	"bakedclay:grey",
+	"bakedclay:magenta",
+	"bakedclay:orange",
+	"bakedclay:pink",
+	"bakedclay:red",
+	"bakedclay:violet",
+	"bakedclay:white",
+	"basic_materials:concrete_block",
+	"default:desert_stone",
+	"default:goldblock",
+	"default:steelblock",
+	"default:stone",
+	"default:mossycobble",
+	"default:wood",
+	"ch_extras:marble",
+	"moreblocks:copperpatina",
+	"technic:granite",
+	"technic:marble"
+)
+
+local materials_all = union(materials_cnc, materials_kp, materials_no_kp, materials_glass, materials_sns, materials_wool, materials_roof,
+	materials_zdlazba, set("default:sandstone", "default:sandstonebrick", "default:sandstone_block"))
 
 local alts_micro = set("", "_1", "_2", "_4", "_12", "_15")
 
@@ -473,7 +556,13 @@ local alts_panel = set("", "_1", "_2", "_4", "_12", "_15",
 	"_l", -- vychýlená tyč L
 	"_l1", -- rohový panel do tvaru L
 	"_wide",
-	"_wide_1")
+	"_wide_1",
+	"_wall",
+	"_wall_flat",
+	"_element",
+	"_element_flat",
+	"_pole",
+	"_pole_flat")
 
 local alts_slab = set("", "_quarter", "_three_quarter", "_1", "_2", "_14", "_15",
 	"_two_sides", --deska L (dvě strany)
@@ -499,21 +588,26 @@ local alts_stair = set("", "_inner", "_outer", "_alt", "_alt_1", "_alt_2", "_alt
 	"_chimney", -- úzký komín
 	"_wchimney") -- široký komín
 
-local alts_cnc = set(
+local no_cnc = set(
+	-- vypnuté tvary soustruhu:
+	"technic_cnc_d45_slope_216",
+	"technic_cnc_element_end_double",
+	"technic_cnc_element_cross_double",
+	"technic_cnc_element_t_double",
+	"technic_cnc_element_edge_double",
+	"technic_cnc_element_straight_double",
+	"technic_cnc_element_end",
+	"technic_cnc_element_cross",
+	"technic_cnc_element_t",
+	"technic_cnc_element_edge",
+	"technic_cnc_element_straight",
 	"technic_cnc_stick",
-"technic_cnc_element_end_double",
-"technic_cnc_element_cross_double",
-"technic_cnc_element_t_double",
-"technic_cnc_element_edge_double",
-"technic_cnc_element_straight_double",
-"technic_cnc_element_end",
-"technic_cnc_element_cross",
-"technic_cnc_element_t",
-"technic_cnc_element_edge",
-"technic_cnc_element_straight",
+	"technic_cnc_cylinder_horizontal"
+)
+
+local alts_cnc = set(
 "technic_cnc_oblate_spheroid",
 "technic_cnc_sphere",
-"technic_cnc_cylinder_horizontal",
 "technic_cnc_cylinder",
 "technic_cnc_twocurvededge",
 "technic_cnc_onecurvededge",
@@ -521,7 +615,6 @@ local alts_cnc = set(
 "technic_cnc_pyramid",
 "technic_cnc_arch216",
 "technic_cnc_arch216_flange",
--- "technic_cnc_d45_slope_216",
 "technic_cnc_sphere_half",
 "technic_cnc_block_fluted",
 "technic_cnc_diagonal_truss",
@@ -535,6 +628,8 @@ local alts_cnc = set(
 "technic_cnc_valley",
 "technic_cnc_bannerstone"
 )
+
+local alts_tombs = set("_0", "_1", "_2", "_5", "_7", "_8", "_9", "_10", "_12", "_13", "_14")
 
 local alts_fence = set("fence", "rail", "mesepost", "fencegate")
 
@@ -605,7 +700,7 @@ local rules = {
 	--  b) table (query)
 	--  c) "*" (always match)
 	{materials_no_kp, set("micro", "panel", "slab", "slope", "stair"), "*", false},
-	{"*", "cnc", "technic_cnc_d45_slope_216", false}, -- vypnutý tvar (nesmí se generovat pro žádný materiál)
+	{"*", "cnc", no_cnc, false}, -- vypnuté tvary (nesmí se generovat pro žádný materiál)
 	{materials_all, "slab", "_1", true}, -- "slab/_1 pro všechny materiály kromě zakázaných"
 	{"default:stone", "*", "*", true}, -- dřevo je referenční materiál, musí podporovat všechny tvary
 
@@ -641,9 +736,17 @@ local rules = {
 		slab = {sns_slabs, true},
 		slope = {sns_slopes, true},
 	}},
+	{materials_for_arcades, "slab", set("_arcade", "_arcade_flat"), true},
 	{materials_roof, "slope", roof_slopes, true}, -- roofs
 	{materials_for_bank_slopes, "bank_slope", bank_slopes, true},
 	{materials_pillars, "pillar", "*", true }, -- zatím bez omezení
+	{materials_tombs, "tombs", alts_tombs, true},
+
+	-- žlutý pískovec (omezený sortiment tvarů):
+	{set("default:sandstone", "default:sandstonebrick", "default:sandstone_block"), {
+		slab = {set("", "_1", "_triplet"), true},
+		slope = {set("", "_half", "_half_raised"), true},
+	}},
 
 -- CNC:
 	{"default:dirt", "cnc",
@@ -654,7 +757,7 @@ local rules = {
 -- fence:
 	{"*", "fence", alts_fence, true}, -- [ ] TODO
 -- catch-all rules:
-	{materials_all, set("micro", "panel", "slab", "slope", "stair", "cnc", "bank_slope"), "*", false},
+	{materials_all, set("micro", "panel", "slab", "slope", "stair", "cnc", "bank_slope", "pillar"), "*", false},
 }
 -- ============================================================================
 

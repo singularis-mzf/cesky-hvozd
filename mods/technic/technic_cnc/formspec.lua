@@ -111,11 +111,11 @@ local function get_formspec(nodename, def, meta)
 	else
 		material_suffix = "_double"
 	end
-	local buttons2, leftover2 = image_button_grid(x, y, width - grid_size - margin * 2, grid_size, slimhalf_buttons, p, material, material_suffix)
-	fs = fs .. buttons1 .. fs_slimhalf:format(half and "" or "_active", half and "_active" or "") .. buttons2
+	-- local buttons2, leftover2 = image_button_grid(x, y, width - grid_size - margin * 2, grid_size, slimhalf_buttons, p, material, material_suffix)
+	fs = fs .. buttons1 -- .. fs_slimhalf:format(half and "" or "_active", half and "_active" or "") .. buttons2
 
 	-- Program paging controls
-	if leftover1 > 0 or leftover2 > 0 then
+	if leftover1 > 0 --[[or leftover2 > 0]] then
 		x = width - margin - grid_size * 2
 		fs = fs .. ("button[%0.1f,%0.1f;%0.1f,%0.1f;paging_prev;" .. S("Previous") .."]"):format(x, padding, grid_size, 0.6)
 			.. ("button[%0.1f,%0.1f;%0.1f,%0.1f;paging_next;" .. S("Next") .. "]"):format(x + grid_size, padding, grid_size, 0.6)

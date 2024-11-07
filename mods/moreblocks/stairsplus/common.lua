@@ -235,6 +235,10 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 	if info.not_blocking_trains then
 		def.groups.not_blocking_trains = 1
 	end
+	if info.wall then
+		def.groups.wall = 1
+		def.connects_to = {"group:fence", "group:wall"}
+	end
 
 	def.description = desc_base..": "..assert(info.description)
 	if category == "stair" and alternate == "" then
@@ -247,9 +251,12 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 	if info.collision_box ~= nil then
 		def.collision_box = info.collision_box
 	end
+	if info.connect_sides ~= nil then
+		def.connect_sides = info.connect_sides
+	end
 
 	-- world-aligned textures
-	if category == "stair" or info.align_style == "world" then
+	if category == "stair" or info.align_style == "world" or info.wall then
 		local new_tiles = {}
 		for i, v in ipairs(def.tiles) do
 			if type(v) == "table" then

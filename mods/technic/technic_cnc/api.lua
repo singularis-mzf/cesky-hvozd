@@ -190,8 +190,8 @@ function technic_cnc.get_product(program, material, size)
 	local multiplier = technic_cnc.products[program]
 	if multiplier then
 		size = math.max(1, math.min(2, size))
-		local twosize = technic_cnc.twosize_products[program]
-		local double = size == 1 and twosize and "_double" or ""
+		local twosize = nil -- technic_cnc.twosize_products[program]
+		local double = "" -- size == 1 and twosize and "_double" or ""
 		local product = ("%s_technic_cnc_%s%s"):format(material, program, double)
 		if minetest.registered_nodes[product] then
 			return ("%s %d"):format(product, multiplier * (twosize and size or 1))

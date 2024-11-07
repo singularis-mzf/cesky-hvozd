@@ -367,19 +367,116 @@ local lbm_def = {
 }
 minetest.register_lbm(lbm_def)
 
--- Change panel_palm_planks_{l,special} to oak planks
+-- Node upgrades:
+local cnc_materials = {
+	"bakedclay:black",
+"bakedclay:blue",
+"bakedclay:brown",
+"bakedclay:cyan",
+"bakedclay:dark_green",
+"bakedclay:dark_grey",
+"bakedclay:green",
+"bakedclay:grey",
+"bakedclay:magenta",
+"bakedclay:natural",
+"bakedclay:orange",
+"bakedclay:pink",
+"bakedclay:red",
+"bakedclay:violet",
+"bakedclay:white",
+"bakedclay:yellow",
+-- "basic_materials:brass_block",
+-- "basic_materials:cement_block",
+-- "basic_materials:concrete_block",
+"building_blocks:fakegrass",
+"cottages:black",
+"cottages:brown",
+"cottages:red",
+"cottages:reet",
+"darkage:slate_tile",
+"default:acacia_wood",
+"default:aspen_wood",
+"default:brick",
+"default:bronzeblock",
+"default:cobble",
+"default:copperblock",
+"default:desert_cobble",
+"default:desert_sandstone",
+"default:desert_sandstone_block",
+"default:desert_sandstone_brick",
+"default:desert_stone",
+"default:desert_stone_block",
+"default:desert_stonebrick",
+"default:dirt",
+-- "default:glass",
+"default:goldblock",
+"default:ice",
+"default:junglewood",
+-- "default:leaves",
+"default:meselamp",
+"default:obsidian_block",
+-- "default:obsidian_glass",
+"default:pine_wood",
+"default:silver_sandstone",
+"default:silver_sandstone_block",
+"default:silver_sandstone_brick",
+"default:steelblock",
+"default:stone",
+"default:stone_block",
+"default:stonebrick",
+-- "default:tree",
+"default:wood",
+"moreblocks:cactus_brick",
+"moreblocks:cactus_checker",
+"moreblocks:copperpatina",
+-- "moreblocks:glow_glass",
+"moreblocks:grey_bricks",
+-- "moreblocks:super_glow_glass",
+"technic:blast_resistant_concrete",
+"technic:cast_iron_block",
+"technic:granite",
+"technic:marble",
+"technic:warning_block",
+"technic:zinc_block",
+}
+
+local upgrade_map = {
+	["moretrees:panel_palm_planks_l"] = "moretrees:panel_oak_planks_l",
+	["moretrees:panel_palm_planks_special"] = "moretrees:panel_oak_planks_special",
+	["default:tree_technic_cnc_stick"] = "moreblocks:panel_tree_noface_pole_flat",
+	["ch_overrides:concrete_arcade"] = "technic:slab_concrete_arcade",
+	["walls:cobble"] = "moreblocks:panel_cobble_wall",
+	["walls:mossycobble"] = "moreblocks:panel_cobble_wall",
+	["walls:desertcobble"] = "moreblocks:panel_desert_cobble_wall",
+}
+local upgrade_list = {}
+
+for _, recipeitem in ipairs(cnc_materials) do
+	local from = recipeitem.."_technic_cnc_stick"
+	local to = recipeitem:gsub("^default:", "moreblocks:")
+	to = to:gsub(":", ":panel_")
+	to = to.."_pole_flat"
+	if minetest.registered_nodes[to] ~= nil then
+		upgrade_map[from] = to
+	else
+		minetest.log("warning", "Expected node not registered: "..to)
+	end
+end
+
+for n, _ in pairs(upgrade_map) do
+	table.insert(upgrade_list, n)
+end
 
 local lbm_def = {
-	label = "CHange palm planks shapes to oak planks",
-	name = "ch_overrides:change_palm_to_oak",
-	nodenames = {"moretrees:panel_palm_planks_l", "moretrees:panel_palm_planks_special"},
+	label = "Upgrade nodes",
+	name = "ch_overrides:node_upgrade_v1",
+	nodenames = upgrade_list,
+	run_at_every_load = true, -- DEBUG
 	action = function(pos, node)
-		if node.name == "moretrees:panel_palm_planks_l" then
-			node.name = "moretrees:panel_oak_planks_l"
-		else
-			node.name = "moretrees:panel_oak_planks_special"
+		node.name = upgrade_map[node.name]
+		if node.name ~= nil then
+			minetest.swap_node(pos, node)
 		end
-		minetest.swap_node(pos, node)
 	end,
 }
 minetest.register_lbm(lbm_def)

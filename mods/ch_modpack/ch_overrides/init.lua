@@ -31,7 +31,6 @@ end
 
 
 dofile("aliases.lua")
-dofile("arcades.lua")
 dofile("bushy_leaves.lua")
 dofile("chests.lua")
 dofile("colorable_glass.lua")
