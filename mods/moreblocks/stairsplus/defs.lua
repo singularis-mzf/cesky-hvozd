@@ -517,6 +517,8 @@ stairsplus.defs = {
 				connect_right = {0.125, -0.125, -0.125, 0.5, 0.125, 0.125}, -- +X
 			},
 			connect_sides = sides_xyz,
+			connects_to = {"group:panel_pole", "group:full_cube_node"}, -- no fence, no wall
+			extra_groups = {panel_pole = 1},
 			wall = true,
 		},
 		["_pole_flat"] = {
@@ -525,6 +527,7 @@ stairsplus.defs = {
 				type = "fixed",
 				fixed = {-0.125, -0.5, -0.125, 0.125, 0.5, 0.125},
 			},
+			extra_groups = {panel_pole = 1},
 			wall = true,
 		}
 	},
@@ -930,6 +933,7 @@ stairsplus.defs = {
 					{-0.5, 0, 0, 0.5, 0.5, 0.5},
 				},
 			},
+			extra_groups = {stair = 1},
 		},
 		["_inner"] = {
 			description = "schod, vnitřní roh",

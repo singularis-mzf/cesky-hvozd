@@ -189,22 +189,37 @@ local not_blocking_trains_shapes = {
 }
 ]]
 
+local fields_to_inherit_from_info = {"selection_box", "collision_box", "connect_sides", "connects_to"}
+local fields_to_inherit_from_fields = {"is_ground_content", "tiles", "paramtype2", "use_texture_alpha", "sounds"}
+
 stairsplus.register_single = function(category, alternate, info, modname, subname, recipeitem, fields)
 
 	local src_def = minetest.registered_nodes[recipeitem] or {}
-	local desc_base = fields.description
-	--[[
-	local readable_alternate = alternate:gsub("_", " "):gsub("^%s*(.-)%s*$", "%1");
+	local def = {
+		paramtype = "light",
+		groups = stairsplus:prepare_groups(fields.groups),
+		on_place = stairsplus.rotate_node_aux,
+		_stairsplus_recipeitem = recipeitem,
+		_stairsplus_category = category,
+		_stairsplus_alternate = alternate,
+	}
 
-	if readable_alternate == "" then
-		readable_alternate = "normal";
-	end ]]
+	for _, n in ipairs(fields_to_inherit_from_fields) do
+		if fields[n] ~= nil then
+			def[n] = fields[n]
+		end
+	end
+	for _, n in ipairs(fields_to_inherit_from_info) do
+		if info[n] ~= nil then
+			def[n] = info[n]
+		end
+	end
 
-	local def = table.copy(info)
-
-	-- copy fields to def
-	for k, v in pairs(fields) do
-		def[k] = v
+	if def.tiles == nil then
+		error("Missing tiles when registering "..modname.. ":" .. category .. "_" .. subname .. alternate)
+	end
+	if def.use_texture_alpha == nil and src_def.use_texture_alpha ~= nil then
+		def.use_texture_alpha = src_def.use_texture_alpha
 	end
 
 	if info.mesh then
@@ -217,42 +232,36 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 		error("Invalid shape def: "..dump2(def))
 	end
 
-	def.paramtype = "light"
+	if def.paramtype2 == nil or def.paramtype2 == "none" then
+		def.paramtype2 = "facedir"
+	end
+	--[[
 	def.paramtype2 = def.paramtype2 or "facedir"
 	if def.use_texture_alpha == nil then
 		def.use_texture_alpha = src_def.use_texture_alpha
 	end
-
-	-- This makes node rotation work on placement
-	def.place_param2 = nil
+	]]
 
 	-- Darken light sources slightly to make up for their smaller visual size
-	def.light_source = math.max(0, (def.light_source or 0) - 1)
+	def.light_source = math.max(0, (fields.light_source or 0) - 1)
 
-	def.on_place = stairsplus.rotate_node_aux
-	def.groups = stairsplus:prepare_groups(fields.groups)
 	def.groups[category] = alternate_to_group_value[alternate] or 1
 	if info.not_blocking_trains then
 		def.groups.not_blocking_trains = 1
 	end
 	if info.wall then
 		def.groups.wall = 1
-		def.connects_to = {"group:fence", "group:wall"}
+		if def.connects_to == nil then
+			def.connects_to = {"group:fence", "group:wall"}
+		end
+		def.paramtype2 = "none" -- TODO: allow colorable connecting shapes
 	end
 
-	def.description = desc_base..": "..assert(info.description)
-	if category == "stair" and alternate == "" then
-		def.groups.stair = 1
-	end
-
-	if info.selection_box ~= nil then
-		def.selection_box = info.selection_box
-	end
-	if info.collision_box ~= nil then
-		def.collision_box = info.collision_box
-	end
-	if info.connect_sides ~= nil then
-		def.connect_sides = info.connect_sides
+	def.description = assert(fields.description)..": "..assert(info.description)
+	if info.extra_groups ~= nil then
+		for k, v in pairs(info.extra_groups) do
+			def.groups[k] = v
+		end
 	end
 
 	-- world-aligned textures
@@ -271,14 +280,7 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 		def.tiles = new_tiles
 	end
 
-	--[[ if fields.drop and not (type(fields.drop) == "table") then
-	if fields.drop then
-		def.drop = modname.. ":" .. category .. "_" .. fields.drop .. alternate
-	end ]]
-	def.drop = nil
-	def._stairsplus_recipeitem = recipeitem
-	def._stairsplus_category = category
-	def._stairsplus_alternate = alternate
+	-- def.drop = nil
 
 	minetest.register_node(":" ..modname.. ":" .. category .. "_" .. subname .. alternate, def)
 	stairsplus.register_recipes(category, alternate, modname, subname, recipeitem)
