@@ -531,7 +531,7 @@ stairsplus.defs = {
 				"group:technic_cnc_valley",
 			}, -- no fence, no wall
 			extra_groups = {panel_pole = 1},
-			wall = true,
+			check_for_pole = function() return true end,
 		},
 		["_pole_flat"] = {
 			description = "tyč (přímá)",
@@ -540,7 +540,7 @@ stairsplus.defs = {
 				fixed = {-0.125, -0.5, -0.125, 0.125, 0.5, 0.125},
 			},
 			extra_groups = {panel_pole = 1},
-			wall = true,
+			check_for_pole = function() return true end,
 		}
 	},
 	["slab"] = {

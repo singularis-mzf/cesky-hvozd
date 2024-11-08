@@ -25,23 +25,32 @@ local materials = {
 	{ S("wrought iron"), "wrought_iron", iron },
 }
 
+local fence_template = assert(minetest.registered_nodes["default:fence_wood"])
+local fields_to_inherit = {
+	"drawtype", "node_box", "selection_box", "collision_box", "connects_to", "connect_sides",
+}
+
 for _, m in ipairs(materials) do
 
 	local desc, name, craft = unpack(m)
-
-	homedecor.register("fence_"..name, {
+	local def = {
 		description = S("Fence/railing (@1)", desc),
-		drawtype = "fencelike",
+		-- drawtype = "fencelike",
 		tiles = {"homedecor_generic_metal_"..name..".png"},
-		inventory_image = "homedecor_fence_"..name..".png",
-		selection_box = homedecor.nodebox.bar_y(1/7),
-		groups = {snappy=3, dig_stone=3},
+		-- inventory_image = "homedecor_fence_"..name..".png",
+		-- selection_box = homedecor.nodebox.bar_y(1/7),
+		groups = {snappy=3, dig_stone=3, fence = 1},
 		sounds = default.node_sound_wood_defaults(),
-		crafts = {
-			craft
-		}
-	})
+	}
+	for _, n in ipairs(fields_to_inherit) do
+		if fence_template[n] ~= nil then
+			def[n] = fence_template[n]
+		end
+	end
+	def.crafts = {craft}
 
+	homedecor.register("fence_"..name, def)
+	-- minetest.override_item("homedecor:fence_"..name, {connects_})
 end
 
 -- other types of fences

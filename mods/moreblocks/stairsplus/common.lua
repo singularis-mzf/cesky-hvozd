@@ -189,8 +189,8 @@ local not_blocking_trains_shapes = {
 }
 ]]
 
-local fields_to_inherit_from_info = {"selection_box", "collision_box", "connect_sides", "connects_to"}
-local fields_to_inherit_from_fields = {"is_ground_content", "tiles", "paramtype2", "use_texture_alpha", "sounds"}
+local fields_to_inherit_from_info = {"selection_box", "collision_box", "connect_sides", "connects_to", "check_for_pole"}
+local fields_to_inherit_from_fields = {"is_ground_content", "tiles", "use_texture_alpha", "sounds"}
 
 stairsplus.register_single = function(category, alternate, info, modname, subname, recipeitem, fields)
 
@@ -232,8 +232,12 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 		error("Invalid shape def: "..dump2(def))
 	end
 
-	if def.paramtype2 == nil or def.paramtype2 == "none" then
-		def.paramtype2 = "facedir"
+	if def.paramtype2 == nil then
+		if def.node_box and def.node_box.type == "connected" then
+			def.paramtype2 = "none"
+		else
+			def.paramtype2 = "facedir"
+		end
 	end
 	--[[
 	def.paramtype2 = def.paramtype2 or "facedir"
@@ -254,7 +258,6 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 		if def.connects_to == nil then
 			def.connects_to = {"group:fence", "group:wall"}
 		end
-		def.paramtype2 = "none" -- TODO: allow colorable connecting shapes
 	end
 
 	def.description = assert(fields.description)..": "..assert(info.description)

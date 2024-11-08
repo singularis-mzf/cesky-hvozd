@@ -122,8 +122,6 @@ default_marram_grass_3.png
 default_mese_post_light_top.png
 default_moss.png
 default_moss_side.png
-default_obsidian_block.png
-default_obsidian_brick.png
 default_paper.png
 default_permafrost.png
 default_steel_ingot.png
@@ -373,6 +371,9 @@ default_grass_2.png
 default_grass_3.png
 default_grass_4.png
 default_grass_5.png
+default_obsidian.png
+default_obsidian_brick.png
+default_obsidian_block.png
 moon.png
 moon_tonemap.png
 sun.png
