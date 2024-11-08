@@ -2,7 +2,8 @@ local F = minetest.formspec_escape
 local ifthenelse = ch_core.ifthenelse
 local ui = assert(unified_inventory)
 
-local text_length_limit = 60
+local send_text_limit = 256
+local view_text_limit = 60
 
 -- local white, light_gray, light_green = ch_core.colors.white, ch_core.colors.light_gray, ch_core.colors.light_green
 
@@ -62,9 +63,9 @@ local function get_events_online_charinfo(player_name)
 	if result == nil then
 		result = {
 			all_event_types = get_all_event_types_for_player(player_name),
+			selected_event_index = 0, -- index aktuálně vybraného oznámení, nebo 0
 			negative_set = deserialize_filter(offline_charinfo.ui_event_filter or ""),
-			-- sendable_event_types = nil,
-			send_type_index = 1,
+			send_type_index = 1, -- index typu oznámení k odeslání
 		}
 		online_charinfo.ch_events = result
 	end
@@ -119,19 +120,28 @@ local function get_ui_formspec(player, perplayer_formspec)
 	if events_charinfo.send_type_index > #sendable_event_types then
 		events_charinfo.send_type_index = 1
 	end
+	local selected_event_index = assert(events_charinfo.selected_event_index)
 
 	table.insert(formspec, "tablecolumns[text;color,span=2;text;text]"..
-		"style[ui_events;font_size=-1]"..
-		"table[0,0;17,4;ui_events;DATUM,#ffffff,OZNÁMENÍ,DRUH")
+		"style[che_ui_events;font_size=-1]"..
+		"table[0,0;17,4;che_ui_events;DATUM,#ffffff,OZNÁMENÍ,DRUH")
 
+	local selected_event_full_text = "Klikněte na oznámení pro zobrazení plného textu."
 	for i, event in ipairs(events) do
-        local cas = event.time
+        local cas, text = event.time, event.text
         if not is_admin then
             cas = cas:sub(1,10)
         end
-        table.insert(formspec, ","..F(cas)..","..event.color..","..F(event.text)..","..F(event.description))
+		if i == selected_event_index then
+			selected_event_full_text = table.concat(ch_core.utf8_wrap(text, 60, {max_result_lines = 5}), "\n")
+		end
+		text = ch_core.utf8_truncate_right(text, 60, "(...)")
+        table.insert(formspec, ","..F(cas)..","..event.color..","..F(text)..","..F(event.description))
 	end
 	table.insert(formspec, ";]")
+	if selected_event_full_text ~= "" then
+		table.insert(formspec, "tooltip[che_ui_events;"..F(selected_event_full_text).."]")
+	end
 
 	--[[ rozbalovací pole s volbou filtru a řazení (zatím nepoužité)
 	table.insert(formspec, "dropdown[5.5,-0.6;7,0.5;ch_events_filtr;"..F(assert(filters[1].description)))
@@ -157,7 +167,7 @@ local function get_ui_formspec(player, perplayer_formspec)
 		formspec[#formspec] = ";"..events_charinfo.send_type_index..";true]"
 		table.insert(formspec, "button[4.25,"..(y + 1)..";2,0.75;che_event_send;odeslat]"..
 			"tooltip[che_text;Sem zadejte text události\\, kterou chcete oznámit ostatním registrovaným hráčům/kám.\n"..
-			"Maximálně "..(text_length_limit - 2 - ch_core.utf8_length(player_info.viewname)).." znaků. "..
+			"Maximálně "..send_text_limit.." znaků.\n"..
 			"Událost nebude viditelná turistickým postavám.\n"..
 			"Takto můžete odeslat jen jednu událost stejného typu za hodinu a odeslaný text již nebudete moci změnit.]"..
 			"tooltip[che_event_send;Odešle text události s aktuálním časovým razítkem.]")
@@ -190,7 +200,7 @@ end
 ui.register_button("ch_events", {
 	type = "image",
 	image = "ch_overrides_ui_events.png",
-	tooltip = "Události a oznámení",
+	tooltip = "Oznámení a události",
 	condition = function(player)
 		return true
 	end,
@@ -214,6 +224,14 @@ local function on_player_receive_fields(player, formname, fields)
 			events_charinfo.send_type_index = n
 		end
 	end
+	if fields.che_ui_events ~= nil then
+		local table_event = minetest.explode_table_event(fields.che_ui_events)
+		if table_event.type == "CHG" or table_event.type == "DCL" then
+			if events_charinfo == nil then events_charinfo = get_events_online_charinfo(player_name) end
+			events_charinfo.selected_event_index = tonumber(table_event.row) - 1
+			update_formspec = true
+		end
+	end
 	if fields.ch_scrollbar2_events ~= nil then
 		local event = minetest.explode_scrollbar_event(fields.ch_scrollbar2_events)
 		if event.type == "CHG" then
@@ -229,7 +247,7 @@ local function on_player_receive_fields(player, formname, fields)
 		if event_type ~= nil then
 			-- možná by bylo správné zde znovu zkontrolovat právo k odeslání tohoto typu oznámení,
 			-- ale soudím, že to nestojí za to
-			local text = ch_core.utf8_truncate_right(tostring(fields.che_text), text_length_limit, "(...)")
+			local text = ch_core.utf8_truncate_right(tostring(fields.che_text), send_text_limit, "(...)")
 			ch_core.add_event(event_type, text, player_name)
 			update_formspec = true
 		else

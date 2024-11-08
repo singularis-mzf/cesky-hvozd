@@ -97,8 +97,8 @@ local function get_bags_formspec(bags_info)
 	end
 	if ch_core.get_trash_inventory(player_name) then
 		table.insert(formspec, string.format(
-			"button[%f,%f;2,0.75;bagtrash;%s]tooltip[bagtrash;%s]", trash_x - 0.25, (trash_y - 1.25), S("Trash Bin"),
-			minetest.formspec_escape("Do odpadkového koše se házejí předměty, které se rozhodnete zničit, pro případ, že byste si to rozmysleli. Obsah koše se ztrácí odpojením ze hry.")))
+			"button[%f,%f;2,1.25;bagtrash;%s]tooltip[bagtrash;%s]", trash_x - 0.25, (trash_y - 1.75), "odpadkový\nkoš",
+			minetest.formspec_escape("Do odpadkového koše se házejí předměty, které se rozhodnete zničit, pro případ, že byste si to rozmysleli.\nObsah koše se ztrácí odpojením ze hry.")))
 	end
 	return table.concat(formspec)
 end
