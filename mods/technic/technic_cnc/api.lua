@@ -18,6 +18,7 @@ function technic_cnc.register_program(recipeitem, suffix, model, groups, images,
 
 	groups = table.copy(groups)
 	groups.not_in_creative_inventory = nil
+	groups[suffix] = 1
 
 	local def = {
 		description   = "neznámý materiál: "..description,

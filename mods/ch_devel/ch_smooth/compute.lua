@@ -11,6 +11,66 @@ local visualize_shape = assert(ch_smooth.visualize_shape)
 
 local empty_table = {}
 
+local function quantize(y)
+	if y < 0.0 then
+		return -math.floor(-2 * y + 0.5) / 2
+	else
+		return math.floor(2 * y + 0.5) / 2
+	end
+end
+
+local function consolide_nodes(node_1, key_1, node_2, key_2)
+	local st1, st2 = node_1.shape_type, node_2.shape_type
+	if st1 == "ignore" and st2 == "ignore" then
+		return -- both nodes are 'ignore'
+	end
+	local by1, by2 = node_1.base_pos.y, node_2.base_pos.y
+	if math.abs(by2 - by1) > 1 then
+		return -- nodes are too distant to consolide
+	end
+	local y1, y2 = node_1[key_1], node_2[key_2]
+
+	if st1 ~= "ignore" and st2 ~= "ignore" then
+		-- both nodes can be shifted
+		assert(tonumber(y1))
+		assert(tonumber(y2))
+		y1 = quantize((by1 + y1 + by2 + y2) / 2)
+		node_1[key_1] = quantize(y1 - by1)
+		node_2[key_2] = quantize(y1 - by2)
+	elseif st1 ~= "ignore" then
+		-- only node_1 can be changed
+		node_1[key_1] = by2 + 1
+	else
+		-- only node_2 can be changed
+		node_2[key_2] = by1 + 1
+	end
+end
+
+local function elastic_computation(points)
+	--[[ points = {
+		[1] = weight,
+		[2] = node,
+		[3] = key,
+	}]]
+	local a, b = 0, 0
+	for _, point in ipairs(points) do
+		local weight, node, key = unpack(point)
+		local y = node.base_pos.y
+		if node.shape_type == "ignore" then
+			y = y + 1
+		else
+			y = y + node[key]
+		end
+		a = a + weight * y
+		b = b + weight
+	end
+	if b ~= 0 then
+		return quantize(a / b)
+	else
+		return nil
+	end
+end
+
 --
 -- compute_abcd(nodes, map) => y-coodinate or nil
 -----------------------------------------------------------------------------
@@ -79,13 +139,15 @@ local function find_shape(material, shape, options)
 			best_shape = matshape
 			best_shape_diff = diff
 			best_shape_exact_hits = exact_hits
-			best_vzorec = vzorec_tvaru	local na, nb, nc, nd
+			best_vzorec = vzorec_tvaru
+			--[[
+			local na, nb, nc, nd
 			local counts = {}
 			local values = {a, b, c, d}
 			for _, value in ipairs(values) do
 				counts[value] = (counts[value] or 0) + 1
 			end
-		
+			]]
 		end
 	end
 	if best_shape == nil then
@@ -299,14 +361,58 @@ local function vyhladit(pos, operation_id)
 		print("nodes == nil")
 		return
 	end
+	if nodes[5].shape_type == "ignore" then
+		print("central node is ignore!")
+		return
+	end
 	print("DEBUG: vyhladit() will work at "..minetest.pos_to_string(pos))
-	local y_base = nodes[5].base_pos.y
-	-- print("NODES = "..dump2(nodes))
-	local newa = compute_abcd(nodes, map_a)
-	local newb = compute_abcd(nodes, map_b)
-	local newc = compute_abcd(nodes, map_c)
-	local newd = compute_abcd(nodes, map_d)
 
+	consolide_nodes(nodes[1], "vxpzm", nodes[2], "vxmzm")
+	consolide_nodes(nodes[2], "vxpzm", nodes[3], "vxmzm")
+	consolide_nodes(nodes[1], "vxmzp", nodes[4], "vxmzm")
+	consolide_nodes(nodes[3], "vxpzp", nodes[6], "vxpzm")
+	consolide_nodes(nodes[4], "vxmzp", nodes[7], "vxmzm")
+	consolide_nodes(nodes[6], "vxpzp", nodes[9], "vxpzm")
+	consolide_nodes(nodes[7], "vxpzp", nodes[8], "vxmzp")
+	consolide_nodes(nodes[8], "vxpzp", nodes[9], "vxmzp")
+
+	print("DEBUG: after consolidation = "..dump2(nodes))
+
+	local y_base = nodes[5].base_pos.y
+	local newa = elastic_computation({
+		-- weight, node, key
+		{4, nodes[1], "vxmzp"},
+		{4, nodes[1], "vxpzm"},
+		{2, nodes[1], "vxmzm"},
+		{1, nodes[4], "vxmzp"},
+		{1, nodes[2], "vxpzm"},
+	})
+	local newb = elastic_computation({
+		{4, nodes[3], "vxmzm"},
+		{4, nodes[3], "vxpzp"},
+		{2, nodes[3], "vxpzm"},
+		{1, nodes[2], "vxmzm"},
+		{1, nodes[6], "vxpzp"},
+	})
+	local newc = elastic_computation({
+		{4, nodes[7], "vxmzm"},
+		{4, nodes[7], "vxpzp"},
+		{2, nodes[7], "vxmzp"},
+		{1, nodes[4], "vxmzm"},
+		{1, nodes[8], "vxpzp"},
+	})
+	local newd = elastic_computation({
+		{4, nodes[9], "vxmzp"},
+		{4, nodes[9], "vxpzm"},
+		{2, nodes[9], "vxpzp"},
+		{1, nodes[8], "vxmzp"},
+		{1, nodes[6], "vxpzm"},
+	})
+
+	print("DEBUG: [VYHLAZENI "..operation_id.."] new = {A = "..(newa or "nil")..", B = "..(newb or "nil")..", C = "..(newc or "nil")..", D = "..(newd or "nil").."}")
+	if newa == nil or newb == nil or newc == nil or newd == nil then
+		return
+	end
 	print(visualize_shape("ABCD", {vxmzm = newa - y_base, vxpzm = newb - y_base, vxmzp = newc - y_base, vxpzp = newd - y_base}))
 	if operation_id then
 		minetest.log("action", "[VYHLAZENI "..operation_id.."] new = {A = "..(newa or "nil")..", B = "..(newb or "nil")..", C = "..(newc or "nil")..", D = "..(newd or "nil").."}")

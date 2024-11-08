@@ -517,7 +517,19 @@ stairsplus.defs = {
 				connect_right = {0.125, -0.125, -0.125, 0.5, 0.125, 0.125}, -- +X
 			},
 			connect_sides = sides_xyz,
-			connects_to = {"group:panel_pole", "group:full_cube_node"}, -- no fence, no wall
+			connects_to = {"group:panel_pole", "group:full_cube_node",
+				"group:technic_cnc_arch216_flange",
+				"group:technic_cnc_bannerstone",
+				"group:technic_cnc_block_fluted",
+				"group:technic_cnc_cylinder",
+				"group:technic_cnc_oct",
+				"group:technic_cnc_opposedcurvededge",
+				"group:technic_cnc_onecurvededge",
+				"group:technic_cnc_sphere",
+				"group:technic_cnc_spike",
+				"group:technic_cnc_twocurvededge",
+				"group:technic_cnc_valley",
+			}, -- no fence, no wall
 			extra_groups = {panel_pole = 1},
 			wall = true,
 		},
