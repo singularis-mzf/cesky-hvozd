@@ -86,7 +86,8 @@ dofile(modpath .. "/formspecs.lua") -- : data, lib
 dofile(modpath .. "/areas.lua") -- : data, lib
 dofile(modpath .. "/nametag.lua") -- : data, lib
 dofile(modpath .. "/privs.lua")
-dofile(modpath .. "/localize_chatcommands.lua") -- : privs, data, lib
+dofile(modpath .. "/clean_players.lua") -- : data, lib, privs
+dofile(modpath .. "/localize_chatcommands.lua") -- : data, lib, privs
 dofile(modpath .. "/udm.lua") -- : areas, data, lib
 dofile(modpath .. "/chat.lua") -- : areas, data, lib, privs, nametag, udm
 dofile(modpath .. "/events.lua") -- : chat, data, lib, privs
