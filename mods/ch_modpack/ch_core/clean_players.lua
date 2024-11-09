@@ -5,7 +5,6 @@ function ch_core.clean_players()
     local count = 0
 
     for _, data in ipairs(all_players) do
-        local offline_charinfo = ch_core.offline_charinfo[data.player_name] or {}
         if
          -- podmínky pro smazání postavy:
          -- 1) postava se nejmenuje Administrace

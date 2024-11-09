@@ -178,7 +178,7 @@ function ch_core.stavby_get_all(filter, sorter, extra_argument)
     if filter == nil then
         filter = function() return true end
     end
-    for key, record in pairs(data) do
+    for _, record in pairs(data) do
         if filter(record, extra_argument) then
             table.insert(result, record)
         end

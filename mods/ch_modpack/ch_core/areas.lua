@@ -7,13 +7,13 @@ local after_player_area_change = {}
 local after_player_areas_change = {}
 
 local function load_ch_areas()
-	local f, s, err, data
+	local data
 	local f, err = io.open(ch_areas_file_path, "r")
 	if not f then
 		minetest.log("warning", "CH areas file cannot be openned: "..(err or "nil"))
 		return {}
 	end
-	s = f:read("*a")
+	local s = f:read("*a")
 	if s then
 		data, err = minetest.parse_json(s)
 	end

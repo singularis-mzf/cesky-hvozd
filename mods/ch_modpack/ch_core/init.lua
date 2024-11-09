@@ -229,7 +229,7 @@ local function globalstep(dtime)
 			-- REAGOVAT NA KLÁVESY:
 			local old_control_bits = online_charinfo.klavesy_b or 0
 			local new_control_bits = player:get_player_control_bits()
-			if not (new_control_bits == old_control_bits) then
+			if new_control_bits ~= old_control_bits then
 				local new_controls = player:get_player_control()
 				local old_controls = online_charinfo.klavesy or new_controls
 				online_charinfo.klavesy = new_controls

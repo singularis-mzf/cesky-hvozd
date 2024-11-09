@@ -2,11 +2,11 @@ ch_core.open_submod("udm", {areas = true, data = true, lib = true})
 
 local color_celoserverovy = minetest.get_color_escape_sequence("#ff8700")
 local color_mistni = minetest.get_color_escape_sequence("#fff297")
-local color_mistni_zblizka = minetest.get_color_escape_sequence("#64f231") -- 54cc29
+-- local color_mistni_zblizka = minetest.get_color_escape_sequence("#64f231") -- 54cc29
 local color_soukromy = minetest.get_color_escape_sequence("#ff4cf3")
-local color_sepot = minetest.get_color_escape_sequence("#fff297cc")
+-- local color_sepot = minetest.get_color_escape_sequence("#fff297cc")
 local color_systemovy = minetest.get_color_escape_sequence("#cccccc")
-local color_reset = minetest.get_color_escape_sequence("#ffffff")
+-- local color_reset = minetest.get_color_escape_sequence("#ffffff")
 
 function ch_core.udm_catch_chat(player_name, message)
     local pinfo = ch_core.normalize_player(player_name)

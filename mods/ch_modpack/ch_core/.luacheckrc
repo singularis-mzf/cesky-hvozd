@@ -16,7 +16,6 @@ globals = {
 		"je_pryc",
 		"je_ve_vykonu_trestu",
 		"jmeno_na_prihlasovaci",
-		"online_charinfo",
 		"precist_hotovost",
 		"prihlasovaci_na_zobrazovaci",
 		"set_temporary_titul",
@@ -25,9 +24,16 @@ globals = {
 		"start_ch_timer",
 		"systemovy_kanal",
 		"update_formspec",
+		online_charinfo = {
+			read_only = false,
+			other_fields = true,
+		}, offline_charinfo = {
+			read_only = false,
+			other_fields = true,
+		}
 	}},
 	doors = {fields = {
-		"get", "login_to_viewname"
+		"get", "login_to_viewname", "register_fencegate"
 	}},
 	player_api = {fields = {"player_attached"}},
 }
@@ -36,6 +42,9 @@ globals = {
 read_globals = {
 	default = {fields = {
 		"can_interact_with_node",
+		"register_fence",
+		"register_fence_rail",
+		"register_mesepost",
 		"node_sound_stone_defaults",
 	}},
 	math = {fields = {"ceil", "floor", "round"}},
@@ -64,7 +73,7 @@ read_globals = {
 			"get_server_uptime", "get_spawn_level", "get_timeofday", "get_tool_wear_after_use", "get_translated_string", "get_translator",
 			"get_us_time", "get_user_path", "get_version", "get_voxel_manip", "get_worldpath", "global_exists", "handle_async", "handle_node_drops",
 			"has_feature", "hash_node_position", "hud_replace_builtin", "inventorycube", "is_area_protected", "is_colored_paramtype", "is_creative_enabled",
-			"is_nan", "is_player", "is_protected", "is_singleplayer", "is_yes", "item_drop", "item_eat", "item_pickup", "item_place", "item_place_node",
+			"is_nan", "is_player", "is_protected", "is_singleplayer", "is_yes", "item_eat", "item_pickup", "item_place", "item_place_node",
 			"item_place_object", "item_secondary_use", "itemstring_with_color", "itemstring_with_palette", "kick_player", "line_of_sight", "load_area",
 			"log", "luaentities", "mkdir", "mod_channel_join", "mvdir", "node_dig", "node_punch", "nodedef_default", "noneitemdef_default",
 			"notify_authentication_modified", "object_refs", "on_craft", "override_chatcommand", "override_item", "parse_coordinates", "parse_json",
@@ -103,16 +112,18 @@ read_globals = {
 			"string_to_privs", "strip_background_colors", "strip_colors", "strip_foreground_colors", "strip_param2_color",
 			"swap_node", "tooldef_default", "transforming_liquid_add", "translate", "unban_player_or_ip", "unregister_biome",
 			"unregister_chatcommand", "unregister_item", "urlencode", "wallmounted_to_dir", "wrap_text", "write_json", "yaw_to_dir",
+			item_drop = {read_only = false},
 			send_join_message = {read_only = false},
 			send_leave_message = {read_only = false},
 		},
 	},
-	string = {fields = {"sub"}},
-	table = {fields = {"copy", "insert_all"}},
-	vector = {fields = {"angle", "copy", "distance", "new", "offset", "rotate", "round", "subtract", "zero"}},
+	string = {fields = {"split", "sub"}},
+	table = {fields = {"copy", "indexof", "insert_all", "key_value_swap"}},
+	vector = {fields = {"angle", "copy", "distance", "equals", "multiply", "new", "offset", "rotate", "round", "subtract", "to_string", "zero"}},
 
 	"AreaStore", "dump2", "emote", "hb", "ItemStack", "player_api", "wielded_light"
 }
 
+files["ap.lua"].ignore = {"_max_xp"}
 files["data.lua"].ignore = {"past_playtime"}
 files["trade.lua"].ignore = {"_trade_state"}

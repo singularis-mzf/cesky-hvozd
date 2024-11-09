@@ -143,12 +143,12 @@ end
 	Je-li to dávka peněz, vrátí jejich hodnotu (nezáporné celé číslo).
 	Jinak vrací nil.
 ]]
-function ch_core.precist_hotovost(stack)
-	if stack == nil then
+function ch_core.precist_hotovost(stacks)
+	if stacks == nil then
 		return nil
-	elseif type(stack) == "table" then
+	elseif type(stacks) == "table" then
 		local result = 0
-		for i, stack in ipairs(stacks) do
+		for _, stack in ipairs(stacks) do
 			local v = penize[stack:get_name()]
 			if v ~= nil then
 				result = result + v * stack:get_count()
@@ -156,13 +156,13 @@ function ch_core.precist_hotovost(stack)
 		end
 		return result
 	else
+		local stack = stacks
 		local v = penize[stack:get_name()]
 		if v ~= nil then
 			return v * stack:get_count()
 		end
 	end
 end
-local precist_hotovost = ch_core.precist_hotovost
 
 -- current_count, count_to_remove
 -- vrací: count_to_remove_now, hundreds_to_remove

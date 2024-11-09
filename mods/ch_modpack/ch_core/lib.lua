@@ -669,7 +669,7 @@ function ch_core.compile_dofile(args, options)
 		end
 		local f = loadfile(filepath)
 		if f ~= nil then
-			return f(unpack(args))
+			return f(unpack(largs))
 		elseif options.nofail == true then
 			return
 		else
@@ -711,7 +711,7 @@ function ch_core.get_all_players(as_map, include_privs)
 		error("ch_core.get_all_players(): include_privs == true is allowed only when the game is running!")
 	end
 	local list, map = {}, {}
-	for prihlasovaci, offline_charinfo in pairs(ch_core.offline_charinfo) do
+	for prihlasovaci, _ in pairs(ch_core.offline_charinfo) do
 		local exists = (not include_privs) or minetest.player_exists(prihlasovaci)
 		if exists then
 			local record = {
@@ -893,8 +893,8 @@ function ch_core.get_ui_form_template(id, player_viewname, title, scrollbars, pe
     local fs_begin, fs_middle, fs_end = {fs.standard_inv_bg}, {}, {}
     local form1, form2 = {}, {}
     local sbar_width = 0.5
+	local style
 
-    local style
     if scrollbars.left ~= nil and scrollbars.right ~= nil then
         style = "left_right"
     elseif scrollbars.top ~= nil and scrollbars.bottom ~= nil then
@@ -903,31 +903,28 @@ function ch_core.get_ui_form_template(id, player_viewname, title, scrollbars, pe
         error("Unsupported UI formspec style!")
     end
 
-    if scrollbars.left ~= nil then
+    if style == "left_right" then
         form1.x = fs.std_inv_x
         form1.y = fs.form_header_y + 0.5
         form1.w = 10.0
         form1.h = fs.std_inv_y - fs.form_header_y - 1.25
         form1.key = "left"
         form1.scrollbar_max = scrollbars.left
-    elseif scrollbars.top ~= nil then
-        form1.x = fs.std_inv_x
-        form1.y = fs.form_header_y + 0.5
-        form1.w = 17.25
-        form1.h = fs.std_inv_y - fs.form_header_y - 1.25
-        form1.key = "top"
-        form1.scrollbar_max = scrollbars.top
-    else
-        error("not implemented yet")
-    end
-    if scrollbars.right ~= nil then
+
         form2.x = fs.page_x - 0.25
         form2.y = 0.5
         form2.w = fs.pagecols - 1
         form2.h = fs.pagerows - 1 + fs.page_y
         form2.key = "right"
         form2.scrollbar_max = scrollbars.right
-    elseif scrollbars.bottom ~= nil then
+    elseif style == "top_bottom" then
+        form1.x = fs.std_inv_x
+        form1.y = fs.form_header_y + 0.5
+        form1.w = 17.25
+        form1.h = fs.std_inv_y - fs.form_header_y - 1.25
+        form1.key = "top"
+        form1.scrollbar_max = scrollbars.top
+
         form2.x = fs.page_x - 0.25
         form2.y = fs.std_inv_y - 0.5
         form2.w = fs.pagecols - 1

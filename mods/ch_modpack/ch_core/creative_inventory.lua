@@ -1,7 +1,5 @@
 ch_core.open_submod("creative_inventory", {lib = true})
 
-local ifthenelse = ch_core.ifthenelse
-
 local none = {}
 local partition_defs = {
 	{
@@ -343,8 +341,8 @@ local categories = {
 				not is_streets_signs(name, groups) and
 				(not groups.dye or groups.basic_dye) and
 				not groups.platform and
-				not (name:sub(1, 16) == "clothing:fabric_") and
-				not (name:sub(1, 15) == "letters:letter_")
+				name:sub(1, 16) ~= "clothing:fabric_" and
+				name:sub(1, 15) ~= "letters:letter_"
 		end,
 		icon = {
 			{image = "ui_category_all.png^[resize:24x24", item = "unified_inventory:bag_large"},
@@ -591,7 +589,6 @@ local function sort_items(itemstrings, group_by_mod)
 	for _, itemstring in ipairs(itemstrings) do
 		local stack = ItemStack(itemstring)
 		local name = stack:get_name()
-		local def = minetest.registered_items[name]
 		local desc = stack:get_description() or ""
 		local tdesc = minetest.get_translated_string("cs", desc)
 		if tdesc == nil then
@@ -762,11 +759,11 @@ function ch_core.update_creative_inventory(force_update)
 	end
 
 	-- 7. přidej kategorie
-	local categories = compute_categories(items_by_order)
+	local ci_categories = compute_categories(items_by_order)
 
 	-- commit
 	local new_ci = {
-		categories = categories,
+		categories = ci_categories,
 		items_by_order = items_by_order,
 		partitions_by_name = partitions_by_name,
 	}
@@ -945,7 +942,7 @@ end
 
 function ch_core.sort_itemstacks(stacks, order_types, lang_code)
 	local cmps = {}
-	for i, otype in ipairs(order_types) do
+	for _, otype in ipairs(order_types) do
 		local cmp_index = name_to_comparison_index[otype.name]
 		if cmp_index == nil then
 			error("Invalid order type '"..otype.name.."'!")

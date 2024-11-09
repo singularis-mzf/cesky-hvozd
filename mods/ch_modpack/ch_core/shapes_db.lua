@@ -787,13 +787,13 @@ function ch_core.get_stairsplus_custom_shapes(recipeitem)
 end
 
 function ch_core.init_stairsplus_custom_shapes(defs)
-	local set = {}
+	local key_set = {}
 	custom_list_shapes = {}
 	for category, cdef in pairs(defs) do
 		for alternate, _ in pairs(cdef) do
 			local key = category.."/"..alternate
-			if set[key] == nil then
-				set[key] = true
+			if key_set[key] == nil then
+				key_set[key] = true
 				table.insert(custom_list_shapes, {category, alternate})
 			end
 		end
@@ -927,16 +927,6 @@ local function assembly_name(matmod, prefix, matname, info, foreign_names)
 	return ifthenelse(foreign_names, ":"..matmod, matmod)..":"..prefix..matname
 end
 
-local function set_tiles(info, tiles, def)
-	if type(info) == "table" and info.texture ~= nil then
-		def.texture = info.texture
-	else
-		def.texture = ""
-		def.tiles = tiles
-	end
-	return def
-end
-
 function ch_core.register_fence(material, defs)
 	local matmod, matname = string.match(material, "([^:]+):([^:]+)$")
 	local ndef = minetest.registered_nodes[material]
@@ -1010,18 +1000,18 @@ function ch_core.register_fence(material, defs)
 		-- example: default:mese_post_light
 		info = ifthenelse(type(defs.mesepost) == "table", defs.mesepost, empty_table)
 		name = assembly_name(matmod, "mese_post_light_", matname, defs.mesepost, defs.foreign_names)
-		local tiles = get_six_textures(ndef.tiles)
+		local mp_tiles = get_six_textures(ndef.tiles)
 		for i = 3, 4 do
-			tiles[i].name = tiles[i].name.."^default_mese_post_light_side.png^[makealpha:0,0,0"
+			mp_tiles[i].name = mp_tiles[i].name.."^default_mese_post_light_side.png^[makealpha:0,0,0"
 		end
 		for i = 5, 6 do
-			tiles[i].name = tiles[i].name.."^default_mese_post_light_side_dark.png^[makealpha:0,0,0"
+			mp_tiles[i].name = mp_tiles[i].name.."^default_mese_post_light_side_dark.png^[makealpha:0,0,0"
 		end
 		def = {
 			material = material,
 			texture = info.texture or texture,
 			description = (ndef.description or "neznámý materiál")..": sloupek s meseovým světlem",
-			tiles = tiles,
+			tiles = mp_tiles,
 			groups = table.copy(groups),
 			sounds = ndef.sounds,
 		}

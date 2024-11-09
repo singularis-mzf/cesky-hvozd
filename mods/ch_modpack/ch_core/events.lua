@@ -33,16 +33,6 @@ local function is_events_admin(pinfo)
     return pinfo.role == "admin" or pinfo.privs.ch_events_admin
 end
 
-local function load_file(dir_path, file_name)
-	local f = io.open(worldpath.."/"..dir_path.."/"..file_name)
-	local result
-	if f then
-		result = f:read("*a")
-		f:close()
-	end
-	return result
-end
-
 local events_month_id -- ID aktuálního měsíce (aktualizuje se ve funkci add_event())
 local events = function()
     local cas = ch_core.aktualni_cas()
@@ -325,7 +315,6 @@ function ch_core.get_sendable_event_types_for_player(player_name_or_player)
         end
     elseif pinfo.role ~= "new" then -- nové postavy nemohou odesílat nic
         local used_types_set = {}
-        local events_in_month = events[timestamp_to_month_id(timestamp)]
         for _, event in ipairs(events[events_month_id] or {}) do
             if event.player_name == player_name and timestamp_to_hour_id(event.timestamp) == hour_id then
                 used_types_set[event.type] = true
@@ -431,10 +420,10 @@ end)
 
 -- Příkaz /události
 local function udalosti(name, param)
-    local events = ch_core.get_events_for_player(name, nil, 10)
-    local color_reset = ch_core.colors.white
+    local player_events = ch_core.get_events_for_player(name, nil, 10)
+    -- local color_reset = ch_core.colors.white
     local result = {"Nejnovější oznámení:"}
-    for _, event in ipairs(events) do
+    for _, event in ipairs(player_events) do
         table.insert(result, "- "..event.time.." <"..minetest.colorize(event.color, event.description).."> "..event.text)
     end
     return true, table.concat(result, "\n")

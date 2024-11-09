@@ -14,7 +14,7 @@ local levels = {
 	{base = 0, count = 500, next = 500},
 }
 
-local ifthenelse = ch_core.ifthenelse
+local ifthenelse = assert(ch_core.ifthenelse)
 
 ch_core.register_event_type("level_up", {
 	description = "zvýšení úrovně",
@@ -566,12 +566,14 @@ if minetest.get_modpath("hudbars") then
 	minetest.register_on_joinplayer(function(player, last_login)
 		local pinfo = ch_core.normalize_player(player)
 		local offline_charinfo = ch_core.get_offline_charinfo(pinfo.player_name)
-		local level, xp, max_xp = offline_charinfo.ap_level, offline_charinfo.ap_xp
-		if level and xp then
+		--[[
+		local level, xp, _max_xp = offline_charinfo.ap_level, offline_charinfo.ap_xp
+		if not (level and xp) then
 			max_xp = ch_core.ap_get_level(level).count
 		else
-			level, xp, max_xp = 1, 0, ch_core.ap_get_level(1).count
+			level, xp, _max_xp = 1, 0, ch_core.ap_get_level(1).count
 		end
+		]]
 		local skryt_body = pinfo.role == "new" or offline_charinfo.skryt_body == 1
 		hb.init_hudbar(player, "ch_xp", 0, 10, skryt_body)
 		update_xp_hud(player, pinfo.player_name, offline_charinfo)

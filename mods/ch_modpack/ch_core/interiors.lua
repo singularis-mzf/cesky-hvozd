@@ -15,7 +15,7 @@ minetest.register_on_mods_loaded(function()
         signlike = true,
         torchlike = true,
     }
-    for name, ndef in pairs(minetest.registered_nodes) do
+    for _, ndef in pairs(minetest.registered_nodes) do
 		if passable_drawtypes[ndef.drawtype or "normal"] then -- or ndef.sunlight_propagates == true
             ndef._ch_interior = passable
 		else

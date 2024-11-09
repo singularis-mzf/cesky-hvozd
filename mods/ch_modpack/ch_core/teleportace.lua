@@ -183,7 +183,7 @@ function ch_core.teleport_player(def)
 	if player == nil or online_charinfo == nil then
 		return false, "postava není ve hře"
 	end
-	local player_pos = player:get_pos()
+	-- local player_pos = player:get_pos()
 
 	-- mohu přemístit postavu?
 	if d.type ~= "admin" and ch_core.je_ve_vykonu_trestu ~= nil then
@@ -238,6 +238,10 @@ end
 	Zjistí, zda je postava přemísťována.
 ]]
 function ch_core.is_teleporting(player_name)
+	local online_charinfo = ch_core.online_charinfo[player_name]
+	if online_charinfo == nil then
+		return false
+	end
 	local timer_def = ch_core.get_ch_timer_info(online_charinfo, "teleportace")
 	if timer_def == nil then
 		return false
@@ -326,7 +330,6 @@ end
 
 -- /začátek
 local function zacatek(player_name, _param)
-	local pos
 	local offline_charinfo = ch_core.offline_charinfo[player_name]
 	if not offline_charinfo then
 		return false, "Interní údaje nebyly nalezeny!"

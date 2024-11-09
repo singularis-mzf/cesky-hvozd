@@ -71,6 +71,7 @@ function ch_core.get_active_objects(names)
     return result
 end
 
+--[[
 local function append_if_inside_radius(dst, lists, pos, radius)
     local new = {}
     for i = 2, 1, -1 do
@@ -82,6 +83,7 @@ local function append_if_inside_radius(dst, lists, pos, radius)
         end
     end
 end
+]]
 
 --[[
     Vrátí aktivní objekty typu "name", pokud se nacházejí v zadané oblasti,
