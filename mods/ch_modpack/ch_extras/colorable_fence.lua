@@ -38,7 +38,7 @@ if minetest.get_modpath("solidcolor") then
 	def.paramtype2 = "color4dir"
 	def.palette = "unifieddyes_palette_color4dir.png"
 	for _, item in ipairs({"ch_extras:colorable_fence_gate_v1_open", "ch_extras:colorable_fence_gate_v1_closed"}) do
-		def.groups = ch_core.assembly_groups_groups(minetest.registered_nodes[item].groups, {ud_param2_colorable = 1})
+		def.groups = ch_core.assembly_groups(minetest.registered_nodes[item].groups, {ud_param2_colorable = 1})
 		minetest.override_item(item, def)
 	end
 end

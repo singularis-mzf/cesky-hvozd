@@ -173,6 +173,7 @@ local function register_sign_node(friendlyname, name, tiles, type, inventory_ima
 		local upper_node = minetest.get_node(upper_pos)
 		if (minetest.registered_nodes[behind_node.name].groups.bigpole
 				and minetest.registered_nodes[behind_node.name].streets_pole_connection[param2][behind_node.param2 + 1] ~= 1)
+				or minetest.registered_nodes[behind_node.name].groups.panel_pole
 				or behind_nodes[behind_node.name] == true
 				or (behind_nodes_same_parity[behind_node.name] and (behind_node.param2 + param2) % 2 == 0) then
 			node.name = node.name .. "_polemount"

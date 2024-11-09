@@ -518,6 +518,7 @@ stairsplus.defs = {
 			},
 			connect_sides = sides_xyz,
 			connects_to = {"group:panel_pole", "group:full_cube_node",
+				"group:streets_light",
 				"group:technic_cnc_arch216_flange",
 				"group:technic_cnc_bannerstone",
 				"group:technic_cnc_block_fluted",
@@ -531,7 +532,7 @@ stairsplus.defs = {
 				"group:technic_cnc_valley",
 			}, -- no fence, no wall
 			extra_groups = {panel_pole = 1},
-			check_for_pole = function() return true end,
+			check_for_pole = true,
 		},
 		["_pole_flat"] = {
 			description = "tyč (přímá)",
@@ -540,7 +541,7 @@ stairsplus.defs = {
 				fixed = {-0.125, -0.5, -0.125, 0.125, 0.5, 0.125},
 			},
 			extra_groups = {panel_pole = 1},
-			check_for_pole = function() return true end,
+			check_for_pole = true,
 		}
 	},
 	["slab"] = {

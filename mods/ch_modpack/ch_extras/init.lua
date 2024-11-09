@@ -43,15 +43,21 @@ dofile("3dprint.lua") -- 3D tisk (jen funkce, samotné bloky jsou definovány ji
 dofile("anchor.lua") -- soukromá světová kotva
 -- dofile("balikovna.lua") -- rozepsáno
 dofile_ud("colorable_doors.lua") -- barvitelné dveře
+dofile_ud("colorable_fence.lua") -- barvitelný plot
 dofile_ud("colorable_glass.lua") -- barvitelné sklo
+dofile_ud("colorable_pole.lua") -- barvitelná tyč
 dofile("covers.lua") -- pokrývky
 dofile("craftitems.lua") -- předměty (různé)
+dofile("doors.lua") -- různé dveře
 dofile("fence_hv.lua") -- výstražný plot
 dofile("flags.lua") -- česká a slovenská vlajka (node_box)
+dofile("geokes.lua") -- geokeš a související značky
 dofile("gravel.lua") -- světlý a železniční štěrk
+dofile("lupa.lua") -- zrcadlo
 dofile("magic_wand.lua") -- kouzelnická hůlka
 dofile("marble.lua") -- venkovní mramor
 dofile("markers.lua") -- značkovací tyče
+dofile("mirror.lua") -- zrcadlo
 dofile("otisky.lua") -- sada na rozbor otisků prstů
 dofile_ud("particle_board.lua") -- dřevotříska
 dofile("periskop.lua") -- periskop
