@@ -53,6 +53,7 @@ local default_items = {
 	{stack = ItemStack("orienteering:builder_compass_1"), survival = true, creative = true},
 	{stack = ItemStack("basic_signs:vevystavbe"), survival = true, creative = true},
 	{stack = ItemStack("ch_extras:teleporter_unsellable 100"), creative = true},
+	{stack = ItemStack("binoculars:binoculars"), new = true},
 
 	{stack = get_flashlight(), min_index = 17, new = true, survival = true, creative = true},
 	{stack = ItemStack("orienteering:map"), min_index = 18, new = true, survival = true, creative = true},

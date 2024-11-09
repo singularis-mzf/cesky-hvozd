@@ -83,7 +83,6 @@ local function on_use(itemstack, user, pointed_thing)
 	local controls = user:get_player_control()
 	if controls.aux1 then
 		-- reset
-		local meta = itemstack:get_meta()
 		meta:set_int("count", 0)
 		meta:set_float("sum", 0)
 		meta:set_int("x1", 0)

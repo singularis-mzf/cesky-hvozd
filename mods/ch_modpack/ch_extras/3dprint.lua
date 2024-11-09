@@ -1,11 +1,10 @@
 ch_extras.recipes3dprint = {}
 
-if minetest.get_modpath("home_workshop_machines") and minetest.get_modpath("technic") then
-
-local has_streets = minetest.get_modpath("streets")
+if not minetest.get_modpath("home_workshop_machines") or not minetest.get_modpath("technic") then
+	return
+end
 
 -- depends = ch_core, home_workshop_machines, technic, unified_inventory
--- optional_depends = streets
 
 local recipes = ch_extras.recipes3dprint
 
@@ -59,11 +58,11 @@ local function get_page_max()
 	end
 end
 
-local function get_formspec(pos, meta, inv, player, page)
+local function get_formspec(pos, meta, _inv, player, page)
 	if meta == nil then
 		meta = minetest.get_meta(pos)
 	end
-	inv = nil -- not used
+	_inv = nil -- not used
 	local node = minetest.get_node(pos)
 	local context = "nodemeta:"..pos.x..","..pos.y..","..pos.z
 	local formspec = {
@@ -116,9 +115,11 @@ local function is_input_item(item_name)
 	return item_name == default_item.input or item_name == "technic:tin_dust" or item_name == "technic:silver_dust"
 end
 
+--[[
 local function dye_points_to_ceil(points)
 	return math.ceil(points / points_per_dye)
 end
+]]
 
 function ch_extras.register_3dprint_recipe(recipe)
 	if type(recipe) ~= "table" or not recipe.output then
@@ -326,7 +327,8 @@ local function allow_metadata_inventory_take(pos, listname, index, stack, player
 		local recipe = recipes[index]
 		local new_state, allowed_count = simulate_crafting(pos, nil, nil, recipe, wanted_count)
 		if allowed_count ~= wanted_count then
-			minetest.log("error", "3D printer crafting of "..recipe.output:to_string().." at "..minetest.pos_to_string(pos).." failed! Can craft only "..count.." items instead of "..orig_count.."!")
+			minetest.log("error", "3D printer crafting of "..recipe.output:to_string().." at "..minetest.pos_to_string(pos)..
+				" failed! Can craft only "..allowed_count.." items instead of "..wanted_count.."!")
 		end
 		set_current_state(pos, nil, nil, new_state)
 		return allowed_count
@@ -382,7 +384,7 @@ local function on_metadata_inventory_take(pos, listname, index, stack, player)
 		local player_name = player and player:get_player_name()
 		minetest.log("action", "3D printer at "..minetest.pos_to_string(pos).." crafted "..stack:to_string().." for "..(player_name or "???"))
 		if player_name ~= nil then
-			ch_core.update_shown_formspec(player_name, "ch_extras:formspec_3dprint", function(custom_state)
+			ch_core.update_formspec(player_name, "ch_extras:formspec_3dprint", function(custom_state)
 					return get_formspec(custom_state.pos, nil, nil, minetest.get_player_by_name(player_name), custom_state.page)
 				end)
 		end
@@ -448,7 +450,7 @@ local function on_timer(pos, elapsed)
 end
 
 local function preserve_metadata(pos, oldnode, oldmeta, drops)
-	for i, stack in ipairs(drops) do
+	for _, stack in ipairs(drops) do
 		if not stack:is_empty() then
 			stack:get_meta():set_int("palette_index", 0)
 		end
@@ -476,7 +478,7 @@ for _, name in ipairs(printers) do
 		override.on_dig = function(pos, node, digger)
 			return on_dig(pos, node, digger, old_on_dig)
 		end
-		override.groups = ch_core.override_groups(ndef.groups, {ud_param2_colorable = 0})
+		override.groups = ch_core.assembly_groups(ndef.groups, {ud_param2_colorable = 0})
 		minetest.override_item(name, override)
 	else
 		minetest.log("warning", "Expected 3D printer node "..name.." does not exist!")
@@ -602,5 +604,3 @@ if minetest.get_modpath("streets") then
 	rr("streets:sign_eu_guideboard_right")
 	rr("streets:sign_eu_guideboard_left")
 end
-
-end -- if

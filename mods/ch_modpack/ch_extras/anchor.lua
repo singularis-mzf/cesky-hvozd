@@ -301,7 +301,7 @@ function get_formspec(custom_state)
 		"item_image[0.375,0.375;1,1;", wa_node_name, "]",
 		"label[1.6,0.9;Soukromá světová kotva]",
 		"label[0.3,2;", state_message,
-			"\nKotvu vlastní: ", ch_core.prihlasovaci_na_zobrazovaci(custom_state.owner, true), white,
+			"\nKotvu vlastní: ", ch_core.prihlasovaci_na_zobrazovaci(owner, true), white,
 			"\nKotva pokrývá oblast: "..F(minetest.pos_to_string(area_min)..".."..minetest.pos_to_string(area_max)).."]",
 		"button_exit[0.25,6.25;7.25,1;show;ukázat pokrytou oblast]",
 		"label[9.5,0.5;záznamy:]",
@@ -436,7 +436,6 @@ def = {
 		ch_core.show_formspec(clicker, "ch_extras:anchor", get_formspec(custom_state), formspec_callback, custom_state, {})
 		return
 	end,
-	on_rotate = screwdriver.disallow,
 }
 minetest.register_node(wa_node_name, def)
 

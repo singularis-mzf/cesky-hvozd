@@ -1,4 +1,4 @@
-local def, nbox
+local def
 
 local F = minetest.formspec_escape
 

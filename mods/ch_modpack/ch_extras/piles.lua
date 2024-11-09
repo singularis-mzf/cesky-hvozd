@@ -141,7 +141,7 @@ function ch_extras.register_woodpiles(name, def)
 	local t = generate_pile_textures(def.top_texture, def.side_texture, def.noise_color)
 	for i = 1, 4 do
 		local desc = "hromada dřeva: "..wood_desc
-		local def = {
+		local ndef = {
 			description = desc,
 			tiles = ifthenelse(i % 2 == 0, t.tiles_even, t.tiles_odd),
 			drawtype = "nodebox",
@@ -159,15 +159,15 @@ function ch_extras.register_woodpiles(name, def)
 			_ch_node_viewname = desc..ifthenelse(i == 1, " (1 vrstva)"," ("..i.." vrstvy)"),
 		}
 		if i == 1 then
-			def.on_place = on_place
+			ndef.on_place = on_place
 		end
 		if i == 4 then
-			def.drawtype = "normal"
-			def.node_box = nil
-			def.selection_box = nil
-			def.collision_box = nil
+			ndef.drawtype = "normal"
+			ndef.node_box = nil
+			ndef.selection_box = nil
+			ndef.collision_box = nil
 		end
-		minetest.register_node("ch_extras:woodpile_"..name.."_"..i, def)
+		minetest.register_node("ch_extras:woodpile_"..name.."_"..i, ndef)
 	end
 	minetest.register_craft{
 		output = "ch_extras:woodpile_"..name.."_1 3",

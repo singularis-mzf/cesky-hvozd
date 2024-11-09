@@ -157,7 +157,7 @@ end
 	Aktualizuje již zobrazený formspec. Vrátí true v případě úspěchu.
 	formspec_or_function může být buď řetězec, nebo funkce, která bude
 	pro získání řetězce zavolána s parametry: (player_name, formname, custom_state).
-	Pokud nevrátí řetězec, update_formspec skončí a vrátí false..
+	Pokud nevrátí řetězec, update_formspec skončí a vrátí false.
 ]]
 function ch_core.update_formspec(player_name_or_player, formname, formspec_or_function)
 	if formname == nil or formname == "" then

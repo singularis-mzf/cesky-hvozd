@@ -1,6 +1,7 @@
 print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 local S = minetest.get_translator("orienteering")
 local mod_map = nil -- minetest.get_modpath("map") -- map mod from Minetest Game
+local ifthenelse = assert(ch_core.ifthenelse)
 
 local orienteering = {}
 orienteering.playerhuds = {}
@@ -323,12 +324,12 @@ function orienteering.update_automapper(player)
 		online_charinfo.enable_minimap = false
 		online_charinfo.enable_radar = false
 	end
-	local enable_radar = (
-		orienteering.tool_active(player, "orienteering:automapper") or orienteering.tool_active(player, "orienteering:quadcorder") or minetest.is_creative_enabled(player_name)
-		) and true or false
-	local enable_minimap = (
-		enable_radar or ((not mod_map) and orienteering.tool_active(player, "orienteering:map")) or ((mod_map) and orienteering.tool_active(player, "map:mapping_kit"))
-		) and true or false
+	local enable_radar = ifthenelse(
+		orienteering.tool_active(player, "orienteering:automapper") or orienteering.tool_active(player, "orienteering:quadcorder"),
+		true, false)
+	local enable_minimap = ifthenelse(
+		enable_radar or minetest.is_creative_enabled(player_name) or
+		orienteering.tool_active(player, ifthenelse(mod_map, "map:mapping_kit", "orienteering:map")), true, false)
 
 	if enable_minimap ~= online_charinfo.enable_minimap or enable_radar ~= online_charinfo.enable_radar then
 		online_charinfo.enable_minimap = enable_minimap

@@ -114,8 +114,9 @@ local function register_cover(name, cover_def) --  texture, description, groups,
 		template.drop = cover_def.item
 	end
 
-	local ctex, ftex = generate_textures(cover_def.texture, cover_def.texture_size, "ch_extras_cover_corner.png") -- cropped, full
-	local etex = empty_tile -- empty texture
+	local ctex, etex, ftex
+	etex = empty_tile -- empty texture
+	ctex = generate_textures(cover_def.texture, cover_def.texture_size, "ch_extras_cover_corner.png") -- cropped, full
 
 	local def = table.copy(template)
 	def.description = "pokrývka: "..cover_def.description..": roh"
