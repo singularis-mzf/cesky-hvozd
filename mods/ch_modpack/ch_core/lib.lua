@@ -463,6 +463,15 @@ function ch_core.assembly_groups(default, override, inherit, inherit_list)
 	return result
 end
 
+--[[
+Ověří, že předaný argument je funkce a zavolá ji s ostatními zadanými argumenty.
+Vrátí její výsledek. Není-li předaný argument funkce, nevrátí nic.
+]]
+function ch_core.call(f, ...)
+	if type(f) == "function" then
+		return f(...)
+	end
+end
 
 --[[
 Určí typ postavy (admin|creative|new|survival) a zkontroluje,

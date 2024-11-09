@@ -27,23 +27,36 @@ local function get_flashlight()
 	meta:set_string("", "return {charge=30000}")
 	return stack
 end
+local function get_replacer()
+	local stack = ItemStack("replacer:replacer")
+	stack:set_wear(1)
+	local meta = stack:get_meta()
+	meta:set_string("", "return {charge=50000}")
+	return stack
+end
 local default_items = {
+	{stack = ItemStack("ch_extras:magic_wand"), creative = true},
 	{stack = ItemStack("ch_extras:jumptool"), new = true, survival = true, creative = true},
 	{stack = ItemStack("rotate:wrench_copper_cw"), survival = true, creative = true},
+	{stack = get_replacer(), survival = true, creative = true},
+	{stack = ItemStack("ch_extras:periskop"), new = true, survival = true, creative = true},
 	{stack = ItemStack("ch_extras:sickle_steel"), survival = true},
 	{stack = ItemStack("ch_extras:teleporter_unsellable"), new = true, survival = true},
-	{stack = ItemStack("ch_extras:teleporter_unsellable 100"), creative = true},
-	{stack = ItemStack("orienteering:map"), new = true, survival = true, creative = true},
-	{stack = ItemStack("orienteering:triangulator"), survival = true, creative = true},
 	{stack = ItemStack("unified_inventory:bag_large"), survival = true, creative = true},
-	{stack = ItemStack("bridger:scaffolding 100"), survival = true},
+	{stack = ItemStack("bridger:scaffolding 100"), survival = true, creative = true},
 	{stack = ItemStack("towercrane:base"), survival = true, creative = true},
 	{stack = ItemStack("bike:bike"), new = true, survival = true, creative = false},
 	{stack = ItemStack("anvil:hammer"), survival = true},
-	{stack = ItemStack("airtanks:bronze_tank"), survival = true, creative = true},
+	--{stack = ItemStack("airtanks:bronze_tank"), survival = true, creative = true},
 	{stack = ItemStack("ch_core:kcs_kcs 1000"), survival = true},
+	{stack = ItemStack("ch_extras:lupa"), new = true, survival = true},
+	{stack = ItemStack("orienteering:builder_compass_1"), survival = true, creative = true},
+	{stack = ItemStack("basic_signs:vevystavbe"), survival = true, creative = true},
+	{stack = ItemStack("ch_extras:teleporter_unsellable 100"), creative = true},
 
 	{stack = get_flashlight(), min_index = 17, new = true, survival = true, creative = true},
+	{stack = ItemStack("orienteering:map"), min_index = 18, new = true, survival = true, creative = true},
+	{stack = ItemStack("orienteering:triangulator"), min_index = 19, survival = true, creative = true},
 }
 
 for i, item in ipairs(default_items) do

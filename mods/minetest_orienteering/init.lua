@@ -89,7 +89,7 @@ orienteering.update_bc_player_huds = dofile(minetest.get_modpath("orienteering")
 -- Displays height (Y)
 minetest.register_tool("orienteering:altimeter", {
 	description = S("Altimeter"),
-	_ch_help = "Je-li na výběrové liště, zobrazí vaši současnou výšku (Y).",
+	_ch_help = "Je-li na výběrové liště, zobrazuje vaši současnou výšku (Y).",
 	_ch_help_group = "o:a",
 	_tt_help = S("Shows your elevation"),
 	_doc_items_longdesc = S("It shows you your current elevation (Y)."),
@@ -102,7 +102,7 @@ minetest.register_tool("orienteering:altimeter", {
 -- Displays X and Z coordinates
 minetest.register_tool("orienteering:triangulator", {
 	description = S("Triangulator"),
-	_ch_help = "Je-li na výběrové liště, zobrazí vaše souřadnice X a Z.",
+	_ch_help = "Je-li na výběrové liště, zobrazuje vaše souřadnice X a Z.",
 	_ch_help_group = "o:t",
 	_tt_help = S("Shows your horizontal coordinates"),
 	_doc_items_longdesc = S("It shows you the coordinates of your current position in the horizontal plane (X and Z)."),
@@ -115,7 +115,7 @@ minetest.register_tool("orienteering:triangulator", {
 -- Displays player yaw
 minetest.register_tool("orienteering:compass", {
 	description = S("Compass"),
-	_ch_help = "Je-li na výběrové liště, zobrazí váš směr ve stupních.",
+	_ch_help = "Je-li na výběrové liště, zobrazuje váš směr ve stupních.",
 	_ch_help_group = "o:c",
 	_tt_help = S("Shows your yaw"),
 	_doc_items_longdesc = S("It shows you your yaw (horizontal viewing angle) in degrees."),
@@ -128,7 +128,7 @@ minetest.register_tool("orienteering:compass", {
 -- Displays player pitch
 minetest.register_tool("orienteering:sextant", {
 	description = S("Sextant"),
-	_ch_help = "Je-li na výběrové liště, zobrazí vám sklon ve stupních.",
+	_ch_help = "Je-li na výběrové liště, zobrazuje vám sklon ve stupních.",
 	_ch_help_group = "o:s",
 	_tt_help = S("Shows your pitch"),
 	_doc_items_longdesc = S("It shows you your pitch (vertical viewing angle) in degrees."),
@@ -141,7 +141,7 @@ minetest.register_tool("orienteering:sextant", {
 -- Ultimate orienteering tool: Displays X,Y,Z, yaw, pitch, time, speed and enables the minimap
 minetest.register_tool("orienteering:quadcorder", {
 	description = S("Quadcorder"),
-	_ch_help = "Nejmocnější orientační pomůcka. Je-li na výběrové liště, zobrazí všechny vaše souřadnice,\nsměr i sklon, herní čas a vaši aktuální rychlost.\nRovněž poskytuje přístup k minimapě.",
+	_ch_help = "Nejmocnější orientační pomůcka. Je-li na výběrové liště, zobrazuje všechny vaše souřadnice,\nsměr i sklon, herní čas a vaši aktuální rychlost.\nRovněž poskytuje přístup k minimapě.",
 	_ch_help_group = "o:q",
 	_tt_help = S("Shows your coordinates, yaw, pitch, time, speed and enables minimap"),
 	_doc_items_longdesc = S("This is the ultimate orientieering tool. It shows you your coordinates (X, Y and Z), shows your yaw and pitch (horizontal and vertical viewing angles), the current time, your current speed and it enables you to access the minimap."),
@@ -156,7 +156,7 @@ minetest.register_tool("orienteering:quadcorder", {
 -- Displays game time
 minetest.register_tool("orienteering:watch", {
 	description = S("Watch"),
-	_ch_help = "Jsou-li na výběrové liště, zobrazí vám herní čas.",
+	_ch_help = "Jsou-li na výběrové liště, zobrazuje vám herní čas.",
 	_ch_help_group = "o:w",
 	_tt_help = S("Shows the time"),
 	_doc_items_longdesc = S("It shows you the current time."),
@@ -170,7 +170,7 @@ minetest.register_tool("orienteering:watch", {
 -- Displays speed
 minetest.register_tool("orienteering:speedometer", {
 	description = S("Speedometer"),
-	_ch_help = "Je-li na výběrové liště, zobrazí vaši současnou rychlost.",
+	_ch_help = "Je-li na výběrové liště, zobrazuje vaši současnou rychlost.",
 	_ch_help_group = "o:sp",
 	_tt_help = S("Shows your speed"),
 	_doc_items_longdesc = S("It shows you your current horizontal (“hor.”) and vertical (“ver.”) speed in meters per second, where one meter is the side length of a single cube."),
@@ -184,7 +184,7 @@ if not mod_map then
 	-- Enables minimap (surface)
 	minetest.register_tool("orienteering:map", {
 		description = S("Map"),
-		_ch_help = "Je-li na výběrové liště, umožní vám přístup k minimapě.",
+		_ch_help = "Je-li na výběrové liště, umožní vám přístup k minimapě (ve výchozím nastavení klávesou V).",
 		_ch_help_group = "o:mm",
 		_tt_help = S("Allows using the minimap"),
 		_doc_items_longdesc = S("The map allows you to view a minimap of the area around you."),
@@ -214,7 +214,7 @@ minetest.register_tool("orienteering:automapper", {
 -- Displays X,Y,Z coordinates, yaw and game time
 minetest.register_tool("orienteering:gps", {
 	description = S("GPS device"),
-	_ch_help = "Je-li na výběrové liště, zobrazí vám všechny souřadnice, směr a herní čas.",
+	_ch_help = "Je-li na výběrové liště, zobrazuje vám všechny souřadnice, směr a herní čas.",
 	_ch_help_group = "o:gps",
 	_tt_help = S("Shows your coordinates, yaw and the time"),
 	_doc_items_longdesc = S("The GPS device shows you your coordinates (X, Y and Z), your yaw (horizontal viewing angle) and the time."),

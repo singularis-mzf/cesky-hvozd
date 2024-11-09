@@ -862,7 +862,9 @@ def = {
 	groups = {tool = 1},
 	_ch_help = "když periskop držíte v ruce, umožní vám shlížet na svět z výšky,\n"..
 "ačkoliv se ve skutečnosti pohybujete stále po zemi;\n"..
-"levý klik = +2,5 metru, pravý klik = -2,5 metru, přepnout na jiný předmět = vypnout",
+"levý klik = +2,5 metru, pravý klik = -2,5 metru, přepnout na jiný předmět = vypnout;\n"..
+"periskop můžete skombinovat s dalekohledem (klávesou Z)",
+	_ch_help_group = "chperisk",
 	on_use = function(itemstack, user, pointed_thing)
 		periskop_use(user, "left")
 	end,
