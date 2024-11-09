@@ -733,7 +733,7 @@ stairsplus.defs = {
 			description = "překlad přes zeď (přímý)",
 			node_box = {
 				type = "fixed",
-				fixed = {-1/2, -3/16, -17/32, 1/2, 3/16, -15/32},
+				fixed = {-8/16, -17/32, -3/16, 8/16, -15/32, 3/16},
 			},
 			wall = true,
 		},

@@ -63,15 +63,15 @@ dofile_ud("particle_board.lua") -- dřevotříska
 dofile("periskop.lua") -- periskop
 dofile("piles.lua") -- hromady dřeva
 dofile("scorched_tree.lua") -- ohořelý kmen
-dofile("sickles.lua") -- srpy
 dofile_ud("shaft.lua") -- dřík kamenného sloupu
+dofile("sickles.lua") -- srpy
 dofile("skakadlo.lua") -- skákadlo
 dofile("small_decorations.lua") -- praskliny a špína
 dofile("switch.lua") -- výměnové návěstidlo
 dofile("teleporter.lua") -- teleportér
 dofile_ud("tile1.lua") -- barvitelná mozaika na dlažbu
-dofile("trojnastroj.lua") -- trojnástroj
 dofile("totalst.lua") -- totální stanice
+dofile("trojnastroj.lua") -- trojnástroj
 dofile_ud("vraceni_satu.lua") -- vracení šatů (regál a pás)
 dofile_ud("vystavni_ram.lua") -- výstavní rám
 dofile("zdlazba.lua") -- zámková dlažba
