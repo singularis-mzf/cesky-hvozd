@@ -466,21 +466,23 @@ stairsplus.defs = {
 			description = "zeď (spojující se)",
 			node_box = {
 				type = "connected",
-				fixed = {-0.125, -0.5, -0.125, 0.125, 0.5, 0.125},
-				connect_front = {-0.125, -0.5, -0.5, 0.125, 0.5, -0.125}, -- -Z
-				connect_left = {-0.5, -0.5, -0.125, -0.125, 0.5, 0.125}, -- -X
-				connect_back = {-0.125, -0.5, 0.125, 0.125, 0.5, 0.5}, -- +Z
-				connect_right = {0.125, -0.5, -0.125, 0.5, 0.5, 0.125}, -- +X
+				fixed = {-0.125, -0.5, -0.125, 0.125, 0.5005, 0.125},
+				connect_front = {-0.125, -0.5, -0.5, 0.125, 0.5005, -0.125}, -- -Z
+				connect_left = {-0.5, -0.5, -0.125, -0.125, 0.5005, 0.125}, -- -X
+				connect_back = {-0.125, -0.5, 0.125, 0.125, 0.5005, 0.5}, -- +Z
+				connect_right = {0.125, -0.5, -0.125, 0.5, 0.5005, 0.125}, -- +X
 			},
 			wall = true,
-			connect_sides = sides_xy,
+			align_style = "world",
+			connect_sides = sides_xyz,
 		},
 		["_wall_flat"] = {
 			description = "zeď (přímá)",
 			node_box = {
 				type = "fixed",
-				fixed = {-0.5, -0.5, -0.125, 0.5, 0.5, 0.125},
+				fixed = {-0.5, -0.5, -0.125, 0.5, 0.5005, 0.125},
 			},
+			align_style = "world",
 			wall = true,
 		},
 		["_element"] = {
@@ -494,6 +496,7 @@ stairsplus.defs = {
 				connect_right = {0.125, -0.5, -0.125, 0.5, 0.0, 0.125}, -- +X
 			},
 			connect_sides = sides_xy,
+			align_style = "world",
 			wall = true,
 		},
 		["_element_flat"] = {
@@ -502,6 +505,7 @@ stairsplus.defs = {
 				type = "fixed",
 				fixed = {-0.5, -0.5, -0.125, 0.5, 0.0, 0.125},
 			},
+			align_style = "world",
 			wall = true,
 		},
 		["_pole"] = {
@@ -532,6 +536,7 @@ stairsplus.defs = {
 				"group:technic_cnc_valley",
 			}, -- no fence, no wall
 			extra_groups = {panel_pole = 1},
+			align_style = "world",
 			check_for_pole = true,
 		},
 		["_pole_flat"] = {
@@ -541,6 +546,7 @@ stairsplus.defs = {
 				fixed = {-0.125, -0.5, -0.125, 0.125, 0.5, 0.125},
 			},
 			extra_groups = {panel_pole = 1},
+			align_style = "world",
 			check_for_pole = true,
 		}
 	},
@@ -719,11 +725,11 @@ stairsplus.defs = {
 			description = "překlad přes zeď (spojující se)",
 			node_box = {
 				type = "connected",
-				fixed = {-3/16, -17/32, -3/16, 3/16, -15/32, 3/16},
-				connect_front = {-3/16, -17/32, -1/2, 3/16, -15/32, 3/16},
-				connect_left = {-1/2, -17/32, -3/16, -3/16, -15/32, 3/16},
-				connect_back = {-3/16, -17/32, 3/16, 3/16, -15/32, 1/2},
-				connect_right = {3/16, -17/32, -3/16, 1/2, -15/32, 3/16},
+				fixed = {-3/16, -17/32, -3/16, 3/16, -13/32, 3/16},
+				connect_front = {-3/16, -17/32, -1/2, 3/16, -13/32, 3/16},
+				connect_left = {-1/2, -17/32, -3/16, -3/16, -13/32, 3/16},
+				connect_back = {-3/16, -17/32, 3/16, 3/16, -13/32, 1/2},
+				connect_right = {3/16, -17/32, -3/16, 1/2, -13/32, 3/16},
 			},
 			align_style = "world",
 			connect_sides = sides_xy,
@@ -733,8 +739,9 @@ stairsplus.defs = {
 			description = "překlad přes zeď (přímý)",
 			node_box = {
 				type = "fixed",
-				fixed = {-8/16, -17/32, -3/16, 8/16, -15/32, 3/16},
+				fixed = {-8/16, -17/32, -3/16, 8/16, -13/32, 3/16},
 			},
+			align_style = "world",
 			wall = true,
 		},
 	},

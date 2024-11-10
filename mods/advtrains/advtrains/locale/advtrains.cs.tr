@@ -258,7 +258,7 @@ Track Worker Tool@n@nLeft-click: change rail type (straight/curve/switch)@nRight
 Track with Railway Gravel=kolej s železničním štěrkem
 Track=kolej
 Train copy/paste tool@n@nLeft-click: copy train@nRight-click: paste train=duplikátor vlakových souprav@n@nKlik levým: zkopírovat soupravu do schránky@nKlik pravým: umístit duplikát na trať
-Train overview / coupling control is only shown when the train stands=Ovládání spřáhel je možné jen u strojícího vlaku
+Train overview / coupling control is only shown when the train stands.=Ovládání spřáhel je možné jen u strojícího vlaku
 Train overview/coupling control:=Ovládání spřáhel:
 Trains on this section:=Vlaky v tomto úseku:
 Trains stopping here (ARS rules)=Vlaky zastavující zde (ARS)
@@ -300,3 +300,4 @@ off=signál stůj
 on=signál volno
 prev FC=předch. NK
 transib=transsibiřská lokomotiva
+Stn. @1 (@2) T. @3=@1 (@2) kolej @3

@@ -1226,15 +1226,15 @@ function wagon:seating_from_key_helper(pname, fields, no)
 	end
 	if fields.inv and self.has_inventory and self.get_inventory_formspec then
 		minetest.close_formspec(pname, "advtrains_seating_"..self.id)
-		minetest.show_formspec(pname, "advtrains_inv_"..self.id, self:get_inventory_formspec(pname, make_inv_name(self.id)))
+		minetest.after(0.1, minetest.show_formspec, pname, "advtrains_inv_"..self.id, self:get_inventory_formspec(pname, make_inv_name(self.id)))
 	end
 	if fields.prop and data.owner==pname then
 		minetest.close_formspec(pname, "advtrains_seating_"..self.id)
-		self:show_wagon_properties(pname)
+		minetest.after(0.1, function(pn) self:show_wagon_properties(pn) end, pname)
 	end
 	if fields.bordcom and self.seat_groups[sgr].driving_ctrl_access and advtrains.check_driving_couple_protection(pname, data.owner, data.whitelist) then
 		minetest.close_formspec(pname, "advtrains_seating_"..self.id)
-		self:show_bordcom(pname)
+		minetest.after(0.1, function(pn) self:show_bordcom(pn) end, pname)
 	end
 	if fields.dcwarn then
 		minetest.chat_send_player(pname, attrans("Doors are closed! Use Sneak+rightclick to ignore the closed doors and get off!"))

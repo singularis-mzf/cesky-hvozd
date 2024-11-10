@@ -17,8 +17,10 @@ local function updatemeta(pos)
 	if not stdata then
 		meta:set_string("infotext", attrans("Error"))
 	end
+	local stn = advtrains.lines.stations[stdata.stn]
+	local stn_viewname = stn and stn.name or "-"
 	
-	meta:set_string("infotext", attrans("Stn. @1 T. @2"..stdata.track, stdata.stn, stdata.track))
+	meta:set_string("infotext", attrans("Stn. @1 (@2) T. @3", stn_viewname, stdata.stn or "", stdata.track or ""))
 end
 
 local door_dropdown = {L=1, R=2, C=3}
@@ -49,22 +51,43 @@ local function show_stoprailform(pos, player)
 		stdata.speed = "M"
 	end
 	
-	local form = "size[8,7]"
-	form = form.."style[stn,ars;font=mono]"
-	form = form.."field[0.8,0.8;2,1;stn;"..attrans("Station Code")..";"..minetest.formspec_escape(stdata.stn).."]"
-	form = form.."field[2.8,0.8;5,1;stnname;"..attrans("Station Name")..";"..minetest.formspec_escape(stnname).."]"
-	form = form.."field[0.80,2.0;1.75,1;ddelay;"..attrans("Door Delay")..";"..minetest.formspec_escape(stdata.ddelay).."]"
-	form = form.."field[2.55,2.0;1.75,1;speed;"..attrans("Dep. Speed")..";"..minetest.formspec_escape(stdata.speed).."]"
-	form = form.."field[4.30,2.0;1.75,1;track;"..attrans("Track")..";"..minetest.formspec_escape(stdata.track).."]"
-	form = form.."field[6.05,2.0;1.75,1;wait;"..attrans("Stop Time")..";"..stdata.wait.."]"
-	form = form.."label[0.5,2.6;"..attrans("Door Side").."]"
-	form = form.."dropdown[0.51,3.0;2;doors;vlevo,vpravo,neotvírat;"..door_dropdown[stdata.doors].."]"
-	form = form.."checkbox[3.00,2.7;reverse;"..attrans("Reverse train")..";"..(stdata.reverse and "true" or "false").."]"
-	form = form.."checkbox[3.00,3.1;kick;"..attrans("Kick out passengers")..";"..(stdata.kick and "true" or "false").."]"
-	form = form.."textarea[0.8,4.2;7,2;ars;"..attrans("Trains stopping here (ARS rules)")..";"..advtrains.interlocking.ars_to_text(stdata.ars).."]"
-	form = form.."button[0.5,6;7,1;save;"..attrans("Save").."]"
-	
-	minetest.show_formspec(pname, "at_lines_stop_"..pe, form)
+	local item_name = (minetest.registered_items["advtrains_line_automation:dtrack_stop_placer"] or {}).description or ""
+	local formspec = "formspec_version[4]"..
+		"size[8,10]"..
+		"item_image[0.25,0.25;1,1;advtrains_line_automation:dtrack_stop_placer]"..
+		"label[1.4,0.85;"..minetest.formspec_escape(item_name).."]"..
+		"button_exit[7,0.25;0.75,0.75;close;X]"..
+		"style[stn,ars,line,routingcode;font=mono]"..
+		"field[0.25,2;2,0.75;stn;"..attrans("Station Code")..";"..minetest.formspec_escape(stdata.stn).."]"..
+		"field[2.5,2;4,0.75;stnname;"..attrans("Station Name")..";"..minetest.formspec_escape(stnname).."]"..
+		"field[6.75,2;1,0.75;track;"..attrans("Track")..";"..minetest.formspec_escape(stdata.track).."]"..
+		"label[0.25,3.4;"..attrans("Door Side").."]"..
+		"dropdown[2.25,3;2,0.75;doors;vlevo,vpravo,neotvírat;"..door_dropdown[stdata.doors].."]"..
+		"checkbox[4.5,3.25;reverse;"..attrans("Reverse train")..";"..(stdata.reverse and "true" or "false").."]"..
+		"checkbox[4.5,3.75;kick;"..attrans("Kick out passengers")..";"..(stdata.kick and "true" or "false").."]"..
+		"checkbox[4.5,4.25;keepopen;Nezavírat dveře na odj.;"..(stdata.keepopen and "true" or "false").."]"..
+		"label[0.25,4.3;"..attrans("Stop Time").."]"..
+		"field[0.25,4.5;1,0.75;wait;;"..stdata.wait.."]"..
+		"label[1.5,4.9;+]"..
+		"field[2,4.5;1,0.75;ddelay;;"..minetest.formspec_escape(stdata.ddelay).."]".. -- "..attrans("Door Delay").."
+		"field[0.25,6;2,0.75;speed;"..attrans("Dep. Speed")..";"..minetest.formspec_escape(stdata.speed).."]"..
+		"field[2.5,6;2,0.75;line;Linka na odj.;"..minetest.formspec_escape(stdata.line or "").."]"..
+		"field[4.75,6;2,0.75;routingcode;Sm.kód na odj.;"..minetest.formspec_escape(stdata.routingcode or "").."]"..
+		"textarea[0.25,7.25;7.5,1.5;ars;"..attrans("Trains stopping here (ARS rules)")..";"..advtrains.interlocking.ars_to_text(stdata.ars).."]"..
+		"button_exit[0.25,9;7.5,0.75;save;"..attrans("Save").."]"..
+		"tooltip[close;Zavře dialogové okno]"..
+		"tooltip[stn;Vnitřní kód stanice/zastávky pro jednodušší manipulaci. Jedna stanice může mít víc kolejí.]"..
+		"tooltip[stnname;Název stanice/zastávky\\, jak má být zobrazován. Pokud stanice/zastávka již existuje, nevyplňujte (stačí zadat kód a kolej)\\, leda chcete zastávku přejmenovat.]"..
+		"tooltip[track;Číslo koleje]"..
+		"tooltip[wait;Základní doba stání s otevřenými dveřmi]"..
+		"tooltip[ddelay;Dodatečná doba stání před odjezdem po uzavření dveří]"..
+		"tooltip[speed;Cílová rychlost zastavivšího vlaku na odjezdu. Platné hodnoty jsou M pro nejvyšší rychlost vlaku a čísla 0 až 20.]"..
+		"tooltip[line;Nová linka na odjezdu. Prázdné pole = zachovat stávající linku. Pro smazání linky zadejte znak -]"..
+		"tooltip[routingcode;Nový směrový kód na odjezdu. Prázdné pole = zachovat stávající směrový kód. Pro smazání kódu vlaku zadejte znak -]"..
+		"tooltip[ars;Seznam podmínek\\, z nichž musí vlak splnit alespoň jednu\\, aby zde zastavil:\nLN {linka}\nRC {směrovací kód}\n"..
+		"* = jakýkoliv vlak\n\\# komentář]"
+
+	minetest.show_formspec(pname, "at_lines_stop_"..pe, formspec)
 end
 local tmp_checkboxes = {}
 minetest.register_on_player_receive_fields(function(player, formname, fields)
@@ -87,6 +110,9 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		if fields.reverse then
 			tmp_checkboxes[pe].reverse = (fields.reverse == "true")
 		end
+		if fields.keepopen then
+			tmp_checkboxes[pe].keepopen = (fields.keepopen == "true")
+		end
 		if fields.save then
 			if fields.stn and stdata.stn ~= fields.stn and fields.stn ~= "" then
 				local stn = advtrains.lines.stations[fields.stn]
@@ -104,7 +130,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				end
 			end
 			local stn = advtrains.lines.stations[stdata.stn]
-			if stn and fields.stnname and fields.stnname ~= stn.name then
+			if stn and fields.stnname and fields.stnname ~= stn.name and (stn.name == nil or stn.name == "" or fields.stnname ~= "") then
 				if (stn.owner == pname or minetest.check_player_privs(pname, "train_admin")) then
 					stn.name = fields.stnname
 				else
@@ -133,6 +159,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			end
 			if fields.speed then
 				stdata.speed = to_int(fields.speed) or "M"
+			end
+			if fields.line then
+				stdata.line = fields.line
+			end
+			if fields.routingcode then
+				stdata.routingcode = fields.routingcode
 			end
 
 			for k,v in pairs(tmp_checkboxes[pe]) do --handle checkboxes
@@ -182,11 +214,15 @@ local adefunc = function(def, preset, suffix, rotation)
 								local stnname = stn and stn.name or attrans("Unknown Station")
 								train.text_inside = attrans("Next Stop:") .. "\n"..stnname
 								advtrains.interlocking.ars_set_disable(train, true)
+								-- DEBUG:
+								-- minetest.chat_send_all("DEBUG: Train approaches to "..minetest.pos_to_string(pos).."!")
+								-- print("DEBUG: train approaches to "..minetest.pos_to_string(pos).." = "..dump2({train = train, stdata = stdata, pe = pe, pos = pos, index = index, has_entered = has_entered}))
 							end
 						end
 					end
 				end,
 				on_train_enter = function(pos, train_id, train, index)
+					-- print("DEBUG: on_train_enter called: "..dump2({pos = pos, train_id = train_id, index = index}))
 					if train.path_cn[index] == 1 then
 						local pe = advtrains.encode_pos(pos)
 						local stdata = advtrains.lines.stops[pe]
@@ -197,10 +233,23 @@ local adefunc = function(def, preset, suffix, rotation)
 						if stdata.ars and (stdata.ars.default or advtrains.interlocking.ars_check_rule_match(stdata.ars, train) ) then
 							local stn = advtrains.lines.stations[stdata.stn]
 							local stnname = stn and stn.name or attrans("Unknown Station")
+							local line, routingcode = stdata.line or "", stdata.routingcode or ""
 							
 							-- Send ATC command and set text
-							advtrains.atc.train_set_command(train, "B0 W O"..stdata.doors..(stdata.kick and "K" or "").." D"..stdata.wait.." OC "..(stdata.reverse and "R" or "").."D"..(stdata.ddelay or 1) .. " A1 S" ..(stdata.speed or "M"), true)
+							advtrains.atc.train_set_command(train, "B0 W O"..stdata.doors..(stdata.kick and "K" or "").." D"..stdata.wait..
+								(stdata.keepopen and " " or " OC ")..(stdata.reverse and "R" or "").." D"..(stdata.ddelay or 1)..
+								" A1 S" ..(stdata.speed or "M"), true)
 							train.text_inside = stnname
+							if line == "-" then
+								train.line = nil
+							elseif line ~= "" then
+								train.line = line
+							end
+							if routingcode == "-" then
+								train.routingcode = nil
+							elseif routingcode ~= "" then
+								train.routingcode = routingcode
+							end
 							if tonumber(stdata.wait) then
 								minetest.after(tonumber(stdata.wait), function() train.text_inside = "" end)
 							end
@@ -210,6 +259,8 @@ local adefunc = function(def, preset, suffix, rotation)
 			},
 		}
 end
+
+advtrains.station_stop_rail_additional_definition = adefunc -- HACK for tieless_tracks
 
 if minetest.get_modpath("advtrains_train_track") ~= nil then
 	advtrains.register_tracks("default", {
