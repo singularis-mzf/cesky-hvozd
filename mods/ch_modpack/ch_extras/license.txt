@@ -221,3 +221,17 @@ ch_extras_colorable_fence.png
 	License: CC BY-SA 4.0
 	Used source:
 	- "Polygonia_64px texture pack" by Lukas Reichlin (license CC BY-SA 4.0) (default_fence_pine_wood.png used)
+
+ch_extras_dice_palette.png
+	Author: Singularis
+	License: CC0
+
+not_wuzzy_dice_1.png
+not_wuzzy_dice_2.png
+not_wuzzy_dice_3.png
+not_wuzzy_dice_4.png
+not_wuzzy_dice_5.png
+not_wuzzy_dice_6.png
+	Author: TumeniNodes
+	License: CC BY-SA 4.0
+	Source: https://github.com/TumeniNodes/not_wuzzy_dice (Not Wuzzy Dice mod)

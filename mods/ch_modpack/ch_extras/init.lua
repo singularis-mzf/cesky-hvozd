@@ -48,6 +48,7 @@ dofile_ud("colorable_glass.lua") -- barvitelné sklo
 dofile_ud("colorable_pole.lua") -- barvitelná tyč
 dofile("covers.lua") -- pokrývky
 dofile("craftitems.lua") -- předměty (různé)
+dofile_ud("dice.lua") -- hrací kostka
 dofile("doors.lua") -- různé dveře
 dofile("fence_hv.lua") -- výstražný plot
 dofile("flags.lua") -- česká a slovenská vlajka (node_box)
