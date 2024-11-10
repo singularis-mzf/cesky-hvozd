@@ -122,6 +122,7 @@ end
         default_text = string or nil, -- text události, který se použije, pokud nebude zadán žádný text ve volání ch_core.add_event()
         chat_access = "public" or "admin" or "players" or "player_only" or nil, -- komu se má událost vypsat v četu, bude-li online
         send_access = "admin" or "players" or nil, -- kdo může událost ručně odeslat z dialogového okna
+        delete_access = "player_only" or nil, -- kdo kromě postav s právem ch_events_admin může událost smazat
 
         ignore = bool or nil, -- je-li true, budou události tohoto typu tiše ignorovány; v případě načtení ze souboru nebudou vypisovány
         prepend_viewname = bool or nil, -- je-li true, značka "{PLAYER}" v textu události nebude rozpoznávána; namísto toho se
@@ -164,6 +165,13 @@ function ch_core.register_event_type(event_type, event_def)
             def.send_access = event_def.send_access
         else
             minetest.log("warning", "Unsupported 'send_access' value '"..event_def.send_access.."' ignored!")
+        end
+    end
+    if event_def.delete_access ~= nil then
+        if event_def.delete_access == "player_only" then
+            def.delete_access = event_def.delete_access
+        else
+            minetest.log("warning", "Unsupported 'delete_access' value '"..event_def.delete_access.."' ignored!")
         end
     end
     event_types[event_type] = def
@@ -342,6 +350,7 @@ end
 --[[
     Vrací pole prvků od nejnovější události po nejstarší. Každý prvek má strukturu:
     {
+        id = STRING or nil, -- ID události, které umožňuje ji smazat (závisí na právech postavy)
         time = STRING, -- časová známka v podobě, jak má být prezentována hráči/ce
         description = STRING, -- označení typu zprávy
         color = "#RRGGBB", -- barva pro zobrazení události, vždy ve formátu #RRGGBB
@@ -373,7 +382,7 @@ function ch_core.get_events_for_player(player_name_or_player, allowed_event_type
             end
         end
     end
-    for _, events_month in ipairs(events) do
+    for events_month_iter, events_month in ipairs(events) do
         for i = #events_month, 1, -1 do
             local event = events_month[i]
             local type_def = event_types_filtered[event.type]
@@ -384,6 +393,14 @@ function ch_core.get_events_for_player(player_name_or_player, allowed_event_type
                     text = get_event_text(event, type_def) or "",
                     color = assert(type_def.color),
                 }
+                if events_month_iter == 1 and
+                    (has_access_rights.admin or
+                        (type_def.delete_access == "player_only" and
+                        event.player_name == pinfo.player_name and
+                        timestamp_to_date(event.timestamp) == timestamp_to_date(get_timestamp())))
+                then
+                        record.id = tostring(i)
+                end
                 table.insert(result, record)
                 if #result >= limit then
                     return result
@@ -392,6 +409,42 @@ function ch_core.get_events_for_player(player_name_or_player, allowed_event_type
         end
     end
     return result
+end
+
+--[[
+    id = STRING -- ID oznámení k smazání (podle záznamu z funkce ch_core.get_events_for_player() )
+    descripton = STRING or nil -- je-li vyplněno, oznámení se smaže jen tehdy, pokud jeho popis přesně odpovídá zadanému
+    player_name = STRING or nil, -- je-li vyplněno, oznámení se smaže jen tehdy, pokud jeho player_name přesně odpovídá zadanému
+    vrací: true, pokud bylo oznámení úspěšně smazáno; false, pokud mazání selhalo
+]]
+function ch_core.remove_event(id, description, player_name)
+    minetest.log("warning", "ch_core.remove_event(): an event is going to be deleted: "..dump2({id = id, description = description}))
+    local index = tonumber(id)
+    local events_month = events[1]
+    if events_month == nil or index == nil or index < 1 or index > #events_month then
+        minetest.log("error", "ch_core.remove_event(): failed, because of invalid index "..tostring(id).." (#events_month = "..#events_month..")")
+        return false
+    end
+    local event = events_month[index]
+    if event == nil then
+        minetest.log("error", "ch_core.remove_event(): failed, because event not found")
+        return false
+    end
+    if description ~= nil then
+        local type_def = event_types[event.type]
+        if type_def == nil or type_def.description ~= description then
+            minetest.log("error", "ch_core.remove_event(): failed, because description does not match")
+            return false
+        end
+    end
+    if player_name ~= nil and event.player_name ~= player_name then
+        minetest.log("error", "ch_core.remove_event(): failed, because player_name does not match")
+        return false
+    end
+    table.remove(events_month, index)
+    save_events()
+    minetest.log("action", "Event removed: "..dump2(event))
+    return true
 end
 
 -- Událost "server_started"
@@ -417,24 +470,5 @@ end)
 minetest.register_on_shutdown(function()
     ch_core.add_event("server_shutdown")
 end)
-
--- Příkaz /události
-local function udalosti(name, param)
-    local player_events = ch_core.get_events_for_player(name, nil, 10)
-    -- local color_reset = ch_core.colors.white
-    local result = {"Nejnovější oznámení:"}
-    for _, event in ipairs(player_events) do
-        table.insert(result, "- "..event.time.." <"..minetest.colorize(event.color, event.description).."> "..event.text)
-    end
-    return true, table.concat(result, "\n")
-end
-local def = {
-    params = "",
-    description = "Zobrazí deset posledních vám přístupných událostí/oznámení",
-    privs = {},
-    func = udalosti,
-}
-minetest.register_chatcommand("události", def)
-minetest.register_chatcommand("udalosti", def)
 
 ch_core.close_submod("events")

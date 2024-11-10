@@ -63,6 +63,8 @@ local function get_events_online_charinfo(player_name)
 	if result == nil then
 		result = {
 			all_event_types = get_all_event_types_for_player(player_name),
+			-- selected_event_id = nil,
+			-- selected_event_description = nil,
 			selected_event_index = 0, -- index aktuálně vybraného oznámení, nebo 0
 			negative_set = deserialize_filter(offline_charinfo.ui_event_filter or ""),
 			send_type_index = 1, -- index typu oznámení k odeslání
@@ -77,6 +79,7 @@ ch_core.register_event_type("custom", {
 	access = "players",
 	chat_access = "players",
 	send_access = "players",
+	delete_access = "player_only",
 	prepend_viewname = true,
 })
 
@@ -121,6 +124,7 @@ local function get_ui_formspec(player, perplayer_formspec)
 		events_charinfo.send_type_index = 1
 	end
 	local selected_event_index = assert(events_charinfo.selected_event_index)
+	events_charinfo.selected_event_id = nil
 
 	table.insert(formspec, "tablecolumns[text;color,span=2;text;text]"..
 		"style[che_ui_events;font_size=-1]"..
@@ -134,6 +138,10 @@ local function get_ui_formspec(player, perplayer_formspec)
         end
 		if i == selected_event_index then
 			selected_event_full_text = table.concat(ch_core.utf8_wrap(text, 60, {max_result_lines = 5}), "\n")
+			if event.id ~= nil then
+				events_charinfo.selected_event_id = event.id
+				events_charinfo.selected_event_description = event.description
+			end
 		end
 		text = ch_core.utf8_truncate_right(text, 60, "(...)")
         table.insert(formspec, ","..F(cas)..","..event.color..","..F(text)..","..F(event.description))
@@ -157,6 +165,11 @@ local function get_ui_formspec(player, perplayer_formspec)
 
 	local y = 0.5
 
+	if events_charinfo.selected_event_id ~= nil then
+		table.insert(formspec, "button[1.25,"..(y - 0.25)..";4,0.5;che_delete;smazat oznámení]")
+		y = y + 1
+	end
+
 	if #sendable_event_types > 0 then
 		table.insert(formspec, "field[0.25,"..y..";6,0.75;che_text;nové oznámení;]"..
 			"dropdown[0.25,"..(y + 1)..";4,0.75;che_event_type;")
@@ -169,7 +182,7 @@ local function get_ui_formspec(player, perplayer_formspec)
 			"tooltip[che_text;Sem zadejte text události\\, kterou chcete oznámit ostatním registrovaným hráčům/kám.\n"..
 			"Maximálně "..send_text_limit.." znaků.\n"..
 			"Událost nebude viditelná turistickým postavám.\n"..
-			"Takto můžete odeslat jen jednu událost stejného typu za hodinu a odeslaný text již nebudete moci změnit.]"..
+			"Takto můžete odeslat jen jedno oznámení stejného typu za hodinu a budete ho moci smazat jen do půlnoci téhož dne.]"..
 			"tooltip[che_event_send;Odešle text události s aktuálním časovým razítkem.]")
 		y = y + 2.5
 	end
@@ -252,6 +265,15 @@ local function on_player_receive_fields(player, formname, fields)
 			update_formspec = true
 		else
 			minetest.log("error", "event_type is nil on sent: "..dump2({fields = fields, events_charinfo = events_charinfo, player_name = player_name}))
+		end
+	elseif fields.che_delete then
+		if events_charinfo == nil then events_charinfo = get_events_online_charinfo(player_name) end
+		local id = events_charinfo.selected_event_id
+		if id ~= nil then
+			local result = ch_core.remove_event(id, events_charinfo.selected_event_description, ifthenelse(not pinfo.privs.server, player_name, nil))
+			ch_core.systemovy_kanal(player_name, ifthenelse(result, "Oznámení bylo smazáno.",
+				"Smazání selhalo! Pokud si myslíte, že je to chyba, obraťe se na Administraci."))
+			update_formspec = result
 		end
 	else
 		for k, v in pairs(fields) do

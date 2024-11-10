@@ -474,7 +474,7 @@ stairsplus.defs = {
 			},
 			wall = true,
 			align_style = "world",
-			connect_sides = sides_xyz,
+			connect_sides = sides_xy,
 		},
 		["_wall_flat"] = {
 			description = "zeď (přímá)",

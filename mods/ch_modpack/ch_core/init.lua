@@ -97,7 +97,7 @@ dofile(modpath .. "/podnebi.lua") -- : privs, chat
 dofile(modpath .. "/dennoc.lua") -- : privs, chat
 dofile(modpath .. "/hud.lua") -- : data, lib, chat
 dofile(modpath .. "/ap.lua") -- : chat, data, events, hud, lib
-dofile(modpath .. "/registrace.lua") -- : chat, data, lib, nametag
+dofile(modpath .. "/registrace.lua") -- : chat, data, events, lib, nametag
 dofile(modpath .. "/pryc.lua") -- : data, lib, events, privs
 dofile(modpath .. "/joinplayer.lua") -- : chat, data, formspecs, lib, nametag, pryc, events
 dofile(modpath .. "/padlock.lua") -- : data, lib

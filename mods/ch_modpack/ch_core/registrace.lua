@@ -1,4 +1,18 @@
-ch_core.open_submod("registrace", {chat = true, data = true, lib = true, nametag = true})
+ch_core.open_submod("registrace", {chat = true, data = true, events = true, lib = true, nametag = true})
+
+ch_core.register_event_type("reg_new", {
+	access = "admin",
+	description = "registrace (turistická postava)",
+	default_text = "nová postava {PLAYER} vstoupila do hry",
+	chat_access = "admin",
+})
+
+ch_core.register_event_type("reg_na_server", {
+	access = "public",
+	description = "přijetí na server",
+	chat_access = "public",
+	color = "#00ff00",
+})
 
 local survival_creative = {survival = true, creative = true}
 local default_privs_to_reg_type = {
@@ -172,6 +186,19 @@ function ch_core.registrovat(player_name, reg_type, extra_privs)
 	offline_charinfo.ap_xp = 0
 	ch_core.save_offline_charinfo(player_name, {"ap_level", "ap_xp", "past_ap_playtime", "past_playtime"})
 	ch_core.ap_add(player_name, offline_charinfo)
+	if reg_type == "new" then
+		ch_core.add_event("reg_new", nil, player_name)
+	else
+		local message
+		if reg_type == "survival" then
+			message = "dělnická postava {PLAYER} byla nově přijata na server"
+		elseif reg_type == "creative" then
+			message = "kouzelnická postava {PLAYER} byla nově přijata na server"
+		else
+			message = "postava {PLAYER} byla nově přijata na server ("..reg_type_desc..")"
+		end
+		ch_core.add_event("reg_na_server", message, player_name)
+	end
 	return true
 end
 
