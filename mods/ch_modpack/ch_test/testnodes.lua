@@ -182,18 +182,37 @@ for paramtype2, ptdef in pairs(paramtypes) do
 	minetest.register_node("ch_test:test_"..paramtype2, def)
 end
 
+local red_tile = {name = "ch_core_white_pixel.png", color = "#AA0000", backface_culling = true}
+
 local def = {
-	description = "test: kryt na železniční přejezd [EXPERIMENTÁLNÍ]",
+	description = "test: označník [EXPERIMENTÁLNÍ]",
 	drawtype = "nodebox",
-	tiles = {{name = "default_wood.png", align_style = "world", backface_culling = true}},
+	tiles = {
+		red_tile,
+		red_tile,
+		red_tile,
+		red_tile,
+		{name = "[combine:128x128:16,0=ch_test_ozn.png", backface_culling = true},
+		{name = "[combine:128x128:48,0=ch_test_ozn.png", backface_culling = true},
+	}, -- {{name = "tiles.png", align_style = "world", backface_culling = true}},
 	paramtype = "light",
 	paramtype2 = "facedir",
 	groups = {oddly_breakable_by_hand = 3},
 	is_ground_content = false,
+	visual_scale = 3,
 	node_box = {
 		type = "fixed",
-		fixed = {-0.5, -0.5, -0.5, 1.5, -0.5 + 1/16, 0.5},
+		fixed = {-0.375/3, -1.5/3, -0.05/3, 0.375/3, 1.5/3, 0.05/3},
 	},
+	selection_box = {
+		type = "fixed",
+		fixed = {-0.375, -1.5, -0.05, 0.375, 1.5, 0.05},
+	},
+	collision_box = {
+		type = "fixed",
+		fixed = {-0.375, -1.5, -0.05, 0.375, 1.5, 0.05},
+	},
+	--[[
 	on_punch = function(pos, node, puncher, pointed_thing)
 		node.param2 = ifthenelse(node.param2 < 239, node.param2 + 1, 0)
 		minetest.swap_node(pos, node)
@@ -201,10 +220,10 @@ local def = {
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		node.param2 = ifthenelse(node.param2 > 0, node.param2 - 1, 239)
 		minetest.swap_node(pos, node)
-	end,
+	end, ]]
 }
 
-minetest.register_node("ch_test:kryt", def)
+minetest.register_node("ch_test:oznacnik", def)
 
 --[[
 if minetest.get_modpath("unifieddyes") then

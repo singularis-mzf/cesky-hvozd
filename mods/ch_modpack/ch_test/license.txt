@@ -23,7 +23,8 @@ ch_test_4dir_3.png
 ch_test_4dir_4.png
 ch_test_4dir_5.png
 ch_test_4dir_6.png
-ch_test_chest_material.png
+ch_test_ozn.png
+ch_test_plasma.png
 	Author: Singularis
 	License: CC-BY-SA 4.0
 
