@@ -107,7 +107,129 @@ local apn_func=function(pos)
 	local meta=minetest.get_meta(pos)
 	if meta then
 		meta:set_string("infotext", attrans("ATC controller, unconfigured."))
-		meta:set_string("formspec", atc.get_atc_controller_formspec(pos, meta))
+		-- meta:set_string("formspec", atc.get_atc_controller_formspec(pos, meta))
+	end
+end
+
+-- formspec and callback:
+
+local function get_custom_state(pos)
+	local node = minetest.get_node(pos)
+	local meta = minetest.get_meta(pos)
+	return {
+		pos = pos,
+		node_name_f = minetest.formspec_escape(node.name),
+		mode = tonumber(meta:get_string("mode")) or 1,
+		command = meta:get_string("command"),
+		command_on = meta:get_string("command_on"),
+		channel = meta:get_string("channel"),
+		line = meta:get_string("line"),
+		routingcode = meta:get_string("routingcode"),
+		text_inside = meta:get_string("text_inside"),
+		text_outside = meta:get_string("text_outside"),
+		ars = meta:get_string("ars"),
+	}
+end
+
+local function get_formspec(custom_state)
+	local F = minetest.formspec_escape
+	local formspec = {
+		ch_core.formspec_header({
+			formspec_version = 6,
+			size = {12,12.75},
+			auto_background = true,
+		}),
+		"style[command,command_on;font=mono]"..
+		"item_image[0.25,0.25;1,1;"..custom_state.node_name_f.."]"..
+		"label[1.4,0.85;řídicí obvod ATC]"..
+		"button_exit[11,0.25;0.75,0.75;close;X]"..
+		"field[0.25,4.25;11.5,0.75;text_inside;nový text uvnitř:;"..F(custom_state.text_inside).."]"..
+		"field[0.25,5.5;11.5,0.75;text_outside;nový text venku:;"..F(custom_state.text_outside).."]"..
+		"field[0.25,6.75;3,0.75;line;nová linka:;"..F(custom_state.line).."]"..
+		"field[0.25,8;3,0.75;routingcode;nový směr. kód:;"..F(custom_state.routingcode).."]"..
+		"textarea[0.25,9.25;3,2.25;ars;vlaky\\, pro které platí:;"..F(custom_state.ars).."]"..
+		"label[3.5,6.55;nápověda:]"..
+		"tablecolumns[text;text]"..
+		"table[3.5,6.75;8.25,4.75;atc_help;S{0-20|M},Zpomalí/zrychlí na zadanou rychlost,SM,Zrychlí na maximální rychlost,"..
+		"B{0-20},Zpomalí na zadanou rychlost,W,Počká na dosažení cílové rychlosti,D{0-...},Počká zadaný počet sekund,"..
+		"R,Pokud vlak stojí\\, obrátí směr jízdy,OL,Otevře levé dveře,OR,Otevře pravé dveře,OC,Zavře všechny dveře,"..
+		"K,Vyhodí cestující (ne strojvedoucí/ho),Cpl,Počkat na náraz do vagonu a připojit ho,"..
+		"A0,Vypne ARS,A1,Zapne ARS,I+ {...}\\;,Vykonat\\, pokud jede vlak po směru šipky,"..
+		"I- {...}\\;,Nevykonat (ř.obvod je jednosměrný),I<{0-20} {...}\\;,Vykonat\\, je-li rychlost menší než uvedená"..
+		",,(analogicky pro op. <=\\, >= a >);]",
+		"button_exit[0.25,11.75;11.5,0.75;save;Uložit]"..
+		"tooltip[line;Nová linka na odjezdu. Prázdné pole = zachovat stávající linku. Pro smazání linky zadejte znak -]"..
+		"tooltip[routingcode;Nový směrový kód na odjezdu. Prázdné pole = zachovat stávající směrový kód. Pro smazání kódu vlaku zadejte znak -]"..
+		"tooltip[text_inside;Nastavit text uvnitř vlaku. Prázdné pole = zachovat stávající. - = smazat]"..
+		"tooltip[text_outside;Nastavit text vně vlaku. Prázdné pole = zachovat stávající. - = smazat]"..
+		"tooltip[ars;Seznam podmínek\\, z nichž musí vlak splnit alespoň jednu\\, aby zde zastavil:\nLN {linka}\nRC {směrovací kód}\n"..
+		"* = jakýkoliv vlak\n\\# komentář]",
+	}
+	if custom_state.mode < 3 then
+		table.insert(formspec, "field[0.25,1.75;11.5,0.75;command;program:;"..F(custom_state.command).."]")
+		if custom_state.mode == 2 then
+			table.insert(formspec, "field[0.25,3;11.5,0.75;command_on;program (při signálu):;"..F(custom_state.command_on).."]")
+		end
+	else
+		table.insert(formspec, "field[0.25,1.75;11.5,0.75;channel;"..attrans("Digiline channel")..";"..F(custom_state.channel).."]")
+	end
+	return table.concat(formspec)
+end
+
+local function formspec_callback(custom_state, player, formname, fields)
+	local pos = custom_state.pos
+	if advtrains.is_protected(pos, player:get_player_name()) then
+		minetest.record_protection_violation(pos, player:get_player_name())
+		return
+	end
+
+	if fields.command ~= nil then custom_state.command = fields.command end
+	if fields.command_on ~= nil then custom_state.command_on = fields.command_on end
+	if fields.line ~= nil then custom_state.line = fields.line end
+	if fields.routingcode ~= nil then custom_state.routingcode = fields.routingcode end
+	if fields.text_inside ~= nil then custom_state.text_inside = fields.text_inside end
+	if fields.text_outside ~= nil then custom_state.text_outside = fields.text_outside end
+	if fields.ars ~= nil then custom_state.ars = fields.ars end
+	if fields.channel ~= nil then custom_state.channel = fields.channel end
+
+	local meta=minetest.get_meta(pos)
+	if meta then
+		if not fields.save then 
+			--[[--maybe only the dropdown changed
+			if fields.mode then
+				meta:set_string("mode", idxtrans[fields.mode])
+				if fields.mode=="digiline" then
+					meta:set_string("infotext", attrans("ATC controller, mode @1\nChannel: @2", fields.mode, meta:get_string("command")) )
+				else
+					meta:set_string("infotext", attrans("ATC controller, mode @1\nCommand: @2", fields.mode, meta:get_string("command")) )
+				end
+				meta:set_string("formspec", atc.get_atc_controller_formspec(pos, meta))
+			end]]--
+			return
+		end
+		if custom_state.ars == "" then custom_state.ars = "*" end
+		--meta:set_string("mode", idxtrans[fields.mode])
+		meta:set_string("command", custom_state.command)
+		--meta:set_string("command_on", fields.command_on)
+		meta:set_string("channel", custom_state.channel)
+		meta:set_string("line", custom_state.line)
+		meta:set_string("routingcode", custom_state.routingcode)
+		meta:set_string("text_inside", custom_state.text_inside)
+		meta:set_string("text_outside", custom_state.text_outside)
+		meta:set_string("ars", custom_state.ars)
+		--if fields.mode=="digiline" then
+		--	meta:set_string("infotext", attrans("ATC controller, mode @1\nChannel: @2", fields.mode, meta:get_string("command")) )
+		--else
+		meta:set_string("infotext", attrans("ATC controller, mode @1\nCommand: @2", "-", meta:get_string("command")) )
+		--end
+		-- meta:set_string("formspec", atc.get_atc_controller_formspec(pos, meta))
+		
+		local pts=minetest.pos_to_string(pos)
+		local _, conns=advtrains.get_rail_info_at(pos, advtrains.all_tracktypes)
+		atc.controllers[pts]={command=fields.command}
+		if #advtrains.occ.get_trains_at(pos) > 0 then
+			atc.send_command(pos)
+		end
 	end
 end
 
@@ -120,73 +242,38 @@ advtrains.atc_function = function(def, preset, suffix, rotation)
 				local pts=minetest.pos_to_string(pos)
 				atc.controllers[pts]=nil
 			end,
-			on_receive_fields = function(pos, formname, fields, player)
-				if advtrains.is_protected(pos, player:get_player_name()) then
-					minetest.record_protection_violation(pos, player:get_player_name())
+			on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+				if advtrains.is_protected(pos, clicker:get_player_name()) then
+					minetest.record_protection_violation(pos, clicker:get_player_name())
 					return
 				end
-				local meta=minetest.get_meta(pos)
-				if meta then
-					if not fields.save then 
-						--[[--maybe only the dropdown changed
-						if fields.mode then
-							meta:set_string("mode", idxtrans[fields.mode])
-							if fields.mode=="digiline" then
-								meta:set_string("infotext", attrans("ATC controller, mode @1\nChannel: @2", fields.mode, meta:get_string("command")) )
-							else
-								meta:set_string("infotext", attrans("ATC controller, mode @1\nCommand: @2", fields.mode, meta:get_string("command")) )
-							end
-							meta:set_string("formspec", atc.get_atc_controller_formspec(pos, meta))
-						end]]--
-						return
-					end
-					--meta:set_string("mode", idxtrans[fields.mode])
-					meta:set_string("command", fields.command)
-					--meta:set_string("command_on", fields.command_on)
-					meta:set_string("channel", fields.channel)
-					--if fields.mode=="digiline" then
-					--	meta:set_string("infotext", attrans("ATC controller, mode @1\nChannel: @2", fields.mode, meta:get_string("command")) )
-					--else
-					meta:set_string("infotext", attrans("ATC controller, mode @1\nCommand: @2", "-", meta:get_string("command")) )
-					--end
-					meta:set_string("formspec", atc.get_atc_controller_formspec(pos, meta))
-					
-					local pts=minetest.pos_to_string(pos)
-					local _, conns=advtrains.get_rail_info_at(pos, advtrains.all_tracktypes)
-					atc.controllers[pts]={command=fields.command}
-					if #advtrains.occ.get_trains_at(pos) > 0 then
-						atc.send_command(pos)
-					end
-				end
+				local custom_state = get_custom_state(pos)
+				ch_core.show_formspec(clicker, "advtrains:atc", get_formspec(custom_state), formspec_callback, custom_state, {})
 			end,
 			advtrains = {
-				on_train_enter = function(pos, train_id)
+				on_train_enter = function(pos, train_id, train, index)
+					if train.path_cn[index] ~= 1 then
+						return -- opposite direction
+					end
+					local meta = minetest.get_meta(pos)
+					if advtrains.interlocking ~= nil then
+						local ars = meta:get_string("ars")
+					 	ars = advtrains.interlocking.text_to_ars(ars) or {default = true}
+						if not (ars.default or advtrains.interlocking.ars_check_rule_match(ars, train)) then
+							return -- ARS does not match
+						end
+					end
+					local function apply_change(old_value, change)
+						if change == "-" then return nil elseif change == "" then return old_value else return change end
+					end
+					train.line = apply_change(train.line, meta:get_string("line"))
+					train.routingcode = apply_change(train.routingcode, meta:get_string("routingcode"))
+					train.text_inside = apply_change(train.text_inside, meta:get_string("text_inside"))
+					train.text_outside = apply_change(train.text_outside, meta:get_string("text_outside"))
 					atc.send_command(pos, train_id)
 				end,
 			},
 		}
-end
-
-function atc.get_atc_controller_formspec(pos, meta)
-	local mode=tonumber(meta:get_string("mode")) or 1
-	local command=meta:get_string("command")
-	local command_on=meta:get_string("command_on")
-	local channel=meta:get_string("channel")
-	local formspec="size[8,6]"
-	--	"dropdown[0,0;3;mode;static,mesecon,digiline;"..mode.."]"
-	if mode<3 then
-		formspec=formspec
-			.."style[command;font=mono]"
-			.."field[0.8,1.5;7,1;command;"..attrans("Command")..";"..minetest.formspec_escape(command).."]"
-		if tonumber(mode)==2 then
-			formspec=formspec
-				.."style[command_on;font=mono]"
-				.."field[0.8,3;7,1;command_on;"..attrans("Command (on)")..";"..minetest.formspec_escape(command_on).."]"
-		end
-	else
-		formspec=formspec.."field[0.8,1.5;7,1;channel;"..attrans("Digiline channel")..";"..minetest.formspec_escape(channel).."]"
-	end
-	return formspec.."button_exit[0.5,4.5;7,1;save;"..attrans("Save").."]"
 end
 
 --from trainlogic.lua train step
