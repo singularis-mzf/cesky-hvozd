@@ -644,7 +644,7 @@ local glass_panel = set("_1", "_2",
 	"_l", -- vychýlená tyč L
 	"_wide_1")
 
-local glass_slab = set("_1", "_2",  "_two_sides", "_three_sides", "_three_sides_u", "_triplet", "_two_sides_half", "_three_sides_half")
+local glass_slab = set("", "_1", "_2",  "_two_sides", "_three_sides", "_three_sides_u", "_triplet", "_two_sides_half", "_three_sides_half")
 
 local glass_slope = set("", "_half", "_half_raised", "_outer", "_outer_half", "_outer_half_raised",
 	"_tripleslope",

@@ -22,6 +22,9 @@ Copyright (C) 2016-2020  Moritz Blei (orwell96) and contributors
 local lot = os.clock()
 minetest.log("action", "[advtrains] Loading...")
 
+local has_itrainmap = minetest.get_modpath("advtrains_itrainmap")
+local has_luaautomation = minetest.get_modpath("advtrains_luaautomation")
+
 -- There is no need to support 0.4.x anymore given that the compatitability with it is already broken by 1bb1d825f46af3562554c12fba35a31b9f7973ff
 attrans = minetest.get_translator ("advtrains")
 
@@ -422,7 +425,7 @@ function advtrains.load_version_4()
 	end
 	
 	--== load luaatc ==
-	if minetest.get_modpath("advtrains_luaautomation") and atlatc then
+	if has_luaautomation and atlatc then
 		local la_save = serialize_lib.load_atomic(advtrains.fpath.."_atlatc.ls")
 		if la_save then
 			atlatc.load(la_save)
@@ -526,7 +529,7 @@ advtrains.avt_save = function(remove_players_from_wagons)
 	
 	-- save of luaatc
 	local la_save
-	if minetest.get_modpath("advtrains_luaautomation") and atlatc then
+	if has_luaautomation and atlatc then
 		la_save = atlatc.save()
 	end
 	
@@ -611,10 +614,10 @@ minetest.register_globalstep(function(dtime_mt)
 		end
 		
 		advtrains.mainloop_trainlogic(dtime,advtrains.mainloop_runcnt)
-		if advtrains_itm_mainloop then
+		if has_itrainmap and advtrains_itm_mainloop then
 			advtrains_itm_mainloop(dtime)
 		end
-		if minetest.get_modpath("advtrains_luaautomation") and atlatc then
+		if has_luaautomation and atlatc then
 			--atlatc.mainloop_stepcode(dtime)
 			atlatc.interrupt.mainloop(dtime)
 		end
@@ -646,7 +649,7 @@ function advtrains.load()
 	--if minetest.get_modpath("advtrains_luaautomation") and atlatc then
 	--	atlatc.load() --includes interrupts
 	--end == No longer loading here. Now part of avt_save() legacy loading.
-	if advtrains_itm_init then
+	if has_itrainmap and advtrains_itm_init then
 		advtrains_itm_init()
 	end
 	init_load=true
@@ -677,7 +680,7 @@ function advtrains.save(remove_players_from_wagons)
 	
 	local t1 = os.clock()
 	advtrains.avt_save(remove_players_from_wagons) --saving advtrains. includes ndb at advtrains.ndb.save_data()
-	if minetest.get_modpath("advtrains_luaautomation") and atlatc then
+	if has_luaautomation and atlatc then
 		atlatc.save()
 	end
 	atlog("Saved advtrains save files, took",math.floor((os.clock()-t1) * 1000),"ms")
