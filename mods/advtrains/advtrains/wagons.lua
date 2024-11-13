@@ -882,7 +882,7 @@ end
 
 --BordCom
 local function checkcouple(ent)
-	if not ent or not ent:getyaw() then
+	if not ent or not ent:get_yaw() then
 		return nil
 	end
 	local le = ent:get_luaentity()

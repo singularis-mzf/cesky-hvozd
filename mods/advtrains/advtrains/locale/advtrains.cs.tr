@@ -181,6 +181,7 @@ Point speed restriction=omezení rychlosti
 Position is occupied by a train.=Pozice je zabrána vlakem.
 Red Subway Passenger Wagon=červený vůz metra
 Remote Routesetting=Vzdálené nastavení vlakové cesty
+Remote Detector Rail=detekující kolej (dálková)
 Remove from section=Odstranit z trať. úseku
 Reset section state=Vymazat stav úseku
 Reset track section @1!=Smazat stav traťového úseku @1!

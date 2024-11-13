@@ -442,7 +442,7 @@ local function vyhladit(pos, operation_id)
 		if true then
 			-- použít tento návrh
 			minetest.log("action", "[ch_smooth] proposal chosen with failures = "..best_proposal.failures..", result = "..dump2(proposal))
-			for j = 1, 9 do
+			for j = 5, 5 do
 				local change = proposal.node_changes[j]
 				if change ~= nil then
 					local old_node = nodes[j]

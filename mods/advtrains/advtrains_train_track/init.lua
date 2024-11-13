@@ -495,7 +495,215 @@ minetest.register_craft({
 		"mesecons:wire_00000000_off"
 	},
 })
+
+local function swap_to_off(pos)
+	local node = advtrains.ndb.get_node(pos)
+	if node == nil then
+		minetest.log("error", "Advtrains node at "..minetest.pos_to_string(pos).." expected, but not found!")
+	else
+		local old_node_name = node.name
+		node.name = old_node_name:gsub("rdetector_on", "rdetector_off")
+		assert(node.name)
+		if node.name ~= old_node_name then
+			advtrains.ndb.swap_node(pos, node)
+			if advtrains.is_node_loaded(pos) then
+				mesecon.receptor_off(pos, advtrains.meseconrules)
+			end
+		end
+	end
 end
+
+local function swap_to_on(pos)
+	local node = advtrains.ndb.get_node(pos)
+	if node == nil then
+		minetest.log("error", "Advtrains node at "..minetest.pos_to_string(pos).." expected, but not found!")
+	else
+		local old_node_name = node.name
+		node.name = old_node_name:gsub("rdetector_off", "rdetector_on")
+		assert(node.name)
+		if node.name ~= old_node_name then
+			advtrains.ndb.swap_node(pos, node)
+			if advtrains.is_node_loaded(pos) then
+				mesecon.receptor_on(pos, advtrains.meseconrules)
+			end
+		end
+	end
+end
+
+local rdetector_data = {
+	--[[
+		[pos_hash] = {
+			pos = pos,
+			created = ...,
+			trains = {
+				[train_id] = {expiration = timestamp}}}
+	]]
+}
+
+local function watch_trains(pos_hash, created)
+	assert(pos_hash)
+	assert(created)
+	local data = rdetector_data[pos_hash]
+	if data == nil then
+		return
+	elseif created ~= data.created then
+		return -- not my data
+	else
+		minetest.after(1, watch_trains, pos_hash, created)
+	end
+	local kept = 0
+	local to_delete = {}
+	local now = minetest.get_us_time()
+	for train_id, traindata in pairs(data.trains) do
+		local train = advtrains.trains[train_id]
+		if train == nil or not train.last_pos then
+			table.insert(to_delete, train_id) -- train does not exist
+		elseif traindata.expiration ~= nil and traindata.expiration <= now then
+			table.insert(to_delete, train_id) -- train expired
+		else
+			kept = kept + 1
+		end
+	end
+	if kept == 0 then
+		-- no kept trains => disable the node
+		swap_to_off(data.pos)
+		rdetector_data[pos_hash] = nil -- no trains remain, delete data
+	elseif #to_delete > 0 then
+		for _, train_id in ipairs(to_delete) do
+			data.trains[train_id] = nil
+		end
+	end
+end
+
+local function on_train_approach(pos, train_id)
+	local pos_hash = advtrains.encode_pos(pos)
+	local data = rdetector_data[pos_hash]
+	local now = minetest.get_us_time()
+	local expiration = now + 30000000
+	if data == nil then
+		rdetector_data[pos_hash] = {
+			pos = pos,
+			created = now,
+			trains = {[train_id] = {expiration = expiration}},
+		}
+		minetest.after(0.1, swap_to_on, pos)
+		minetest.after(1, watch_trains, pos_hash, now)
+	else
+		data.trains[train_id] = {expiration = expiration}
+	end
+end
+
+local function on_train_enter(pos, train_id)
+	local pos_hash = advtrains.encode_pos(pos)
+	local data = rdetector_data[pos_hash]
+	local now = minetest.get_us_time()
+	if data == nil then
+		rdetector_data[pos_hash] = {
+			pos = pos,
+			created = now,
+			trains = {[train_id] = {}},
+		}
+		minetest.after(0.1, swap_to_on, pos)
+		minetest.after(1, watch_trains, pos_hash, now)
+	else
+		data.trains[train_id] = {}
+	end
+end
+
+local function on_train_leave(pos, train_id)
+	local pos_hash = advtrains.encode_pos(pos)
+	local data = rdetector_data[pos_hash]
+	if data ~= nil then
+		data.trains[train_id] = {expiration = minetest.get_us_time() - 1000000}
+	end
+end
+
+local function after_dig_node(pos)
+	rdetector_data[advtrains.encode_pos(pos)] = nil
+end
+
+advtrains.register_tracks("default", {
+	nodename_prefix="advtrains:dtrack_rdetector_off",
+	texture_prefix="advtrains_dtrack_detector",
+	models_prefix="advtrains_dtrack",
+	models_suffix=".b3d",
+	shared_texture="advtrains_dtrack_shared_rdetector_off.png",
+	description=attrans("Remote Detector Rail"),
+	formats={},
+	get_additional_definiton = function(def, preset, suffix, rotation)
+		return {
+			mesecons = {
+				receptor = {
+					state = mesecon.state.off,
+					rules = advtrains.meseconrules
+				}
+			},
+			after_dig_node = after_dig_node,
+			drop = "advtrains:dtrack_rdetector_off_placer",
+			advtrains = {
+				on_updated_from_nodedb = function(pos, node)
+					mesecon.receptor_off(pos, advtrains.meseconrules)
+				end,
+				on_train_approach = function(pos, train_id, train, index, has_entered)
+					if has_entered then
+						on_train_enter(pos, train_id)
+					else
+						on_train_approach(pos, train_id)
+					end
+				end,
+				on_train_enter = on_train_enter,
+				on_train_leave = on_train_leave,
+			}
+		}
+	end
+}, advtrains.ap.t_30deg_straightonly)
+advtrains.register_tracks("default", {
+	nodename_prefix="advtrains:dtrack_rdetector_on",
+	texture_prefix="advtrains_dtrack",
+	models_prefix="advtrains_dtrack",
+	models_suffix=".b3d",
+	shared_texture="advtrains_dtrack_shared_rdetector_on.png",
+	description=attrans("Remote Detector Rail"),
+	formats={},
+	get_additional_definiton = function(def, preset, suffix, rotation)
+		return {
+			after_dig_node = after_dig_node,
+			drop = "advtrains:dtrack_rdetector_off_placer",
+			mesecons = {
+				receptor = {
+					state = mesecon.state.on,
+					rules = advtrains.meseconrules
+				}
+			},
+			advtrains = {
+				on_updated_from_nodedb = function(pos, node)
+					mesecon.receptor_on(pos, advtrains.meseconrules)
+				end,
+				on_train_approach = function(pos, train_id, train, index, has_entered)
+					if has_entered then
+						on_train_enter(pos, train_id)
+					else
+						on_train_approach(pos, train_id)
+					end
+				end,
+				on_train_enter = on_train_enter,
+				on_train_leave = on_train_leave,
+			}
+		}
+	end
+}, advtrains.ap.t_30deg_straightonly_noplacer)
+minetest.register_craft({
+type="shapeless",
+output = 'advtrains:dtrack_rdetector_off_placer',
+recipe = {
+	"advtrains:dtrack_detector_off_placer",
+	"default:mese_crystal",
+},
+})
+
+end
+
+
 --TODO legacy
 --I know lbms are better for this purpose
 for name,rep in pairs({swl_st="swlst", swr_st="swrst", swl_cr="swlcr", swr_cr="swrcr", }) do
