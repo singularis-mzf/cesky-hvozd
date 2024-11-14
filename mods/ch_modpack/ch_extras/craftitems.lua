@@ -2,7 +2,7 @@ local def
 
 -- ch_extras:clean_dirt
 ---------------------------------------------------------------
-local image = "default_dirt.png^[resize:32x32^(default_sand.png^[resize:32x32^[opacity:128)"
+local image = "default_dirt.png&[resize:32x32&(default_sand.png&[resize:32x32&[opacity:128)"
 image = "[inventorycube{"..image.."{"..image.."{"..image
 def = {
 	description = "přebraná hlína",

@@ -676,6 +676,8 @@ local glass_no_cnc = set(
 	"technic_cnc_element_straight"
 )
 
+local sns_micro = set("_1", "_2")
+
 local sns_slabs = wool_slabs
 
 local sns_slopes = set("", "_half", "_half_raised",
@@ -733,6 +735,7 @@ local rules = {
 		stair = {alts_stair, true},
 	}},
 	{materials_sns, {
+		micro = {sns_micro, true},
 		slab = {sns_slabs, true},
 		slope = {sns_slopes, true},
 	}},

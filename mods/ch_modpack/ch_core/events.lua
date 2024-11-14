@@ -115,12 +115,12 @@ end
 
 --[[
     event_def = {
-        access = "public" or "admin" or "players" or "player_only" or "discard",
+        access = "public" or "admin" or "players" or "player_only" or "discard" or "player_and_admin",
         description = string, -- popis typu události pro zobrazení ve formspecech a v četu
 
         color = "#RRGGBB" or nil, -- barva pro zobrazení události
         default_text = string or nil, -- text události, který se použije, pokud nebude zadán žádný text ve volání ch_core.add_event()
-        chat_access = "public" or "admin" or "players" or "player_only" or nil, -- komu se má událost vypsat v četu, bude-li online
+        chat_access = "public" or "admin" or "players" or "player_only" or or "player_and_admin" nil, -- komu se má událost vypsat v četu, bude-li online
         send_access = "admin" or "players" or nil, -- kdo může událost ručně odeslat z dialogového okna
         delete_access = "player_only" or nil, -- kdo kromě postav s právem ch_events_admin může událost smazat
 
@@ -134,7 +134,9 @@ function ch_core.register_event_type(event_type, event_def)
         error("Event type "..event_type.." is already registered.")
     end
     local access = event_def.access
-    if access ~= "public" and access ~= "admin" and access ~= "players" and access ~= "player_only" and access ~= "discard" then
+    if access ~= "public" and access ~= "admin" and access ~= "players" and access ~= "player_only" and access ~= "discard" and
+        access ~= "player_and_admin"
+    then
         error("Invalid event access keyword: "..event_def.access)
     end
     local def = {
@@ -154,7 +156,9 @@ function ch_core.register_event_type(event_type, event_def)
         def.prepend_viewname = true
     end
     if event_def.chat_access ~= nil then
-        if event_def.chat_access == "admin" or event_def.chat_access == "players" or event_def.chat_access == "public" or event_def.chat_access == "player_only" then
+        if event_def.chat_access == "admin" or event_def.chat_access == "players" or event_def.chat_access == "public" or
+            event_def.chat_access == "player_only" or event_def.chat_access == "player_and_admin"
+        then
             def.chat_access = event_def.chat_access
         else
             minetest.log("warning", "Unsupported 'chat_access' value '"..event_def.chat_access.."' ignored!")
@@ -185,6 +189,9 @@ function ch_core.add_event(event_type, text, player_name)
     end
     if type_def.ignore then
         return -- ignore this event
+    end
+    if text ~= nil and #text > 1024 then
+        text = ch_core.utf8_truncate_right(text, 1024)
     end
     local timestamp = get_timestamp()
     local month_id = timestamp_to_month_id(timestamp)
@@ -258,6 +265,13 @@ function ch_core.add_event(event_type, text, player_name)
                     table.insert(players_to_send, opinfo.player_name)
                 end
             end
+        elseif type_def.chat_access == "player_and_admin" then
+            for _, oplayer in ipairs(minetest.get_connected_players()) do
+                local opinfo = ch_core.normalize_player(oplayer)
+                if opinfo.player_name == player_name or is_events_admin(opinfo) then
+                    table.insert(players_to_send, opinfo.player_name)
+                end
+            end
         end
         local message_to_send = {}
         if type_def.color ~= nil then
@@ -286,6 +300,7 @@ function ch_core.get_event_types_for_player(player_name_or_player, negative_set)
         players = pinfo.role ~= "new",
         admin = is_events_admin(pinfo),
         player_only = true,
+        player_and_admin = true,
         discard = false,
     }
     local result = {}
@@ -365,6 +380,7 @@ function ch_core.get_events_for_player(player_name_or_player, allowed_event_type
         players = pinfo.role ~= "new",
         admin = is_events_admin(pinfo),
         player_only = true, -- bude testováno samostatně
+        player_and_admin = true, -- bude testováno samostatně
         discard = false,
     }
     local event_types_filtered = {}
@@ -386,7 +402,12 @@ function ch_core.get_events_for_player(player_name_or_player, allowed_event_type
         for i = #events_month, 1, -1 do
             local event = events_month[i]
             local type_def = event_types_filtered[event.type]
-            if type_def ~= nil and not type_def.ignore and (type_def.access ~= "player_only" or event.player_name == pinfo.player_name) then
+            if
+                type_def ~= nil and
+                not type_def.ignore and
+                (type_def.access ~= "player_only" or event.player_name == pinfo.player_name) and
+                (type_def.access ~= "player_and_admin" or event.player_name == pinfo.player_name or has_access_rights.admin)
+            then
                 local record = {
                     time = assert(event.timestamp), -- TODO...
                     description = assert(type_def.description),
@@ -446,6 +467,29 @@ function ch_core.remove_event(id, description, player_name)
     minetest.log("action", "Event removed: "..dump2(event))
     return true
 end
+
+-- Hlášení chyb
+ch_core.register_event_type("bug", {
+    access = "player_and_admin",
+    description = "hlášení chyby (/chyba)",
+    chat_access = "player_and_admin",
+    color = "#cccccc",
+})
+
+minetest.register_chatcommand("chyba", {
+    params = "<popis chyby>",
+    privs = {ch_registered_player = true},
+    description = "Slouží k nahlášení chyby ve hře. Hlášení uvidíte jen vy a Administrace.",
+    func = function(player_name, param)
+        local player = minetest.get_player_by_name(player_name)
+        if player == nil then
+            return false, "Vnitřní chyba při nahlašování. Nahlašte prosím chybu jiným způsobem (např. herní poštou)."
+        end
+        local pos = vector.round(player:get_pos())
+        ch_core.add_event("bug", minetest.pos_to_string(pos).." "..param, player_name)
+        return true, "Chyba byla nahlášena. Děkujeme. Hlášením chyb pomáháte zlepšovat tento server."
+    end,
+})
 
 -- Událost "server_started"
 

@@ -357,6 +357,7 @@ stairsplus.defs = {
 				type = "fixed",
 				fixed = {-0.5, -0.5, 0.25, 0.5, 0, 0.5},
 			},
+			align_style = "world",
 			not_blocking_trains = true,
 		},
 		["_1"] = {
@@ -365,6 +366,7 @@ stairsplus.defs = {
 				type = "fixed",
 				fixed = {-0.5, -0.5, 0.25, 0.5, -0.4375, 0.5},
 			},
+			align_style = "world",
 			not_blocking_trains = true,
 		},
 		["_2"] = {
@@ -373,6 +375,7 @@ stairsplus.defs = {
 				type = "fixed",
 				fixed = {-0.5, -0.5, 0.25, 0.5, -0.375, 0.5},
 			},
+			align_style = "world",
 			not_blocking_trains = true,
 		},
 		["_4"] = {
@@ -381,6 +384,7 @@ stairsplus.defs = {
 				type = "fixed",
 				fixed = {-0.5, -0.5, 0.25, 0.5, -0.25, 0.5},
 			},
+			align_style = "world",
 			not_blocking_trains = true,
 		},
 		["_12"] = {
@@ -389,6 +393,7 @@ stairsplus.defs = {
 				type = "fixed",
 				fixed = {-0.5, -0.5, 0.25, 0.5, 0.25, 0.5},
 			},
+			align_style = "world",
 		},
 		--[[ ["_14"] = {
 			description = "panel 14/16",
@@ -396,6 +401,7 @@ stairsplus.defs = {
 				type = "fixed",
 				fixed = {-0.5, -0.5, 0.25, 0.5, 0.375, 0.5},
 			},
+			align_style = "world",
 		}, ]]
 		["_15"] = {
 			description = "panel 15/16",
@@ -403,6 +409,7 @@ stairsplus.defs = {
 				type = "fixed",
 				fixed = {-0.5, -0.5, 0.25, 0.5, 0.4375, 0.5},
 			},
+			align_style = "world",
 		},
 		["_special"] = {
 			description = "vychýlená tyč I",
@@ -453,6 +460,7 @@ stairsplus.defs = {
 				type = "fixed",
 				fixed = {-0.5, -0.5, 0, 0.5, 0, 0.5},
 			},
+			align_style = "world",
 		},
 		["_wide_1"] = {
 			description = "široký panel ultratenký",
@@ -460,6 +468,7 @@ stairsplus.defs = {
 				type = "fixed",
 				fixed = {-0.5, -0.5, 0, 0.5, -0.46875, 0.5},
 			},
+			align_style = "world",
 			not_blocking_trains = true,
 		},
 		["_wall"] = {
@@ -953,6 +962,7 @@ stairsplus.defs = {
 					{-0.5, 0, 0, 0.5, 0.5, 0.5},
 				},
 			},
+			align_style = "world",
 			extra_groups = {stair = 1},
 		},
 		["_inner"] = {
@@ -965,6 +975,7 @@ stairsplus.defs = {
 					{-0.5, 0, -0.5, 0, 0.5, 0},
 				},
 			},
+			align_style = "world",
 		},
 		["_outer"] = {
 			description = "schod, vnější roh",
@@ -975,6 +986,7 @@ stairsplus.defs = {
 					{-0.5, 0, 0, 0, 0.5, 0.5},
 				},
 			},
+			align_style = "world",
 		},
 		["_alt"] = {
 			description = "schody samostatné 8/16",
@@ -985,6 +997,7 @@ stairsplus.defs = {
 					{-0.5, 0, 0, 0.5, 0.5, 0.5},
 				},
 			},
+			align_style = "world",
 		},
 		["_alt_1"] = {
 			description = "schody samostatné 1/16",
@@ -995,6 +1008,7 @@ stairsplus.defs = {
 					{-0.5, 0.4375, 0, 0.5, 0.5, 0.5},
 				},
 			},
+			align_style = "world",
 		},
 		["_alt_2"] = {
 			description = "schody samostatné 2/16",
@@ -1005,6 +1019,7 @@ stairsplus.defs = {
 					{-0.5, 0.375, 0, 0.5, 0.5, 0.5},
 				},
 			},
+			align_style = "world",
 		},
 		["_alt_4"] = {
 			description = "schody samostatné 4/16",
@@ -1015,6 +1030,7 @@ stairsplus.defs = {
 					{-0.5, 0.25, 0, 0.5, 0.5, 0.5},
 				},
 			},
+			align_style = "world",
 		},
 		["_triple"] = {
 			description = "schody třetinové",
@@ -1026,6 +1042,7 @@ stairsplus.defs = {
 					{-0.5, 0.166666666667, 0.166666666667,		0.5, 0.5, 0.5},
 				},
 			},
+			align_style = "world",
 		},
 		["_chimney"] = {
 			description = "úzký komín",
