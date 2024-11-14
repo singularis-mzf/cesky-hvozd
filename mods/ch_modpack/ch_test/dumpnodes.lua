@@ -79,3 +79,34 @@ minetest.register_chatcommand("dumpnodes", {
     privs = {server = true},
     func = dumpnodes,
 })
+
+function dn(param)
+    local to_dump
+    if type(param) == "table" then
+        if param.x ~= nil and param.y ~= nil and param.z ~= nil then
+            param = core.get_node(param).name
+        elseif type(param.name) == "string" then
+            param = param.name
+        end
+    elseif type(param) == "userdata" then
+        param = param:to_table()
+    end
+    if type(param) == "string" then
+        to_dump = minetest.registered_items[param]
+        if to_dump ~= nil then
+            to_dump = {
+                name = param,
+                type = to_dump.type,
+                def = to_dump,
+            }
+        else
+            to_dump = {
+                name = param,
+                type = "unknown",
+            }
+        end
+    else
+        to_dump = param
+    end
+    print(dump2(to_dump))
+end

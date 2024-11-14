@@ -667,13 +667,13 @@ function ch_core.compile_dofile(args, options)
 		if #largs == 0 then
 			largs = args
 		end
-		local f = loadfile(filepath)
+		local f, errmsg = loadfile(filepath)
 		if f ~= nil then
 			return f(unpack(largs))
 		elseif options.nofail == true then
 			return
 		else
-			error("dofile("..filepath..") failed! probably syntax error or missing file")
+			error("dofile("..filepath..") failed!: "..(errmsg or "nil"))
 		end
 	end
 	return result
