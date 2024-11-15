@@ -646,6 +646,50 @@ local materials_for_manholes = set(
 "xdecor:wood_tile"
 )
 
+local platform_materials = set(
+	"basic_materials:cement_block",
+	"basic_materials:concrete_block",
+	"building_blocks:Tar",
+	"darkage:basalt",
+	"darkage:basalt_brick",
+	"darkage:gneiss_brick",
+	"darkage:marble",
+	"darkage:ors_brick",
+	"darkage:serpentine",
+	"darkage:slate_brick",
+	"darkage:stone_brick",
+	"default:acacia_wood",
+	"default:aspen_wood",
+	"default:desert_stone",
+	"default:desert_stone_block",
+	"default:junglewood",
+	"default:pine_wood",
+	"default:steelblock",
+	"default:stone",
+	"default:stonebrick",
+	"default:stone_block",
+	"default:wood",
+	"moretrees:cedar_planks",
+	"moretrees:cherrytree_planks",
+	"moretrees:chestnut_tree_planks",
+	"moretrees:date_palm_planks",
+	"moretrees:birch_planks",
+	"moretrees:apple_tree_planks",
+	"moretrees:ebony_planks",
+	"moretrees:fir_planks",
+	"moretrees:oak_planks",
+	"moretrees:palm_planks",
+	"moretrees:plumtree_planks",
+	"moretrees:rubber_tree_planks",
+	"moretrees:sequoia_planks",
+	"moretrees:spruce_planks",
+	"moretrees:poplar_planks",
+	"moretrees:willow_planks",
+	"moreblocks:wood_tile_center",
+	"moreblocks:wood_tile_full",
+	"technic:marble"
+)
+
 local materials_all = union(materials_cnc, materials_kp, materials_no_kp, materials_glass, materials_sns, materials_wool, materials_roof,
 	materials_zdlazba, set("default:sandstone", "default:sandstonebrick", "default:sandstone_block"))
 
@@ -732,6 +776,8 @@ local alts_cnc = set(
 local alts_tombs = set("_0", "_1", "_2", "_5", "_7", "_8", "_9", "_10", "_12", "_13", "_14")
 
 local alts_fence = set("fence", "rail", "mesepost", "fencegate")
+
+local alts_advtrains = set("platform_high", "platform_low", "platform_45_high", "platform_45_low")
 
 local wool_panels = set("", "_1", "_2", "_4", "_l", "_special")
 
@@ -848,6 +894,7 @@ local rules = {
 	{materials_for_manholes, "streets", set("manhole", "stormdrain"), true},
 	{set("default:wood", "default:acacia_wood", "default:aspen_wood", "default:junglewood", "default:pine_wood"),
 		"streets", "manhole", true},
+	{platform_materials, "advtrains", alts_advtrains, true},
 
 	-- žlutý pískovec (omezený sortiment tvarů):
 	{set("default:sandstone", "default:sandstonebrick", "default:sandstone_block"), {
@@ -891,6 +938,24 @@ function ch_core.get_stairsplus_custom_shapes(recipeitem)
 	end
 	-- print("ch_core.get_stairsplus_custom_shapes(): "..#result.." shapes generated for "..recipeitem)
 	return ifthenelse(#result > 0, result, nil) -- return nil when no shapes are allowed
+end
+
+function ch_core.get_materials_from_shapes_db(key)
+	local set
+	if key == "advtrains" then
+		set = platform_materials
+	end
+	if set == nil then
+		error("ch_core.get_materials_from_shapes_db(): unsupported key \""..key.."\"!")
+	end
+	local result = {}
+	for name, _ in pairs(set) do
+		table.insert(result, name)
+	end
+	if not set["default:stone"] then
+		table.insert(result, "default:stone")
+	end
+	return result
 end
 
 function ch_core.init_stairsplus_custom_shapes(defs)
