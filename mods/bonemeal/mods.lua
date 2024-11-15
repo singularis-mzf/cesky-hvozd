@@ -198,6 +198,14 @@ if minetest.get_modpath("dryplants") then
 	})
 end
 
+if minetest.get_modpath("bushes") then
+	bonemeal:add_sapling({
+		{"bushes:yt_sapling", function(pos)
+			local node_timer = minetest.get_node_timer(pos)
+			node_timer:start(0)
+		end, "soil"}
+	})
+end
 
 if minetest.get_modpath("dye") then
 

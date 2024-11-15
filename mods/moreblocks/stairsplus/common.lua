@@ -205,8 +205,9 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 	}
 
 	for _, n in ipairs(fields_to_inherit_from_fields) do
-		if fields[n] ~= nil then
-			def[n] = fields[n]
+		local value = fields[n] or src_def[n]
+		if value ~= nil then
+			def[n] = value
 		end
 	end
 	for _, n in ipairs(fields_to_inherit_from_info) do

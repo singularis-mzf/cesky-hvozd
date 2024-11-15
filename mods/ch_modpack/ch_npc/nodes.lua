@@ -7,7 +7,7 @@ local function allow_metadata_inventory_move(pos, from_list, from_index, to_list
 end
 
 local function allow_metadata_inventory_put(pos, listname, index, stack, player)
-	if minetest.check_player_privs(player, "spawn_npc") then
+	if player ~= nil and minetest.check_player_privs(player, "spawn_npc") then
 		return stack:get_count()
 	else
 		return 0
@@ -15,7 +15,7 @@ local function allow_metadata_inventory_put(pos, listname, index, stack, player)
 end
 
 local function allow_metadata_inventory_take(pos, listname, index, stack, player)
-	if minetest.check_player_privs(player, "spawn_npc") then
+	if player ~= nil and minetest.check_player_privs(player, "spawn_npc") then
 		return stack:get_count()
 	else
 		return 0
@@ -43,6 +43,20 @@ local function on_construct(pos)
 	inv:set_size("clothes", internal.clothes_inv_size)
 end
 
+local function on_place(itemstack, placer, pointed_thing)
+	if placer == nil then
+		return
+	end
+	if minetest.check_player_privs(placer, "spawn_npc") then
+		return minetest.item_place(itemstack, placer, pointed_thing)
+	end
+	if minetest.is_player(placer) then
+		local player_name = placer:get_player_name()
+		ch_core.systemovy_kanal(player_name, "Pozice pro nehráčské postavy mohou umísťovat pouze hráči/ky s právem spawn_npc.\n"..
+			"Pro umístění nehráčské postavy se, prosím, domluv s Administrací.")
+	end
+end
+
 local function on_punch(pos, node, clicker, itemstack)
 	return ch_npc.update_npc(pos, node)
 end
@@ -57,44 +71,53 @@ local function on_rightclick(pos, node, clicker, itemstack)
 	end
 end
 
-local def = {
-	description = "nehráčská postava (zobrazená)",
+local npc_node_box = {
+	type = "fixed",
+	fixed = {-0.01, -0.5, -0.01, 0.01, -0.49, 0.01}
+}
+local npc_selection_box = {
+	type = "fixed",
+	fixed = {-0.5, -0.5, -0.5, 0.5, 1/16 - 0.5, 0.5}
+}
+
+ch_core.register_nodes({
 	drawtype = "nodebox",
-	node_box = {type = "fixed", fixed = {-0.01, -0.5, -0.01, 0.01, -0.49, 0.01}},
-	selection_box = {type = "fixed", fixed = {-0.5, -0.5, -0.5, 0.5, 1/16 - 0.5, 0.5}},
-	tiles = {"ch_core_white_pixel.png^[opacity:0"},
-	use_texture_alpha = "clip",
+	selection_box = npc_selection_box,
 	inventory_image = "default_invisible_node_overlay.png",
 	wield_image = "default_invisible_node_overlay.png",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {ch_npc_spawner = 1, not_in_creative_inventory = 1},
 	walkable = false,
 	pointable = true,
-	light_source = 1,
-
 	can_dig = can_dig,
 	allow_metadata_inventory_move = allow_metadata_inventory_move,
 	allow_metadata_inventory_put = allow_metadata_inventory_put,
 	allow_metadata_inventory_take = allow_metadata_inventory_take,
 	on_construct = on_construct,
+	on_place = on_place,
 	on_punch = on_punch,
 	on_metadata_inventory_move = on_metadata_inventory_move,
 	on_metadata_inventory_put = on_metadata_inventory_put,
 	on_metadata_inventory_take = on_metadata_inventory_take,
 	on_rightclick = on_rightclick,
-}
-
-minetest.register_node("ch_npc:npc", table.copy(def))
-
-def.description = "nehráčská postava"
-def.tiles = {"ch_core_white_pixel.png^[opacity:16"}
-def.node_box = def.selection_box
-def.use_texture_alpha = "blend"
-def.light_source = 5
-def.groups = {ch_npc_spawner = 2}
-
-minetest.register_node("ch_npc:npc_hidden", def)
+}, {
+	["ch_npc:npc"] = {
+		description = "nehráčská postava (zobrazená)",
+		tiles = {"ch_core_white_pixel.png^[opacity:0"},
+		use_texture_alpha = "clip",
+		node_box = npc_node_box,
+		light_source = 1,
+		groups = {ch_npc_spawner = 1, not_in_creative_inventory = 1},
+	},
+	["ch_npc:npc_hidden"] = {
+		description = "nehráčská postava",
+		tiles = {"ch_core_white_pixel.png^[opacity:16"},
+		use_texture_alpha = "blend",
+		node_box = npc_selection_box,
+		light_source = 5,
+		groups = {ch_npc_spawner = 2},
+	},
+})
 
 -- LBM (update entities when nodes are loaded)
 minetest.register_lbm({
