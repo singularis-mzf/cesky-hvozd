@@ -332,7 +332,7 @@ minetest.register_craftitem(":mobs:horseshoe_diamond", {
 minetest.register_craft({
 	output = "mobs:horseshoe_diamond",
 	recipe = {
-		{"", "default:diamondblock", ""},
+		{"", "default:diamond", ""},
 		{"default:diamond", "", "default:diamond"},
 		{"default:diamond", "", "default:diamond"}
 	}

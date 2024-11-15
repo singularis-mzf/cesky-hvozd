@@ -234,7 +234,7 @@ unified_inventory.add_category_items('minerals', {
 	"default:copper_ingot",
 	"default:copper_lump",
 	"default:gold_lump",
-	"default:diamondblock",
+--	"default:diamondblock",
 	"default:stone_with_diamond",
 	"default:stone_with_mese",
 	"default:steel_ingot",

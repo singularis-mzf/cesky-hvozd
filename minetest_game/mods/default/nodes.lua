@@ -1303,6 +1303,7 @@ minetest.register_node("default:stone_with_diamond", {
 	sounds = default.node_sound_stone_defaults(),
 })
 
+--[[
 minetest.register_node("default:diamondblock", {
 	description = S("Diamond Block"),
 	tiles = {"default_diamond_block.png"},
@@ -1310,6 +1311,7 @@ minetest.register_node("default:diamondblock", {
 	groups = {cracky = 1, level = 3},
 	sounds = default.node_sound_stone_defaults(),
 })
+]]
 
 --
 -- Plantlife (non-cubic)

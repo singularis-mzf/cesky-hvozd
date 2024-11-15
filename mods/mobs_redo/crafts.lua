@@ -129,7 +129,7 @@ minetest.register_craft({
 	output = "mobs:protector2",
 	recipe = {
 		{"mobs:protector", "default:mese_crystal", "mobs:protector"},
-		{"default:mese_crystal", "default:diamondblock", "default:mese_crystal"},
+		{"default:mese_crystal", "default:diamond", "default:mese_crystal"},
 		{"mobs:protector", "default:mese_crystal", "mobs:protector"}
 	}
 })

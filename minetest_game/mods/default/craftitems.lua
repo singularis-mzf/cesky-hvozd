@@ -399,12 +399,14 @@ minetest.register_craft({
 	}
 })
 
+--[[
 minetest.register_craft({
 	output = "default:diamond 9",
 	recipe = {
 		{"default:diamondblock"},
 	}
 })
+]]
 
 minetest.register_craft({
 	output = "default:gold_ingot 9",

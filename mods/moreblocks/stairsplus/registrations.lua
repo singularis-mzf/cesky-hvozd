@@ -37,7 +37,6 @@ if minetest.get_modpath("default") then
 		"desert_stone",
 		"desert_stone_block",
 		"desert_stonebrick",
-		"diamondblock",
 		"dirt",
 		"glass",
 		"goldblock",

@@ -140,6 +140,7 @@ minetest.register_craft({
 	}
 })
 
+--[[
 minetest.register_craft({
 	output = "default:diamondblock",
 	recipe = {
@@ -148,6 +149,7 @@ minetest.register_craft({
 		{"default:diamond", "default:diamond", "default:diamond"},
 	}
 })
+]]
 end -- not expect_compactor
 
 if not expect_technic then

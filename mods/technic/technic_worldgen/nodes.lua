@@ -141,7 +141,7 @@ minetest.register_craft({
 	}
 })
 
-minetest.register_alias("technic:diamond_block", "default:diamondblock")
+-- minetest.register_alias("technic:diamond_block", "default:diamondblock")
 minetest.register_alias("technic:diamond", "default:diamond")
 minetest.register_alias("technic:mineral_diamond", "default:stone_with_diamond")
 

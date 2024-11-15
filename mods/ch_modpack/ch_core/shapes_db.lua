@@ -126,7 +126,6 @@ local materials_kp = set(
 "default:desert_stone",
 "default:desert_stone_block",
 "default:desert_stonebrick",
-"default:diamondblock",
 "default:dirt",
 "default:goldblock",
 "default:ice",
