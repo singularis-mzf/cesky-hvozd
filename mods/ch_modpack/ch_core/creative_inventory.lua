@@ -315,6 +315,8 @@ function ch_core.overridable.is_other_shape(item_name, groups)
 	return
 		(groups.fence and item_name ~= "technic:insulator_clip_fencepost") or
 		groups.gravestone or
+		groups.streets_manhole or
+		groups.streets_stormdrain or
 		item_name:sub(1, 7) == "pkarcs:" or
 		item_name:sub(1, 8) == "pillars:"
 end
