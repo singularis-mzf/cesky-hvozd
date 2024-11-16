@@ -569,15 +569,10 @@ local materials_for_manholes = set(
 "building_blocks:Tar",
 "ch_extras:marble",
 "ch_extras:particle_board_grey",
-"cottages:black",
-"cottages:brown",
-"cottages:red",
 "darkage:basalt",
 "darkage:basalt_brick",
 "darkage:basalt_cobble",
 "darkage:chalk",
-"darkage:glass",
-"darkage:glow_glass",
 "darkage:gneiss",
 "darkage:gneiss_brick",
 "darkage:gneiss_cobble",
@@ -643,8 +638,17 @@ local materials_for_manholes = set(
 "technic:marble",
 "technic:marble_bricks",
 "technic:warning_block",
-"xdecor:wood_tile"
+"xdecor:wood_tile",
+"ch_extras:cervzdlazba",
+"ch_extras:zdlazba"
 )
+
+local materials_for_manholes_only = set(
+	"default:wood",
+	"default:acacia_wood",
+	"default:aspen_wood",
+	"default:junglewood",
+	"default:pine_wood")
 
 local platform_materials = set(
 	"basic_materials:cement_block",
@@ -892,8 +896,7 @@ local rules = {
 	{materials_tombs, "tombs", alts_tombs, true},
 	{"streets:asphalt_yellow", "streets", "*", false},
 	{materials_for_manholes, "streets", set("manhole", "stormdrain"), true},
-	{set("default:wood", "default:acacia_wood", "default:aspen_wood", "default:junglewood", "default:pine_wood"),
-		"streets", "manhole", true},
+	{materials_for_manholes_only, "streets", "manhole", true},
 	{platform_materials, "advtrains", alts_advtrains, true},
 
 	-- žlutý pískovec (omezený sortiment tvarů):
@@ -944,6 +947,8 @@ function ch_core.get_materials_from_shapes_db(key)
 	local set
 	if key == "advtrains" then
 		set = platform_materials
+	elseif key == "streets" then
+		set = union(materials_for_manholes, materials_for_manholes_only)
 	end
 	if set == nil then
 		error("ch_core.get_materials_from_shapes_db(): unsupported key \""..key.."\"!")
