@@ -12,6 +12,7 @@ end
 if farming and farming.mod and farming.mod == "redo" then
 
 	bonemeal:add_crop({
+		{"farming:tomato_yellow_", 8},
 		{"farming:tomato_", 8},
 		{"farming:corn_", 8},
 		{"farming:melon_", 8},

@@ -220,18 +220,15 @@ local function check_crops(pos, nodename, strength)
 			crop = nodename:split(":")[2]
 
 			-- get stage number or set to 0 for seed
-			stage = tonumber( crop:split("_")[2] ) or 0
+			stage = tonumber(crop:match("_([0-9]+)$")) or 0
 			stage = min(stage + strength, crops[n][2])
 
 			-- check for place_param setting
 			nod = crops[n][1] .. stage
 			def = minetest.registered_nodes[nod]
-			local current_node = minetest.get_node(pos)
-			local param2 = current_node.param2
-			if def ~= nil then
-				param2 = def.place_param2 or param2
-			end
-			minetest.set_node(pos, {name = nod, param2 = def})
+			local node = minetest.get_node(pos)
+			node.name = nod
+			minetest.set_node(pos, node)
 
 			particle_effect(pos)
 

@@ -81,7 +81,7 @@ dofile(modpath .. "/lib.lua") -- : data
 dofile(modpath .. "/interiors.lua") -- : lib
 dofile(modpath .. "/shapes_db.lua") -- : lib
 dofile(modpath .. "/penize.lua") -- : lib
-dofile(modpath .. "/ch_wm_nodes.lua") -- : lib
+dofile(modpath .. "/nodedir.lua") -- : lib
 dofile(modpath .. "/formspecs.lua") -- : data, lib
 dofile(modpath .. "/areas.lua") -- : data, lib
 dofile(modpath .. "/nametag.lua") -- : data, lib

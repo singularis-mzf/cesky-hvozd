@@ -1,6 +1,7 @@
 
 local mod_name = "rotate"
 local mod_name_upper=string.upper(mod_name)
+local ifthenelse = ch_core.ifthenelse
 local S = minetest.get_translator("rotate")
 
 if _G[mod_name] == nil then
@@ -394,8 +395,8 @@ local function player_node_state(player, pointed_thing)
 
 	-- Compute the nearest side of the node
 	if math.abs(player_pos.x - node_pos.x) <= 0.5 and math.abs(player_pos.z - node_pos.z) <= 0.5 then
-		local eye_offset = player:get_eye_offset()
-		if eye_offset.y >= node_pos.y then
+		local eye_pos = vector.add(player_pos, player:get_eye_offset())
+		if eye_pos.y >= node_pos.y then
 			result.pointed_side = "up"
 		else
 			result.pointed_side = "down"
@@ -572,6 +573,23 @@ local function facedir_to_param2(paramtype2, facedir, extra_data)
 			-- + 1
 			result = (extra_data + 1) % 240
 		end
+	elseif paramtype2 == "colordegrotate" then
+		if facedir == 0 then
+			-- no change
+			result = extra_data
+		elseif facedir == 1 then
+			-- - 1
+			local r = bit.band(extra_data, 0x1F)
+			result = bit.band(extra_data, 0xE0) + ifthenelse(r > 0, r - 1, 23)
+		elseif facedir == 2 then
+			-- 180°
+			local r = bit.band(extra_data, 0x1F)
+			result = bit.band(extra_data, 0xE0) + (r + 12) % 24
+		elseif facedir == 3 then
+			-- + 1
+			local r = bit.band(extra_data, 0x1F)
+			result = bit.band(extra_data, 0xE0) + ifthenelse(r < 23, r + 1, 0)
+		end
 	end
 
 	return result
@@ -650,11 +668,16 @@ local function get_node_absolute_orientation_mode(pointed_thing)
 	local pos = pointed_thing.under
 	local node = minetest.get_node(pos)
 	local ndef = minetest.registered_nodes[node.name]
-	if minetest.get_item_group(node.name, "walldir") > 0 then
+	local nodedir_facedir = ch_core.get_nodedir(node.name)
+	if nodedir_facedir ~= nil then
+		local axis = mt_axis_code(nodedir_facedir)
+		local rot = mt_rot_code(nodedir_facedir)
+		return string.format("a%d%d",axis,rot)
+	--[[elseif minetest.get_item_group(node.name, "walldir") > 0 then
 		local param2 = ndef._facedir
 		local axis = mt_axis_code(param2)
 		local rot = mt_rot_code(param2)
-		return string.format("a%d%d",axis,rot)
+		return string.format("a%d%d",axis,rot)]]
 	elseif ndef and node.param2 ~= nil and not (ndef.drawtype == "nodebox" and ndef.node_box.type ~= "fixed") and ndef.paramtype2 ~= "degrotate" and ndef.paramtype2 ~= "colordegrotate" then
 		local facedir, extra_data = node_to_facedir(ndef, node.param2)
 		if facedir == nil then
@@ -676,7 +699,17 @@ local function get_node_relative_orientation_mode(player, pointed_thing)
 	local pos = pointed_thing.under
 	local node = minetest.get_node(pos)
 	local ndef = minetest.registered_nodes[node.name]
-	if minetest.get_item_group(node.name, "walldir") > 0 then
+	local nodedir_facedir = ch_core.get_nodedir(node.name)
+	if nodedir_facedir ~= nil then
+		local state = player_node_state(player, pointed_thing)
+		if not state then
+			return
+		end
+		local relative = mt_to_relative_orientation(state, nodedir_facedir)
+		local axis = mt_axis_code(relative)
+		local rot = mt_rot_code(relative)
+		return string.format("r%d%d",axis,rot)
+	--[[elseif minetest.get_item_group(node.name, "walldir") > 0 then
 		local param2 = ndef._facedir
 		local state = player_node_state(player, pointed_thing)
 		if not state then
@@ -685,7 +718,7 @@ local function get_node_relative_orientation_mode(player, pointed_thing)
 		local relative = mt_to_relative_orientation(state, param2)
 		local axis = mt_axis_code(relative)
 		local rot = mt_rot_code(relative)
-		return string.format("r%d%d",axis,rot)
+		return string.format("r%d%d",axis,rot)]]
 	elseif ndef and node.param2 ~= nil and not (ndef.drawtype == "nodebox" and ndef.node_box.type ~= "fixed") and ndef.paramtype2 ~= "degrotate" and ndef.paramtype2 ~= "colordegrotate" then
 		local facedir, extra_data = node_to_facedir(ndef, node.param2)
 		if facedir == nil then
@@ -727,20 +760,24 @@ local function wrench_handler(itemstack, player, pointed_thing, mode, material, 
 
 	node = minetest.get_node(pos)
 	ndef = minetest.registered_nodes[node.name]
+	local nodedir_facedir = ch_core.get_nodedir(node.name)
 	if not ndef or not ndef.paramtype2 or node.param2 == nil or
-			((node.paramtype2 == "degrotate" or node.paramtype2 == "colordegrotate") and string.match(mode, "^[ar]")) -- *degrotate not allowed in relative/absolute mode
+			(nodedir_facedir == nil and (node.paramtype2 == "degrotate" or node.paramtype2 == "colordegrotate") and string.match(mode, "^[ar]")) -- *degrotate not allowed in relative/absolute mode
 	then
 		return
 	end
 	old_param2 = node.param2
-	if minetest.get_item_group(node.name, "walldir") <= 0 then
+	if nodedir_facedir ~= nil then
+		old_facedir, extra_data = nodedir_facedir, node.param2
+	else -- if minetest.get_item_group(node.name, "walldir") <= 0 then
 		old_facedir, extra_data = node_to_facedir(ndef, old_param2)
 		if not old_facedir or not extra_data then
-			minetest.log("warning", "node_to_facedir() returned nil (node.name == \""..node.name.."\", ndef.paramtype2 == "..(ndef.paramtype2 or "nil")..", old_param2 == "..(old_param2 or "nil")..")")
+			if ndef.paramtype2 ~= "none" and ndef.paramtype2 ~= "color" then
+				minetest.log("warning", "node_to_facedir() returned nil (node.name == \""..node.name.."\", ndef.paramtype2 == "..(ndef.paramtype2 or "nil")..", old_param2 == "..(old_param2 or "nil")..")")
+			end
 			return
 		end
-	else
-		old_facedir, extra_data = ndef._facedir, old_param2
+	-- else old_facedir, extra_data = ndef._facedir, old_param2
 	end
 
 	local new_facedir
@@ -765,14 +802,43 @@ local function wrench_handler(itemstack, player, pointed_thing, mode, material, 
 	end
 
 	local new_param2
-	if minetest.get_item_group(node.name, "walldir") <= 0 then
+	if nodedir_facedir ~= nil then
+		local new_node_name = ch_core.get_nodedir_nodename(node.name, new_facedir)
+		if new_node_name ~= nil and minetest.registered_nodes[new_node_name] ~= nil then
+			-- OK, rotate using nodedir approach (on_rotate will not be called)
+			if module.debug >= 1 then
+				minetest.chat_send_player(player:get_player_name(),
+						string.format("Node wrenched: axis %d, rot %d (%d) ->  axis: %d, rot: %d (%d)",
+							mt_axis_code(old_facedir),
+							mt_rot_code(old_facedir),
+							old_facedir,
+							mt_axis_code(new_facedir),
+							mt_rot_code(new_facedir),
+							new_facedir))
+			end
+
+			node.name = new_node_name
+			minetest.swap_node(pos, node)
+			minetest.check_for_falling(pos)
+			if not creative_mode(player) --[[ and not repeated_rotation(player, node, pos) ]] then
+				-- 'ceil' ensures that the minimum wear is *always* 1
+				-- (and makes the tools wear a tiny bit faster)
+				itemstack:add_wear(math.ceil(65535 / max_uses))
+			end
+			return itemstack
+		end
+	else
+		new_param2 = facedir_to_param2(ndef.paramtype2, new_facedir, extra_data)
+	end
+
+	--[[if minetest.get_item_group(node.name, "walldir") <= 0 then
 		new_param2 = facedir_to_param2(ndef.paramtype2, new_facedir, extra_data)
 	else
 		new_param2 = facedir_to_param2("facedir", new_facedir, extra_data)
-	end
+	end]]
 
 	if not new_param2 then
-		minetest.log("warning", "Conversion failed: "..new_facedir.." cannot be converted to "..ndef.paramtype2)
+		minetest.log("warning", "Conversion failed: "..(new_facedir or "nil").." cannot be converted to "..ndef.paramtype2)
 		return
 	end
 

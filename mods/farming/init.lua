@@ -727,6 +727,7 @@ end
 ddoo("carrot.lua", farming.carrot)
 ddoo("potato.lua", farming.potato)
 ddoo("tomato.lua", farming.tomato)
+ddoo("tomato_yellow.lua", true)
 ddoo("cucumber.lua", farming.cucumber)
 ddoo("corn.lua", farming.corn)
 ddoo("coffee.lua", farming.coffee)

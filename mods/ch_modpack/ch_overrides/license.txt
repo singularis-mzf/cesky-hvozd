@@ -614,6 +614,15 @@ moretrees_palm_wood.png
 	Source:
 		https://github.com/sirrobzeroone/DungeonSoup
 
+farming_tomato_yellow_7.png
+farming_tomato_yellow_8.png
+	Authors: Sirrobzeroone, Various Artists, Denzis, Cestmír Dammer,
+		Matt Rumble, Calinou, 7Soul1, Glitch, Rubberduck, ScratchIO
+        Modified by Singularis
+	License: CC0
+	Used source:
+		https://github.com/sirrobzeroone/DungeonSoup
+
 darkage_marble_.png
 	Author: Clemstriangular
 	License: EUPLv1.2

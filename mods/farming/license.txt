@@ -4,7 +4,7 @@ License of code (most files):
 The MIT License (MIT)
 
 Copyright (c) 2016 TenPlus1
-Copyright (c) 2022 Singularis
+Copyright (c) 2022, 2024 Singularis
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -125,6 +125,11 @@ Created by JoseTheCrafter and edited by TenPlus1 (CC BY 3.0):
   farming_tomato_6.png
   farming_tomato_7.png
   farming_tomato_8.png
+  farming_tomato_yellow_7.png
+  farming_tomato_yellow_8.png
+
+Created by JoseTheCrafter and edited by TenPlus1 and Singularis (CC BY 3.0):
+  farming_tomato_yellow.png
 
 Created by GeMinecraft and edited by TenPlus1 (CC BY 3.0):
   farming_corn.png
