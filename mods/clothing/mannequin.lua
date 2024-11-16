@@ -9,7 +9,9 @@ local mannequin_stand_formspec = "size[8,7]" ..
   default.get_hotbar_bg(0,3) ..
   "list[current_name;clothing;2,0.0;3,3;]" ..
   "list[current_player;main;0,3;8,1;]" ..
-  "list[current_player;main;0,4.25;8,3;8]"
+  "list[current_player;main;0,4.25;8,3;8]" ..
+  "listring[current_name;clothing]"..
+  "listring[current_player;main]"
 
 local y_change = - 7.0/16
 
@@ -279,3 +281,11 @@ if minetest.get_modpath("basic_materials") then
   })
 end
 
+minetest.register_lbm({
+  label = "Mannequin stand update",
+  name = "clothing:mannequin_stand_update_v1",
+  nodenames = {"clothing:mannequin_stand"},
+  action = function(pos, node, dtime_s)
+    minetest.get_meta(pos):set_string("formspec", mannequin_stand_formspec)
+  end,
+})

@@ -182,7 +182,16 @@ for paramtype2, ptdef in pairs(paramtypes) do
 	minetest.register_node("ch_test:test_"..paramtype2, def)
 end
 
+if not minetest.get_modpath("display_api") or not minetest.get_modpath("font_api") or not minetest.get_modpath("signs_api") then
+	return
+end
+
+local display_entity_name = "ch_test:text"
+
+display_api.register_display_entity(display_entity_name)
+
 local red_tile = {name = "ch_core_white_pixel.png", color = "#AA0000", backface_culling = true}
+local meritko = 3 / 128
 
 local def = {
 	description = "test: označník [EXPERIMENTÁLNÍ]",
@@ -198,12 +207,22 @@ local def = {
 	use_texture_alpha = "opaque",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {oddly_breakable_by_hand = 3},
+	groups = {oddly_breakable_by_hand = 3, display_api = 1},
 	is_ground_content = false,
 	visual_scale = 3,
 	node_box = {
 		type = "fixed",
-		fixed = {-0.375/3, -1.5/3, -0.05/3, 0.375/3, 1.5/3, 0.05/3},
+		fixed = {
+			-- horní čtverec:
+			{-16 * meritko/3, 32 * meritko/3, -2 * meritko/3, 16 * meritko/3, 64 * meritko/3, 2 * meritko/3},
+			-- mezera:
+			{-20 * meritko/3, 24 * meritko/3, -2 * meritko/3, 20 * meritko/3, 32 * meritko/3, 2 * meritko/3},
+			-- jízdní řád:
+			{-16 * meritko/3, -21 * meritko/3, -2 * meritko/3, 16 * meritko/3, 21 * meritko/3, 2 * meritko/3},
+			-- nohy:
+			{-16 * meritko/3, -64 * meritko/3, -2 * meritko/3, -14 * meritko/3, -21 * meritko/3, 2 * meritko/3},
+			{14 * meritko/3, -64 * meritko/3, -2 * meritko/3, 16 * meritko/3, -21 * meritko/3, 2 * meritko/3},
+		},
 	},
 	selection_box = {
 		type = "fixed",
@@ -213,6 +232,26 @@ local def = {
 		type = "fixed",
 		fixed = {-0.375, -1.5, -0.05, 0.375, 1.5, 0.05},
 	},
+	display_entities = {
+		[display_entity_name] = {
+			size = { x = 32*meritko, y = 6 * meritko },
+			depth = -2 * meritko - display_api.entity_spacing,
+			top = -28 * meritko,
+			maxlines = 2,
+			color = "#FF0000",
+			on_display_update = font_api.on_display_update,
+		},
+	},
+	on_place = display_api.on_place,
+	on_construct = function(pos)
+		display_api.on_construct(pos)
+		local meta = minetest.get_meta(pos)
+		meta:set_string("display_text", "ZASTÁVKA")
+		meta:set_string("infotext", "infotext označníku")
+		display_api.update_entities(pos)
+	end,
+	on_destruct = display_api.on_destruct,
+	on_rotate = display_api.on_rotate,
 	--[[
 	on_punch = function(pos, node, puncher, pointed_thing)
 		node.param2 = ifthenelse(node.param2 < 239, node.param2 + 1, 0)
@@ -223,6 +262,20 @@ local def = {
 		minetest.swap_node(pos, node)
 	end, ]]
 }
+
+--[[
+_["def"]["display_entities"] = {}
+_["def"]["display_entities"]["signs:display_text"] = {}
+_["def"]["display_entities"]["signs:display_text"]["size"] = {}
+_["def"]["display_entities"]["signs:display_text"]["size"]["x"] = 0.8125
+_["def"]["display_entities"]["signs:display_text"]["size"]["y"] = 0.1875
+_["def"]["display_entities"]["signs:display_text"]["on_display_update"] = <function>
+_["def"]["display_entities"]["signs:display_text"]["depth"] = 0.46675
+_["def"]["display_entities"]["signs:display_text"]["maxlines"] = 1
+_["def"]["display_entities"]["signs:display_text"]["top"] = -0.34375
+_["def"]["display_entities"]["signs:display_text"]["color"] = "#000"
+_["def"]["display_entities"]["signs:display_text"]["aspect_ratio"] = 0.5
+]]
 
 minetest.register_node("ch_test:oznacnik", def)
 
