@@ -41,6 +41,7 @@ ch_core = {
 		time_speed_night = 132, -- 48,
 		trash_all_sound = "", -- zvuk k přehrání při mazání více předmětů
 		trash_one_sound = "", -- zvuk k přehrání při mazání jednoho předmětu
+		chyba_handler = function(player, text) return end,
 	},
 }
 

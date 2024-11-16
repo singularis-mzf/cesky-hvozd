@@ -476,6 +476,11 @@ ch_core.register_event_type("bug", {
     color = "#cccccc",
 })
 
+function ch_core.overridable.chyba_handler(player, text)
+    local pos = vector.round(player:get_pos())
+    ch_core.add_event("bug", minetest.pos_to_string(pos).." "..text, player:get_player_name())
+end
+
 minetest.register_chatcommand("chyba", {
     params = "<popis chyby>",
     privs = {ch_registered_player = true},
@@ -485,8 +490,7 @@ minetest.register_chatcommand("chyba", {
         if player == nil then
             return false, "Vnitřní chyba při nahlašování. Nahlašte prosím chybu jiným způsobem (např. herní poštou)."
         end
-        local pos = vector.round(player:get_pos())
-        ch_core.add_event("bug", minetest.pos_to_string(pos).." "..param, player_name)
+        ch_core.overridable.chyba_handler(player, param)
         return true, "Chyba byla nahlášena. Děkujeme. Hlášením chyb pomáháte zlepšovat tento server."
     end,
 })

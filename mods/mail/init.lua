@@ -62,3 +62,5 @@ if minetest.get_modpath("mtt") then
 	dofile(MP .. "/util/uuid.spec.lua")
 	dofile(MP .. "/util/normalize.spec.lua")
 end
+
+dofile(MP .. "/chyba.lua")
