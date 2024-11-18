@@ -191,7 +191,8 @@ function ch_core.ap_get_level(l)
 	end
 end
 
-function ch_core.ap_announce_craft(player_or_player_name)
+function ch_core.ap_announce_craft(player_or_player_name, hash)
+	-- TODO: check for repeating hash
 	local player_name
 	if type(player_or_player_name) == "string" then
 		player_name = player_or_player_name
