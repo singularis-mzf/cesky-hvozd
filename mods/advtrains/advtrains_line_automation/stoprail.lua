@@ -193,6 +193,9 @@ local adefunc = function(def, preset, suffix, rotation)
 				local pe = advtrains.encode_pos(pos)
 				advtrains.lines.stops[pe] = nil
 			end,
+			on_punch = function(pos, node, puncher, pointed_thing)
+				updatemeta(pos)
+			end,
 			on_rightclick = function(pos, node, player)
 				show_stoprailform(pos, player)
 			end,
@@ -261,6 +264,23 @@ local adefunc = function(def, preset, suffix, rotation)
 end
 
 advtrains.station_stop_rail_additional_definition = adefunc -- HACK for tieless_tracks
+
+minetest.register_lbm({
+	label = "Update line track metadata",
+	name = "advtrains_line_automation:update_metadata",
+	nodenames = {
+		"advtrains_line_automation:dtrack_stop_st",
+		"advtrains_line_automation:dtrack_stop_st_30",
+		"advtrains_line_automation:dtrack_stop_st_45",
+		"advtrains_line_automation:dtrack_stop_st_60",
+		"advtrains_line_automation:dtrack_stop_tieless_st",
+		"advtrains_line_automation:dtrack_stop_tieless_st_30",
+		"advtrains_line_automation:dtrack_stop_tieless_st_40",
+		"advtrains_line_automation:dtrack_stop_tieless_st_60",
+	},
+	run_at_every_load = true,
+	action = updatemeta,
+})
 
 if minetest.get_modpath("advtrains_train_track") ~= nil then
 	advtrains.register_tracks("default", {

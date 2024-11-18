@@ -52,7 +52,91 @@ local function register_node(mode, nodename, def)
 	end
 end
 
-register_node("4dir", "techpack_stairway:grating", {
+local grating_border = 17/32
+
+ch_core.register_nodes({
+	description = S("TechPack Grating"),
+	drawtype = "nodebox",
+	paramtype = "light",
+	paramtype2 = "color",
+	palette = "unifieddyes_palette_extended.png",
+	use_texture_alpha = CLIP,
+	sunlight_propagates = true,
+	is_ground_content = false,
+	groups = ch_core.assembly_groups(stairway_groups, {not_in_creative_inventory = 1, ud_param2_colorable = 1}),
+	sounds = default.node_sound_metal_defaults(),
+	drop = {items = {{items = {"techpack_stairway:grating"}, inherit_color = true}}},
+}, {
+	["techpack_stairway:grating"] = { -- -Y
+		tiles = {"techpack_stairway_bottom.png", "techpack_stairway_bottom.png", "techpack_stairway_side.png"},
+		node_box = {type = "fixed", fixed = {-grating_border, -15/32, -grating_border,  grating_border, -14/32, grating_border}},
+		selection_box = {type = "fixed", fixed = {-16/32, -16/32, -16/32,  16/32, -10/32, 16/32}},
+		groups = ch_core.assembly_groups(stairway_groups, {not_in_creative_inventory = 0, ud_param2_colorable = 1}),
+	},
+	["techpack_stairway:grating_2"] = { -- -Z
+		tiles = {"techpack_stairway_side.png",
+			"techpack_stairway_side.png^[transformR180",
+			"techpack_stairway_side.png^[transformR270",
+			"techpack_stairway_side.png^[transformR90",
+			"techpack_stairway_bottom.png",
+			"techpack_stairway_bottom.png"},
+		node_box = {type = "fixed", fixed = {-grating_border, -grating_border, -15/32,  grating_border, grating_border, -14/32}},
+		selection_box = {type = "fixed", fixed = {-16/32, -16/32, -16/32,  16/32, 16/32, -10/32}},
+	},
+	["techpack_stairway:grating_3"] = { -- +Z
+		tiles = {"techpack_stairway_side.png^[transformR180",
+			"techpack_stairway_side.png",
+			"techpack_stairway_side.png^[transformR90",
+			"techpack_stairway_side.png^[transformR270",
+			"techpack_stairway_bottom.png",
+			"techpack_stairway_bottom.png"},
+		node_box = {type = "fixed", fixed = {-grating_border, -grating_border, 14/32,  grating_border, grating_border, 15/32}},
+		selection_box = {type = "fixed", fixed = {-16/32, -16/32, 10/32,  16/32, 16/32, 16/32}},
+	},
+	["techpack_stairway:grating_4"] = { -- -X
+		tiles = {"techpack_stairway_side.png^[transformR270",
+			"techpack_stairway_side.png^[transformR270",
+			"techpack_stairway_bottom.png",
+			"techpack_stairway_bottom.png",
+			"techpack_stairway_side.png^[transformR90",
+			"techpack_stairway_side.png^[transformR270"},
+		node_box = {type = "fixed", fixed = {-15/32, -grating_border, -grating_border,  -14/32, grating_border, grating_border}},
+		selection_box = {type = "fixed", fixed = {-16/32, -16/32, -16/32, -10/32, 16/32, 16/32}},
+	},
+	["techpack_stairway:grating_5"] = { -- +X
+		tiles = {
+			"techpack_stairway_side.png^[transformR90",
+			"techpack_stairway_side.png^[transformR90",
+			"techpack_stairway_bottom.png",
+			"techpack_stairway_bottom.png",
+			"techpack_stairway_side.png^[transformR270",
+			"techpack_stairway_side.png^[transformR90"},
+		node_box = {type = "fixed", fixed = {14/32, -grating_border, -grating_border,  15/32, grating_border, grating_border}},
+		selection_box = {type = "fixed", fixed = {10/32, -16/32, -16/32, 16/32, 16/32, 16/32}},
+	},
+	["techpack_stairway:grating_6"] = { -- +Y
+		tiles = {
+			"techpack_stairway_bottom.png",
+			"techpack_stairway_bottom.png",
+			"techpack_stairway_side.png^[transformR180",
+		},
+		node_box = {type = "fixed", fixed = {-grating_border, 14/32, -grating_border,  grating_border, 15/32, grating_border}},
+		selection_box = {type = "fixed", fixed = {-16/32, 10/32, -16/32,  16/32, 16/32, 16/32}},
+	},
+})
+
+local nodedir_group = {}
+for i = 1, 6 do
+	local name = "techpack_stairway:grating_"..i
+	if i == 1 then name = "techpack_stairway:grating" end
+	for j = (i - 1) * 4, (i * 4 - 1) do
+		nodedir_group[j] = name
+	end
+end
+
+ch_core.register_nodedir_group(nodedir_group)
+
+--[[register_node("4dir", "techpack_stairway:grating", {
 	description = S("TechPack Grating"),
 	tiles = {
 		'techpack_stairway_bottom.png',
@@ -82,7 +166,7 @@ register_node("4dir", "techpack_stairway:grating", {
 	is_ground_content = false,
 	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
-})
+})]]
 
 register_node("4dir", "techpack_stairway:handrail1", {
 	description = S("TechPack Handrail 1"),

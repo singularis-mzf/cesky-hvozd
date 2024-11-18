@@ -16,6 +16,12 @@ local facedir_group_to_shift = {
 local colors = {
 	"white",
 	"yellow",
+	"black",
+	"red",
+	"green",
+	"violet",
+	"brown",
+	"blue",
 }
 
 local function formspec_callback(custom_state, player, formname, fields)
@@ -53,7 +59,7 @@ local function formspec_callback(custom_state, player, formname, fields)
 	end
 end
 
-local function on_place(itemstack, placer, pointed_thing, name, colorname, r)
+local function on_place(itemstack, placer, pointed_thing, name, r)
 
 	local empty_table = {}
 	local player_name = placer and placer:is_player() and placer:get_player_name()
@@ -62,16 +68,17 @@ local function on_place(itemstack, placer, pointed_thing, name, colorname, r)
 		return itemstack -- only works when used by a player
 	end
 
+	local itemstack_name = itemstack:get_name()
+	local color_index = minetest.get_item_group(itemstack_name, "streets_tool")
+
+	if color_index < 1 or color_index > #colors then
+		minetest.debug("invalid color_index "..color_index)
+		return itemstack
+	end
+
 	local control = placer:get_player_control()
 	if control.aux1 then
 		-- SETUP
-		local itemstack_name = itemstack:get_name()
-		local color_index = minetest.get_item_group(itemstack_name, "streets_tool")
-
-		if color_index < 1 or color_index > #colors then
-			minetest.debug("invalid color_index "..color_index)
-			return itemstack
-		end
 		local colorname = colors[color_index]
 
 		local formspec = {
@@ -138,7 +145,7 @@ local function on_place(itemstack, placer, pointed_thing, name, colorname, r)
 		local pos_shift
 		local pos
 
-		if ndef_under.paramtype2 == "facedir" then
+		if ndef_under.paramtype2 == "facedir" or ndef_under.paramtype2 == "colorfacedir" then
 			pos_shift = facedir_group_to_shift[math.floor(node_under.param2 / 4 % 6)]
 		else
 			pos_shift = vector.new(0, 1, 0)
@@ -167,14 +174,14 @@ local function on_place(itemstack, placer, pointed_thing, name, colorname, r)
 
 		local new_node
 		if variant == "" then
-		new_node = {
-				name = "streets:mark_" .. name:gsub("{color}", colorname:lower()) .. r,
-				param2 = minetest.dir_to_facedir(placer:get_look_dir()),
+			new_node = {
+				name = "streets:mark_" .. name:gsub("{color}", "white") .. r,
+				param2 = minetest.dir_to_facedir(placer:get_look_dir()) + 32 * (color_index - 1),
 			}
 		else
 			new_node = {
-				name = "streets:mark_" .. name:gsub("{color}", colorname:lower()) .. "_" .. variant .. r,
-				param2 = node_under.param2,
+				name = "streets:mark_" .. name:gsub("{color}", "white") .. "_" .. variant .. r,
+				param2 = node_under.param2 + 32 * (color_index - 1),
 			}
 		end
 

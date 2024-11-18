@@ -767,7 +767,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				if fields.dsproute then
 					local t = os.clock()
 					advtrains.interlocking.visualize_route(sigd, tcbs.routes[sel_rte], "disp_"..t)
-					minetest.after(10, function() advtrains.interlocking.clear_visu_context("disp_"..t) end)
+					minetest.after(60, function() advtrains.interlocking.clear_visu_context("disp_"..t) end)
 				end
 				if fields.editroute and hasprivs then
 					advtrains.interlocking.show_route_edit_form(pname, sigd, sel_rte)

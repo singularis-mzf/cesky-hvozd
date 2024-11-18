@@ -4,6 +4,19 @@ local S = minetest.get_translator("unifieddyes")
 
 local has_ch_sky = minetest.get_modpath("ch_sky")
 
+local function color_to_description(colorname)
+	if colorname == nil then
+		error("nil in color_to_description()!")
+	end
+	local idef = minetest.registered_items["dye:"..colorname] or minetest.registered_items[colorname]
+	if idef ~= nil and idef.description ~= nil then
+		return idef.description
+	else
+		minetest.log("error", "Can't translate color '"..colorname.."' to a description")
+		return colorname
+	end
+end
+
 local function get_palette(ndef)
 	if ndef == nil then
 		return nil
@@ -95,16 +108,16 @@ function unifieddyes.on_airbrush(itemstack, player, pointed_thing)
 	if (not minetest.is_creative_enabled(player_name)) and not inv:contains_item("main", painting_with) then
 		local suff = ""
 		if not idx then
-			suff = "  " .. S("Besides, @1 can't be applied to that node.", string.sub(painting_with, 5))
+			suff = "  " .. S("Besides, @1 can't be applied to that node.", color_to_description(painting_with))
 		end
 		minetest.chat_send_player(
-			player_name, S("*** You're in survival mode, and you're out of @1.", string.sub(painting_with, 5))..suff
+			player_name, S("*** You're in survival mode, and you're out of @1.", color_to_description(painting_with))..suff
 		)
 		return
 	end
 
 	if not idx then
-		minetest.chat_send_player(player_name, S("*** @1 can't be applied to that node.", string.sub(painting_with, 5)))
+		minetest.chat_send_player(player_name, S("*** @1 can't be applied to that node.", color_to_description(painting_with)))
 		return
 	end
 
@@ -139,7 +152,7 @@ function unifieddyes.on_airbrush(itemstack, player, pointed_thing)
 		name = modname..":"..string.gsub(nodename2, oldcolor, newcolor)
 
 		if not minetest.registered_items[name] then
-			minetest.chat_send_player(player_name, S("*** @1 can't be applied to that node.", string.sub(painting_with, 5)))
+			minetest.chat_send_player(player_name, S("*** @1 can't be applied to that node.", color_to_description(painting_with)))
 			return
 		end
 	elseif idx == oldidx then
@@ -469,7 +482,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 					minetest.chat_send_player(player_name, S("*** Clicked \"Accept\", but the selected color can't be used on the"))
 					minetest.chat_send_player(player_name, S("*** node that was right-clicked (and \"Show All\" wasn't in effect)."))
 					if unifieddyes.player_current_dye[player_name] then
-						minetest.chat_send_player(player_name, S("*** Ignoring it and sticking with @1.", string.sub(unifieddyes.player_current_dye[player_name], 5)))
+						minetest.chat_send_player(player_name, S("*** Ignoring it and sticking with @1.", color_to_description(unifieddyes.player_current_dye[player_name])))
 					else
 						minetest.chat_send_player(player_name, S("*** Ignoring it."))
 					end
@@ -477,7 +490,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				else
 					unifieddyes.player_current_dye[player_name] = dye
 					unifieddyes.player_selected_dye[player_name] = nil
-					minetest.chat_send_player(player_name, S("*** Selected @1 for the airbrush.", string.sub(dye, 5)))
+					minetest.chat_send_player(player_name, S("*** Selected @1 for the airbrush.", color_to_description(dye)))
 					return
 				end
 			else -- assume "Cancel" or Esc.
@@ -537,7 +550,7 @@ minetest.register_tool("unifieddyes:airbrush", {
 			local newcolor = unifieddyes.color_to_name(node.param2, def)
 
 			if newcolor and string.find(def.paramtype2, "color") then
-				minetest.chat_send_player(player_name, S("*** Switching to @1 for the airbrush, to match that node.", newcolor))
+				minetest.chat_send_player(player_name, S("*** Switching to @1 for the airbrush, to match that node.", color_to_description(newcolor)))
 				unifieddyes.player_current_dye[player_name] = "dye:"..newcolor
 			else
 				minetest.chat_send_player(player_name, S("*** That node is uncolored."))

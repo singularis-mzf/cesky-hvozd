@@ -191,8 +191,119 @@ local display_entity_name = "ch_test:text"
 display_api.register_display_entity(display_entity_name)
 
 local red_tile = {name = "ch_core_white_pixel.png", color = "#AA0000", backface_culling = true}
-local meritko = 3 / 128
+local meritko = 1 / 64
+local def = {
+	description = "test: označník (horní díl) [EXPERIMENTÁLNÍ]",
+	drawtype = "nodebox",
+	tiles = {
+		red_tile,
+		red_tile,
+		red_tile,
+		red_tile,
+		red_tile,
+		{name = "[combine:32x32:0,0=ch_test_ozn.png^[resize:64x64", backface_culling = true},
+	},
+	use_texture_alpha = "opaque",
+	paramtype = "light",
+	paramtype2 = "4dir",
+	groups = {oddly_breakable_by_hand = 3, display_api = 1},
+	is_ground_content = false,
+	node_box = {
+		type = "fixed",
+		fixed = {-24 * meritko, -0.5, -3 * meritko, 24 * meritko, 0.5, 3 * meritko},
+	},
+	display_entities = {
+		[display_entity_name] = {
+			size = { x = 32*meritko, y = 6 * meritko },
+			depth = -2 * meritko - display_api.entity_spacing,
+			top = -28 * meritko,
+			maxlines = 2,
+			color = "#FF0000",
+			on_display_update = font_api.on_display_update,
+		},
+	},
+	on_place = display_api.on_place,
+	on_construct = function(pos)
+		display_api.on_construct(pos)
+		local meta = minetest.get_meta(pos)
+		meta:set_string("display_text", "ZASTÁVKA")
+		meta:set_string("infotext", "infotext označníku")
+		display_api.update_entities(pos)
+	end,
+	on_destruct = display_api.on_destruct,
+	on_rotate = display_api.on_rotate,
+	--[[
+	on_punch = function(pos, node, puncher, pointed_thing)
+		node.param2 = ifthenelse(node.param2 < 239, node.param2 + 1, 0)
+		minetest.swap_node(pos, node)
+	end,
+	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		node.param2 = ifthenelse(node.param2 > 0, node.param2 - 1, 239)
+		minetest.swap_node(pos, node)
+	end, ]]
+}
+minetest.register_node("ch_test:ozn_horni", def)
 
+def = {
+	description = "test: označník (spodní díl) [EXPERIMENTÁLNÍ]",
+	drawtype = "nodebox",
+	tiles = {
+		red_tile,
+		red_tile,
+		red_tile,
+		red_tile,
+		red_tile,
+		{name = "[combine:32x32:0,-32=ch_test_ozn.png^[resize:64x64", backface_culling = true},
+	},
+	use_texture_alpha = "opaque",
+	paramtype = "light",
+	paramtype2 = "4dir",
+	groups = {oddly_breakable_by_hand = 3 --[[, display_api = 1]]},
+	is_ground_content = false,
+	node_box = {
+		type = "fixed",
+		fixed = {
+			{-24 * meritko, -0.5, -3 * meritko, 24 * meritko, 0.5, 3 * meritko},
+			{-24 * meritko, -1.5, -3 * meritko, -20 * meritko, -0.5, 3 * meritko},
+			{20 * meritko, -1.5, -3 * meritko, 24 * meritko, -0.5, 3 * meritko},
+		},
+	},
+	--[[
+	TODO
+	display_entities = {
+		[display_entity_name] = {
+			size = { x = 32*meritko, y = 6 * meritko },
+			depth = -2 * meritko - display_api.entity_spacing,
+			top = -28 * meritko,
+			maxlines = 2,
+			color = "#FF0000",
+			on_display_update = font_api.on_display_update,
+		},
+	},
+	]]
+	-- on_place = display_api.on_place,
+	on_construct = function(pos)
+		-- display_api.on_construct(pos)
+		local meta = minetest.get_meta(pos)
+		meta:set_string("display_text", "ZASTÁVKA")
+		meta:set_string("infotext", "infotext označníku")
+		-- display_api.update_entities(pos)
+	end,
+	-- on_destruct = display_api.on_destruct,
+	-- on_rotate = display_api.on_rotate,
+	--[[
+	on_punch = function(pos, node, puncher, pointed_thing)
+		node.param2 = ifthenelse(node.param2 < 239, node.param2 + 1, 0)
+		minetest.swap_node(pos, node)
+	end,
+	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		node.param2 = ifthenelse(node.param2 > 0, node.param2 - 1, 239)
+		minetest.swap_node(pos, node)
+	end, ]]
+}
+minetest.register_node("ch_test:ozn_spodni", def)
+
+--[[
 local def = {
 	description = "test: označník [EXPERIMENTÁLNÍ]",
 	drawtype = "nodebox",
@@ -252,17 +363,8 @@ local def = {
 	end,
 	on_destruct = display_api.on_destruct,
 	on_rotate = display_api.on_rotate,
-	--[[
-	on_punch = function(pos, node, puncher, pointed_thing)
-		node.param2 = ifthenelse(node.param2 < 239, node.param2 + 1, 0)
-		minetest.swap_node(pos, node)
-	end,
-	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-		node.param2 = ifthenelse(node.param2 > 0, node.param2 - 1, 239)
-		minetest.swap_node(pos, node)
-	end, ]]
 }
-
+]]
 --[[
 _["def"]["display_entities"] = {}
 _["def"]["display_entities"]["signs:display_text"] = {}
@@ -277,7 +379,7 @@ _["def"]["display_entities"]["signs:display_text"]["color"] = "#000"
 _["def"]["display_entities"]["signs:display_text"]["aspect_ratio"] = 0.5
 ]]
 
-minetest.register_node("ch_test:oznacnik", def)
+-- minetest.register_node("ch_test:oznacnik", def)
 
 --[[
 if minetest.get_modpath("unifieddyes") then

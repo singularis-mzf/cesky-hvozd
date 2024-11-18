@@ -234,18 +234,24 @@ local marking_node_variants = {
 	},
 }
 
+local marker_colors = {
+	{"white", "bílý", "#ffffff"},
+	{"yellow", "žlutý", "#ecb100"},
+	{"black", "černý", "#000000"},
+	{"red", "červený", "#ec1313"},
+	{"green", "zelený", "#318c0b"},
+	{"violet", "fialový", "#8c2086"},
+	{"brown", "hnědý", "#5a3000"},
+	{"blue", "modrý", "#01245f"},
+}
+
 local marker_ch_help_group = "str_marker"
 local marker_ch_help = "Pravým klikem na rovnou podlahu, svah na dva metry či svah na tři metry nakreslí na podklad značku.\nNelze opravovat (musí se vyrobit nový).\nNefunguje na svah 45°.\nAux1+pravý klik na jakýkoliv blok pro změnu kreslené značky."
 local marker_on_place = dofile(minetest.get_modpath("streets") .. "/roadmarkings_placer.lua")
 
-local register_marking_nodes = function(surface_friendlyname, surface_name, surface_tiles, surface_groups, surface_sounds, register_stairs, friendlyname, name, tex, r, basic)
-	local surface_tiles_orig = surface_tiles
-	surface_tiles = table.copy(surface_tiles_orig)
-	for i, def in ipairs(surface_tiles_orig) do
-		if type(def) == "table" and def.name then
-			surface_tiles[i] = def.name
-		end
-	end
+local legacy_yellow_marking_nodes = {}
+
+local register_marking_nodes = function(friendlyname, name, tex, r)
 	local rotation_friendly = ""
 	if r == "r90" then
 		rotation_friendly = " (R90)"
@@ -261,170 +267,96 @@ local register_marking_nodes = function(surface_friendlyname, surface_name, surf
 	if r ~= "" then
 		r = "_" .. r
 	end
-
-	for color = 1, 2 do
-		local colorname, colordesc
-		if color == 1 then
-			colorname = "White"
-			colordesc = "bílý"
-		elseif color == 2 then
-			colorname = "Yellow"
-			colordesc = "žlutý"
-			tex = "" .. tex .. "^[colorize:#ecb100"
-		end
-
-		minetest.register_tool(":streets:tool_" .. name:gsub("{color}", colorname:lower()) .. r, {
+	local white_name = name:gsub("{color}", "white")
+	local function on_place(itemstack, placer, pointed_thing)
+		return marker_on_place(itemstack, placer, pointed_thing, white_name, r)
+	end
+	for color, colordef in ipairs(marker_colors) do
+		local colorname, colordesc = colordef[1], colordef[2]
+		local colored_tex = tex.."^[multiply:"..colordef[3]
+		local toolname = "streets:tool_" .. name:gsub("{color}", colorname) .. r
+		minetest.register_tool(toolname, {
 			description = S("značkovač @1: ", colordesc) .. friendlyname .. rotation_friendly,
 			groups = { streets_tool = color, not_repairable = 1, },
-			inventory_image = tex,
-			wield_image = tex,
-			on_place = function(itemstack, placer, pointed_thing)
-				return marker_on_place(itemstack, placer, pointed_thing, name, colorname, r)
-			end,
+			inventory_image = colored_tex,
+			wield_image = colored_tex,
+			on_place = on_place,
 			_ch_help = marker_ch_help,
 			_ch_help_group = marker_ch_help_group,
 		})
+	end
 
-		local node_name_base = "streets:mark_" .. name:gsub("{color}", colorname:lower())
+	local node_name_base = "streets:mark_" .. white_name
 
-		minetest.register_node(":" .. node_name_base .. r, {
-			description = S("značka: ") .. friendlyname .. rotation_friendly .. " " .. colorname,
-			tiles = { tex, "streets_transparent.png" },
+	minetest.register_node(node_name_base .. r, {
+		description = S("značka: ") .. friendlyname .. rotation_friendly,
+		tiles = { tex, "streets_transparent.png" },
+		use_texture_alpha = "clip",
+		drawtype = "nodebox",
+		paramtype = "light",
+		paramtype2 = "colorfacedir",
+		palette = "streets_roadmarkings_palette.png",
+		groups = { snappy = 3, attached_node = 1, oddly_breakable_by_hand = 1, not_in_creative_inventory = 1 },
+		sunlight_propagates = true,
+		walkable = false,
+		inventory_image = tex,
+		wield_image = tex,
+		node_box = marking_normal_node_box,
+		selection_box = marking_normal_selection_box,
+		drop = "",
+	})
+	table.insert(legacy_yellow_marking_nodes, "streets:mark_" .. name:gsub("{color}", "yellow") .. r)
+
+	for variant_name, variant_def in pairs(marking_node_variants) do
+		minetest.register_node(":" .. node_name_base .. "_" .. variant_name .. r, {
+			description = S("značka: ") .. friendlyname .. rotation_friendly .. " (" .. variant_def.description .. ")",
+			tiles = { { name = tex, backface_culling = true } },
 			use_texture_alpha = "clip",
-			drawtype = "nodebox",
+			drawtype = "mesh",
+			mesh = variant_def.mesh,
 			paramtype = "light",
-			paramtype2 = "facedir",
-			groups = { snappy = 3, attached_node = 1, oddly_breakable_by_hand = 1, not_in_creative_inventory = 1 },
+			paramtype2 = "colorfacedir",
+			palette = "streets_roadmarkings_palette.png",
+			groups = { snappy = 3, --[[attached_node = 1,]] oddly_breakable_by_hand = 1, not_in_creative_inventory = 1 },
 			sunlight_propagates = true,
 			walkable = false,
 			inventory_image = tex,
 			wield_image = tex,
-			node_box = marking_normal_node_box,
-			selection_box = marking_normal_selection_box,
+			selection_box = variant_def.selection_box,
 			drop = "",
 		})
-
-		for variant_name, variant_def in pairs(marking_node_variants) do
-			minetest.register_node(":" .. node_name_base .. "_" .. variant_name .. r, {
-				description = S("značka: ") .. friendlyname .. rotation_friendly .. " " .. colorname .. " (" .. variant_def.description .. ")",
-				tiles = { { name = tex, backface_culling = true } },
-				use_texture_alpha = "clip",
-				drawtype = "mesh",
-				mesh = variant_def.mesh,
-				paramtype = "light",
-				paramtype2 = "facedir",
-				groups = { snappy = 3, --[[attached_node = 1,]] oddly_breakable_by_hand = 1, not_in_creative_inventory = 1 },
-				sunlight_propagates = true,
-				walkable = false,
-				inventory_image = tex,
-				wield_image = tex,
-				selection_box = variant_def.selection_box,
-				drop = "",
-			})
-		end
-
-		--[[
-		local tiles = {}
-		tiles[1] = surface_tiles[1]
-		tiles[2] = surface_tiles[2] or surface_tiles[1] --If less than 6 textures are used, this'll "expand" them to 6
-		tiles[3] = surface_tiles[3] or surface_tiles[1]
-		tiles[4] = surface_tiles[4] or surface_tiles[1]
-		tiles[5] = surface_tiles[5] or surface_tiles[1]
-		tiles[6] = surface_tiles[6] or surface_tiles[1]
-		tiles[1] = tiles[1] .. "^(" .. tex .. ")"
-		tiles[5] = tiles[5] .. "^(" .. tex .. ")^[transformR180"
-		tiles[6] = tiles[6] .. "^(" .. tex .. ")"
-		local groups = streets.copytable(surface_groups)
-		groups.not_in_creative_inventory = 1
-		minetest.register_node(":streets:mark_" .. name:gsub("{color}", colorname:lower()) .. r .. "_on_" .. surface_name, {
-			description = surface_friendlyname .. " with Marking: " .. friendlyname .. rotation_friendly .. " " .. colorname,
-			groups = groups,
-			sounds = surface_sounds,
-			tiles = tiles,
-			use_texture_alpha = "opaque",
-			paramtype2 = "facedir",
-			drop = "",
-			after_destruct = function(pos, oldnode)
-				local newnode = oldnode
-				newnode.name = oldnode.name:gsub("mark_(.-)_on_", "")
-				minetest.set_node(pos, newnode)
-			end,
-		})
-		minetest.register_craft({
-			output = "streets:mark_" .. name:gsub("{color}", colorname:lower()) .. r .. "_on_" .. surface_name,
-			type = "shapeless",
-			recipe = { "streets:" .. surface_name, "streets:mark_" .. name:gsub("{color}", colorname:lower()) }
-		})
-		if register_stairs and ( not streets.only_basic_stairsplus or basic ) and (minetest.get_modpath("moreblocks") or minetest.get_modpath("stairsplus")) then
-			local stairs_def = {
-				description = surface_friendlyname .. " with Marking: " .. friendlyname .. rotation_friendly .. " " .. colorname,
-				tiles = tiles,
-				groups = surface_groups,
-				sounds = surface_sounds,
-				drop = {
-					max_items = 1, -- Maximum number of items to drop.
-					items = {
-						-- Choose max_items randomly from this list.
-						{
-							items = { "" }, -- Choose one item randomly from this list.
-							rarity = 1, -- Probability of getting is 1 / rarity.
-						},
-					},
-				},
-				after_destruct = function(pos, oldnode)
-					local newnode = oldnode
-					newnode.name = oldnode.name:gsub("mark_(.-)_on_", "")
-					minetest.set_node(pos, newnode)
-				end,
-			}
-
-			stairsplus:register_stair("streets",
-				"mark_" .. name:gsub("{color}", colorname:lower()) .. r .. "_on_" .. surface_name,
-				"streets:mark_" .. name:gsub("{color}", colorname:lower()) .. r .. "_on_" .. surface_name,
-				stairs_def)
-			stairsplus:register_slab("streets",
-				"mark_" .. name:gsub("{color}", colorname:lower()) .. r .. "_on_" .. surface_name,
-				"streets:mark_" .. name:gsub("{color}", colorname:lower()) .. r .. "_on_" .. surface_name,
-				stairs_def)
-			stairsplus:register_slope("streets",
-				"mark_" .. name:gsub("{color}", colorname:lower()) .. r .. "_on_" .. surface_name,
-				"streets:mark_" .. name:gsub("{color}", colorname:lower()) .. r .. "_on_" .. surface_name,
-				stairs_def)
-		end
-		]]
+		table.insert(legacy_yellow_marking_nodes, "streets:mark_" .. name:gsub("{color}", "yellow").."_"..variant_name..r)
 	end
 end
 
 if streets.surfaces.surfacetypes then
-	local labeltypes = streets.labels.labeltypes
 	for _, v in pairs(streets.surfaces.surfacetypes) do
 		register_surface_nodes(v.friendlyname, v.name, v.tiles, v.groups, v.sounds, v.craft, v.register_stairs)
-		if labeltypes then
-			for _, w in pairs(labeltypes) do
-				register_marking_nodes(v.friendlyname, v.name, v.tiles, v.groups, v.sounds, v.register_stairs, w.friendlyname, w.name, w.tex, "", w.basic)
-				if not streets.only_basic_stairsplus and w.rotation then
-					if w.rotation.r90 then
-						register_marking_nodes(v.friendlyname, v.name, v.tiles, v.groups, v.sounds, v.register_stairs, w.friendlyname, w.name, w.tex, "r90", w.basic)
-					end
-					if w.rotation.r180 then
-						register_marking_nodes(v.friendlyname, v.name, v.tiles, v.groups, v.sounds, v.register_stairs, w.friendlyname, w.name, w.tex, "r180", w.basic)
-					end
-					if w.rotation.r270 then
-						register_marking_nodes(v.friendlyname, v.name, v.tiles, v.groups, v.sounds, v.register_stairs, w.friendlyname, w.name, w.tex, "r270", w.basic)
-					end
-				elseif streets.only_basic_stairsplus and w.basic_rotation then
-					if w.basic_rotation.r90 then
-					register_marking_nodes(v.friendlyname, v.name, v.tiles, v.groups, v.sounds, v.register_stairs, w.friendlyname, w.name, w.tex, "r90", w.basic)
-					end
-					if w.basic_rotation.r180 then
-						register_marking_nodes(v.friendlyname, v.name, v.tiles, v.groups, v.sounds, v.register_stairs, w.friendlyname, w.name, w.tex, "r180", w.basic)
-					end
-					if w.basic_rotation.r270 then
-						register_marking_nodes(v.friendlyname, v.name, v.tiles, v.groups, v.sounds, v.register_stairs, w.friendlyname, w.name, w.tex, "r270", w.basic)
-					end
-				end
+	end
+end
+if streets.labels.labeltypes then
+	for _, w in pairs(streets.labels.labeltypes) do
+		register_marking_nodes(w.friendlyname, w.name, w.tex, "")
+		if not streets.only_basic_stairsplus and w.rotation then
+			if w.rotation.r90 then
+				register_marking_nodes(w.friendlyname, w.name, w.tex, "r90")
 			end
-			-- labeltypes = nil
+			if w.rotation.r180 then
+				register_marking_nodes(w.friendlyname, w.name, w.tex, "r180")
+			end
+			if w.rotation.r270 then
+				register_marking_nodes(w.friendlyname, w.name, w.tex, "r270")
+			end
+		elseif streets.only_basic_stairsplus and w.basic_rotation then
+			if w.basic_rotation.r90 then
+				register_marking_nodes(w.friendlyname, w.name, w.tex, "r90")
+			end
+			if w.basic_rotation.r180 then
+				register_marking_nodes(w.friendlyname, w.name, w.tex, "r180")
+			end
+			if w.basic_rotation.r270 then
+				register_marking_nodes(w.friendlyname, w.name, w.tex, "r270")
+			end
 		end
 	end
 end
@@ -435,9 +367,24 @@ if streets.signs.signtypes then
 	end
 end
 
-for _, color in ipairs({"white", "yellow"}) do
+for _, colordef in ipairs(marker_colors) do
 	minetest.register_craft({
-		output = "streets:tool_solid_"..color.."_center_line",
-		recipe = {{"dye:"..color}, {"darkage:chalk_powder"}, {"default:stick"}},
+		output = "streets:tool_solid_"..colordef[1].."_center_line",
+		recipe = {{"dye:"..colordef[1]}, {"darkage:chalk_powder"}, {"default:stick"}},
+	})
+	minetest.register_craft({
+		output = "streets:tool_solid_"..colordef[1].."_center_line_wide",
+		recipe = {{"dye:"..colordef[1], ""}, {"darkage:chalk_powder", ""}, {"default:stick", "default:stick"}},
 	})
 end
+
+minetest.register_lbm({
+	label = "Upgrade legacy yellow roadmarks",
+	name = "streets:update_legacy_yellow_roadmarks",
+	nodenames = legacy_yellow_marking_nodes,
+	action = function(pos, node, dtime_s)
+		node.name = node.name:gsub("yellow", "white")
+		node.param2 = node.param2 + 32
+		minetest.swap_node(pos, node)
+	end,
+})

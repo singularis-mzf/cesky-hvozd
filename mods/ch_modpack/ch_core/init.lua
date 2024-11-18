@@ -112,6 +112,7 @@ dofile(modpath .. "/kos.lua") -- : lib
 
 -- KOHOUT: při přechodu mezi dnem a nocí přehraje zvuk
 
+local ifthenelse = ch_core.ifthenelse
 local last_timeofday = 0 -- pravděpodobně se pokusí něco přehrát v prvním globalstepu,
 -- ale to nevadí, protöže v tu chvíli stejně nemůže být ještě nikdo online.
 local abs = math.abs
@@ -128,6 +129,7 @@ local get_us_time = minetest.get_us_time
 local has_wielded_light = minetest.get_modpath("wielded_light")
 local custom_globalsteps = {}
 local last_ap_timestamp = 0
+local use_forbidden_height = ifthenelse(minetest.settings:get_bool("ch_forbidden_height", false), true, false)
 
 local stepheight_low = {stepheight = 0.3}
 local stepheight_high = {stepheight = 1.1}
@@ -252,6 +254,18 @@ local function globalstep(dtime)
 			-- VĚZENÍ:
 			if --[[ ch_core.submods_loaded["vezeni"] and ]] offline_charinfo.trest > 0 then
 				ch_core.vykon_trestu(player, player_pos, us_time, online_charinfo)
+			elseif use_forbidden_height and player_pos.y >= 1024 and player_pos.y <= 1256 then
+				-- zakázaná výška
+				minetest.log("warning", "Player "..player_name.." reached forbidden area at "..minetest.pos_to_string(player_pos).."!")
+				minetest.after(0.1, function()
+					ch_core.teleport_player({
+						type = "admin",
+						player = player,
+						target_pos = ch_core.positions["zacatek_1"] or vector.zero(),
+						sound_after = "chat3_bell",
+					})
+					ch_core.systemovy_kanal(player_name, "Dostali jste se do zakázaného výškového pásma! Pozice y >= 1024 jsou nepřístupné.")
+				end)
 			end
 
 			-- pokud se změnil držený předmět, možná bude potřeba zobrazit jeho nápovědu

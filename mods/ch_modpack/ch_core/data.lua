@@ -557,6 +557,26 @@ local function on_shutdown()
 	end
 end
 
+local function on_placenode(pos, newnode, placer, oldnode, itemstack, pointed_thing)
+	if minetest.is_player(placer) then
+		local player_name = placer:get_player_name()
+		local online_charinfo = ch_core.online_charinfo[player_name]
+		if online_charinfo ~= nil then
+			online_charinfo.last_placenode_ustime = minetest.get_us_time()
+		end
+	end
+end
+
+local function on_dignode(pos, oldnode, digger)
+	if minetest.is_player(digger) then
+		local player_name = digger:get_player_name()
+		local online_charinfo = ch_core.online_charinfo[player_name]
+		if online_charinfo ~= nil then
+			online_charinfo.last_dignode_ustime = minetest.get_us_time()
+		end
+	end
+end
+
 function ch_core.clear_help(player)
 	local player_name = player:get_player_name()
 	local online_charinfo = ch_core.online_charinfo[player_name]
@@ -617,6 +637,8 @@ end
 minetest.register_on_joinplayer(on_joinplayer)
 minetest.register_on_leaveplayer(on_leaveplayer)
 minetest.register_on_shutdown(on_shutdown)
+minetest.register_on_dignode(on_dignode)
+minetest.register_on_placenode(on_placenode)
 
 local def = {
 	description = "Smaže údaje o tom, ke kterým předmětům již byly postavě zobrazeny nápovědy, takže budou znovu zobrazovány nápovědy ke všem předmětům.",
