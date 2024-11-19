@@ -99,7 +99,7 @@ local function register_sign_node(friendlyname, name, tiles, type, inventory_ima
 		}
 		polemount_def.node_box = {
 			type = "fixed",
-			fixed = { -1 / 2, -1 / 2, 0.8, 1 / 2, 1 / 2, 0.85 }
+			fixed = { -1 / 2, -1 / 2, 0.825, 1 / 2, 1 / 2, 0.875 }
 		}
 	else
 		normal_def.mesh = meshes.normal_mesh
@@ -117,7 +117,7 @@ local function register_sign_node(friendlyname, name, tiles, type, inventory_ima
 	}
 	polemount_def.selection_box = {
 		type = "fixed",
-		fixed = { -1 / 2, -1 / 2, 0.8, 1 / 2, 1 / 2, 0.85 }
+		fixed = { -1 / 2, -1 / 2, 0.825, 1 / 2, 1 / 2, 0.875 }
 	}
 	normal_def.collision_box = {
 		type = "fixed",
@@ -129,7 +129,7 @@ local function register_sign_node(friendlyname, name, tiles, type, inventory_ima
 	}
 	polemount_def.collision_box = {
 		type = "fixed",
-		fixed = { -1 / 2, -1 / 2, 0.8, 1 / 2, 1 / 2, 0.85 }
+		fixed = { -1 / 2, -1 / 2, 0.825, 1 / 2, 1 / 2, 0.875 }
 	}
 
 	normal_def.after_place_node = function(pos)

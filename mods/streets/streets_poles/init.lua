@@ -26,7 +26,7 @@ minetest.register_node(":streets:bigpole", {
 	node_box = {
 		type = "fixed",
 		fixed = {
-			{ -0.15, -0.5, -0.15, 0.15, 0.5, 0.15 }
+			{ -0.125, -0.5, -0.125, 0.125, 0.5, 0.125 }
 		}
 	},
 	on_place = minetest.rotate_node,
@@ -75,7 +75,7 @@ minetest.register_node(":streets:bigpole_short", {
 	node_box = {
 		type = "fixed",
 		fixed = {
-			{ -0.15, -0.5, -0.15, 0.15, 0.15, 0.15 }
+			{ -0.125, -0.5, -0.125, 0.125, 0.125, 0.125 }
 		}
 	},
 	on_place = minetest.rotate_node,
@@ -122,8 +122,8 @@ minetest.register_node(":streets:bigpole_edge", {
 	node_box = {
 		type = "fixed",
 		fixed = {
-			{ -0.15, -0.5, -0.15, 0.15, 0.15, 0.15 },
-			{ -0.15, -0.15, -0.15, 0.15, 0.15, -0.5 }
+			{ -0.125, -0.5, -0.125, 0.125, 0.125, 0.125 },
+			{ -0.125, -0.125, -0.125, 0.125, 0.125, -0.5 }
 		}
 	},
 	on_place = minetest.rotate_node,
@@ -178,8 +178,8 @@ minetest.register_node(":streets:bigpole_tjunction", {
 	node_box = {
 		type = "fixed",
 		fixed = {
-			{ -0.15, -0.5, -0.15, 0.15, 0.15, 0.15 },
-			{ -0.15, -0.15, -0.5, 0.15, 0.15, 0.5 }
+			{ -0.125, -0.5, -0.125, 0.125, 0.125, 0.125 },
+			{ -0.125, -0.125, -0.5, 0.125, 0.125, 0.5 }
 		}
 	},
 	on_place = minetest.rotate_node,
@@ -225,9 +225,9 @@ minetest.register_node(":streets:bigpole_corner", {
 	node_box = {
 		type = "fixed",
 		fixed = {
-			{ -0.15, -0.5, -0.15, 0.15, 0.15, 0.15 },
-			{ -0.15, -0.15, -0.15, 0.15, 0.15, -0.5 },
-			{ -0.15, -0.15, -0.15, 0.5, 0.15, 0.15 }
+			{ -0.125, -0.5, -0.125, 0.125, 0.125, 0.125 },
+			{ -0.125, -0.125, -0.125, 0.125, 0.125, -0.5 },
+			{ -0.125, -0.125, -0.125, 0.5, 0.125, 0.125 }
 		}
 	},
 	on_place = minetest.rotate_node,
@@ -274,9 +274,9 @@ minetest.register_node(":streets:bigpole_four_side_junction", {
 	node_box = {
 		type = "fixed",
 		fixed = {
-			{ -0.15, -0.5, -0.15, 0.15, 0.5, 0.15 },
-			{ -0.15, -0.15, -0.15, 0.15, 0.15, -0.5 },
-			{ -0.15, -0.15, -0.15, 0.5, 0.15, 0.15 }
+			{ -0.125, -0.5, -0.125, 0.125, 0.5, 0.125 },
+			{ -0.125, -0.125, -0.125, 0.125, 0.125, -0.5 },
+			{ -0.125, -0.125, -0.125, 0.5, 0.125, 0.125 }
 		}
 	},
 	on_place = minetest.rotate_node,
@@ -323,8 +323,8 @@ minetest.register_node(":streets:bigpole_cross", {
 	node_box = {
 		type = "fixed",
 		fixed = {
-			{ -0.15, -0.5, -0.15, 0.15, 0.5, 0.15 },
-			{ -0.15, -0.15, -0.5, 0.15, 0.15, 0.5 }
+			{ -0.125, -0.5, -0.125, 0.125, 0.5, 0.125 },
+			{ -0.125, -0.125, -0.5, 0.125, 0.125, 0.5 }
 		}
 	},
 	on_place = minetest.rotate_node,
@@ -372,9 +372,9 @@ minetest.register_node(":streets:bigpole_five_side_junction", {
 	node_box = {
 		type = "fixed",
 		fixed = {
-			{ -0.15, -0.5, -0.15, 0.15, 0.5, 0.15 },
-			{ -0.15, -0.15, -0.5, 0.15, 0.15, 0.5 },
-			{ -0.15, -0.15, -0.15, 0.5, 0.15, 0.15 }
+			{ -0.125, -0.5, -0.125, 0.125, 0.5, 0.125 },
+			{ -0.125, -0.125, -0.5, 0.125, 0.125, 0.5 },
+			{ -0.125, -0.125, -0.125, 0.5, 0.125, 0.125 }
 		}
 	},
 	on_place = minetest.rotate_node,
@@ -420,9 +420,9 @@ minetest.register_node(":streets:bigpole_all_sides", {
 	node_box = {
 		type = "fixed",
 		fixed = {
-			{ -0.15, -0.5, -0.15, 0.15, 0.5, 0.15 },
-			{ -0.15, -0.15, -0.5, 0.15, 0.15, 0.5 },
-			{ -0.5, -0.15, -0.15, 0.5, 0.15, 0.15 }
+			{ -0.125, -0.5, -0.125, 0.125, 0.5, 0.125 },
+			{ -0.125, -0.125, -0.5, 0.125, 0.125, 0.5 },
+			{ -0.5, -0.125, -0.125, 0.5, 0.125, 0.125 }
 		}
 	},
 	on_place = minetest.rotate_node,
@@ -467,7 +467,7 @@ minetest.register_node(":streets:smallpole", {
 	node_box = {
 		type = "fixed",
 		fixed = {
-			{ -1/32, -0.5, -0.15, 1/32, 0.5, -0.15 + 1/16 }
+			{ -1/32, -0.5, -0.125, 1/32, 0.5, -0.125 + 1/16 }
 		}
 	},
 	on_place = minetest.rotate_node,
