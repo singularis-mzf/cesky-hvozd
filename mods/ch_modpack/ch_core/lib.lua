@@ -2,6 +2,10 @@ ch_core.open_submod("lib", {data = true})
 
 -- DATA
 -- ===========================================================================
+local click_sound = {
+	name = "click",
+	gain = 0.05,
+}
 local diakritika = {
 	["Á"] = "A",
 	["Ä"] = "A",
@@ -1367,6 +1371,16 @@ function ch_core.odstranit_diakritiku(s)
 		end
 	end
 	return res
+end
+
+--[[
+Pokud je zadaný klient ve hře (musí jít o přihlašovací jméno), přehraje mu zvuk kliknutí.
+Parametr může být nil; v takovém případě neudělá nic.
+]]
+function ch_core.play_click_sound_to(player_name)
+	if player_name ~= nil then
+		minetest.sound_play(click_sound, {to_player = player_name}, true)
+	end
 end
 
 --[[

@@ -291,15 +291,22 @@ for _, rtab in ipairs({
 	end
 
 	for typ, prts in pairs {
-		["hfs"] = {asp = {main = false, shunt = false}, n = "pam", mesh = "_hfs"},
-		["pam"] = {asp = {main = -1, shunt = false, proceed_as_main = true}, n = "hfs"}
+		["hfs"] = {
+			asp = {main = false, shunt = false},
+			n = "pam",
+			--[[mesh = "_hfs",]]
+			name = "železniční návěst: posun zakázán",
+			tile2 = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_hfs.png^[makealpha:255,255,255)",
+		},
+		["pam"] = {
+			asp = {main = -1, shunt = false, proceed_as_main = true},
+			n = "hfs",
+			name = "železniční návěst: posun pokračuje jako normální vlak",
+			tile2 = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_pam.png^[makealpha:255,255,255)"
+		}
 	} do
 		local mesh = prts.mesh or ""
-		local tile2 = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_"..typ..".png^[makealpha:255,255,255)"
-		if typ == "hfs" then
-			tile2 = "advtrains_signals_ks_sign_hfs.png"
-		end
-		register_sign("sign", typ, prts.n, attrans("Signal Sign"), "sign"..mesh, tile2, "hfs", "advtrains_signals_ks_sign_lf7.png", prts.asp)
+		register_sign("sign", typ, prts.n, prts.name, "sign"..mesh, prts.tile2, "hfs", prts.tile2, prts.asp)
 	end
 	
 	for typ, prts in pairs {
