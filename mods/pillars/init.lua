@@ -213,50 +213,9 @@ end
 
 pillars = {}
 
-local function formspec_callback(custom_state, player, formname, fields)
-	local player_name = player:get_player_name()
-	local pos = custom_state.pos
-	local node = minetest.get_node(pos)
-	local recipeitem = analyze_shape(node.name)
-	if recipeitem ~= nil then
-		for _, shape_def in pairs(shapes) do
-			local node_name = get_shape(recipeitem, shape_def.suffix)
-			if fields["chg_"..node_name:sub(9, -1)] ~= nil then
-				if minetest.is_protected(pos, player_name) then
-					minetest.record_protection_violation(pos, player_name)
-				elseif node.name ~= node_name then
-					node.name = node_name
-					minetest.swap_node(pos, node)
-					fields.quit = "true"
-					minetest.close_formspec(player_name, formname)
-				end
-				return
-			end
-		end
-	end
-end
-
 local function on_rightclick(pos, node, clicker, itemstack, pointed_thing)
-	local player_name = clicker and clicker:get_player_name()
-	if player_name ~= nil and not minetest.is_protected(pos, player_name) then
-		local recipeitem = analyze_shape(node.name)
-		if recipeitem == nil then return end
-		local formspec = {
-			ch_core.formspec_header({formspec_version = 4, size = {5.75, 4}, auto_background = true}),
-			"label[0.5,0.5;Změnit tvar]",
-			"button_exit[4.775,0.25;0.5,0.5;close;X]",
-		}
-		for row = 1, 2 do
-			for col = 1, 4 do
-				local i = (row - 1) * 4 + col
-				local shape_def = group_to_shapedef[i]
-				if shape_def ~= nil then
-					local node_name = get_shape(recipeitem, shape_def.suffix)
-					table.insert(formspec, ("item_image_button[%f,%f;1,1;%s;%s;]"):format(1.25 * col - 0.75, 1.25 * row - 0.25, node_name, "chg_"..node_name:sub(9, -1)))
-				end
-			end
-		end
-		ch_core.show_formspec(player_name, "pillars:change_pillar", table.concat(formspec), formspec_callback, {pos = pos}, {})
+	if minetest.is_player(clicker) then
+		ch_core.systemovy_kanal(clicker:get_player_name(), "Přidržte Shift pro stavění nebo Aux1 pro otevření panelu pro změnu tvaru.")
 	end
 end
 
@@ -344,6 +303,14 @@ function pillars.register_pillar(name, def)
 		minetest.register_craft({output = recipeitem .. " 1", recipe = {{"pillars:" .. name.."_half"}}})
 	end
 	registered_pillars[def.basenode] = name
+	local shape_selector_nodes = {}
+	for i = 1, 8 do
+		local shape_def = group_to_shapedef[i]
+		if shape_def ~= nil and minetest.registered_nodes["pillars:"..name..shape_def.suffix] ~= nil then
+			shape_selector_nodes[i] = "pillars:"..name..shape_def.suffix
+		end
+	end
+	ch_core.register_shape_selector_group({columns = 4, rows = 2, nodes = shape_selector_nodes, override_rightclick = true})
 end
 
 -- Create Pillar from nodes defined in default mod

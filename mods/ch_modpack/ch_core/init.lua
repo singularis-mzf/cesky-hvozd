@@ -70,7 +70,6 @@ function ch_core.close_submod(submod)
 	return true
 end
 
--- dofile(modpath .. "/rotation.lua")
 dofile(modpath .. "/active_objects.lua")
 dofile(modpath .. "/markers.lua")
 dofile(modpath .. "/barvy_linek.lua")
@@ -91,6 +90,7 @@ dofile(modpath .. "/clean_players.lua") -- : data, lib, privs
 dofile(modpath .. "/localize_chatcommands.lua") -- : data, lib, privs
 dofile(modpath .. "/udm.lua") -- : areas, data, lib
 dofile(modpath .. "/chat.lua") -- : areas, data, lib, privs, nametag, udm
+dofile(modpath .. "/shape_selector.lua") -- : chat, formspecs, lib
 dofile(modpath .. "/events.lua") -- : chat, data, lib, privs
 dofile(modpath .. "/stavby.lua") -- : chat, events, lib
 -- dofile(modpath .. "/inv_inspector.lua") -- : data, formspecs, lib, chat
