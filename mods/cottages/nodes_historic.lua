@@ -80,7 +80,14 @@ minetest.register_node("cottages:glass_pane", {
 		description = S("simple glass pane (centered)"),
 		drawtype = "nodebox",
                 -- top, bottom, side1, side2, inner, outer
-		tiles = {"cottages_glass_pane.png"},
+		tiles = {
+			"[combine:16x1:0,0=cottages_glass_pane.png^[resize:16x16",
+			"[combine:16x1:0,0=cottages_glass_pane.png^[resize:16x16",
+			"[combine:16x1:0,0=cottages_glass_pane.png^[resize:16x16",
+			"[combine:16x1:0,0=cottages_glass_pane.png^[resize:16x16",
+			"cottages_glass_pane.png",
+			"cottages_glass_pane.png",
+		},
 		use_texture_alpha = "blend",
 		paramtype = "light",
 		paramtype2 = "facedir",
@@ -98,14 +105,22 @@ minetest.register_node("cottages:glass_pane", {
 			},
 		},
 		is_ground_content = false,
+		sounds = cottages.sounds.glass,
 })
 
 
 minetest.register_node("cottages:glass_pane_side", {
 		description = S("simple glass pane"),
 		drawtype = "nodebox",
-                -- top, bottom, side1, side2, inner, outer
-		tiles = {"cottages_glass_pane.png"},
+    	-- top, bottom, side1, side2, inner, outer
+		tiles = {
+			"[combine:16x1:0,0=cottages_glass_pane.png^[resize:16x16",
+			"[combine:16x1:0,0=cottages_glass_pane.png^[resize:16x16",
+			"[combine:16x1:0,0=cottages_glass_pane.png^[resize:16x16",
+			"[combine:16x1:0,0=cottages_glass_pane.png^[resize:16x16",
+			"cottages_glass_pane.png",
+			"cottages_glass_pane.png",
+		},
 		use_texture_alpha = "blend",
 		paramtype = "light",
 		paramtype2 = "facedir",
@@ -123,6 +138,7 @@ minetest.register_node("cottages:glass_pane_side", {
 			},
 		},
 		is_ground_content = false,
+		sounds = cottages.sounds.glass,
 })
 
 
@@ -151,6 +167,7 @@ minetest.register_node("cottages:wood_flat", {
 		},
 		is_ground_content = false,
 		on_place = minetest.rotate_node,
+		sounds = cottages.sounds.wood,
 })
 
 ---------------------------------------------------------------------------------------

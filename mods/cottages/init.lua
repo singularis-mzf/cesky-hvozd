@@ -37,11 +37,13 @@ if( not( minetest.get_modpath("default"))) then
 	cottages.sounds.dirt   = nil
 	cottages.sounds.leaves = nil
 	cottages.sounds.stone  = nil
+	cottages.sounds.glass  = nil
 else
 	cottages.sounds.wood   = default.node_sound_wood_defaults()
 	cottages.sounds.dirt   = default.node_sound_dirt_defaults()
 	cottages.sounds.stone  = default.node_sound_stone_defaults()
 	cottages.sounds.leaves = default.node_sound_leaves_defaults()
+	cottages.sounds.glass  = default.node_sound_glass_defaults()
 end
 
 -- the straw from default comes with stairs as well and might replace

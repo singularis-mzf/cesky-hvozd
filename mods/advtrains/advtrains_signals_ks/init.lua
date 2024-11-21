@@ -275,9 +275,9 @@ for _, rtab in ipairs({
 				advtrains_signal = 2,
 				not_blocking_trains = 1,
 				save_in_at_nodedb = 1,
-				not_in_creative_inventory = (rtab.ici and typ == dtyp) and 0 or 1,
+				not_in_creative_inventory = rtab.ici and 0 or 1,
 			},
-			drop = "advtrains_signals_ks:"..prefix.."_"..dtyp.."_0",
+			drop = "advtrains_signals_ks:"..prefix.."_"..typ.."_0",
 			inventory_image = inv,
 			advtrains = {
 				get_aspect = function() return asp end
@@ -484,8 +484,13 @@ minetest.register_craft{
 }
 
 minetest.register_craft{
-	output = "advtrains_signals_ks:sign_lf_8_0 1",
+	output = "advtrains_signals_ks:sign_pam_0 1",
 	recipe = {{"advtrains_signals_ks:sign_hfs_0"}}
+}
+
+minetest.register_craft{
+	output = "advtrains_signals_ks:sign_lf_8_0 1",
+	recipe = {{"advtrains_signals_ks:sign_pam_0"}}
 }
 
 minetest.register_craft{

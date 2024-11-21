@@ -295,7 +295,7 @@ local rope_bottom_def = {
 	
 	on_construct = function( pos )
 		local timer = minetest.get_node_timer( pos )
-		timer:start( 1 )
+		timer:start( 0.5 )
 	end,
 	
 	on_timer = rope_extension_timer,

@@ -34,7 +34,7 @@ ropes.make_rope_on_timer = function(rope_node_name)
 				ropes.move_players_down(pos, 1)
 			else
 				local timer = minetest.get_node_timer( pos )
-				timer:start( 1 )
+				timer:start( 0.5 )
 			end
 		end
 	end
