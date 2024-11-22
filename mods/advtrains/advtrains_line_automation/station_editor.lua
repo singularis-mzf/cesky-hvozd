@@ -1,7 +1,65 @@
 local def
 local F = minetest.formspec_escape
 local ifthenelse = ch_core.ifthenelse
-local load_stations = assert(advtrains.lines.load_stations_for_formspec)
+
+local function load_stations()
+	local result = {}
+	local by_stn = {}
+	local all_lines_set = {["*"] = true}
+	local lines_set = {}
+	for stn, data in pairs(advtrains.lines.stations) do
+		local new_station = {
+			stn = stn,
+			name = data.name or "",
+			owner = data.owner or "",
+			tracks = {},
+		}
+		by_stn[stn] = new_station
+		lines_set[stn] = {}
+		table.insert(result, new_station)
+	end
+	for epos, data in pairs(advtrains.lines.stops) do
+		if data.stn ~= nil and data.stn ~= "" and by_stn[data.stn] ~= nil then
+			local st = by_stn[data.stn]
+			local new_track = {
+				epos = epos,
+				pos = assert(advtrains.decode_pos(epos)),
+				track = data.track or "",
+			}
+			table.insert(st.tracks, new_track)
+			local ars = data.ars
+			if ars ~= nil then
+				if ars.default then
+					lines_set[data.stn] = all_lines_set
+				else
+					local set = lines_set[data.stn]
+					for _, rule in ipairs(ars) do
+						if not rule.n and rule.ln ~= nil then
+							set[rule.ln] = true
+						end
+					end
+				end
+			end
+		end
+	end
+	for _, st in ipairs(result) do
+		local set = lines_set[st.stn]
+		if set["*"] then
+			st.lines = {"*"}
+		else
+			local lines = {}
+			for line, _ in pairs(set) do
+				table.insert(lines, line)
+			end
+			table.sort(lines)
+			st.lines = lines
+		end
+	end
+	table.sort(result, function(a, b) return a.stn < b.stn end)
+	return result
+end
+
+advtrains.lines.load_stations_for_formspec = load_stations
 
 local function station_distance(player_pos, st)
 	if st.tracks[1] == nil then
@@ -51,17 +109,17 @@ end
 local filters = {
 	{
 		description = "od nejbližší",
-		filter = filter_all,
+		-- filter = filter_all,
 		sorter = sort_by_distance,
 	},
 	{
 		description = "podle kódu A-Z",
-		filter = filter_all,
+		-- filter = filter_all,
 		sorter = sort_by_stn,
 	},
 	{
 		description = "podle názvu A-Z",
-		filter_all,
+		-- filter = filter_all,
 		sorter = sort_by_name,
 	},
 }
@@ -80,13 +138,13 @@ local function get_formspec(custom_state)
 
 	local stations = custom_state.stations
 	if stations == nil then
-		local filter_func = filters[custom_state.active_filter].filter or filter_all
+		-- local filter_func = filters[custom_state.active_filter].filter or filter_all
 		local sorter_func = filters[custom_state.active_filter].sorter
 		stations = {}
 		for _, st in ipairs(load_stations()) do
-			if filter_func(st, player_info) then
+			-- if filter_func(st, player_info) then
 				table.insert(stations, st)
-			end
+			-- end
 		end
 		table.sort(stations, function(a, b) return sorter_func(a, b, player_info) end)
 		custom_state.stations = stations
@@ -105,7 +163,7 @@ local function get_formspec(custom_state)
 		"0=ch_core_empty.png,"..
 		"1=basic_materials_padlock.png\\^[resize:16x16"..
 		";text;text,width=25;color,span=1;text,width=7;text;text]"..
-		"table[0.5,1.25;19,5;zastavka;0,KÓD,NÁZEV,#ffffff,SPRAVUJE,VZDÁLENOST,INFO")
+		"table[0.5,1.25;19,5;dopravna;0,KÓD,NÁZEV,#ffffff,SPRAVUJE,VZDÁLENOST,INFO")
 	for _, st in ipairs(stations) do
 		local n_tracks = #st.tracks
 		table.insert(formspec, ",0,"..F(st.stn)..","..F(st.name)..",#ffffff,"..F(ch_core.prihlasovaci_na_zobrazovaci(st.owner))..","..
@@ -186,7 +244,7 @@ local function formspec_callback(custom_state, player, formname, fields)
 		als[new_stn] = {name = assert(new_name), owner = assert(new_owner)}
 		custom_state.stations = nil
 		update_formspec = true
-		ch_core.systemovy_kanal(custom_state.player_name, "Zastávka/stanice/odbočka úspěšně vytvořena.")
+		ch_core.systemovy_kanal(custom_state.player_name, "Dopravna úspěšně vytvořena.")
 	elseif fields.ulozit then
 		local new_stn, new_name, new_owner = fields.stn, fields.name or "", fields.owner
 		local pinfo = ch_core.normalize_player(player)
@@ -266,8 +324,8 @@ local function formspec_callback(custom_state, player, formname, fields)
 		return
 	end
 
-	if fields.zastavka then
-		local event = minetest.explode_table_event(fields.zastavka)
+	if fields.dopravna then
+		local event = minetest.explode_table_event(fields.dopravna)
 		if event.type == "CHG" then
 			custom_state.selection_index = ifthenelse(event.row > 1, event.row, nil)
 			update_formspec = true
@@ -297,7 +355,7 @@ local function show_formspec(player)
 		-- selection_index = nil,
 	}
 	-- ch_core.show_formspec(player_or_player_name, formname, formspec, formspec_callback, custom_state, options)
-	ch_core.show_formspec(player, "ch_overrides:zastavky", get_formspec(custom_state), formspec_callback, custom_state, {})
+	ch_core.show_formspec(player, "advtrains_line_automation:editor_dopraven", get_formspec(custom_state), formspec_callback, custom_state, {})
 end
 
 advtrains.lines.open_station_editor = show_formspec

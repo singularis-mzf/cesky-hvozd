@@ -1,63 +1,6 @@
 -- stoprail.lua
 -- adds "stop rail". Recognized by lzb. (part of behavior is implemented there)
 
-function advtrains.lines.load_stations_for_formspec()
-	local result = {}
-	local by_stn = {}
-	local all_lines_set = {["*"] = true}
-	local lines_set = {}
-	for stn, data in pairs(advtrains.lines.stations) do
-		local new_station = {
-			stn = stn,
-			name = data.name or "",
-			owner = data.owner or "",
-			tracks = {},
-		}
-		by_stn[stn] = new_station
-		lines_set[stn] = {}
-		table.insert(result, new_station)
-	end
-	for epos, data in pairs(advtrains.lines.stops) do
-		if data.stn ~= nil and data.stn ~= "" and by_stn[data.stn] ~= nil then
-			local st = by_stn[data.stn]
-			local new_track = {
-				epos = epos,
-				pos = assert(advtrains.decode_pos(epos)),
-				track = data.track or "",
-			}
-			table.insert(st.tracks, new_track)
-			local ars = data.ars
-			if ars ~= nil then
-				if ars.default then
-					lines_set[data.stn] = all_lines_set
-				else
-					local set = lines_set[data.stn]
-					for _, rule in ipairs(ars) do
-						if not rule.n and rule.ln ~= nil then
-							set[rule.ln] = true
-						end
-					end
-				end
-			end
-		end
-	end
-	for _, st in ipairs(result) do
-		local set = lines_set[st.stn]
-		if set["*"] then
-			st.lines = {"*"}
-		else
-			local lines = {}
-			for line, _ in pairs(set) do
-				table.insert(lines, line)
-			end
-			table.sort(lines)
-			st.lines = lines
-		end
-	end
-	table.sort(result, function(a, b) return a.stn < b.stn end)
-	return result
-end
-
 local function to_int(n)
 	--- Disallow floating-point numbers
 	local k = tonumber(n)
@@ -135,7 +78,7 @@ local function show_stoprailform(pos, player)
 		pname_unless_admin = pname
 	end
 	local formspec = "formspec_version[4]"..
-		"size[8,10]"..
+		"size[8,11]"..
 		"item_image[0.25,0.25;1,1;advtrains_line_automation:dtrack_stop_placer]"..
 		"label[1.4,0.85;"..minetest.formspec_escape(item_name).."]"..
 		"button_exit[7,0.25;0.75,0.75;close;X]"..
@@ -161,7 +104,12 @@ local function show_stoprailform(pos, player)
 		"field[2.5,6;2,0.75;line;Linka na odj.;"..minetest.formspec_escape(stdata.line or "").."]"..
 		"field[4.75,6;2,0.75;routingcode;Sm.kód na odj.;"..minetest.formspec_escape(stdata.routingcode or "").."]"..
 		"textarea[0.25,7.25;7.5,1.5;ars;"..attrans("Trains stopping here (ARS rules)")..";"..advtrains.interlocking.ars_to_text(stdata.ars).."]"..
-		"button_exit[0.25,9;7.5,0.75;save;"..attrans("Save").."]"..
+		"label[0.3,9.25;Platí jen pro vlaky s]"..
+		"field[3,9;1,0.5;minparts;;"..minetest.formspec_escape(stdata.minparts or "0").."]"..
+		"label[4.15,9.25;až]"..
+		"field[4.6,9;1,0.5;maxparts;;"..minetest.formspec_escape(stdata.maxparts or "128").."]"..
+		"label[5.75,9.25;vozy.]"..
+		"button_exit[0.25,10;7.5,0.75;save;"..attrans("Save").."]"..
 		"tooltip[close;Zavře dialogové okno]"..
 		"tooltip[stn;Dopravna\\, ke které tato zastávka patří. Jedna dopravna může mít víc kolejí. K vytvoření a úpravám dopraven použijte Editor dopraven.]"..
 		"tooltip[track;Číslo koleje]"..
@@ -171,7 +119,10 @@ local function show_stoprailform(pos, player)
 		"tooltip[line;Nová linka na odjezdu. Prázdné pole = zachovat stávající linku. Pro smazání linky zadejte znak -]"..
 		"tooltip[routingcode;Nový směrový kód na odjezdu. Prázdné pole = zachovat stávající směrový kód. Pro smazání kódu vlaku zadejte znak -]"..
 		"tooltip[ars;Seznam podmínek\\, z nichž musí vlak splnit alespoň jednu\\, aby zde zastavil:\nLN {linka}\nRC {směrovací kód}\n"..
-		"* = jakýkoliv vlak\n\\# značí komentář a ! na začátku řádky danou podmínku neguje (nedoporučuje se)]"
+		"* = jakýkoliv vlak\n\\# značí komentář a ! na začátku řádky danou podmínku neguje (nedoporučuje se)]"..
+		"tooltip[minparts;Minimální počet vozů\\, které musí vlak mít\\, aby zde zastavil. Výchozí hodnota je 0.]"..
+		"tooltip[maxparts;Maximální počet vozů\\, které vlak může mít\\, aby zde zastavil. Výchozí (a maximální) hodnota je 128.]"..
+		"tooltip[editsn;Otevře v novém okně editor dopraven.\nPoužijte tento editor pro založení nové dopravny\\, jíž budete moci přiřadit koleje.]"
 
 	minetest.show_formspec(pname, "at_lines_stop_"..pe, formspec)
 end
@@ -259,6 +210,16 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			if fields.routingcode then
 				stdata.routingcode = fields.routingcode
 			end
+			if fields.minparts then
+				local v = to_int(fields.minparts)
+				if v <= 0 or v > 128 then v = nil end
+				stdata.minparts = v
+			end
+			if fields.maxparts then
+				local v = to_int(fields.maxparts)
+				if v <= 0 or v > 128 then v = nil end
+				stdata.maxparts = v
+			end
 
 			for k,v in pairs(tmp_checkboxes[pe]) do --handle checkboxes
 				stdata[k] = v or nil
@@ -277,6 +238,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	
 end)
 
+local function should_stop(stdata, train)
+	local n_trainparts = #assert(train.trainparts)
+	local ars = stdata.ars
+	return ars and (stdata.minparts or 0) <= n_trainparts and n_trainparts <= (stdata.maxparts or 128) and
+		(ars.default or advtrains.interlocking.ars_check_rule_match(ars, train))
+end
 
 local adefunc = function(def, preset, suffix, rotation)
 		return {
@@ -312,7 +279,7 @@ local adefunc = function(def, preset, suffix, rotation)
 							if not stdata.ars then
 								stdata.ars = {default=true}
 							end
-							if stdata.ars and (stdata.ars.default or advtrains.interlocking.ars_check_rule_match(stdata.ars, train) ) then
+							if should_stop(stdata, train) then
 								advtrains.lzb_add_checkpoint(train, index, 2, nil)
 								local stn = advtrains.lines.stations[stdata.stn]
 								local stnname = stn and stn.name or attrans("Unknown Station")
@@ -330,7 +297,7 @@ local adefunc = function(def, preset, suffix, rotation)
 							return
 						end
 						
-						if stdata.ars and (stdata.ars.default or advtrains.interlocking.ars_check_rule_match(stdata.ars, train) ) then
+						if should_stop(stdata, train) then
 							local stn = advtrains.lines.stations[stdata.stn]
 							local stnname = stn and stn.name or attrans("Unknown Station")
 							local line, routingcode = stdata.line or "", stdata.routingcode or ""
