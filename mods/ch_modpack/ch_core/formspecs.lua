@@ -1,5 +1,9 @@
 ch_core.open_submod("formspecs", {data = true, lib = true})
 
+-- API:
+-- ch_core.show_formspec(player_or_player_name, formname, formspec, formspec_callback, custom_state, options)
+-- local function formspec_callback(custom_state, player, formname, fields)
+
 --[[
 	player_name => {
 		callback = function,

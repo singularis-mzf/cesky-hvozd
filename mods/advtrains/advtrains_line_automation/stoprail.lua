@@ -1,6 +1,62 @@
 -- stoprail.lua
 -- adds "stop rail". Recognized by lzb. (part of behavior is implemented there)
 
+function advtrains.lines.load_stations_for_formspec()
+	local result = {}
+	local by_stn = {}
+	local all_lines_set = {["*"] = true}
+	local lines_set = {}
+	for stn, data in pairs(advtrains.lines.stations) do
+		local new_station = {
+			stn = stn,
+			name = data.name or "",
+			owner = data.owner or "",
+			tracks = {},
+		}
+		by_stn[stn] = new_station
+		lines_set[stn] = {}
+		table.insert(result, new_station)
+	end
+	for epos, data in pairs(advtrains.lines.stops) do
+		if data.stn ~= nil and data.stn ~= "" and by_stn[data.stn] ~= nil then
+			local st = by_stn[data.stn]
+			local new_track = {
+				epos = epos,
+				pos = assert(advtrains.decode_pos(epos)),
+				track = data.track or "",
+			}
+			table.insert(st.tracks, new_track)
+			local ars = data.ars
+			if ars ~= nil then
+				if ars.default then
+					lines_set[data.stn] = all_lines_set
+				else
+					local set = lines_set[data.stn]
+					for _, rule in ipairs(ars) do
+						if not rule.n and rule.ln ~= nil then
+							set[rule.ln] = true
+						end
+					end
+				end
+			end
+		end
+	end
+	for _, st in ipairs(result) do
+		local set = lines_set[st.stn]
+		if set["*"] then
+			st.lines = {"*"}
+		else
+			local lines = {}
+			for line, _ in pairs(set) do
+				table.insert(lines, line)
+			end
+			table.sort(lines)
+			st.lines = lines
+		end
+	end
+	table.sort(result, function(a, b) return a.stn < b.stn end)
+	return result
+end
 
 local function to_int(n)
 	--- Disallow floating-point numbers
@@ -25,6 +81,28 @@ end
 
 local door_dropdown = {L=1, R=2, C=3}
 local door_dropdown_rev = {["vpravo"]="R", ["vlevo"]="L", ["neotvírat"]="C"}
+
+local function get_stn_dropdown(stn, player_name)
+	local stations = advtrains.lines.load_stations_for_formspec()
+	local selected_index
+	local result = {"dropdown[0.25,2;6,0.75;stn;(nepřiřazeno)"}
+	local right_mark
+	for i, st in ipairs(stations) do
+		if player_name ~= nil and player_name ~= st.owner then
+			right_mark = "(cizí) "
+		else
+			right_mark = ""
+		end
+		table.insert(result, ","..right_mark..minetest.formspec_escape(st.stn.."  |  "..st.name))
+		if st.stn == stn then
+			selected_index = i + 1
+		end
+	end
+	table.insert(result, ";"..(selected_index or "1")..";true]")
+	return table.concat(result)
+end
+
+local player_to_stn_override = {}
 
 local function show_stoprailform(pos, player)
 	local pe = advtrains.encode_pos(pos)
@@ -52,14 +130,22 @@ local function show_stoprailform(pos, player)
 	end
 	
 	local item_name = (minetest.registered_items["advtrains_line_automation:dtrack_stop_placer"] or {}).description or ""
+	local pname_unless_admin
+	if not minetest.check_player_privs(pname, "train_admin") then
+		pname_unless_admin = pname
+	end
 	local formspec = "formspec_version[4]"..
 		"size[8,10]"..
 		"item_image[0.25,0.25;1,1;advtrains_line_automation:dtrack_stop_placer]"..
 		"label[1.4,0.85;"..minetest.formspec_escape(item_name).."]"..
 		"button_exit[7,0.25;0.75,0.75;close;X]"..
-		"style[stn,ars,line,routingcode;font=mono]"..
+		"style[ars,line,routingcode;font=mono]"..
+		"label[0.25,1.75;"..attrans("Station Code").." | "..attrans("Station Name").."]"..
+		get_stn_dropdown(player_to_stn_override[pname] or stdata.stn, pname_unless_admin)..
+		--[[
 		"field[0.25,2;2,0.75;stn;"..attrans("Station Code")..";"..minetest.formspec_escape(stdata.stn).."]"..
 		"field[2.5,2;4,0.75;stnname;"..attrans("Station Name")..";"..minetest.formspec_escape(stnname).."]"..
+		]]
 		"field[6.75,2;1,0.75;track;"..attrans("Track")..";"..minetest.formspec_escape(stdata.track).."]"..
 		"label[0.25,3.4;"..attrans("Door Side").."]"..
 		"dropdown[2.25,3;2,0.75;doors;vlevo,vpravo,neotvírat;"..door_dropdown[stdata.doors].."]"..
@@ -70,14 +156,14 @@ local function show_stoprailform(pos, player)
 		"field[0.25,4.5;1,0.75;wait;;"..stdata.wait.."]"..
 		"label[1.5,4.9;+]"..
 		"field[2,4.5;1,0.75;ddelay;;"..minetest.formspec_escape(stdata.ddelay).."]".. -- "..attrans("Door Delay").."
+		(advtrains.lines.open_station_editor ~= nil and "button[3.5,4.5;4,0.75;editstn;Editor dopraven]" or "")..
 		"field[0.25,6;2,0.75;speed;"..attrans("Dep. Speed")..";"..minetest.formspec_escape(stdata.speed).."]"..
 		"field[2.5,6;2,0.75;line;Linka na odj.;"..minetest.formspec_escape(stdata.line or "").."]"..
 		"field[4.75,6;2,0.75;routingcode;Sm.kód na odj.;"..minetest.formspec_escape(stdata.routingcode or "").."]"..
 		"textarea[0.25,7.25;7.5,1.5;ars;"..attrans("Trains stopping here (ARS rules)")..";"..advtrains.interlocking.ars_to_text(stdata.ars).."]"..
 		"button_exit[0.25,9;7.5,0.75;save;"..attrans("Save").."]"..
 		"tooltip[close;Zavře dialogové okno]"..
-		"tooltip[stn;Vnitřní kód stanice/zastávky pro jednodušší manipulaci. Jedna stanice může mít víc kolejí.]"..
-		"tooltip[stnname;Název stanice/zastávky\\, jak má být zobrazován. Pokud stanice/zastávka již existuje, nevyplňujte (stačí zadat kód a kolej)\\, leda chcete zastávku přejmenovat.]"..
+		"tooltip[stn;Dopravna\\, ke které tato zastávka patří. Jedna dopravna může mít víc kolejí. K vytvoření a úpravám dopraven použijte Editor dopraven.]"..
 		"tooltip[track;Číslo koleje]"..
 		"tooltip[wait;Základní doba stání s otevřenými dveřmi]"..
 		"tooltip[ddelay;Dodatečná doba stání před odjezdem po uzavření dveří]"..
@@ -85,7 +171,7 @@ local function show_stoprailform(pos, player)
 		"tooltip[line;Nová linka na odjezdu. Prázdné pole = zachovat stávající linku. Pro smazání linky zadejte znak -]"..
 		"tooltip[routingcode;Nový směrový kód na odjezdu. Prázdné pole = zachovat stávající směrový kód. Pro smazání kódu vlaku zadejte znak -]"..
 		"tooltip[ars;Seznam podmínek\\, z nichž musí vlak splnit alespoň jednu\\, aby zde zastavil:\nLN {linka}\nRC {směrovací kód}\n"..
-		"* = jakýkoliv vlak\n\\# komentář]"
+		"* = jakýkoliv vlak\n\\# značí komentář a ! na začátku řádky danou podmínku neguje (nedoporučuje se)]"
 
 	minetest.show_formspec(pname, "at_lines_stop_"..pe, formspec)
 end
@@ -113,31 +199,38 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		if fields.keepopen then
 			tmp_checkboxes[pe].keepopen = (fields.keepopen == "true")
 		end
+
+		if fields.stn then
+			local new_index = tonumber(fields.stn)
+			if new_index ~= nil then
+				player_to_stn_override[pname] = new_index
+			end
+		end
+
 		if fields.save then
-			if fields.stn and stdata.stn ~= fields.stn and fields.stn ~= "" then
-				local stn = advtrains.lines.stations[fields.stn]
-				if stn then
-					if (stn.owner == pname or minetest.check_player_privs(pname, "train_admin")) then
-						stdata.stn = fields.stn
-					else
-						minetest.chat_send_player(pname, attrans("Station code '@1' does already exist and is owned by @2", fields.stn, stn.owner))
-						show_stoprailform(pos,player)
-						return
+			local new_index = player_to_stn_override[pname]
+			if new_index ~= nil then
+				if new_index == 1 then
+					-- no name station
+					stdata.stn = ""
+					minetest.log("action", pname.." set track at "..minetest.pos_to_string(pos).." to no station.")
+				else
+					local stations = advtrains.lines.load_stations_for_formspec()
+					local station = stations[new_index - 1]
+					if station ~= nil then
+						if station.owner == pname or minetest.check_player_privs(pname, "train_admin") then
+							stdata.stn = station.stn
+							minetest.log("action", pname.." set track at "..minetest.pos_to_string(pos).." to station '"..tostring(station.stn).."'.")
+						else
+							minetest.chat_send_player(pname, attrans("Station code '@1' does already exist and is owned by @2", station.stn, station.owner))
+							show_stoprailform(pos,player)
+							return
+						end
 					end
-				else
-					advtrains.lines.stations[fields.stn] = {name = fields.stnname, owner = pname}
-					stdata.stn = fields.stn
 				end
+				player_to_stn_override[pname] = nil
 			end
-			local stn = advtrains.lines.stations[stdata.stn]
-			if stn and fields.stnname and fields.stnname ~= stn.name and (stn.name == nil or stn.name == "" or fields.stnname ~= "") then
-				if (stn.owner == pname or minetest.check_player_privs(pname, "train_admin")) then
-					stn.name = fields.stnname
-				else
-					minetest.chat_send_player(pname, attrans("Not allowed to edit station name, owned by @1", stn.owner))
-				end
-			end
-			
+
 			-- dropdowns
 			if fields.doors then
 				stdata.doors = door_dropdown_rev[fields.doors] or "C"
@@ -173,7 +266,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			tmp_checkboxes[pe] = nil
 			--TODO: signal
 			updatemeta(pos)
+			minetest.log("action", pname.." saved stoprail at "..minetest.pos_to_string(pos))
 			show_stoprailform(pos, player)
+		elseif fields.editstn and advtrains.lines.open_station_editor ~= nil then
+			minetest.close_formspec(pname, formname)
+			minetest.after(0.25, advtrains.lines.open_station_editor, player)
+			return
 		end
 	end			
 	
@@ -197,6 +295,9 @@ local adefunc = function(def, preset, suffix, rotation)
 				updatemeta(pos)
 			end,
 			on_rightclick = function(pos, node, player)
+				if minetest.is_player(player) then
+					player_to_stn_override[player:get_player_name()] = nil
+				end
 				show_stoprailform(pos, player)
 			end,
 			advtrains = {
@@ -217,15 +318,11 @@ local adefunc = function(def, preset, suffix, rotation)
 								local stnname = stn and stn.name or attrans("Unknown Station")
 								train.text_inside = attrans("Next Stop:") .. "\n"..stnname
 								advtrains.interlocking.ars_set_disable(train, true)
-								-- DEBUG:
-								-- minetest.chat_send_all("DEBUG: Train approaches to "..minetest.pos_to_string(pos).."!")
-								-- print("DEBUG: train approaches to "..minetest.pos_to_string(pos).." = "..dump2({train = train, stdata = stdata, pe = pe, pos = pos, index = index, has_entered = has_entered}))
 							end
 						end
 					end
 				end,
 				on_train_enter = function(pos, train_id, train, index)
-					-- print("DEBUG: on_train_enter called: "..dump2({pos = pos, train_id = train_id, index = index}))
 					if train.path_cn[index] == 1 then
 						local pe = advtrains.encode_pos(pos)
 						local stdata = advtrains.lines.stops[pe]
