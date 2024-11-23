@@ -63,6 +63,7 @@ dofile("otisky.lua") -- sada na rozbor otisků prstů
 dofile_ud("particle_board.lua") -- dřevotříska
 dofile("periskop.lua") -- periskop
 dofile("piles.lua") -- hromady dřeva
+dofile("ropeblock.lua") -- lanový blok
 dofile("scorched_tree.lua") -- ohořelý kmen
 dofile_ud("shaft.lua") -- dřík kamenného sloupu
 dofile("sickles.lua") -- srpy

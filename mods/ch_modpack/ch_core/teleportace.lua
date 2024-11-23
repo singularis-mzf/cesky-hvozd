@@ -22,6 +22,7 @@ local function get_finish_teleport_func(player_name, d, is_immediate)
 		end
 		local player_pos = player:get_pos()
 		player:set_properties{pointable = true}
+		ch_core.set_temporary_titul(player_name, "přemísťuje se", false)
 
 		-- zopakovat testy přemístitelnosti
 		if not is_immediate then
@@ -221,6 +222,7 @@ function ch_core.teleport_player(def)
 				local delay_str = string.format("%.3f", delay)
 				delay_str = delay_str:gsub("%.", ",")
 				ch_core.systemovy_kanal(player_name, "Přemístění zahájeno (čas na přípravu: "..delay_str.." sekund).")
+				ch_core.set_temporary_titul(player_name, "přemísťuje se", true)
 			end
 			minetest.log("action", "Teleport of "..player_name.." to "..minetest.pos_to_string(d.target_pos).." started.")
 			player:set_properties{pointable = false}
@@ -262,6 +264,7 @@ function ch_core.cancel_teleport(player_name, due_to_player_action)
 		return false
 	end
 	ch_core.cancel_ch_timer(online_charinfo, "teleportace")
+	ch_core.set_temporary_titul(player_name, "přemísťuje se", false)
 	local player = minetest.get_player_by_name(player_name)
 	if player ~= nil then
 		player:set_properties{pointable = true}
@@ -285,6 +288,7 @@ function ch_core.finish_teleport(player_name)
 	local timer_def = ch_core.get_ch_timer_info(online_charinfo, "teleportace")
 	if timer_def ~= nil then
 		ch_core.cancel_ch_timer(online_charinfo, "teleportace")
+		ch_core.set_temporary_titul(player_name, "přemísťuje se", false)
 		return timer_def.func()
 	else
 		return false
