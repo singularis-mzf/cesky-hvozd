@@ -274,7 +274,7 @@ function ildb.create_ts(sigd)
 	end
 	
 	track_sections[id] = {
-		name = "Section "..id,
+		name = tostring(id),
 		tc_breaks = { sigd }
 	}
 	tcbs.ts_id = id
