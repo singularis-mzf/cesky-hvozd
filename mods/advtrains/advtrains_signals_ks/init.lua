@@ -201,6 +201,7 @@ for _, rtab in ipairs({
 			on_rightclick = advtrains.interlocking.signal_rc_handler,
 			can_dig = advtrains.interlocking.signal_can_dig,
 			after_dig_node = advtrains.interlocking.signal_after_dig,
+			after_place_node = advtrains.after_place_signal,
 		})
 		-- rotatable by trackworker
 		advtrains.trackplacer.add_worked("advtrains_signals_ks:hs", typ, "_"..rot)
@@ -247,6 +248,7 @@ for _, rtab in ipairs({
 			on_rightclick = advtrains.interlocking.signal_rc_handler,
 			can_dig = advtrains.interlocking.signal_can_dig,
 			after_dig_node = advtrains.interlocking.signal_after_dig,
+			after_place_node = advtrains.after_place_signal,
 		})
 		-- rotatable by trackworker
 		advtrains.trackplacer.add_worked("advtrains_signals_ks:ra", typ, "_"..rot)
@@ -275,7 +277,7 @@ for _, rtab in ipairs({
 				advtrains_signal = 2,
 				not_blocking_trains = 1,
 				save_in_at_nodedb = 1,
-				not_in_creative_inventory = rtab.ici and 0 or 1,
+				not_in_creative_inventory = (rtab.ici and typ == dtyp) and 0 or 1,
 			},
 			drop = "advtrains_signals_ks:"..prefix.."_"..typ.."_0",
 			inventory_image = inv,
@@ -285,6 +287,7 @@ for _, rtab in ipairs({
 			on_rightclick = advtrains.interlocking.signal_rc_handler,
 			can_dig = advtrains.interlocking.signal_can_dig,
 			after_dig_node = advtrains.interlocking.signal_after_dig,
+			after_place_node = advtrains.after_place_signal,
 		})
 		-- rotatable by trackworker
 		advtrains.trackplacer.add_worked("advtrains_signals_ks:"..prefix, typ, "_"..rot, nxt)
@@ -306,7 +309,7 @@ for _, rtab in ipairs({
 		}
 	} do
 		local mesh = prts.mesh or ""
-		register_sign("sign", typ, prts.n, prts.name, "sign"..mesh, prts.tile2, "hfs", prts.tile2, prts.asp)
+		register_sign("sign", typ, prts.n, prts.name, "sign"..mesh, prts.tile2, typ, prts.tile2, prts.asp)
 	end
 	
 	for typ, prts in pairs {
@@ -380,7 +383,8 @@ for _, rtab in ipairs({
 				save_in_at_nodedb = 1,
 				not_in_creative_inventory = (rtab.ici and prts.ici) and 0 or 1,
 			},
-			after_dig_node = function(pos) advtrains.ndb.update(pos) end
+			after_dig_node = function(pos) advtrains.ndb.update(pos) end,
+			after_place_node = advtrains.after_place_signal,
 		}
 
 		-- Zs 3
@@ -424,6 +428,7 @@ for _, rtab in ipairs({
 			not_in_creative_inventory = (rtab.ici) and 0 or 1,
 		},
 		drop = "advtrains_signals_ks:mast_mast_0",
+		after_place_node = advtrains.after_place_signal,
 	})
 	advtrains.trackplacer.add_worked("advtrains_signals_ks:mast","mast", "_"..rot)
 end

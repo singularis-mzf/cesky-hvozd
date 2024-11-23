@@ -470,3 +470,43 @@ else
 		end
 	end
 end
+
+local variants = {
+	{"0", 0},
+	{"30", 0},
+	{"45", 0},
+	{"60", 0},
+	{"0", 1},
+	{"30", 1},
+	{"45", 1},
+	{"60", 1},
+	{"0", 2},
+	{"30", 2},
+	{"45", 2},
+	{"60", 2},
+	{"0", 3},
+	{"30", 3},
+	{"45", 3},
+	{"60", 3},
+	{"0", 0},
+	{"30", 0},
+	{"45", 0},
+	{"60", 0},
+}
+
+function advtrains.after_place_signal(pos, placer, itemstack, pointed_thing)
+	if not minetest.is_player(placer) then return end
+	local name = itemstack:get_name()
+	if not name:match("_0$") then return end
+	local rn = minetest.registered_nodes
+	local prefix = name:sub(1, -2)
+	if not (rn[prefix.."30"] and rn[prefix.."45"] and rn[prefix.."60"]) then return end
+	local variant = math.floor(placer:get_look_horizontal() * -8 / math.pi + 16.5)
+	local n = variants[variant + 1]
+	if n == nil then return end
+	local node = minetest.get_node(pos)
+	if node.name ~= name then return end
+	node.name = prefix..n[1]
+	node.param2 = n[2]
+	minetest.swap_node(pos, node)
+end

@@ -201,7 +201,7 @@ minetest.register_on_punchnode(function(pos, node, player, pointed_thing)
 					if tcbs then
 						tcbs.signal = pos
 						if not tcbs.signal_name then
-							tcbs.signal_name = "Signal at "..minetest.pos_to_string(sigd.p)
+							tcbs.signal_name = minetest.pos_to_string(sigd.p)
 						end
 						if not tcbs.routes then
 							tcbs.routes = {}
@@ -489,7 +489,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		if fields.setname then
 			ts.name = fields.name
 			if ts.name == "" then
-				ts.name = attrans("Section @1", ts_id)
+				ts.name = ts_id
 			end
 		end
 		
