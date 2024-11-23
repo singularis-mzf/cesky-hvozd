@@ -43,6 +43,50 @@ end
 -- Tree generation
 --
 
+-- Update degrotate leaves
+local last_update_leaves_after_grow = {pos = vector.zero(), us_time = 0, updated = 0, not_updated = 0}
+
+function default.update_leaves_after_grow(pos)
+	local us_begin = minetest.get_us_time()
+	if vector.equals(pos, last_update_leaves_after_grow.pos) and math.abs(us_begin - last_update_leaves_after_grow.us_time) < 100000 then
+		return last_update_leaves_after_grow.updated, last_update_leaves_after_grow.not_updated -- already called at the same position
+	end
+	local get_node, node = minetest.get_node
+	local positions = minetest.find_nodes_in_area(vector.offset(pos, -16, 0, -16), vector.offset(pos, 16, 64, 16), {"group:leaves", "default:apple"}, true)
+	local updated, not_updated = 0, 0
+	for node_name, poslist in pairs(positions) do
+		local ndef = minetest.registered_nodes[node_name]
+		local update = ndef ~= nil and ndef._ch_update_degrotate_param2
+		if node_name == "default:apple" then
+			for _, apos in ipairs(poslist) do
+				if #minetest.find_nodes_in_area(vector.offset(apos, -3, -3, -3), vector.offset(apos, 3, 3, 3), {"default:leaves"}, false) > 0 then
+					minetest.remove_node(apos) -- remove apples near default:leaves
+				end
+			end
+		elseif type(update) == "function" then
+			for _, lpos in ipairs(poslist) do
+				node = get_node(lpos)
+				if node.param2 == 0 then
+					update(lpos, node)
+					updated = updated + 1
+				elseif node_name:match("^default:") and node.param2 % 60 == 0 then
+					node.param2 = 0
+					update(lpos, node)
+					updated = updated + 1
+				else
+					not_updated = not_updated + 1
+				end
+			end
+		else
+			not_updated = not_updated + #poslist
+		end
+	end
+	minetest.log("action", "Finished update_leaves_after_grow() at "..minetest.pos_to_string(pos)..": updated "..updated..
+		", not updated "..not_updated.." nodes in "..((minetest.get_us_time() - us_begin) / 1000).." ms.")
+	last_update_leaves_after_grow = {pos = pos, us_time = minetest.get_us_time(), updated = updated, not_updated = not_updated}
+	return updated, not_updated
+end
+
 -- Apple tree and jungle tree trunk and leaves function
 
 local function add_trunk_and_leaves(data, a, pos, tree_cid, leaves_cid,
@@ -133,6 +177,7 @@ function default.grow_tree(pos, is_apple_tree, bad)
 	vm:set_data(data)
 	vm:write_to_map()
 	vm:update_map()
+	default.update_leaves_after_grow(pos)
 end
 
 -- Jungle tree
@@ -185,6 +230,7 @@ function default.grow_jungle_tree(pos, bad)
 	vm:set_data(data)
 	vm:write_to_map()
 	vm:update_map()
+	default.update_leaves_after_grow(pos)
 end
 
 
@@ -311,6 +357,7 @@ function default.grow_pine_tree(pos, snow)
 	vm:set_data(data)
 	vm:write_to_map()
 	vm:update_map()
+	default.update_leaves_after_grow(pos)
 end
 
 
@@ -321,6 +368,7 @@ function default.grow_new_apple_tree(pos)
 		"/schematics/apple_tree_from_sapling.mts"
 	minetest.place_schematic({x = pos.x - 3, y = pos.y - 1, z = pos.z - 3},
 		path, "random", nil, false)
+	default.update_leaves_after_grow(pos)
 end
 
 
@@ -331,6 +379,7 @@ function default.grow_new_jungle_tree(pos)
 		"/schematics/jungle_tree_from_sapling.mts"
 	minetest.place_schematic({x = pos.x - 2, y = pos.y - 1, z = pos.z - 2},
 		path, "random", nil, false)
+	default.update_leaves_after_grow(pos)
 end
 
 
@@ -341,6 +390,7 @@ function default.grow_new_emergent_jungle_tree(pos)
 		"/schematics/emergent_jungle_tree_from_sapling.mts"
 	minetest.place_schematic({x = pos.x - 3, y = pos.y - 5, z = pos.z - 3},
 		path, "random", nil, false)
+	default.update_leaves_after_grow(pos)
 end
 
 
@@ -357,6 +407,7 @@ function default.grow_new_pine_tree(pos)
 	end
 	minetest.place_schematic({x = pos.x - 2, y = pos.y - 1, z = pos.z - 2},
 		path, "0", nil, false)
+	default.update_leaves_after_grow(pos)
 end
 
 
@@ -373,6 +424,7 @@ function default.grow_new_snowy_pine_tree(pos)
 	end
 	minetest.place_schematic({x = pos.x - 2, y = pos.y - 1, z = pos.z - 2},
 		path, "random", nil, false)
+	default.update_leaves_after_grow(pos)
 end
 
 
@@ -383,6 +435,7 @@ function default.grow_new_acacia_tree(pos)
 		"/schematics/acacia_tree_from_sapling.mts"
 	minetest.place_schematic({x = pos.x - 4, y = pos.y - 1, z = pos.z - 4},
 		path, "random", nil, false)
+	default.update_leaves_after_grow(pos)
 end
 
 
@@ -393,6 +446,7 @@ function default.grow_new_aspen_tree(pos)
 		"/schematics/aspen_tree_from_sapling.mts"
 	minetest.place_schematic({x = pos.x - 2, y = pos.y - 1, z = pos.z - 2},
 		path, "0", nil, false)
+	default.update_leaves_after_grow(pos)
 end
 
 
@@ -406,6 +460,7 @@ function default.grow_bush(pos)
 		"/schematics/bush.mts"
 	minetest.place_schematic({x = pos.x - 1, y = pos.y - 1, z = pos.z - 1},
 		path, "0", nil, false)
+	default.update_leaves_after_grow(pos)
 end
 
 -- Blueberry bush
@@ -415,6 +470,7 @@ function default.grow_blueberry_bush(pos)
 		"/schematics/blueberry_bush.mts"
 	minetest.place_schematic({x = pos.x - 1, y = pos.y, z = pos.z - 1},
 		path, "0", nil, false)
+	default.update_leaves_after_grow(pos)
 end
 
 
@@ -425,6 +481,7 @@ function default.grow_acacia_bush(pos)
 		"/schematics/acacia_bush.mts"
 	minetest.place_schematic({x = pos.x - 1, y = pos.y - 1, z = pos.z - 1},
 		path, "0", nil, false)
+	default.update_leaves_after_grow(pos)
 end
 
 
@@ -435,6 +492,7 @@ function default.grow_pine_bush(pos)
 		"/schematics/pine_bush.mts"
 	minetest.place_schematic({x = pos.x - 1, y = pos.y - 1, z = pos.z - 1},
 		path, "0", nil, false)
+	default.update_leaves_after_grow(pos)
 end
 
 
@@ -558,6 +616,7 @@ function default.grow_sapling(pos)
 
 	minetest.log("action", "Growing sapling " .. node.name .. " at " .. minetest.pos_to_string(pos))
 	sapling_def.grow(pos)
+	default.update_leaves_after_grow(pos)
 end
 
 local function register_sapling_growth(nodename, grow)

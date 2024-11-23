@@ -54,6 +54,7 @@ moretrees.treedesc = {
 		mesepost_light = S("Beech Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.beech_model)
+			default.update_leaves_after_grow(pos)
 		end,
 	},
 	apple_tree = {
@@ -71,6 +72,7 @@ moretrees.treedesc = {
 		mesepost_light = S("Apple Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.apple_tree_model)
+			default.update_leaves_after_grow(pos)
 		end,
 	},
 	oak = {
@@ -88,6 +90,7 @@ moretrees.treedesc = {
 		mesepost_light = S("Oak Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.oak_model)
+			default.update_leaves_after_grow(pos)
 		end,
 	},
 	sequoia = {
@@ -105,6 +108,7 @@ moretrees.treedesc = {
 		mesepost_light = S("Giant Sequoia Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.sequoia_model)
+			default.update_leaves_after_grow(pos)
 		end,
 	},
 	birch = {
@@ -120,7 +124,10 @@ moretrees.treedesc = {
 		fence_rail = S("Birch Tree Fence Rail"),
 		fence_gate = S("Birch Tree Fence Gate"),
 		mesepost_light = S("Birch Tree Mese Post Light"),
-		grow_function = moretrees.grow_birch,
+		grow_function = function(pos, ...)
+			moretrees.grow_birch(pos, ...)
+			default.update_leaves_after_grow(pos)
+		end,
 	},
 	palm = {
 		trunk = S("Palm Tree Trunk"),
@@ -137,6 +144,7 @@ moretrees.treedesc = {
 		mesepost_light = S("Palm Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.palm_model)
+			default.update_leaves_after_grow(pos)
 		end,
 	},
 	date_palm = {
@@ -154,6 +162,7 @@ moretrees.treedesc = {
 		mesepost_light = S("Date Palm Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.date_palm_model)
+			default.update_leaves_after_grow(pos)
 		end,
 	},
 	spruce = {
@@ -169,7 +178,10 @@ moretrees.treedesc = {
 		fence_rail = S("Spruce Tree Fence Rail"),
 		fence_gate = S("Spruce Tree Fence Gate"),
 		mesepost_light = S("Spruce Tree Mese Post Light"),
-		grow_function = moretrees.grow_spruce,
+		grow_function = function(pos, ...)
+			moretrees.grow_spruce(pos, ...)
+			default.update_leaves_after_grow(pos)
+		end,
 	},
 	cedar =  {
 		trunk = S("Cedar Tree Trunk"),
@@ -186,6 +198,7 @@ moretrees.treedesc = {
 		mesepost_light = S("Cedar Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.cedar_model)
+			default.update_leaves_after_grow(pos)
 		end,
 	},
 	poplar = {
@@ -203,6 +216,7 @@ moretrees.treedesc = {
 		mesepost_light = S("Poplar Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.poplar_model)
+			default.update_leaves_after_grow(pos)
 		end,
 	},
 	willow = {
@@ -220,6 +234,7 @@ moretrees.treedesc = {
 		mesepost_light = S("Willow Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.willow_model)
+			default.update_leaves_after_grow(pos)
 		end,
 	},
 	rubber_tree = {
@@ -237,6 +252,7 @@ moretrees.treedesc = {
 		mesepost_light = S("Rubber Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.rubber_tree_model)
+			default.update_leaves_after_grow(pos)
 		end,
 	},
 	fir = {
@@ -252,7 +268,10 @@ moretrees.treedesc = {
 		fence_rail = S("Douglas Fir Fence Rail"),
 		fence_gate = S("Douglas Fir Fence Gate"),
 		mesepost_light = S("Douglas Fir Tree Mese Post Light"),
-		grow_function = moretrees.grow_fir,
+		grow_function = function(pos, ...)
+			moretrees.grow_fir(pos, ...)
+			default.update_leaves_after_grow(pos)
+		end,
 	},
 	jungletree = {
 		trunk = S("Jungle Tree Trunk"),
@@ -266,7 +285,10 @@ moretrees.treedesc = {
 		fence = S("Jungle Tree Fence"),
 		fence_rail = S("Jungle Tree Fence Rail"),
 		fence_gate = S("Jungle Tree Fence Gate"),
-		grow_function = moretrees.grow_jungletree,
+		grow_function = function(pos, ...)
+			moretrees.grow_jungletree(pos, ...)
+			default.update_leaves_after_grow(pos)
+		end
 	},
 	cherrytree = {
 		trunk = S("Cherry Tree Trunk"),
@@ -281,7 +303,10 @@ moretrees.treedesc = {
 		fence_rail = S("Cherry Tree Fence Rail"),
 		fence_gate = S("Cherry Tree Fence Gate"),
 		mesepost_light = S("Cherry Tree Mese Post Light"),
-		grow_function = assert(moretrees.grow_cherrytree),
+		grow_function = function(pos)
+			moretrees.grow_cherrytree(pos)
+			default.update_leaves_after_grow(pos)
+		end,
 	},
 	chestnut_tree = {
 		trunk = S("Chestnut Tree Trunk"),
@@ -298,6 +323,7 @@ moretrees.treedesc = {
 		mesepost_light = S("Chestnut Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.chestnut_tree_model)
+			default.update_leaves_after_grow(pos)
 		end,
 	},
 	ebony = {
@@ -315,6 +341,7 @@ moretrees.treedesc = {
 		mesepost_light = S("Ebony Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.ebony_model)
+			default.update_leaves_after_grow(pos)
 		end,
 	},
 	plumtree = {
@@ -332,6 +359,7 @@ moretrees.treedesc = {
 		mesepost_light = S("Plum Tree Mese Post Light"),
 		grow_function = function(pos)
 			minetest.spawn_tree(pos,moretrees.plumtree_model)
+			default.update_leaves_after_grow(pos)
 		end,
 	},
 }

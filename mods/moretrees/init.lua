@@ -64,6 +64,7 @@ function moretrees.grow_birch(pos)
 	else
 		minetest.spawn_tree(pos, moretrees.birch_model2)
 	end
+	default.update_leaves_after_grow(pos)
 end
 
 -- Code to spawn a spruce tree
@@ -75,6 +76,7 @@ function moretrees.grow_spruce(pos)
 	else
 		minetest.spawn_tree(pos, moretrees.spruce_model2)
 	end
+	default.update_leaves_after_grow(pos)
 end
 
 -- Code to spawn jungle trees
@@ -129,6 +131,7 @@ function moretrees.grow_jungletree(pos)
 			minetest.swap_node(leaves[leaf], moretrees.air)
 	end
 	minetest.spawn_tree(pos, moretrees.jungletree_model)
+	default.update_leaves_after_grow(pos)
 end
 
 -- code to spawn fir trees
@@ -156,6 +159,7 @@ function moretrees.grow_fir(pos)
 		minetest.swap_node(leaves[leaf], moretrees.air)
 	end
 	minetest.spawn_tree(pos,moretrees.fir_model)
+	default.update_leaves_after_grow(pos)
 end
 
 -- same thing, but a smaller version that grows only in snow biomes
@@ -183,12 +187,14 @@ function moretrees.grow_fir_snow(pos)
 			minetest.swap_node(leaves[leaf], moretrees.air)
 	end
 	minetest.spawn_tree(pos,moretrees.fir_model)
+	default.update_leaves_after_grow(pos)
 end
 
 function moretrees.grow_cherrytree(pos)
 	local schema = assert(moretrees.sakura_tree)
 	minetest.remove_node(pos)
 	minetest.place_schematic(vector.offset(pos, -4, 0, -3), schema, 0, nil, false)
+	default.update_leaves_after_grow(pos)
 end
 
 dofile(modpath.."/tree_models.lua")

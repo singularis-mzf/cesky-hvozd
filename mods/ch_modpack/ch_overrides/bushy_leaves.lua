@@ -101,6 +101,7 @@ program.after_place_node = function(pos, placer, itemstack, pointed_thing)
 		return update_degrotate_param2(pos, node)
 	end
 end
+program._ch_update_degrotate_param2 = update_degrotate_param2
 
 programs.degrotate = program
 programs.degrotate_nostick = program

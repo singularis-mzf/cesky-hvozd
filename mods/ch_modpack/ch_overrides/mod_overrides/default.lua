@@ -51,3 +51,15 @@ for i = 1, 5 do
 		minetest.override_item(prefix..i, override)
 	end
 end
+
+-- Remove apples near default:leaves
+minetest.register_lbm({
+	label = "Remove apples near default:leaves",
+	name = "ch_overrides:remove_apples",
+	nodenames = {"default:apple"},
+	action = function(pos, node, dtime_s)
+		if #minetest.find_nodes_in_area(vector.offset(pos, -2, -2, -2), vector.offset(pos, 2, 2, 2), {"default:leaves"}, false) > 0 then
+			minetest.remove_node(pos)
+		end
+	end,
+})
