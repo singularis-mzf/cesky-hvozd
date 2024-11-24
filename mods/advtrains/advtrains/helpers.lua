@@ -458,6 +458,7 @@ function advtrains.position_in_range(pos, range)
 	return false
 end
 
+--[[
 local active_node_range = tonumber(minetest.settings:get("active_block_range"))*16 + 16
 -- Function to check whether node at position(pos) is "loaded"/"active"
 -- That is, whether it is within the active_block_range to a player
@@ -469,6 +470,10 @@ else
 			return true
 		end
 	end
+end
+]]
+function advtrains.is_node_loaded(pos)
+	return minetest.compare_block_status(pos, "loaded") -- loaded, or active?
 end
 
 local variants = {
