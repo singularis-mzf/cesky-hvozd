@@ -509,9 +509,9 @@ function advtrains.after_place_signal(pos, placer, itemstack, pointed_thing)
 	local variant = math.floor(placer:get_look_horizontal() * -8 / math.pi + 16.5)
 	local n = variants[variant + 1]
 	if n == nil then return end
-	local node = minetest.get_node(pos)
+	local node = advtrains.ndb.get_node(pos)
 	if node.name ~= name then return end
 	node.name = prefix..n[1]
 	node.param2 = n[2]
-	minetest.swap_node(pos, node)
+	advtrains.ndb.swap_node(pos, node)
 end
