@@ -39,3 +39,37 @@ for i = 0, 64 do
 	minetest.register_alias("technic:lv_cable"..i, "technic:lv_cable")
 end
 
+local translation_table = {
+["technic:lv_grinder"] = "technic:mv_grinder",
+["technic:lv_extractor"] = "technic:mv_extractor",
+["technic:hv_admin_generator"] = "air",
+["technic:mv_admin_generator"] = "air",
+["technic:lv_electric_furnace"] = "technic:mv_electric_furnace",
+["technic:lv_compressor"] = "technic:mv_compressor",
+["technic:lv_alloy_furnace"] = "technic:mv_alloy_furnace",
+["technic:lv_admin_generator"] = "air",
+["technic_hv_extend:hv_grinder"] = "technic:mv_grinder",
+["technic_hv_extend:hv_electric_furnace"] = "technic:mv_electric_furnace",
+["technic_hv_extend:hv_compressor"] = "technic:mv_compressor",
+["technic_hv_extend:hv_alloy_furnace"] = "technic:mv_alloy_furnace",
+}
+local translation_nodenames = {}
+for n, _ in pairs(translation_table) do
+	table.insert(translation_nodenames, n)
+end
+
+minetest.register_lbm({
+	label = "Change technic machines to a single tier",
+	name = "technic:change_to_single_tier",
+	nodenames = translation_nodenames,
+	action = function(pos, node, dtime_s)
+		local new_nodename = translation_table[node.name]
+		if new_nodename ~= nil and minetest.registered_nodes[new_nodename] ~= nil then
+			node.name = new_nodename
+			minetest.swap_node(pos, node)
+			print("DEBUG: "..minetest.pos_to_string(pos).." changed to "..new_nodename)
+		else
+			minetest.log("error", "Expected new node "..(new_nodename or "nil").." does not exist! "..minetest.pos_to_string(pos).." will not be upgraded!")
+		end
+	end,
+})

@@ -15,7 +15,7 @@ end
 function compactor.register_compactor(data)
     data.typename = "compacting"
     data.machine_name = "compactor"
-    data.machine_desc = minetest.translate("technic", "@1 Compactor", "%s")
+    data.machine_desc = "průmyslový lis" -- minetest.translate("technic", "@1 Compactor", "%s")
 	data.input_size = compactor_input_size
     technic.register_base_machine(data)
 end
@@ -39,6 +39,7 @@ function compactor.register_block_recipes_override(ingot_name, ingot_count, bloc
 	end
 end
 
+--[[
 compactor.register_compactor({tier = "LV", demand = {100}, speed = 1})
 
 minetest.register_craft({
@@ -58,6 +59,18 @@ minetest.register_craft({
         {"technic:stainless_steel_ingot", "compactor:lv_compactor", "technic:stainless_steel_ingot"},
         {"pipeworks:tube_1", "technic:mv_transformer", "pipeworks:tube_1"},
         {"technic:stainless_steel_ingot", "technic:mv_cable", "technic:stainless_steel_ingot"},
+    },
+})
+]]
+
+compactor.register_compactor({tier = "MV", demand = {300, 250, 200}, speed = 2, upgrade = 1, tube = 1})
+
+minetest.register_craft({
+    output = "compactor:mv_compactor",
+    recipe = {
+        {"technic:marble", "basic_materials:motor", "technic:granite"},
+        {"pipeworks:autocrafter", "technic:machine_casing", "mesecons_pistons:piston_normal_off"},
+        {"basic_materials:brass_ingot", "technic:lv_cable", "default:bronze_ingot"},
     },
 })
 

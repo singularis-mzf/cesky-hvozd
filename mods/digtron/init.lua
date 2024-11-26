@@ -65,7 +65,7 @@ dofile( digtron_modpath .. "/nodes/node_duplicator.lua" ) -- constructs copies o
 
 --Technic
 dofile( digtron_modpath .. "/nodes/node_battery_holder.lua" ) -- holds rechargeable batteries from the technic mod
-dofile( digtron_modpath .. "/nodes/node_power_connector.lua")
+-- dofile( digtron_modpath .. "/nodes/node_power_connector.lua")
 
 dofile( digtron_modpath .. "/nodes/recipes.lua" )
 
@@ -109,7 +109,7 @@ if minetest.get_modpath("catacomb") and catacomb ~= nil and catacomb.chamber_pro
 		minetest.get_content_id("digtron:corner_panel"),
 		minetest.get_content_id("digtron:battery_holder"),
 		minetest.get_content_id("digtron:inventory_ejector"),
-		minetest.get_content_id("digtron:power_connector"),
+		-- minetest.get_content_id("digtron:power_connector"),
 	}
 	for _, node_id in pairs(digtron_nodes) do
 		catacomb.chamber_protected_nodes[node_id] = true

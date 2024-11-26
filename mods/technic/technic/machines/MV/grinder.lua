@@ -3,9 +3,9 @@
 minetest.register_craft({
 	output = 'technic:mv_grinder',
 	recipe = {
-		{'technic:stainless_steel_ingot', 'technic:lv_grinder',     'technic:stainless_steel_ingot'},
-		{'pipeworks:tube_1',              'technic:mv_transformer', 'pipeworks:tube_1'},
-		{'technic:stainless_steel_ingot', 'technic:mv_cable',       'technic:stainless_steel_ingot'},
+		{'default:desert_stone', 'default:diamond',        'default:desert_stone'},
+		{'default:desert_stone', 'technic:machine_casing', 'default:desert_stone'},
+		{'technic:granite',      'technic:lv_cable',       'technic:granite'},
 	}
 })
 

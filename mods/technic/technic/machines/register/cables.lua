@@ -4,7 +4,7 @@ local S = technic.getter
 local cable_tier = {}
 
 function technic.is_tier_cable(name, tier)
-	return cable_tier[name] == tier
+	return cable_tier[name] ~= nil
 end
 
 function technic.get_cable_tier(name)
@@ -161,7 +161,11 @@ function technic.register_cable(tier, size)
 		drawtype = "nodebox",
 		node_box = node_box,
 		connects_to = {"group:technic_"..ltier.."_cable",
-			"group:technic_"..ltier, "group:technic_all_tiers", "group:technic_"..ltier.."_cablelike"},
+		"group:technic_hv",
+		"group:technic_mv",
+		"group:technic_lv",
+		"group:technic_all_tiers",
+			"group:technic_"..ltier.."_cablelike"},
 		on_construct = clear_networks,
 		on_destruct = clear_networks,
 		check_for_pole = true,
@@ -202,7 +206,10 @@ function technic.register_cable(tier, size)
 			drawtype = "nodebox",
 			node_box = table.copy(node_box),
 			connects_to = {"group:technic_"..ltier.."_cable",
-				"group:technic_"..ltier, "group:technic_all_tiers"},
+			"group:technic_hv",
+			"group:technic_mv",
+			"group:technic_lv",
+			"group:technic_all_tiers"},
 			on_construct = clear_networks,
 			on_destruct = clear_networks,
 		}

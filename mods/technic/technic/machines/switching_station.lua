@@ -39,6 +39,7 @@ minetest.register_node("technic:switching_station",{
 	groups = {snappy=2, choppy=2, oddly_breakable_by_hand=2, technic_all_tiers=1},
 	connect_sides = {"bottom"},
 	sounds = default.node_sound_wood_defaults(),
+	--[[
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("infotext", S("Switching Station"))
@@ -86,6 +87,7 @@ minetest.register_node("technic:switching_station",{
 			end
 		},
 	},
+	]]
 })
 
 --[[
@@ -535,21 +537,26 @@ local function on_new_abm(pos, node, active_object_count, active_object_count_wi
 	local technic_run = node_def.technic_run
 	if technic_run ~= nil then
 		for tier, machine_type in pairs(tiers) do
-			local cable_nodes = minetest.find_nodes_in_area(vector.offset(pos, -2, -2, -2), vector.offset(pos, 2, 2, 2), "group:technic_"..tier:lower().."_cable", false)
+			-- local cable_nodes = minetest.find_nodes_in_area(vector.offset(pos, -2, -2, -2), vector.offset(pos, 2, 2, 2), "group:technic_"..tier:lower().."_cable", false)
 			local input
 
 			if machine_type == technic.receiver then
+				--[[
 				if tier == "LV" or #cable_nodes >= 2 then
 					input = 100000
 				else
 					input = 0
-				end
+				end ]]
+				input = 100000
 			elseif machine_type == technic.battery or machine_type == technic.producer_receiver then
+				--[[
 				if #cable_nodes >= 2 then
 					input = 100000
 				else
 					input = 0
 				end
+				]]
+				input = 100000
 			end
 			if input ~= nil then
 				minetest.get_meta(pos):set_int(tier.."_EU_input", input)

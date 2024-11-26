@@ -29,12 +29,13 @@ minetest.register_node("technic:power_monitor",{
 	groups = {snappy=2, choppy=2, oddly_breakable_by_hand=2, technic_all_tiers=1, technic_machine=1},
 	connect_sides = {"bottom", "back"},
 	sounds = default.node_sound_wood_defaults(),
-	on_construct = function(pos)
+	--[[ on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
 		meta:set_string("infotext", S("Power Monitor"))
-	end,
+	end, ]]
 })
 
+--[[
 minetest.register_abm({
 	nodenames = {"technic:power_monitor"},
 	label = "Machines: run power monitor",
@@ -61,6 +62,7 @@ minetest.register_abm({
 		end
 	end,
 })
+]]
 
 for tier in pairs(technic.machines) do
 	-- RE in order to use the "timeout" functions, although it consumes 0 power

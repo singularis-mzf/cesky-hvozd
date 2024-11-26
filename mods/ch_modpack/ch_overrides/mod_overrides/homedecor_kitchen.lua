@@ -47,7 +47,7 @@ local def = {
 local recipe
 
 def.machine_name = "microwave_oven"
-def.machine_desc = "NN Mikrovlnná trouba"
+def.machine_desc = "mikrovlnná trouba"
 recipe = {
 	{ "default:steel_ingot", "default:steel_ingot" , "default:steel_ingot", },
 	{ "default:steel_ingot", "default:glass", "basic_materials:ic", },
@@ -56,7 +56,7 @@ recipe = {
 override_homedecor_oven("homedecor:microwave_oven", def, recipe)
 
 def.machine_name = "oven_white"
-def.machine_desc = "NN sporák (bílý)"
+def.machine_desc = "sporák (bílý)"
 recipe = {
 	{"ch_overrides:lv_oven_steel", "", ""},
 	{"dye:white", "", ""},
@@ -65,7 +65,7 @@ recipe = {
 override_homedecor_oven("homedecor:oven", def, recipe)
 
 def.machine_name = "oven_steel"
-def.machine_desc = "NN sporák (nerezový)"
+def.machine_desc = "sporák (nerezový)"
 recipe = {
 	{ "basic_materials:heating_element", "default:steel_ingot" , "basic_materials:heating_element", },
 	{ "default:steel_ingot", "default:glass", "default:steel_ingot", },

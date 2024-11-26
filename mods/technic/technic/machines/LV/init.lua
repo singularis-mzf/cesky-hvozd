@@ -13,13 +13,12 @@ dofile(path.."/solar_array.lua")
 dofile(path.."/geothermal.lua")
 dofile(path.."/water_mill.lua")
 dofile(path.."/generator.lua")
-dofile(path.."/admin_generator.lua")
 
 -- Machines
-dofile(path.."/alloy_furnace.lua")
-dofile(path.."/electric_furnace.lua")
-dofile(path.."/grinder.lua")
-dofile(path.."/extractor.lua")
-dofile(path.."/compressor.lua")
+-- dofile(path.."/alloy_furnace.lua")
+-- dofile(path.."/electric_furnace.lua")
+-- dofile(path.."/grinder.lua")
+-- dofile(path.."/extractor.lua")
+-- dofile(path.."/compressor.lua")
 
 dofile(path.."/music_player.lua")

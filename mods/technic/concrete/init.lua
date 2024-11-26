@@ -8,6 +8,7 @@ technic.concrete_posts = {}
 
 local S = minetest.get_translator("concrete")
 
+--[[
 for i = 0, 31 do
 	minetest.register_alias("technic:concrete_post"..i,
 			"technic:concrete_post")
@@ -16,6 +17,7 @@ for i = 32, 63 do
 	minetest.register_alias("technic:concrete_post"..i,
 			"technic:concrete_post_with_platform")
 end
+]]
 
 local steel_ingot
 if minetest.get_modpath("technic_worldgen") then
@@ -24,6 +26,7 @@ else
 	steel_ingot = "default:steel_ingot"
 end
 
+--[[
 minetest.register_craft({
 	output = 'technic:concrete_post_platform 6',
 	recipe = {
@@ -39,6 +42,7 @@ minetest.register_craft({
 		{'default:stone','basic_materials:steel_bar','default:stone'},
 	}
 })
+]]
 
 minetest.register_craft({
 	output = 'technic:blast_resistant_concrete 5',
@@ -76,6 +80,7 @@ if minetest.get_modpath("moreblocks") then
 	})
 end
 
+--[[
 local box_platform = {-0.5,  0.3,  -0.5,  0.5,  0.5, 0.5}
 local box_post     = {-0.15, -0.5, -0.15, 0.15, 0.5, 0.15}
 local box_front    = {-0.1,  -0.3, -0.5,  0.1,  0.3, 0}
@@ -137,5 +142,6 @@ for platform = 0, 1 do
 		after_dig_node = after_dig_node,
 	})
 end
+]]
 
 print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")

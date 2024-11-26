@@ -19,6 +19,7 @@ local mods = {
 	"moretrees",
 	"sandwiches",
 	"smartshop",
+	"technic",
 	"technic_cnc",
 	"ts_furniture", -- colored chairs and sitting
 }

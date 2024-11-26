@@ -37,7 +37,8 @@ local function make_reactor_formspec(meta)
 	"list[current_player;main;0,5;8,4;]"..
 	"listring[]"..
 	"button[5.5,1.5;2,1;start;Start]"..
-	"checkbox[5.5,2.5;autostart;automatic Start;"..meta:get_string("autostart").."]"
+	"checkbox[5.5,2.5;autostart;automatický start;"..meta:get_string("autostart").."]"
+	--[[
 	if not digiline_remote_path then
 		return f
 	end
@@ -49,6 +50,7 @@ local function make_reactor_formspec(meta)
 	return f..
 		"button_exit[4.6,3.69;2,1;save;Save]"..
 		"field[1,4;4,1;remote_channel;Digiline Remote Channel;${remote_channel}]"
+		]]
 end
 
 local SS_OFF = 0

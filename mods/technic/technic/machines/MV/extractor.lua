@@ -3,9 +3,9 @@
 minetest.register_craft({
 	output = 'technic:mv_extractor',
 	recipe = {
-		{'technic:stainless_steel_ingot', 'technic:lv_extractor',   'technic:stainless_steel_ingot'},
-		{'pipeworks:tube_1',              'technic:mv_transformer', 'pipeworks:tube_1'},
-		{'technic:stainless_steel_ingot', 'technic:mv_cable',       'technic:stainless_steel_ingot'},
+		{'technic:treetap', 'basic_materials:motor',          'technic:treetap'},
+		{'technic:treetap', 'technic:machine_casing', 'technic:treetap'},
+		{'',                'technic:lv_cable',       ''},
 	}
 })
 

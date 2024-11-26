@@ -243,7 +243,7 @@ local digiline_def = {
 
 local function run(pos, node)
 	local meta = minetest.get_meta(pos)
-	local eu_input   = meta:get_int("HV_EU_input")
+	local eu_input   = 100000
 	local enabled = meta:get_int("enabled") ~= 0 and
 		(meta:get_int("mesecon_mode") == 0 or meta:get_int("mesecon_effect") ~= 0)
 	local machine_name = S("@1 Forcefield Emitter", S("HV"))

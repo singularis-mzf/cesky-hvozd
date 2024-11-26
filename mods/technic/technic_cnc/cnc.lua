@@ -66,7 +66,7 @@ if technic_cnc.use_technic or technic_cnc.pipeworks or technic_cnc.digilines the
 		recipe = {
 			{'basic_materials:ic', 'technic:cnc',                 'basic_materials:ic'},
 			{'pipeworks:tube_1',   'technic:machine_casing',      'pipeworks:tube_1'},
-			{'technic:cnc',        'digilines:wire_std_00000000', 'technic:cnc'},
+			{'technic:cnc',        'mesecons:wire_00000000_off', 'technic:cnc'},
 		},
 		tiles = tiles,
 		tiles_active = tiles_active,

@@ -41,7 +41,7 @@ function technic.register_base_machine(data)
 
 	data.modname = data.modname or minetest.get_current_modname()
 
-	local groups = {cracky = 2, technic_machine = 1, ["technic_"..ltier] = 1}
+	local groups = {cracky = 2, technic_machine = 1, technic_all_tiers = 1}
 	if data.tube then
 		groups.tubedevice = 1
 		groups.tubedevice_receiver = 1
@@ -84,7 +84,7 @@ function technic.register_base_machine(data)
 	local run = function(pos, node)
 		local meta     = minetest.get_meta(pos)
 		local inv      = meta:get_inventory()
-		local eu_input = meta:get_int(tier.."_EU_input")
+		local eu_input = 100000 -- meta:get_int(tier.."_EU_input")
 
 		local machine_desc_tier = machine_desc:format(S(tier))
 		local machine_node      = data.modname..":"..ltier.."_"..machine_name
