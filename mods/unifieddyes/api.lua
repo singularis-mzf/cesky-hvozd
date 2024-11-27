@@ -196,6 +196,7 @@ local function register_c(craft, h, sat, val)
 end
 
 function unifieddyes.register_color_craft(craft)
+	--[[
 	local hues_table = unifieddyes.HUES_EXTENDED
 	local sats_table = unifieddyes.SATS
 	local vals_table = unifieddyes.VALS_SPLIT
@@ -228,7 +229,7 @@ function unifieddyes.register_color_craft(craft)
 	end
 
 	register_c(craft, "pink")
-
+]]
 end
 
 -- code borrowed from homedecor

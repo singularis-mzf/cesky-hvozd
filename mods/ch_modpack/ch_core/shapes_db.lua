@@ -509,6 +509,7 @@ local materials_roof = set(
 	"farming:straw",
 	"moreblocks:cactus_checker",
 	"moreblocks:copperpatina",
+	"moretrees:ebony_planks",
 	"technic:cast_iron_block",
 	"technic:zinc_block"
 )
