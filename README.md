@@ -969,13 +969,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/ulla/summer/)
 
-## Technic HV Extend (technic\_hv\_extend)
-
-* Zdroj: [https://github.com/Emojigit/technic\_hv\_extend](https://github.com/Emojigit/technic\_hv\_extend), revize b16a76d607cc7df2b2aca25ca1b76d079727290c
-* Původní licence: LGPL 2.1
-* Licence úprav: LGPL 2.1
-* [ContentDB](https://content.minetest.net/packages/Emojiminetest/technic\_hv\_extend/)
-
 ## Technic Recipes (technic\_recipes)
 
 * Zdroj: [https://gitlab.com/alerikaisattera/technic\_recipes](https://gitlab.com/alerikaisattera/technic\_recipes), revize 5e77fa4bfbf8e42140e2dde9f9ade14d1fb49161
