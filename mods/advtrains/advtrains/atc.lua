@@ -143,8 +143,8 @@ local function get_formspec(custom_state)
 		"item_image[0.25,0.25;1,1;"..custom_state.node_name_f.."]"..
 		"label[1.4,0.85;řídicí obvod ATC]"..
 		"button_exit[11,0.25;0.75,0.75;close;X]"..
-		"field[0.25,4.25;11.5,0.75;text_inside;nový text uvnitř:;"..F(custom_state.text_inside).."]"..
-		"field[0.25,5.5;11.5,0.75;text_outside;nový text venku:;"..F(custom_state.text_outside).."]"..
+		"textarea[0.25,4.25;11.5,0.75;text_inside;nový text uvnitř (5 ř.):;"..F(custom_state.text_inside).."]"..
+		"textarea[0.25,5.5;11.5,0.75;text_outside;nový text venku (3 ř.):;"..F(custom_state.text_outside).."]"..
 		"field[0.25,6.75;3,0.75;line;nová linka:;"..F(custom_state.line).."]"..
 		"field[0.25,8;3,0.75;routingcode;nový směr. kód:;"..F(custom_state.routingcode).."]"..
 		"textarea[0.25,9.25;3,2.25;ars;vlaky\\, pro které platí:;"..F(custom_state.ars).."]"..
@@ -174,6 +174,18 @@ local function get_formspec(custom_state)
 		table.insert(formspec, "field[0.25,1.75;11.5,0.75;channel;"..attrans("Digiline channel")..";"..F(custom_state.channel).."]")
 	end
 	return table.concat(formspec)
+end
+
+local function limit_text(t, limit)
+	local tbl = t:split("\n")
+	if #tbl <= limit then
+		return t
+	else
+		for i = #t, limit + 1, -1 do
+			tbl[i] = nil
+		end
+		return table.concat(tbl, "\n")
+	end
 end
 
 local function formspec_callback(custom_state, player, formname, fields)
@@ -214,8 +226,8 @@ local function formspec_callback(custom_state, player, formname, fields)
 		meta:set_string("channel", custom_state.channel)
 		meta:set_string("line", custom_state.line)
 		meta:set_string("routingcode", custom_state.routingcode)
-		meta:set_string("text_inside", custom_state.text_inside)
-		meta:set_string("text_outside", custom_state.text_outside)
+		meta:set_string("text_inside", limit_text(custom_state.text_inside, 5))
+		meta:set_string("text_outside", limit_text(custom_state.text_outside, 3))
 		meta:set_string("ars", custom_state.ars)
 		--if fields.mode=="digiline" then
 		--	meta:set_string("infotext", attrans("ATC controller, mode @1\nChannel: @2", fields.mode, meta:get_string("command")) )

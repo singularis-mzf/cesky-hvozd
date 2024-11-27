@@ -951,7 +951,17 @@ function advtrains.step_fc(data)
 end
 
 
-
+local function limit_text(t, limit)
+	local tbl = t:split("\n")
+	if #tbl <= limit then
+		return t
+	else
+		for i = #t, limit + 1, -1 do
+			tbl[i] = nil
+		end
+		return table.concat(tbl, "\n")
+	end
+end
 
 
 function wagon:show_bordcom(pname)
@@ -1043,14 +1053,14 @@ function wagon:handle_bordcom_fields(pname, formname, fields)
 	if not train then return end
 	if fields.text_outside then
 		if fields.text_outside~="" then
-			train.text_outside=fields.text_outside
+			train.text_outside = limit_text(fields.text_outside, 3)
 		else
 			train.text_outside=nil
 		end
 	end
 	if fields.text_inside then
 		if fields.text_inside~="" then
-			train.text_inside=fields.text_inside
+			train.text_inside = limit_text(fields.text_inside, 5)
 		else
 			train.text_inside=nil
 		end
