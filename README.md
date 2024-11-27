@@ -330,6 +330,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/Hume2/bike/)
 
+## Birds (birds)
+
+* Zdroj: [https://gitgud.io/blut/birds](https://gitgud.io/blut/birds), revize dd90b4a0d03cf3f09b986e8993767141bfb719f5
+* Původní licence: kód a model CC0, textury CC-BY 4.0
+* Licence úprav: CC0
+* [ContentDB](https://content.luanti.org/packages/shaft/birds/)
+
 ## Bonemeal (bonemeal)
 
 * Zdroj: [https://notabug.org/tenplus1/bonemeal](https://notabug.org/tenplus1/bonemeal), revize 804343f7c02fe554a8c652ea90a56528c8237833

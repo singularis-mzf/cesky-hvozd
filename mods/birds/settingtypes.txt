@@ -1,0 +1,3 @@
+birds.minBirds (Minimum number of birds in the sky) int 80
+birds.maxSwarmSize (Maximum size of swarm) int 9
+birds.spawnAltitude (Lowest Spawn Altitude) int 60
