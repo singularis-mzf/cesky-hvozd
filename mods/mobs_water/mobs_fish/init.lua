@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 local SPRITE_VERSION = false -- set to true to use upright sprites instead of meshes
 
@@ -178,4 +178,4 @@ mobs:spawn({
 mobs:register_egg("mobs_fish:tropical", "tropická ryba",
 	"animal_fish_blue_white_fish_blue_white_item.png", 0)
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

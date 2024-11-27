@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
     Leads — Adds leads for transporting animals to Minetest.
     Copyright © 2023, Silver Sandstone <@SilverSandstone@craftodon.social>
@@ -40,3 +41,4 @@ dofile(modpath .. '/internal.lua');
 dofile(modpath .. '/items.lua');
 dofile(modpath .. '/leads.lua');
 dofile(modpath .. '/knots.lua');
+ch_base.close_mod(minetest.get_current_modname())

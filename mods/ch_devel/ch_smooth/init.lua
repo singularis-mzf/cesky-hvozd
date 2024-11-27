@@ -1,10 +1,10 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 TODO:
 [ ] implementovat podporu tvarů vysokých dva bloky a jejich osamostatněných polovin
 [ ] pod vodou používat výhradně pobřežní tvary, pokud existují
 [ ] vyladit chování se stromy, květinami apod.
 ]]
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local ch_smooth = {
 	rollback_log = {},
@@ -76,4 +76,4 @@ minetest.register_tool("ch_smooth:wand", def)
 
 ch_smooth = nil
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

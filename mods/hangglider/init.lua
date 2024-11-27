@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator("hangglider")
 local has_player_monoids = minetest.get_modpath("player_monoids")
 local has_areas = minetest.get_modpath("areas")
@@ -244,3 +245,4 @@ minetest.register_tool("hangglider:hangglider", {
 })
 
 dofile(minetest.get_modpath("hangglider").."/crafts.lua")
+ch_base.close_mod(minetest.get_current_modname())

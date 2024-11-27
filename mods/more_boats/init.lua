@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator("more_boats")
 local modpath = minetest.get_modpath("more_boats")
 
@@ -317,3 +318,4 @@ register_boat("pine_boat", {
 	textures = {"default_pine_wood.png"},
 	wood_item = "default:pine_wood",
 })
+ch_base.close_mod(minetest.get_current_modname())

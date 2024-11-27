@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- from Bushes classic mod (originally by unknown, maintained by VanessaE),
 -- reduced by Singularis
 
@@ -216,3 +217,4 @@ minetest.register_craft({
 		{ "bushes:mixed_berry_pie_cooked" },
 	},
 })
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 -- Function that get the input/output rules of the delayer
 local delayer_get_output_rules = function(node)
@@ -174,4 +174,4 @@ minetest.register_craft({
 		{"mesecons_gamecompat:cobble","mesecons_gamecompat:cobble", "mesecons_gamecompat:cobble"},
 	}
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

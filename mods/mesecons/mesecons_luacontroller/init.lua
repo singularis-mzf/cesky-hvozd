@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --        ______
 --       |
 --       |
@@ -28,7 +29,6 @@
 -- (see where local env is defined)
 -- Something nice to play is is appending minetest.env to it.
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local BASENAME = "mesecons_luacontroller:luacontroller"
 
@@ -941,4 +941,4 @@ minetest.register_craft({
 		{'group:mesecon_conductor_craftable', 'group:mesecon_conductor_craftable', ''},
 	}
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

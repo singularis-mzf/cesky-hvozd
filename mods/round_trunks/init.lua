@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
     Round Tree Trunks - Turns cubic tree trunks into cylindrical.
 	Copyright © 2018, 2020 Hamlet and contributors.
@@ -20,7 +21,6 @@
 	and limitations under the Licence.
 
 --]]
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 round_trunks = {}
 
@@ -116,4 +116,4 @@ minetest.override_item('default:aspen_tree', t_TEXTURES_ASPEN_TREE)
 minetest.override_item('default:pine_tree', t_TEXTURES_PINE_TREE)
 minetest.override_item('default:tree', t_TEXTURES_DEFAULT_TREE)
 ]]
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

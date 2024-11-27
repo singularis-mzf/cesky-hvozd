@@ -1,9 +1,9 @@
+ch_base.open_mod(minetest.get_current_modname())
 
 -- Baked Clay by TenPlus1
 
 local S = minetest.get_translator("bakedclay")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local clay = {
 	{"natural", S("Natural")},
@@ -329,4 +329,4 @@ if minetest.get_modpath("flowerpot") then
 	flowerpot.register_node("bakedclay:mannagrass")
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

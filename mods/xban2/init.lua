@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 
 xban = { MP = minetest.get_modpath(minetest.get_current_modname()) }
 
@@ -416,3 +417,4 @@ minetest.after(1, check_temp_bans)
 
 dofile(xban.MP.."/dbimport.lua")
 dofile(xban.MP.."/gui.lua")
+ch_base.close_mod(minetest.get_current_modname())

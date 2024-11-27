@@ -1,7 +1,7 @@
+ch_base.open_mod(minetest.get_current_modname())
 --Minetest 0.4.7 mod: concrete
 --(c) 2013 by RealBadAngel <mk@realbadangel.pl>
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local technic = rawget(_G, "technic") or {}
 technic.concrete_posts = {}
@@ -144,4 +144,4 @@ for platform = 0, 1 do
 end
 ]]
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

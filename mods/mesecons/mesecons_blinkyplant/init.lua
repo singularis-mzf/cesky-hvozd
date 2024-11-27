@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- The BLINKY_PLANT
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local minimal_interval = 0.2
 local default_interval = 3
@@ -369,4 +369,4 @@ minetest.register_lbm{
 	end,
 }
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 --provides shorter names for the commands in `worldedit_commands`
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 worldedit.alias_command = function(alias, original)
 	if not worldedit.registered_commands[original] then
@@ -53,4 +53,4 @@ worldedit.alias_command("l", "lua")
 worldedit.alias_command("lt", "luatransform")
 worldedit.alias_command("clro", "clearobjects")
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- SPDX-FileCopyrightText: 2022 David Hurka <doxydoxy@mailbox.org>
 --
 -- SPDX-License-Identifier: MIT OR LGPL-2.1-or-later
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 advtrains_attachment_offset_patch = {};
 
@@ -72,4 +72,4 @@ end
 dofile(minetest.get_modpath("advtrains_attachment_offset_patch") .. "/dummy.lua");
 dofile(minetest.get_modpath("advtrains_attachment_offset_patch") .. "/api.lua");
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local MODPATH = minetest.get_modpath(minetest.get_current_modname())
 
 local depends = {
@@ -29,3 +30,4 @@ include("lights.lua")
 -- include("mobs.lua")
 -- include("stocking.lua")
 include("misc.lua")
+ch_base.close_mod(minetest.get_current_modname())

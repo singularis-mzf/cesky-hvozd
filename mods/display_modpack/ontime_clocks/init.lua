@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
     ontime_clocks mod for Minetest - Clock nodes displaying ingame time 
     (c) Pierre-Yves Rollo
@@ -18,7 +19,6 @@
     along with ontime_clocks.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 ontime_clocks = {}
 ontime_clocks.name = minetest.get_current_modname()
@@ -32,4 +32,4 @@ dofile(ontime_clocks.path.."/common.lua")
 dofile(ontime_clocks.path.."/nodes.lua")
 dofile(ontime_clocks.path.."/crafts.lua")
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

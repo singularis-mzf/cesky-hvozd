@@ -1,7 +1,7 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator("homedecor_cobweb")
 homedecor_cobweb = {}
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 homedecor.register("cobweb_corner", {
 	description = S("Cobweb"),
@@ -172,4 +172,4 @@ function homedecor_cobweb.rotate(pos)
 
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

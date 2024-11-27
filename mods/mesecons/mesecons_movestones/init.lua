@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- MOVESTONE
 -- Non-sticky:
 -- Moves along mesecon lines
@@ -8,7 +9,6 @@
 -- Pushes all block in front of it
 -- Pull all blocks in its back
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 -- settings:
 local timer_interval = 1 / mesecon.setting("movestone_speed", 3)
@@ -237,5 +237,5 @@ minetest.register_alias("mesecons_movestones:movestone_active",
 minetest.register_alias("mesecons_movestones:sticky_movestone_active",
 		"mesecons_movestones:sticky_movestone")
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
+ch_base.close_mod(minetest.get_current_modname())

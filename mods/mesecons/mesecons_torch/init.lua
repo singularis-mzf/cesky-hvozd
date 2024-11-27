@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 --MESECON TORCHES
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local rotate_torch_rules = function (rules, param2)
 	if param2 == 5 then
@@ -128,4 +128,4 @@ minetest.register_abm({
 -- 2 = x+1
 -- 0 = y+1
 -- 1 = y-1
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator("homedecor_pictures_and_paintings")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local wood_tex = homedecor.textures.default_wood
 
@@ -177,4 +177,4 @@ if minetest.get_modpath("i3") then
 	})
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

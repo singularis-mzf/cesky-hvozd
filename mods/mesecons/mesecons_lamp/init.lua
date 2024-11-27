@@ -1,7 +1,7 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- MESELAMPS
 -- A lamp is "is an electrical device used to create artificial light" (wikipedia)
 -- guess what?
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local mesecon_lamp_box = {
 	type = "wallmounted",
@@ -70,4 +70,4 @@ minetest.register_craft({
 		{"", "mesecons_gamecompat:glass", ""},
 	}
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 -- local variables
 local l_spawn_chance = 60000
@@ -194,4 +194,4 @@ if ENABLE_SWIMMERS then
 	mobs:register_egg("mobs_crocs:crocodile_swim", "krokodýl (plavavé povahy)",
 		"default_grass.png", 1)
 end
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 local S = minetest.get_translator("hudbars")
 local N = function(s) return s end
@@ -568,4 +568,4 @@ minetest.register_globalstep(function(dtime)
 	end
 	if timer > 4 then timer = 0 end
 end)
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

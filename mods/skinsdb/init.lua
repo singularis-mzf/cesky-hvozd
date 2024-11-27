@@ -1,10 +1,10 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Unified Skins for Minetest - based modified Bags from unfied_inventory and skins from inventory_plus
 
 -- Copyright (c) 2012 cornernote, Dean Montgomery
 -- Rework 2017 by bell07
 -- License: GPLv3
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 skins = {}
 skins.modpath = minetest.get_modpath(minetest.get_current_modname())
@@ -102,4 +102,4 @@ minetest.register_allow_player_inventory_action(function(player, action, inv, da
 		return 0
 	end
 end)
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

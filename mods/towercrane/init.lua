@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 
 	Tower Crane Mod
@@ -21,7 +22,6 @@
 	+--------+  - dir as "(0,0,1)"
 ]]--
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 -- for lazy programmers
 local P2S = function(pos) if pos then return minetest.pos_to_string(pos) end end
@@ -414,4 +414,4 @@ towercrane.turnright = turnright
 towercrane.turnleft = turnleft
 towercrane.is_my_crane = is_my_crane
 towercrane.get_crane_data = get_crane_data
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

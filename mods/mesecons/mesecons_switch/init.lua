@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- mesecons_switch
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 mesecon.register_node("mesecons_switch:mesecon_switch", {
 	paramtype2="facedir",
@@ -36,4 +36,4 @@ minetest.register_craft({
 		{"group:mesecon_conductor_craftable","", "group:mesecon_conductor_craftable"},
 	}
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

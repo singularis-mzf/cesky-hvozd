@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Unified Inventory Plus for Minetest 0.4.8+
 
 local modname = minetest.get_current_modname()
@@ -57,3 +58,4 @@ end
 if uip.settings.enable_craft_clear then
     dofile(modpath .. "/craft_clear.lua")
 end
+ch_base.close_mod(minetest.get_current_modname())

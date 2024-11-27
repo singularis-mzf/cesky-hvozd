@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 
 -- local variables
 local l_spawn_chance_gull	= 24000
@@ -183,3 +184,4 @@ if ENABLE_SMALL_BIRDS then
 		mobs:register_egg(mobname, "malý "..info[2], info[5], 1)
 	end
 end
+ch_base.close_mod(minetest.get_current_modname())

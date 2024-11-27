@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Home Decor mod by VanessaE
 --
 -- Mostly my own code, with bits and pieces lifted from Minetest's default
@@ -9,7 +10,6 @@
 
 local S = minetest.get_translator("homedecor_misc")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 homedecor_misc = {}
 
@@ -1046,4 +1046,4 @@ minetest.register_node(":homedecor:japanese_wall_bottom", {
 	sounds = default.node_sound_wood_defaults(),
 })
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

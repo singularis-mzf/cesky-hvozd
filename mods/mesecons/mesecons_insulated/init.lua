@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 local are_wires_walkable = mesecon.is_wire_walkable()
 
@@ -92,4 +92,4 @@ minetest.register_craft({
 		{"mesecons_materials:fiber", "mesecons_materials:fiber", "mesecons_materials:fiber"},
 	}
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

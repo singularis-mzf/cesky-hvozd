@@ -1,10 +1,10 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Home decor seating
 -- forked from the previous lrfurn mod
 
 local S = minetest.get_translator("homedecor_seating")
 local modpath = minetest.get_modpath("homedecor_seating")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 lrfurn = {}
 
@@ -132,4 +132,4 @@ dofile(modpath.."/sofas.lua")
 dofile(modpath.."/armchairs.lua")
 dofile(modpath.."/misc.lua")
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --------------------------------------------------------
 -- Minetest :: Extra Doors v2.0 (extra_doors)
 --
@@ -8,7 +9,6 @@
 -- One of the most essential but often overlooked elements of building design is door selection.
 -- Doors set the tone and character, and having the wrong style of door can make or break a build.
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local steel_rod = "basic_materials:steel_bar"
 
@@ -295,4 +295,4 @@ minetest.register_craft( {
 	burntime = 12,
 } )
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

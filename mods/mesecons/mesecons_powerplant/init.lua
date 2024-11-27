@@ -1,7 +1,7 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- The POWER_PLANT
 -- Just emits power. always.
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 minetest.register_node("mesecons_powerplant:power_plant", {
 	drawtype = "plantlike",
@@ -33,4 +33,4 @@ minetest.register_craft({
 		{"group:sapling"},
 	}
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

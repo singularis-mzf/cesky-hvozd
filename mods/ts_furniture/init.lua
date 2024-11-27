@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 ts_furniture = {}
 
 -- If true, you can sit on chairs and benches, when right-click them.
@@ -285,4 +285,4 @@ if minetest.get_modpath("ethereal") then
 	ts_furniture.register_furniture("ethereal:yellow_wood", "Healing Tree")
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

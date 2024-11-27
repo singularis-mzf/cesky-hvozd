@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --- WorldEdit mod for the Minetest engine
 -- @module worldedit
 -- @release 1.3
@@ -8,7 +9,6 @@
 -- @author Bret O'Donnel (cornernote)
 -- @author ShadowNinja
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 worldedit = {}
 
@@ -43,4 +43,4 @@ if minetest.settings:get_bool("worldedit_run_tests") then
 	dofile(path .. "/test.lua")
 	minetest.after(0, worldedit.run_tests)
 end
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

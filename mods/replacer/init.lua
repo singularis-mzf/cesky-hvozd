@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 
           
 --[[
@@ -46,7 +47,6 @@
 --            * receipe changed
 --            * inventory image added
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")    
 -- adds a function to check ownership of a node; taken from VanessaEs homedecor mod
 dofile(minetest.get_modpath("replacer").."/check_owner.lua");
 
@@ -304,4 +304,4 @@ minetest.register_craft({
 	},
 })
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

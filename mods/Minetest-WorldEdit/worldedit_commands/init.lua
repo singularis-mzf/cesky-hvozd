@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 minetest.register_privilege("worldedit", "Umožňuje používat příkazy Editoru světa")
 
@@ -1662,4 +1662,4 @@ worldedit.register_command("clearobjects", {
 		worldedit.player_notify(name, S("@1 objects cleared", count))
 	end,
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

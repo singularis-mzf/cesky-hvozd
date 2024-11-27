@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Various home electronics
 
 local S = minetest.get_translator("homedecor_electronics")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 homedecor.register("speaker", {
 	description = S("Large Stereo Speaker"),
@@ -285,4 +285,4 @@ minetest.register_craft({
 	burntime = 30,
 })
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

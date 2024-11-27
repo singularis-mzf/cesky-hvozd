@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- SPDX-FileCopyrightText: 2021 David Hurka <doxydoxy@mailbox.org>
 --
 -- SPDX-License-Identifier: CC0-1.0 OR MIT
 --
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 morelights_dim.register_texture_for_dimming("morelights_vintage_block.png");
 morelights_dim.register_texture_for_dimming("morelights_vintage_block_bg.png");
 morelights_dim.register_texture_for_dimming(
@@ -29,4 +29,4 @@ do
             "[combine:2x16:0,8=[combine\\:2x16\\:0,-8=morelights_vintage_oil_flame.png^[multiply:#dddddd";
     minetest.register_node(":morelights_vintage:oillamp_morelights_dim_off", off);
 end
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

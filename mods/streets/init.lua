@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 	## StreetsMod 2.0 ##
 	Submod: streetsmod
@@ -48,3 +49,4 @@ streets.load_submod("streets_laneuse")
 
 -- Let the API register everything and finish the setup
 dofile(streets.conf.modpath .. "/api_register_all.lua")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- yaw values:
 -- x+ = -pi/2
 -- x- = +pi/2
@@ -868,3 +869,4 @@ minetest.register_on_mods_loaded(function()
 --		minetest.log("error","Mobkit namespace inconsistent, has been modified by other mods.")
 --	end
 end)
+ch_base.close_mod(minetest.get_current_modname())

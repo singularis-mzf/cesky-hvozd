@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- 3D Mushroom mod by VanessaE
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 mushroom = {}
 
 minetest.override_item("flowers:mushroom_fertile_brown", {
@@ -64,4 +64,4 @@ minetest.register_alias("mushroom:poison", "flowers:mushroom_red")
 minetest.register_alias("mushroom:identifier", "default:mese_crystal_fragment")
 
 -- print("[3D Mushrooms] loaded.")
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

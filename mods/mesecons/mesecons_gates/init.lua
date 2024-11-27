@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 local selection_box = {
 	type = "fixed",
@@ -167,4 +167,4 @@ register_gate("or", 2, function (val1, val2) return (val1 or val2) end,
 	 {"", "mesecons:mesecon", "mesecons:mesecon"},
 	 {"mesecons:mesecon", "", ""}},
 	"hradlo OR")
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

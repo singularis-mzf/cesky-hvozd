@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 --==========================================
 -- Candles mod by darkrose
@@ -58,3 +59,4 @@ minetest.register_node("church_candles:candelabra_flame", {
 	groups = {torch = 1, dig_immediate = 3},
 	drop = "",
 	})
+ch_base.close_mod(minetest.get_current_modname())

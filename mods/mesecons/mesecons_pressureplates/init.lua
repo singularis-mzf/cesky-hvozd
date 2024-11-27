@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 local pp_box_off = {
 	type = "fixed",
@@ -119,4 +119,4 @@ mesecon.register_pressure_plate(
 	{{"mesecons_gamecompat:cobble", "mesecons_gamecompat:cobble"}},
 	{ cracky = 3, oddly_breakable_by_hand = 3 },
 	mesecon.node_sound.stone)
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

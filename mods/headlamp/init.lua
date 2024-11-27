@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local battery_life = 30000
 local battery_drain = 100
 
@@ -126,3 +127,4 @@ minetest.register_craft({
 		{"farming:string", "technic:stainless_steel_ingot", "farming:string"},
 	}
 })
+ch_base.close_mod(minetest.get_current_modname())

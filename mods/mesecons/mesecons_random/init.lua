@@ -1,5 +1,5 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- REMOVESTONE
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 minetest.register_node("mesecons_random:removestone", {
 	tiles = {"jeija_removestone.png"},
@@ -78,4 +78,4 @@ minetest.register_craft({
 		{"mesecons_gamecompat:steel_ingot", "mesecons_gamecompat:cobble", "mesecons_gamecompat:steel_ingot"},
 	}
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

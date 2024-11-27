@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 		Minetest-mod "Charcoal", A mod with charcoal lumps and blocks
 		Copyright (C) 2021 J. A. Anders
@@ -21,7 +22,6 @@
 -- Mod Version 0.1
 --
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 charcoal = {}
 
@@ -113,4 +113,4 @@ minetest.register_craft({
   },  
 })
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

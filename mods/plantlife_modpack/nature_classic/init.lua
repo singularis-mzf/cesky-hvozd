@@ -1,9 +1,9 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Nature Classic mod
 -- Originally by neko259
 
 local S = minetest.get_translator("nature_classic")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 minetest.register_node(":nature:blossom", {
     description = S("Apple blossoms"),
@@ -27,4 +27,4 @@ minetest.register_craft({
     burntime = 2,
 })
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

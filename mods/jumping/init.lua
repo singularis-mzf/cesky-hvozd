@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 local trampolinebox = {
 	type = "fixed",
@@ -101,4 +101,4 @@ if minetest.get_modpath("farming") and minetest.get_modpath("wool") then
 		}
 	})
 end
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

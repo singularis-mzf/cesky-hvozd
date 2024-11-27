@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 
  Metro font for Font API
@@ -11,7 +12,6 @@
  Derivative textures and code are under CC-BY-SA license
 --]]
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 font_api.register_font(
 	'metro',
@@ -24,4 +24,4 @@ font_api.register_font(
 	  }
 );
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Miscellanous tools and mechanical contrivances
 
 local S = minetest.get_translator("home_workshop_misc")
@@ -120,3 +121,4 @@ minetest.register_alias("homedecor:tool_cabinet_top",    "air")
 minetest.register_alias("homedecor:beer_tap",            "home_workshop_misc:beer_tap")
 minetest.register_alias("homedecor:beer_mug",            "home_workshop_misc:beer_mug")
 -- minetest.register_alias("homedecor:coin",                "currency:minegeld_cent_25")
+ch_base.close_mod(minetest.get_current_modname())

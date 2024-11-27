@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator("homedecor_bedroom")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local sc_disallow = minetest.get_modpath("screwdriver") and screwdriver.disallow or nil
 
@@ -391,4 +391,4 @@ unifieddyes.register_color_craft({
 	}
 })
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

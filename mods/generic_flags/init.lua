@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --------------------------------------------------------
 -- Minetest :: Generic Flags Mod (flags)
 --
@@ -835,3 +836,4 @@ minetest.register_craft({
 	type = "shapeless",
 	recipe = {"generic_flags:sk", "technic:control_logic_unit"},
 })
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- This file supplies Kitchen stuff like refrigerators, sinks, etc.
 
 local S = minetest.get_translator("homedecor_kitchen")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 -- steel-textured fridge
 homedecor.register("refrigerator_steel", {
@@ -792,4 +792,4 @@ minetest.register_lbm({
 	end
 })
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 
 local modpath = minetest.get_modpath("wrench")
 
@@ -58,3 +59,4 @@ for _, mod in pairs(mods) do
 		dofile(modpath.."/nodes/"..mod..".lua")
 	end
 end
+ch_base.close_mod(minetest.get_current_modname())

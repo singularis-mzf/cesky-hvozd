@@ -1,5 +1,5 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Advtrains line automation system
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 advtrains.lines = {
 	-- [station code] = {name=..., owner=...}
 	stations = {},
@@ -45,4 +45,4 @@ function advtrains.lines.step(dtime)
 	advtrains.lines.rwt.step(dtime)
 	advtrains.lines.sched.run()
 end
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

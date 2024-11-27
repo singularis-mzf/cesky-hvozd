@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Licensed under CC0.
 -- Painting textures from Stunt Rally <https://code.google.com/p/vdrift-ogre/>, licensed under CC0.
 
@@ -49,3 +50,4 @@ for _, row in ipairs(paintings.dyes) do
 		}
 	})
 end
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local modules = {}
 for _, file in pairs{
 	"schema",
@@ -144,4 +145,5 @@ end
 -- dofile(modlib.mod.get_resource("modlib", "build", "html_entities.lua"))
 
 -- TODO verify localizations suffice
+ch_base.close_mod(minetest.get_current_modname())
 return modlib

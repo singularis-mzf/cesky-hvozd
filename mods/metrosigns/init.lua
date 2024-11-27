@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 ---------------------------------------------------------------------------------------------------
 -- metrosigns mod for minetest by A S Lewis
 --      https://github.com/axcore/metrosigns
@@ -245,3 +246,4 @@ end
 dofile(metrosigns.path_mod.."/trainblocks.lua") -- Original material from trainblocks by Maxx
 dofile(metrosigns.path_mod.."/customsigns.lua") -- Signs with customisable text (designed to be used alongside the map nodes). Requires signs_api from display_modpack
 dofile(metrosigns.path_mod.."/machine.lua") -- Sign-writing machines and ink cartridges
+ch_base.close_mod(minetest.get_current_modname())

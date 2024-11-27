@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 minetest.register_node("craftable_lava:hot_stone", {
 	description = "vřelá skála",
@@ -80,4 +80,4 @@ abm_def = {
 }
 minetest.register_abm(abm_def)
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

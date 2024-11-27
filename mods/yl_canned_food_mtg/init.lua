@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Version 1.0.1
 -- Author AliasAlreadyTaken
 -- License MIT
@@ -27,3 +28,4 @@ dofile(yl_canned_food_mtg.modpath .. "features.lua")
 
 local mod_end_time = (minetest.get_us_time() - mod_start_time) / 1000000
 minetest.log("action", "[MOD] yl_canned_food_mtg loaded in [" .. mod_end_time .. "s]")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local mod_name = minetest.get_current_modname()
 
 -- Node replacements that emit light
@@ -642,3 +643,4 @@ wielded_light.register_lightable_node("default:river_water_source", nil, "river_
 
 ---TEST
 --wielded_light.register_item_light('default:dirt', 14)
+ch_base.close_mod(minetest.get_current_modname())

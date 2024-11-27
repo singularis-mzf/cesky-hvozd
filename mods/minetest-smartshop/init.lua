@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local modname = minetest.get_current_modname()
 local modpath = minetest.get_modpath(modname)
 local S = minetest.get_translator(modname)
@@ -60,3 +61,4 @@ end
 
 --------------------------------
 smartshop.dofile = nil  -- no need to export this, not sure whether it's dangerous
+ch_base.close_mod(minetest.get_current_modname())

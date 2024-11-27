@@ -1,10 +1,10 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- HYDRO_TURBINE
 -- Water turbine:
 -- Active if flowing >water< above it
 -- (does not work with other liquids)
 
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 minetest.register_node("mesecons_hydroturbine:hydro_turbine_off", {
 	drawtype = "mesh",
@@ -106,4 +106,4 @@ minetest.register_craft({
 	}
 })
 
-print("[MOD END]" .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

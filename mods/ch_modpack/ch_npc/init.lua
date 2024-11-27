@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 -- local S = minetest.get_translator("ch_npc")
 
@@ -33,5 +33,5 @@ for _, filename in ipairs(lua_files) do
 	mydofile(filename)
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
+ch_base.close_mod(minetest.get_current_modname())

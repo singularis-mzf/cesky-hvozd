@@ -1,9 +1,9 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- This mod provides the visible text on signs library used by Home Decor
 -- and perhaps other mods at some point in the future.  Forked from thexyz's/
 -- PilzAdam's original text-on-signs mod and rewritten by Vanessa Ezekowitz
 -- and Diego Martinez
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 signs_lib = {}
 
@@ -16,4 +16,4 @@ dofile(signs_lib.path.."/encoding.lua")
 dofile(signs_lib.path.."/api.lua")
 dofile(signs_lib.path.."/standard_signs.lua")
 dofile(signs_lib.path.."/compat.lua")
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 	Teleporter networks that allow players to choose a destination out of a list
 	Copyright (C) 2013 Sokomine
@@ -17,7 +18,6 @@
 
 --]]
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 -- integration test
 if minetest.settings:get_bool("travelnet.enable_travelnet_integration_test") then
@@ -151,4 +151,4 @@ travelnet.player_formspec_data = nil
 -- ch_core integration:
 ch_core.default_teleport_sound = {name = "travelnet_travel", gain = 0.75}
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

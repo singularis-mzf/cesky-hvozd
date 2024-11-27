@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
     Dense Ores mod for Minetest
     Copyright (C) 2021 benedict424
@@ -26,7 +27,6 @@ Large, small
 
 local S = minetest.get_translator("denseores")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 denseores_modpath = minetest.get_modpath("denseores")
 
@@ -238,4 +238,4 @@ if minetest.get_modpath("moreores") then		--Thank you Kazea of the Minetest Four
 	dofile(denseores_modpath .. "/mo.lua")
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

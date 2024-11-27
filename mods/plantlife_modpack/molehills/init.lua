@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 -----------------------------------------------------------------------------------------------
 -- Idea by Sokomine
 -- Code & textures by Mossmanikin
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 abstract_molehills = {}
 
 local molehills_rarity = tonumber(minetest.settings:get("molehills_rarity")) or 99.5
@@ -102,4 +102,4 @@ biome_lib.register_on_generate({
 	abstract_molehills.place_molehill
 )
 ]]
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

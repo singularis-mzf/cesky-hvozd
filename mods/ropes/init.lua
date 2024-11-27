@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 ropes = {
   name = 'ropes',
 }
@@ -64,4 +64,4 @@ minetest.register_alias("castle:ropes", "ropes:rope")
 minetest.register_alias("castle:ropebox", "ropes:steel1rope_block")
 minetest.register_alias("castle:box_rope", "ropes:rope")
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

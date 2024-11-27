@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 sausages = {
 	S = minetest.get_translator(minetest.get_current_modname()),
 	log = function(lvl,msg)
@@ -17,3 +18,4 @@ end
 
 require("sausages")
 require("crafting")
+ch_base.close_mod(minetest.get_current_modname())

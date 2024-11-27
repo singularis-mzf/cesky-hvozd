@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 local modname = minetest.get_current_modname()
 local modpath = minetest.get_modpath(modname)
@@ -24,4 +24,4 @@ mydofile("nodes.lua")
 mydofile("formspec.lua")
 mydofile("functions.lua")
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

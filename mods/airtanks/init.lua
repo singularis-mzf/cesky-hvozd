@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator(minetest.get_current_modname())
 
 local print_settingtypes = false
@@ -610,3 +611,4 @@ minetest.register_lbm({
 		compressor_construct(pos)
 	end,
 })
+ch_base.close_mod(minetest.get_current_modname())

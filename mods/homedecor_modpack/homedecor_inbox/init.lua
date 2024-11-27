@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator("inbox")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local inbox = {}
 
@@ -129,4 +129,4 @@ function inbox.get_inbox_insert_formspec(pos)
 	return formspec
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator("homedecor_clocks")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local wood
 if minetest.get_modpath("default") then
@@ -161,4 +161,4 @@ homedecor.register("grandfather_clock", {
 minetest.register_alias("homedecor:grandfather_clock_bottom", "homedecor:grandfather_clock")
 minetest.register_alias("homedecor:grandfather_clock_top", "air")
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

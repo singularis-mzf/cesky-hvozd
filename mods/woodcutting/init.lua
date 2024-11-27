@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 woodcutting = {}
 
 local mod_storage = minetest.get_mod_storage()
@@ -485,3 +486,4 @@ minetest.register_on_leaveplayer(function(player)
 		process:stop_process()
 	end
 end)
+ch_base.close_mod(minetest.get_current_modname())

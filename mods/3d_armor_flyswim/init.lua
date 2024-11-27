@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --------------------------------------------------------------------------------------
 --            ________      .___    _____                                           --
 --            \_____  \   __| _/   /  _  \_______  _____   ___________              --
@@ -358,3 +359,4 @@ minetest.register_globalstep(function()
 		online_charinfo.head_offset = offset
 	end
 end)
+ch_base.close_mod(minetest.get_current_modname())

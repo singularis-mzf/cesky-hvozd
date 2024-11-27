@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 =====================================================================
 ** More Blocks **
@@ -8,7 +9,6 @@ Licensed under the zlib license. See LICENSE.md for more information.
 =====================================================================
 --]]
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 moreblocks = {}
 
@@ -27,4 +27,4 @@ if minetest.get_modpath("default") then
     dofile(modpath .. "/crafting.lua")
     dofile(modpath .. "/aliases.lua")
 end
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

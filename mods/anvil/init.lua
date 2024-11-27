@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 ---------------------------------------------------------------------------------------
 -- simple anvil that can be used to repair tools
 ---------------------------------------------------------------------------------------
@@ -5,7 +6,6 @@
 -- * the hammer gets damaged a bit at each repair step
 ---------------------------------------------------------------------------------------
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 anvil = {
 	setting = {
@@ -506,4 +506,4 @@ minetest.register_craft({
 	}
 })
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

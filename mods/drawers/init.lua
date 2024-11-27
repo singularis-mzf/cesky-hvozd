@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 Minetest Mod Storage Drawers - A Mod adding storage drawers
 
@@ -417,3 +418,4 @@ core.register_craft({
 	}
 })
 ]]
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[ Helpers ]]--
 
 local S = minetest.get_translator("bike")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 -- Skin mod detection
 local skin_mod
@@ -983,4 +983,4 @@ minetest.override_item("basic_materials:padlock", {
 	_ch_help = "Levým klikem na svoje kolo je zamknete, nebo naopak odstraníte existující zámek.",
 })
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

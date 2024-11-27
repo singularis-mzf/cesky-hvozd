@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- [Mod] Simple Arcs [pkarcs]
 -- by PEAK
 -- 06-05-2017
@@ -19,7 +20,6 @@ end
 
 --]]
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 pkarcs = {}
 
@@ -393,4 +393,4 @@ pkarcs.register_node("default:pine_wood")
 pkarcs.register_node("default:acacia_wood")
 pkarcs.register_node("default:aspen_wood")
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

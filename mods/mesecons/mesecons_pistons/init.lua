@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 local specs = {
 	normal = {
@@ -483,4 +483,4 @@ minetest.register_alias("mesecons:piston", "mesecons:piston_normal_off")
 
 -- load legacy code
 dofile(minetest.get_modpath("mesecons_pistons").."/legacy.lua")
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

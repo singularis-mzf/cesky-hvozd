@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 local path = minetest.get_modpath(minetest.get_current_modname()) .. "/"
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 -- Check for translation method
 local S
@@ -60,4 +60,4 @@ end
 -- Lucky Blocks
 dofile(path .. "lucky_block.lua")
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

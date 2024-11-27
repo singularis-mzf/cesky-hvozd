@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator(minetest.get_current_modname())
 
 local ring_big_bell = function(pos)
@@ -233,4 +233,4 @@ if minetest.get_modpath("mcl_core") then
 		},
 	})
 end
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

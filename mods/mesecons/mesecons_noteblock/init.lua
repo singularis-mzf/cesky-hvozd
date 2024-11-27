@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 minetest.register_node("mesecons_noteblock:noteblock", {
 	description = "hudební blok",
@@ -102,4 +102,4 @@ mesecon.noteblock_play = function(pos, param2)
 		minetest.sound_play(soundname, {pos = pos}, true)
 	end
 end
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

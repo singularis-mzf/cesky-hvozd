@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator("homedecor_foyer")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 homedecor.register("coatrack_wallmount", {
 	tiles = { homedecor.plain_wood },
@@ -120,4 +120,4 @@ for _, mat in ipairs(mat_colors) do
 	})
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

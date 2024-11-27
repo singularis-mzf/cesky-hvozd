@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 ---
 ---Mask
 ---
@@ -68,4 +68,4 @@ clothing.sewing_table:recipe_register_input("", {
 	production_time = 40,
 	consumption_step_size = 1,
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

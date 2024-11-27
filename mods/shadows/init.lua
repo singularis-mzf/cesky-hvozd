@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 local shadows = {
 	map_params = {
 		decay_minimum_light = 3,
@@ -422,4 +422,4 @@ minetest.register_on_placenode(function(pos)
 	local block = to_block_pos(pos, shadows.map_params.blocksize)
 	shadows:mark_block_dirty(block)
 end)
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

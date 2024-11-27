@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- This file supplies the majority of homedecor's lighting
 
 local S = minetest.get_translator("homedecor_lighting")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 homedecor_lighting = {}
 
@@ -1893,4 +1893,4 @@ if minetest.get_modpath("darkage") then
 	end
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

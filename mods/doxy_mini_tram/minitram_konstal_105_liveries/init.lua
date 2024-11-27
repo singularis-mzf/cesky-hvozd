@@ -1,10 +1,10 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- SPDX-FileCopyrightText: 2022 David Hurka <doxydoxy@mailbox.org>
 --
 -- SPDX-License-Identifier: CC0-1.0 OR MIT
 
 local S = minetest.get_translator("minitram_konstal_105_liveries");
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 minitram_konstal_105_liveries = {};
 
@@ -347,4 +347,4 @@ function minitram_konstal_105_liveries.add_liveries_konstal_105(wagon_definition
     multi_component_liveries.setup_advtrains_wagon(wagon_definition, livery_definition, livery_texture_slot);
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

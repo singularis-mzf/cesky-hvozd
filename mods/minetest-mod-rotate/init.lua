@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 local wrench_debug = 0
 
@@ -83,6 +83,6 @@ dofile(modpath .. "/register_default.lua")
 -- make private stuff inaccessible
 _G[mod_name] = module.api
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())
 return module.api
 

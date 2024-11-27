@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 
 Unified Dyes
@@ -29,7 +30,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 --=====================================================================
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 unifieddyes = {}
 
@@ -86,4 +86,4 @@ dofile(modpath.."/aliases.lua")
 
 -- print("[UnifiedDyes] Loaded!")
 unifieddyes.init = true
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

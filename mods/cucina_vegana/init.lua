@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 	**********************************************
 	***             Cucina Vegana              ***
@@ -176,3 +177,4 @@ else
 	minetest.log("info", "[MOD] " .. modname .. " Version " .. cucina_vegana.version .. " in redo-mode loaded.")
 
 end
+ch_base.close_mod(minetest.get_current_modname())

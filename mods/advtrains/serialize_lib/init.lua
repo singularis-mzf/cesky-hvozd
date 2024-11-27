@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- serialize_lib
 --[[
 	Copyright (C) 2020  Moritz Blei (orwell96) and contributors
@@ -13,7 +14,6 @@
     GNU Affero General Public License for more details.
 ]]--
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 serialize_lib = {}
 
@@ -75,4 +75,4 @@ function serialize_lib.write_table_to_file(root_table, filename)
 	return true
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = attrans
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 advtrains.register_wagon("engine_industrial", {
 	mesh="advtrains_engine_industrial.b3d",
@@ -165,4 +165,4 @@ minetest.register_craft({
 	},
 })
 ]]
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

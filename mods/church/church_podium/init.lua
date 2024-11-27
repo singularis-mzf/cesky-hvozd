@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 
 local podiums = {}
 
@@ -99,3 +100,4 @@ for _, row in ipairs(podiums.materials) do
 	end
 
 end
+ch_base.close_mod(minetest.get_current_modname())

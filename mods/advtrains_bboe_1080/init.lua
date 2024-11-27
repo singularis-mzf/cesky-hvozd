@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = attrans
 
 advtrains.register_wagon("engine_BBOE_1080", {
@@ -114,3 +115,4 @@ minetest.register_craft({
 		{"advtrains:wheel", "", "advtrains:wheel"},
 	},
 })
+ch_base.close_mod(minetest.get_current_modname())

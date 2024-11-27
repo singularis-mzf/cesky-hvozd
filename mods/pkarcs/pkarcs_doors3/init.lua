@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 screwdriver = screwdriver or {}
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 pkarcs_doors3 = {}
 
@@ -453,4 +453,4 @@ for _, row in ipairs(pkarcs_doors3.door) do
 		}
 	})
 end
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

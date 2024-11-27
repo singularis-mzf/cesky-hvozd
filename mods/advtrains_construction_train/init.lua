@@ -1,5 +1,5 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = attrans
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 function round_down(pos)
    return {x=math.floor(pos.x), y=math.floor(pos.y), z=math.floor(pos.z)}
@@ -199,4 +199,4 @@ minetest.register_craft({
 	},
 })
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

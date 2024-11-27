@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 	Farming Redo Mod
 	by TenPlus1
@@ -5,7 +6,6 @@
 	auto-refill by crabman77
 ]]
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 farming = {
 	mod = "redo",
@@ -776,4 +776,4 @@ dofile(farming.path .. "/compatibility.lua") -- Farming Plus compatibility
 dofile(farming.path .. "/fishing.lua")
 dofile(farming.path .. "/lucky_block.lua")
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

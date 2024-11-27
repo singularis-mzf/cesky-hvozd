@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local modpath = minetest.get_modpath("technic_recipes")
 
 if minetest.get_modpath("df_farming") then
@@ -48,3 +49,4 @@ technic.register_grinder_recipe({input = {"pipeworks:pipe_1_empty 2"}, output = 
 
 technic.register_grinder_recipe({input = {"technic:carbon_plate"}, output = "technic:coal_dust 12"})
 technic.register_grinder_recipe({input = {"technic:copper_plate"}, output = "technic:copper_dust 5"})
+ch_base.close_mod(minetest.get_current_modname())

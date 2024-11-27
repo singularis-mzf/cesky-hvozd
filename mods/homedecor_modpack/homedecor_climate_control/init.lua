@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Nodes that would affect the local temperature e.g. fans, heater, A/C
 
 local S = minetest.get_translator("homedecor_climate_control")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 homedecor.register("air_conditioner", {
 	description = S("Air Conditioner"),
@@ -221,4 +221,4 @@ minetest.register_craft( {
     },
 })
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

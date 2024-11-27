@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 
 cheese = {}
 cheese.aged_cheeses = {"parmesan","fontal","gruyere","emmental","monteray_jack","asiago","toma","gouda","gorgonzola","stilton","brie","stracchino"}-- full list of cheeses
@@ -69,3 +70,4 @@ if minetest.get_modpath("awards") then
 	dofile(path .. "awards.lua")
 end
 ]]
+ch_base.close_mod(minetest.get_current_modname())

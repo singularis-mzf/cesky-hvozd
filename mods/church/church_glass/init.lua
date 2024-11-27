@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --------------------
 -- Register Nodes
 --------------------
@@ -435,3 +436,4 @@ minetest.register_craft{
 		{"", ""},
 	},
 }
+ch_base.close_mod(minetest.get_current_modname())

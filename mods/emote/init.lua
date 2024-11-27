@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local modname = minetest.get_current_modname()
 local modpath = minetest.get_modpath(modname)
 local S = minetest.get_translator(modname)
@@ -124,3 +125,4 @@ minetest.register_tool("emote:sleep", {
 	end
 })
 ]]
+ch_base.close_mod(minetest.get_current_modname())

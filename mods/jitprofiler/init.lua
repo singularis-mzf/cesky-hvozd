@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local profiler_start, profiler_stop
 do
 	local ie = minetest.request_insecure_environment()
@@ -77,3 +78,4 @@ minetest.register_chatcommand("jps", {
 		return jitprofiler_start(_name, "1 p")
 	end,
 })
+ch_base.close_mod(minetest.get_current_modname())

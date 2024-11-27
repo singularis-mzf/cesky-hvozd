@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator("bridger")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local function analyze_look(placer) -- => coord, shift
 	local vlook = placer:get_look_vertical() * 8 / math.pi -- => -4..4
@@ -78,4 +78,4 @@ if minetest.settings:get_bool("Bridger_enable_alias") then
 	dofile(minetest.get_modpath("bridger") .. "/alias.lua")
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

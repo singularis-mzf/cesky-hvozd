@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- SPDX-FileCopyrightText: 2022 David Hurka <doxydoxy@mailbox.org>
 --
 -- SPDX-License-Identifier: CC0-1.0 OR MIT
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 visual_line_number_displays = {};
 
@@ -30,4 +30,4 @@ if render_manual_pictures then
 end
 ]]
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

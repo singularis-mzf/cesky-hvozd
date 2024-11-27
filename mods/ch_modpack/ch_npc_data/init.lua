@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 local function x(n, v)
 	local result = {}
@@ -29,5 +29,5 @@ ch_npc.register_npc("villager3", "Villager.b3d", x(10, "texturemedvillager.png")
 ch_npc.register_npc("villager4", "Villager.b3d", x(10, "texturenorvillager.png"), mobs_character_offset, mobs_character_collisionbox)
 ch_npc.register_npc("villager5", "Villager.b3d", x(10, "texturepapvillager.png"), mobs_character_offset, mobs_character_collisionbox)
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
+ch_base.close_mod(minetest.get_current_modname())

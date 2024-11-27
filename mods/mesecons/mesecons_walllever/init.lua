@@ -1,7 +1,7 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- WALL LEVER
 -- Basically a switch that can be attached to a wall
 -- Powers the block 2 nodes behind (using a receiver)
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 mesecon.register_node("mesecons_walllever:wall_lever", {
 	description="pákový vypínač",
@@ -64,4 +64,4 @@ minetest.register_craft({
 		{"group:stick"},
 	}
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

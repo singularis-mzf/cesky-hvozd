@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 local EEPROM_SIZE = 255
 
 local microc_rules = {}
@@ -722,4 +722,4 @@ yc.merge_portstates = function(Lreal, Lvirtual)
 	if Lvirtual.d or Lreal.d then L.d = true end
 	return L
 end
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

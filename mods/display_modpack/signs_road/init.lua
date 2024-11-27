@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
     signs_road mod for Minetest - Various road signs with text displayed
     on.
@@ -19,7 +20,6 @@
     along with signs_road.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 signs_road = {}
 signs_road.name = minetest.get_current_modname()
@@ -33,4 +33,4 @@ dofile(signs_road.path.."/nodes.lua")
 dofile(signs_road.path.."/crafts.lua")
 dofile(signs_road.path.."/compatibility.lua")
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

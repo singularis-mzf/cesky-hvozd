@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 local themename = ""
 
 dreambuilder_hotbar = {}
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 if minetest.global_exists("dreambuilder_theme") then
 	themename = dreambuilder_theme.name.."_"
@@ -87,4 +87,4 @@ minetest.register_chatcommand("lišta", chatcommand_def)
 minetest.register_chatcommand("lista", chatcommand_def)
 minetest.register_chatcommand("hotbar", chatcommand_def)
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator(minetest.get_current_modname())
 
 local modpath = minetest.get_modpath("technic_chests")
@@ -87,4 +87,4 @@ minetest.register_lbm({
 		end
 	end,
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

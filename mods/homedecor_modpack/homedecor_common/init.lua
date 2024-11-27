@@ -1,9 +1,9 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Home Decor API/functions, and common textures and models
 -- by VanessaE
 
 local modpath = minetest.get_modpath("homedecor_common")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 homedecor = {}
 homedecor.modpath = modpath
@@ -71,4 +71,4 @@ if minetest.settings:get_bool("log_mod") then
 	minetest.log("action", "[HomeDecor API] Loaded!")
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

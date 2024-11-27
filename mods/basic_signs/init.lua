@@ -1,7 +1,7 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Basic wall/yard/metal signs
 -- these were originally part of signs_lib
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 basic_signs = {}
 basic_signs.path = minetest.get_modpath(minetest.get_current_modname())
@@ -238,4 +238,4 @@ signs_lib.register_sign("basic_signs:test", {
 })
 ]]
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

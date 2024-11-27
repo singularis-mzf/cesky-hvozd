@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 mobs:register_mob("mobs_jellyfish:jellyfish", {
 	type = "animal",
@@ -43,4 +43,4 @@ mobs:spawn({
 })
 
 mobs:register_egg("mobs_jellyfish:jellyfish", "medúza", "jellyfish_inv.png", 0)
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- NOTICE: This code borrows from the `advtrains_train_track` mod
 -- maintained by orwell (https://content.minetest.net/users/orwell/)
 -- and other users. See the Advtrains git repo (https://git.bananach.space/advtrains.git)
@@ -170,3 +171,4 @@ if advtrains.station_stop_rail_additional_definition ~= nil and minetest.get_mod
 		},
 	})
 end
+ch_base.close_mod(minetest.get_current_modname())

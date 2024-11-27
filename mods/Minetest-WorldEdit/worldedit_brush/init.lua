@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 if minetest.raycast == nil then
 	error(
 		"worldedit_brush requires at least Minetest 5.0"
@@ -126,4 +126,4 @@ worldedit.register_command("brush", {
 		minetest.get_player_by_name(name):set_wielded_item(itemstack)
 	end,
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

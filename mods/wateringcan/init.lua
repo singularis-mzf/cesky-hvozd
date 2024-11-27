@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator("wateringcan")
 
 -- some lists make it extendable
@@ -111,3 +112,4 @@ if minetest.get_modpath("bucket") ~= nil then
 		replacements = {{"group:water_bucket", "bucket:bucket_empty"}}
 	})
 end
+ch_base.close_mod(minetest.get_current_modname())

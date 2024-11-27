@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 local lightstone_rules = {
 	{x=0,  y=0,  z=-1},
@@ -73,4 +73,4 @@ mesecon.lightstone_add("pink", "mesecons_gamecompat:dye_pink", "jeija_lightstone
 mesecon.lightstone_add("magenta", "mesecons_gamecompat:dye_magenta", "jeija_lightstone_magenta_off.png", "jeija_lightstone_magenta_on.png", "purpurový signální blok")
 mesecon.lightstone_add("cyan", "mesecons_gamecompat:dye_cyan", "jeija_lightstone_cyan_off.png", "jeija_lightstone_cyan_on.png", "tyrkysový signální blok")
 mesecon.lightstone_add("violet", "mesecons_gamecompat:dye_violet", "jeija_lightstone_violet_off.png", "jeija_lightstone_violet_on.png", "fialový signální blok")
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

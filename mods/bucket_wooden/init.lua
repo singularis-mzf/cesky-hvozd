@@ -1,7 +1,7 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Minetest 0.4 mod: bucket
 -- See README.txt for licensing and other information.
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 bucket.register_empty_bucket("bucket_wooden:bucket_empty", {
 	description = "prázdné vědro",
@@ -56,4 +56,4 @@ minetest.register_craft({
 	burntime = 22,
 })
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

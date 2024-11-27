@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 wine = {}
 
 local path = minetest.get_modpath("wine")
@@ -670,3 +671,4 @@ end)
 
 
 print ("[MOD] Wine loaded")
+ch_base.close_mod(minetest.get_current_modname())

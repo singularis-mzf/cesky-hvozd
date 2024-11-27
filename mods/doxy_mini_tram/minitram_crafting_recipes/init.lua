@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- SPDX-FileCopyrightText: 2022 David Hurka <doxydoxy@mailbox.org>
 -- SPDX-FileCopyrightText: 2022 Singularis <singularis@volny.cz>
 --
@@ -5,7 +6,6 @@
 
 local S = minetest.get_translator("minitram_crafting_recipes");
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 --! Returns the first registered item name from the list @p names.
 --! The empty string is considered registered.
@@ -295,4 +295,4 @@ minetest.register_craft({
     };
 });
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

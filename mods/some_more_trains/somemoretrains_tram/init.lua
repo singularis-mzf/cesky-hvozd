@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = attrans
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 -- Gets called when an entity is made - will set the right livery that was painted
 local function tram_set_textures(self, data)
     local new_textures = self.textures
@@ -205,4 +205,4 @@ minetest.register_craft({
 		{'default:steelblock', 'default:steelblock', 'default:steelblock'},
 	},
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

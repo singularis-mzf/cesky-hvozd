@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator("morelights_extras")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 minetest.register_node("morelights_extras:f_block", {
     description = S("Futuristic Light Block"),
     tiles = {"morelights_extras_f_block.png"},
@@ -243,4 +243,4 @@ minetest.register_craft({
         {a.steel, "morelights:bulb", a.steel}
     }
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

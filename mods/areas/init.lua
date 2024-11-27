@@ -1,9 +1,9 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Areas mod by ShadowNinja
 -- Based on node_ownership
 -- Modified by Singularis for Český hvozd server
 -- License: LGPLv2+
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local area_types = {
 	{number = 1, name = "normal", jmeno = "normální"}, -- ch_registered_player priv is required to build
@@ -64,4 +64,4 @@ if minetest.settings:get_bool("log_mods") then
 	minetest.log("action", "areas loaded in "..diffTime.."s.")
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

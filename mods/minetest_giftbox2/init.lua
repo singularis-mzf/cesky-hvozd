@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --------------------------------------------------------
 -- Minetest :: Giftbox2 Mod (giftbox2)
 --
@@ -116,3 +117,4 @@ minetest.register_alias( "mt_seasons:gift_box_magenta", "giftbox2:giftbox_magent
 minetest.register_alias( "mt_seasons:gift_box_yellow", "giftbox2:giftbox_yellow" )
 minetest.register_alias( "mt_seasons:gift_box_white", "giftbox2:giftbox_white" )
 minetest.register_alias( "mt_seasons:gift_box_black", "giftbox2:giftbox_black" )
+ch_base.close_mod(minetest.get_current_modname())

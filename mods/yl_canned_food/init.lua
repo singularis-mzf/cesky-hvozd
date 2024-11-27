@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Version 1.0.0
 -- Author AliasAlreadyTaken
 -- This version was modified by Singularis for Český hvozd server
@@ -24,3 +25,4 @@ dofile(yl_canned_food.modpath .. "items.lua")
 
 local mod_end_time = (minetest.get_us_time() - mod_start_time) / 1000000
 minetest.log("action", "[MOD] yl_canned_food loaded in [" .. mod_end_time .. "s]")
+ch_base.close_mod(minetest.get_current_modname())

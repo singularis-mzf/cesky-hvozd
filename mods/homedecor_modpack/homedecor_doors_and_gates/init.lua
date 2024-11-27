@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Node definitions for Homedecor doors
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 if not minetest.get_modpath("doors") or not minetest.get_modpath("default") then
 	minetest.log(
@@ -710,4 +710,4 @@ minetest.register_lbm({
 		minetest.set_node({x=pos.x, y=pos.y+1, z=pos.z}, {name = "doors:hidden"})
 	end
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

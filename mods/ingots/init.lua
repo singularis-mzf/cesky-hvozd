@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 	Ingots - allows the placemant of ingots in the world
 	Copyright (C) 2018  Skamiz Kazzarch
@@ -18,7 +19,6 @@
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 ]]--
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local IS_BIG = 1000
 
@@ -614,4 +614,4 @@ if upgrade_legacy_ingots then
 	})
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,5 +1,5 @@
+ch_base.open_mod(minetest.get_current_modname())
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 bonemeal = {}
 
@@ -693,4 +693,4 @@ minetest.register_on_mods_loaded(function()
 	end
 end)
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[ Placeable Books by everamzah
 	Copyright (C) 2016 James Stevenson
 	Copyright (C) 2023 Singularis
@@ -56,3 +57,4 @@ books.on_use = nil
 books.closed_on_rightclick = nil
 books.open_on_rightclick = nil
 books.update_infotext = nil
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 
 The MIT License (MIT)
@@ -23,7 +24,6 @@ DEALINGS IN THE SOFTWARE.
 
 local modname = minetest.get_current_modname()
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local modpath = minetest.get_modpath(modname)
 
@@ -221,4 +221,4 @@ for color, cdef in pairs(confetti_colors) do
     })
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

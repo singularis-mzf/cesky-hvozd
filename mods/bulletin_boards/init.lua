@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- TODO:
 -- There's potential race conditions in here if two players have the board open
 -- and a culling happens or they otherwise diddle around with it. For now just
@@ -736,3 +737,4 @@ local function on_joinplayer(player, last_login)
 end
 
 minetest.register_on_joinplayer(on_joinplayer)
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,7 +1,7 @@
+ch_base.open_mod(minetest.get_current_modname())
 
 -- Realistic Torch mod by TenPlus1
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 real_torch = {}
 real_torch.S = minetest.get_translator("real_torch")
 local S = real_torch.S
@@ -256,4 +256,4 @@ minetest.override_item("tnt:gunpowder", {
 	end
 })
 end
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

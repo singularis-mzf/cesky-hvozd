@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 what_is_this_uwu = dofile(minetest.get_modpath('what_is_this_uwu')..'/help.lua')
 
 minetest.register_on_joinplayer(function(player)
@@ -119,3 +120,4 @@ minetest.register_chatcommand('wituwu', {
 	end
 })
 ]]
+ch_base.close_mod(minetest.get_current_modname())

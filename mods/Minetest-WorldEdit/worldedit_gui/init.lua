@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 worldedit = worldedit or {}
 
@@ -294,4 +294,4 @@ worldedit.register_gui_handler("worldedit_gui", function(name, fields)
 end)
 
 dofile(minetest.get_modpath(minetest.get_current_modname()) .. "/functionality.lua")
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

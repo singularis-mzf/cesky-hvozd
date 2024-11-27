@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local emojis = {
 	{
 		name = "1_emoji",
@@ -201,3 +202,4 @@ minetest.register_on_chat_message(function(name, message, pos)
 		
 end)
 ]]
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 tombs = {}
 tombs.nodes = {}
 tombs.recipes = {}
@@ -83,3 +84,4 @@ for name, mdef in pairs(materials) do
 		minetest.log("warning", "Material "..name.." expected for tomb stone not found!")
 	end
 end
+ch_base.close_mod(minetest.get_current_modname())

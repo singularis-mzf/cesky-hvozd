@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- SPDX-FileCopyrightText: 2022 David Hurka <doxydoxy@mailbox.org>
 --
 -- SPDX-License-Identifier: CC0-1.0 OR MIT
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local S = minetest.get_translator("minitram_konstal_105");
 local V = vector.new;
@@ -209,4 +209,4 @@ local groups = table.copy(minetest.registered_items[item_name].groups);
 groups.minitram = 1;
 minetest.override_item(item_name, { groups = groups });
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

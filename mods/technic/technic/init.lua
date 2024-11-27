@@ -1,9 +1,9 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Minetest 0.4.7 mod: technic
 -- namespace: technic
 -- (c) 2012-2013 by RealBadAngel <mk@realbadangel.pl>
 -- (c) 2022 by Singularis <singularis@volny.cz>
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local load_start = os.clock()
 
@@ -53,4 +53,4 @@ if minetest.settings:get_bool("log_mods") then
 	-- print(S("[Technic] Loaded in @1 seconds", string.format("%f", os.clock() - load_start)))
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

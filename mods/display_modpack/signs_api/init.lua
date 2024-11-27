@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
     signs mod for Minetest - Various signs with text displayed on
     (c) Pierre-Yves Rollo
@@ -18,7 +19,6 @@
     along with signs.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 signs_api = {}
 signs_api.name = minetest.get_current_modname()
@@ -325,4 +325,4 @@ end
 -- Text entity for all signs
 display_api.register_display_entity("signs:display_text")
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

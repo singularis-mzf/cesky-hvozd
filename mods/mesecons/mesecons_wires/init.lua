@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- naming scheme: wire:(xp)(zp)(xm)(zm)(xpyp)(zpyp)(xmyp)(zmyp)_on/off
 -- where x= x direction, z= z direction, y= y direction, p = +1, m = -1, e.g. xpym = {x=1, y=-1, z=0}
 -- The (xp)/(zpyp)/.. statements shall be replaced by either 0 or 1
@@ -8,7 +9,6 @@
 -- ## Update wire looks ##
 -- #######################
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local are_wires_walkable = mesecon.is_wire_walkable()
 
@@ -264,4 +264,4 @@ end
 
 minetest.register_alias("mesecons:mesecon", "mesecons:wire_00000000_off")
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

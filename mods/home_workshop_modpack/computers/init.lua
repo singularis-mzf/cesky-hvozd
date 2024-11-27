@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 computers = {}
 
 computers.register = function (name, def)
@@ -101,3 +102,4 @@ dofile(MODPATH.."/aliases.lua")
 if minetest.get_modpath("default") and minetest.get_modpath("basic_materials") then
 	dofile(MODPATH.."/recipes.lua")
 end
+ch_base.close_mod(minetest.get_current_modname())

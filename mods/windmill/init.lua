@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 
 
 windmill = {}
@@ -129,3 +130,4 @@ minetest.register_craft({
 		{"default:steel_ingot", "default:stick", "default:steel_ingot" },
 	},
 })
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 local slab_width = 1 / 16
 local one_and_a_half = 1.5
 
@@ -212,4 +212,4 @@ for dye, data in pairs(colors) do
 end
 minetest.register_craft({output = "solidcolor:plaster_grey 4", type = "shapeless", recipe = {"group:sand", "basic_materials:wet_cement", "default:clay", "default:clay"}})
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

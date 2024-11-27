@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local sounds = {}
 
 local function on_construct(pos)
@@ -160,3 +161,4 @@ minetest.register_craft({
 		{"default:steel_ingot","homedecor:heating_element","mesecons_solarpanel:solar_panel_off"},
 	},
 })
+ch_base.close_mod(minetest.get_current_modname())

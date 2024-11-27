@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Minetest 0.4.6 mod: extranodes
 -- namespace: technic
 local S = minetest.get_translator("extranodes")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 if minetest.get_modpath("moreblocks") then
 
@@ -275,4 +275,4 @@ if minetest.get_modpath("unifieddyes") then
 		}
 	})
 end
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = attrans
 
 advtrains.register_wagon("engine_transib", {
@@ -117,3 +118,4 @@ minetest.register_craft({
 })
 
 
+ch_base.close_mod(minetest.get_current_modname())

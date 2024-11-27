@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = attrans
 
 advtrains.register_wagon("engine_zugspitzbahn", {
@@ -176,3 +177,4 @@ minetest.register_craft({
 	type = "shapeless",
 	recipe = {"advtrains:wagon_zugspitzbahn", "dye:green"},
 })
+ch_base.close_mod(minetest.get_current_modname())

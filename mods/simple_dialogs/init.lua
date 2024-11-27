@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --*** version 0.31 ***
 simple_dialogs = { }
 
@@ -1462,3 +1463,4 @@ end) --register_on_player_receive_fields dialog
 
 
 
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 local has_unifieddyes = minetest.get_modpath("unifieddyes")
 
@@ -78,4 +78,4 @@ dofile_ud("vraceni_satu.lua") -- vracení šatů (regál a pás)
 dofile_ud("vystavni_ram.lua") -- výstavní rám
 dofile("zdlazba.lua") -- zámková dlažba
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

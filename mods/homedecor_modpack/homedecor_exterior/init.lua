@@ -1,7 +1,7 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator("homedecor_exterior")
 homedecor_exterior = {}
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local bbq_cbox = {
 	type = "fixed",
@@ -476,4 +476,4 @@ minetest.register_alias("homedecor:well_base", "homedecor:well")
 minetest.register_alias("gloopblocks:shrubbery", "homedecor:shrubbery_green")
 minetest.register_alias("gloopblocks:shrubbery_large", "homedecor:shrubbery_large_green")
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

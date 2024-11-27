@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 
 	The MIT License (MIT)
@@ -453,3 +454,4 @@ minetest.register_craft({
 		{"mesecons:wire_00000000_off", "mesecons_luacontroller:luacontroller0000", wire}
 	}
 })
+ch_base.close_mod(minetest.get_current_modname())

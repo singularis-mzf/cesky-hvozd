@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 mail = {
 	-- version
 	version = 3,
@@ -64,3 +65,4 @@ if minetest.get_modpath("mtt") then
 end
 
 dofile(MP .. "/chyba.lua")
+ch_base.close_mod(minetest.get_current_modname())

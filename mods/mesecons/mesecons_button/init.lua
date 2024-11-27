@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- WALL BUTTON
 -- A button that when pressed emits power for 1 second
 -- and then turns off again
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 mesecon.button_turnoff = function (pos)
 	local node = minetest.get_node(pos)
@@ -111,4 +111,4 @@ minetest.register_craft({
 	}
 })
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

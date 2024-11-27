@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 artdeco = {}
 local modname = minetest.get_current_modname()
 artdeco.modname = modname
@@ -13,3 +14,4 @@ dofile(artdeco.modpath .. '/facade.lua')
 dofile(artdeco.modpath .. '/nodeboxes.lua')
 dofile(artdeco.modpath .. '/doors.lua')
 dofile(artdeco.modpath .. '/recipes.lua')
+ch_base.close_mod(minetest.get_current_modname())

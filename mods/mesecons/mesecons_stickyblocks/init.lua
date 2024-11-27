@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Sticky blocks can be used together with pistons or movestones to push / pull
 -- structures that are "glued" together using sticky blocks
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 -- All sides sticky block
 minetest.register_node("mesecons_stickyblocks:sticky_block_all", {
@@ -18,4 +18,4 @@ minetest.register_node("mesecons_stickyblocks:sticky_block_all", {
 	end,
 	sounds = mesecon.node_sound.wood,
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

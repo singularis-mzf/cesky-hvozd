@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 -- Load support for intllib.
 local path = minetest.get_modpath(minetest.get_current_modname()) .. "/"
@@ -88,4 +88,4 @@ end
 
 print (S("[MOD] Mobs Redo Animals loaded"))
 ]]
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

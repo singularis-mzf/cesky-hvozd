@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 
 --[[
 if minetest.get_modpath("default") then
@@ -130,5 +130,5 @@ if minetest.get_modpath("doors") then
 
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
+ch_base.close_mod(minetest.get_current_modname())

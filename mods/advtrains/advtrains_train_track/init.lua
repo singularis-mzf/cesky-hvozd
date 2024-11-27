@@ -1,7 +1,7 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Default tracks for advtrains
 -- (c) orwell96 and contributors
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 --flat
 advtrains.register_tracks("default", {
@@ -752,4 +752,4 @@ minetest.register_lbm({
 	})
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 local modpath = minetest.get_modpath('redef')
 local path = modpath..DIR_DELIM..'redefinitions'..DIR_DELIM
 local worldpath = minetest.get_worldpath()..DIR_DELIM
@@ -41,4 +41,4 @@ minetest.register_on_mods_loaded(function()
         end
     end
 end)
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

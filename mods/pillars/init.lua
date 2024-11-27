@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Pillars by Citorva
 -- This mode is licensed as MIT licence. This code can't be edited or copyed
 -- outside the terms of this license.
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local ifthenelse = ch_core.ifthenelse
 
@@ -569,4 +569,4 @@ for k, v in pairs(default_lib_nodes) do
 	end
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

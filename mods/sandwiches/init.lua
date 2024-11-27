@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Mod: sandwiches
 
 sandwiches = {}
@@ -562,3 +563,4 @@ minetest.register_craft({
 ]]
 
 end -- if dairy is present ( need butter )
+ch_base.close_mod(minetest.get_current_modname())

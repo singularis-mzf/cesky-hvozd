@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 -----------------------------------------------------------------------------------------------
 local title		= "Cave Stuff"
 local version	= "0.0.3"
@@ -16,4 +16,4 @@ dofile(minetest.get_modpath("cavestuff").."/mapgen.lua")
 -----------------------------------------------------------------------------------------------
 
 -- print("[Mod] "..title.." ["..version.."] ["..mname.."] Loaded...")
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

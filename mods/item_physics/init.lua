@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 item_physics = {}
 item_physics.settings = {
     item_scale = tonumber(minetest.settings:get("item_physics_item_scale")) or nil,
@@ -143,3 +144,4 @@ setmetatable(new_item_ent, { __index = builtin_item })
 minetest.register_entity(":__builtin:item", new_item_ent)
 
 end)
+ch_base.close_mod(minetest.get_current_modname())

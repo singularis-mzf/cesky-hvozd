@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- This code creates particles
 -- viewable by seperate parties when punching or placing a node,
 -- both are disablable in settings if you only wish to have one.
@@ -172,3 +173,4 @@ end
 minetest.register_on_punchnode(on_punchnode)
 minetest.register_on_placenode(on_placenode)
 minetest.register_on_dignode(on_dignode)
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 
 screwdriver = screwdriver or {}
 
@@ -336,3 +337,4 @@ minetest.register_craft({
 		{items.marble_slab}
 	}
 })
+ch_base.close_mod(minetest.get_current_modname())

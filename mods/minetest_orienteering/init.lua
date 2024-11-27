@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator("orienteering")
 local mod_map = nil -- minetest.get_modpath("map") -- map mod from Minetest Game
 local ifthenelse = assert(ch_core.ifthenelse)
@@ -520,4 +520,4 @@ if minetest.get_modpath("awards") ~= nil and minetest.get_modpath("default") ~= 
 		}
 	})
 end
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator("advtrains")
 
 local block = 'default:steelblock'
@@ -368,3 +369,4 @@ minetest.register_craft({
 		{'advtrains:wheel', '', 'advtrains:wheel'},
 	},
 })
+ch_base.close_mod(minetest.get_current_modname())

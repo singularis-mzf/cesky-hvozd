@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 
 -- Version: 2.2
 -- Autor:   Sokomine
@@ -22,7 +23,6 @@
 --          Added threshing floor.
 --          Added hand-driven mill.
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 cottages = {
 	S = minetest.get_translator("cottages"),
@@ -103,4 +103,4 @@ dofile(minetest.get_modpath("cottages").."/alias.lua");
 -- variable no longer needed
 cottages.S = nil;
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

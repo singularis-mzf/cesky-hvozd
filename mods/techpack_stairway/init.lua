@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 
 	TechPack Stairway
@@ -810,3 +811,4 @@ minetest.register_craft({
 })
 
 dofile(minetest.get_modpath("techpack_stairway").."/upgrade_lbm.lua")
+ch_base.close_mod(minetest.get_current_modname())

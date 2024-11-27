@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 minetest.register_node('church_bell:iron', {
 	description = 'železný kostelní zvon',
 	node_placement_prediction = '',
@@ -76,3 +77,4 @@ minetest.register_craft({
 		{items.iron_ingot, '', items.iron_ingot},
 	},
 })
+ch_base.close_mod(minetest.get_current_modname())

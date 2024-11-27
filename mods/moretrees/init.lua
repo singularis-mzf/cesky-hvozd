@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- More trees!  2013-04-07
 --
 -- This mod adds more types of trees to the game
@@ -13,7 +14,6 @@
 -- by RealBadAngel.
 --
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 moretrees = {
 	air = {name = "air"}
@@ -206,4 +206,4 @@ dofile(modpath.."/cocos_palm.lua")
 dofile(modpath.."/crafts.lua")
 dofile(modpath.."/schematics/sakura.lua")
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

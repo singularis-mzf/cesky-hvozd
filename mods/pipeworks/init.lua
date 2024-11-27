@@ -1,10 +1,10 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Pipeworks mod by Vanessa Ezekowitz - 2013-07-13
 --
 -- This mod supplies various steel pipes and plastic pneumatic tubes
 -- and devices that they can connect to.
 --
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 pipeworks = {}
 pipeworks.ui_cat_tube_list = {}
 
@@ -204,4 +204,4 @@ if minetest.global_exists("unified_inventory") and unified_inventory.registered_
 end
 
 minetest.log("info", "Pipeworks loaded!")
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

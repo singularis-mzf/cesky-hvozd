@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 local modpath = minetest.get_modpath("technic_worldgen")
 
 technic = rawget(_G, "technic") or {}
@@ -25,4 +25,4 @@ if minetest.get_modpath("mg") then
 	dofile(modpath.."/mg.lua")
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

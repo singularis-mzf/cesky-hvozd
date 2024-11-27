@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- SPDX-FileCopyrightText: 2021 David Hurka <doxydoxy@mailbox.org>
 --
 -- SPDX-License-Identifier: CC0-1.0 OR MIT
 morelights_dim = {};
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 dofile(minetest.get_modpath("morelights_dim") .. "/util.lua");
 
 --- Items listed as key in this table will trigger the
@@ -120,4 +120,4 @@ function morelights_dim.create_dim_tile(tile, state)
 end
 
 dofile(minetest.get_modpath("morelights_dim") .. "/api.lua");
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

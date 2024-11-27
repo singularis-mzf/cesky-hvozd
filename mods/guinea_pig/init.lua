@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 local path = minetest.get_modpath("guinea_pig")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 -- Animals
 dofile(path .. "/guinea_pig.lua") 
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

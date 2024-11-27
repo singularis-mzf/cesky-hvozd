@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 =====================================================================
 ** More Ores **
@@ -8,7 +9,6 @@ Licensed under the zlib license. See LICENSE.md for more information.
 =====================================================================
 --]]
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 moreores = {}
 
 local modpath = minetest.get_modpath("moreores")
@@ -462,4 +462,4 @@ for orename, def in pairs(oredefs) do
 	-- Register everything
 	add_ore("moreores", def.description, orename, def)
 end
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

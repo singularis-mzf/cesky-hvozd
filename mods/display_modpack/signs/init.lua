@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
     signs mod for Minetest - Various signs with text displayed on
     (c) Pierre-Yves Rollo
@@ -17,7 +18,6 @@
     You should have received a copy of the GNU General Public License
     along with signs.  If not, see <http://www.gnu.org/licenses/>.
 --]]
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 signs = {}
 signs.name = minetest.get_current_modname()
 signs.path = minetest.get_modpath(signs.name)
@@ -32,4 +32,4 @@ dofile(signs.path.."/crafts.lua")
 dofile(signs.path.."/compatibility.lua")
 
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

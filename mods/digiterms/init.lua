@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 --[[
     digiterms mod for Minetest - Digiline monitors using Display API / Font API
     (c) Pierre-Yves Rollo
@@ -35,3 +36,4 @@ dofile(digiterms.path.."/crafts.lua")
   dofile(digiterms.path.."/scifi_nodes.lua")
   dofile(digiterms.path.."/scifi_crafts.lua")
 -- end
+ch_base.close_mod(minetest.get_current_modname())

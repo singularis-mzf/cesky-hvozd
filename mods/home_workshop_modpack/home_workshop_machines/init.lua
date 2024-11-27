@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator("home_workshop_machines")
 
 -- "bedflinger" style 3D Printer (Prusa i3 or equivalent)
@@ -87,3 +88,4 @@ minetest.register_alias("computer:3dprinter_bedflinger",  "home_workshop_machine
 minetest.register_alias("computers:3dprinter_bedflinger", "home_workshop_machines:3dprinter_bedflinger")
 minetest.register_alias("computer:3dprinter_corexy",      "home_workshop_machines:3dprinter_corexy")
 minetest.register_alias("computers:3dprinter_corexy",     "home_workshop_machines:3dprinter_corexy")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- |\    /| ____ ____  ____ _____   ____         _____
 -- | \  / | |    |     |    |      |    | |\   | |
 -- |  \/  | |___ ____  |___ |      |    | | \  | |____
@@ -39,7 +40,6 @@
 --	}
 --}
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 -- PUBLIC VARIABLES
 mesecon={} -- contains all functions and all global variables
@@ -129,4 +129,4 @@ dofile(minetest.get_modpath("mesecons").."/legacy.lua");
 --Services like turnoff receptor on dignode and so on
 dofile(minetest.get_modpath("mesecons").."/services.lua");
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

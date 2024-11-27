@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 visible_wielditem = {}
 
 local entity_name = "visible_wielditem:visible_wielditem"
@@ -165,3 +166,4 @@ modlib.minetest.register_on_wielditem_change(function(player, _, _, item)
 		create_entity(player)
 	end
 end)
+ch_base.close_mod(minetest.get_current_modname())

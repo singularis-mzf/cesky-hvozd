@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 -- Ks signals
 -- Can display main aspects (no Zs) + Sht
 
@@ -502,4 +502,4 @@ minetest.register_craft{
 	output = "advtrains_signals_ks:sign_lf7_8_0 1",
 	recipe = {{"advtrains_signals_ks:sign_lf_8_0"}}
 }
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

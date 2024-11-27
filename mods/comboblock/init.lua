@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -------------------------------------------------------------------------------------
 --    _________               ___.         __________.__                 __        --
 --    \_   ___ \  ____   _____\_ |__   ____\______   \  |   ____   ____ |  | __    --
@@ -701,3 +702,4 @@ for _,v1 in pairs(slab_index) do
 		end })
 	end
 end
+ch_base.close_mod(minetest.get_current_modname())

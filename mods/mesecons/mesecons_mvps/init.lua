@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 --register stoppers for movestones/pistons
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 mesecon.mvps_stoppers = {}
 mesecon.on_mvps_move = {}
@@ -336,4 +336,4 @@ mesecon.register_on_mvps_move(function(moved_nodes)
 		end
 	end
 end)
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

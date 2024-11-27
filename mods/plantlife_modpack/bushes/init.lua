@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Bushes Mod by Mossmanikin, Evergreen, & Neuromancer
 -- The initial code for this was taken from Mossmanikin's Grasses Mod,
 -- then heavilly modified by Neuromancer for this mod.
@@ -259,3 +260,4 @@ local sapling_def = {
 }
 
 minetest.register_node("bushes:yt_sapling", sapling_def)
+ch_base.close_mod(minetest.get_current_modname())

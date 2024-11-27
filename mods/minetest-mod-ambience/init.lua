@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 
 ambience = {}
 
@@ -342,3 +343,4 @@ dofile(minetest.get_modpath("ambience") .. "/soundsets.lua")
 
 
 print("[MOD] Ambience Lite loaded")
+ch_base.close_mod(minetest.get_current_modname())

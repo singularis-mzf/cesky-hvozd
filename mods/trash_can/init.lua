@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- standard compatibility switcher block.
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local moditems = {}  -- switcher
 moditems.iron_item = "default:steel_ingot" -- MTG iron ingot
@@ -263,4 +263,4 @@ minetest.register_craft({
 		{moditems.iron_item,moditems.iron_item,moditems.iron_item},
 	}
 })
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

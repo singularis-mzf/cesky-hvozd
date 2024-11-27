@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 drinks = {
 	registered_drinks = {},
 	registered_fruits = {},
@@ -844,3 +845,4 @@ minetest.register_craft({
 })
 
 dofile(minetest.get_modpath('drinks')..'/drink_machines.lua')
+ch_base.close_mod(minetest.get_current_modname())

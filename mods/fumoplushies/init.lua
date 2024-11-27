@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local plushie_base = "fumoplushies:plushie"
 local plastic_sheet = "basic_materials:plastic_sheet"
 local plastic_strip = "basic_materials:plastic_strip"
@@ -81,3 +82,4 @@ for id, props in pairs(panenky) do
 		minetest.register_craft({type = props.craft_type, output = "fumoplushies:" .. id .. "plushie", recipe = props.recipe})
 	end
 end
+ch_base.close_mod(minetest.get_current_modname())

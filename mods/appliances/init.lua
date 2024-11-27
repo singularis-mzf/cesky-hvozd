@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 appliances = {};
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local modpath = minetest.get_modpath(minetest.get_current_modname());
 
@@ -21,4 +21,4 @@ dofile(modpath.."/appliance.lua");
 dofile(modpath.."/tool.lua");
 dofile(modpath.."/extensions.lua");
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 digtron = {}
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 digtron.auto_controller_colorize = "#88000030"
 digtron.pusher_controller_colorize = "#00880030"
@@ -117,4 +117,4 @@ if minetest.get_modpath("catacomb") and catacomb ~= nil and catacomb.chamber_pro
 	end
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

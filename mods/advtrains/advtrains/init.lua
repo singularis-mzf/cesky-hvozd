@@ -1,4 +1,4 @@
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.open_mod(minetest.get_current_modname())
 --[[
 Advanced Trains - Minetest Mod
 
@@ -764,5 +764,5 @@ end
 
 
 local tot=(os.clock()-lot)*1000
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 minetest.log("action", "[advtrains] Loaded in "..tot.."ms")
+ch_base.close_mod(minetest.get_current_modname())

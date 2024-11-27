@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local nodebox = {
 	type = "fixed",
 	fixed = {{-8/16, -8/16, -8/16, 8/16, -7/16, 8/16 }},
@@ -232,3 +233,4 @@ end
 
 
 register_flipflop()
+ch_base.close_mod(minetest.get_current_modname())

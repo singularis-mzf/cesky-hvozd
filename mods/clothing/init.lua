@@ -1,6 +1,6 @@
+ch_base.open_mod(minetest.get_current_modname())
 local modpath = minetest.get_modpath(minetest.get_current_modname())
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 dofile(modpath.."/api.lua")
 dofile(modpath.."/clothing.lua")
@@ -213,4 +213,4 @@ function clothing.update_player_skin_from_inv(self, player, inv)
 	clothing:set_player_clothing(player)
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())

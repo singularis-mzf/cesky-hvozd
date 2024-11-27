@@ -1,8 +1,8 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- This file adds fences of various types
 
 local S = minetest.get_translator("homedecor_fences")
 
-print("[MOD BEGIN] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
 
 local brass =  {
 	output = "homedecor:fence_brass 6",
@@ -461,4 +461,4 @@ if minetest.get_modpath("signs_lib") and minetest.get_modpath("default") then
 	signs_lib.old_fenceposts_replacement_signs["homedecor:fence_wrought_iron_with_sign"] = "default:sign_wall_wood_onpole"
 end
 
-print("[MOD END] " .. minetest.get_current_modname() .. "(" .. os.clock() .. ")")
+ch_base.close_mod(minetest.get_current_modname())
