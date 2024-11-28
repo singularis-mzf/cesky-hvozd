@@ -748,7 +748,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 ## Mobs Redo (mobs\_redo)
 
-* Zdroj: [https://notabug.org/TenPlus1/mobs\_redo](https://notabug.org/TenPlus1/mobs\_redo), revize ca34cc2274082bd4a3cf4843f7f5ff939d659e1e
+* Zdroj: [https://notabug.org/TenPlus1/mobs\_redo](https://notabug.org/TenPlus1/mobs\_redo), revize 527fe8c2d5136f49aedb5d4cbc94f760fcea74e5
 * Původní licence: MIT
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/mobs/)
