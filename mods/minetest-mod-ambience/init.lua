@@ -108,14 +108,18 @@ end)
 -- plays music and selects sound set
 local get_ambience = function(player, tod, name)
 
+	local day_night_ratio = player:get_day_night_ratio() or ch_core.herni_cas().day_night_ratio or 1.0
+
 	-- play server or local music if music enabled and music not already playing
-	if play_music and MUSICVOLUME > 0
-	and playing[name] and playing[name].music < 0 then
+	if play_music and MUSICVOLUME > 0 and
+		(player:get_pos().y < 0 or day_night_ratio >= 0.8) and
+		playing[name] and playing[name].music < 0
+	then
 
 		-- count backwards
 		playing[name].music = playing[name].music -1
 
-		-- play music every 20 minutes
+		-- play music every 20 minutes of day
 		if playing[name].music < -(60 * 20) then
 
 			playing[name].music = minetest.sound_play("ambience_music", {
