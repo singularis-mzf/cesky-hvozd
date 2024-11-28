@@ -2,7 +2,7 @@
 
 Toto je kompletní repozitář módů a úprav pro server „Český hvozd“.
 Všechny módy jsou lokalizovány do češtiny a přizpůsobeny provozu
-na serveru Minetest 5.8.0; některé úpravy jsou ale specifické či
+na serveru Luanti 5.10.0; některé úpravy jsou ale specifické či
 destruktivní, takže pokud chcete upravený mód použít samostatně,
 budete muset projít změny v jeho kódu a vybrat jen ty, které potřebujete.
 
@@ -36,9 +36,9 @@ resp. *ostatní\_zdroje*.
 
 Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“ z tohoto repozitáře potřeba také:
 
-* kopie herního světa (adresář „Hvozd“)
+* herní svět
 * minetest.conf
-* Minetest Server 5.8.0 (verze se může v budoucnu změnit)
+* Luanti Server 5.10.0 (verze se může v budoucnu změnit)
 
 # Hra
 
