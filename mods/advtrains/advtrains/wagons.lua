@@ -43,20 +43,22 @@ local function make_inv_name(uid)
 end
 
 
-local wagon={
+local wagon_base_initial_properties = {
 	collisionbox = {-0.5,-0.5,-0.5, 0.5,0.5,0.5},
 	--physical = true,
 	visual = "mesh",
 	mesh = "wagon.b3d",
 	visual_size = {x=1, y=1},
 	textures = {"black.png"},
+	static_save=false,
+}
+
+local wagon = {
 	is_wagon=true,
 	wagon_span=1,--how many index units of space does this wagon consume
 	wagon_width=3, -- Wagon width in meters
 	has_inventory=false,
-	static_save=false,
 }
-
 
 function wagon:train()
 	local data = advtrains.wagons[self.id]
@@ -1346,6 +1348,7 @@ function advtrains.register_wagon(sysname_p, prototype, desc, inv_img, nincreati
 	if not string.match(sysname, ":") then
 		sysname = "advtrains:"..sysname_p
 	end
+	ch_core.upgrade_entity_properties(prototype, {keep_fields = false, base_properties = wagon_base_initial_properties})
 	setmetatable(prototype, {__index=wagon})
 	minetest.register_entity(":"..sysname,prototype)
 	advtrains.wagon_prototypes[sysname] = prototype

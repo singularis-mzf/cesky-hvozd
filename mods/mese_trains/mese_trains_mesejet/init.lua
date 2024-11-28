@@ -97,7 +97,7 @@ advtrains.register_wagon("mese_trains_mesejet:mese_trains_mesejet_wagon", {
 			end
 			if self.line_cache ~= nil and line == nil then
 				self.object:set_properties({
-						textures = self.textures,
+						textures = self.initial_properties.textures,
 				})
 				self.line_cache = nil
 			end
@@ -195,7 +195,7 @@ advtrains.register_wagon("mese_trains_mesejet:mese_trains_mesejet_engine", {
 			end
 			if self.line_cache ~= nil and line == nil then
 				self.object:set_properties({
-						textures = self.textures,
+						textures = self.initial_properties.textures,
 				})
 				self.line_cache = nil
 			end

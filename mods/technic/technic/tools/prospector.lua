@@ -3,7 +3,7 @@ local S = technic.getter
 technic.register_power_tool("technic:prospector", 300000)
 
 local function get_metadata(toolstack)
-	local m = minetest.deserialize(toolstack:get_metadata())
+	local m = minetest.deserialize(toolstack:get_meta():get_string(""))
 	if not m then m = {} end
 	if not m.charge then m.charge = 0 end
 	if not m.target then m.target = "" end
@@ -30,7 +30,7 @@ minetest.register_tool("technic:prospector", {
 		end
 		if not minetest.is_creative_enabled(user:get_player_name()) then
 			toolmeta.charge = toolmeta.charge - charge_to_take
-			toolstack:set_metadata(minetest.serialize(toolmeta))
+			toolstack:get_meta():set_string("", minetest.serialize(toolmeta))
 			technic.set_RE_wear(toolstack, toolmeta.charge, technic.power_tools[toolstack:get_name()])
 		end
 		local start_pos = pointed_thing.under
@@ -113,7 +113,7 @@ minetest.register_on_player_receive_fields(function(user, formname, fields)
 			toolmeta.look_depth = field:sub(12)
 		end
 	end
-	toolstack:set_metadata(minetest.serialize(toolmeta))
+	toolstack:get_meta():set_string("", minetest.serialize(toolmeta))
 	user:set_wielded_item(toolstack)
 	return true
 end)

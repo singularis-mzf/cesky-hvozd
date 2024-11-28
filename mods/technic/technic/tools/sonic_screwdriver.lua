@@ -41,7 +41,7 @@ local function screwdriver_handler(itemstack, user, pointed_thing, mode)
 	-- contrary to the default screwdriver, do not check for can_dig, to allow rotating machines with CLU's in them
 	-- this is consistent with the previous sonic screwdriver
 
-	local meta1 = minetest.deserialize(itemstack:get_metadata())
+	local meta1 = minetest.deserialize(itemstack:get_meta():get_string(""))
 	if not meta1 or not meta1.charge or meta1.charge < 100 then
 		return
 	end
@@ -65,7 +65,7 @@ local function screwdriver_handler(itemstack, user, pointed_thing, mode)
 
 	if not minetest.is_creative_enabled(user:get_player_name()) then
 		meta1.charge = meta1.charge - 100
-		itemstack:set_metadata(minetest.serialize(meta1))
+		itemstack:get_meta():set_string("", minetest.serialize(meta1))
 		technic.set_RE_wear(itemstack, meta1.charge, sonic_screwdriver_max_charge)
 	end
 

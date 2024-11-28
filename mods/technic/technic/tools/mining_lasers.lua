@@ -103,7 +103,7 @@ for _, m in pairs(mining_lasers_list) do
 		wear_represents = "technic_RE_charge",
 		on_refill = technic.refill_RE_charge,
 		on_use = function(itemstack, user)
-			local meta = minetest.deserialize(itemstack:get_metadata())
+			local meta = minetest.deserialize(itemstack:get_meta():get_string(""))
 			if not meta or not meta.charge or meta.charge == 0 then
 				return
 			end
@@ -121,7 +121,7 @@ for _, m in pairs(mining_lasers_list) do
 			if not minetest.is_creative_enabled(user:get_player_name()) then
 				meta.charge = math.max(meta.charge - m[4], 0)
 				technic.set_RE_wear(itemstack, meta.charge, m[3])
-				itemstack:set_metadata(minetest.serialize(meta))
+				itemstack:get_meta():set_string("", minetest.serialize(meta))
 			end
 			return itemstack
 		end,

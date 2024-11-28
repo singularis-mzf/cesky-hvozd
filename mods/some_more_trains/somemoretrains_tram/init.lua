@@ -3,7 +3,7 @@ local S = attrans
 
 -- Gets called when an entity is made - will set the right livery that was painted
 local function tram_set_textures(self, data)
-    local new_textures = self.textures
+    local new_textures = self.initial_properties.textures
 	if data.livery then
         new_textures[2] = data.livery.painting
         new_textures[3] = data.livery.line
@@ -108,8 +108,8 @@ function tram_on_step(self, dtime, data, train)
 		data.livery = {painting="somemoretrains_tram_painting.png",line="somemoretrains_tram_line.png"}
 		tram_set_textures(self, data)
 	end
-	--[[if data.livery ~= self.textures[2] then
-		minetest.chat_send_all('data.livery: '.. data.livery .. ' - texture: ' .. self.textures[2])
+	--[[if data.livery ~= self.initial_properties.textures[2] then
+		minetest.chat_send_all('data.livery: '.. data.livery .. ' - texture: ' .. self.initial_properties.textures[2])
 		tram_set_textures(self, data)
 	end]]--
 	--set line number

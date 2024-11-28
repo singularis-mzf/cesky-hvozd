@@ -52,13 +52,13 @@ local function check_for_flashlight(player, skip_charge)
 		local hotbar = inv:get_list("main")
 		for i, flashlight_index in ipairs(flashlights) do
 			local item = hotbar[flashlight_index]
-			local meta = minetest.deserialize(item:get_metadata())
+			local meta = minetest.deserialize(item:get_meta():get_string(""))
 			local charge = meta and meta.charge
 			if charge and charge >= flashlight_consumption then
 				if not skip_charge and not is_creative then
 					meta.charge = charge - flashlight_consumption
 					technic.set_RE_wear(item, meta.charge, flashlight_max_charge)
-					item:set_metadata(minetest.serialize(meta))
+					item:get_meta():set_string("", minetest.serialize(meta))
 					inv:set_stack("main", flashlight_index, item)
 				end
 				return true

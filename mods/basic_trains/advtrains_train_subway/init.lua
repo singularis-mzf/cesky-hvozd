@@ -137,7 +137,7 @@ local wagon = {
 				})
 			elseif self.line_cache~=nil and line==nil then
 				self.object:set_properties({
-						textures=self.textures,
+						textures=self.initial_properties.textures,
 				})
 				self.line_cache=nil
 			end

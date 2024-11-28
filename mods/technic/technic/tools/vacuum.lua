@@ -18,7 +18,7 @@ technic.register_power_tool("technic:vacuum_mk2", vacuum2_max_charge)
 technic.register_power_tool("technic:vacuum_mk3", vacuum3_max_charge)
 
 local function vacuum_onuse(itemstack, user, pointed_thing, max_charge, charge_per_object, range)
-	local meta = minetest.deserialize(itemstack:get_metadata())
+	local meta = minetest.deserialize(itemstack:get_meta():get_string(""))
 	if not meta or not meta.charge then
 		return
 	end
@@ -51,7 +51,7 @@ local function vacuum_onuse(itemstack, user, pointed_thing, max_charge, charge_p
 
 	if not minetest.is_creative_enabled(user:get_player_name()) then
 		technic.set_RE_wear(itemstack, meta.charge, max_charge)
-		itemstack:set_metadata(minetest.serialize(meta))
+		itemstack:get_meta():set_string("", minetest.serialize(meta))
 	end
 	return itemstack
 end

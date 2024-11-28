@@ -676,7 +676,7 @@ function mob_class:update_tag(newname)
 		end
 	end
 
-	self.infotext = "entita: " .. self.name .. " | type: " .. self.type
+	self.infotext = "entita: " .. self.name .. " | zařazení: " .. self.type
 		.. ("\nzdraví: " .. self.health .. " / " .. prop.hp_max)
 		.. (self.owner == "" and "" or "\nvlastní: " .. self.owner) .. text
 

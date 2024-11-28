@@ -224,7 +224,7 @@ local function chainsaw_onuse(max_charge, itemstack, user, pointed_thing)
 		return itemstack
 	end
 
-	local meta = minetest.deserialize(itemstack:get_metadata())
+	local meta = minetest.deserialize(itemstack:get_meta():get_string(""))
 	if not meta or not meta.charge or
 			meta.charge < chainsaw_charge_per_node then
 		return
@@ -241,7 +241,7 @@ local function chainsaw_onuse(max_charge, itemstack, user, pointed_thing)
 	meta.charge = chainsaw_dig(pointed_thing.under, meta.charge)
 	if not minetest.is_creative_enabled(name) then
 		technic.set_RE_wear(itemstack, meta.charge, max_charge)
-		itemstack:set_metadata(minetest.serialize(meta))
+		itemstack:get_meta():set_string("", minetest.serialize(meta))
 	end
 	return itemstack
 end

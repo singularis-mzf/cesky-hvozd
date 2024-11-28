@@ -116,12 +116,13 @@ local ifthenelse = ch_core.ifthenelse
 local last_timeofday = 0 -- pravděpodobně se pokusí něco přehrát v prvním globalstepu,
 -- ale to nevadí, protöže v tu chvíli stejně nemůže být ještě nikdo online.
 local abs = math.abs
-local deg = math.deg
 local get_timeofday = minetest.get_timeofday
 local gain_1 = {gain = 1.0}
 local head_bone_name = "Head"
-local head_bone_position = vector.new(0, 6.35, 0)
-local head_bone_angle = vector.new(0, 0, 0)
+local head_bone_override = {
+	position = {vec = vector.new(0, 6.35, 0), absolute = true},
+	rotation = {vec = vector.zero(), absolute = true},
+}
 local emoting = (minetest.get_modpath("emote") and emote.emoting) or {}
 local globstep_dtime_accumulated = 0.0
 local hud_dtime_accumulated = 0.0
@@ -220,13 +221,13 @@ local function globalstep(dtime)
 					elseif rozdil < -0.3 then
 						novy_uhel_hlavy = puvodni_uhel_hlavy - 0.3
 					end
-					head_bone_angle.x = -0.5 * deg(puvodni_uhel_hlavy + novy_uhel_hlavy)
-					player:set_bone_position(head_bone_name, head_bone_position, head_bone_angle)
+					head_bone_override.rotation.vec.x = -0.5 * (puvodni_uhel_hlavy + novy_uhel_hlavy)
+					player:set_bone_override(head_bone_name, head_bone_override)
 					online_charinfo.uhel_hlavy = novy_uhel_hlavy
 				end
 			else
-				head_bone_angle.x = 0
-				player:set_bone_position(head_bone_name, head_bone_position, head_bone_angle)
+				head_bone_override.rotation.vec.x = 0
+				player:set_bone_override(head_bone_name, head_bone_override)
 			end
 
 			-- REAGOVAT NA KLÁVESY:

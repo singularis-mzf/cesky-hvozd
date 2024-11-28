@@ -1823,8 +1823,8 @@ function ch_core.set_pos_to_meta(meta, key, pos)
 end
 
 --[[
-Přesune klíče definující vlastnosti entity do podtabulky
-initial_properties.
+Přesune klíče definující vlastnosti entity do podtabulky initial_properties.
+Provádí úpravy přímo v předané tabulce a vrací ji (tzn. nevytváří kopii).
 ]]
 function ch_core.upgrade_entity_properties(entity_def, options)
 	if options == nil then

@@ -259,7 +259,7 @@ local function mining_drill_mk2_setmode(user,itemstack)
 	minetest.chat_send_player(player_name, S("Mining Drill Mk@1 Mode @2", 2, mode)..": "..mining_drill_mode_text[mode][1])
     itemstack:set_name("technic:mining_drill_mk2_"..mode);
 	meta["mode"]=mode
-    itemstack:set_metadata(minetest.serialize(meta))
+    itemstack:get_meta():set_string("", minetest.serialize(meta))
 	return itemstack
 end
 
@@ -283,14 +283,14 @@ local function mining_drill_mk3_setmode(user,itemstack)
 	minetest.chat_send_player(player_name, S("Mining Drill Mk@1 Mode @2", 3, mode)..": "..mining_drill_mode_text[mode][1])
     itemstack:set_name("technic:mining_drill_mk3_"..mode);
 	meta["mode"]=mode
-    itemstack:set_metadata(minetest.serialize(meta))
+    itemstack:get_meta():set_string("", minetest.serialize(meta))
 	return itemstack
 end
 
 
 local function mining_drill_mk2_handler(itemstack, user, pointed_thing)
 	local keys = user:get_player_control()
-	local meta = minetest.deserialize(itemstack:get_metadata())
+	local meta = minetest.deserialize(itemstack:get_meta():get_string(""))
 	if not meta or not meta.mode or keys.aux1 then
 		return mining_drill_mk2_setmode(user, itemstack)
 	end
@@ -303,7 +303,7 @@ local function mining_drill_mk2_handler(itemstack, user, pointed_thing)
 		drill_dig_it(pos, user, meta.mode)
 		if not minetest.is_creative_enabled(user:get_player_name()) then
 			meta.charge = meta.charge - charge_to_take
-			itemstack:set_metadata(minetest.serialize(meta))
+			itemstack:get_meta():set_string("", minetest.serialize(meta))
 			technic.set_RE_wear(itemstack, meta.charge, max_charge[2])
 		end
 	end
@@ -312,7 +312,7 @@ end
 
 local function mining_drill_mk3_handler(itemstack, user, pointed_thing)
 	local keys = user:get_player_control()
-	local meta = minetest.deserialize(itemstack:get_metadata())
+	local meta = minetest.deserialize(itemstack:get_meta():get_string(""))
 	if not meta or not meta.mode or keys.aux1 then
 		return mining_drill_mk3_setmode(user, itemstack)
 	end
@@ -325,7 +325,7 @@ local function mining_drill_mk3_handler(itemstack, user, pointed_thing)
 		drill_dig_it(pos, user, meta.mode)
 		if not minetest.is_creative_enabled(user:get_player_name()) then
 			meta.charge = meta.charge - charge_to_take
-			itemstack:set_metadata(minetest.serialize(meta))
+			itemstack:get_meta():set_string("", minetest.serialize(meta))
 			technic.set_RE_wear(itemstack, meta.charge, max_charge[3])
 		end
 	end
@@ -349,7 +349,7 @@ minetest.register_tool("technic:mining_drill", {
 		if pointed_thing.type ~= "node" or not pos_is_pointable(pointed_thing.under) then
 			return itemstack
 		end
-		local meta = minetest.deserialize(itemstack:get_metadata())
+		local meta = minetest.deserialize(itemstack:get_meta():get_string(""))
 		if not meta or not meta.charge then
 			return
 		end
@@ -359,7 +359,7 @@ minetest.register_tool("technic:mining_drill", {
 			drill_dig_it(pos, user, 1)
 			if not minetest.is_creative_enabled(user:get_player_name()) then
 				meta.charge = meta.charge - charge_to_take
-				itemstack:set_metadata(minetest.serialize(meta))
+				itemstack:get_meta():set_string("", minetest.serialize(meta))
 				technic.set_RE_wear(itemstack, meta.charge, max_charge[1])
 			end
 		end

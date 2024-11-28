@@ -13,10 +13,10 @@ local function set_can_wear(itemstack, level, max_level)
 end
 
 local function get_can_level(itemstack)
-	if itemstack:get_metadata() == "" then
+	if itemstack:get_meta():get_string("") == "" then
 		return 0
 	else
-		return tonumber(itemstack:get_metadata())
+		return tonumber(itemstack:get_meta():get_string(""))
 	end
 end
 
@@ -49,7 +49,7 @@ function technic.register_can(d)
 				end
 				charge = math.floor(bucket.water_land(pointed_thing.under, 8 * charge) / 8)
 			end
-			itemstack:set_metadata(tostring(charge))
+			itemstack:get_meta():set_string("", tostring(charge))
 			set_can_wear(itemstack, charge, data.can_capacity)
 			return itemstack
 		end,
@@ -76,12 +76,12 @@ function technic.register_can(d)
 			end
 			minetest.set_node(pos, {name=data.liquid_source_name})
 			charge = charge - 1
-			itemstack:set_metadata(tostring(charge))
+			itemstack:get_meta():set_string("", tostring(charge))
 			set_can_wear(itemstack, charge, data.can_capacity)
 			return itemstack
 		end,
 		on_refill = function(stack)
-			stack:set_metadata(tostring(data.can_capacity))
+			stack:get_meta():set_string("", tostring(data.can_capacity))
 			set_can_wear(stack, data.can_capacity, data.can_capacity)
 			return stack
 		end,
@@ -96,7 +96,7 @@ function technic.register_can(d)
 			elseif new_level > capacity then
 				new_level = capacity
 			end
-			itemstack:set_metadata(tostring(new_level))
+			itemstack:get_meta():set_string("", tostring(new_level))
 			set_can_wear(itemstack, new_level, capacity)
 			return itemstack
 		end
