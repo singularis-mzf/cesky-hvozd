@@ -658,27 +658,27 @@ function mob_class:update_tag(newname)
 	local text = ""
 
 	if self.horny == true then
-		text = "\nLoving: " .. (self.hornytimer - (HORNY_TIME + HORNY_AGAIN_TIME))
+		text = "\núroveň lásky: " .. (self.hornytimer - (HORNY_TIME + HORNY_AGAIN_TIME))
 	elseif self.child == true then
-		text = "\nGrowing: " .. (self.hornytimer - CHILD_GROW_TIME)
+		text = "\núroveň růstu: " .. (self.hornytimer - CHILD_GROW_TIME)
 	elseif self._tame_countdown then
-		text = "\nTaming: " .. self._tame_countdown
+		text = "\núroveň ochočení: " .. self._tame_countdown
 	elseif self._breed_countdown then
-		text = "\nBreeding: " .. self._breed_countdown
+		text = "\núroveň plození: " .. self._breed_countdown
 	end
 
 	if self.protected then
 
 		if self.protected == 2 then
-			text = text .. "\nProtection: Level 2"
+			text = text .. "\núroveň ochrany: 2"
 		else
-			text = text .. "\nProtection: Level 1"
+			text = text .. "\núroveň ochrany: 1"
 		end
 	end
 
-	self.infotext = "Entity: " .. self.name .. " | Type: " .. self.type
-		.. ("\nHealth: " .. self.health .. " / " .. prop.hp_max)
-		.. (self.owner == "" and "" or "\nOwner: " .. self.owner) .. text
+	self.infotext = "entita: " .. self.name .. " | type: " .. self.type
+		.. ("\nzdraví: " .. self.health .. " / " .. prop.hp_max)
+		.. (self.owner == "" and "" or "\nvlastní: " .. self.owner) .. text
 
 	-- set infotext changes
 	if self.infotext ~= prop.infotext then
@@ -3992,6 +3992,9 @@ end
 -- MarkBu's newer spawn function (USE this one please modders)
 
 function mobs:spawn(def)
+	if not def.cesky_hvozd_allowed then
+		return
+	end
 
 	mobs:spawn_specific(
 		def.name,

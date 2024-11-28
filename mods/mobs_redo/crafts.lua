@@ -27,15 +27,16 @@ sound_helper("node_sound_glass_defaults")
 
 -- helper function to add {eatable} group to food items
 
-function mobs.add_eatable(item, hp)
+function mobs.add_eatable(item)
 
 	local def = minetest.registered_items[item]
 
 	if def then
 
-		local groups = table.copy(def.groups) or {}
+		local groups = table.copy(assert(def.groups))
 
-		groups.eatable = hp ; groups.flammable = 2
+		groups.eatable = assert(groups.ch_food)
+		groups.flammable = 2
 
 		minetest.override_item(item, {groups = groups})
 	end
@@ -51,7 +52,7 @@ local items = {
 	diamond = mc2 and "mcl_core:diamond" or "default:diamond",
 	steel_ingot = mc2 and "mcl_core:iron_ingot" or "default:steel_ingot",
 	gold_block = mc2 and "mcl_core:goldblock" or "default:goldblock",
-	diamond_block = mc2 and "mcl_core:diamondblock" or "default:diamondblock",
+	diamond_block = mc2 and "mcl_core:diamondblock" or "default:diamond", -- no diamond block on ČH
 	stone = mc2 and "mcl_core:stone" or "default:stone",
 	mese_crystal = mc2 and "mcl_core:gold_ingot" or "default:mese_crystal",
 	wood = mc2 and "mcl_core:wood" or "default:wood",
@@ -63,7 +64,8 @@ local items = {
 -- name tag
 
 minetest.register_craftitem("mobs:nametag", {
-	description = S("Name Tag") .. " " .. S("\nRight-click Mobs Redo mob to apply"),
+	description = S("Name Tag"),
+	_ch_help = "Slouží k pojmenování zvířat.\nPravým klikem na zvíře otevřete dialogové okno k jeho pojmenování.",
 	inventory_image = "mobs_nametag.png",
 	groups = {flammable = 2, nametag = 1}
 })
@@ -88,8 +90,8 @@ minetest.register_craftitem("mobs:leather", {
 minetest.register_craftitem("mobs:meat_raw", {
 	description = S("Raw Meat"),
 	inventory_image = "mobs_meat_raw.png",
-	on_use = minetest.item_eat(3),
-	groups = {food_meat_raw = 1}
+	on_use = ch_core.item_eat(),
+	groups = {food_meat_raw = 1, flammable = 2, ch_food = 3}
 })
 
 mobs.add_eatable("mobs:meat_raw", 3)
@@ -99,8 +101,8 @@ mobs.add_eatable("mobs:meat_raw", 3)
 minetest.register_craftitem("mobs:meat", {
 	description = S("Meat"),
 	inventory_image = "mobs_meat.png",
-	on_use = minetest.item_eat(8),
-	groups = {food_meat = 1}
+	on_use = ch_core.item_eat(),
+	groups = {food_meat = 1, flammable = 2, ch_food = 8}
 })
 
 mobs.add_eatable("mobs:meat", 8)
@@ -115,7 +117,8 @@ minetest.register_craft({
 -- lasso
 
 minetest.register_tool("mobs:lasso", {
-	description = S("Lasso (right-click animal to put in inventory)"),
+	description = S("Lasso"),
+	_ch_help = "Pravý klik se pokusí zvíře umístit do vašeho inventáře. Nechytá motýly a světlušky.",
 	inventory_image = "mobs_magic_lasso.png",
 	groups = {flammable = 2}
 })
@@ -134,7 +137,8 @@ minetest.register_alias("mobs:magic_lasso", "mobs:lasso")
 -- net
 
 minetest.register_tool("mobs:net", {
-	description = S("Net (right-click animal to put in inventory)"),
+	description = S("Net"),
+	_ch_help = "Pravý klik se pokusí zvíře umístit do vašeho inventáře. Nechytá motýly a světlušky.",
 	inventory_image = "mobs_net.png",
 	groups = {flammable = 2}
 })
@@ -152,6 +156,7 @@ minetest.register_craft({
 
 minetest.register_tool("mobs:shears", {
 	description = S("Steel Shears (right-click to shear)"),
+	_ch_help = "Pravý klik na ovci z ní ostříhá vlnu. Pozor, levý klik ovci zraní!",
 	inventory_image = "mobs_shears.png",
 	groups = {flammable = 2}
 })
@@ -276,7 +281,7 @@ minetest.register_tool(":mobs:mob_reset_stick", {
 	description = S("Mob Reset Stick"),
 	inventory_image = "default_stick.png^[colorize:#ff000050",
 	stack_max = 1,
-	groups = {not_in_creative_inventory = 1},
+	-- groups = {not_in_creative_inventory = 1},
 
 	on_use = function(itemstack, user, pointed_thing)
 
@@ -369,11 +374,11 @@ minetest.register_node("mobs:meatblock", {
 	description = S("Meat Block"),
 	tiles = {"mobs_meat_top.png", "mobs_meat_bottom.png", "mobs_meat_side.png"},
 	paramtype2 = "facedir",
-	groups = {choppy = 1, oddly_breakable_by_hand = 1, axey = 1, handy = 1},
+	groups = {choppy = 1, oddly_breakable_by_hand = 1, axey = 1, handy = 1, flammable = 2, ch_food = 20},
 	is_ground_content = false,
 	sounds = mobs.node_sound_dirt_defaults(),
 	on_place = minetest.rotate_node,
-	on_use = minetest.item_eat(20),
+	on_use = ch_core.item_eat(),
 	_mcl_hardness = 0.8,
 	_mcl_blast_resistance = 1
 })
@@ -395,11 +400,11 @@ minetest.register_node("mobs:meatblock_raw", {
 	description = S("Raw Meat Block"),
 	tiles = {"mobs_meat_raw_top.png", "mobs_meat_raw_bottom.png", "mobs_meat_raw_side.png"},
 	paramtype2 = "facedir",
-	groups = {choppy = 1, oddly_breakable_by_hand = 1, axey = 1, handy = 1},
+	groups = {choppy = 1, oddly_breakable_by_hand = 1, axey = 1, handy = 1, ch_food = 20},
 	is_ground_content = false,
 	sounds = mobs.node_sound_dirt_defaults(),
 	on_place = minetest.rotate_node,
-	on_use = minetest.item_eat(20),
+	on_use = ch_core.item_eat(),
 	_mcl_hardness = 0.8,
 	_mcl_blast_resistance = 1
 })
