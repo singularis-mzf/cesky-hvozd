@@ -1,5 +1,6 @@
 ch_base.open_mod(minetest.get_current_modname())
 local S = minetest.get_translator(minetest.get_current_modname())
+local ifthenelse = ch_core.ifthenelse
 
 local print_settingtypes = false
 local CONFIG_FILE_PREFIX = "airtanks_"
@@ -175,6 +176,10 @@ local function register_air_tank_2(name, desc, color, uses)
 		},
 		output = "airtanks:empty_"..name.."_tank_2",
 	})
+	minetest.register_craft({
+		recipe = {{"airtanks:empty_"..name.."_tank_2"}},
+		output = "airtanks:empty_"..name.."_tank 2",
+	})
 	--[[ Allow full tanks too
 	minetest.register_craft({
 		recipe = {
@@ -271,6 +276,26 @@ local sounds = default.node_sound_metal_defaults()
 
 local tank_inv_size = 4*4
 
+local function get_compressor_formspec(remaining_time, electric)
+	local result = {
+		"size[8,9]",
+		"checkbox[0.5,0.5;electric;elektrické napájení;",
+		ifthenelse(electric, "true]", "false]"..
+			"label[1,1.5;" .. S("Fuel") .. "]"..
+			"list[context;fuel;1,2;1,1;]"..
+			"label[2,2;" .. S("Pressure:").."\n"..remaining_time .. "]"),
+		"label[4.5,0;" .. S("Tanks") .. "]",
+		"list[context;tanks;3,0.5;4,4;]",
+		"list[current_player;main;0,4.85;8,1;]",
+		"list[current_player;main;0,6.08;8,3;8]",
+		"listring[context;tanks]",
+		"listring[current_player;main]",
+		default.get_hotbar_bg(0,4.85)
+	}
+	return table.concat(result)
+end
+
+--[[
 local get_compressor_formspec
 if config.compressor_needs_fuel then
 	get_compressor_formspec = function(remaining_time)
@@ -302,6 +327,7 @@ else
 		return formspec	
 	end
 end
+]]
 
 -- ensures only valid items can be placed into compressor inventories
 local test_can_put = function(pos, listname, index, itemstack)
@@ -464,7 +490,8 @@ local compressor_construct = function(pos)
 	inv:set_size("fuel", 1)
 	inv:set_size("tanks", tank_inv_size)
 	meta:set_float("fuel_time", 0)
-	meta:set_string("formspec", get_compressor_formspec(0))
+	meta:set_string("electric", "false")
+	meta:set_string("formspec", get_compressor_formspec(0, false))
 end
 
 minetest.register_node("airtanks:compressor", {
@@ -516,7 +543,11 @@ minetest.register_node("airtanks:compressor", {
 		local meta = minetest.get_meta(pos)
 		local last_return = true
 		while elapsed > 0 and last_return == true do
-			last_return = compressor_timestep(pos)
+			if meta:get_string("electric") == "true" then
+				last_return = compressor_timestep_without_fuel(pos)
+			else
+				last_return = compressor_timestep(pos)
+			end
 			elapsed = elapsed - 1
 		end
 		if last_return == true then
@@ -527,8 +558,18 @@ minetest.register_node("airtanks:compressor", {
 			minetest.sound_play("airtanks_compressor_fail", {pos = pos, gain = 0.5})
 			meta:set_string("last_state", "fail")
 		end
-		meta:set_string("formspec", get_compressor_formspec(math.floor(meta:get_float("fuel_time"))))
-	end
+		meta:set_string("formspec", get_compressor_formspec(math.floor(meta:get_float("fuel_time")), meta:get_string("electric") == "true"))
+	end,
+	on_receive_fields = function(pos, formname, fields, sender)
+		if fields.electric then
+			local meta = minetest.get_meta(pos)
+			meta:set_string("electric", fields.electric)
+			meta:set_string("formspec", get_compressor_formspec(math.floor(meta:get_float("fuel_time")), fields.electric == "true"))
+			if fields.electric == "true" then
+				ensure_timer(pos)
+			end
+		end
+	end,
 })
 
 
