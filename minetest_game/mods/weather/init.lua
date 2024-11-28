@@ -3,6 +3,7 @@ ch_base.open_mod(minetest.get_current_modname())
 
 local mg_name = minetest.get_mapgen_setting("mg_name")
 if minetest.settings:get_bool("enable_weather") == false then
+	ch_base.close_mod(minetest.get_current_modname())
 	return
 end
 
@@ -12,6 +13,7 @@ if mg_name == "v6" or mg_name == "singlenode" then
 		player:set_lighting({ shadows = { intensity = 0.33 } })
 	end)
 
+	ch_base.close_mod(minetest.get_current_modname())
 	return
 end
 
