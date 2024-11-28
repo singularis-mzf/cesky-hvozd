@@ -393,7 +393,7 @@ local function update_bc_player_huds(player)
 						for _, position in ipairs(data) do
 							local hud_def = {
 								-- constant fields:
-								hud_elem_type = "waypoint",
+								type = "waypoint",
 								alignment = xy_00,
 								z_index = -300,
 								text = " m",
@@ -407,7 +407,7 @@ local function update_bc_player_huds(player)
 							table.insert(huds_to_add, hud_def)
 							hud_def = {
 								-- constant fields:
-								hud_elem_type = "image_waypoint",
+								type = "image_waypoint",
 								alignment = xy_00,
 								z_index = -300,
 								text = string.format("ch_core_dot.png^[multiply:#%06x", position.color),

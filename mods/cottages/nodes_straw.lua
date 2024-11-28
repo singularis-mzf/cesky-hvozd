@@ -269,7 +269,7 @@ minetest.register_node("cottages:threshing_floor", {
 		end	
 
 		local hud0 = puncher:hud_add({
-			hud_elem_type = "image",
+			type = "image",
 			scale = {x = 38, y = 38},
 			text = "cottages_junglewood.png^[colorize:#888888:128",
 			position = {x = 0.5, y = 0.5},
@@ -277,21 +277,21 @@ minetest.register_node("cottages:threshing_floor", {
 		});
 
 		local hud1 = puncher:hud_add({
-			hud_elem_type = "image",
+			type = "image",
 			scale = {x = 15, y = 15},
 			text = "cottages_junglewood.png"..overlay1,
 			position = {x = 0.4, y = 0.5},
 			alignment = {x = 0, y = 0}
 		});
 		local hud2 = puncher:hud_add({
-			hud_elem_type = "image",
+			type = "image",
 			scale = {x = 15, y = 15},
 			text = "cottages_junglewood.png"..overlay2,
 			position = {x = 0.6, y = 0.35},
 			alignment = {x = 0, y = 0}
 		});
 		local hud3 = puncher:hud_add({
-			hud_elem_type = "image",
+			type = "image",
 			scale = {x = 15, y = 15},
 			text = "cottages_junglewood.png"..overlay3,
 			position = {x = 0.6, y = 0.65},
@@ -299,7 +299,7 @@ minetest.register_node("cottages:threshing_floor", {
 		});
 
 		local hud4 = puncher:hud_add({
-			hud_elem_type = "text",
+			type = "text",
 			text = tostring( found_wheat-anz_wheat ),
 			number = 0x00CC00,
 			alignment = {x = 0, y = 0},
@@ -313,7 +313,7 @@ minetest.register_node("cottages:threshing_floor", {
 			anz_seeds = "0";
 		end
 		local hud5 = puncher:hud_add({
-			hud_elem_type = "text",
+			type = "text",
 			text = '+ '..tostring( anz_straw )..' straw',
 			number = 0x00CC00,
 			alignment = {x = 0, y = 0},
@@ -321,7 +321,7 @@ minetest.register_node("cottages:threshing_floor", {
 			position = {x = 0.6, y = 0.35},
 		});
 		local hud6 = puncher:hud_add({
-			hud_elem_type = "text",
+			type = "text",
 			text = '+ '..tostring( anz_seeds )..' seeds',
 			number = 0x00CC00,
 			alignment = {x = 0, y = 0},

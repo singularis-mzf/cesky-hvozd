@@ -1,7 +1,7 @@
 local player_name_to_hud = {}
 
 local hud_defaults = {
-	hud_elem_type = "text",
+	type = "text",
 	name = "TEST hud",
 	position = { x = 1, y = 0.75 },
 	offset = { x = -5, y = -5 },

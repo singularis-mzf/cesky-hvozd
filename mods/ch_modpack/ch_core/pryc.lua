@@ -80,7 +80,7 @@ function ch_core.set_pryc(player_name, options)
 	-- HUD
 	if not no_hud then
 		local hud_def = {
-			hud_elem_type = "image",
+			type = "image",
 			-- text = "ch_core_white_pixel.png^[invert:rgb^[opacity:192",
 			text = "ch_core_pryc.png",
 			position = { x = 0, y = 0 },

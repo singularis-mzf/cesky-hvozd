@@ -358,7 +358,7 @@ function woodcutting_class:show_hud(pos)
 		self._player:hud_change(self._hud, "text", message)
 	else
 		self._hud = self._player:hud_add({
-				hud_elem_type = "text",
+				type = "text",
 				position = {x=0.3,y=0.3},
 				alignment = {x=0,y=0},
 				size = "",

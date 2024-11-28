@@ -7,7 +7,7 @@ local base_y_offset = 90
 local y_scale = 20
 
 local text_hud_defaults = {
-	hud_elem_type = "text",
+	type = "text",
 	position = { x = 0.5, y = 0 },
 	-- offset
 	-- text
@@ -60,7 +60,7 @@ function ch_core.show_player_list(player, online_charinfo)
 		table.insert(hud_defs, new_hud)
 	end
 	new_hud = {
-		hud_elem_type = "image",
+		type = "image",
 		alignment = { x = -1, y = 1 },
 		position = { x = 1, y = 0 },
 		offset = { x = 0, y = base_y_offset },
@@ -306,7 +306,7 @@ end
 
 -- DATE AND TIME HUD
 local datetime_hud_defaults = {
-	hud_elem_type = "text",
+	type = "text",
 	position = { x = 1, y = 1 },
 	offset = { x = -5, y = -5 },
 	text = "",

@@ -102,7 +102,7 @@ function advtrains.set_trainhud(name, text, driver)
 	   return
 	end
 	local driverhud = {
-		hud_elem_type = "image",
+		type = "image",
 		name = "ADVTRAINS_DRIVER",
 		position = {x=0.5, y=1},
 		offset = {x=0,y=-170},
@@ -113,7 +113,7 @@ function advtrains.set_trainhud(name, text, driver)
 		hud = {["driver"]={}}
 		advtrains.hud[name] = hud
 		hud.id = player:hud_add({
-			hud_elem_type = "text",
+			type = "text",
 			name = "ADVTRAINS",
 			number = 0xFFFFFF,
 			position = {x=0.5, y=1},
@@ -147,7 +147,7 @@ function advtrains.set_help_hud(name, text)
 		hud = {}
 		advtrains.hhud[name] = hud
 		hud.id = player:hud_add({
-			hud_elem_type = "text",
+			type = "text",
 			name = "ADVTRAINS_HELP",
 			number = 0xFFFFFF,
 			position = {x=1, y=0.3},

@@ -358,7 +358,7 @@ function orienteering.init_hud(player)
 	orienteering.playerhuds[name] = {}
 	for i=1, o_lines do
 		orienteering.playerhuds[name]["o_line"..i] = player:hud_add({
-			hud_elem_type = "text",
+			type = "text",
 			text = "",
 			position = orienteering.settings.hud_pos,
 			offset = { x = orienteering.settings.hud_offset.x, y = orienteering.settings.hud_offset.y + 20*(i-1) },

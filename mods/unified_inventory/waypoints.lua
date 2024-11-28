@@ -235,7 +235,7 @@ local function update_hud(player, waypoints, temp, i)
 	end
 	if waypoint.active then
 		temp.hud = player:hud_add({
-			hud_elem_type = "waypoint",
+			type = "waypoint",
 			number = hud_colors[waypoint.color or 1][2] ,
 			name = name,
 			text = "m",

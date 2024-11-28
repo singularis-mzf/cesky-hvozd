@@ -217,7 +217,7 @@ minetest.register_node("cottages:anvil", {
 		end
 			
 		local hud1 = puncher:hud_add({
-			hud_elem_type = "image",
+			type = "image",
 			scale = {x = 15, y = 15},
 			text = hud_image,
 			position = {x = 0.5, y = 0.5},
@@ -227,7 +227,7 @@ minetest.register_node("cottages:anvil", {
 		local hud3 = nil;
 		if( input:get_wear()>0 ) then
 			hud2 = puncher:hud_add({
-				hud_elem_type = "statbar",
+				type = "statbar",
 				text = "default_cloud.png^[colorize:#ff0000:256",
 				number = 40,
 				direction = 0, -- left to right
@@ -237,7 +237,7 @@ minetest.register_node("cottages:anvil", {
 				size = {x=32, y=32},
 			})
 			hud3 = puncher:hud_add({
-				hud_elem_type = "statbar",
+				type = "statbar",
 				text = "default_cloud.png^[colorize:#00ff00:256",
 				number = damage_state,
 				direction = 0, -- left to right

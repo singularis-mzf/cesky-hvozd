@@ -40,7 +40,7 @@ local function set_hud_overlay(player, name, image)
 	end
 	if not hud_overlay_ids[name] then
 		hud_overlay_ids[name] = player:hud_add({
-			hud_elem_type = "image",
+			type = "image",
 			text = image,
 			position = {x = 0, y = 0},
 			scale = {x = -100, y = -100},

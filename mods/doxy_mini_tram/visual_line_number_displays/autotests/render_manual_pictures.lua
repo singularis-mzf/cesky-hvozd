@@ -145,7 +145,7 @@ local function test_function(index, test_player)
         -- and the client appears to see it.
         -- It is not actually visible on the client’s screen...
         player:hud_add({
-                hud_elem_type = "image";
+                type = "image";
                 position = { x = 0.5, y = 0.5 };
                 name = "Test Texture";
                 text = test_texture;
