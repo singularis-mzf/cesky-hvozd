@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Minetest 0.4 mod: bucket
 -- See README.txt for licensing and other information.
 
@@ -515,3 +516,4 @@ if minetest.global_exists("dungeon_loot") then
 	})
 end
 ]]
+ch_base.close_mod(minetest.get_current_modname())

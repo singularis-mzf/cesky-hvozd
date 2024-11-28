@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- creative/init.lua
 
 -- Load support for MT game translation.
@@ -99,3 +100,4 @@ function minetest.handle_node_drops(pos, drops, digger)
 		end
 	end
 end
+ch_base.close_mod(minetest.get_current_modname())

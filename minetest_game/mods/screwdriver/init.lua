@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- screwdriver/init.lua
 
 screwdriver = {}
@@ -230,3 +231,4 @@ minetest.register_alias("screwdriver:screwdriver1", "screwdriver:screwdriver")
 minetest.register_alias("screwdriver:screwdriver2", "screwdriver:screwdriver")
 minetest.register_alias("screwdriver:screwdriver3", "screwdriver:screwdriver")
 minetest.register_alias("screwdriver:screwdriver4", "screwdriver:screwdriver")
+ch_base.close_mod(minetest.get_current_modname())

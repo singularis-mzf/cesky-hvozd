@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- boats/init.lua
 
 -- Load support for MT game translation.
@@ -288,3 +289,4 @@ minetest.register_craft({
 	recipe = "boats:boat",
 	burntime = 20,
 })
+ch_base.close_mod(minetest.get_current_modname())

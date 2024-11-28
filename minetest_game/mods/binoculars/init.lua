@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- binoculars/init.lua
 
 -- Mod global namespace
@@ -71,3 +72,4 @@ minetest.register_craft({
 		{"default:obsidian_glass", "", "default:obsidian_glass"},
 	}
 })
+ch_base.close_mod(minetest.get_current_modname())

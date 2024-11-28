@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- tnt/init.lua
 
 tnt = {}
@@ -695,3 +696,4 @@ tnt.register_tnt({
 	description = S("TNT"),
 	radius = tnt_radius,
 })
+ch_base.close_mod(minetest.get_current_modname())

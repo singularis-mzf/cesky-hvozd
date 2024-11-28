@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- bones/init.lua
 
 -- Minetest 0.4 mod: bones
@@ -289,3 +290,4 @@ minetest.register_on_dieplayer(function(player)
 		meta:set_string("infotext", S("@1's bones", player_name))
 	end
 end)
+ch_base.close_mod(minetest.get_current_modname())

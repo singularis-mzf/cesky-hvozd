@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- carts/init.lua
 
 -- Load support for MT game translation.
@@ -26,3 +27,4 @@ if minetest.global_exists("dungeon_loot") then
 		name = "carts:rail", chance = 0.35, count = {1, 6}
 	})
 end
+ch_base.close_mod(minetest.get_current_modname())

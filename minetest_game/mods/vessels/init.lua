@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- vessels/init.lua
 
 -- Minetest 0.4 mod: vessels
@@ -228,3 +229,4 @@ if minetest.global_exists("dungeon_loot") then
 		name = "vessels:glass_fragments", chance = 0.35, count = {1, 4}
 	})
 end
+ch_base.close_mod(minetest.get_current_modname())

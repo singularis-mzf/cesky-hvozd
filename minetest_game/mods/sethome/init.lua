@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- sethome/init.lua
 
 sethome = {}
@@ -63,3 +64,4 @@ local def = {
 }
 minetest.register_chatcommand("doma", def)
 ]]
+ch_base.close_mod(minetest.get_current_modname())

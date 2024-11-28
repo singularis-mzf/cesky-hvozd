@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Disable by mapgen or setting
 
 local mg_name = minetest.get_mapgen_setting("mg_name")
@@ -133,3 +134,4 @@ minetest.after(0, cyclic_update)
 minetest.register_on_joinplayer(function(player)
 	update_clouds()
 end)
+ch_base.close_mod(minetest.get_current_modname())

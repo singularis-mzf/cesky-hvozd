@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- sfinv/init.lua
 
 dofile(minetest.get_modpath("sfinv") .. "/api.lua")
@@ -17,3 +18,4 @@ sfinv.register_page("sfinv:crafting", {
 			]], true)
 	end
 })
+ch_base.close_mod(minetest.get_current_modname())

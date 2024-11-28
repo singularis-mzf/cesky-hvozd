@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- Minetest 0.4 mod: default
 -- See README.txt for licensing and other information.
 
@@ -77,3 +78,4 @@ dofile(default_path.."/crafting.lua")
 dofile(default_path.."/mapgen.lua")
 dofile(default_path.."/aliases.lua")
 dofile(default_path.."/legacy.lua")
+ch_base.close_mod(minetest.get_current_modname())

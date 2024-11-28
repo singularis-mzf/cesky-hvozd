@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 dofile(minetest.get_modpath("player_api") .. "/api.lua")
 
 -- Default player appearance
@@ -24,3 +25,4 @@ player_api.register_model("character.b3d", {
 minetest.register_on_joinplayer(function(player)
 	player_api.set_model(player, "character.b3d")
 end)
+ch_base.close_mod(minetest.get_current_modname())

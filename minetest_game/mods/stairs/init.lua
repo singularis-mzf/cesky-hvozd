@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- stairs/init.lua
 
 -- Global namespace for functions
@@ -14,3 +15,4 @@ stairs = {
 	register_stair_and_slab = function(subname, recipeitem, groups, images, desc_stair, desc_slab, sounds, worldaligntex, desc_stair_inner, desc_stair_outer)
 	end,
 }
+ch_base.close_mod(minetest.get_current_modname())

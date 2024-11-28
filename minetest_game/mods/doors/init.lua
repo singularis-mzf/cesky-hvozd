@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- doors/init.lua
 
 -- our API object
@@ -305,3 +306,4 @@ minetest.register_lbm({
 	nodenames = {"group:door"},
 	action = function(pos, node, dtime_s) return doors.update_infotext(pos, node, minetest.get_meta(pos)) end,
 })
+ch_base.close_mod(minetest.get_current_modname())

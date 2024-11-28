@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- dye/init.lua
 
 dye = {}
@@ -125,3 +126,4 @@ S("Red Dye")
 S("Magenta Dye")
 S("Pink Dye")
 --]]
+ch_base.close_mod(minetest.get_current_modname())

@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- butterflies/init.lua
 
 -- Load support for MT game translation.
@@ -135,3 +136,4 @@ minetest.register_on_generated(function(minp, maxp, blockseed)
 		end
 	end
 end)
+ch_base.close_mod(minetest.get_current_modname())

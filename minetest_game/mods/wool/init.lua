@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- wool/init.lua
 
 -- Load support for MT game translation.
@@ -54,3 +55,5 @@ S("Red Wool")
 S("Magenta Wool")
 S("Pink Wool")
 --]]
+
+ch_base.close_mod(minetest.get_current_modname())

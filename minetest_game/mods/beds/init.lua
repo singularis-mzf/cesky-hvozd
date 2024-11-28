@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- beds/init.lua
 
 local S = minetest.get_translator("beds")
@@ -154,3 +155,4 @@ minetest.register_craft({
 	recipe = "beds:bed_bottom",
 	burntime = 12,
 })
+ch_base.close_mod(minetest.get_current_modname())

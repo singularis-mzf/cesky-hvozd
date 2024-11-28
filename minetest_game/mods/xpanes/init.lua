@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 -- xpanes/init.lua
 
 -- Load support for MT game translation.
@@ -259,3 +260,4 @@ if minetest.get_modpath("doors") then
 		}
 	})
 end
+ch_base.close_mod(minetest.get_current_modname())
