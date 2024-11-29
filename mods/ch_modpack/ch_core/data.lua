@@ -108,6 +108,7 @@ local offline_charinfo_data_types = {
 	domov = "string",
 	doslech = "int", -- >= 0
 	extended_inventory = "int", -- 0 = normální velikost, 1 = rozšířený inventář
+	last_ann_shown_date = "string", -- datum, kdy byla hráči/ce naposledy vypsána oznámení po přihlášení do hry (YYYY-MM-DD)
 	last_login = "int", -- >= 0, in seconds since 1. 1. 2000 UTC; 0 is invalid value
 	neshybat = "int", -- 0 = shýbat se při stisku Shift, 1 = neshýbat se
 	no_ch_sky = "int", -- 0 = krásná obloha ano, 1 = ne
@@ -130,6 +131,7 @@ local initial_offline_charinfo = {
 	ap_version = ch_core.verze_ap,
 	domov = "",
 	doslech = 50,
+	last_ann_shown_date = "1970-01-01",
 	rezim_plateb = 0,
 	zacatek_kam = 1,
 }

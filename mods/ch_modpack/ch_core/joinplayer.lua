@@ -231,63 +231,97 @@ local function on_newplayer(player)
 	offline_charinfo.pending_registration_type = "new"
 end
 
-local function after_joinplayer(player_name)
+local function after_joinplayer(player_name, join_timestamp)
+	local online_charinfo = ch_core.online_charinfo[player_name]
 	local player = minetest.get_player_by_name(player_name)
-	if player then
-		local controls = player:get_player_control()
-		if not controls.aux1 then
-			player:set_properties({stepheight = 0.3})
-		end
-		player:set_clouds({density = 0}) -- disable clouds
-		--[[
-			5.5.x => formspec_version = 5, protocol_version = 40
-			5.6.x => formspec_version = 6, protocol_version = 41
-			5.7.x => formspec_version = 6, protocol_version = 42
-			5.8.0 => formspec_version = 7, protocol_version = 43
-		]]
-		local online_charinfo = ch_core.online_charinfo[player_name]
-		if online_charinfo.protocol_version < 42 and online_charinfo.protocol_version ~= 0 then
-			local client_version
-			if online_charinfo.protocol_version == 40 then
-				client_version = "5.5.x"
-			elseif online_charinfo.protocol_version == 41 then
-				client_version = "5.6.x"
-			else
-				client_version = "?.?.?"
-			end
-			ch_core.systemovy_kanal(player_name, minetest.get_color_escape_sequence("#cc5257").."VAROVÁNÍ: Váš klient je zastaralý! Zdá se, že používáte klienta Minetest "..client_version..", který nepodporuje některé moderní vlastnosti hry využívané na Českém hvozdu. Hra vám bude fungovat, ale některé bloky se nemusejí zobrazit správně. Pro správné zobrazení doporučujeme přejít na Minetest 5.7.0 nebo novější, máte-li tu možnost.")
-		end
-
-		-- Vypsat posledních 5 přihlášených registrovaných postav:
-		-- (přeskočit vlastní postavu a předváděcí postavy)
-		local last_logins = ch_core.get_last_logins(true, {[player_name] = true, Jan_Rimbaba = true, Zofia_Slivka = true})
-		if #last_logins > 0 then
-			local output = {
-				"INFORMACE: Registrované postavy objevivší se ve hře v poslední době: ",
-			}
-			-- local last_players = {}
-			for i, info in ipairs(last_logins) do
-				local viewname = ch_core.prihlasovaci_na_zobrazovaci(info.player_name, true)
-				local kdy = info.last_login_before
-				if kdy < 0 then
-					kdy = "???"
-				elseif kdy == 0 then
-					kdy = "dnes"
-				elseif kdy == 1 then
-					kdy = "včera"
-				else
-					kdy = "před "..kdy.." dny"
-				end
-				table.insert(output, ch_core.colors.light_green..viewname..ch_core.colors.white.." ("..kdy..")")
-				table.insert(output, ", ")
-				if i == 5 then break end
-			end
-			output[#output] = ""
-			ch_core.systemovy_kanal(player_name, table.concat(output))
-		end
-
-		minetest.log("action", "Player "..player_name.." after_joinplayer privs = "..dump_privs(minetest.get_player_privs(player_name)))
+	if player == nil or online_charinfo == nil or online_charinfo.join_timestamp ~= join_timestamp then
+		return
 	end
+	local controls = player:get_player_control()
+	if not controls.aux1 then
+		player:set_properties({stepheight = 0.3})
+	end
+	player:set_clouds({density = 0}) -- disable clouds
+	--[[
+		5.5.x => formspec_version = 5, protocol_version = 40
+		5.6.x => formspec_version = 6, protocol_version = 41
+		5.7.x => formspec_version = 6, protocol_version = 42
+		5.8.0 => formspec_version = 7, protocol_version = 43
+		5.9.0 => formspec_version = ?, protocol_version = ?
+		5.10.0 => formspec_version = 8, protocol_version = 46
+	]]
+	local online_charinfo = ch_core.online_charinfo[player_name]
+	if online_charinfo.protocol_version < 42 and online_charinfo.protocol_version ~= 0 then
+		local client_version
+		if online_charinfo.protocol_version == 40 then
+			client_version = "5.5.x"
+		elseif online_charinfo.protocol_version == 41 then
+			client_version = "5.6.x"
+		else
+			client_version = "?.?.?"
+		end
+		ch_core.systemovy_kanal(player_name, minetest.get_color_escape_sequence("#cc5257").."VAROVÁNÍ: Váš klient je zastaralý! Zdá se, že používáte klienta Minetest "..client_version..", který nepodporuje některé moderní vlastnosti hry využívané na Českém hvozdu. Hra vám bude fungovat, ale některé bloky se nemusejí zobrazit správně. Pro správné zobrazení doporučujeme přejít na Minetest 5.7.0 nebo novější, máte-li tu možnost.")
+	end
+
+	-- Vypsat posledních 5 přihlášených registrovaných postav:
+	-- (přeskočit vlastní postavu a předváděcí postavy)
+	local last_logins = ch_core.get_last_logins(true, {[player_name] = true, Jan_Rimbaba = true, Zofia_Slivka = true})
+	if #last_logins > 0 then
+		local output = {
+			"INFORMACE: Registrované postavy objevivší se ve hře v poslední době: ",
+		}
+		-- local last_players = {}
+		for i, info in ipairs(last_logins) do
+			local viewname = ch_core.prihlasovaci_na_zobrazovaci(info.player_name, true)
+			local kdy = info.last_login_before
+			if kdy < 0 then
+				kdy = "???"
+			elseif kdy == 0 then
+				kdy = "dnes"
+			elseif kdy == 1 then
+				kdy = "včera"
+			else
+				kdy = "před "..kdy.." dny"
+			end
+			table.insert(output, ch_core.colors.light_green..viewname..ch_core.colors.white.." ("..kdy..")")
+			table.insert(output, ", ")
+			if i == 5 then break end
+		end
+		output[#output] = ""
+		ch_core.systemovy_kanal(player_name, table.concat(output))
+	end
+
+	minetest.log("action", "Player "..player_name.." after_joinplayer privs = "..dump_privs(minetest.get_player_privs(player_name)))
+end
+
+local event_types = {"public_announcement", "announcement", "custom"}
+
+local function after_joinplayer_5min(player_name, join_timestamp)
+	local online_charinfo = ch_core.online_charinfo[player_name]
+	local offline_charinfo = ch_core.offline_charinfo[player_name] or {}
+	if online_charinfo == nil or online_charinfo.join_timestamp ~= join_timestamp or minetest.get_player_by_name(player_name) == nil then
+		return -- player probably already logged out
+	end
+	local cas = ch_core.aktualni_cas()
+	local dnes = string.format("%04d-%02d-%02d", cas.rok, cas.mesic, cas.den)
+	local last_ann_shown_date = offline_charinfo.last_ann_shown_date or "1970-01-01"
+	if last_ann_shown_date >= dnes then return end
+	local events = ch_core.get_events_for_player(player_name, event_types, 10, last_ann_shown_date)
+	if #events > 0 then
+		local output = {}
+		local counts_by_description = {}
+		for _, record in ipairs(events) do
+			local old_count = counts_by_description[record.description] or 0
+			counts_by_description[record.description] = old_count + 1
+			if old_count < 3 then
+				table.insert(output, 1, minetest.get_color_escape_sequence("#6666FF").."<"..record.description.."> ("..record.time:sub(1, 10)..") "..
+					minetest.get_color_escape_sequence(record.color)..record.text)
+			end
+		end
+		ch_core.systemovy_kanal(player_name, table.concat(output, "\n"))
+	end
+	offline_charinfo.last_ann_shown_date = dnes
+	ch_core.save_offline_charinfo(player_name, "last_ann_shown_date")
 end
 
 local function on_joinplayer_pomodoro(player, player_name, online_charinfo)
@@ -383,8 +417,9 @@ local function on_joinplayer(player, last_login)
 	on_joinplayer_pomodoro(player, player_name, online_charinfo)
 	--
 
-	-- minetest.after(0.5, function() ch_core.set_pryc(player_name, {no_hud = true, silently = true}) end)
-	minetest.after(2, after_joinplayer, player_name)
+	assert(online_charinfo.join_timestamp)
+	minetest.after(2, after_joinplayer, player_name, online_charinfo.join_timestamp)
+	minetest.after(5 * 60, after_joinplayer_5min, player_name, online_charinfo.join_timestamp)
 	return true
 end
 
@@ -395,11 +430,7 @@ minetest.send_join_message = function(player_name)
 	-- local protocol_version = assert(online_charinfo.protocol_version)
 
 	if news_role ~= "disconnect" and news_role ~= "invalid_name" and news_role ~= "invalid_locale" then
-		if news_role ~= "new_player" then
-			ch_core.add_event("joinplayer", nil, player_name)
-		else
-			ch_core.add_event("joinplayer_new", nil, player_name)
-		end
+		ch_core.add_event(ifthenelse(news_role ~= "new_player", "joinplayer", "joinplayer_new"), nil, player_name)
 	end
 	return true
 end

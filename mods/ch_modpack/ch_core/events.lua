@@ -65,7 +65,8 @@ local events = function()
 end
 events, events_month_id = events()
 --[[
-    events[month_id] = {
+    -- index = 1 pro aktuální měsíc, 2 pro předchozí a 3 pro ten před ním
+    events[index] = {
         -- pole je seřazené od nejstarší události po nejnovější
         {
             timestamp = STRING, -- časová známka události (úplná)
@@ -371,8 +372,13 @@ end
         color = "#RRGGBB", -- barva pro zobrazení události, vždy ve formátu #RRGGBB
         text = STRING, -- text, jak má být prezentován hráči/ce, nebo prázdný řetězec
     }
+
+    player_name_or_player -- jméno nebo PlayerRef
+    allowed_event_types -- seznam typů událostí, které vyfiltrovat, nebo nil pro všechny typy
+    limit -- maximální počet událostí, které vrátit; musí být uvedeno
+    date_limit -- datum ve formátu YYYY-MM-DD nebo nil; je-li vyplněno, vrátí jen událost z daného dne nebo novější
 ]]
-function ch_core.get_events_for_player(player_name_or_player, allowed_event_types, limit)
+function ch_core.get_events_for_player(player_name_or_player, allowed_event_types, limit, date_limit)
     local pinfo = ch_core.normalize_player(player_name_or_player)
     local result = {}
     local has_access_rights = {
@@ -414,6 +420,9 @@ function ch_core.get_events_for_player(player_name_or_player, allowed_event_type
                     text = get_event_text(event, type_def) or "",
                     color = assert(type_def.color),
                 }
+                if date_limit ~= nil and timestamp_to_date(event.timestamp) < date_limit then
+                    return result -- event too old
+                end
                 if events_month_iter == 1 and
                     (has_access_rights.admin or
                         (type_def.delete_access == "player_only" and
