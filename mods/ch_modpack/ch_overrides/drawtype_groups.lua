@@ -11,19 +11,26 @@ local cube_drawtypes = {
 local function get_attracts_poles_rank(name, ndef)
     local groups = ndef.groups or {}
     if groups.sign then
-        if not name:match("_yard$") and not name:match("_on_pole$") then
+        if
+            not name:match("_yard$") and
+            not name:match("_onpole$") and
+            not name:match("_hanging$")
+        then
             return 1
         end
     elseif groups.display_api then
         if
             not name:match("^digiterms:") and
             not name:match("^ontime_clocks:") and
-            not name:match("^signs_road:inv") -- no invisible signs
+            not name:match("^signs_road:inv") and -- no invisible signs
+            not name:match("_on_pole$")
         then
             return 1
         end
-    elseif groups.streets_light or groups.technic_cnc_arch216_flange or
-        groups.technic_cnc_bannerstone or groups.technic_cnc_block_fluted or
+    elseif groups.streets_light or
+        groups.technic_cnc_arch216_flange or
+        groups.technic_cnc_bannerstone or
+        groups.technic_cnc_block_fluted or
         groups.technic_cnc_cylinder or
         groups.technic_cnc_oct or
         groups.technic_cnc_opposedcurvededge or
@@ -65,12 +72,18 @@ local function do_override()
     end
     for _, name in ipairs(names) do
         local ndef = minetest.registered_nodes[name]
-        local new_groups = ch_core.assembly_groups(ndef.groups, {
-            attracts_poles = get_attracts_poles_rank(name, ndef),
-            ["drawtype_"..(ndef.drawtype or "normal")] = 1,
-            full_cube_node = get_full_cube_rank(ndef),
-        })
-        minetest.override_item(name, {groups = new_groups})
+        local drawtype = tostring(ndef.drawtype or "normal")
+        local new_groups = ndef.groups or {}
+        local full_cube_rank = get_full_cube_rank(ndef)
+        local attracts_poles_rank = get_attracts_poles_rank(name, ndef)
+        if full_cube_rank ~= 0 then
+            new_groups.full_cube_node = 1
+        end
+        if attracts_poles_rank ~= 0 then
+            new_groups.attracts_poles = 1
+        end
+        new_groups["ch_drawtype_"..(ndef.drawtype or "normal")] = 1
+        minetest.override_item(name, {groups = assert(new_groups)})
         count = count + 1
     end
     print("[ch_overrides/drawtype_groups] "..count.." nodes overriden")
