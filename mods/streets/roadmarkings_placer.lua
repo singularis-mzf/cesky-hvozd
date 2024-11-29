@@ -135,39 +135,65 @@ local function on_place(itemstack, placer, pointed_thing, name, r)
 		end
 
 		-- PLACE
+		local pos_above = pointed_thing.above
 		local pos_under = pointed_thing.under
+		local node_above = minetest.get_node(pos_above)
 		local node_under = minetest.get_node(pos_under)
 		local ndef_under = minetest.registered_nodes[node_under.name]
-		if not ndef_under then
-			return -- cannot place on an unknown node
+		if node_above.name ~= "air" then
+			return -- can only place to the air
+		end
+		if not ndef_under or ndef_under.walkable == false or minetest.get_item_group(node_under.name, "attached_node") ~= 0 then
+			return -- can only place on walkable non-attached nodes
 		end
 		local groups_under = ndef_under.groups or {}
-		local pos_shift
-		local pos
+		local extra_facedir
 
-		if ndef_under.paramtype2 == "facedir" or ndef_under.paramtype2 == "colorfacedir" then
-			pos_shift = facedir_group_to_shift[math.floor(node_under.param2 / 4 % 6)]
+		if pos_above.y < pos_under.y then
+			extra_facedir = 20
+		elseif pos_above.x < pos_under.x then
+			extra_facedir = 16
+		elseif pos_above.x > pos_under.x then
+			extra_facedir = 12
+		elseif pos_above.z < pos_under.z then
+			extra_facedir = 8
+		elseif pos_above.z > pos_under.z then
+			extra_facedir = 4
 		else
-			pos_shift = vector.new(0, 1, 0)
+			extra_facedir = 0
 		end
 
-		local variant = ""
-		if groups_under.slope == 8 then -- lower half slope
-			variant = "slope_lower"
-		elseif groups_under.slope == 108 then -- bank lower half slope
-			variant = "slope_lower"
-			pos_shift = vector.multiply(pos_shift, 2)
-		elseif groups_under.slope == 12 then -- upper half slope
-			variant = "slope_upper"
-		elseif groups_under.slope == 112 then -- bank upper half slope
-			variant = "slope_upper"
-			pos_shift = vector.multiply(pos_shift, 2)
-		elseif groups_under.slope == 3 then -- triple slope
-			variant = "slope_triple"
-		end
-		pos = vector.add(pos_under, pos_shift)
+		local variant, pos_multiplier = "", 1
+		local craftitem, category, alternate = stairsplus:analyze_shape(node_under.name)
 
-		if minetest.is_protected(pos, player_name) and not minetest.check_player_privs(player_name, { protection_bypass = true }) then
+		if craftitem ~= nil and (category == "slope" or category == "bank_slope") then
+			if alternate == "_half" then
+				variant = "slope_lower"
+			elseif alternate == "_half_raised" then
+				variant = "slope_upper"
+			elseif alternate == "_tripleslope" then
+				variant = "slope_triple"
+			end
+			if category == "bank_slope" then
+				pos_multiplier = 2
+			end
+		end
+
+		local pos
+		if variant == "" then
+			pos = pos_above
+		else
+			local pos_shift
+			if ndef_under.paramtype2 == "facedir" or ndef_under.paramtype2 == "colorfacedir" then
+				pos_shift = facedir_group_to_shift[math.floor(node_under.param2 / 4 % 6)]
+				pos_shift = vector.multiply(pos_shift, pos_multiplier)
+			else
+				pos_shift = vector.new(0, pos_multiplier, 0)
+			end
+			pos = vector.add(pos_under, pos_shift)
+		end
+
+		if minetest.is_protected(pos, player_name) then
 			minetest.record_protection_violation(pos, name)
 			return
 		end
@@ -176,19 +202,13 @@ local function on_place(itemstack, placer, pointed_thing, name, r)
 		if variant == "" then
 			new_node = {
 				name = "streets:mark_" .. name:gsub("{color}", "white") .. r,
-				param2 = minetest.dir_to_facedir(placer:get_look_dir()) + 32 * (color_index - 1),
+				param2 = minetest.dir_to_facedir(placer:get_look_dir()) + extra_facedir + 32 * (color_index - 1),
 			}
 		else
 			new_node = {
 				name = "streets:mark_" .. name:gsub("{color}", "white") .. "_" .. variant .. r,
-				param2 = node_under.param2 + 32 * (color_index - 1),
+				param2 = (node_under.param2 % 32) + 32 * (color_index - 1),
 			}
-		end
-
-		local node_above = minetest.get_node(pos)
-		if node_above.name ~= "air" then
-			minetest.log("action", "Failed placement of "..new_node.name.." at "..minetest.pos_to_string(pos).." where is "..node_above.name)
-			return -- can only place in the air
 		end
 
 		minetest.set_node(pos, new_node)

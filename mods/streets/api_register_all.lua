@@ -288,43 +288,40 @@ local register_marking_nodes = function(friendlyname, name, tex, r)
 
 	local node_name_base = "streets:mark_" .. white_name
 
-	minetest.register_node(node_name_base .. r, {
-		description = S("značka: ") .. friendlyname .. rotation_friendly,
-		tiles = { tex, "streets_transparent.png" },
+	local common_def = {
+		drawtype = "mesh",
+		tiles = { { name = tex, backface_culling = true } },
 		use_texture_alpha = "clip",
-		drawtype = "nodebox",
 		paramtype = "light",
 		paramtype2 = "colorfacedir",
 		palette = "streets_roadmarkings_palette.png",
-		groups = { snappy = 3, attached_node = 1, oddly_breakable_by_hand = 1, not_in_creative_inventory = 1 },
+		groups = { snappy = 3, streets_mark = 1, oddly_breakable_by_hand = 1, not_in_creative_inventory = 1 },
 		sunlight_propagates = true,
+		buildable_to = true,
+		floodable = true,
 		walkable = false,
 		inventory_image = tex,
 		wield_image = tex,
-		node_box = marking_normal_node_box,
-		selection_box = marking_normal_selection_box,
 		drop = "",
-	})
+	}
+	local def = table.copy(common_def)
+	def.description = S("značka: ") .. friendlyname .. rotation_friendly
+	def.tiles = { tex, "streets_transparent.png" }
+	def.drawtype = "nodebox"
+	def.node_box = marking_normal_node_box
+	def.selection_box = marking_normal_selection_box
+
+	minetest.register_node(node_name_base .. r, table.copy(def))
 	table.insert(legacy_yellow_marking_nodes, "streets:mark_" .. name:gsub("{color}", "yellow") .. r)
 
 	for variant_name, variant_def in pairs(marking_node_variants) do
-		minetest.register_node(":" .. node_name_base .. "_" .. variant_name .. r, {
-			description = S("značka: ") .. friendlyname .. rotation_friendly .. " (" .. variant_def.description .. ")",
-			tiles = { { name = tex, backface_culling = true } },
-			use_texture_alpha = "clip",
-			drawtype = "mesh",
-			mesh = variant_def.mesh,
-			paramtype = "light",
-			paramtype2 = "colorfacedir",
-			palette = "streets_roadmarkings_palette.png",
-			groups = { snappy = 3, --[[attached_node = 1,]] oddly_breakable_by_hand = 1, not_in_creative_inventory = 1 },
-			sunlight_propagates = true,
-			walkable = false,
-			inventory_image = tex,
-			wield_image = tex,
-			selection_box = variant_def.selection_box,
-			drop = "",
-		})
+		def = table.copy(common_def)
+		def.description = S("značka: ") .. friendlyname .. rotation_friendly .. " (" .. variant_def.description .. ")"
+		def.mesh = variant_def.mesh
+		def.selection_box = variant_def.selection_box
+
+		minetest.register_node(":" .. node_name_base .. "_" .. variant_name .. r, def)
+
 		table.insert(legacy_yellow_marking_nodes, "streets:mark_" .. name:gsub("{color}", "yellow").."_"..variant_name..r)
 	end
 end
