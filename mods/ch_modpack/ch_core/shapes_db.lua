@@ -95,8 +95,6 @@ local materials_kp = set(
 "darkage:basalt_brick",
 "darkage:basalt_cobble",
 "darkage:chalk",
-"darkage:glass",
-"darkage:glow_glass",
 "darkage:gneiss",
 "darkage:gneiss_brick",
 "darkage:gneiss_cobble",
@@ -238,6 +236,8 @@ local materials_no_kp = set(
 local materials_glass = set(
 	"building_blocks:smoothglass",
 	"building_blocks:woodglass",
+	"darkage:glass",
+	"darkage:glow_glass",
 	"default:glass",
 	"default:obsidian_glass",
 	"moreblocks:clean_glass",
@@ -712,6 +712,7 @@ local alts_panel = set("", "_1", "_2", "_4", "_12", "_15",
 	"_element_flat",
 	"_pole",
 	"_pole_flat")
+	-- "_banister" (zatím jen pro kámen)
 
 local alts_slab = set("", "_quarter", "_three_quarter", "_1", "_2", "_14", "_15",
 	"_two_sides", --deska L (dvě strany)
@@ -721,7 +722,9 @@ local alts_slab = set("", "_quarter", "_three_quarter", "_1", "_2", "_14", "_15"
 	"_cube", -- kvádr
 	"_two_sides_half", -- deska L (dvě strany, seříznutá)
 	"_three_sides_half", -- deska rohová (tři strany, seříznutá)
-	"_rcover" -- kryt na koleje
+	"_rcover", -- kryt na koleje
+	"_table", -- stůl
+	"_bars" -- zábradlí či mříž
 )
 
 local alts_slope = set("", "_half", "_half_raised",
@@ -729,7 +732,8 @@ local alts_slope = set("", "_half", "_half_raised",
 	"_outer", "_outer_half", "_outer_half_raised", "_outer_cut", "_outer_cut_half", "_cut",
 	"_slab", -- trojúhelník
 	"_tripleslope",
-	"_cut2" -- šikmá hradba
+	"_cut2", -- šikmá hradba
+	"_beveled" -- zkosená deska
 )
 
 local alts_stair = set("", "_inner", "_outer", "_alt", "_alt_1", "_alt_2", "_alt_4",
@@ -855,7 +859,7 @@ local rules = {
 	{materials_no_kp, set("micro", "panel", "slab", "slope", "stair"), "*", false},
 	{"*", "cnc", no_cnc, false}, -- vypnuté tvary (nesmí se generovat pro žádný materiál)
 	{materials_all, "slab", "_1", true}, -- "slab/_1 pro všechny materiály kromě zakázaných"
-	{"default:stone", "*", "*", true}, -- dřevo je referenční materiál, musí podporovat všechny tvary
+	{"default:stone", "*", "*", true}, -- kámen je referenční materiál, musí podporovat všechny tvary
 
 	{materials_glass, {
 		micro = {glass_micro, true},

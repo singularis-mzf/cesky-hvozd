@@ -23,12 +23,12 @@ minetest.register_alias("moreblocks:fence_junglewood", "default:fence_junglewood
 minetest.register_alias("moreblocks:fence_jungle_wood", "default:fence_junglewood")
 minetest.register_alias("moreblocks:jungle_stick", "default:stick")
 
-for _, t in pairs(circular_saw.names) do
+--[[for _, t in pairs(circular_saw.names) do
 	if t[1] ~= nil then
 		minetest.register_alias("moreblocks:" .. t[1] .. "_jungle_wood" .. t[2],
 			"moreblocks:" .. t[1] .. "_junglewood" .. t[2])
 	end
-end
+end]]
 minetest.register_alias("moreblocks:horizontaltree", "moreblocks:horizontal_tree")
 minetest.register_alias("moreblocks:horizontaljungletree", "moreblocks:horizontal_jungle_tree")
 minetest.register_alias("moreblocks:stonesquare", "moreblocks:stone_tile")

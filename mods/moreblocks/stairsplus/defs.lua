@@ -5,6 +5,10 @@ Copyright © 2011-2020 Hugo Locurcio and contributors.
 Licensed under the zlib license. See LICENSE.md for more information.
 --]]
 
+local box_beveled_slab = {
+	type = "fixed",
+	fixed = {-8/16, -8/16, -8/16, 8/16, -7/16, 8/16},
+}
 
 local box_slope = {
 	type = "fixed",
@@ -547,6 +551,7 @@ stairsplus.defs = {
 			extra_groups = {panel_pole = 1},
 			align_style = "world",
 			check_for_pole = true,
+			not_blocking_trains = true,
 		},
 		["_pole_flat"] = {
 			description = "tyč (přímá)",
@@ -557,7 +562,20 @@ stairsplus.defs = {
 			extra_groups = {panel_pole = 1},
 			align_style = "world",
 			check_for_pole = true,
-		}
+			not_blocking_trains = true,
+		},
+		["_banister"] = {
+			description = "zábradlí",
+			node_box = {
+				type = "fixed",
+				fixed = {
+					{-8/16, 7/16, 5/16, 8/16, 8/16, 8/16}, -- horní deska
+					{-9/32, -8/16, 6/16, -7/32, 7/16, 7/16}, -- levá tyč
+					{9/32, -8/16, 6/16, 7/32, 7/16, 7/16}, -- pravá tyč
+				},
+			},
+			not_blocking_trains = true,
+		},
 	},
 	["slab"] = {
 		[""] = {
@@ -753,6 +771,32 @@ stairsplus.defs = {
 			align_style = "world",
 			wall = true,
 		},
+		["_table"] = {
+			description = "stůl",
+			node_box = {
+				type = "fixed",
+				fixed = {
+					{-8/16, 7/16, -8/16, 8/16, 8/16, 8/16}, -- horní deska
+					{-4/16, -8/16, -4/16, 4/16, -7/16, 4/16}, -- podstavec
+					{-1/16, -7/16, -1/16, 1/16, 7/16, 1/16}, -- tyč
+				},
+			},
+		},
+		["_bars"] = {
+			description = "zábradlí či mříž",
+			node_box = {
+				type = "fixed",
+				fixed = {
+					{-17/32, -16/32, 15/32, -15/32, 16/32, 17/32}, -- levá tyč
+					{15/32, -16/32, 15/32, 17/32, 16/32, 17/32}, -- pravá tyč
+					{-15/32, 2/6, 15/32, 15/32, 3/6, 17/32}, -- horní pruh
+					{-15/32, 0/6, 15/32, 15/32, 1/6, 17/32}, -- druhý pruh
+					{-15/32, -2/6, 15/32, 15/32, -1/6, 17/32}, -- třetí pruh
+				},
+			},
+			align_style = "world",
+			not_blocking_trains = true,
+		}
 	},
 	["slope"] = {
 		[""] = {
@@ -951,6 +995,12 @@ stairsplus.defs = {
 			collision_box = box_roof45_3,
 			selection_box = box_roof45_3,
 		},
+		["_beveled"] = {
+			description = "zkosená deska",
+			mesh = "moreblocks_beveled_tile.obj",
+			collision_box = box_beveled_slab,
+			selection_box = box_beveled_slab,
+		}
 	},
 	["stair"] = {
 		[""] = {
