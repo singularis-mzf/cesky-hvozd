@@ -654,7 +654,6 @@ local materials_for_manholes_only = set(
 local platform_materials = set(
 	"basic_materials:cement_block",
 	"basic_materials:concrete_block",
-	"building_blocks:Tar",
 	"darkage:basalt",
 	"darkage:basalt_brick",
 	"darkage:gneiss_brick",
@@ -663,40 +662,35 @@ local platform_materials = set(
 	"darkage:serpentine",
 	"darkage:slate_brick",
 	"darkage:stone_brick",
-	"default:acacia_wood",
-	"default:aspen_wood",
 	"default:desert_stone",
 	"default:desert_stone_block",
-	"default:junglewood",
-	"default:pine_wood",
 	"default:steelblock",
 	"default:stone",
 	"default:stonebrick",
 	"default:stone_block",
-	"default:wood",
-	"moretrees:cedar_planks",
-	"moretrees:cherrytree_planks",
-	"moretrees:chestnut_tree_planks",
-	"moretrees:date_palm_planks",
-	"moretrees:birch_planks",
-	"moretrees:apple_tree_planks",
-	"moretrees:ebony_planks",
-	"moretrees:fir_planks",
-	"moretrees:oak_planks",
-	"moretrees:palm_planks",
-	"moretrees:plumtree_planks",
-	"moretrees:rubber_tree_planks",
-	"moretrees:sequoia_planks",
-	"moretrees:spruce_planks",
-	"moretrees:poplar_planks",
-	"moretrees:willow_planks",
-	"moreblocks:wood_tile_center",
-	"moreblocks:wood_tile_full",
+	"solidcolor:plaster_blue",
+	"solidcolor:plaster_cyan",
+	"solidcolor:plaster_dark_green",
+	"solidcolor:plaster_dark_grey",
+	"solidcolor:plaster_green",
+	"solidcolor:plaster_grey",
+	"solidcolor:plaster_medium_amber_s50",
+	"solidcolor:plaster_orange",
+	"solidcolor:plaster_pink",
+	"solidcolor:plaster_red",
+	"solidcolor:plaster_white",
+	"solidcolor:plaster_yellow",
 	"technic:marble"
+)
+local platform_materials_exceptions = set(
+	"default:wood",
+	"default:junglewood",
+	"moretrees:oak_planks"
 )
 
 local materials_all = union(materials_cnc, materials_kp, materials_no_kp, materials_glass, materials_sns, materials_wool, materials_roof,
-	materials_zdlazba, set("default:sandstone", "default:sandstonebrick", "default:sandstone_block", "ch_extras:rope_block"))
+	materials_zdlazba, platform_materials, platform_materials_exceptions,
+	set("default:sandstone", "default:sandstonebrick", "default:sandstone_block", "ch_extras:rope_block"))
 
 local alts_micro = set("", "_1", "_2", "_4", "_12", "_15")
 
@@ -902,6 +896,8 @@ local rules = {
 	{"streets:asphalt_yellow", "streets", "*", false},
 	{materials_for_manholes, "streets", set("manhole", "stormdrain"), true},
 	{materials_for_manholes_only, "streets", "manhole", true},
+
+	{platform_materials_exceptions , "advtrains", set("platform_high", "platform_low"), true},
 	{platform_materials, "advtrains", alts_advtrains, true},
 
 	-- žlutý pískovec (omezený sortiment tvarů):
@@ -925,7 +921,7 @@ local rules = {
 -- fence:
 	{"*", "fence", alts_fence, true}, -- [ ] TODO
 -- catch-all rules:
-	{materials_all, set("micro", "panel", "slab", "slope", "stair", "cnc", "bank_slope", "pillar", "streets"), "*", false},
+	{materials_all, set("micro", "panel", "slab", "slope", "stair", "cnc", "bank_slope", "advtrains", "pillar", "streets"), "*", false},
 }
 -- ============================================================================
 
@@ -957,7 +953,7 @@ end
 function ch_core.get_materials_from_shapes_db(key)
 	local set
 	if key == "advtrains" then
-		set = platform_materials
+		set = union(platform_materials, platform_materials_exceptions)
 	elseif key == "streets" then
 		set = union(materials_for_manholes, materials_for_manholes_only)
 	end

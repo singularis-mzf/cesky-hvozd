@@ -425,7 +425,7 @@ local categories = {
 			return (groups.platform or 0) > 0
 		end,
 		icon = {
-			{image = "default_acacia_wood.png^[resize:128x128^advtrains_platform.png^[resize:16x16", item = "advtrains:platform_low_acacia_wood"}
+			{image = "basic_materials_cement_block.png^[resize:128x128^advtrains_platform.png^[resize:16x16", item = "advtrains:platform_low_cement_block"}
 		},
 	},
 	{
