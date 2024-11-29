@@ -3,7 +3,7 @@ ch_base.open_mod(minetest.get_current_modname())
 
 if not minetest.features.formspec_version_element then
 	-- At least formspec_version[] is the minimal feature requirement
-	error("Unified Inventory requires Minetest version 5.4.0 or newer.\n" ..
+	error("Unified Inventory requires Minetest version 5.7.0 or newer.\n" ..
 		" Please update Minetest or use an older version of Unified Inventory.")
 end
 
@@ -166,8 +166,8 @@ for _, style in ipairs({ui.style_full, ui.style_lite}) do
 	style.standard_inv = string.format("list[current_player;main;%f,%f;8,4;]",
 							style.std_inv_x + ui.list_img_offset, style.std_inv_y + ui.list_img_offset)
 
-	style.standard_inv_bg = ui.make_inv_img_grid(style.std_inv_x, style.std_inv_y, 8, 1, true)..
-							ui.make_inv_img_grid(style.std_inv_x, style.std_inv_y + ui.imgscale, 8, 3)
+	style.standard_inv_bg = "" --[[ ui.make_inv_img_grid(style.std_inv_x, style.std_inv_y, 8, 1, true)..
+							ui.make_inv_img_grid(style.std_inv_x, style.std_inv_y + ui.imgscale, 8, 3)]]
 
 	style.craft_grid =	table.concat({
 							ui.make_inv_img_grid(style.craft_x, style.craft_y, 3, 3),

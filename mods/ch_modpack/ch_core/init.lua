@@ -7,6 +7,10 @@ ch_core = {
 
 	ap_interval = 15, -- interval pro podmód „ap“
 	cas = 0,
+	inventory_size = {
+		normal = 32,
+		extended = 64,
+	},
 	supported_lang_codes = {cs = true, sk = true},
 	verze_ap = 1, -- aktuální verze podmódu „ap“
 	vezeni_data = {

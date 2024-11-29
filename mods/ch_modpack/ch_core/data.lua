@@ -107,6 +107,7 @@ local offline_charinfo_data_types = {
 	discard_drops = "int", -- 0 = nic, 1 = předměty házet do koše
 	domov = "string",
 	doslech = "int", -- >= 0
+	extended_inventory = "int", -- 0 = normální velikost, 1 = rozšířený inventář
 	last_login = "int", -- >= 0, in seconds since 1. 1. 2000 UTC; 0 is invalid value
 	neshybat = "int", -- 0 = shýbat se při stisku Shift, 1 = neshýbat se
 	no_ch_sky = "int", -- 0 = krásná obloha ano, 1 = ne

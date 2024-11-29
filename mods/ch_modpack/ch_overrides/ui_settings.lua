@@ -420,6 +420,16 @@ local function get_formspec(player, perplayer_formspec)
 			fsgen:checkbox("zobrazzbyv", "ukazatel času zbývajícího do soumraku/úsvitu", toffline_charinfo.skryt_zbyv ~= 1, tooltip))
 	end
 
+	-- Rozšířený inventář?
+	if tplayer_role ~= "new" and tplayer_role ~= "none" then
+		tooltip = "Rozšíří váš hlavní inventář o dalších 32 přihrádek\n"..
+			"dostupných posuvníkem nebo kolečkem myši.\n"..
+			"Tyto nové přihrádky jsou dostupné pouze v okně inventáře,\n"..
+			"ne v oknech truhel, strojů apod."
+		table.insert(formspec,
+			fsgen:checkbox("extinv", "rozšířený hlavní inventář", toffline_charinfo.extended_inventory == 1, tooltip))
+	end
+
 	if tplayer ~= nil then
 		-- Osobní osvětlení světa [all players in game]
 		tooltip =
@@ -769,6 +779,9 @@ local function on_player_receive_fields(player, formname, fields)
 		else
 			ch_core.hide_gametime_hudbar(tplayer_name)
 		end
+	elseif fields.chs_extinv then
+		ch_core.extend_player_inventory(tplayer_name, fields.chs_extinv == "true")
+		update_formspec = true
 
 	-- 3. FIELDS WITH BUTTONS
 	elseif fields.chs_adoslech_set and tonumber(fields.chs_adoslech) ~= nil then

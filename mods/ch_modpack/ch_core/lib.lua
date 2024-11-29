@@ -683,6 +683,73 @@ function ch_core.compile_dofile(args, options)
 	return result
 end
 
+function ch_core.extend_player_inventory(player_name, extend)
+	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	if offline_charinfo == nil then
+		minetest.log("error", "ch_core.extend_player_inventory() called on player "..player_name.." that has no offline_charinfo!")
+		return false
+	end
+	local player = minetest.get_player_by_name(player_name)
+	local target_size
+	if extend then
+		-- extend the inventory
+		target_size = ch_core.inventory_size.extended
+		if player ~= nil then
+			local inv = player:get_inventory()
+			local inv_size = inv:get_size("main")
+			if inv_size < target_size then
+				inv:set_size("main", target_size)
+				minetest.log("action", "Player inventory "..player_name.."/main was extended from "..inv_size.." slots to "..target_size..".")
+			end
+		end
+		if offline_charinfo.extended_inventory ~= 1 then
+			offline_charinfo.extended_inventory = 1
+			ch_core.save_offline_charinfo(player_name, "extended_inventory")
+		end
+
+	elseif not extend and offline_charinfo.extended_inventory == 1 then
+		-- shrink the inventory
+		target_size = ch_core.inventory_size.normal
+		if player ~= nil then
+			local inv = player:get_inventory()
+			local inv_size = inv:get_size("main")
+			if inv_size < target_size then
+				inv:set_size("main", target_size)
+				minetest.log("action", "Player inventory "..player_name.."/main was extended from "..inv_size.." slots to "..target_size..".")
+			elseif inv_size > target_size then
+				local current_items = inv:get_list("main")
+				local overflown_stacks = {}
+				inv:set_size("main", target_size)
+				for i = target_size + 1, inv_size do
+					local stack = current_items[i]
+					if not stack:is_empty() then
+						stack = inv:add_item("main", stack)
+						if not stack:is_empty() then
+							table.insert(overflown_stacks, stack)
+						end
+					end
+				end
+				minetest.log("action", "Player inventory "..player_name.."/main was shrinked from "..inv_size.." slots to "..target_size..". "..#overflown_stacks.." overflown stacks.")
+				if #overflown_stacks > 0 then
+					local player_pos = assert(player:get_pos())
+					for _, stack in ipairs(overflown_stacks) do
+						if core.add_item(player_pos, stack) == nil then
+							minetest.log("error", "Spawning overflown item "..stack:to_string().." failed! The item is lost.")
+						end
+					end
+				end
+			end
+		end
+		if offline_charinfo.extended_inventory == 1 then
+			offline_charinfo.extended_inventory = 0
+			ch_core.save_offline_charinfo(player_name, "extended_inventory")
+		end
+	else
+		-- no change
+		return
+	end
+end
+
 --[[
 Pro zadanou hodnotu facedir vrátí rotační vektor symbolizující rotaci
 z výchozího otočení (facedir = 0) do otočení cílového.

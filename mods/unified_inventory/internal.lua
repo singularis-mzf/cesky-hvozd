@@ -341,7 +341,7 @@ function ui.get_formspec(player, page)
 	end
 
 	local fs = {
-		"formspec_version[4]",
+		"formspec_version[6]",
 		"size["..ui_peruser.formw..","..ui_peruser.formh.."]",
 		pagedef.formspec_prepend and "" or "no_prepend[]",
 		ui.standard_background
@@ -356,8 +356,34 @@ function ui.get_formspec(player, page)
 
 	if fsdata.draw_inventory ~= false then
 		-- Player inventory
+		local has_extended_inventory = ch_core.offline_charinfo[player_name].extended_inventory == 1
+
+		if has_extended_inventory then
+			fs[#fs + 1] = string.format("scroll_container[%f,%f;%f,%f;ui_sb_main_inv;vertical]",
+				ui_peruser.std_inv_x + ui.list_img_offset, ui_peruser.std_inv_y + ui.list_img_offset,
+				8 * ui.imgscale, 4 * ui.imgscale)
+			fs[#fs + 1] = string.format("box[0,%f;10,10;#00000099]", 4 * ui.imgscale + 0 * ui.list_img_offset)
+		else
+			fs[#fs + 1] =  string.format("container[%f,%f]", ui_peruser.std_inv_x + ui.list_img_offset, ui_peruser.std_inv_y + ui.list_img_offset)
+		end
+		fs[#fs + 1] = ui.make_inv_img_grid(0, 0, 8, 1, true)
+		if has_extended_inventory then
+			fs[#fs + 1] = ui.make_inv_img_grid(0, 0 + ui.imgscale, 8, 7)
+		else
+			fs[#fs + 1] = ui.make_inv_img_grid(0, 0 + ui.imgscale, 8, 3)
+		end
 		fs[#fs + 1] = "listcolors[#00000000;#00000000]"
-		fs[#fs + 1] = ui_peruser.standard_inv
+		if has_extended_inventory then
+			fs[#fs + 1] = string.format("list[current_player;main;%f,%f;8,8;]", ui.list_img_offset, ui.list_img_offset)
+			fs[#fs + 1] = "scroll_container_end[]"..
+				"scrollbaroptions[max=50]"..
+				string.format("scrollbar[%f,%f;0.25,%f;vertical;ui_sb_main_inv;0]",
+					ui_peruser.std_inv_x + ui.list_img_offset - 0.25, ui_peruser.std_inv_y + 0.2, 4 * ui.imgscale - 0.1)..
+				"tooltip[ui_sb_main_inv;Tip: k přístupu do skryté části vašeho inventáře\nmůžete použít také kolečko myši.]"
+		else
+			fs[#fs + 1] = string.format("list[current_player;main;%f,%f;8,4;]", ui.list_img_offset, ui.list_img_offset)
+			fs[#fs + 1] = "container_end[]"
+		end
 		local ch_bank = ui.ch_bank
 		if ch_bank then
 			fs[#fs + 1] = ch_bank.get_zustatek_formspec(player_name, ui_peruser.money_x, ui_peruser.money_y, 10, "penize", "hcs", "kcs", "zcs")
@@ -526,7 +552,7 @@ end
 minetest.register_on_joinplayer(function(player)
 	local player_name = player:get_player_name()
 	local info = minetest.get_player_information(player_name)
-	if info and (info.formspec_version or 0) < 4 then
+	if info and (info.formspec_version or 0) < 6 then
 		minetest.chat_send_player(player_name, S("Unified Inventory: Your game version is too old"
 			.. " and does not support the GUI requirements. You might experience visual issues."))
 	end

@@ -394,8 +394,12 @@ function ui.is_creative(playername)
 end
 
 function ui.single_slot(xpos, ypos, bright)
+	return string.format("image[%f,%f;%f,%f;ui_single_slot%s.png;16]",
+		xpos, ypos, ui.imgscale, ui.imgscale, (bright and "_bright" or ""))
+--[[
 	return string.format("background9[%f,%f;%f,%f;ui_single_slot%s.png;false;16]",
 	xpos, ypos, ui.imgscale, ui.imgscale, (bright and "_bright" or "") )
+]]
 end
 
 function ui.make_trash_slot(xpos, ypos)

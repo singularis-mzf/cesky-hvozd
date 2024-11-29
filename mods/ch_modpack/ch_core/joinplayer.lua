@@ -1,6 +1,7 @@
 ch_core.open_submod("joinplayer", {chat = true, data = true, events = true, formspecs = true, lib = true, nametag = true, pryc = true})
 
 local F = minetest.formspec_escape
+local ifthenelse = ch_core.ifthenelse
 
 ch_core.register_event_type("joinplayer", {
 	-- ignoruje postavy, které budou odpojeny, a turistické postavy
@@ -374,6 +375,9 @@ local function on_joinplayer(player, last_login)
 		minetest.set_player_privs(player_name, privs)
 		minetest.log("action", "creative priv set on join for "..player_name)
 	end
+
+	-- Set the inventory size
+	ch_core.extend_player_inventory(player_name, offline_charinfo.extended_inventory == 1)
 
 	-- Pomodoro functionality for single-players:
 	on_joinplayer_pomodoro(player, player_name, online_charinfo)
