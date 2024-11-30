@@ -259,7 +259,6 @@ minetest.register_entity("clothing:mannequin_entity", {
     self.pos = vector.round(opos)
     local pos = vector.offset(opos, 0, -y_change, 0)
     local node = core.get_node(pos)
-    print("DEBUG: node is "..node.name)
     local meta = core.get_meta(pos)
     local old_handle = meta:get_int("entity_handle")
     if old_handle == 0 then

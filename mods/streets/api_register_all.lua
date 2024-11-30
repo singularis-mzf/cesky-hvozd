@@ -295,7 +295,7 @@ local register_marking_nodes = function(friendlyname, name, tex, r)
 		paramtype = "light",
 		paramtype2 = "colorfacedir",
 		palette = "streets_roadmarkings_palette.png",
-		groups = { snappy = 3, streets_mark = 1, oddly_breakable_by_hand = 1, not_in_creative_inventory = 1 },
+		groups = { snappy = 3, streets_mark = 1, oddly_breakable_by_hand = 1, not_in_creative_inventory = 1, not_blocking_trains = 1 },
 		sunlight_propagates = true,
 		buildable_to = true,
 		floodable = true,
