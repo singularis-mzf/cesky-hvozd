@@ -82,6 +82,7 @@ dofile(modpath .. "/hotbar.lua")
 dofile(modpath .. "/vgroups.lua")
 dofile(modpath .. "/data.lua")
 dofile(modpath .. "/lib.lua") -- : data
+dofile(modpath .. "/entity_register.lua") -- : lib
 dofile(modpath .. "/interiors.lua") -- : lib
 dofile(modpath .. "/shapes_db.lua") -- : lib
 dofile(modpath .. "/penize.lua") -- : lib
