@@ -650,7 +650,8 @@ local function sensors()
 			
 			local pos = self.object:get_pos()
 --local tim = minetest.get_us_time()
-			self.nearby_objects = minetest.get_objects_inside_radius(pos, range)
+			-- self.nearby_objects = minetest.get_objects_inside_radius(pos, range)
+			self.nearby_objects = ch_core.get_players_inside_radius(pos, range) -- mobkit will only sense players now (optimization)
 --minetest.chat_send_all(minetest.get_us_time()-tim)
 			for i,obj in ipairs(self.nearby_objects) do	
 				if obj == self.object then

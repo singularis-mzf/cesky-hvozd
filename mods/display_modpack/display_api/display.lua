@@ -133,8 +133,23 @@ end
 
 local function get_display_objrefs(pos, create)
 	local objrefs = {}
-	local ndef = minetest.registered_nodes[minetest.get_node(pos).name]
+	local node = minetest.get_node_or_nil(pos)
+	if node == nil then
+		return objrefs
+	end
+	local meta = minetest.get_meta(pos)
+	local ndef = minetest.registered_nodes[node.name]
 	if ndef and ndef.display_entities then
+		for name, _ in pairs(ndef.display_entities) do
+			local handle = meta:get_int("display_entity_"..name)
+			if handle ~= 0 then
+				local entity, objref = ch_core.get_entity_by_handle(handle, name)
+				if entity ~= nil then
+					objrefs[name] = assert(objref)
+				end
+			end
+		end
+		--[[
 		for _, objref in
 			ipairs(minetest.get_objects_inside_radius(pos, max_entity_pos)) do
 			local entity = objref:get_luaentity()
@@ -147,12 +162,18 @@ local function get_display_objrefs(pos, create)
 				end
 			end
 		end
+		]]
 		if create then
 			-- Add missing
 			for name, _ in pairs(ndef.display_entities) do
 				if not objrefs[name] then
-					objrefs[name] = minetest.add_entity(pos, name,
-						minetest.serialize({ nodepos = pos }))
+					local new_object = minetest.add_entity(pos, name, minetest.serialize({ nodepos = pos }))
+					local new_entity = new_object:get_luaentity()
+					local new_handle = ch_core.get_handle_of_entity(new_entity)
+					if new_handle ~= nil then
+						meta:set_int("display_entity_"..name, new_handle)
+						objrefs[name] = new_object
+					end
 				end
 			end
 		end
@@ -217,16 +238,32 @@ function display_api.on_activate(entity, staticdata)
 		end
 
 		if entity.nodepos then
-			local node = minetest.get_node(entity.nodepos)
-			local ndef = minetest.registered_nodes[node.name]
+			local node = core.get_node(entity.nodepos)
+			local ndef = core.registered_nodes[node.name]
 			if ndef and ndef.display_entities then
 				local edef = ndef.display_entities[entity.name]
 				if edef then
-					-- Call on_display_update callback of the entity to build texture
-					if edef.on_display_update then
-						edef.on_display_update(entity.nodepos, entity.object)
+					local meta = core.get_meta(entity.nodepos)
+					local meta_name = "display_entity_"..entity.name
+					local old_handle = meta:get_int(meta_name)
+					if old_handle == 0 then
+						old_handle = nil
 					end
-					return
+					local new_handle, error_message = ch_core.register_entity(entity, old_handle)
+					if new_handle == nil then
+						-- entity registration failed!
+						core.log("error", "Entity registration failed: "..(error_message or "nil"))
+					else
+						if old_handle == nil or new_handle ~= old_handle then
+							meta:set_int(meta_name, new_handle)
+							print("DEBUG: handle metadata "..meta_name.." updated to "..new_handle.." at "..core.pos_to_string(entity.nodepos))
+						end
+						-- Call on_display_update callback of the entity to build texture
+						if edef.on_display_update then
+							edef.on_display_update(entity.nodepos, entity.object)
+						end
+						return
+					end
 				end
 			end
 		end
@@ -311,8 +348,10 @@ function display_api.register_display_entity(entity_name)
 				collisionbox = { 0, 0, 0, 0, 0, 0 },
 				visual = "upright_sprite",
 				textures = {},
+				pointable = false,
 			},
 			on_activate = display_api.on_activate,
+			on_deactivate = ch_core.unregister_entity,
 			get_staticdata = function(self)
 				return minetest.serialize({ nodepos = self.nodepos })
 			end,

@@ -796,6 +796,8 @@ function advtrains.train_step_c(id, train, dtime)
 					end
 				end
 			end
+			--[[ -- TODO: damage to other objects temporarily disabled to save CPU time,
+			     -- enable it again when get_objects_inside_radius() could be implemented efficiently
 			--- 8c damage other objects ---
 			if is_loaded_area then
 				local objs = minetest.get_objects_inside_radius(rcollpos, 2)
@@ -806,6 +808,7 @@ function advtrains.train_step_c(id, train, dtime)
 					end
 				end
 			end
+			]]
 		end
 	end
 end

@@ -1890,7 +1890,7 @@ function mob_class:do_runaway_from()
 	local p, sp, dist, pname
 	local player, obj, min_player, name
 	local min_dist = self.view_range + 1
-	local objs = minetest.get_objects_inside_radius(s, self.view_range)
+	local objs = ch_core.get_players_inside_radius(s, self.view_range)
 
 	-- loop through entities surrounding mob
 	for n = 1, #objs do
@@ -3551,7 +3551,7 @@ function mobs:register_mob(name, def)
 		custom_attack = def.custom_attack,
 
 		on_spawn = def.on_spawn,
-		on_blast = def.on_blast, -- class redifinition
+		on_blast = def.on_blast, -- class redefinition
 		do_punch = def.do_punch,
 		on_breed = def.on_breed,
 		on_grown = def.on_grown,
@@ -3560,21 +3560,30 @@ function mobs:register_mob(name, def)
 		is_mob = true, _hittable_by_projectile = true, -- mineclone thing
 
 		on_activate = function(self, staticdata, dtime)
-			return self:mob_activate(staticdata, def, dtime)
+			self:mob_activate(staticdata, def, dtime)
+			ch_core.register_entity(self)
 		end,
 
 		get_staticdata = function(self)
 			return self:mob_staticdata(self)
-		end
+		end,
+
+		on_deactivate = ch_core.unregister_entity,
 
 	}, mob_class_meta))
+	ch_core.enable_entity_name_index(name)
 end
 
 -- count how many mobs of one type are inside an area
 -- will also return true for second value if player is inside area
 
 local function count_mobs(pos, type)
+	local mobs = ch_core.find_handles_in_radius(pos, aoc_range * 2, type)
+	local players = ch_core.get_players_inside_radius(pos, aoc_range * 2)
 
+	return #mobs, players[1] ~= nil
+
+	--[[
 	local total = 0
 	local objs = minetest.get_objects_inside_radius(pos, aoc_range * 2)
 	local ent, players
@@ -3593,6 +3602,7 @@ local function count_mobs(pos, type)
 	end
 
 	return total, players
+	]]
 end
 
 -- do we have enough space to spawn mob? (thanks wuzzy)
@@ -4778,10 +4788,14 @@ minetest.register_chatcommand("clear_mobs", {
 
 -- Is mob hearing enabled, if so override minetest.sound_play with custom function
 
-if settings:get_bool("mobs_can_hear") ~= false then
+local mobs_can_hear = settings:get_bool("mobs_can_hear") ~= false
+mobs_can_hear = false -- disable this functionality at all
+if mobs_can_hear then
 
 	local node_hear = settings:get_bool("mobs_can_hear_node")
 	local old_sound_play = minetest.sound_play
+
+	minetest.log("warning", "mobs_can_hear is enabled, this can cause performance issues")
 
 	minetest.sound_play = function(spec, param, eph)
 

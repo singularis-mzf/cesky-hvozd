@@ -943,6 +943,20 @@ function ch_core.get_player_role(player_or_player_name)
 end
 
 --[[
+	Vrátí seznam hráčských postav (ObjectRef) ve vymezené oblasti.
+	Jde o bezprostřední náhradu za core.get_objects_inside_radius().
+]]
+function ch_core.get_players_inside_radius(center, radius)
+	local result = {}
+	for _, player in ipairs(core.get_connected_players()) do
+		if vector.distance(center, player:get_pos()) <= radius then
+			table.insert(result, player)
+		end
+	end
+	return result
+end
+
+--[[
 Vygeneruje šablonu pro stránku formspecu pro unified_inventory.
 id -- string, required -- rozlišující textové ID pro připojení za prvky ch_scrollbar[12]_
 player_viewname -- string, optional -- jméno postavy pro zobrazení v záhlaví (může být barevné)

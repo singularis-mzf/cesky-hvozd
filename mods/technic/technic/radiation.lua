@@ -337,7 +337,7 @@ local rad_dmg_mult_sqrt = math.sqrt(1 / rad_dmg_cutoff)
 local function dmg_abm(pos, node)
 	local strength = minetest.get_item_group(node.name, "radioactive")
 	local max_dist = strength * rad_dmg_mult_sqrt
-	for _, o in pairs(minetest.get_objects_inside_radius(pos,
+	for _, o in pairs(ch_core.get_players_inside_radius(pos,
 			max_dist + abdomen_offset)) do
 		if (entity_damage or o:is_player()) and o:get_hp() > 0 then
 			dmg_object(pos, o, strength)

@@ -216,6 +216,7 @@ minetest.register_tool("screwdriver:screwdriver", {
 		screwdriver.handler(itemstack, user, pointed_thing, screwdriver.ROTATE_AXIS, 200)
 		return itemstack
 	end,
+	_ch_help = "Slouží k otáčení bloků.\nKliknutí levým tlačítkem otočí blok okolo osy, kliknutí pravým změní osu otáčení.",
 })
 
 

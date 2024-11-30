@@ -2,6 +2,8 @@
 
 local builtin_item = minetest.registered_entities["__builtin:item"]
 
+default.builtin_item_on_step = assert(builtin_item.on_step)
+
 local item = {
 	set_item = function(self, itemstring)
 		builtin_item.set_item(self, itemstring)
@@ -41,7 +43,7 @@ local item = {
 	end,
 
 	on_step = function(self, dtime, ...)
-		builtin_item.on_step(self, dtime, ...)
+		default.builtin_item_on_step(self, dtime, ...)
 
 		if self.flammable then
 			-- flammable, check for igniters every 10 s

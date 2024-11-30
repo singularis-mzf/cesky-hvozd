@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local modpath = minetest.get_modpath("xcompat")
 
 xcompat = {
@@ -49,3 +50,4 @@ if minetest.get_modpath("mtt") and mtt.enabled then
     -- register tests
     dofile(modpath .. "/mtt.lua")
 end
+ch_base.close_mod(minetest.get_current_modname())

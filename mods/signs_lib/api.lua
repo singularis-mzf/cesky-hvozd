@@ -169,42 +169,49 @@ minetest.register_entity("signs_lib:text", {
 		static_save = true,
 	},
 	on_activate = function(self)
-		local node = minetest.get_node(self.object:get_pos())
+		local pos = self.object:get_pos()
+		local node = minetest.get_node(pos)
 		if minetest.get_item_group(node.name, "sign") == 0 then
 			self.object:remove()
+		else
+			local meta = minetest.get_meta(pos)
+			local handle = meta:get_int("signs_lib_sign_handle")
+			if handle == 0 then
+				handle = nil
+			end
+			local new_handle, error_message = ch_core.register_entity(self, handle)
+			if handle == nil or handle ~= new_handle then
+				meta:set_int("signs_lib_sign_handle", new_handle)
+			end
 		end
 	end,
+	on_deactivate = ch_core.unregister_entity,
 })
 
 function signs_lib.delete_objects(pos)
-	local objects = minetest.get_objects_inside_radius(pos, 0.5)
-	for _, v in ipairs(objects) do
-		if v then
-			local e = v:get_luaentity()
-			if e and string.match(e.name, "sign.*text") then
-				v:remove()
-			end
+	local meta = minetest.get_meta(pos)
+	local handle = meta:get_int("signs_lib_sign_handle")
+	if handle ~= 0 then
+		local e, o = ch_core.get_entity_by_handle(handle, "signs_lib:text")
+		if e ~= nil then
+			o:remove()
 		end
 	end
 end
 
 function signs_lib.spawn_entity(pos, texture, glow)
 	local node = minetest.get_node(pos)
+	local meta = minetest.get_meta(pos)
 	local def = minetest.registered_items[node.name]
 	if not def or not def.entity_info then return end
 
 	local text_scale = (node and node.text_scale) or signs_lib.default_text_scale
-	local objects = minetest.get_objects_inside_radius(pos, 0.5)
+	local handle = meta:get_int("signs_lib_sign_handle")
 	local obj
-
-	if #objects > 0 then
-		for _, v in ipairs(objects) do
-			if v then
-				local e = v:get_luaentity()
-				if e and e.name == "signs_lib:text" then
-					obj = v
-				end
-			end
+	if handle ~= 0 then
+		local e, o = ch_core.get_entity_by_handle(handle, "signs_lib:text")
+		if e ~= nil then
+			obj = o
 		end
 	end
 

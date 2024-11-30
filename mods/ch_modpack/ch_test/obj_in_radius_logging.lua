@@ -24,5 +24,6 @@ minetest.get_objects_inside_radius = function(...)
     if math.floor(old_acc_elapsed) ~= math.floor(acc_elapsed) then
         minetest.log("warning", "get_objects_inside_radius(): "..math.floor(acc_elapsed).." seconds reached ("..calls.." calls).")
     end
+	-- print("\n\n"..debug.traceback())
 	return unpack(results)
 end

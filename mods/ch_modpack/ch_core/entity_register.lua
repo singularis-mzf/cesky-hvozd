@@ -5,7 +5,40 @@ local ifthenelse = ch_core.ifthenelse
 local count = 0 -- aktuální počet zaregistrovaných entit
 local next_gc_count = 16 -- počet, při jehož dosažení se spustí pročištění
 local entities = {} -- mapa registrovaných entit: handle => entita
+local name_index = {
+    ["__builtin:item"] = {},
+} -- mapa entity_name => {handle => object} (indexování __builtin:item je zapnuto předem)
 local handle_generator = PcgRandom(os.time())
+
+local function remove_registered_entity(handle)
+    local entity = entities[handle]
+    if entity == nil then
+        return false
+    end
+    local name = assert(entity.name)
+    local index = name_index[name]
+    if index ~= nil then
+        index[handle] = nil
+    end
+    entities[handle] = nil
+    entity._ch_entity_handle = nil
+    count = count - 1
+    return true
+end
+
+local function add_entity_to_register(handle, entity)
+    local object = entity.object
+    if not object:is_valid() or entities[handle] ~= nil then
+        return false
+    end
+    entities[handle] = entity
+    local index = name_index[entity.name]
+    if index ~= nil then
+        index[handle] = object
+    end
+    count = count + 1
+    entity._ch_entity_handle = handle
+end
 
 --[[
     Projde zaregistrované entity a odstraní ty, jejichž objekty již vypršely.
@@ -26,13 +59,72 @@ function ch_core.collect_invalid_entities()
     end
     if gc_count > 0 then
         for handle, _ in pairs(result) do
-            entities[handle] = nil
-            count = count - 1
+            remove_registered_entity(handle)
         end
         next_gc_count = 2 * count
-        print("DEBUG: "..gc_count.." invalidated entities removed from the register. next_gc_count = "..next_gc_count)
     end
     return gc_count, result, count
+end
+
+--[[
+    Vypne indexování entit zadaného jména
+]]
+function ch_core.disable_entity_name_index(name)
+    name_index[name] = nil
+end
+
+--[[
+    Zapne indexování entit zadaného jména
+]]
+function ch_core.enable_entity_name_index(name)
+    if name_index[name] == nil then
+        local new_index = {}
+        for handle, entity in pairs(entities) do
+            if entity.name == name and entity.object:is_valid() then
+                new_index[handle] = entity.object
+            end
+        end
+        name_index[name] = new_index
+    end
+end
+
+--[[
+    Vrátí seznam handles pro entity daného typu v zadané oblasti.
+    Aby fungovala, musí být zapnutý entity_name_index pro daný typ entit.
+    Parametry:
+    * pos (vector),
+    * radius (float),
+    * name (string),
+    * return_type (enum: handle|entity|object or nil) [co vrátit v seznamu; nil znamená handle]
+    * handle_to_ignore (int32 or nil) [je-li nastaveno, entita se zadaným handle se do výstupního seznamu nezahrne]
+    Vrací:
+    a) seznam nalezených entit (typ prvků je určený parametrem return_type)
+    b) nil (pokud není zapnuto indexování entit daného typu)
+]]
+function ch_core.find_handles_in_radius(pos, radius, name, return_type, handle_to_ignore)
+    local result = {}
+    local index = name_index[name]
+    if index == nil then
+        return nil
+    end
+    if handle_to_ignore == nil then
+        handle_to_ignore = 0
+    end
+    for handle, object in pairs(index) do
+        if handle ~= handle_to_ignore then
+            local opos = object:get_pos() -- get_pos() může vrátit nil pro vypršené objekty
+            if opos ~= nil and vector.distance(pos, opos) <= radius then
+                if return_type == nil or return_type == "handle" then
+                    table.insert(result, handle)
+                elseif return_type == "entity" then
+                    table.insert(result, entities[handle])
+                else
+                    table.insert(result, object)
+                end
+            end
+        end
+    end
+    return result
 end
 
 --[[
@@ -55,25 +147,23 @@ function ch_core.get_handle_of_entity(lua_entity)
     if lua_entity == nil then
         return nil
     elseif type(lua_entity) == "table" then
-        local result = lua_entity._ch_entity_handle
-        if type(result) == "number" and entities[result] ~= nil then
+        local handle = lua_entity._ch_entity_handle
+        if type(handle) == "number" and entities[handle] ~= nil then
             -- already has a handle
             if lua_entity.object:is_valid() then
-                return result
+                return handle
             else
                 -- object already expired!
-                result._ch_entity_handle = nil
-                entities[result] = nil
-                count = count - 1
+                remove_registered_entity(handle)
                 return nil
             end
         end
         local message
-        result, message = ch_core.register_entity(lua_entity)
+        handle, message = ch_core.register_entity(lua_entity)
         if message ~= nil then
-            core.log(ifthenelse(result == nil, "error", "warning"), "ch_core.get_handle_of_entity(): "..message)
+            core.log(ifthenelse(handle == nil, "error", "warning"), "ch_core.get_handle_of_entity(): "..message)
         end
-        return result
+        return handle
     else
         error("ch_core.get_handle_of_entity() called with an invalid argument: "..dump2({type = type(lua_entity), value = lua_entity}))
     end
@@ -86,9 +176,9 @@ end
         * handle (int32 or nil)
         * required_name (string or nil)
     Vrací:
-        a) table (požadovaná entita)
-        b) false (odkazovaná entita existuje, ale liší se hodnotou 'name')
-        c) nil (parametr je nil nebo odkazovaná entita neexistuje nebo nemá platný objekt)
+        a) entity (table) [požadovaná entita], object (ObjRef) [její objekt]
+        b) nil, other_name (string) [odkazovaná entita existuje, ale liší se hodnotou 'name']
+        c) nil, nil [parametr je nil nebo odkazovaná entita neexistuje nebo nemá platný objekt]
 ]]
 function ch_core.get_entity_by_handle(handle, required_name)
     if type(handle) == "number" then
@@ -96,23 +186,18 @@ function ch_core.get_entity_by_handle(handle, required_name)
         if result ~= nil then
             local o = result.object
             if o == nil or not o:is_valid() then
-                print("DEBUG: Already invalid entity with handle "..handle.." removed from the register.")
-                result._ch_entity_handle = nil
-                entities[handle] = nil -- entity already invalidated!
+                remove_registered_entity(handle)
                 return nil
             end
             if required_name ~= nil and required_name ~= result.name then
-                return false -- different name
+                return nil, result.name -- different name
             end
-            return result
+            return result, o
         end
-        return result
-    elseif handle == nil then
-        return nil
-    else
+    elseif handle ~= nil then
         minetest.log("warning", "ch_core.get_entity_by_handle() called with an invalid argument: "..dump2({type = type(handle), value = handle}))
-        return nil
     end
+    return nil, nil
 end
 
 --[[
@@ -127,8 +212,10 @@ function ch_core.is_valid_entity_handle(h)
         return false, "not a number (invalid type)"
     elseif math.floor(h) ~= h then
         return false, "not an integer"
-    elseif result < -2147483648 or result > 2147483647 then
+    elseif h < -2147483648 or h > 2147483647 then
         return false, "out of range"
+    elseif h == 0 then
+        return false, "zero is an invalid handle"
     else
         return true, "OK"
     end
@@ -167,17 +254,18 @@ function ch_core.register_entity(lua_entity, handle_to_use)
         return handle, ifthenelse(handle_to_use == nil or handle_to_use == handle, "already registered", "already registered under a different handle!")
     end
     handle = handle_to_use
+    local handle_type = "old"
     local warning
     if handle_to_use ~= nil then
         local e = entities[handle_to_use]
         if e ~= nil then
             if e.object:is_valid() then
                 handle = nil
+                handle_type = "???"
                 warning = "requested handle already used for a different entity"
             else
                 -- object with requested handle already expired
-                entities[handle_to_use] = nil
-                count = count - 1
+                remove_registered_entity(handle_to_use)
             end
         end
     end
@@ -185,14 +273,14 @@ function ch_core.register_entity(lua_entity, handle_to_use)
     if handle == nil then
         -- generate a new handle
         repeat
-            handle = handle_generator:next()
+            repeat
+                handle = handle_generator:next()
+            until handle ~= 0
             assert(ch_core.is_valid_entity_handle(handle))
         until entities[handle] == nil
+        handle_type = "new"
     end
-    lua_entity._ch_entity_handle = handle
-    entities[handle] = lua_entity
-    count = count + 1
-    print("DEBUG: a new entity registered under a new handle "..result)
+    add_entity_to_register(handle, lua_entity)
     if count >= next_gc_count then
         ch_core.collect_invalid_entities()
         if entities[handle] == nil then
@@ -212,13 +300,31 @@ function ch_core.unregister_entity(lua_entity)
     if lua_entity ~= nil then
         local handle = lua_entity._ch_entity_handle
         if type(handle) == "number" then
-            lua_entity._ch_entity_handle = nil
             if entities[handle] ~= nil then
-                entities[handle] = nil
+                remove_registered_entity(handle)
                 return true
             end
+            lua_entity._ch_entity_handle = nil -- for sure
         end
     end
 end
+
+-- __builtin:item by se měla registrovat:
+local builtin_item = core.registered_entities["__builtin:item"]
+local function empty_function() end
+local orig_on_activate = builtin_item.on_activate or empty_function
+local orig_on_deactivate = builtin_item.on_deactivate or empty_function
+local new_item = {
+    on_activate = function(self, ...)
+        orig_on_activate(self, ...)
+        ch_core.register_entity(self)
+    end,
+    on_deactivate = function(self, ...)
+        orig_on_deactivate(self, ...)
+        ch_core.unregister_entity(self)
+    end,
+}
+setmetatable(new_item, {__index = builtin_item})
+core.register_entity(":__builtin:item", new_item)
 
 ch_core.close_submod("entity_register")

@@ -27,6 +27,7 @@ local function drop_armor(pos)
   end
 end
 
+--[[
 local function get_stand_object(pos)
   local object = nil
   local objects = minetest.get_objects_inside_radius(pos, 0.5) or {}
@@ -45,18 +46,30 @@ local function get_stand_object(pos)
   end
   return object
 end
+]]
 
-local function update_entity(pos)
+local function update_entity(pos, entity_hint) -- pos is a node position
+  local opos = vector.offset(pos, 0, y_change, 0)
   local node = minetest.get_node(pos)
-  local object = get_stand_object(pos)
+  local object
+  if entity_hint ~= nil then
+    object = assert(entity_hint.object)
+  else
+    local meta = minetest.get_meta(pos)
+    local handle = meta:get_int("entity_handle")
+    if handle ~= 0 then
+      local entity = ch_core.get_entity_by_handle(handle)
+      if entity ~= nil then
+        object = entity.object
+      end
+    end
+  end
   if object then
     if not string.find(node.name, "clothing:mannequin_") then
       object:remove()
       return
     end
   else
-    local opos = {x=pos.x, z=pos.z}
-    opos.y = pos.y + y_change
     object = minetest.add_entity(opos, "clothing:mannequin_entity")
   end
   if object then
@@ -229,22 +242,37 @@ minetest.register_node("clothing:mannequin_stand", {
 
 minetest.register_entity("clothing:mannequin_entity", {
 	initial_properties = {
-  physical = true,
-  visual = "mesh",
-  --mesh = "skinsdb_3d_armor_character_5.b3d",
-  mesh = "clothing_mannequin.obj",
-  visual_size = {x=1, y=1},
-  collisionbox = {0,0,0,0,0,0},
-  textures = {"clothing_mannequin.png", "clothing_transparent.png", "clothing_transparent.png", "clothing_transparent.png"},
-  use_texture_alpha = true,
+    physical = true,
+    visual = "mesh",
+    --mesh = "skinsdb_3d_armor_character_5.b3d",
+    mesh = "clothing_mannequin.obj",
+    visual_size = {x=1, y=1},
+    collisionbox = {0,0,0,0,0,0},
+    textures = {"clothing_mannequin.png", "clothing_transparent.png", "clothing_transparent.png", "clothing_transparent.png"},
+    use_texture_alpha = true,
+    static_save = true,
 	},
   pos = nil,
   timer = 0,
   on_activate = function(self)
-    local pos = self.object:get_pos()
-    if pos then
-      self.pos = vector.round(pos)
+    local opos = assert(self.object:get_pos())
+    self.pos = vector.round(opos)
+    local pos = vector.offset(opos, 0, -y_change, 0)
+    local node = core.get_node(pos)
+    print("DEBUG: node is "..node.name)
+    local meta = core.get_meta(pos)
+    local old_handle = meta:get_int("entity_handle")
+    if old_handle == 0 then
+      old_handle = nil
+    end
+    local new_handle, errmsg = ch_core.register_entity(self, old_handle)
+    if new_handle ~= nil then
+      if old_handle == nil or new_handle ~= old_handle then
+        meta:set_int("entity_handle", new_handle)
+      end
       update_entity(pos)
+    else
+      core.log("error", "clothing:mannequin_entity registration failed: "..(errmsg or "nil"))
     end
   end,
   on_blast = function(self, damage)
@@ -256,6 +284,7 @@ minetest.register_entity("clothing:mannequin_entity", {
     end
     return false, false, drops
   end,
+  on_deactivate = ch_core.unregister_entity,
 })
 
 minetest.register_abm({
@@ -263,9 +292,6 @@ minetest.register_abm({
   interval = 15,
   chance = 1,
   action = function(pos, node, active_object_count, active_object_count_wider)
-    local num
-    num = #minetest.get_objects_inside_radius(pos, 0.5)
-    if num > 0 then return end
     update_entity(pos)
   end
 })
