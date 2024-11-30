@@ -542,11 +542,10 @@ local function craftguide_craft(player, formname, fields)
 
 	local player_name = player:get_player_name()
 
-	local output = ui.current_item[player_name] or ""
-	if output == "" then return end
+	local output = ui.current_item[player_name]
+	if output == nil or output:is_empty() then return end
 
-	local crafts = ui.crafts_for[
-		ui.current_craft_direction[player_name]][output] or {}
+	local crafts = ui.crafts_for[ui.current_craft_direction[player_name]][output:get_name()] or {}
 	if #crafts == 0 then return end
 
 	local alternate = ui.alternate[player_name]

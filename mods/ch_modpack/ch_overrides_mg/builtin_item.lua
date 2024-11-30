@@ -12,7 +12,11 @@ default.builtin_item_on_step = function(self, dtime, ...)
 	if self.physical_state and not self.moving_state then
 		local rndnum = math.random(0, 15)
 		if rndnum == 15 then
-			local my_handle = assert(ch_core.get_handle_of_entity(self))
+			local my_handle, errmsg = ch_core.get_handle_of_entity(self)
+			if my_handle == nil then
+				core.log("error", "ch_core.get_handle_of_entity() failed for __builtin:item: "..(errmsg or "nil"))
+				return
+			end
 			local stack = ItemStack(self.itemstring)
 			if stack:get_free_space() == 0 then return end
 			local other_items = ch_core.find_handles_in_radius(self.object:get_pos(), 1.0, "__builtin:item", "entity", my_handle)
