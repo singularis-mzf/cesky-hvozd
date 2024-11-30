@@ -1109,6 +1109,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: BSD-2-Clause
 * [ContentDB](https://content.minetest.net/packages/kaeza/xban2/)
 
+## XCompat (xcompat)
+
+* Zdroj: [https://github.com/mt-mods/xcompat](https://github.com/mt-mods/xcompat), revize X
+* Původní licence: MIT
+* Licence úprav: MIT
+* [ContentDB](https://content.luanti.org/packages/mt-mods/xcompat/)
+
 ## YL Canned Food (yl\_canned\_food)
 
 * Zdroj: [https://gitea.your-land.de/your-land/yl\_canned\_food.git](https://gitea.your-land.de/your-land/yl\_canned\_food.git), revize 944c1b5d13dceb88b2aa8bbb9e040ed7ebc05d10
