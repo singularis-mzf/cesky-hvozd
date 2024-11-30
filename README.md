@@ -79,6 +79,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPL 3
 * [ContentDB](https://content.minetest.net/packages/Pyrollo/display\_modpack/)
 
+## DLX Trains (dlxtrains\_modpack)
+
+* Zdroj: [https://github.com/Marnack/dlxtrains\_modpack](https://github.com/Marnack/dlxtrains\_modpack), revize 1561c547827248d7085856a03706c3a66a20a0bd
+* Původní licence: AGPLv3 pro kód, média CC BY-SA 3.0 Unported
+* Licence úprav: AGPLv3, média také CC BY-SA 3.0 Unported
+* [ContentDB](https://content.luanti.org/packages/Marnack/dlxtrains/)
+
 ## Doxy's Mini Tram (doxy\_mini\_tram)
 
 * Zdroj: [https://invent.kde.org/davidhurka/doxy\_mini\_tram](https://invent.kde.org/davidhurka/doxy\_mini\_tram), revize 3cfebc01254b5f93d59ec707cb5dda17c6b7be1d
