@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local mod_name = "dlxtrains"
 
 dlxtrains = {}
@@ -25,3 +26,4 @@ dofile(mod_path.."/materials.lua")
 dofile(mod_path.."/items.lua")
 dofile(mod_path.."/tools.lua")
 dofile(mod_path.."/livery_functions.lua")
+ch_base.close_mod(minetest.get_current_modname())

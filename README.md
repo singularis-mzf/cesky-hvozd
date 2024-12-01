@@ -58,13 +58,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: AGPL 3
 * [ContentDB](https://content.minetest.net/packages/orwell/advtrains/)
 
-## Advtrains Basic Trains (basic\_trains)
-
-* Zdroj: [http://git.bananach.space/basic\_trains.git/](http://git.bananach.space/basic\_trains.git/), revize 764be1bda4363c7dd1ad60df2e3df0d7f040ae9b
-* Původní licence: AGPL v3 (kód), CC-BY-SA-3.0 (média)
-* Licence úprav: AGPL v3
-* [ContentDB](https://content.minetest.net/packages/orwell/basic\_trains/)
-
 ## Church Modpack (church)
 
 * Zdroj: [https://github.com/mootpoint/church](https://github.com/mootpoint/church), revize 066001b8586f25edb609fb166ef582ac963ae23f
@@ -78,20 +71,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: LGPL 3 pro kód, CC-BY-SA-3.0 pro média
 * Licence úprav: LGPL 3
 * [ContentDB](https://content.minetest.net/packages/Pyrollo/display\_modpack/)
-
-## DLX Trains (dlxtrains\_modpack)
-
-* Zdroj: [https://github.com/Marnack/dlxtrains\_modpack](https://github.com/Marnack/dlxtrains\_modpack), revize 1561c547827248d7085856a03706c3a66a20a0bd
-* Původní licence: AGPLv3 pro kód, média CC BY-SA 3.0 Unported
-* Licence úprav: AGPLv3, média také CC BY-SA 3.0 Unported
-* [ContentDB](https://content.luanti.org/packages/Marnack/dlxtrains/)
-
-## Doxy's Mini Tram (doxy\_mini\_tram)
-
-* Zdroj: [https://invent.kde.org/davidhurka/doxy\_mini\_tram](https://invent.kde.org/davidhurka/doxy\_mini\_tram), revize 3cfebc01254b5f93d59ec707cb5dda17c6b7be1d
-* Původní licence: převážně MIT, jednotlivé soubory pod různými jinými, ale vše svobodné
-* Licence úprav: uvedeny u jednotlivých souborů stejným způsobem jako v původním módu
-* [ContentDB](https://content.minetest.net/packages/doxygen\_spammer/doxy\_mini\_tram/)
 
 ## Home Decor (homedecor)
 
@@ -126,13 +105,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: CC0 a MIT
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/doxygen\_spammer/morelights\_dim/)
-
-## Moretrains (moretrains)
-
-* Zdroj: [https://git.bananach.space/moretrains.git/](https://git.bananach.space/moretrains.git/), revize 59ee0e4f1577b75ab8736c8a8115c774eeaea3c7
-* Původní licence: LGPLv2.1 pro kód, CC-BY-SA 3.0 pro média
-* Licence úprav: LGPLv2.1 pro kód, CC-BY-SA 3.0 pro média
-* [ContentDB](https://content.minetest.net/packages/gpcf/moretrains/)
 
 ## Plantlife (plantlife)
 
@@ -171,7 +143,14 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: AGPLv3
 * [ContentDB](https://content.minetest.net/packages/sfan5/worldedit/)
 
-# Doplňky k balíku Advtrains
+# Doplňky k balíku Advtrains (včetně balíků)
+
+## Advtrains Basic Trains (basic\_trains)
+
+* Zdroj: [http://git.bananach.space/basic\_trains.git/](http://git.bananach.space/basic\_trains.git/), revize 764be1bda4363c7dd1ad60df2e3df0d7f040ae9b
+* Původní licence: AGPL v3 (kód), CC-BY-SA-3.0 (média)
+* Licence úprav: AGPL v3
+* [ContentDB](https://content.minetest.net/packages/orwell/basic\_trains/)
 
 ## advtrains\_bboe\_1080
 
@@ -200,6 +179,27 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: CC BY-SA 3.0
 * [ContentDB](https://content.minetest.net/packages/advtrains\_supplemental/advtrains\_transib/)
 
+## Classic Coaches (classic\_coaches)
+
+* Zdroj: [https://github.com/Marnack/classic\_coaches](https://github.com/Marnack/classic\_coaches), revize b2833751b2172e5a0e67249f87fbdeaaa41fc5f9
+* Původní licence: AGPLv3 pro kód, CC BY-SA 3.0 Unported pro média
+* Licence úprav: AGPLv3 pro kód i média, CC BY-SA 3.0 pro média
+* [ContentDB](https://content.luanti.org/packages/Marnack/classic\_coaches/)
+
+## DLX Trains (dlxtrains\_modpack)
+
+* Zdroj: [https://github.com/Marnack/dlxtrains\_modpack](https://github.com/Marnack/dlxtrains\_modpack), revize 1561c547827248d7085856a03706c3a66a20a0bd
+* Původní licence: AGPLv3 pro kód, média CC BY-SA 3.0 Unported
+* Licence úprav: AGPLv3, média také CC BY-SA 3.0 Unported
+* [ContentDB](https://content.luanti.org/packages/Marnack/dlxtrains/)
+
+## Doxy's Mini Tram (doxy\_mini\_tram)
+
+* Zdroj: [https://invent.kde.org/davidhurka/doxy\_mini\_tram](https://invent.kde.org/davidhurka/doxy\_mini\_tram), revize 3cfebc01254b5f93d59ec707cb5dda17c6b7be1d
+* Původní licence: převážně MIT, jednotlivé soubory pod různými jinými, ale vše svobodné
+* Licence úprav: uvedeny u jednotlivých souborů stejným způsobem jako v původním módu
+* [ContentDB](https://content.minetest.net/packages/doxygen\_spammer/doxy\_mini\_tram/)
+
 ## Tieless Tracks (minetest\_tieless\_tracks)
 
 * Zdroj: [https://github.com/SamMatzko/minetest\_tieless\_tracks](https://github.com/SamMatzko/minetest\_tieless\_tracks), revize 0424a3408af080a6f74246fd684227470f9a41c3
@@ -214,12 +214,18 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPLv2.1 (only) pro kód, CC BY-SA 3.0 pro modely a textury, CC0 pro zvuky
 * [ContentDB](https://content.minetest.net/packages/xenonca/mese\_trains/)
 
+## Moretrains (moretrains)
+
+* Zdroj: [https://git.bananach.space/moretrains.git/](https://git.bananach.space/moretrains.git/), revize 59ee0e4f1577b75ab8736c8a8115c774eeaea3c7
+* Původní licence: LGPLv2.1 pro kód, CC-BY-SA 3.0 pro média
+* Licence úprav: LGPLv2.1 pro kód, CC-BY-SA 3.0 pro média
+* [ContentDB](https://content.minetest.net/packages/gpcf/moretrains/)
+
 ## Some More Trains (some\_more\_trains)
 
 * Zdroj: [https://github.com/APercy/some\_more\_trains](https://github.com/APercy/some\_more\_trains), revize 326f7e73a73e05e26a4cc25c8cc5acc777429443
 * Původní licence: AGPLv3
 * Licence úprav: AGPLv3
-
 
 # Doplňky k balíku Display
 
@@ -719,7 +725,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/entuland/matrix/)
 
-## Metrosigns
+## Metrosigns (metrosigns)
 
 * Zdroj: [https://github.com/axcore/metrosigns](https://github.com/axcore/metrosigns), revize 0402258e41852c25e54bde09a02889731bd7af36
 * Původní licence: AGPL pro vše kromě sign writeru a ink cartridges; CC BY-SA 3.0 Unported pro sign writer a ink cartridges.

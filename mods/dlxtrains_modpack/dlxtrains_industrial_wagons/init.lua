@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local mod_name = "dlxtrains_industrial_wagons"
 
 dlxtrains_industrial_wagons = {}
@@ -33,3 +34,4 @@ dofile(mod_path.."/animal_sounds.lua")
 dofile(mod_path.."/items.lua")
 dofile(mod_path.."/wagons.lua")
 dofile(mod_path.."/wagon_recipes.lua")
+ch_base.close_mod(minetest.get_current_modname())
