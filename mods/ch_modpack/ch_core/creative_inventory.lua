@@ -296,6 +296,30 @@ local partition_defs = {
 		},
 		mods = {"computers", "digiterms", "home_workshop_machines"},
 	},
+	{
+		name = "platforms_1",
+		groups = {"platform=1"},
+		items = none,
+		mods = none,
+	},
+	{
+		name = "platforms_2",
+		groups = {"platform=2"},
+		items = none,
+		mods = none,
+	},
+	{
+		name = "platforms_3",
+		groups = {"platform=3"},
+		items = none,
+		mods = none,
+	},
+	{
+		name = "platforms_4",
+		groups = {"platform=4"},
+		items = none,
+		mods = none,
+	},
 }
 
 function ch_core.overridable.is_clothing(item_name)
@@ -411,12 +435,22 @@ local categories = {
 		},
 	},
 	{
-		description = "oblečení a obuv",
+		description = "lokomotivy a vagony",
 		condition = function(itemstring, name, def, groups, palette_index)
-			return ch_core.overridable.is_clothing(name)
+			return groups.at_wagon ~= nil
 		end,
 		icon = {
-			{image = "(clothing_inv_shirt.png^[multiply:#98cd61)^[resize:24x24", item = "clothing:shirt_green"},
+			{image = "moretrains_engine_japan_inv.png^[resize:24x24", item = "advtrains:moretrains_engine_japan"},
+		},
+	},
+	{
+		description = "nástroje",
+		condition = function(itemstring, name, def, groups, palette_index)
+			return minetest.registered_tools[name] ~= nil
+		end,
+		icon = {
+			{image = "moreores_tool_mithrilpick.png^[resize:24x24", item = "moreores:pick_mithril"},
+			{image = "default_tool_mesepick.png", item = "default:pick_mese"},
 		},
 	},
 	{
@@ -426,6 +460,15 @@ local categories = {
 		end,
 		icon = {
 			{image = "basic_materials_cement_block.png^[resize:128x128^advtrains_platform.png^[resize:16x16", item = "advtrains:platform_low_cement_block"}
+		},
+	},
+	{
+		description = "oblečení a obuv",
+		condition = function(itemstring, name, def, groups, palette_index)
+			return ch_core.overridable.is_clothing(name)
+		end,
+		icon = {
+			{image = "(clothing_inv_shirt.png^[multiply:#98cd61)^[resize:24x24", item = "clothing:shirt_green"},
 		},
 	},
 	{
@@ -456,13 +499,12 @@ local categories = {
 		},
 	},
 	{
-		description = "test: nástroje",
+		description = "test: železnice kromě vozidel",
 		condition = function(itemstring, name, def, groups, palette_index)
-			return minetest.registered_tools[name] ~= nil
+			return name:match("^advtrains") and not groups.at_wagon
 		end,
 		icon = {
-			{image = "moreores_tool_mithrilpick.png^[resize:24x24", item = "moreores:pick_mithril"},
-			{image = "default_tool_mesepick.png", item = "default:pick_mese"},
+			{image = "advtrains_dtrack_placer.png^[resize:24x24", item = "advtrains:dtrack_placer"},
 		},
 	},
 }
@@ -686,10 +728,17 @@ function ch_core.update_creative_inventory(force_update)
 				local mod --[[, subname]] = name:match("^([^:]*):([^:]*)$")
 				local success = false
 				for group, rank in pairs(groups) do
-					if rank > 0 and group_to_partition[group] and not partition_to_exclude_items[group_to_partition[group]][name] then
-						partition = group_to_partition[group]
-						success = true
-						break
+					if rank > 0 then
+						local groupplus = group.."="..rank
+						if group_to_partition[group] and not partition_to_exclude_items[group_to_partition[group]][name] then
+							partition = group_to_partition[group]
+							success = true
+							break
+						elseif group_to_partition[groupplus] and not partition_to_exclude_items[group_to_partition[groupplus]][name] then
+							partition = group_to_partition[groupplus]
+							success = true
+							break
+						end
 					end
 				end
 				if not success then
