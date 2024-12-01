@@ -189,8 +189,34 @@ local not_blocking_trains_shapes = {
 }
 ]]
 
-local fields_to_inherit_from_info = {"selection_box", "collision_box", "connect_sides", "connects_to", "check_for_pole"}
+local fields_to_inherit_from_info = {
+	"selection_box", "collision_box",
+	"connect_sides", "connects_to",
+	"check_for_pole",
+	"paramtype2", "walkable",
+	"on_punch", "_ch_help", "_ch_help_group",
+}
 local fields_to_inherit_from_fields = {"is_ground_content", "tiles", "use_texture_alpha", "sounds"}
+
+local function override_tiles(tiles, overrides)
+	local new_tiles = {}
+	for i, v in ipairs(tiles) do
+		if type(v) == "table" then
+			new_tiles[i] = table.copy(v)
+			for k, v in pairs(overrides) do
+				new_tiles[i][k] = v
+			end
+		elseif type(v) == "string" then
+			new_tiles[i] = table.copy(overrides)
+			if overrides.name == nil then
+				new_tiles[i].name = v
+			end
+		else
+			new_tiles[i] = v
+		end
+	end
+	return new_tiles
+end
 
 stairsplus.register_single = function(category, alternate, info, modname, subname, recipeitem, fields)
 
@@ -240,12 +266,6 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 			def.paramtype2 = "facedir"
 		end
 	end
-	--[[
-	def.paramtype2 = def.paramtype2 or "facedir"
-	if def.use_texture_alpha == nil then
-		def.use_texture_alpha = src_def.use_texture_alpha
-	end
-	]]
 
 	-- Darken light sources slightly to make up for their smaller visual size
 	def.light_source = math.max(0, (fields.light_source or 0) - 1)
@@ -253,12 +273,6 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 	def.groups[category] = alternate_to_group_value[alternate] or 1
 	if info.not_blocking_trains then
 		def.groups.not_blocking_trains = 1
-	end
-	if info.wall then
-		def.groups.wall = 1
-		if def.connects_to == nil then
-			def.connects_to = {"group:fence", "group:wall"}
-		end
 	end
 
 	def.description = assert(fields.description)..": "..assert(info.description)
@@ -268,23 +282,22 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 		end
 	end
 
-	-- world-aligned textures
-	if info.align_style == "world" or info.wall then
-		local new_tiles = {}
-		for i, v in ipairs(def.tiles) do
-			if type(v) == "table" then
-				new_tiles[i] = table.copy(v)
-				new_tiles[i].align_style = "world"
-			elseif type(v) == "string" then
-				new_tiles[i] = {name = v, align_style = "world"}
-			else
-				new_tiles[i] = v
-			end
+	-- world-aligned textures / forced backface_culling
+	if info.align_style == "world" or info.backface_culling ~= nil then
+		local overrides = {}
+		if info.align_style == "world" then
+			overrides.align_style = "world"
 		end
-		def.tiles = new_tiles
+		if info.backface_culling ~= nil then
+			overrides.backface_culling = info.backface_culling
+		end
+		def.tiles = override_tiles(def.tiles, overrides)
 	end
 
-	-- def.drop = nil
+	-- drop another shape
+	if info.drop_shape ~= nil then
+		def.drop = {items = {{items = {modname..":"..info.drop_shape[1].."_"..subname..info.drop_shape[2]}, inherit_color = true}}}
+	end
 
 	minetest.register_node(":" ..modname.. ":" .. category .. "_" .. subname .. alternate, def)
 	stairsplus.register_recipes(category, alternate, modname, subname, recipeitem)

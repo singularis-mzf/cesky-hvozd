@@ -48,6 +48,9 @@ ch_core_wood_noise_32.png
 ch_core_wood_noise_64.png
 ch_core_wood_noise_128.png
 ch_core_planks_128.png
+ch_core_diagfiller_22a.obj
+ch_core_diagfiller_22b.obj
+ch_core_diagfiller_45.obj
 	Author: Singularis
 	License: CC-BY-SA 4.0
 

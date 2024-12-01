@@ -10,6 +10,32 @@ local box_beveled_slab = {
 	fixed = {-8/16, -8/16, -8/16, 8/16, -7/16, 8/16},
 }
 
+local box_diagfiller22 = {
+	type = "fixed",
+	fixed = {
+		{-0.5, -0.5, -0.5, 0.5, -0.5 + 1/16, 0},
+		{-0.5, -0.5, 0, 0, -0.5 + 1/16, 1.5},
+	},
+}
+
+local box_diagfiller22b =  {
+	type = "fixed",
+	fixed = {
+		{-0.5, -0.5, -0.5, 0.5, -0.5 + 1/16, 0},
+		{0, -0.5, 0, 0.5, -0.5 + 1/16, 1.5},
+	},
+}
+
+local box_diagfiller45 = {
+	type = "fixed",
+	fixed = {
+		{-0.5, -0.5, -0.5, 0.5, -0.5 + 1/16, 0},
+		{-0.5, -0.5, 0, 0, -0.5 + 1/16, 0.5},
+		{-1.5, -0.5, 0.5, -0.5, -0.5 + 1/16, 1},
+		{-1.5, -0.5, 1, -1, -0.5 + 1/16, 1.5},
+	},
+}
+
 local box_slope = {
 	type = "fixed",
 	fixed = {
@@ -293,6 +319,31 @@ local box_roof45_3 = f(box_roof45)
 
 --==============================================================
 
+local function diag_filler_on_punch(pos, node, puncher, pointed_thing)
+	if puncher == nil or not core.is_player(puncher) then
+		return
+	end
+	local player_name = puncher:get_player_name()
+	if core.is_protected(pos, player_name) then
+		core.record_protection_violation(pos, player_name)
+		return
+	end
+	if node.name:sub(-2, -1) == "45" then
+		node.name = node.name:sub(1, -3).."22a"
+	elseif node.name:sub(-3, -1) == "22a" then
+		node.name = node.name:sub(1, -2).."b"
+	elseif node.name:sub(-3, -1) == "22b" then
+		node.name = node.name:sub(1, -4).."45"
+	else
+		return
+	end
+	if core.registered_nodes[node.name] ~= nil then
+		core.swap_node(pos, node)
+	end
+end
+
+--==============================================================
+
 local sides_xy = {"front", "back", "left", "right"}
 local sides_xyz = {"front", "back", "left", "right", "top", "bottom"}
 
@@ -485,8 +536,9 @@ stairsplus.defs = {
 				connect_back = {-0.125, -0.5, 0.125, 0.125, 0.5005, 0.5}, -- +Z
 				connect_right = {0.125, -0.5, -0.125, 0.5, 0.5005, 0.125}, -- +X
 			},
-			wall = true,
+			extra_groups = {wall = 1},
 			align_style = "world",
+			connects_to = {"group:wall"},
 			connect_sides = sides_xy,
 		},
 		["_wall_flat"] = {
@@ -496,7 +548,7 @@ stairsplus.defs = {
 				fixed = {-0.5, -0.5, -0.125, 0.5, 0.5005, 0.125},
 			},
 			align_style = "world",
-			wall = true,
+			extra_groups = {wall = 1},
 		},
 		["_element"] = {
 			description = "nízká zeď (spojující se)",
@@ -509,8 +561,9 @@ stairsplus.defs = {
 				connect_right = {0.125, -0.5, -0.125, 0.5, 0.0, 0.125}, -- +X
 			},
 			connect_sides = sides_xy,
+			connects_to = {"group:short_wall"},
 			align_style = "world",
-			wall = true,
+			extra_groups = {short_wall = 1},
 		},
 		["_element_flat"] = {
 			description = "nízká zeď (přímá)",
@@ -519,7 +572,7 @@ stairsplus.defs = {
 				fixed = {-0.5, -0.5, -0.125, 0.5, 0.0, 0.125},
 			},
 			align_style = "world",
-			wall = true,
+			extra_groups = {short_wall = 1},
 		},
 		["_pole"] = {
 			description = "tyč (spojující se)",
@@ -747,7 +800,8 @@ stairsplus.defs = {
 			},
 			align_style = "world",
 			connect_sides = sides_xy,
-			wall = true,
+			connects_to = {"group:arcade"},
+			extra_groups = {arcade = 1},
 		},
 		["_arcade_flat"] = {
 			description = "překlad přes zeď (přímý)",
@@ -756,7 +810,7 @@ stairsplus.defs = {
 				fixed = {-8/16, -17/32, -3/16, 8/16, -13/32, 3/16},
 			},
 			align_style = "world",
-			wall = true,
+			extra_groups = {arcade = 1},
 		},
 		["_table"] = {
 			description = "stůl",
@@ -987,6 +1041,42 @@ stairsplus.defs = {
 			mesh = "moreblocks_beveled_tile.obj",
 			collision_box = box_beveled_slab,
 			selection_box = box_beveled_slab,
+		},
+		["_diagfiller22a"] = {
+			description = "diagonální výplň 22° A",
+			mesh = "ch_core_diagfiller_22a.obj",
+			selection_box = box_diagfiller22,
+			paramtype2 = "4dir",
+			backface_culling = false,
+			not_blocking_trains = true,
+			walkable = false,
+			on_punch = diag_filler_on_punch,
+			_ch_help_group = "diagfiller",
+			_ch_help = "levým klikem na umístěný blok lze přepínat mezi variantami 45°, 22° A a 22° B",
+		},
+		["_diagfiller22b"] = {
+			description = "diagonální výplň 22° B",
+			mesh = "ch_core_diagfiller_22b.obj",
+			selection_box = box_diagfiller22b,
+			paramtype2 = "4dir",
+			backface_culling = false,
+			not_blocking_trains = true,
+			walkable = false,
+			on_punch = diag_filler_on_punch,
+			_ch_help_group = "diagfiller",
+			_ch_help = "levým klikem na umístěný blok lze přepínat mezi variantami 45°, 22° A a 22° B",
+		},
+		["_diagfiller45"] = {
+			description = "diagonální výplň 45° dvojitá",
+			mesh = "ch_core_diagfiller_45.obj",
+			selection_box = box_diagfiller45,
+			paramtype2 = "4dir",
+			backface_culling = false,
+			not_blocking_trains = true,
+			walkable = false,
+			on_punch = diag_filler_on_punch,
+			_ch_help_group = "diagfiller",
+			_ch_help = "levým klikem na umístěný blok lze přepínat mezi variantami 45°, 22° A a 22° B",
 		}
 	},
 	["stair"] = {

@@ -112,12 +112,17 @@ circular_saw.names = {
 
 	{"panel", "_wall", 4},
 	{"panel", "_wall_flat", 4},
+
 	{"panel", "_element", 2},
 	{"panel", "_element_flat", 2},
+
 	{"panel", "_pole", 4},
 	{"panel", "_pole_flat", 4},
+
 	{"slab", "_arcade", 2},
 	{"slab", "_arcade_flat", 2},
+
+	{"slope", "_diagfiller45", 1},
 	-- {"slope", "_outer_cut_half_raised", 3},
 	-- {"slope", "_slab_half", 2},
 	-- {"slope", "_slab_half_raised", 6},

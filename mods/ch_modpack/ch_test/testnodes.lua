@@ -182,9 +182,7 @@ for paramtype2, ptdef in pairs(paramtypes) do
 	minetest.register_node("ch_test:test_"..paramtype2, def)
 end
 
-if not minetest.get_modpath("display_api") or not minetest.get_modpath("font_api") or not minetest.get_modpath("signs_api") then
-	return
-end
+if minetest.get_modpath("display_api") and minetest.get_modpath("font_api") and minetest.get_modpath("signs_api") then
 
 local display_entity_name = "ch_test:text"
 
@@ -445,3 +443,4 @@ ch_core.register_4dir_nodes("ch_test:fdt", {tiles = true, node_box = true, drop 
 		groups = {oddly_breakable_by_hand = 3},
 	}
 ]]
+end

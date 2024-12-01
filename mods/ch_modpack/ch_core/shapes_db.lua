@@ -688,6 +688,12 @@ local platform_materials_exceptions = set(
 	"moretrees:oak_planks"
 )
 
+local materials_under_rails = set(
+	"ch_extras:bright_gravel",
+	"ch_extras:railway_gravel",
+	"default:gravel"
+)
+
 local materials_all = union(materials_cnc, materials_kp, materials_no_kp, materials_glass, materials_sns, materials_wool, materials_roof,
 	materials_zdlazba, platform_materials, platform_materials_exceptions,
 	set("default:sandstone", "default:sandstonebrick", "default:sandstone_block", "ch_extras:rope_block"))
@@ -781,6 +787,8 @@ local alts_tombs = set("_0", "_1", "_2", "_5", "_7", "_8", "_9", "_10", "_12", "
 local alts_fence = set("fence", "rail", "mesepost", "fencegate")
 
 local alts_advtrains = set("platform_high", "platform_low", "platform_45_high", "platform_45_low")
+
+local alts_diagfiller = set("_diagfiller22a", "_diagfiller22b", "_diagfiller45")
 
 local wool_panels = set("", "_1", "_2", "_4", "_l", "_special")
 
@@ -888,14 +896,18 @@ local rules = {
 		slab = {sns_slabs, true},
 		slope = {sns_slopes, true},
 	}},
+
+	{"streets:asphalt_yellow", "streets", "*", false},
+
+	-- speciality:
 	{materials_for_arcades, "slab", set("_arcade", "_arcade_flat"), true},
-	{materials_roof, "slope", roof_slopes, true}, -- roofs
 	{materials_for_bank_slopes, "bank_slope", bank_slopes, true},
+	{materials_roof, "slope", roof_slopes, true}, -- roofs
 	{materials_pillars, "pillar", "*", true }, -- zatím bez omezení
 	{materials_tombs, "tombs", alts_tombs, true},
-	{"streets:asphalt_yellow", "streets", "*", false},
 	{materials_for_manholes, "streets", set("manhole", "stormdrain"), true},
 	{materials_for_manholes_only, "streets", "manhole", true},
+	{materials_under_rails, "slope", alts_diagfiller, true},
 
 	{platform_materials_exceptions , "advtrains", set("platform_high", "platform_low"), true},
 	{platform_materials, "advtrains", alts_advtrains, true},
@@ -911,6 +923,7 @@ local rules = {
 		slab = {"_1", true},
 		stair = {"chimney", true},
 	}},
+
 
 -- CNC:
 	{"default:dirt", "cnc",
