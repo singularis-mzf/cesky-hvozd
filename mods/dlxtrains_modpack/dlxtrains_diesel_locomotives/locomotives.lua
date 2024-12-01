@@ -461,7 +461,13 @@ if dlxtrains_diesel_locomotives.max_wagon_length >= 7.35 then
 		collisionbox = {-0.5,-0.5,-0.5,0.5,2.5,0.5},
 		coupler_types_front = {chain=true},
 		coupler_types_back = {chain=true},
-		drops={dlxtrains.materials.steelblock and (dlxtrains.materials.steelblock.." 2")},
+		drops={
+			"dlxtrains_diesel_locomotives:locomotive_body_type1",
+			"dlxtrains:coupler_buffer_and_chain 2",
+			"dlxtrains_diesel_locomotives:locomotive_chassis",
+			"dlxtrains_diesel_locomotives:locomotive_bogie 2",
+			"dlxtrains_diesel_locomotives:fuel_tank",
+		},
 		horn_sound = "advtrains_industrial_horn",
 		has_inventory = false,
 		custom_on_step=function(wagon, dtime)
@@ -563,7 +569,13 @@ if dlxtrains_diesel_locomotives.max_wagon_length >= 6.80725 then
 		collisionbox = {-0.5,-0.5,-0.5,0.5,2.5,0.5},
 		coupler_types_front = {knuckle=true},
 		coupler_types_back = {knuckle=true},
-		drops={dlxtrains.materials.steelblock and (dlxtrains.materials.steelblock.." 2")},
+		drops={
+			"dlxtrains_diesel_locomotives:locomotive_body_type2",
+			"dlxtrains:coupler_knuckle 2",
+			"dlxtrains_diesel_locomotives:locomotive_chassis",
+			"dlxtrains_diesel_locomotives:locomotive_bogie 2",
+			"dlxtrains_diesel_locomotives:fuel_tank",
+		},
 		horn_sound = "advtrains_industrial_horn",
 		has_inventory = false,
 		custom_on_step=function(wagon, dtime)
@@ -651,13 +663,13 @@ if dlxtrains_diesel_locomotives.max_wagon_length >= 8.2 then
 		},
 		seat_groups = {
 			cab_1={
-				name = "Cab 1",
+				name = "Kabina 1",
 				access_to = {"cab_2"},
 				require_doors_open = false,
 				driving_ctrl_access = true,
 			},
 			cab_2={
-				name = "Cab 2",
+				name = "Kabina 2",
 				access_to = {"cab_1"},
 				require_doors_open = false,
 				driving_ctrl_access = true,
@@ -673,7 +685,13 @@ if dlxtrains_diesel_locomotives.max_wagon_length >= 8.2 then
 		collisionbox = {-0.5,-0.5,-0.5,0.5,2.5,0.5},
 		coupler_types_front = {chain=true},
 		coupler_types_back = {chain=true},
-		drops={dlxtrains.materials.steelblock and (dlxtrains.materials.steelblock.." 2")},
+		drops={
+			"dlxtrains_diesel_locomotives:locomotive_body_type3",
+			"dlxtrains:coupler_buffer_and_chain 2",
+			"dlxtrains_diesel_locomotives:locomotive_chassis",
+			"dlxtrains_diesel_locomotives:locomotive_bogie 2",
+			"dlxtrains_diesel_locomotives:fuel_tank",
+		},
 		horn_sound = "advtrains_industrial_horn",
 		has_inventory = false,
 		custom_on_step=function(wagon, dtime)

@@ -100,12 +100,12 @@ if dlxtrains_support_wagons.max_wagon_length >= 6 then
 		},
 		seat_groups = {
 			cabin={
-				name = "Cabin",
+				name = "kabina",
 				access_to = {"cupola"},
 				require_doors_open = false,
 			},
 			cupola={
-				name = "Cupola",
+				name = "výhled",
 				access_to = {"cabin"},
 				require_doors_open = false,
 			},
@@ -118,7 +118,12 @@ if dlxtrains_support_wagons.max_wagon_length >= 6 then
 		collisionbox = {-1.0,-0.5,-1.0,1.0,2.5,1.0},
 		coupler_types_front = {knuckle=true},
 		coupler_types_back = {knuckle=true},
-		drops={dlxtrains.materials.steelblock},
+		drops={
+			"dlxtrains_support_wagons:caboose_body_type1",
+			"dlxtrains:coupler_knuckle 2",
+			"dlxtrains:wagon_chassis",
+			"dlxtrains:bogie 2",
+		},
 		has_inventory = false,
 	}
 
@@ -167,12 +172,12 @@ if dlxtrains_support_wagons.max_wagon_length >= 4.875 then
 		},
 		seat_groups = {
 			cabin={
-				name = "Cabin",
+				name = "kabina",
 				access_to = {"veranda"},
 				require_doors_open = false,
 			},
 			veranda={
-				name = "Veranda",
+				name = "veranda",
 				access_to = {"cabin"},
 				require_doors_open = false,
 			},
@@ -186,7 +191,12 @@ if dlxtrains_support_wagons.max_wagon_length >= 4.875 then
 		collisionbox = {-1.4,-0.5,-1.4,1.4,2.5,1.4},
 		coupler_types_front = {chain=true},
 		coupler_types_back = {chain=true},
-		drops={dlxtrains.materials.steelblock},
+		drops={
+			"dlxtrains_support_wagons:escort_body_type1",
+			"dlxtrains:coupler_buffer_and_chain 2",
+			"dlxtrains:wagon_chassis",
+			"dlxtrains:wheel_set 2",
+		},
 		has_inventory = false,
 	}
 

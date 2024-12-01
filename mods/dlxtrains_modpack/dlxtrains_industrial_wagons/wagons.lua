@@ -979,7 +979,7 @@ end
 local function get_wagon_proprties_button_spec(wagon_id, pname, x, y)
 	local button_spec = ""
 	if advtrains.wagons[wagon_id].owner == pname then
-		button_spec = "button_exit["..x..","..y..";4,1;prop;"..S("Wagon properties").."]"
+		button_spec = "button_exit["..x..","..y..";4,1;prop;"..attrans("Wagon properties").."]"
 	end
 	return button_spec
 end
@@ -1134,7 +1134,12 @@ if dlxtrains_industrial_wagons.max_wagon_length >= 8.5 then
 		collisionbox = {-1.0,-0.5,-1.0,1.0,2.5,1.0},
 		coupler_types_front = {chain=true},
 		coupler_types_back = {chain=true},
-		drops={dlxtrains.materials.steelblock},
+		drops={
+			"dlxtrains_industrial_wagons:container_body_type1",
+			"dlxtrains:coupler_buffer_and_chain 2",
+			"dlxtrains:wagon_chassis",
+			"dlxtrains:wheel_set 2",
+		},
 		has_inventory = true,
 		get_inventory_formspec = function(wagon, pname, invname)
 			return "size[8,9]"..
@@ -1174,7 +1179,12 @@ if dlxtrains_industrial_wagons.max_wagon_length >= 4.875 then
 		collisionbox = {-1.0,-0.5,-1.0,1.0,2.5,1.0},
 		coupler_types_front = {chain=true},
 		coupler_types_back = {chain=true},
-		drops={dlxtrains.materials.steelblock},
+		drops={
+			"dlxtrains_industrial_wagons:container_body_type2",
+			"dlxtrains:coupler_buffer_and_chain 2",
+			"dlxtrains:wagon_chassis",
+			"dlxtrains:wheel_set 2",
+		},
 		has_inventory = true,
 		get_inventory_formspec = function(wagon, pname, invname)
 			return "size[8,7]"..
@@ -1213,7 +1223,12 @@ if dlxtrains_industrial_wagons.max_wagon_length >= 8 then
 		collisionbox = {-1.0,-0.5,-1.0,1.0,2.5,1.0},
 		coupler_types_front = {knuckle=true},
 		coupler_types_back = {knuckle=true},
-		drops={dlxtrains.materials.steelblock},
+		drops={
+			"dlxtrains_industrial_wagons:covered_goods_body_type1",
+			"dlxtrains:coupler_knuckle 2",
+			"dlxtrains:wagon_chassis",
+			"dlxtrains:bogie 2",
+		},
 		has_inventory = true,
 		get_inventory_formspec = function(wagon, pname, invname)
 			return "size[8,10]"..
@@ -1251,7 +1266,12 @@ if dlxtrains_industrial_wagons.max_wagon_length >= 8 then
 		collisionbox = {-1.0,-0.5,-1.0,1.0,2.5,1.0},
 		coupler_types_front = {knuckle=true},
 		coupler_types_back = {knuckle=true},
-		drops={dlxtrains.materials.steelblock},
+		drops={
+			"dlxtrains_industrial_wagons:covered_goods_body_type2",
+			"dlxtrains:coupler_knuckle 2",
+			"dlxtrains:wagon_chassis",
+			"dlxtrains:bogie 2",
+		},
 		has_inventory = true,
 		get_inventory_formspec = function(wagon, pname, invname)
 			return "size[8,10]"..
@@ -1289,7 +1309,12 @@ if dlxtrains_industrial_wagons.max_wagon_length >= 7 then
 		collisionbox = {-1.0,-0.5,-1.0,1.0,2.5,1.0},
 		coupler_types_front = {chain=true},
 		coupler_types_back = {chain=true},
-		drops={dlxtrains.materials.steelblock},
+		drops={
+			"dlxtrains_industrial_wagons:covered_goods_body_type3",
+			"dlxtrains:coupler_buffer_and_chain 2",
+			"dlxtrains:wagon_chassis",
+			"dlxtrains:wheel_set 2",
+		},
 		has_inventory = true,
 		get_inventory_formspec = function(wagon, pname, invname)
 			return "size[8,9]"..
@@ -1329,7 +1354,12 @@ if dlxtrains_industrial_wagons.max_wagon_length >= 6 then
 		collisionbox = {-1.0,-0.5,-1.0,1.0,2.5,1.0},
 		coupler_types_front = {chain=true},
 		coupler_types_back = {chain=true},
-		drops={dlxtrains.materials.steelblock},
+		drops={
+			"dlxtrains_industrial_wagons:flat_body_type1",
+			"dlxtrains:coupler_buffer_and_chain 2",
+			"dlxtrains:wagon_chassis",
+			"dlxtrains:bogie 2",
+		},
 		has_inventory = true,
 		get_inventory_formspec = function(wagon, pname, invname)
 			return "size[8,8]"..
@@ -1372,7 +1402,13 @@ if dlxtrains_industrial_wagons.max_wagon_length >= 6 then
 		collisionbox = {-1.0,-0.5,-1.0,1.0,2.5,1.0},
 		coupler_types_front = {knuckle=true},
 		coupler_types_back = {knuckle=true},
-		drops={dlxtrains.materials.steelblock},
+		drops={
+			"dlxtrains_industrial_wagons:flat_body_type1",
+			dlxtrains.materials.steel_ingot,
+			"dlxtrains:coupler_knuckle 2",
+			"dlxtrains:wagon_chassis",
+			"dlxtrains:bogie 2",
+		},
 		has_inventory = true,
 		get_inventory_formspec = function(wagon, pname, invname)
 			return "size[8,8]"..
@@ -1415,7 +1451,12 @@ if dlxtrains_industrial_wagons.max_wagon_length >= 6 then
 		collisionbox = {-1.0,-0.5,-1.0,1.0,2.5,1.0},
 		coupler_types_front = {knuckle=true},
 		coupler_types_back = {knuckle=true},
-		drops={dlxtrains.materials.steelblock},
+		drops={
+			"dlxtrains_industrial_wagons:hopper_body_type1",
+			"dlxtrains:coupler_knuckle 2",
+			"dlxtrains:wagon_chassis",
+			"dlxtrains:bogie 2",
+		},
 		has_inventory = true,
 		get_inventory_formspec = function(wagon, pname, invname)
 			return "size[8,8]"..
@@ -1456,7 +1497,10 @@ if dlxtrains_industrial_wagons.max_wagon_length >= 6 then
 		collisionbox = {-1.0,-0.5,-1.0,1.0,2.5,1.0},
 		coupler_types_front = {knuckle=true},
 		coupler_types_back = {knuckle=true},
-		drops={dlxtrains.materials.steelblock},
+		drops={
+			dlxtrains.materials.steel_ingot.." 3",
+			"dlxtrains_industrial_wagons:hopper_type1",
+		},
 		has_inventory = true,
 		get_inventory_formspec = function(wagon, pname, invname)
 			return "size[8,8]"..
@@ -1507,7 +1551,12 @@ if dlxtrains_industrial_wagons.max_wagon_length >= 6 then
 		collisionbox = {-1.0,-0.5,-1.0,1.0,2.5,1.0},
 		coupler_types_front = {knuckle=true},
 		coupler_types_back = {knuckle=true},
-		drops={"default:steelblock"},
+		drops={
+			"dlxtrains_industrial_wagons:livestock_body_type1",
+			"dlxtrains:coupler_knuckle 2",
+			"dlxtrains:wagon_chassis",
+			"dlxtrains:bogie 2",
+		},
 		has_inventory = true,
 		get_inventory_formspec = function(wagon, pname, invname)
 			return "size[8,7]"..
@@ -1548,7 +1597,12 @@ if dlxtrains_industrial_wagons.max_wagon_length >= 6 then
 		collisionbox = {-1.0,-0.5,-1.0,1.0,2.5,1.0},
 		coupler_types_front = {knuckle=true},
 		coupler_types_back = {knuckle=true},
-		drops={dlxtrains.materials.steelblock},
+		drops={
+			"dlxtrains_industrial_wagons:open_body_type1",
+			"dlxtrains:coupler_knuckle 2",
+			"dlxtrains:wagon_chassis",
+			"dlxtrains:bogie 2",
+		},
 		has_inventory = true,
 		get_inventory_formspec = function(wagon, pname, invname)
 			return "size[8,8]"..
@@ -1591,7 +1645,12 @@ if dlxtrains_industrial_wagons.max_wagon_length >= 6 then
 		collisionbox = {-1.0,-0.5,-1.0,1.0,2.5,1.0},
 		coupler_types_front = {chain=true},
 		coupler_types_back = {chain=true},
-		drops={dlxtrains.materials.steelblock},
+		drops={
+			"dlxtrains_industrial_wagons:stake_body_type1",
+			"dlxtrains:coupler_buffer_and_chain 2",
+			"dlxtrains:wagon_chassis",
+			"dlxtrains:wheel_set 2",
+		},
 		has_inventory = true,
 		get_inventory_formspec = function(wagon, pname, invname)
 			return "size[8,8]"..
@@ -1650,7 +1709,14 @@ if dlxtrains_industrial_wagons.max_wagon_length >= 4.875 then
 		collisionbox = {-1.0,-0.5,-1.0,1.0,2.5,1.0},
 		coupler_types_front = {chain=true},
 		coupler_types_back = {chain=true},
-		drops={dlxtrains.materials.steelblock},
+		drops={
+			"dlxtrains_industrial_wagons:brakemans_cabin",
+			"dlxtrains_industrial_wagons:small_tank",
+			dlxtrains.materials.ladder_steel,
+			"dlxtrains:coupler_buffer_and_chain 2",
+			"dlxtrains:wagon_chassis",
+			"dlxtrains:wheel_set 2",
+		},
 		has_inventory = true,
 		get_inventory_formspec = function(wagon, pname, invname)
 			return "size[8,8]"..
@@ -1697,7 +1763,14 @@ if dlxtrains_industrial_wagons.max_wagon_length >= 4.875 then
 		collisionbox = {-1.0,-0.5,-1.0,1.0,2.5,1.0},
 		coupler_types_front = {chain=true},
 		coupler_types_back = {chain=true},
-		drops={dlxtrains.materials.steelblock},
+		drops={
+			dlxtrains.materials.steel_ingot,
+			"dlxtrains_industrial_wagons:small_tank",
+			dlxtrains.materials.ladder_steel,
+			"dlxtrains:coupler_buffer_and_chain 2",
+			"dlxtrains:wagon_chassis",
+			"dlxtrains:wheel_set 2",
+		},
 		has_inventory = true,
 		get_inventory_formspec = function(wagon, pname, invname)
 			return "size[8,8]"..
@@ -1738,7 +1811,13 @@ if dlxtrains_industrial_wagons.max_wagon_length >= 6 then
 		collisionbox = {-1.0,-0.5,-1.0,1.0,2.5,1.0},
 		coupler_types_front = {chain=true},
 		coupler_types_back = {knuckle=true},
-		drops={dlxtrains.materials.steelblock},
+		drops={
+			"dlxtrains_industrial_wagons:flat_body_type1",
+			"dlxtrains:coupler_buffer_and_chain",
+			"dlxtrains:wagon_chassis",
+			"dlxtrains:coupler_knuckle",
+			"dlxtrains:bogie 2",
+		},
 		has_inventory = true,
 		get_inventory_formspec = function(wagon, pname, invname)
 			return "size[8,8]"..

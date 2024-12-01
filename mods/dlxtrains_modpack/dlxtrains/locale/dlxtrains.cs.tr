@@ -1,0 +1,18 @@
+# textdomain: dlxtrains
+Knuckle Coupler=kloubové spřáhlo
+DLX Blueprint=plán DLX
+Bogie=železniční čtyřkolí
+Coupler, buffer and chain=spřáhlo (nárazník a řetěz)
+Coupler, knuckle=kloubové spřáhlo
+Wagon Chassis=karoserie vagonu
+Wheel Set=železniční náprava
+DLX Wagon Updater tool@n@nLeft-click: Update DLX wagon to refresh its appearance, typically in case of an inventory change=nástroj pro aktualizaci vzhledu vagonu DLX po změně inventáře
+DLX Age Selector tool@n@nLeft-click: Toggle age appearance of DLX wagon=nástroj pro přepínání opotřebení vozu DLX
+DLX Livery Selector tool@n@nLeft-click: Change DLX wagon to next livery scheme@nSneak+Left-click: Change DLX wagon to previous livery scheme=nástroj pro výběr barevného motivu vozu DLX
+@1 Standard=@1 standardní vzhled
+@1 Middle Era=@1 (střední éra)
+@1 Early Era=@1 (počátky)
+This is an old livery used by the fictional @1 company in its early days.=Toto je starý vzhled používaný fiktivní společností @1 v jejích raných letech.
+This is a livery used by the fictional @1 company before it adopted its current standard.=Toto je předchozí vzhled používaný fiktivní společností @1.
+This is the current standard livery for the fictional @1 company.=Toto je současný vzhled používaný fiktivní společností @1.
+This wagon does not have any other liveries available.=Tento vagon nenabízí žádnou další variantu vzhledu.
