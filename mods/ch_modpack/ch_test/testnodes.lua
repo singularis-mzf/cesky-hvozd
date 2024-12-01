@@ -15,7 +15,7 @@ local paramtypes = {
 		mesh = "ch_core_normal.obj",
 	},
 	wallmounted = {
-		param2_max = 5,
+		param2_max = 7,
 	},
 	["4dir"] = {
 		param2_max = 3,

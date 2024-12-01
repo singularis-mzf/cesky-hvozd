@@ -66,8 +66,8 @@ end
 screwdriver.rotate.colorfacedir = screwdriver.rotate.facedir
 
 local wallmounted_tbl = {
-	[screwdriver.ROTATE_FACE] = {[2] = 5, [3] = 4, [4] = 2, [5] = 3, [1] = 0, [0] = 1},
-	[screwdriver.ROTATE_AXIS] = {[2] = 5, [3] = 4, [4] = 2, [5] = 1, [1] = 0, [0] = 3}
+	[screwdriver.ROTATE_FACE] = {[2] = 5, [3] = 4, [4] = 2, [5] = 3, [1] = 7, [0] = 6, [6] = 0, [7] = 1},
+	[screwdriver.ROTATE_AXIS] = {[2] = 1, [3] = 1, [4] = 1, [5] = 1, [1] = 0, [0] = 3}
 }
 
 screwdriver.rotate.wallmounted = function(pos, node, mode)
@@ -76,7 +76,7 @@ screwdriver.rotate.wallmounted = function(pos, node, mode)
 	rotation = wallmounted_tbl[mode][rotation] or 0
 	if minetest.get_item_group(node.name, "attached_node") ~= 0 then
 		-- find an acceptable orientation
-		for i = 1, 5 do
+		for i = 1, 7 do
 			if not check_attached_node(pos, rotation) then
 				rotation = wallmounted_tbl[mode][rotation] or 0
 			else
