@@ -84,9 +84,16 @@ advtrains.register_wagon("mese_trains_mesejet:mese_trains_mesejet_wagon", {
 	custom_on_step = function(self, dtime, data, train)
 		if train.line and self.line_cache ~= train.line then
 			self.line_cache = train.line
-			local line = tonumber(train.line)
+			local orig_line = train.line or ""
+			local line = orig_line:gsub("[^0-9]", "")
+			line = tonumber(line)
 			if type(line) == "number" and 0 < line and line < 10 then
-				local new_line_tex = "mese_trains_mesejet_wagon.png^((mese_trains_mesejet_wagon_lines.png^mese_trains_mesejet_wagon_line_" .. line .. ".png)^[colorize:" .. lines[line] .. ":255)"
+				local new_line_tex = "mese_trains_mesejet_wagon.png^([combine:256x256"..
+					":0,0=mese_trains_mesejet_wagon_lines.png"..
+					":16,180=mese_trains_n"..line.."big.png\\^[transformR90"..
+					":203,94=mese_trains_n"..line.."small.png\\^[transformR90"..
+					":203,94=mese_trains_nssmall.png\\^[transformR90"..
+					"^[colorize:"..lines[line]..":255)"
 				self.object:set_properties({
 					textures = {new_line_tex}
 				})
@@ -182,9 +189,15 @@ advtrains.register_wagon("mese_trains_mesejet:mese_trains_mesejet_engine", {
 	custom_on_step = function(self, dtime, data, train)
 		if train.line and self.line_cache ~= train.line then
 			self.line_cache = train.line
-			local line = tonumber(train.line)
-			if type(line) == "number" and line < 10 and line > 0 then
-				local new_line_tex = "mese_trains_mesejet_engine.png^(mese_trains_mesejet_engine_lines.png^[colorize:" .. lines[line] .. ":255)"
+			local orig_line = train.line or ""
+			local line = orig_line:gsub("[^0-9]", "")
+			line = tonumber(line)
+			if type(line) == "number" and 0 < line and line < 10 then
+				local new_line_tex = "mese_trains_mesejet_engine.png^([combine:256x256"..
+					":0,0=mese_trains_mesejet_engine_lines.png"..
+					":100,25=mese_trains_nsbig.png\\^[transformR90"..
+					":100,18=mese_trains_n"..line.."big.png\\^[transformR90"..
+					"^[colorize:"..lines[line]..":255)"
 				self.object:set_properties({
 					textures = {new_line_tex}
 				})

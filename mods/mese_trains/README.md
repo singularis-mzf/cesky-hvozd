@@ -16,3 +16,4 @@ License of code: [LGPL 2.1 only](https://spdx.org/licenses/LGPL-2.1-only.html) (
 - `mese_trains_mesejet`
   - models: based on gpcf's/[rubberduck's](https://notabug.org/rbduck/minetest-moretrains) `moretrains_japan` [moretrains](https://content.minetest.net/packages/gpcf/moretrains/) models, changed the UV map layout (2022-10-01, xenonca)
   - textures: based on gpcf's/[rubberduck's](https://notabug.org/rbduck/minetest-moretrains) `moretrains_japan` [moretrains](https://content.minetest.net/packages/gpcf/moretrains/) textures, changed exterior and interior textures (2022-10-01, xenonca)
+  - textures: mese_trains_n* – modified by Singularis from the original line numbers
