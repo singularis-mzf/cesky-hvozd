@@ -256,7 +256,6 @@ function display_api.on_activate(entity, staticdata)
 					else
 						if old_handle == nil or new_handle ~= old_handle then
 							meta:set_int(meta_name, new_handle)
-							print("DEBUG: handle metadata "..meta_name.." updated to "..new_handle.." at "..core.pos_to_string(entity.nodepos))
 						end
 						-- Call on_display_update callback of the entity to build texture
 						if edef.on_display_update then

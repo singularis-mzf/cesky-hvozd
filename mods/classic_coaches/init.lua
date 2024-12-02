@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 local mod_name = "classic_coaches"
 
 local S = minetest.get_translator(mod_name)
@@ -945,3 +946,4 @@ for _, wagon in pairs(wagons) do
 		})
 	end
 end
+ch_base.close_mod(minetest.get_current_modname())

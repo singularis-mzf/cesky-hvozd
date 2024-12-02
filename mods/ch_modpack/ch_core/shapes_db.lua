@@ -835,7 +835,7 @@ local glass_no_cnc = set(
 
 local sns_micro = set("_1", "_2")
 
-local sns_slabs = wool_slabs
+local sns_slabs = set("", "_quarter", "_three_quarter", "_1", "_2", "_14", "_15", "_rcover")
 
 local sns_slopes = set("", "_half", "_half_raised",
 	"_inner", "_inner_half", "_inner_half_raised", "_inner_cut", "_inner_cut_half", "_inner_cut_half_raised",
