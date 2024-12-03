@@ -83,14 +83,14 @@ local function on_place(itemstack, placer, pointed_thing, name, r)
 
 		local formspec = {
 			"formspec_version[4]",
-			"size[9,6.5]",
+			"size[9,7.5]",
 			"label[0.375,0.5;Změna tvaru]",
-			"button_exit[1,5.3;7,0.75;zavrit;Zavřít ovládací panel]",
+			"button_exit[1,6.3;7,0.75;zavrit;Zavřít ovládací panel]",
 		}
 		local name, desc
 		local tools = {}
 
-		for _, w in pairs(streets.labels.labeltypes) do
+		for _, w in ipairs(streets.labels.labeltypes_in_order) do
 			local base_name = "streets:tool_" .. w.name:gsub("{color}", colorname)
 			name = base_name:gsub("^streets:tool_", "")
 			desc = w.friendlyname
@@ -115,7 +115,7 @@ local function on_place(itemstack, placer, pointed_thing, name, r)
 		local x_scale, y_scale = 1, 1
 		local x_shift, y_shift = -0.5, 0
 		local button_size = 0.9
-		for y = 1, 4 do
+		for y = 1, 5 do
 			for x = 1, 8 do
 				i = i + 1
 				tool = tools[i]

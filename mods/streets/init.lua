@@ -20,7 +20,7 @@ streets.conf = {
 
 -- The API collects some data here
 streets.surfaces = { surfacetypes = {} }
-streets.labels = { labeltypes = {} }
+streets.labels = { labeltypes = {}, labeltypes_in_order = {} }
 streets.signs = { signtypes = {} }
 
 -- Load the API file

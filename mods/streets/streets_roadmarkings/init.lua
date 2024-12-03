@@ -283,6 +283,88 @@ streets.register_road_marking({
 })
 ]]
 
+--SYMBOLS
+
+--[[
+streets.register_road_marking({
+	name = "{color}_parking",
+	friendlyname = "Parking",
+	tex = "streets_parking.png",
+	section = "symbols",
+	dye_needed = 3,
+	rotation = { r90 = 1, r180 = 1, r270 = 1 },
+})
+]]
+
+--OTHER
+
+streets.register_road_marking({
+	name = "solid_{color}_diagonal_line",
+	friendlyname = S("příčná čára"),
+	tex = "streets_solid_diagonal_line.png",
+	section = "other",
+	dye_needed = 2,
+	rotation = { r90 = 1 },
+})
+
+streets.register_road_marking({
+	name = "double_solid_{color}_diagonal_line",
+	friendlyname = S("V 13a Šikmé rovnoběžné čáry"),
+	tex = "streets_double_solid_diagonal_line.png",
+	section = "other",
+	dye_needed = 4,
+	rotation = { r90 = 1 },
+})
+
+streets.register_road_marking({
+	name = "{color}_halt_line_center_corner",
+	friendlyname = S("V 5 Příčná čára souvislá"),
+	tex = "streets_halt_line_center_corner.png",
+	section = "other",
+	dye_needed = 4,
+	rotation = { r90 = 1, r180 = 1, r270 = 1 },
+})
+
+streets.register_road_marking({
+	name = "{color}_halt_line_wide",
+	friendlyname = S("V 5 Příčná čára souvislá pokračování"),
+	tex = "[combine:16x16:-1,0=streets_solid_side_line_wide.png^[transformR270",
+	section = "other",
+	dye_needed = 4,
+	rotation = { r90 = 1, r180 = 1, r270 = 1 },
+})
+
+--[[
+streets.register_road_marking({
+	name = "{color}_halt_line_center_corner_wide",
+	friendlyname = "Halt Line Center Corner Wide",
+	tex = "streets_halt_line_center_corner_wide.png",
+	section = "other",
+	dye_needed = 6,
+	rotation = { r90 = 1, r180 = 1, r270 = 1 },
+})
+]]
+
+streets.register_road_marking({
+	name = "{color}_halt_line_center_corner_flipped",
+	friendlyname = S("V 5 Příčná čára souvislá (opačná)"),
+	tex = "streets_halt_line_center_corner.png^[transformFX",
+	section = "other",
+	dye_needed = 4,
+	rotation = { r90 = 1, r180 = 1, r270 = 1 },
+})
+--[[
+
+streets.register_road_marking({
+	name = "{color}_halt_line_center_corner_wide_flipped",
+	friendlyname = "Halt Line Center Corner Wide (Flipped)",
+	tex = "streets_halt_line_center_corner_wide.png^[transformFX",
+	section = "other",
+	dye_needed = 6,
+	rotation = { r90 = 1, r180 = 1, r270 = 1 },
+})
+]]
+
 
 --ARROWS
 
@@ -349,20 +431,6 @@ streets.register_road_marking({
 	rotation = { r90 = 1, r180 = 1, r270 = 1 },
 })
 
-
---SYMBOLS
-
---[[
-streets.register_road_marking({
-	name = "{color}_parking",
-	friendlyname = "Parking",
-	tex = "streets_parking.png",
-	section = "symbols",
-	dye_needed = 3,
-	rotation = { r90 = 1, r180 = 1, r270 = 1 },
-})
-]]
-
 streets.register_road_marking({
 	name = "{color}_cross",
 	friendlyname = S("V 12b Žluté zkřížené čáry"),
@@ -371,7 +439,6 @@ streets.register_road_marking({
 	dye_needed = 4,
 })
 
---OTHER
 
 streets.register_road_marking({
 	name = "solid_{color}_stripe",
@@ -382,60 +449,3 @@ streets.register_road_marking({
 	rotation = { r90 = 1 },
 })
 
-streets.register_road_marking({
-	name = "solid_{color}_diagonal_line",
-	friendlyname = S("příčná čára"),
-	tex = "streets_solid_diagonal_line.png",
-	section = "other",
-	dye_needed = 2,
-	rotation = { r90 = 1 },
-})
-
-streets.register_road_marking({
-	name = "double_solid_{color}_diagonal_line",
-	friendlyname = S("V 13a Šikmé rovnoběžné čáry"),
-	tex = "streets_double_solid_diagonal_line.png",
-	section = "other",
-	dye_needed = 4,
-	rotation = { r90 = 1 },
-})
-
-streets.register_road_marking({
-	name = "{color}_halt_line_center_corner",
-	friendlyname = S("V 5 Příčná čára souvislá"),
-	tex = "streets_halt_line_center_corner.png",
-	section = "other",
-	dye_needed = 4,
-	rotation = { r90 = 1, r180 = 1, r270 = 1 },
-})
-
---[[
-streets.register_road_marking({
-	name = "{color}_halt_line_center_corner_wide",
-	friendlyname = "Halt Line Center Corner Wide",
-	tex = "streets_halt_line_center_corner_wide.png",
-	section = "other",
-	dye_needed = 6,
-	rotation = { r90 = 1, r180 = 1, r270 = 1 },
-})
-]]
-
-streets.register_road_marking({
-	name = "{color}_halt_line_center_corner_flipped",
-	friendlyname = S("V 5 Příčná čára souvislá (opačná)"),
-	tex = "streets_halt_line_center_corner.png^[transformFX",
-	section = "other",
-	dye_needed = 4,
-	rotation = { r90 = 1, r180 = 1, r270 = 1 },
-})
---[[
-
-streets.register_road_marking({
-	name = "{color}_halt_line_center_corner_wide_flipped",
-	friendlyname = "Halt Line Center Corner Wide (Flipped)",
-	tex = "streets_halt_line_center_corner_wide.png^[transformFX",
-	section = "other",
-	dye_needed = 6,
-	rotation = { r90 = 1, r180 = 1, r270 = 1 },
-})
-]]

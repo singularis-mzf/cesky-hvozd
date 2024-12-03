@@ -237,12 +237,12 @@ local marking_node_variants = {
 local marker_colors = {
 	{"white", "bílý", "#ffffff"},
 	{"yellow", "žlutý", "#ecb100"},
-	{"black", "černý", "#000000"},
+	{"black", "černý", "#101010"},
 	{"red", "červený", "#ec1313"},
 	{"green", "zelený", "#318c0b"},
-	{"violet", "fialový", "#8c2086"},
-	{"brown", "hnědý", "#5a3000"},
-	{"blue", "modrý", "#01245f"},
+	{"violet", "fialový", "#a826a0"},
+	{"brown", "hnědý", "#673700"},
+	{"blue", "modrý", "#000080"},
 }
 
 local marker_ch_help_group = "str_marker"
@@ -273,13 +273,13 @@ local register_marking_nodes = function(friendlyname, name, tex, r)
 	end
 	for color, colordef in ipairs(marker_colors) do
 		local colorname, colordesc = colordef[1], colordef[2]
-		local colored_tex = tex.."^[multiply:"..colordef[3]
 		local toolname = "streets:tool_" .. name:gsub("{color}", colorname) .. r
 		minetest.register_tool(toolname, {
 			description = S("značkovač @1: ", colordesc) .. friendlyname .. rotation_friendly,
 			groups = { streets_tool = color, not_repairable = 1, },
-			inventory_image = colored_tex,
-			wield_image = colored_tex,
+			inventory_image = tex,
+			wield_image = tex,
+			color = colordef[3],
 			on_place = on_place,
 			_ch_help = marker_ch_help,
 			_ch_help_group = marker_ch_help_group,

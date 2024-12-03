@@ -47,5 +47,9 @@ function streets.register_road_sign(data)
 end
 
 function streets.register_road_marking(data)
+	if streets.labels.labeltypes[data.name] ~= nil then
+		error("Road marking '"..data.name.."' is already registered!")
+	end
 	streets.labels.labeltypes[data.name] = data
+	table.insert(streets.labels.labeltypes_in_order, data)
 end
