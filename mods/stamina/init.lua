@@ -96,7 +96,7 @@ local function stamina_update_hud(player, stamina_level)
 		hud_value = stamina_level - STAMINA_HUNGER_LEVEL
 		hud_maxvalue = STAMINA_MAX_STAMINA - STAMINA_HUNGER_LEVEL
 	end
-	minetest.log("action", "[debug] Stamina update: stamina_level = "..stamina_level..", hunger_level = "..STAMINA_HUNGER_LEVEL..", is_hunger = "..(is_hunger and "true" or "false")..", hud = "..hud_value.." of "..hud_maxvalue)
+	-- minetest.log("action", "[debug] Stamina update: stamina_level = "..stamina_level..", hunger_level = "..STAMINA_HUNGER_LEVEL..", is_hunger = "..(is_hunger and "true" or "false")..", hud = "..hud_value.." of "..hud_maxvalue)
 
 	if not player_data.hud_status then
 		-- init
@@ -134,7 +134,7 @@ local function stamina_update_hud(player, stamina_level)
 			hud_bar = "hudbars_bar_stamina.png"
 		end
 
-		minetest.log("action", "[debug] Stamina of "..player:get_player_name().." HUD label: ("..player_data.hud_label..") => ("..hud_label.."), HUD value: ("..player_data.hud_value..") => ("..hud_value..")")
+		-- minetest.log("action", "[debug] Stamina of "..player:get_player_name().." HUD label: ("..player_data.hud_label..") => ("..hud_label.."), HUD value: ("..player_data.hud_value..") => ("..hud_value..")")
 
 		player_data.hud_status = hud_status
 		player_data.was_hunger = is_hunger
@@ -148,7 +148,7 @@ local function stamina_update_hud(player, stamina_level)
 
 	elseif player_data.hud_value ~= hud_value then
 		-- update only the value
-		minetest.log("action", "[debug] Stamina of "..player:get_player_name().." HUD value update: ("..player_data.hud_value..") => ("..hud_value..")")
+		-- minetest.log("action", "[debug] Stamina of "..player:get_player_name().." HUD value update: ("..player_data.hud_value..") => ("..hud_value..")")
 		player_data.hud_value = hud_value
 		if not hb.get_hudbar_state(player, "hlad").hidden then
 			result = hb.change_hudbar(player, "hlad", hud_value, nil, nil, nil, nil, player_data.hud_label)

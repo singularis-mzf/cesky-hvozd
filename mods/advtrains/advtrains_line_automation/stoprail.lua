@@ -78,17 +78,13 @@ local function show_stoprailform(pos, player)
 		pname_unless_admin = pname
 	end
 	local formspec = "formspec_version[4]"..
-		"size[8,11]"..
+		"size[8,12]"..
 		"item_image[0.25,0.25;1,1;advtrains_line_automation:dtrack_stop_placer]"..
 		"label[1.4,0.85;"..minetest.formspec_escape(item_name).."]"..
 		"button_exit[7,0.25;0.75,0.75;close;X]"..
 		"style[ars,line,routingcode;font=mono]"..
 		"label[0.25,1.75;"..attrans("Station Code").." | "..attrans("Station Name").."]"..
 		get_stn_dropdown(player_to_stn_override[pname] or stdata.stn, pname_unless_admin)..
-		--[[
-		"field[0.25,2;2,0.75;stn;"..attrans("Station Code")..";"..minetest.formspec_escape(stdata.stn).."]"..
-		"field[2.5,2;4,0.75;stnname;"..attrans("Station Name")..";"..minetest.formspec_escape(stnname).."]"..
-		]]
 		"field[6.75,2;1,0.75;track;"..attrans("Track")..";"..minetest.formspec_escape(stdata.track).."]"..
 		"label[0.25,3.4;"..attrans("Door Side").."]"..
 		"dropdown[2.25,3;2,0.75;doors;vlevo,vpravo,neotvírat;"..door_dropdown[stdata.doors].."]"..
@@ -103,13 +99,15 @@ local function show_stoprailform(pos, player)
 		"field[0.25,6;2,0.75;speed;"..attrans("Dep. Speed")..";"..minetest.formspec_escape(stdata.speed).."]"..
 		"field[2.5,6;2,0.75;line;Linka na odj.;"..minetest.formspec_escape(stdata.line or "").."]"..
 		"field[4.75,6;2,0.75;routingcode;Sm.kód na odj.;"..minetest.formspec_escape(stdata.routingcode or "").."]"..
-		"textarea[0.25,7.25;7.5,1.5;ars;"..attrans("Trains stopping here (ARS rules)")..";"..advtrains.interlocking.ars_to_text(stdata.ars).."]"..
-		"label[0.3,9.25;Platí jen pro vlaky s]"..
-		"field[3,9;1,0.5;minparts;;"..minetest.formspec_escape(stdata.minparts or "0").."]"..
-		"label[4.15,9.25;až]"..
-		"field[4.6,9;1,0.5;maxparts;;"..minetest.formspec_escape(stdata.maxparts or "128").."]"..
-		"label[5.75,9.25;vozy.]"..
-		"button_exit[0.25,10;7.5,0.75;save;"..attrans("Save").."]"..
+		"field[0.25,7.25;2,0.75;interval;Interval \\[s\\]:;"..minetest.formspec_escape(stdata.interval or "").."]"..
+		"field[2.5,7.25;2,0.75;ioffset;Jeho posun:;"..minetest.formspec_escape(stdata.ioffset or "0").."]"..
+		"textarea[0.25,8.4;7.5,1.5;ars;"..attrans("Trains stopping here (ARS rules)")..";"..advtrains.interlocking.ars_to_text(stdata.ars).."]"..
+		"label[0.3,10.25;Platí jen pro vlaky s]"..
+		"field[3,10;1,0.5;minparts;;"..minetest.formspec_escape(stdata.minparts or "0").."]"..
+		"label[4.15,10.25;až]"..
+		"field[4.6,10;1,0.5;maxparts;;"..minetest.formspec_escape(stdata.maxparts or "128").."]"..
+		"label[5.75,10.25;vozy.]"..
+		"button_exit[0.25,11;7.5,0.75;save;"..attrans("Save").."]"..
 		"tooltip[close;Zavře dialogové okno]"..
 		"tooltip[stn;Dopravna\\, ke které tato zastávka patří. Jedna dopravna může mít víc kolejí. K vytvoření a úpravám dopraven použijte Editor dopraven.]"..
 		"tooltip[track;Číslo koleje]"..
@@ -122,7 +120,14 @@ local function show_stoprailform(pos, player)
 		"* = jakýkoliv vlak\n\\# značí komentář a ! na začátku řádky danou podmínku neguje (nedoporučuje se)]"..
 		"tooltip[minparts;Minimální počet vozů\\, které musí vlak mít\\, aby zde zastavil. Výchozí hodnota je 0.]"..
 		"tooltip[maxparts;Maximální počet vozů\\, které vlak může mít\\, aby zde zastavil. Výchozí (a maximální) hodnota je 128.]"..
-		"tooltip[editsn;Otevře v novém okně editor dopraven.\nPoužijte tento editor pro založení nové dopravny\\, jíž budete moci přiřadit koleje.]"
+		"tooltip[editsn;Otevře v novém okně editor dopraven.\nPoužijte tento editor pro založení nové dopravny\\, jíž budete moci přiřadit koleje.]"..
+		"tooltip[interval;Hodnota v sekundách 1 až 3600 nebo nevyplněno. Je-li vyplněno\\, rozdělí čas na intervaly zadané délky,\n"..
+		"a pokud z této zastávkové koleje v rámci jednoho z nich odjede vlak\\, odjezd dalšího bude pozdržen do začátku\n"..
+		"následujícího intervalu. Výchozí začátky intervalů stejné délky jsou v celé železniční síti společné.\n"..
+		"Slouží k nastavení intervalového provozu.]"..
+		"tooltip[ioffset;Hodnota v sekundách 0 až (interval - 1). Posune začátek intervalů oproti výchozímu stavu\n"..
+		"o zadaný počet sekund vpřed. Slouží k detailnímu vyladění času odjezdů relativně vůči ostatním linkám.]"
+
 
 	minetest.show_formspec(pname, "at_lines_stop_"..pe, formspec)
 end
@@ -220,6 +225,30 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				if v <= 0 or v > 128 then v = nil end
 				stdata.maxparts = v
 			end
+			if fields.interval then
+				if fields.interval == "" or fields.interval == "0" then
+					stdata.interval = nil
+				else
+					local n = to_int(fields.interval)
+					if 0 < n and n <= 3600 then
+						stdata.interval = n
+					end
+				end
+			end
+			if stdata.interval == nil then
+				stdata.ioffset = nil
+			elseif fields.ioffset then
+				if fields.ioffset == "" or fields.ioffset == "0" then
+					stdata.ioffset = nil
+				else
+					local n = to_int(fields.ioffset)
+					if n > 0 then
+						stdata.ioffset = n % stdata.interval
+					else
+						stdata.ioffset = nil
+					end
+				end
+			end
 
 			for k,v in pairs(tmp_checkboxes[pe]) do --handle checkboxes
 				stdata[k] = v or nil
@@ -274,11 +303,11 @@ local adefunc = function(def, preset, suffix, rotation)
 						local pe = advtrains.encode_pos(pos)
 						local stdata = advtrains.lines.stops[pe]
 						if stdata and stdata.stn then
-						
-							--TODO REMOVE AFTER SOME TIME (only migration)
+							--[[TODO REMOVE AFTER SOME TIME (only migration)
 							if not stdata.ars then
 								stdata.ars = {default=true}
 							end
+							]]
 							if should_stop(stdata, train) then
 								advtrains.lzb_add_checkpoint(train, index, 2, nil)
 								local stn = advtrains.lines.stations[stdata.stn]
@@ -300,12 +329,36 @@ local adefunc = function(def, preset, suffix, rotation)
 						if should_stop(stdata, train) then
 							local stn = advtrains.lines.stations[stdata.stn]
 							local stnname = stn and stn.name or attrans("Unknown Station")
-							local line, routingcode = stdata.line or "", stdata.routingcode or ""
-							
+							local line = stdata.line or ""
+							local routingcode = stdata.routingcode or ""
+							local wait = tonumber(stdata.wait) or 0
+							local interval = stdata.interval
+							local ioffset = stdata.ioffset or 0
+							local lastdep = stdata.lastdep
+							local rwt = advtrains.lines.rwt
+							local rwtime = assert(tonumber(rwt.to_secs(rwt.get_time())))
+
+							-- Interval
+							if lastdep ~= nil and interval ~= nil then
+								if lastdep > rwtime then
+									lastdep = rwtime
+								end
+								local normaldep = rwtime + wait
+								local nextdep = lastdep + (interval - (lastdep + (interval - ioffset)) % interval)
+								if normaldep < nextdep then
+									minetest.log("action", "[INFO] The train "..train_id.." will wait for "..(nextdep - normaldep).." additional seconds due to interval at "..core.pos_to_string(pos)..".")
+									wait = wait + (nextdep - normaldep)
+								-- else -- will wait normal time
+								end
+							end
+							stdata.lastdep = rwtime + wait
+
 							-- Send ATC command and set text
-							advtrains.atc.train_set_command(train, "B0 W O"..stdata.doors..(stdata.kick and "K" or "").." D"..stdata.wait..
+							local command = "B0 W O"..stdata.doors..(stdata.kick and "K" or "").." D"..wait..
 								(stdata.keepopen and " " or " OC ")..(stdata.reverse and "R" or "").." D"..(stdata.ddelay or 1)..
-								" A1 S" ..(stdata.speed or "M"), true)
+								" A1 S" ..(stdata.speed or "M")
+							-- print("DEBUG: setting command for train "..train_id.." at rwtime "..rwtime..": "..command)
+							advtrains.atc.train_set_command(train, command, true)
 							train.text_inside = stnname
 							if line == "-" then
 								train.line = nil
@@ -317,8 +370,8 @@ local adefunc = function(def, preset, suffix, rotation)
 							elseif routingcode ~= "" then
 								train.routingcode = routingcode
 							end
-							if tonumber(stdata.wait) then
-								minetest.after(tonumber(stdata.wait), function() train.text_inside = "" end)
+							if tonumber(wait) then
+								minetest.after(tonumber(wait), function() train.text_inside = "" end)
 							end
 						end
 					end
