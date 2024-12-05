@@ -678,12 +678,22 @@ function advtrains.save(remove_players_from_wagons)
 		return
 	end
 	
+	local rwtime
+	if advtrains.lines ~= nil and advtrains.lines.rwt ~= nil then
+		local rwt = advtrains.lines.rwt
+		rwtime = rwt.to_string(rwt.get_time())
+	end
+
 	local t1 = os.clock()
 	advtrains.avt_save(remove_players_from_wagons) --saving advtrains. includes ndb at advtrains.ndb.save_data()
 	if has_luaautomation and atlatc then
 		atlatc.save()
 	end
-	atlog("Saved advtrains save files, took",math.floor((os.clock()-t1) * 1000),"ms")
+	local message = "Saved advtrains save files, took",math.floor((os.clock()-t1) * 1000),"ms"
+	if rwtime ~= nil then
+		message = message.." rwtime="..rwtime
+	end
+	atlog(message)
 	
 	-- Cleanup actions
 	--TODO very simple yet hacky workaround for the "green signals" bug

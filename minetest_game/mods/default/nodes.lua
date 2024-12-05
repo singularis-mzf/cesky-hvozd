@@ -23,6 +23,7 @@ default:cobble
 default:stonebrick
 default:stone_block
 default:mossycobble
+default:stone_from_lava
 
 default:desert_stone
 default:desert_cobble
@@ -299,6 +300,20 @@ minetest.register_node("default:mossycobble", {
 	sounds = default.node_sound_stone_defaults(),
 })
 
+minetest.register_node("default:stone_from_lava", {
+	description = S("Stone from Lava"),
+	drawtype = "nodebox",
+	node_box = {
+		type = "leveled",
+		fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
+	},
+	tiles = {"default_stone.png"},
+	groups = {cracky = 3, stone = 1},
+	drop = "",
+	sounds = default.node_sound_stone_defaults(),
+	paramtype = "light",
+	paramtype2 = "leveled",
+})
 
 minetest.register_node("default:desert_stone", {
 	description = S("Desert Stone"),

@@ -156,7 +156,14 @@ default.cool_lava = function(pos, node)
 	if node.name == "default:lava_source" then
 		minetest.set_node(pos, {name = "default:obsidian"})
 	else -- Lava flowing
-		minetest.set_node(pos, {name = "default:stone"})
+		local node_up = minetest.get_node(vector.offset(pos, 0, 1, 0))
+		local param2
+		if node_up.name ~= "air" then
+			param2 = 64
+		else
+			param2 = math.random(32, 64)
+		end
+		minetest.set_node(pos, {name = "default:stone_from_lava", param2 = param2})
 	end
 	minetest.sound_play("default_cool_lava",
 		{pos = pos, max_hear_distance = 16, gain = 0.2}, true)
