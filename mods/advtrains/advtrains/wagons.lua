@@ -1349,6 +1349,13 @@ function advtrains.register_wagon(sysname_p, prototype, desc, inv_img, nincreati
 		sysname = "advtrains:"..sysname_p
 	end
 	ch_core.upgrade_entity_properties(prototype, {keep_fields = false, base_properties = wagon_base_initial_properties})
+	if prototype.initial_properties ~= nil and prototype.initial_properties.collisionbox ~= nil and prototype.initial_properties.selectionbox == nil then
+		local new_selection_box = table.copy(prototype.initial_properties.collisionbox)
+		if new_selection_box.rotate == nil then
+			new_selection_box.rotate = true
+		end
+		prototype.initial_properties.selectionbox = new_selection_box
+	end
 	setmetatable(prototype, {__index=wagon})
 	minetest.register_entity(":"..sysname,prototype)
 	advtrains.wagon_prototypes[sysname] = prototype
