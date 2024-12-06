@@ -227,14 +227,21 @@ end)
 
 -- TCB Form
 
+local sidecolorA = minetest.get_color_escape_sequence("#f40000")
+local sidecolorB = minetest.get_color_escape_sequence("#068b00")
+
 local function mktcbformspec(tcbs, btnpref, offset, pname)
 	local form = ""
 	local ts
+	local sidecolor = sidecolorB
+	if btnpref == "A" then
+		sidecolor = sidecolorA
+	end
 	if tcbs.ts_id then
 		ts = ildb.get_ts(tcbs.ts_id)
 	end
 	if ts then
-		form = form.."label[0.5,"..offset..";"..attrans("Side @1", btnpref)..": "..minetest.formspec_escape(ts.name).."]"
+		form = form.."label[0.5,"..offset..";"..sidecolor..attrans("Side @1", btnpref)..": "..minetest.formspec_escape(ts.name).."]"
 		form = form.."button[0.5,"..(offset+0.5)..";5,1;"..btnpref.."_gotots;"..attrans("Show track section").."]"
 		if ildb.may_modify_tcbs(tcbs) then
 			-- Note: the security check to prohibit those actions is located in database.lua in the corresponding functions.
@@ -243,7 +250,7 @@ local function mktcbformspec(tcbs, btnpref, offset, pname)
 		end
 	else
 		tcbs.ts_id = nil
-		form = form.."label[0.5,"..offset..";Strana "..btnpref..": "..attrans("End of interlocking").."]"
+		form = form.."label[0.5,"..offset..";"..sidecolor.."Strana "..btnpref..": "..attrans("End of interlocking").."]"
 		form = form.."button[0.5,"..(offset+0.5)..";5,1;"..btnpref.."_makeil;"..attrans("Create Interlocked Track Section").."]"
 		--if tcbs.section_free then
 			--form = form.."button[0.5,"..(offset+1.5)..";5,1;"..btnpref.."_setlocked;Section is free]"
