@@ -142,7 +142,7 @@ local konstal_105_definition = {
     wagon_span = 4.7; -- Wagon length ~~ 8.9m => Coupling distance ~~ 9.4 m.
     wheel_positions = { 2.9, -2.9 };
     is_locomotive = true;
-    collisionbox = { -0.9, -2.5, -4, 0.9, 2.5, 4 };
+    collisionbox = { -0.9, -2.5, -4, 0.9, 2.5, 4, rotate = true };
     drops = {
 		"technic:blue_energy_crystal 2",
 		"minitram_crafting_recipes:minitram_pantograph",

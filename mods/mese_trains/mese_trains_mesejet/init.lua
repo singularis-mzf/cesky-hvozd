@@ -73,7 +73,7 @@ advtrains.register_wagon("mese_trains_mesejet:mese_trains_mesejet_wagon", {
 	door_entry = {-1.7, 1.7},
 	visual_size = {x = 1, y = 1},
 	wagon_span = 2.96,
-	collisionbox = {-0.8, -0.5, -2.6, 0.8, 2.5, 2.6},
+	collisionbox = {-0.8, -0.5, -2.6, 0.8, 2.5, 2.6, rotate = true},
 	drops = {
 		"default:steelblock 2",
 		"default:steel_ingot",
@@ -178,7 +178,7 @@ advtrains.register_wagon("mese_trains_mesejet:mese_trains_mesejet_engine", {
 	visual_size = {x = 1, y = 1},
 	wagon_span = 3.1,
 	is_locomotive = true,
-	collisionbox = {-0.8, -0.5, -2.6, 0.8, 2.5, 2.6},
+	collisionbox = {-0.8, -0.5, -2.6, 0.8, 2.5, 2.6, rotate = true},
 	drops = {
 		"default:steelblock 3",
 		"default:mese",
