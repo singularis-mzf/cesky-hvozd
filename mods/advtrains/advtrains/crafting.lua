@@ -44,7 +44,17 @@ minetest.register_craft({
 minetest.register_craft({
 	output = 'advtrains:signal_wall_r_off',
 	type = "shapeless",
+	recipe = {'advtrains:signal_wall_p_off'},
+})
+minetest.register_craft({
+	output = 'advtrains:signal_wall_b_off',
+	type = "shapeless",
 	recipe = {'advtrains:signal_wall_t_off'},
+})
+minetest.register_craft({
+	output = 'advtrains:signal_wall_p_off',
+	type = "shapeless",
+	recipe = {'advtrains:signal_wall_b_off'},
 })
 
 --trackworker

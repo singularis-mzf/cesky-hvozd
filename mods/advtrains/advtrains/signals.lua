@@ -50,7 +50,7 @@ for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", 
 		minetest.register_node("advtrains:retrosignal_"..r..rotation, {
 			drawtype = "mesh",
 			paramtype="light",
-			paramtype2="facedir",
+			paramtype2="4dir",
 			walkable = false,
 			selection_box = {
 				type = "fixed",
@@ -116,7 +116,7 @@ for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", 
 		minetest.register_node("advtrains:signal_"..r..rotation, {
 			drawtype = "mesh",
 			paramtype="light",
-			paramtype2="facedir",
+			paramtype2="4dir",
 			walkable = false,
 			selection_box = {
 				type = "fixed",
@@ -195,11 +195,12 @@ for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", 
 		r={0, -1/2, -1/4, 1/2, 1/2, 1/4},
 		t={-1/2, 0, -1/4, 1/2, 1/2, 1/4},
 		b={-1/4, -1/2, 1/2 - 1/8, 1/4, 1/2, 1/2},
+		p={-1/4, -1/2, 5/8, 1/4, 1/2, 7/8},
 	}) do
 		local def ={
 			drawtype = "mesh",
 			paramtype="light",
-			paramtype2="facedir",
+			paramtype2="4dir",
 			walkable = false,
 			selection_box = {
 				type = "fixed",
@@ -264,8 +265,8 @@ for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", 
 			can_dig = can_dig_func,
 			after_dig_node = after_dig_func,
 		}
-		if loc == "b" then
-			def.mesh = "advtrains_signal_wall_b.obj"
+		if loc == "b" or loc == "p" then
+			def.mesh = "advtrains_signal_wall_"..loc..".obj"
 		end
 		minetest.register_node("advtrains:signal_wall_"..loc.."_"..r, def)
 	end

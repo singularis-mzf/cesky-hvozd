@@ -296,20 +296,66 @@ for _,birdName in ipairs(birdNames) do
 
 end
 
-local spawnOffsetMult = vector.new(20,4,20)
-function spawnSwarm(pos)
-	if minetest.get_node(pos).name ~= "air" then
-		return false
-	end
-	
-	for x=pos.x-spawnOffsetMult.x/2,pos.x+spawnOffsetMult.x/2 do
-	for y=pos.y-spawnOffsetMult.y/2,pos.y+spawnOffsetMult.y/2 do
-	for z=pos.z-spawnOffsetMult.z/2,pos.z+spawnOffsetMult.z/2 do
-		if minetest.get_node(pos).name ~= "air" then
-			return false
+local groups_not_for_birds = {
+	"cracky", "choppy", "crumbly", "oddly_breakable_by_hand"
+}
+local function is_name_for_birds(name)
+	if name ~= nil then
+		for _, group in ipairs(groups_not_for_birds) do
+			if core.get_item_group(name, group) ~= 0 then
+				return false
+			end
 		end
 	end
+	return true
+end
+
+local vm_buffer = {}
+local function is_place_for_birds(pos)
+	if core.get_node(pos).name ~= "air" then
+		return false
 	end
+	local pmin = vector.offset(vector.round(pos), -20, -20, -20)
+	local pmax = vector.offset(pmin, 40, 21, 40)
+	local vm = core.get_voxel_manip(pmin, pmax)
+	local data = vm_buffer
+	vm:get_data(data)
+	local emin, emax = vm:get_emerged_area()
+	local area = VoxelArea(emin, emax)
+	local ystride, zstride = area.ystride, area.zstride
+	local CONTENT_AIR = core.CONTENT_AIR
+	local cid_for_birds = {[CONTENT_AIR] = true}
+	local cid, nfb_pos
+	for zb = (pmin.z - emin.z) * zstride, (pmax.z - emin.z) * zstride, zstride do
+		for yb = (pmin.y - emin.y) * ystride + zb, (pmax.y - emin.y) * ystride + zb, ystride do
+			for idx = (pmin.x - emin.x) + yb + 1, (pmax.x - emin.x) + yb + 1 do
+				cid = data[idx]
+				if cid == nil then
+					core.log("error", "cid == nil".." DEBUG: "..dump2({cid = cid, CONTENT_AIR = core.CONTENT_AIR,
+						nfb_pos = nfb_pos, idx = idx, data_len = #data, zb = zb, yb = yb, ystride = ystride, zstride = zstride,
+						emin = emin, emax = emax, pmin = pmin, pmax = pmax}))
+				elseif cid ~= CONTENT_AIR and cid_for_birds[cid] == nil then
+					local name = core.get_name_from_content_id(cid)
+					if is_name_for_birds(name) then
+						cid_for_birds[cid] = true
+					else
+						nfb_pos = area:position(idx)
+						break
+					end
+				end
+			end
+		end
+	end
+	return nfb_pos == nil
+end
+
+local spawnOffsetMult = vector.new(20,4,20)
+function spawnSwarm(pos)
+	if not is_place_for_birds(pos) then
+		pos.y = pos.y + 20
+		if not is_place_for_birds(pos) then
+			return false
+		end
 	end
 	
 	pos.x = pos.x + 3
