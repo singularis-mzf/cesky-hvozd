@@ -81,11 +81,10 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	minetest.log("action", "Player "..player_name.." received "..count.." fields (formname = \""..tostring(formname).."\", sha1 = "..hash..", quit = "..tostring(fields.quit)..")")
 end)
 
--- temp
+--[[ temp
 
 minetest.override_item("default:wood", {
 	tiles = {"default_wood.png^[resize:256x256^(ch_core_planks_128.png^[makealpha:255,255,255^[opacity:100^[resize:256x256)"},
-})
-
+}) ]]
 
 ch_base.close_mod(minetest.get_current_modname())

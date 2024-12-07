@@ -190,8 +190,13 @@ for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", 
 	if r=="off" then crea=0 end
 	
 	--tunnel signals. no rotations.
-	for loc, sbox in pairs({l={-1/2, -1/2, -1/4, 0, 1/2, 1/4}, r={0, -1/2, -1/4, 1/2, 1/2, 1/4}, t={-1/2, 0, -1/4, 1/2, 1/2, 1/4}}) do
-		minetest.register_node("advtrains:signal_wall_"..loc.."_"..r, {
+	for loc, sbox in pairs({
+		l={-1/2, -1/2, -1/4, 0, 1/2, 1/4},
+		r={0, -1/2, -1/4, 1/2, 1/2, 1/4},
+		t={-1/2, 0, -1/4, 1/2, 1/2, 1/4},
+		b={-1/4, -1/2, 1/2 - 1/8, 1/4, 1/2, 1/2},
+	}) do
+		local def ={
 			drawtype = "mesh",
 			paramtype="light",
 			paramtype2="facedir",
@@ -258,7 +263,11 @@ for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", 
 			},
 			can_dig = can_dig_func,
 			after_dig_node = after_dig_func,
-		})
+		}
+		if loc == "b" then
+			def.mesh = "advtrains_signal_wall_b.obj"
+		end
+		minetest.register_node("advtrains:signal_wall_"..loc.."_"..r, def)
 	end
 end
 
