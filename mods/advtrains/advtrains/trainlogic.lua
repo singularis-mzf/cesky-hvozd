@@ -62,9 +62,16 @@ local LZB_ZERO_APPROACH_DIST = 0.1
 -- Speed the train temporarily approaches the stop point with
 local LZB_ZERO_APPROACH_SPEED = 0.2
 
-
+local on_player_overrun = {}
 
 tp_player_tmr = 0
+
+function advtrains.register_on_player_overrun(func)
+	-- func = function(player, train_id, train_velocity)
+	-- train_velocity is a vector with direction of the train's move and length of the train's current speed
+	assert(type(func) == "function")
+	table.insert(on_player_overrun, func)
+end
 
 advtrains.mainloop_trainlogic=function(dtime, stepno)
 	--build a table of all players indexed by pts. used by damage and door system.
@@ -771,10 +778,20 @@ function advtrains.train_step_c(id, train, dtime)
 						end
 
 						--- 8b damage players ---
-						if is_loaded_area and train.velocity > 3 and (setting_overrun_mode=="drop" or setting_overrun_mode=="normal") then
+						if is_loaded_area and train.velocity > 3 --[[ and (setting_overrun_mode=="drop" or setting_overrun_mode=="normal") ]] then
 							local testpts = minetest.pos_to_string(testpos)
 							local player=advtrains.playersbypts[testpts]
 							if player and player:get_hp()>0 and advtrains.is_damage_enabled(player:get_player_name()) then
+								local train_nextpos = advtrains.path_get(train, atround(collindex) + 1)
+								if train_nextpos == nil or vector.equals(train_nextpos, collpos) then
+									minetest.log("error", "Player "..player:get_player_name().." was overrun by train "..train.id..", but can't determine the train's direction!")
+								else
+									local train_direction = vector.direction(collpos, train_nextpos)
+									for _, func in ipairs(on_player_overrun) do
+										func(player, train.id, train_direction, train.velocity)
+									end
+								end
+								--[[
 								--atdebug("damage found",player:get_player_name())
 								if setting_overrun_mode=="drop" then
 									--instantly kill player
@@ -791,6 +808,7 @@ function advtrains.train_step_c(id, train, dtime)
 									player_inv:set_list("craft", {})
 								end
 								player:set_hp(0)
+								]]
 							end
 						end
 					end

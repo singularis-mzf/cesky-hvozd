@@ -1,0 +1,2 @@
+#    Whether apply a penalty when a player is overrun by a train.
+ch_player_overrun_penalty (Enable player overrun penalty) bool false

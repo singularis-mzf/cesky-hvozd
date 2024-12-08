@@ -25,6 +25,13 @@ minetest.register_privilege("railway_operator", {
 	give_to_singleplayer= true,
 });
 
+-- Other privileges
+minetest.register_privilege("train_ghost", {
+	description = "Poskytuje imunitu proti sražení vlakem.",
+	give_to_singleplayer = false,
+});
+
+
 -- there is a configuration option "allow_build_only_owner". If this is active, a player having track_builder can only build rails and operate signals/turnouts in an area explicitly belonging to him
 -- (checked using a dummy player called "*dummy*" (which is not an allowed player name))
 
