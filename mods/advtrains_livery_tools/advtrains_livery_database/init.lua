@@ -1,3 +1,4 @@
+ch_base.open_mod(minetest.get_current_modname())
 advtrains_livery_database = {}
 
 local callback_functions = {}
@@ -526,3 +527,4 @@ function advtrains_livery_database.get_livery_textures_from_design(livery_design
 end
 
 
+ch_base.close_mod(minetest.get_current_modname())
