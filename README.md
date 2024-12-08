@@ -193,6 +193,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: AGPLv3 pro kód i média, CC BY-SA 3.0 pro média
 * [ContentDB](https://content.luanti.org/packages/Marnack/classic\_coaches/)
 
+## Classic Coaches Generic Livery Pack (classic\_coaches\_generic\_livery\_pack)
+
+* Zdroj: [https://github.com/Marnack/classic\_coaches\_generic\_livery\_pack](https://github.com/Marnack/classic\_coaches\_generic\_livery\_pack), revize 5814d84f6c640b77b633629b6a86867aedf206ba
+* Původní licence: AGPLv3 pro kód, CC BY-SA 3.0 Unported pro média
+* Licence úprav: AGPLv3 pro kód i média, CC BY-SA 3.0 pro média
+* [ContentDB](https://content.luanti.org/packages/Marnack/classic\_coaches\_generic\_livery\_pack/)
+
 ## DLX Trains (dlxtrains\_modpack)
 
 * Zdroj: [https://github.com/Marnack/dlxtrains\_modpack](https://github.com/Marnack/dlxtrains\_modpack), revize 1561c547827248d7085856a03706c3a66a20a0bd

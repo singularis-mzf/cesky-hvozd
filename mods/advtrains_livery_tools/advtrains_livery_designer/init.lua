@@ -1006,7 +1006,7 @@ local function get_livery_editor_formspec_section(context)
 			"container_end[]"..
 			"container_end[]"..
 			get_model_preview_formspec(context, context.livery_editor_tab.textures, false)..
-			"button[0.5,7.0;0.8,0.8;InfoButton;i]"..
+			-- "button[0.5,7.0;0.8,0.8;InfoButton;i]".. -- TODO: add back when it will work
 			"tooltip[0.5,7.0;0.8,0.8;"..S("Displays information about the current livery template.").."]"
 
 		if override_count > 0 then
