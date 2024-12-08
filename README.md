@@ -165,6 +165,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: AGPLv3
 * Licence úprav: AGPLv3
 
+## Advtrains Livery Tools (advtrains\_livery\_tools)
+
+* Zdroj: [https://github.com/Marnack/advtrains\_livery\_tools](https://github.com/Marnack/advtrains\_livery\_tools), revize c3dfc0787dd556337b579284168a51db8a8971f6
+* Původní licence: AGPLv3 pro kód, CC BY-SA 3.0 Unported pro obrázky, textury a zvuky
+* Licence úprav: AGPLv3 pro kód, CC BY-SA 3.0 Unported pro obrázky, textury a zvuky
+* [ContentDB](https://content.luanti.org/packages/Marnack/advtrains\_livery\_tools/)
+
 ## advtrains\_train\_zugspitzbahn
 
 * Zdroj: [https://notabug.org/advtrains_supplemental/advtrains\_train\_zugspitzbahn](https://notabug.org/advtrains_supplemental/advtrains\_train\_zugspitzbahn), revize 8ba8b04709deb7d433f7357d65400aed75bd252a
