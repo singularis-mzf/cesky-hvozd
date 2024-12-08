@@ -290,7 +290,7 @@ local register_marking_nodes = function(friendlyname, name, tex, r)
 
 	local common_def = {
 		drawtype = "mesh",
-		tiles = { { name = tex, backface_culling = true } },
+		tiles = { { name = tex, backface_culling = false } },
 		use_texture_alpha = "clip",
 		paramtype = "light",
 		paramtype2 = "colorfacedir",
@@ -306,7 +306,7 @@ local register_marking_nodes = function(friendlyname, name, tex, r)
 	}
 	local def = table.copy(common_def)
 	def.description = S("značka: ") .. friendlyname .. rotation_friendly
-	def.tiles = { tex, "streets_transparent.png" }
+	def.tiles = { common_def.tiles[1], {name = "blank.png"} }
 	def.drawtype = "nodebox"
 	def.node_box = marking_normal_node_box
 	def.selection_box = marking_normal_selection_box
