@@ -213,12 +213,6 @@ end
 
 pillars = {}
 
-local function on_rightclick(pos, node, clicker, itemstack, pointed_thing)
-	if minetest.is_player(clicker) then
-		ch_core.systemovy_kanal(clicker:get_player_name(), "Přidržte Shift pro stavění nebo Aux1 pro otevření panelu pro změnu tvaru.")
-	end
-end
-
 local groups_to_inherit = {"cracky", "crumbly", "snappy", "oddly_breakable_by_hand"}
 local keys_to_inherit = {"sounds", "sunlight_propagates", "use_texture_alpha"}
 
@@ -253,7 +247,6 @@ function pillars.register_pillar(name, def)
 				connect_sides = assert(sd.sides),
 				after_dig_node = after_dig_node,
 				after_place_node = after_place_node,
-				on_rightclick = on_rightclick,
 				_ch_pillar_recipeitem = recipeitem,
 			}
 			for _, key in ipairs(keys_to_inherit) do

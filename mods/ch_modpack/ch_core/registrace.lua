@@ -68,6 +68,7 @@ local default_items = {
 	{stack = ItemStack("basic_signs:vevystavbe"), survival = true, creative = true},
 	{stack = ItemStack("ch_extras:teleporter_unsellable 100"), creative = true},
 	{stack = ItemStack("binoculars:binoculars"), new = true},
+	{stack = ItemStack("ch_core:chisel"), survival = true, creative = true},
 
 	{stack = get_flashlight(), min_index = 17, new = true, survival = true, creative = true},
 	{stack = ItemStack("orienteering:map"), min_index = 18, new = true, survival = true, creative = true},

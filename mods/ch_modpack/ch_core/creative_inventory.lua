@@ -15,8 +15,9 @@ local partition_defs = {
                  "advtrains:trackworker", "wrench:wrench", "replacer:replacer",
                  "ch_extras:total_station", "ch_extras:jumptool", "ch_extras:teleporter_unsellable", "wine:wine_barrel",
                  "technic:mining_drill", "technic:mining_drill_mk2", "technic:mining_drill_mk3",
-                 "bridger:scaffolding", "orienteering:builder_compass_1", "ch_extras:lupa", "ch_extras:periskop",
-				"binoculars:binoculars"},
+                 "bridger:scaffolding", "ch_core:chisel",
+				 "orienteering:builder_compass_1", "ch_extras:lupa", "ch_extras:periskop",
+				 "binoculars:binoculars"},
 		mods = none,
 	},
 	{

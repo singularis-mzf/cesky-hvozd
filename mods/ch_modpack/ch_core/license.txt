@@ -83,3 +83,9 @@ ch_core_formspec_bg.png
 	Used source:
 		technic_chest_form_bg.png by RealBadAngel, used under licence WTFPL
 		(https://github.com/minetest-mods/technic)
+
+ch_core_chisel.png
+	Author: Singularis
+	License: CC BY-SA 3.0
+	Used source:
+		https://commons.wikimedia.org/wiki/File:Chisel_wood_24mm.jpg (CC BY-SA 3.0; author: Za)

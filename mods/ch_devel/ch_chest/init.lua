@@ -1,5 +1,22 @@
-ch_base.open_mod(minetest.get_current_modname())
+ch_base.open_mod(core.get_current_modname())
 
+local dofile = ch_core.compile_dofile({{}})
+
+ch_chest = {}
+
+dofile("internal.lua")
+dofile("functions.lua")
+dofile("formspec.lua")
+dofile("nodes.lua")
+
+--[[
+	Práva:
+		- view
+		- put
+		- take
+]]
+
+--[[
 local modname = minetest.get_current_modname()
 local modpath = minetest.get_modpath(modname)
 ch_chest = {}
@@ -34,17 +51,14 @@ local internal = {
 		},
 	},
 	-- mod_storage = minetest.get_mod_storage(),
-	player_to_current_inventory = { --[[
+	player_to_current_inventory = { --[ [
 		[player_name] = {
 			inv = InvRef,
 			listname = string,
 			location = string, -- for formspec only
 		}...
-	]] },
+	] ] },
 	-- tempinv = minetest.create_detached_inventory("ch_chest_tempinv", {}),
-	NOT_GIVEN = 0,
-	GIVEN_OPENLY = 1,
-	GIVEN_ANONYMOUSLY = 2,
 }
 
 local fun = loadfile(modpath.."/formspec.lua")
@@ -63,5 +77,6 @@ end
 mydofile("formspec.lua")
 mydofile("functions.lua")
 mydofile("nodes.lua")
+]]
 
-ch_base.close_mod(minetest.get_current_modname())
+ch_base.close_mod(core.get_current_modname())

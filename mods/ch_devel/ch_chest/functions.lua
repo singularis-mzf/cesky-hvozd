@@ -1,188 +1,94 @@
 local internal = ...
 
-local has_pipeworks = minetest.get_modpath("pipeworks")
-local has_unifieddyes = minetest.get_modpath("unifieddyes")
-local NOT_GIVEN = internal.NOT_GIVEN
-local GIVEN_OPENLY = internal.GIVEN_OPENLY
-local GIVEN_ANONYMOUSLY = internal.GIVEN_ANONYMOUSLY
+local get_feature = internal.get_feature
+-- local ifthenelse = ch_core.ifthenelse
 
-local ifthenelse = ch_core.ifthenelse
-
-local right_to_index = {
-	view = 1,
-	sort = 4,
-	put = 7,
-	take = 10,
-	dig = 13,
-	set = 16,
-}
-
-local player_to_current_inventory = {}
-
-local function get_player_category(meta, player_name)
-	local is_owner, is_group = false, false
-
-	if player_name == nil then
-		return {
-			player_role = "none",
-			admin = false,
-			owner = false,
-			group = false,
-		}, 3
-	else
-		if meta:get_int("ch_given") ~= 0 then
-			is_owner = meta:get_string("ch_given_by") == player_name or meta:get_string("ch_given_to") == player_name
-		else
-			is_owner = meta:get_string("owner") == player_name
-		end
-
-		if not is_owner then
-			is_group = string.find(meta:get_string("agroup"), "|"..string.lower(player_name).."|") ~= nil
-		end
-
-		local player_role = ch_core.get_player_role(player_name)
-		local result = {
-			player_role = player_role,
-			admin = player_role == "admin",
-			owner = is_owner,
-			group = is_group,
-		}
-		if player_role == "new" or player_role == "admin" then
-			return result, 0
-		elseif is_owner then
-			return result, 1
-		elseif is_group then
-			return result, 2
-		else
-			return result, 3
-		end
-	end
-end
-
-local function check_right(meta, player_name, right)
-	local category, shift = get_player_category(meta, player_name)
-	print("DEBUG: "..dump2({category = category, shift = shift, player_name = player_name}))
-	if shift == 0 then
-		return category.admin
-	end
-	local rights = meta:get_string("rights")
-	shift = shift + right_to_index[right] - 1
-	local result = rights:sub(shift, shift) ~= "0"
-	print("DEBUG: check_right: "..(player_name or "nil").."/"..right.."="..ifthenelse(result, "true", "false"))
-	return result
-end
-
-local function get_rights(meta, player_name)
-	local result, shift = get_player_category(meta, player_name)
-	if shift == 0 then
-		for k, _ in pairs(right_to_index) do
-			result[k] = result.admin
-		end
-	else
-		shift = shift - 1
-		local rights = meta:get_string("rights")
-		for k, i in pairs(right_to_index) do
-			result[k] = rights:sub(i + shift, i + shift) ~= "0"
-		end
-	end
-	return result
-end
-
-internal.get_player_category = get_player_category
-internal.check_right = check_right
-internal.get_rights = get_rights
-
-function internal.new_chest_id()
-	local next_id = internal.mod_storage:get_int("next_chest_id")
-	if next_id ~= 0 then
-		internal.mod_storage:set_int("next_chest_id", next_id + 1)
-		return next_id
-	else
-		internal.mod_storage:set_int("next_chest_id", 1002)
-		return 1001
-	end
-end
-
-function internal.update_chest_infotext(meta)
-	local ch_given = meta:get_int("ch_given")
-	if ch_given == GIVEN_ANONYMOUSLY then
-		meta:set_string("infotext", meta:get_string("title").."\ntruhla pro: "..ch_core.prihlasovaci_na_zobrazovaci(meta:get_string("ch_given_to")))
-	elseif ch_given == GIVEN_OPENLY then
-		meta:set_string("infotext", meta:get_string("title").."\ntruhla pro: "..ch_core.prihlasovaci_na_zobrazovaci(meta:get_string("ch_given_to")).."\ndar od: "..ch_core.prihlasovaci_na_zobrazovaci(meta:get_string("ch_given_by")))
-	else
-		meta:set_string("infotext", meta:get_string("title").."\ntruhlu vlastní: "..ch_core.prihlasovaci_na_zobrazovaci(meta:get_string("owner")))
-	end
-end
-
-function ch_chest.init(pos, node, width, height, title, owner)
-	local meta = minetest.get_meta(pos)
+function ch_chest.on_construct(pos)
+	local meta = core.get_meta(pos)
+	local node = core.get_node(pos)
 	local inv = meta:get_inventory()
-
-	if width < 1 or height < 1 then
-		error("Invalid chest size!")
-	end
+	local width, height = get_feature(node.name, meta, "width"), get_feature(node.name, meta, "height")
 	inv:set_size("main", width * height)
-	inv:set_size("qmove", 1)
-	inv:set_size("trash", 1)
-	inv:set_size("upgrades", 5)
-	meta:set_int("width", width)
-	meta:set_int("height", height)
-	meta:set_int("chest_id", internal.new_chest_id())
-	if title ~= nil then
-		meta:set_string("title", title)
+	if get_feature(node.name, meta, "qmove") then
+		inv:set_size("qmove", 1)
 	end
-	if owner ~= nil then
-		meta:set_string("owner", owner)
+	if get_feature(node.name, meta, "trash") then
+		inv:set_size("trash", 1)
 	end
-	meta:set_string("rights", "111111111111111111")
-	internal.update_chest_infotext(meta)
+	-- inv:set_size("upgrades", 5)
+	-- meta:set_int("chest_id", internal.new_chest_id())
 end
 
-function internal.on_construct(pos)
-	local node = minetest.get_node(pos)
-	local ndef = minetest.registered_nodes[node.name]
-	if ndef ~= nil then
-		ch_chest.init(pos, node, 8, 4, ndef.description or "truhla")
+function ch_chest.after_place_node(pos, placer, itemstack, pointed_thing)
+	local meta = core.get_meta(pos)
+	local node = core.get_node(pos)
+	local ownership = get_feature(node.name, meta, "ownership")
+	if ownership == "owner" and meta:get_string("owner") == "" then
+		meta:set_string("owner", (placer and placer:get_player_name()) or "")
+		ch_chest.update_chest_infotext(node, meta)
 	end
 end
 
-function internal.preserve_metadata(pos, oldnode, oldmeta, drops)
+function ch_chest.after_dig_node(pos, oldnode, oldmetadata, digger)
 end
 
-function internal.after_place_node(pos, placer, itemstack, pointed_thing)
-	local meta = minetest.get_meta(pos)
-	local owner = meta:get_string("owner")
-	if owner == "" then
-		owner = placer and placer:get_player_name()
-		if owner ~= nil then
-			meta:set_string("owner", owner)
-		end
-	end
-	internal.update_chest_infotext(meta)
+function ch_chest.preserve_metadata(pos, oldnode, oldmeta, drops)
 end
 
-function internal.after_dig_node(pos, oldnode, oldmetadata, digger)
-end
-
-function internal.can_dig(pos, player)
+function ch_chest.can_dig(pos, player)
 	if player == nil then
 		return false
 	end
-	if internal.check_right(minetest.get_meta(pos), player:get_player_name(), "dig") then
-		return true
+	local player_name = player:get_player_name()
+	if core.is_protected(pos, player_name) then
+		core.record_protection_violation(pos, player_name)
+		return false
 	end
-	return false
+	-- if internal.check_right(core.get_meta(pos), player:get_player_name(), "dig") then
+	return true
 end
 
-function internal.on_rightclick(pos, node, clicker, itemstack, pointed_thing)
-	local player_name = clicker and clicker:get_player_name()
-	if player_name == nil then
-		return
+function ch_chest.on_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
+	if to_list == "trash" then
+		ch_core.vyhodit_inventar(player:get_player_name(), core.get_meta(pos):get_inventory(), to_list, "koš truhly")
 	end
-	local meta = minetest.get_meta(pos)
-	if internal.check_right(meta, player_name, "view") then
-		internal.show_formspec(clicker, pos, meta)
+end
+
+function ch_chest.on_metadata_inventory_put(pos, listname, index, stack, player)
+	if listname == "trash" then
+		ch_core.vyhodit_inventar(player:get_player_name(), core.get_meta(pos):get_inventory(), listname, "koš truhly")
+	--[[
+	elseif listname == "upgrades" then
+		local upgrade = assert(internal.upgrades[index])
+		local meta = minetest.get_meta(pos)
+		local inv = meta:get_inventory()
+		meta:set_int("width", upgrade.width)
+		meta:set_int("height", upgrade.height)
+		inv:set_size("main", upgrade.width * upgrade.height)
+		internal.update_chest_infotext(node, meta)
+		]]
 	end
+end
+
+function ch_chest.on_metadata_inventory_take(pos, listname, index, stack, player)
+	--[[
+	if listname == "upgrades" then
+		local upgrade = assert(internal.upgrades[index])
+		local new_upgrade = internal.upgrades[index - 1]
+		local new_width, new_height
+		if new_upgrade ~= nil then
+			new_width, new_height = new_upgrade.width, new_upgrade.height
+		else
+			new_width, new_height = internal.default_width, internal.default_height
+		end
+		local meta = minetest.get_meta(pos)
+		local inv = meta:get_inventory()
+		meta:set_int("width", new_width)
+		meta:set_int("height", new_height)
+		inv:set_size("main", new_width * new_height)
+		internal.update_chest_infotext(node, meta)
+	end
+	]]
 end
 
 local function quick_move(src_inv, src_listname, src_stack, dst_inv, dst_listname)
@@ -200,49 +106,26 @@ local function quick_move(src_inv, src_listname, src_stack, dst_inv, dst_listnam
 	src_inv:set_list(src_listname, src_list)
 end
 
-function internal.allow_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
+function ch_chest.allow_metadata_inventory_put(pos, listname, index, stack, player)
 	local player_name = player and player:get_player_name()
 	if player_name == nil then return 0 end
-	local meta = minetest.get_meta(pos)
-
-	if from_list == to_list then
-		return ifthenelse(from_list == "main" and internal.check_right(meta, player_name, "sort"), count, 0)
-	elseif from_list == "main" and to_list == "qmove" then
-		if internal.check_right(meta, player_name, "take") then
-			local destination = internal.player_to_current_inventory[player_name]
-			if destination ~= nil then
-				local node_inv = meta:get_inventory()
-				quick_move(node_inv, "main", node_inv:get_stack(from_list, from_index), destination.inv, destination.listname)
-			end
-		end
-	elseif from_list == "main" and to_list == "trash" then
-		return ifthenelse(internal.check_right(meta, player_name, "take"), count, 0)
-	end
-	return 0
-end
-
-function internal.allow_metadata_inventory_put(pos, listname, index, stack, player)
-	local player_name = player and player:get_player_name()
-	if player_name == nil then return 0 end
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
+	local node = core.get_node(pos)
 
 	if listname == "main" then
-		if internal.check_right(meta, player_name, "put") then
+		if internal.check_right(node.name, meta, player_name, "put") then
 			return stack:get_count()
 		else
 			return 0
 		end
 
 	elseif listname == "qmove" then
-		local source = internal.player_to_current_inventory[player_name]
-		if source ~= nil then
-			quick_move(source.inv, source.listname, stack, meta:get_inventory(), "main")
-		end
+		quick_move(player:get_inventory(), "main", stack, meta:get_inventory(), "main")
 		return 0
 
 	elseif listname == "trash" then
 		return stack:get_count()
-
+	--[[
 	elseif listname == "upgrades" then
 		-- postava musí mít právo "set"
 		if not internal.check_right(meta, player_name, "set") then
@@ -265,16 +148,17 @@ function internal.allow_metadata_inventory_put(pos, listname, index, stack, play
 			return 0
 		end
 		return ifthenelse(table.indexof(upgrade.items, stack:get_name()) ~= -1, 1, 0)
+		]]
 
 	else
 		return 0
 	end
 end
 
-function internal.allow_metadata_inventory_take(pos, listname, index, stack, player)
+function ch_chest.allow_metadata_inventory_take(pos, listname, index, stack, player)
 	local player_name = player and player:get_player_name()
 	if player_name == nil then return 0 end
-	local meta = minetest.get_meta(pos)
+	local meta = core.get_meta(pos)
 
 	if listname == "main" then
 		if internal.check_right(meta, player_name, "take") then
@@ -286,6 +170,7 @@ function internal.allow_metadata_inventory_take(pos, listname, index, stack, pla
 	elseif listname == "trash" or listname == "qmove" then
 		return stack:get_count()
 
+	--[[
 	elseif listname == "upgrades" then
 		-- postava musí mít právo "set"
 		if not internal.check_right(meta, player_name, "set") then
@@ -310,55 +195,40 @@ function internal.allow_metadata_inventory_take(pos, listname, index, stack, pla
 			end
 		end
 		return 1
+		]]
 
 	else
 		return 0
 	end
 end
 
-function internal.on_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
-	if to_list == "trash" then
-		ch_core.vyhodit_inventar(player:get_player_name(), minetest.get_meta(pos):get_inventory(), to_list, "koš truhly")
+function ch_chest.on_rightclick(pos, node, clicker, itemstack, pointed_thing)
+	local player_name = clicker and clicker:get_player_name()
+	if player_name == nil then
+		return
+	end
+	local meta = core.get_meta(pos)
+	if internal.can_view(node.name, meta, player_name) then
+		internal.show_formspec(clicker, pos, node, meta)
 	end
 end
 
-function internal.on_metadata_inventory_put(pos, listname, index, stack, player)
-	if listname == "trash" then
-		ch_core.vyhodit_inventar(player:get_player_name(), minetest.get_meta(pos):get_inventory(), listname, "koš truhly")
-
-	elseif listname == "upgrades" then
-		local upgrade = assert(internal.upgrades[index])
-		local meta = minetest.get_meta(pos)
-		local inv = meta:get_inventory()
-		meta:set_int("width", upgrade.width)
-		meta:set_int("height", upgrade.height)
-		inv:set_size("main", upgrade.width * upgrade.height)
-		internal.update_chest_infotext(meta)
+function ch_chest.can_insert(pos, node, stack)
+	local meta = core.get_meta(pos)
+	if not get_feature(node.name, meta, "pipeworks") or not internal.can_put(node.name, meta) then
+		return false
 	end
+	if meta:get_int("splitstacks") == 1 and stack:get_count() > 1 then
+		stack = ItemStack(stack)
+		stack:set_count(1)
+	end
+	-- TODO: log
+	return meta:get_inventory():room_for_item("main", stack)
 end
 
-function internal.on_metadata_inventory_take(pos, listname, index, stack, player)
-	if listname == "upgrades" then
-		local upgrade = assert(internal.upgrades[index])
-		local new_upgrade = internal.upgrades[index - 1]
-		local new_width, new_height
-		if new_upgrade ~= nil then
-			new_width, new_height = new_upgrade.width, new_upgrade.height
-		else
-			new_width, new_height = internal.default_width, internal.default_height
-		end
-		local meta = minetest.get_meta(pos)
-		local inv = meta:get_inventory()
-		meta:set_int("width", new_width)
-		meta:set_int("height", new_height)
-		inv:set_size("main", new_width * new_height)
-		internal.update_chest_infotext(meta)
-	end
-end
-
-function internal.insert_object(pos, node, stack)
-	local meta = minetest.get_meta(pos)
-	if internal.check_right(meta, nil, "put") then
+function ch_chest.insert_object(pos, node, stack)
+	local meta = core.get_meta(pos)
+	if get_feature(node.name, meta, "pipeworks") and internal.can_put(node.name, meta) then
 		-- TODO: log
 		return meta:get_inventory():add_item("main", stack)
 	else
@@ -366,28 +236,93 @@ function internal.insert_object(pos, node, stack)
 	end
 end
 
-function internal.can_insert(pos, node, stack)
-	local meta = minetest.get_meta(pos)
-	if internal.check_right(meta, nil, "put") then
-		if meta:get_int("splitstacks") == 1 and stack:get_count() > 1 then
-			stack = ItemStack(stack)
-			stack:set_count(1)
-		end
-		-- TODO: log
-		return meta:get_inventory():room_for_item("main", stack)
-	else
-		return false
-	end
-end
-
-function internal.remove_items(pos, node, stack, dir, count, list, index)
-	local meta = minetest.get_meta(pos)
+function ch_chest.remove_items(pos, node, stack, dir, count, list, index)
+	local meta = core.get_meta(pos)
 	local inv = meta:get_inventory()
 	local items = stack:take_item(count)
 	inv:set_stack(list, index, stack)
 	-- TODO: log
 	return items
 end
+
+function ch_chest.on_blast()
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--[[
+
+
+
+
+local right_to_index = {
+	view = 1,
+	sort = 4,
+	put = 7,
+	take = 10,
+	dig = 13,
+	set = 16,
+}
+
+local player_to_current_inventory = {}
+
+internal.get_player_category = get_player_category
+internal.check_right = check_right
+internal.get_rights = get_rights
+
+function internal.new_chest_id()
+	local next_id = internal.mod_storage:get_int("next_chest_id")
+	if next_id ~= 0 then
+		internal.mod_storage:set_int("next_chest_id", next_id + 1)
+		return next_id
+	else
+		internal.mod_storage:set_int("next_chest_id", 1002)
+		return 1001
+	end
+end
+
+
+function internal.on_rightclick(pos, node, clicker, itemstack, pointed_thing)
+	local player_name = clicker and clicker:get_player_name()
+	if player_name == nil then
+		return
+	end
+	local meta = minetest.get_meta(pos)
+	if internal.check_right(meta, player_name, "view") then
+		internal.show_formspec(clicker, pos, meta)
+	end
+end
+
+
+
+
+
+
+
+
+
+
 
 function internal.set_group_members(meta, input)
 	local comments, members, set = {}, {}, {}
@@ -441,7 +376,9 @@ function internal.move_all(src_inv, src_listname, dst_inv, dst_listname)
 		end
 	end
 end
+]]
 
+--[[
 local function si_lt(a, b)
 	-- 1. prázdné dávky jsou větší než cokoliv
 	if b:is_empty() and not a:is_empty() then
@@ -459,4 +396,23 @@ function internal.sort_inventory(sort_mode, inv, listname)
 	-- TODO: [ ] sort_mode support
 	table.sort(list, si_lt)
 	inv:set_list(listname, list)
+end
+]]
+
+function ch_chest.update_chest_infotext(node, meta)
+    local has_title = internal.get_feature(node.name, meta, "has_title")
+    local ownership = internal.get_feature(node.name, meta, "ownership")
+    local result = {}
+    if has_title then
+        table.insert(result, meta:get_string("title"))
+    end
+    if ownership == "owner" then
+        table.insert(result, "truhlu vlastní: "..ch_core.prihlasovaci_na_zobrazovaci(meta:get_string("owner")))
+    end
+    if #result > 0 then
+        result = table.concat(result, "\n")
+    else
+        result = ""
+    end
+    meta:set_string("infotext", result)
 end
