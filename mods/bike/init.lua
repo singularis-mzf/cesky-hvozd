@@ -78,8 +78,11 @@ for _, mod in pairs(skin_mods) do
 end
 
 local function get_player_skin(player)
-	local name = player:get_player_name()
-	local armor_tex = ""
+	-- local name = player:get_player_name()
+	-- local armor_tex = ""
+	if skin_mod == "skinsdb" then
+		return "blank.png^[resize:64x32^[combine:56x32:0,0="..assert(skins.get_player_skin(player)["_texture"])..":0,16=bike_grey_overlay.png"
+	end
 	return "bike_replacement.png" --[[
 	if minetest.global_exists("armor") then
 		-- Filter out helmet (for bike helmet) and boots/shield (to not mess up UV mapping)

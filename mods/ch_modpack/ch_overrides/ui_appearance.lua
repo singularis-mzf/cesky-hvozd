@@ -34,8 +34,15 @@ local function get_skinlist(player_name)
 	end
 	local result = player_name_to_skinlist[player_name]
 	if result == nil then
-		result = skins.get_skinlist_for_player(player_name)
-		table.sort(result, skins_lt)
+		local list = skins.get_skinlist_for_player(player_name)
+		table.sort(list, skins_lt)
+		result = {}
+		for _, skin in ipairs(list) do
+			local key = assert(skin._key)
+			if not key:match("^character_") or key:match("^character_A[ABC]_") then
+				table.insert(result, skin)
+			end
+		end
 		player_name_to_skinlist[player_name] = result
 	end
 	return result
@@ -73,12 +80,15 @@ local function get_formspec(player, perplayer_formspec)
 	local skinlist = get_skinlist(player_name)
 	if #skinlist > 0 then
 		local current_skin = skins.get_player_skin(player)
-		local current_skin_index = 1
+		local current_skin_index
 		for i, skin in ipairs(skinlist) do
 			if skin._key == current_skin._key then
 				current_skin_index = i
 				break
 			end
+		end
+		if current_skin_index == nil then
+			current_skin_index = #skinlist
 		end
 		local fs_skins = {}
 		for i, skin in ipairs(skinlist) do
