@@ -120,6 +120,7 @@ local offline_charinfo_data_types = {
 	skryt_body = "int", -- 0 => zobrazit, 1 => skrýt
 	skryt_hlad = "int", -- 0 => zobrazovat (výchozí), 1 => skrýt
 	skryt_zbyv = "int", -- 0 => zobrazovat (výchozí), 1 => skrýt
+	stavba = "string",
 	ui_event_filter = "string",
 	zacatek_kam = "int", -- 1 => Začátek, 2 => Masarykovo náměstí, 3 => Hlavní nádraží
 
@@ -133,6 +134,7 @@ local initial_offline_charinfo = {
 	doslech = 50,
 	last_ann_shown_date = "1970-01-01",
 	rezim_plateb = 0,
+	stavba = "",
 	zacatek_kam = 1,
 }
 for k, t in pairs(offline_charinfo_data_types) do

@@ -110,7 +110,7 @@ dofile(modpath .. "/padlock.lua") -- : data, lib
 dofile(modpath .. "/vezeni.lua") -- : privs, data, lib, chat, hud
 dofile(modpath .. "/timers.lua") -- : data, chat, hud
 dofile(modpath .. "/wielded_light.lua") -- : data, lib, nodes
-dofile(modpath .. "/teleportace.lua") -- : data, lib, chat, privs, timers
+dofile(modpath .. "/teleportace.lua") -- : data, lib, chat, privs, stavby, timers
 dofile(modpath .. "/creative_inventory.lua") -- : lib
 dofile(modpath .. "/kos.lua") -- : lib
 

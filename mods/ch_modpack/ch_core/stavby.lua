@@ -5,7 +5,7 @@ Datová struktura záznamu o stavbě:
 
 {
     key = string, -- pozice stavby v normalizovaném tvaru (klíč do tabulky staveb)
-    pos = {x, y, z} -- pozice stavby ve formě tabulky celých čísel
+    pos = {x = int y = int, z = int} -- pozice stavby ve formě vektoru celých čísel
 
     -- ostatní pole mohou být přímo upravována:
     nazev = string, -- název stavby (nemusí být jedinečný)

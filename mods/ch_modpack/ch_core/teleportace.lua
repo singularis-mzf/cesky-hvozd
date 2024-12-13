@@ -1,4 +1,4 @@
-ch_core.open_submod("teleportace", {privs = true, data = true, chat = true, lib = true, timers = true})
+ch_core.open_submod("teleportace", {privs = true, data = true, chat = true, lib = true, stavby = true, timers = true})
 
 local ifthenelse = ch_core.ifthenelse
 
@@ -332,6 +332,73 @@ local function domu(player_name)
 	return true
 end
 
+-- /stavím
+local function stavim(player_name, pos)
+	if not pos then
+		return false, "Chybná pozice!"
+	end
+	local filter_result = {}
+	ch_core.stavby_get_all(function(record)
+		local distance = vector.distance(pos, record.pos)
+		if record.spravuje == player_name then
+			-- spravovaná stavba: max. vzdálenost 100 m, stav jakýkoliv kromě opuštěného
+			if distance <= 100 and record.stav ~= "opusteno" and record.stav ~= "k_smazani" then
+				filter_result[1] = record
+			end
+		else
+			-- nespravovaná stavba: max. vzdálenost 20 m, stav rozestaveno nebo rekonstrukce
+			if distance <= 20 and (record.stav == "rozestaveno" or record.stav == "rekonstrukce") then
+				filter_result[1] = record
+			end
+		end
+	end)
+	if filter_result[1] == nil then
+		return false, "Pro nastavení pozice příkazem /stavím musíte mít do 100 metrů vámi spravovanou stavbu, která není opuštěná nebo ke smazání, "..
+			"nebo musí být do 20 metrů cizí stavba, která je rozestavěná nebo v rekonstrukci."
+	end
+	local cas = ch_core.aktualni_cas()
+	local dnes = string.format("%04d-%02d-%02d", cas.rok, cas.mesic, cas.den)
+	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
+	if not offline_charinfo then
+		return false, "Interní údaje nebyly nalezeny!"
+	end
+	local old_pos, pos_date
+	if offline_charinfo.stavba ~= nil then
+		old_pos, pos_date = offline_charinfo.stavba:match("^([^@]+)@([^@]+)$")
+	end
+	if pos_date == dnes then
+		return false, "Cílovou pozici příkazem /stavím lze nastavit jen jednou denně!"
+	end
+	offline_charinfo.stavba = core.pos_to_string(pos).."@"..dnes
+	ch_core.save_offline_charinfo(player_name, "stavba")
+	core.log("action", player_name.." set their 'stavba' position to "..offline_charinfo.stavba)
+	return true, "Pozice pro příkaz /nastavbu nastavena. Pamatujte, že tuto pozici můžete změnit jen jednou denně."
+end
+
+-- /nastavbu
+local function nastavbu(player_name)
+	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	if not offline_charinfo then
+		return false, "Interní údaje nebyly nalezeny!"
+	elseif not offline_charinfo.stavba or offline_charinfo.stavba == "" then
+		return false, "Nejprve si musíte nastavit pozici stavby příkazem /stavím."
+	end
+	local new_pos, pos_date = offline_charinfo.stavba:match("^([^@]+)@([^@]+)$")
+	new_pos = new_pos and core.string_to_pos(new_pos)
+	if not new_pos or not pos_date then
+		return false, "Uložená pozice má neplatný formát!"
+	end
+	ch_core.teleport_player{
+		type = "player",
+		player = player_name,
+		target_pos = new_pos,
+		delay = 20.0,
+		sound_before = ch_core.default_teleport_sound,
+		sound_after = ch_core.default_teleport_sound,
+	}
+	return true
+end
+
 -- /začátek
 local function zacatek(player_name, _param)
 	local offline_charinfo = ch_core.offline_charinfo[player_name]
@@ -359,16 +426,20 @@ local function zacatek(player_name, _param)
 	return true
 end
 
-local def = {
+local def
+
+-- /začátek
+def = {
 	description = "Přenese vás na počáteční pozici.",
 	func = zacatek,
 }
-minetest.register_chatcommand("zacatek", def);
-minetest.register_chatcommand("začátek", def);
-minetest.register_chatcommand("zacatek", def);
-minetest.register_chatcommand("yačátek", def);
-minetest.register_chatcommand("yacatek", def);
+core.register_chatcommand("zacatek", def);
+core.register_chatcommand("začátek", def);
+core.register_chatcommand("zacatek", def);
+core.register_chatcommand("yačátek", def);
+core.register_chatcommand("yacatek", def);
 
+-- /doma
 def = {
 	description = "Uloží domovskou pozici pro pozdější návrat příkazem /domů.",
 	privs = {home = true},
@@ -387,11 +458,41 @@ def = {
 		end
 	end
 }
-minetest.register_chatcommand("doma", table.copy(def));
-def.description = "Přenese vás na domovskou pozici uloženou příkazem /doma."
-def.func = domu
+core.register_chatcommand("doma", table.copy(def));
 
-minetest.register_chatcommand("domů", def);
-minetest.register_chatcommand("domu", def);
+-- /domů
+def = {
+	description  = "Přenese vás na domovskou pozici uloženou příkazem /doma.",
+	privs = {home = true},
+	func = domu,
+}
+core.register_chatcommand("domů", def);
+core.register_chatcommand("domu", def);
+
+-- /stavím
+def = {
+	description = "Uloží pozici na stavbě pro pozdější návrat příkazem /nastavbu. Pozici lze změnit jen jednou denně.",
+	privs = {home = true},
+	func = function(player_name)
+		local player = minetest.get_player_by_name(player_name)
+		local pos = player and player:get_pos()
+		if pos then
+			return stavim(player_name, pos)
+		else
+			return false
+		end
+	end
+}
+core.register_chatcommand("stavím", def)
+core.register_chatcommand("stavim", def)
+
+-- /nastavbu
+def = {
+	description = "Přenese vás na pozici na stavbě uloženou příkazem /stavím.",
+	privs = {home = true},
+	func = nastavbu,
+}
+core.register_chatcommand("nastavbu", def)
+core.register_chatcommand("na_stavbu", def)
 
 ch_core.close_submod("teleportace")

@@ -101,6 +101,7 @@ local function show_stoprailform(pos, player)
 		"field[4.75,6;2,0.75;routingcode;Sm.kód na odj.;"..minetest.formspec_escape(stdata.routingcode or "").."]"..
 		"field[0.25,7.25;2,0.75;interval;Interval \\[s\\]:;"..minetest.formspec_escape(stdata.interval or "").."]"..
 		"field[2.5,7.25;2,0.75;ioffset;Jeho posun:;"..minetest.formspec_escape(stdata.ioffset or "0").."]"..
+		"button[4.75,7;3,1.0;ioffsetnow;Nastavit posun\nna odjezd teď + uložit]"..
 		"textarea[0.25,8.4;7.5,1.5;ars;"..attrans("Trains stopping here (ARS rules)")..";"..advtrains.interlocking.ars_to_text(stdata.ars).."]"..
 		"label[0.3,10.25;Platí jen pro vlaky s]"..
 		"field[3,10;1,0.5;minparts;;"..minetest.formspec_escape(stdata.minparts or "0").."]"..
@@ -126,7 +127,9 @@ local function show_stoprailform(pos, player)
 		"následujícího intervalu. Výchozí začátky intervalů stejné délky jsou v celé železniční síti společné.\n"..
 		"Slouží k nastavení intervalového provozu.]"..
 		"tooltip[ioffset;Hodnota v sekundách 0 až (interval - 1). Posune začátek intervalů oproti výchozímu stavu\n"..
-		"o zadaný počet sekund vpřed. Slouží k detailnímu vyladění času odjezdů relativně vůči ostatním linkám.]"
+		"o zadaný počet sekund vpřed. Slouží k detailnímu vyladění času odjezdů relativně vůči ostatním linkám.]"..
+		"tooltip[ioffsetnow;Nastaví posun intervalu tak\\, aby pro tuto kolej nový interval začínal právě teď.\n"..
+		"Také uloží ostatní provedené změny.]"
 
 
 	minetest.show_formspec(pname, "at_lines_stop_"..pe, formspec)
@@ -163,7 +166,18 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			end
 		end
 
-		if fields.save then
+		local set_offset
+
+		if fields.ioffsetnow and fields.interval ~= "" and fields.interval ~= "0" then
+			local interval = to_int(fields.interval)
+			if 0 < interval and interval <= 3600 then
+				local rwt = assert(advtrains.lines.rwt)
+				local rwtime = rwt.to_secs(rwt.get_time())
+				set_offset = rwtime % interval
+			end
+		end
+
+		if fields.save or set_offset ~= nil then
 			local new_index = player_to_stn_override[pname]
 			if new_index ~= nil then
 				if new_index == 1 then
@@ -237,6 +251,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			end
 			if stdata.interval == nil then
 				stdata.ioffset = nil
+			elseif set_offset ~= nil then
+				stdata.ioffset = set_offset
 			elseif fields.ioffset then
 				if fields.ioffset == "" or fields.ioffset == "0" then
 					stdata.ioffset = nil
