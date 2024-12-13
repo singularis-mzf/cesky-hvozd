@@ -492,8 +492,32 @@ local default_lib_nodes = {
 		description = "pilíř z bronzu",
 		sounds = default.node_sound_metal_defaults(),
 	},
+	bridger_white = {
+		basenode = "bridger:block_white",
+		description = "pilíř z bílého bloku",
+	},
+	bridger_steel = {
+		basenode = "bridger:block_steel",
+		description = "pilíř z černého bloku",
+	},
+	bridger_red = {
+		basenode = "bridger:block_red",
+		description = "pilíř z červeného bloku",
+	},
+	bridger_green = {
+		basenode = "bridger:block_green",
+		description = "pilíř ze zeleného bloku",
+	},
+	bridger_yellow = {
+		basenode = "bridger:block_yellow",
+		description = "pilíř ze žlutého bloku",
+	},
 
-	-- PLASTER:
+	-- CLAY/PLASTER:
+	bakedclay_black = {
+		basenode = "bakedclay:black",
+		description = "pilíř z černého páleného jílu",
+	},
 	plaster_white = {
 		basenode = "solidcolor:plaster_white",
 		description = "pilíř s bílou omítkou",

@@ -366,9 +366,15 @@ local materials_cnc = set(
 )
 
 local materials_pillars = set(
+	"bakedclay:black",
 	"basic_materials:brass_block",
 "basic_materials:cement_block",
 "basic_materials:concrete_block",
+"bridger:block_white",
+"bridger:block_steel",
+"bridger:block_red",
+"bridger:block_green",
+"bridger:block_yellow",
 "ch_extras:marble",
 "darkage:basalt",
 "darkage:basalt_brick",

@@ -4,28 +4,40 @@ local item_to_shape_selector_group = {}
 local F = minetest.formspec_escape
 
 --[[
-    Shape selector group definition:
+    Definice skupiny pro shape_selector:
     {
-        columns = int, -- number of columns in the formspec (>= 1),
-        rows = int, -- number of rows in the formspec (>= 1),
-        nodes = {nodespec, ...}, -- the list of nodes in the group (nils are allowed)
+        -- povinné položky:
+        columns = int, -- počet sloupců ve formspecu (>= 1),
+        rows = int, -- počet řádek ve formspecu (>= 1),
+        nodes = {nodespec, ...}, -- seznam bloků ve skupině (viz níže)
+        -- volitelné položky:
+        price_item = string, -- název předmětu, který bude používaný jako cena za změnu <zatím nepodporováno>
     }
 
-    Each nodespec can be:
-    - string (node name)
-    - a table:
+    Každý nodespec může být:
+    - string (název bloku; není-li registrován, pozice bude vynechána)
+    - table:
     {
-        name = string, -- node name (required)
-        param2 = 0..255, -- a particular param2 value (optional)
-        price = ItemStack(...), -- an item required as a price for change (optional) <not supported yet>
+        -- povinné položky:
+        name = string, -- název bloku
+        -- volitelné položky:
+        param2 = 0..255 + 256 * (maska 0..255),
+            -- základní hodnota udává hodnotu pro nastavení do param2;
+            -- maska udává, které bity se nastaví podle uvedené hodnoty (bity 0) a které se převezmou z původní
+            -- hodnoty param2 (bity 1)
+        price = int, -- hodnota varianty <zatím nepodporováno>
+        oneway = bool, -- je-li true, zadaný blok se nebude registrovat do skupiny a konverze bude
+                       -- prezentováno jako jednosměrná; rovněž se nepoužije při rozpoznávání <zatím nepodporováno>
+        tooltip = string, -- vlastní text pro tooltip[] <zatím nepodporováno>
     }
-    - nil (to render a free space)
+    - nil (vynechání pozice)
 
     TODO:
-    [ ] add support for 'oneway'
-    [ ] add support for colored nodes (like ch_extras:dice)
-    [ ] add support for custom tooltips (if possible)
-    [ ] add support for 'price'
+    [ ] plná podpora pro param2 s maskou
+    [ ] podpora pro 'tooltip' (je-li možná)
+    [ ] podpora pro 'oneway'
+    [ ] podpora pro barvené bloky (jako ch_extras:dice)
+    [ ] podpora pro 'price'
 ]]
 
 function ch_core.register_shape_selector_group(def)

@@ -139,11 +139,15 @@ local function on_place(itemstack, placer, pointed_thing, name, r)
 		local pos_under = pointed_thing.under
 		local node_above = minetest.get_node(pos_above)
 		local node_under = minetest.get_node(pos_under)
+		local ndef_above = minetest.registered_nodes[node_above.name]
 		local ndef_under = minetest.registered_nodes[node_under.name]
-		if node_above.name ~= "air" then
-			return -- can only place to the air
+		if ndef_above == nil or ndef_under == nil then
+			return -- can only place on/to known blocks
 		end
-		if not ndef_under or ndef_under.walkable == false or minetest.get_item_group(node_under.name, "attached_node") ~= 0 then
+		if node_above.name ~= "air" and ndef_above.buildable_to ~= true then
+			return -- can only place to the air or to buildable_to blocks
+		end
+		if ndef_under.walkable == false or minetest.get_item_group(node_under.name, "attached_node") ~= 0 then
 			return -- can only place on walkable non-attached nodes
 		end
 		local groups_under = ndef_under.groups or {}
