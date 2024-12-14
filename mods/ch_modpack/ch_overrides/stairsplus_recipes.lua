@@ -13,6 +13,20 @@ for _, recipeitem in ipairs(recipeitems) do
         shape_to_node[shape[1].."/"..shape[2]] = stairsplus:get_shape(recipeitem, shape[1], shape[2])
     end
 
+    local function register_shape_selector_group_simple(shapes)
+        local nodes = {}
+        for _, shape in ipairs(shapes) do
+            local n = shape_to_node[shape]
+            if n ~= nil then
+                table.insert(nodes, n)
+            end
+        end
+        if #nodes > 1 then
+            ch_core.register_shape_selector_group({nodes = nodes})
+        end
+        return #nodes
+    end
+
     -- složit/rozložit trojitý díl
     for _, p in ipairs({
         {"slab/_1", "slab/_triplet"},
@@ -146,12 +160,40 @@ for _, recipeitem in ipairs(recipeitems) do
         minetest.register_craft({output = from, recipe = {{to}}})
     end
 
+    register_shape_selector_group_simple({"slope/_roof22", "slope/_roof22_raised", "slope/_roof45"})
+    register_shape_selector_group_simple({"slope/_roof22_3", "slope/_roof22_raised_3", "slope/_roof45_raised"})
+
+    from, from2, to = shape_to_node["slope/_diagfiller22a"], shape_to_node["slope/_diagfiller22b"], shape_to_node["slope/_diagfiller45"]
+    if from ~= nil and from2 ~= nil and to ~= nil then
+        ch_core.register_shape_selector_group({
+            columns = 4, rows = 3, nodes = {
+                {name = from,  param2 = 0xFC00, label = "+Z"},
+                {name = from,  param2 = 0xFC01, label = "+X"},
+                {name = from,  param2 = 0xFC02, label = "-Z"},
+                {name = from,  param2 = 0xFC03, label = "-X"},
+                {name = from2, param2 = 0xFC00, label = "+Z"},
+                {name = from2, param2 = 0xFC01, label = "+X"},
+                {name = from2, param2 = 0xFC02, label = "-Z"},
+                {name = from2, param2 = 0xFC03, label = "-X"},
+                {name = to,    param2 = 0xFC00, label = "+Z"},
+                {name = to,    param2 = 0xFC01, label = "+X"},
+                {name = to,    param2 = 0xFC02, label = "-Z"},
+                {name = to,    param2 = 0xFC03, label = "-X"},
+            },
+        })
+        minetest.register_craft({output = from2, recipe = {{from}}})
+        minetest.register_craft({output = to, recipe = {{from2}}})
+        minetest.register_craft({output = from, recipe = {{to}}})
+    end
+    -- register_shape_selector_group_simple({"slope/_diagfiller22a", "slope/_diagfiller22b", "slope/_diagfiller45"})
+
     -- přepínání spojujících se a přímých tvarů
     for _, shape in ipairs({"panel/_wall", "panel/_element", "panel/_pole", "slab/_arcade"}) do
         from, to = shape_to_node[shape], shape_to_node[shape.."_flat"]
         if from ~= nil and to ~= nil then
             minetest.register_craft({output = to, recipe = {{from}}})
             minetest.register_craft({output = from, recipe = {{to}}})
+            ch_core.register_shape_selector_group({nodes = {from, to}})
         end
     end
 end

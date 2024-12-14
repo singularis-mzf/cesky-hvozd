@@ -186,6 +186,9 @@ if display_api.is_rotation_restricted() then
 	end
 end
 
+local shape_selector_after_change(pos, old_node, new_node, player, nodespec)
+	display_api.update_entities(pos)
+end
 
 local function update_box(fields, box_name, on_pole_offset)
 	local result = fields[box_name]
@@ -318,6 +321,10 @@ function signs_api.register_sign(mod, name, model)
 		minetest.register_craft({
 			output = mod..":"..name,
 			recipe = {{mod..":"..name.."_on_pole"}},
+		})
+		ch_core.register_shape_selector_group({
+			nodes = {mod..":"..name, mod..":"..name.."_on_pole"},
+			after_change = shape_selector_after_change,
 		})
 	end
 end

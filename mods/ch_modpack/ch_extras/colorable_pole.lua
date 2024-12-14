@@ -99,6 +99,15 @@ end
 
 ch_core.register_nodedir_group(nodedir_group)
 
+ch_core.register_shape_selector_group({
+    nodes = {
+        {name = "ch_extras:colorable_pole", param2 = 0xFF00},
+        {name = "ch_extras:colorable_pole_flat", param2 = 0xFF00},
+        {name = "ch_extras:colorable_pole_flat_2", param2 = 0xFF00},
+        {name = "ch_extras:colorable_pole_flat_3", param2 = 0xFF00},
+    },
+})
+
 minetest.register_craft({
     output = "ch_extras:colorable_pole 6",
     recipe = {

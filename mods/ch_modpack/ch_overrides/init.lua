@@ -12,6 +12,7 @@ local mods = {
 	"currency",
 	"darkage",
 	"default",
+	"doors",
 	"farming",
 	"homedecor_kitchen",
 	"homedecor_misc",
@@ -64,23 +65,6 @@ minetest.override_chatcommand("giveme", {func = function(player_name, param)
 	minetest.log("action", player_name.." gives themself: "..param)
 	return giveme_func(player_name, param)
 end})
-
--- watch receive fields
-
-
-minetest.register_on_player_receive_fields(function(player, formname, fields)
-	local player_name = player:get_player_name()
-	if formname ~= "" then
-		ch_core.play_click_sound_to(player_name)
-	end
-	local hash = minetest.sha1(formname.."@"..dump2(fields))
-	ch_core.ap_announce_craft(player, hash)
-	local count = 0
-	for _, _ in pairs(fields) do
-		count = count + 1
-	end
-	minetest.log("action", "Player "..player_name.." received "..count.." fields (formname = \""..tostring(formname).."\", sha1 = "..hash..", quit = "..tostring(fields.quit)..")")
-end)
 
 --[[ temp
 

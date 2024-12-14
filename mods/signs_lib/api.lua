@@ -984,6 +984,8 @@ end
 
 function signs_lib.register_sign(name, raw_def)
 	local def = table.copy(raw_def)
+	local variants = {}
+	local base_description = def.description or ""
 
 	if raw_def.entity_info == "standard" then
 		def.entity_info = {
@@ -1057,6 +1059,7 @@ function signs_lib.register_sign(name, raw_def)
 
 	minetest.register_node(":"..name, def)
 	table.insert(signs_lib.lbm_restore_nodes, name)
+	table.insert(variants, {name = name})
 
 	local no_wall_name = string.gsub(name, "_wall", "")
 
@@ -1098,6 +1101,7 @@ function signs_lib.register_sign(name, raw_def)
 	-- reveals either the vertical or horizontal pole mount part of the model
 
 	if raw_def.allow_onpole then
+		othermounts_def.description = base_description.." (na svislou tyč)"
 		othermounts_def.tiles[3] = raw_def.tiles[3] or "signs_lib_pole_mount.png"
 		othermounts_def.tiles[4] = "signs_lib_blank.png"
 		othermounts_def.tiles[5] = "signs_lib_blank.png"
@@ -1105,11 +1109,13 @@ function signs_lib.register_sign(name, raw_def)
 
 		minetest.register_node(":"..no_wall_name.."_onpole", othermounts_def)
 		table.insert(signs_lib.lbm_restore_nodes, no_wall_name.."_onpole")
+		table.insert(variants, {name = no_wall_name.."_onpole", label = "|"})
 	end
 
 	if raw_def.allow_onpole_horizontal then
 		local onpole_horiz_def = table.copy(othermounts_def)
 
+		onpole_horiz_def.description = base_description.." (na vodorovnou tyč)"
 		onpole_horiz_def.tiles[3] = "signs_lib_blank.png"
 		onpole_horiz_def.tiles[4] = raw_def.tiles[3] or "signs_lib_pole_mount.png"
 		onpole_horiz_def.tiles[5] = "signs_lib_blank.png"
@@ -1117,12 +1123,14 @@ function signs_lib.register_sign(name, raw_def)
 
 		minetest.register_node(":"..no_wall_name.."_onpole_horiz", onpole_horiz_def)
 		table.insert(signs_lib.lbm_restore_nodes, no_wall_name.."_onpole_horiz")
+		table.insert(variants, {name = no_wall_name.."_onpole_horiz", label = "–"})
 	end
 
 	if raw_def.allow_hanging then
 
 		local hanging_def = table.copy(def)
 		hanging_def.paramtype2 = "facedir"
+		hanging_def.description = base_description.." (ke stropu)"
 
 		local hcbox = signs_lib.make_selection_boxes(35, 32, nil, 0, 3, -18.5, true)
 
@@ -1144,12 +1152,14 @@ function signs_lib.register_sign(name, raw_def)
 
 		minetest.register_node(":"..no_wall_name.."_hanging", hanging_def)
 		table.insert(signs_lib.lbm_restore_nodes, no_wall_name.."_hanging")
+		table.insert(variants, {name = no_wall_name.."_hanging", label = "^"})
 	end
 
 	if raw_def.allow_yard then
 
 		local ydef = table.copy(def)
 		ydef.paramtype2 = "facedir"
+		ydef.description = base_description.." (na podlahu)"
 
 		local ycbox = signs_lib.make_selection_boxes(35, 34.5, false, 0, -1.25, -19.69, true)
 
@@ -1171,6 +1181,7 @@ function signs_lib.register_sign(name, raw_def)
 
 		minetest.register_node(":"..no_wall_name.."_yard", ydef)
 		table.insert(signs_lib.lbm_restore_nodes, no_wall_name.."_yard")
+		table.insert(variants, {name = no_wall_name.."_yard", label = "v"})
 	end
 
 	if raw_def.allow_widefont then
@@ -1178,6 +1189,15 @@ function signs_lib.register_sign(name, raw_def)
 		table.insert(signs_lib.old_widefont_signs, name.."_widefont_onpole")
 		table.insert(signs_lib.old_widefont_signs, name.."_widefont_hanging")
 		table.insert(signs_lib.old_widefont_signs, name.."_widefont_yard")
+	end
+
+	if #variants > 1 then
+		ch_core.register_shape_selector_group({
+			nodes = variants,
+			after_change = function(pos, old_node, new_node, player, nodespec)
+				signs_lib.update_sign(pos, nil, nil, new_node)
+			end,
+		})
 	end
 end
 

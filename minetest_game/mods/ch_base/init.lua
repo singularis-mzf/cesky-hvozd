@@ -132,15 +132,18 @@ end
 function core.register_lbm(def, ...)
     assert(type(def) == "table")
     local orig_action = def.action
-    if orig_action == nil then
+    if type(orig_action) ~= "function" then
         return orig_register_lbm(def, ...)
     end
     local label = acquire_label("lbm")
-    def = table.copy(def)
-    def.action = function(...)
+    local new_def = {}
+    for k, v in pairs(def) do
+        new_def[k] = v
+    end
+    new_def.action = function(...)
         return run_and_measure(label, orig_action, ...)
     end
-    return orig_register_lbm(def, ...)
+    return orig_register_lbm(new_def, ...)
 end
 
 function core.register_abm(def, ...)
@@ -148,11 +151,14 @@ function core.register_abm(def, ...)
     local orig_action = def.action
     assert(orig_action)
     local label = acquire_label("abm")
-    def = table.copy(def)
-    def.action = function(...)
+    local new_def = {}
+    for k, v in pairs(def) do
+        new_def[k] = v
+    end
+    new_def.action = function(...)
         return run_and_measure(label, orig_action, ...)
     end
-    return orig_register_abm(def, ...)
+    return orig_register_abm(new_def, ...)
 end
 
 function core.register_entity(name, def, ...)

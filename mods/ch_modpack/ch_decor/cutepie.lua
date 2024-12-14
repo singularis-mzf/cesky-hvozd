@@ -85,3 +85,6 @@ minetest.register_craft({
 		{"mesecons_lightstone:lightstone_magenta_off", "mesecons_button:button_off"},
 	},
 })
+
+ch_core.register_shape_selector_group({nodes = {"cutepie:cute_block", "cutepie:cute_block_light"}})
+ch_core.register_shape_selector_group({nodes = {"cutepie:cute_block2", "cutepie:cute_block_light2"}})

@@ -126,6 +126,7 @@ function doors.register(name, def)
 	if not name:find(":") then
 		name = "doors:" .. name
 	end
+	local base_description = def.description or ""
 
 	local mesh_prefix, mesh_level
 	-- mesh_level 1: single mesh (currently not supported)
@@ -182,7 +183,7 @@ function doors.register(name, def)
 	})
 
 	local craftitem_def = {
-		description = def.description,
+		description = base_description,
 		inventory_image = def.inventory_image,
 		groups = table.copy(def.groups),
 
@@ -281,7 +282,7 @@ function doors.register(name, def)
 	minetest.register_craftitem(":" .. name, table.copy(craftitem_def))
 -- 
 	if mesh_prefix == "door" then -- centering support
-		craftitem_def.description = craftitem_def.description .. " (" .. S("centered") ..")"
+		craftitem_def.description = base_description.." (vystředěné)"
 		minetest.register_craftitem(":" .. name .. "_cd", craftitem_def)
 
 		minetest.register_craft({output = name, recipe = {{name.."_cd"}}})
@@ -402,24 +403,27 @@ function doors.register(name, def)
 	end
 
 	def.mesh = mesh_prefix .. "_a.obj"
+	def.description = base_description.." (klika vpravo)"
 	minetest.register_node(":" .. name .. "_a", table.copy(def))
 	screwdriver_rightclick_override_list[name.."_a"] = 1
 
 	def.mesh = mesh_prefix .. "_b.obj"
+	def.description = base_description.." (klika vlevo)"
 	minetest.register_node(":" .. name .. "_b", table.copy(def))
 	screwdriver_rightclick_override_list[name.."_b"] = 1
 
 	def.mesh = mesh_prefix .. (mesh_level > 2 and "_a2.obj" or "_b.obj")
+	def.description = base_description.." (klika vpravo)"
 	minetest.register_node(":" .. name .. "_c", table.copy(def))
 	screwdriver_rightclick_override_list[name.."_c"] = 1
 
 	def.mesh = mesh_prefix .. (mesh_level > 2 and "_b2.obj" or "_a.obj")
+	def.description = base_description.." (klika vlevo)"
 	minetest.register_node(":" .. name .. "_d", table.copy(def))
 	screwdriver_rightclick_override_list[name.."_d"] = 1
 
 	if mesh_prefix == "door" then
 		def = table.copy(def)
-		def.description = def.description
 		def.selection_box = centered_door_box_ab
 		def.collision_box = centered_door_box_ab
 		def.drop = name .. "_cd"
@@ -427,10 +431,12 @@ function doors.register(name, def)
 		def.door.name = name .. "_cd"
 
 		def.mesh = "doors_cdoor_a.obj"
+		def.description = base_description.." (klika vpravo, vystředěné)"
 		minetest.register_node(":" .. name .. "_cd_a", def)
 		screwdriver_rightclick_override_list[name.."_cd_a"] = 1
 
 		def.mesh = "doors_cdoor_b.obj"
+		def.description = base_description.." (klika vlevo, vystředěné)"
 		minetest.register_node(":" .. name .. "_cd_b", def)
 		screwdriver_rightclick_override_list[name.."_cd_b"] = 1
 
@@ -438,12 +444,14 @@ function doors.register(name, def)
 		def.selection_box = centered_door_box_c
 		def.collision_box = centered_door_box_c
 		def.mesh = "doors_cdoor_a2.obj"
+		def.description = base_description.." (klika vpravo, vystředěné)"
 		minetest.register_node(":" .. name .. "_cd_c", def)
 		screwdriver_rightclick_override_list[name.."_cd_c"] = 1
 
 		def.selection_box = centered_door_box_d
 		def.collision_box = centered_door_box_d
 		def.mesh = "doors_cdoor_b2.obj"
+		def.description = base_description.." (klika vlevo, vystředěné)"
 		minetest.register_node(":" .. name .. "_cd_d", def)
 		screwdriver_rightclick_override_list[name.."_cd_d"] = 1
 	end

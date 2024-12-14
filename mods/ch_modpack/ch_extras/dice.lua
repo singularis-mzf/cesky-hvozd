@@ -127,7 +127,22 @@ for i = 1, 6 do
         on_punch = on_punch,
         on_use = on_use,
     }
-    minetest.register_node("ch_extras:dice_"..i, def)
+    local node_name = "ch_extras:dice_"..i
+    minetest.register_node(node_name, def)
+    local ss_group = {
+        columns = 4,
+        nodes = {
+            {name = node_name, param2 = 0x1F00},
+            {name = node_name, param2 = 0x1F20},
+            {name = node_name, param2 = 0x1F40},
+            {name = node_name, param2 = 0x1F60},
+            {name = node_name, param2 = 0x1F80},
+            {name = node_name, param2 = 0x1FA0},
+            {name = node_name, param2 = 0x1FC0},
+            {name = node_name, param2 = 0x1FE0},
+        },
+    }
+    ch_core.register_shape_selector_group(ss_group)
 end
 
 minetest.register_craft({

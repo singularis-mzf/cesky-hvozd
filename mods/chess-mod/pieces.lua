@@ -66,6 +66,7 @@ local function process_figure_changed(spawn_pos, figure_pos, old_figure_node, ne
 	if spawn_pos == nil or (old_figure_node == nil and new_figure_node == nil) then
 		return
 	end
+	-- [ ] TODO: zpracovat proměnu pěšce na jinou figuru!
 	local meta = minetest.get_meta(spawn_pos)
 	local fdesc = get_field_description(spawn_pos, figure_pos) or "??"
 	local color, figure, abbr, message
@@ -266,4 +267,18 @@ for color_name, color_def in pairs(colors) do
 		}
 		minetest.register_node("chess:"..figure_name.."_"..color_name, def)
 	end
+	ch_core.register_shape_selector_group({
+		columns = 4, rows = 2,
+		nodes = {
+			{name = "chess:queen_"..color_name, oneway = true},
+			{name = "chess:bishop_"..color_name, oneway = true},
+			{name = "chess:knight_"..color_name, oneway = true},
+			{name = "chess:rook_"..color_name, oneway = true},
+			{name = "chess:pawn_"..color_name},
+		},
+		after_change = function(pos, old_node, new_node, player, nodespec)
+			local spawn_pos = find_chess_spawn(pos)
+			process_figure_changed(spawn_pos, pos, old_node, new_node, player)
+		end,
+	})
 end
