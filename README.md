@@ -939,6 +939,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT (kód), CC BY-SA-4.0 (textury)
 * [ContentDB](https://content.minetest.net/packages/Emojiminetest/sausages/)
 
+## Superimposed Window Frames (si\_frames)
+
+* Zdroj: [https://github.com/C-C-Minetest-Server/si\_frames](https://github.com/C-C-Minetest-Server/si\_frames), revize d0730f4c43d9a6a96d34ea4ba1612fc239f2e637
+* Původní licence: AGPLv3
+* Licence úprav: AGPLv3
+* [ContentDB](https://content.luanti.org/packages/Emojiminetest/si\_frames/)
+
 ## Signs Lib (signs\_lib)
 
 * Zdroj: [https://github.com/mt-mods/signs\_lib](https://github.com/mt-mods/signs\_lib), revize 60d67afab3d78ece7e9b4a61b50c60903e8c72a9

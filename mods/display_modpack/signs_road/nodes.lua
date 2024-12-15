@@ -499,7 +499,7 @@ local models = {
 			description = S("White direction sign"),
 			tiles = { "signs_road_white_direction.png" },
 			use_texture_alpha = "opaque",
-			inventory_image = "signs_road_white_dir_inventory.png",
+			inventory_image = "signs_road_white_dir_inventory.png^[transformFX",
 			signs_other_dir = "signs_road:white_right_sign",
 			on_place=signs_api.on_place_direction,
 			on_rightclick = signs_api.on_right_click_direction,
@@ -759,7 +759,7 @@ local models = {
 			description = S("Red direction sign"),
 			tiles = { "signs_road_red_direction.png" },
 			use_texture_alpha = "opaque",
-			inventory_image = "signs_road_red_dir_inventory.png",
+			inventory_image = "signs_road_red_dir_inventory.png^[transformFX",
 			signs_other_dir = "signs_road:red_right_sign",
 			on_place = signs_api.on_place_direction,
 			on_rightclick = signs_api.on_right_click_direction,
@@ -775,7 +775,18 @@ local models = {
 }
 
 -- Node registration
+signs_api.shape_selector_mode = "suppress"
 for name, model in pairs(models)
 do
-	signs_api.register_sign("signs_road", name, model)
+	if name:match("_left_") or name:match("_right_") then
+		signs_api.register_sign("signs_road", name, model)
+	end
 end
+signs_api.shape_selector_mode = "with_dirsigns"
+for name, model in pairs(models)
+do
+	if not (name:match("_left_") or name:match("_right_")) then
+		signs_api.register_sign("signs_road", name, model)
+	end
+end
+signs_api.shape_selector_mode = nil

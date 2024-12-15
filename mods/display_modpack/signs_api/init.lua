@@ -186,7 +186,7 @@ if display_api.is_rotation_restricted() then
 	end
 end
 
-local shape_selector_after_change(pos, old_node, new_node, player, nodespec)
+local function shape_selector_after_change(pos, old_node, new_node, player, nodespec)
 	display_api.update_entities(pos)
 end
 
@@ -322,10 +322,28 @@ function signs_api.register_sign(mod, name, model)
 			output = mod..":"..name,
 			recipe = {{mod..":"..name.."_on_pole"}},
 		})
-		ch_core.register_shape_selector_group({
-			nodes = {mod..":"..name, mod..":"..name.."_on_pole"},
-			after_change = shape_selector_after_change,
-		})
+		if mod:match("^:") then
+			mod = mod:sub(2,-1)
+		end
+		local nodes = {mod..":"..name, mod..":"..name.."_on_pole"}
+		if signs_api.shape_selector_mode == "with_dirsigns" and name:match("_sign$") then
+			local sname = mod..":"..name:sub(1,-6)
+			for _, dir in ipairs({"_left_sign", "_right_sign"}) do
+				if core.registered_nodes[sname..dir] then
+					table.insert(nodes, sname..dir)
+				end
+				if core.registered_nodes[sname..dir.."_on_pole"] then
+					table.insert(nodes, sname..dir.."_on_pole")
+				end
+			end
+		end
+		if signs_api.shape_selector_mode ~= "suppress" then
+			ch_core.register_shape_selector_group({
+				columns = 2,
+				nodes = nodes,
+				after_change = shape_selector_after_change,
+			})
+		end
 	end
 end
 

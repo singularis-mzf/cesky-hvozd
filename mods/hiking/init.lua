@@ -1,7 +1,6 @@
 ch_base.open_mod(minetest.get_current_modname())
 --Hume2's Hiking mod
 
-
 hiking = {}
 
 hiking.base_material = "dye:white"
@@ -174,6 +173,17 @@ function hiking.register_sign_lr(colour, style)
 	local base_sign = "hiking:" .. style.id .. colour.name
 	local left_sign = "hiking:" .. style.id .. "_left" .. colour.name
 	local right_sign = "hiking:" .. style.id .. "_right" .. colour.name
+
+	ch_core.register_shape_selector_group({
+		columns = 3,
+		nodes = {
+			base_sign,
+			"hiking:pole_" .. style.id .. colour.name,
+			"hiking:pole2_" .. style.id .. colour.name,
+			left_sign,
+			right_sign,
+		},
+	})
 
 	minetest.register_craft({
 		output = right_sign .. " 6",

@@ -12,7 +12,7 @@ local function get_formspec(custom_state)
         "label[0.5,0.85;Kód jazyka Lua]"..
         "button_exit[11,0.25;0.75,0.75;close;X]"..
         "textarea[0.5,1.75;11,9;program;program:;",
-        F(custom_state.text),
+        F(custom_state.online_charinfo.lua_code or ""),
         "]"..
         "button[0.25,11.75;11.5,0.75;run;Spustit]",
     }
@@ -28,11 +28,11 @@ local function formspec_callback(custom_state, player, formname, fields)
         return
     end
     if fields.program then
-        custom_state.text = fields.program
+        custom_state.online_charinfo.lua_code = fields.program
     end
     if fields.run then
         local func, success, errmsg
-        func, errmsg = loadstring(custom_state.text)
+        func, errmsg = loadstring(custom_state.online_charinfo.lua_code or "")
         if not func then
             ch_core.systemovy_kanal(player_name, error_color.."Chyba syntaxe: "..(errmsg or "nil"))
         else
@@ -55,11 +55,12 @@ minetest.register_chatcommand("lua", {
     description = "Otevře rozhraní pro spouštění příkazů jazyka Lua",
     privs = required_privs,
     func = function(player_name, param)
-        if ch_core.online_charinfo[player_name] == nil or not minetest.check_player_privs(player_name, required_privs) then
+        local online_charinfo = ch_core.online_charinfo[player_name]
+        if online_charinfo == nil or not minetest.check_player_privs(player_name, required_privs) then
             return false, "Neplatné volání!"
         end
         local custom_state = {
-            text = "",
+            online_charinfo = online_charinfo,
         }
         ch_core.show_formspec(player_name, "ch_test:lua", get_formspec(custom_state), formspec_callback, custom_state, {})
         return true

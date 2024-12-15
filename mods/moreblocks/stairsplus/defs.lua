@@ -319,31 +319,6 @@ local box_roof45_3 = f(box_roof45)
 
 --==============================================================
 
-local function diag_filler_on_punch(pos, node, puncher, pointed_thing)
-	if puncher == nil or not core.is_player(puncher) then
-		return
-	end
-	local player_name = puncher:get_player_name()
-	if core.is_protected(pos, player_name) then
-		core.record_protection_violation(pos, player_name)
-		return
-	end
-	if node.name:sub(-2, -1) == "45" then
-		node.name = node.name:sub(1, -3).."22a"
-	elseif node.name:sub(-3, -1) == "22a" then
-		node.name = node.name:sub(1, -2).."b"
-	elseif node.name:sub(-3, -1) == "22b" then
-		node.name = node.name:sub(1, -4).."45"
-	else
-		return
-	end
-	if core.registered_nodes[node.name] ~= nil then
-		core.swap_node(pos, node)
-	end
-end
-
---==============================================================
-
 local sides_xy = {"front", "back", "left", "right"}
 local sides_xyz = {"front", "back", "left", "right", "top", "bottom"}
 
@@ -1050,9 +1025,6 @@ stairsplus.defs = {
 			backface_culling = false,
 			not_blocking_trains = true,
 			walkable = false,
-			on_punch = diag_filler_on_punch,
-			_ch_help_group = "diagfiller",
-			_ch_help = "levým klikem na umístěný blok lze přepínat mezi variantami 45°, 22° A a 22° B",
 		},
 		["_diagfiller22b"] = {
 			description = "diagonální výplň 22° B",
@@ -1062,9 +1034,6 @@ stairsplus.defs = {
 			backface_culling = false,
 			not_blocking_trains = true,
 			walkable = false,
-			on_punch = diag_filler_on_punch,
-			_ch_help_group = "diagfiller",
-			_ch_help = "levým klikem na umístěný blok lze přepínat mezi variantami 45°, 22° A a 22° B",
 		},
 		["_diagfiller45"] = {
 			description = "diagonální výplň 45° dvojitá",
@@ -1074,9 +1043,6 @@ stairsplus.defs = {
 			backface_culling = false,
 			not_blocking_trains = true,
 			walkable = false,
-			on_punch = diag_filler_on_punch,
-			_ch_help_group = "diagfiller",
-			_ch_help = "levým klikem na umístěný blok lze přepínat mezi variantami 45°, 22° A a 22° B",
 		}
 	},
 	["stair"] = {

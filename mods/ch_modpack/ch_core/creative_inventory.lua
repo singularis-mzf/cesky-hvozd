@@ -343,7 +343,8 @@ function ch_core.overridable.is_other_shape(item_name, groups)
 		groups.streets_manhole or
 		groups.streets_stormdrain or
 		item_name:sub(1, 7) == "pkarcs:" or
-		item_name:sub(1, 8) == "pillars:"
+		item_name:sub(1, 8) == "pillars:" or
+		item_name:sub(1, 10) == "si_frames:"
 end
 
 local function is_experimental(name, groups)
