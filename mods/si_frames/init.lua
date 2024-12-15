@@ -1,12 +1,14 @@
+ch_base.open_mod(core.get_current_modname())
 -- si_frames/init.lua
 -- Add a wooden frame over windows
 -- Copyright (C) 2018-2019  Hans von Smacker
 -- Copyright (C) 2024  1F616EMO
+-- Copyright (C) 2024 Singularis
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 
-local S = minetest.get_translator("si_frames")
+local S = core.get_translator("si_frames")
 local NS = function(s) return s end
-local nodes = minetest.registered_nodes
+local nodes = core.registered_nodes
 
 ---@class si_frames
 si_frames = {}
@@ -88,11 +90,26 @@ local function prepare_groups(groups)
     return rtn
 end
 
----Register all type of frames for a node
 function si_frames.register_frames(name, def)
-    if not def then def = {} end
+    error("This API not supported on Cesky hvozd")
+end
 
-    def.tiles = { def.texture }
+---Register all type of frames for a node
+function si_frames.register_frames2(nodename)
+    local ndef = nodes[nodename]
+    if ndef == nil then
+        core.log("warning", "si_frames.register_frames2() called on unknown node '"..nodename.."'!")
+        return
+    end
+    local modname, name = nodename:match("^(.*):(.*)$")
+    local def = {
+        description = ndef.description,
+        groups = prepare_groups(ndef.groups),
+        sounds = ndef.sounds,
+    }
+    local texture = ndef.tiles[1] .. (rotate and "^[transform1" or "")
+
+    def.tiles = { texture }
     def.drawtype = "mesh"
     def.paramtype = "light"
     def.paramtype2 = "facedir"
@@ -103,62 +120,27 @@ function si_frames.register_frames(name, def)
     def.collisionbox = node_box
 
     for variant, variant_def in pairs(type_of_frames) do
-        local vdef = table.copy(def)
-        vdef.description = S(variant_def.name, def.description or name)
-        vdef.mesh = variant_def.model
-        -- FIXME: Hand display texture is still broken
-        vdef.inventory_image = "(si_frames_of.png^" .. def.texture .. ")^[mask:si_frames_" .. variant .. ".png"
-        vdef.wield_image = def.texture .. "^si_frames_" .. variant .. ".png"
-        minetest.register_node("si_frames:" .. variant .. "_" .. name, vdef)
+        print("DEBUG: variant "..variant.." of "..nodename)
+        if ch_core.is_shape_allowed(nodename, "si_frames", variant) then
+            local vdef = table.copy(def)
+            vdef.description = S(variant_def.name, def.description or name)
+            vdef.mesh = variant_def.model
+            -- FIXME: Hand display texture is still broken
+            vdef.inventory_image = "(si_frames_of.png^" .. texture .. ")^[mask:si_frames_" .. variant .. ".png"
+            vdef.wield_image = texture .. "^si_frames_" .. variant .. ".png"
+            core.register_node("si_frames:" .. variant .. "_" .. name, vdef)
 
-        minetest.register_craft({
-            output = "si_frames:" .. variant .. "_" .. name,
-            recipe = variant_def.craft(def.materieal)
-        })
+            core.register_craft({
+                output = "si_frames:" .. variant .. "_" .. name,
+                recipe = variant_def.craft(nodename)
+            })
+        else
+            print("DEBUG: not registering ".."si_frames:" .. variant .. "_" .. name.." because is_shape_allowed is false.")
+        end
     end
 end
 
-local function prepare_def(node, rotate)
-    return {
-        description = nodes[node].description,
-        texture = nodes[node].tiles[1] .. (rotate and "^[transform1" or ""),
-        groups = prepare_groups(nodes[node].groups),
-        sounds = nodes[node].sounds,
-        materieal = node,
-    }
+for _, nodename in ipairs(ch_core.get_materials_from_shapes_db("si_frames")) do
+    si_frames.register_frames2(nodename)
 end
-
-if minetest.get_modpath("default") then
-    si_frames.register_frames("wood", prepare_def("default:wood"))
-    si_frames.register_frames("junglewood", prepare_def("default:junglewood"))
-    si_frames.register_frames("pine_wood", prepare_def("default:pine_wood"))
-    si_frames.register_frames("acacia_wood", prepare_def("default:acacia_wood"))
-    si_frames.register_frames("aspen_wood", prepare_def("default:aspen_wood"))
-end
-
-if minetest.get_modpath("maple") then
-    si_frames.register_frames("maple_wood", prepare_def("maple:maple_wood"))
-end
-
-if minetest.get_modpath("ethereal") then
-    si_frames.register_frames("basandra_wood", prepare_def("ethereal:basandra_wood"))
-    si_frames.register_frames("sakura_wood", prepare_def("ethereal:sakura_wood", true))
-    si_frames.register_frames("willow_wood", prepare_def("ethereal:willow_wood"))
-    si_frames.register_frames("redwood_wood", prepare_def("ethereal:redwood_wood"))
-    si_frames.register_frames("frost_wood", prepare_def("ethereal:frost_wood"))
-    si_frames.register_frames("yellow_wood", prepare_def("ethereal:yellow_wood"))
-    si_frames.register_frames("palm_wood", prepare_def("ethereal:palm_wood"))
-    si_frames.register_frames("banana_wood", prepare_def("ethereal:banana_wood"))
-    si_frames.register_frames("birch_wood", prepare_def("ethereal:birch_wood"))
-    si_frames.register_frames("olive_wood", prepare_def("ethereal:olive_wood"))
-    si_frames.register_frames("bamboo_block", prepare_def("ethereal:bamboo_block", true))
-end
-
-if minetest.get_modpath("mcl_core") then
-    si_frames.register_frames("wood", prepare_def("mcl_core:wood"))
-    si_frames.register_frames("darkwood", prepare_def("mcl_core:darkwood"))
-    si_frames.register_frames("junglewood", prepare_def("mcl_core:junglewood"))
-    si_frames.register_frames("sprucewood", prepare_def("mcl_core:sprucewood"))
-    si_frames.register_frames("acaciawood", prepare_def("mcl_core:acaciawood"))
-    si_frames.register_frames("birchwood", prepare_def("mcl_core:birchwood"))
-end
+ch_base.close_mod(minetest.get_current_modname())

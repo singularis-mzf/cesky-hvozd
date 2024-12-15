@@ -700,6 +700,14 @@ local materials_under_rails = set(
 	"default:gravel"
 )
 
+local materials_for_si_frames = set(
+	"default:acacia_wood",
+	"default:aspen_wood",
+	"default:junglewood",
+	"default:pine_wood",
+	"default:wood"
+)
+
 local materials_all = union(materials_cnc, materials_kp, materials_no_kp, materials_glass, materials_sns, materials_wool, materials_roof,
 	materials_zdlazba, platform_materials, platform_materials_exceptions,
 	set("default:sandstone", "default:sandstonebrick", "default:sandstone_block", "ch_extras:rope_block"))
@@ -795,6 +803,8 @@ local alts_fence = set("fence", "rail", "mesepost", "fencegate")
 local alts_advtrains = set("platform_high", "platform_low", "platform_45_high", "platform_45_low")
 
 local alts_diagfiller = set("_diagfiller22a", "_diagfiller22b", "_diagfiller45")
+
+local alts_si_frames = set("wfs", "wfq", "wfqd", "wfr")
 
 local wool_panels = set("", "_1", "_2", "_4", "_l", "_special")
 
@@ -913,6 +923,7 @@ local rules = {
 	{materials_tombs, "tombs", alts_tombs, true},
 	{materials_for_manholes, "streets", set("manhole", "stormdrain"), true},
 	{materials_for_manholes_only, "streets", "manhole", true},
+	{materials_for_si_frames, "si_frames", alts_si_frames, true},
 	{materials_under_rails, "slope", alts_diagfiller, true},
 
 	{platform_materials_exceptions , "advtrains", set("platform_high", "platform_low"), true},
@@ -973,6 +984,8 @@ function ch_core.get_materials_from_shapes_db(key)
 	local set
 	if key == "advtrains" then
 		set = union(platform_materials, platform_materials_exceptions)
+	elseif key == "si_frames" then
+		set = materials_for_si_frames
 	elseif key == "streets" then
 		set = union(materials_for_manholes, materials_for_manholes_only)
 	end
@@ -986,6 +999,7 @@ function ch_core.get_materials_from_shapes_db(key)
 	if not set["default:stone"] then
 		table.insert(result, "default:stone")
 	end
+	print("DEBUG: get_materials_from_shapes_db("..key..") will return "..#result.." materials")
 	return result
 end
 
