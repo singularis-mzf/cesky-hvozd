@@ -1,7 +1,7 @@
 -- barvitelná tyč
 ------------------
 local ifthenelse = assert(ch_core.ifthenelse)
-local pole_texture = ifthenelse(minetest.get_modpath("solidcolor"), "solidcolor_clay.png", "default_clay.png")
+local pole_texture = "ch_core_clay.png"
 local pole_sounds = default.node_sound_metal_defaults()
 
 local def = {

@@ -111,6 +111,32 @@ if minetest.get_modpath("default") then
 	end
 end
 
+-- ch_core registrations
+local ch_core_nodes = {
+	"plaster_blue",
+	"plaster_cyan",
+	"plaster_dark_green",
+	"plaster_dark_grey",
+	"plaster_grey",
+	"plaster_medium_amber_s50",
+	"plaster_orange",
+	"plaster_pink",
+	"plaster_red",
+	"plaster_green",
+	"plaster_white",
+	"plaster_yellow",
+}
+
+for i, name in ipairs(ch_core_nodes) do
+	local ndef = core.registered_nodes["ch_core:"..name]
+	if ndef == nil then
+		error("ch_core:"..name.." missing!")
+	end
+	stairsplus:register_all("ch_core", name, "ch_core:"..name, ndef)
+end
+
+
+
 -- farming registrations
 if minetest.get_modpath("farming") then
 	local farming_nodes = {"hemp_block", "straw"}

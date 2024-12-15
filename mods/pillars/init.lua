@@ -519,51 +519,51 @@ local default_lib_nodes = {
 		description = "pilíř z černého páleného jílu",
 	},
 	plaster_white = {
-		basenode = "solidcolor:plaster_white",
+		basenode = "ch_core:plaster_white",
 		description = "pilíř s bílou omítkou",
 	},
 	plaster_red = {
-		basenode = "solidcolor:plaster_red",
+		basenode = "ch_core:plaster_red",
 		description = "pilíř s červenou omítkou",
 	},
 	plaster_blue = {
-		basenode = "solidcolor:plaster_blue",
+		basenode = "ch_core:plaster_blue",
 		description = "pilíř s modrou omítkou",
 	},
 	plaster_medium_amber_s50 = {
-		basenode = "solidcolor:plaster_medium_amber_s50",
+		basenode = "ch_core:plaster_medium_amber_s50",
 		description = "pilíř s okrovou omítkou",
 	},
 	plaster_orange = {
-		basenode = "solidcolor:plaster_orange",
+		basenode = "ch_core:plaster_orange",
 		description = "pilíř s oranžovou omítkou",
 	},
 	plaster_pink = {
-		basenode = "solidcolor:plaster_pink",
+		basenode = "ch_core:plaster_pink",
 		description = "pilíř s růžovou omítkou",
 	},
 	plaster_grey = {
-		basenode = "solidcolor:plaster_grey",
+		basenode = "ch_core:plaster_grey",
 		description = "pilíř s šedou omítkou",
 	},
 	plaster_dark_grey = {
-		basenode = "solidcolor:plaster_dark_grey",
+		basenode = "ch_core:plaster_dark_grey",
 		description = "pilíř s tmavě šedou omítkou",
 	},
 	plaster_dark_green = {
-		basenode = "solidcolor:plaster_dark_green",
+		basenode = "ch_core:plaster_dark_green",
 		description = "pilíř s tmavozelenou omítkou",
 	},
 	plaster_cyan = {
-		basenode = "solidcolor:plaster_cyan",
+		basenode = "ch_core:plaster_cyan",
 		description = "pilíř s tykrysovou omítkou",
 	},
 	plaster_green = {
-		basenode = "solidcolor:plaster_green",
+		basenode = "ch_core:plaster_green",
 		description = "pilíř se zelenou omítkou",
 	},
 	plaster_yellow = {
-		basenode = "solidcolor:plaster_yellow",
+		basenode = "ch_core:plaster_yellow",
 		description = "pilíř se žlutou omítkou",
 	},
 }
