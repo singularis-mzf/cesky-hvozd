@@ -38,7 +38,21 @@ local allowed_combos = {
 	[20] = "technic:slab_concrete+streets:slab_asphalt_blue",
 	[21] = "default:slab_silver_sandstone_block+ch_core:slab_plaster_medium_amber_s50",
 }
+
+local function combo_after_change(pos, old_node, new_node, player, nodespec)
+	local ndef = core.registered_nodes[old_node.name]
+	if ndef ~= nil then
+		-- give the other slab to the player
+		if new_node.name == ndef.comboblock_v1 then
+			player:get_inventory():add_item("main", assert(ndef.comboblock_v2))
+		elseif new_node.name == ndef.comboblock_v2 then
+			player:get_inventory():add_item("main", assert(ndef.comboblock_v1))
+		end
+	end
+end
+
 local allowed_combos_tmp = {}
+local shape_selector_groups = {}
 for i, v in ipairs(allowed_combos) do
 	local a, b = v:match("^([^+]+)%+([^+]+)$")
 	if not a then
@@ -49,6 +63,7 @@ for i, v in ipairs(allowed_combos) do
 		error("allowed_combos: Duplicity at ["..i.."] = ["..x.."] = "..v)
 	end
 	allowed_combos_tmp[v] = i
+	shape_selector_groups[v] = {columns = 4, rows = 1, nodes = {}, after_change = combo_after_change}
 end
 allowed_combos = allowed_combos_tmp
 
@@ -319,6 +334,7 @@ local m_path = minetest.get_modpath(m_name)
 	-- Comboblock Switch --
 	-----------------------
 
+	--[[
 	local function cb_on_punch(pos, node, puncher, pointed_thing)
 		if puncher and puncher:is_player() then
 			local player_name = puncher:get_player_name()
@@ -344,6 +360,7 @@ local m_path = minetest.get_modpath(m_name)
 		end
 		minetest.set_node(pos, node)
 	end
+	]]
 
 ----------------------------
 --       Main Code        --
@@ -463,20 +480,28 @@ for _,v1 in pairs(slab_index) do
 				local v2_is_glass = string.find(string.lower(tostring(v2)), "glass")                          -- so using name string match but this pretty unreliable.
 																											  -- returns value nil if not otherwise returns integar see lua string.find
 
+				local combo_name = "comboblock:"..v1:split(":")[2].."_onc_"..v2:split(":")[2]
 				local allowed_combo_index, allowed_combo_index_suffix
 				allowed_combo_index = allowed_combos[v1.."+"..v2]
 				if allowed_combo_index then
 					allowed_combo_index_suffix = "A"
+					local ss_nodes = shape_selector_groups[v1.."+"..v2].nodes
+					ss_nodes[1] = combo_name
+					ss_nodes[3] = {name = v1, oneway = true}
+					ss_nodes[4] = {name = v2, oneway = true}
 				else
 					allowed_combo_index = allowed_combos[v2.."+"..v1]
 					if allowed_combo_index then
 						allowed_combo_index_suffix = "B"
+						local ss_nodes = shape_selector_groups[v2.."+"..v1].nodes
+						ss_nodes[2] = combo_name
+						ss_nodes[3] = {name = v2, oneway = true}
+						ss_nodes[4] = {name = v1, oneway = true}
 					end
 				end
 				if not allowed_combo_index then
 					-- not allowed
 				elseif v1_is_glass and v2_is_glass then                                                           -- glass_glass nodes so drawtype = glasslike
-						local combo_name = "comboblock:"..v1:split(":")[2].."_onc_"..v2:split(":")[2]
 						local combo_tiles = {v1_tiles[1].name.."^[resize:"..cs.."x"..cs,
 							v2_tiles[2].name.."^[resize:"..cs.."x"..cs,
 							v1_tiles[3].name.."^[resize:"..cs.."x"..cs..v2_tiles[3].name,                      -- Stairs registers it's tiles slightly differently now
@@ -499,7 +524,7 @@ for _,v1 in pairs(slab_index) do
 									{items = {tostring(v1), tostring(v2)}},
 								},
 							},
-							on_punch = cb_on_punch,
+							-- on_punch = cb_on_punch,
 							comboblock_v1 = tostring(v1),
 							comboblock_v2 = tostring(v2)})
 
@@ -517,7 +542,6 @@ for _,v1 in pairs(slab_index) do
 						})
 
 				elseif not v1_is_glass and not v2_is_glass then -- normal nodes
-						local combo_name = "comboblock:"..v1:split(":")[2].."_onc_"..v2:split(":")[2]
 						local combo_tiles = {v1_tiles[1].name.."^[resize:"..cs.."x"..cs,
 							v2_tiles[2].name.."^[resize:"..cs.."x"..cs,
 							v1_tiles[3].name.."^[resize:"..cs.."x"..cs..v2_tiles[3].name,						-- Stairs registers it's tiles slightly differently now
@@ -539,7 +563,7 @@ for _,v1 in pairs(slab_index) do
 									{items = {tostring(v1), tostring(v2)}},
 								},
 							},
-							on_punch = cb_on_punch,
+							-- on_punch = cb_on_punch,
 							comboblock_v1 = tostring(v1),
 							comboblock_v2 = tostring(v2)})
 						minetest.register_craft({output = tostring(v1), recipe = {{combo_name}}, replacements = {{combo_name, tostring(v2)}}})
@@ -702,4 +726,11 @@ for _,v1 in pairs(slab_index) do
 		end })
 	end
 end
+
+for _, group in pairs(shape_selector_groups) do
+	if group.nodes[3] ~= nil then
+		ch_core.register_shape_selector_group(group)
+	end
+end
+
 ch_base.close_mod(minetest.get_current_modname())
