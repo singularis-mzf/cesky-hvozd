@@ -448,6 +448,8 @@ local upgrade_map = {
 	["walls:cobble"] = "moreblocks:panel_cobble_wall",
 	["walls:mossycobble"] = "moreblocks:panel_cobble_wall",
 	["walls:desertcobble"] = "moreblocks:panel_desert_cobble_wall",
+	["default:dirt_technic_cnc_valley"] = "moreblocks:slope_dirt_valley",
+	["default:wood_technic_cnc_valley"] = "moreblocks:slope_wood_valley",
 }
 local upgrade_list = {}
 
@@ -469,9 +471,8 @@ end
 
 local lbm_def = {
 	label = "Upgrade nodes",
-	name = "ch_overrides:node_upgrade_v1",
+	name = "ch_overrides:node_upgrade_v2",
 	nodenames = upgrade_list,
-	run_at_every_load = true, -- DEBUG
 	action = function(pos, node)
 		node.name = upgrade_map[node.name]
 		if node.name ~= nil then

@@ -747,7 +747,8 @@ local alts_slope = set("", "_half", "_half_raised",
 	"_slab", -- trojúhelník
 	"_tripleslope",
 	"_cut2", -- šikmá hradba
-	"_beveled" -- zkosená deska
+	"_beveled", -- zkosená deska
+	"_valley"
 )
 
 local alts_stair = set("", "_inner", "_outer", "_alt", "_alt_1", "_alt_2", "_alt_4",
@@ -792,7 +793,7 @@ local alts_cnc = set(
 "technic_cnc_circle",
 "technic_cnc_oct",
 "technic_cnc_peek",
-"technic_cnc_valley",
+-- "technic_cnc_valley",
 "technic_cnc_bannerstone"
 )
 

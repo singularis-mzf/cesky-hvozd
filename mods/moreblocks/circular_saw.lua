@@ -123,6 +123,8 @@ circular_saw.names = {
 	{"slab", "_arcade_flat", 2},
 
 	{"slope", "_diagfiller45", 1},
+	{"slope", "_valley", 8},
+
 	-- {"slope", "_outer_cut_half_raised", 3},
 	-- {"slope", "_slab_half", 2},
 	-- {"slope", "_slab_half_raised", 6},

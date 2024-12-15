@@ -12,7 +12,6 @@ mymeshnodes_circle.obj
 mymeshnodes_oct.obj
 mymeshnodes_peek.obj
 mymeshnodes_rounded_corner.obj
-mymeshnodes_valley.obj
 	Authors: VanessaE, Max, ExeterDad
 	Source: https://github.com/DonBatman/mymeshnodes
 	License: DWYWPL (probably, please examine source also)
