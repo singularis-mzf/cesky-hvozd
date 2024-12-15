@@ -253,7 +253,6 @@ moreblocks_coal_stone_bricks.png
 moreblocks_iron_stone.png
 moreblocks_iron_stone_block.png
 moreblocks_iron_stone_bricks.png
-solidcolor_stone_block.png
 	Author: Singularis
 	Used source: https://commons.wikimedia.org/wiki/File:Light_brown_stone_texture.jpg (public domain)
 	License: CC BY 4.0

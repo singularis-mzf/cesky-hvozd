@@ -236,7 +236,7 @@ if depends.farming_redo then
 		minetest.register_craft({
 			output = "christmas_decor:candycane_block",
 			recipe = {
-				{"solidcolor:solid_block", ""},
+				{"ch_extras:colorable_plastic", ""},
 				{"", "dye:red"},
 			},
 		})

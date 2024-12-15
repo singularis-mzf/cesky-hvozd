@@ -982,13 +982,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPLv2.1 pro kód, CC BY-SA 4.0 pro zvuky
 * [ContentDB](https://content.minetest.net/packages/texmex/snowsong/)
 
-## Solid Color (solidcolor)
-
-* Zdroj: [https://cheapiesystems.com/git/solidcolor/](https://cheapiesystems.com/git/solidcolor/), revize 0450d8f82bb7c70c164a802730b99c2829791ebd
-* Původní licence: Unlicense (ale z původního kódu už nezůstalo prakticky nic)
-* Licence úprav: Unlicense pro kód, různé licence pro přidané textury
-* [ContentDB](https://content.minetest.net/packages/cheapie/solidcolor/)
-
 ## Stamina (stamina)
 
 * Zdroj: [https://notabug.org/TenPlus1/stamina](https://notabug.org/TenPlus1/stamina), revize 96570a558e165f23b42389a501ceebaf20e0f3a8

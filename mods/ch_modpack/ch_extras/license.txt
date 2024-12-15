@@ -52,6 +52,7 @@ ch_extras_parekvrohliku_h.png
 ch_extras_parekvrohliku_k.png
 ch_extras_periskop.png
 ch_extras_skakadlo.png
+ch_extras_small_noise.png
 ch_extras_switch_arrow.png
 ch_extras_switch_off.png
 ch_extras_switch_straight.png
@@ -205,6 +206,7 @@ ch_extras_otisky.png
 
 ch_extras_shaft.png
 ch_extras_shaft_top.png
+ch_extras_stone_block.png
 	Author: Singularis
 	License: CC BY 4.0
 	Used sources:

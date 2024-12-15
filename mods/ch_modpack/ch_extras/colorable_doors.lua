@@ -13,8 +13,8 @@ doors.register("door_colorable", {
 	overlay_tiles = {{name = "ch_extras_cdoor_overlay.png", color = "white", backface_culling = true}},
 
 	recipe = {
-		{"solidcolor:solid_block", "", ""},
-		{"solidcolor:solid_block", "", ""},
-		{"solidcolor:solid_block", "", ""},
+		{"ch_extras:colorable_plastic", "", ""},
+		{"ch_extras:colorable_plastic", "", ""},
+		{"ch_extras:colorable_plastic", "", ""},
 	},
 })
