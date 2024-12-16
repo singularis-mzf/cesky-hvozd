@@ -466,5 +466,8 @@ for _, row in ipairs(pkarcs_doors.door) do
 			{"", craft_material, craft_material},
 		}
 	})
+
+	ch_core.register_shape_selector_group({nodes = {"pkarcs_doors:" ..name.. "_Ldoor", "pkarcs_doors:" ..name.. "_Rdoor"}})
 end
+
 ch_base.close_mod(minetest.get_current_modname())
