@@ -233,7 +233,6 @@ if not HAVE_TRAINBLOCKS_FLAG and
 	minetest.register_node("metrosigns:sign_exit_left", table.copy(def))
 	metrosigns.register_sign(category, "metrosigns:sign_exit_left", metrosigns.writer.sign_units)
 
-
 	def.description = "svítící barvitelná směrovka vpravo"
 	def.overlay_tiles = {
 		def.overlay_tiles[1],
@@ -249,6 +248,21 @@ if not HAVE_TRAINBLOCKS_FLAG and
 	def.display_entities = {[display_entity_name] = x}
 	minetest.register_node("metrosigns:sign_exit_right", table.copy(def))
 	metrosigns.register_sign(category, "metrosigns:sign_exit_right", metrosigns.writer.sign_units)
+
+	ch_core.register_shape_selector_group({nodes = {"metrosigns:tb_sign_station_exit_left", "metrosigns:tb_sign_station_exit_right"}})
+	ch_core.register_shape_selector_group({
+		columns = 2,
+		nodes = {"metrosigns:sign_exit_left", "metrosigns:sign_exit_right"},
+		after_change = function(pos, old_node, new_node, player, nodespec)
+			local old_def, new_def = core.registered_nodes[old_node.name], core.registered_nodes[new_node.name]
+			if old_def.display_entities ~= nil and new_def.display_entities ~= nil then
+				display_api.update_entities(pos) -- preserve text
+			else
+				core.swap_node(pos, old_node)
+				core.set_node(pos, new_node) -- will call on_destruct/on_construct
+			end
+		end,
+	})
 
 --[[
     minetest.register_node("metrosigns:tb_box_berlin_sbahn", {
@@ -271,6 +285,7 @@ if not HAVE_TRAINBLOCKS_FLAG and
 ]]
 
 	local linky = ch_core.barvy_linek
+	local nodes = {} -- for shape selector
 
 	for l, ldef in ipairs(linky) do
 		local num = ("0"..l):sub(-2,-1)
@@ -327,5 +342,10 @@ if not HAVE_TRAINBLOCKS_FLAG and
             walkable = false
         })
         metrosigns.register_sign(category, "metrosigns:tb_sign_line_"..num, metrosigns.writer.sign_units)
+		table.insert(nodes, "metrosigns:tb_sign_line_"..num)
     end
+	ch_core.register_shape_selector_group({
+		columns = 5,
+		nodes = nodes,
+	})
 end
