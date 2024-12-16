@@ -110,6 +110,7 @@ Emplace manual lock=Ručně uzamknout
 Enable ARS=Zapnout ARS
 Enable Automatic Working=Zapnout automatickou cestu
 End of interlocking=Konec zabezepečení
+end=konec
 Error=Chyba
 Expect to pass the next signal at maximum speed=Bude: Volno
 Expect to pass the next signal at speed of @1=Bude: Volno s omezením rychlosti na @1

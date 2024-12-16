@@ -327,7 +327,8 @@ for _, rtab in ipairs({
 		if typ == "e" then
 			tile2 = "advtrains_signals_ks_sign_zs10.png"
 		end
-		register_sign("sign", typ, prts.n, attrans("Permanent local speed restriction sign"), "sign"..mesh, tile2, "8", "advtrains_signals_ks_sign_8.png^[invert:rgb", prts.asp)
+		register_sign("sign", typ, prts.n, attrans("Permanent local speed restriction sign").." ("..(typ == "e" and attrans("end") or typ) ..")",
+			"sign"..mesh, tile2, "8", "advtrains_signals_ks_sign_8.png^[invert:rgb", prts.asp)
 	end
 
 	for typ, prts in pairs {
@@ -340,7 +341,8 @@ for _, rtab in ipairs({
 	} do
 		local tile2 = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_"..typ..".png^[makealpha:255,255,255)"..(typ == "e" and "" or "^[multiply:orange")
 		local inv = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_8.png^[makealpha:255,255,255)^[multiply:orange"
-		register_sign("sign_lf", typ, prts.n, attrans("Temporary local speed restriction sign"), "sign", tile2, "8", inv, {main = prts.main, shunt = true, type = "temp"})
+		register_sign("sign_lf", typ, prts.n, attrans("Temporary local speed restriction sign").." ("..(typ == "e" and attrans("end") or typ) ..")",
+			"sign", tile2, "8", inv, {main = prts.main, shunt = true, type = "temp"})
 	end
 
 	for typ, prts in pairs {
@@ -353,7 +355,8 @@ for _, rtab in ipairs({
 	} do
 		local tile2 = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_"..typ..".png^[makealpha:255,255,255)"
 		local inv = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_8.png^[makealpha:255,255,255)"
-		register_sign("sign_lf7", typ, prts.n, attrans("Line speed restriction sign"), "sign", tile2, "8", inv, {main = prts.main, shunt = true, type = "line"})
+		register_sign("sign_lf7", typ, prts.n, attrans("Line speed restriction sign").." ("..(typ == "20" and attrans("end") or typ) ..")",
+			"sign", tile2, "8", inv, {main = prts.main, shunt = true, type = "line"})
 	end
 	
 	-- Geschwindigkeits(vor)anzeiger für Ks-Signale
