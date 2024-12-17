@@ -88,6 +88,11 @@ end
 
 -- function to iterate over all the programs the CNC machine knows
 function technic_cnc.register_all(recipeitem, groups, images, description)
+	local ndef = core.registered_nodes[recipeitem]
+	if ndef == nil then
+		error("Cannot register CNC shapes of unknown node '"..recipeitem.."'!")
+	end
+	images = assert(ndef.tiles)
 	for _, data in ipairs(technic_cnc.programs) do
 		-- Disable node creation for disabled node types for some material
 		local do_register = ch_core.is_shape_allowed(recipeitem, "cnc", data.suffix)

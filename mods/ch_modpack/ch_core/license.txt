@@ -37,6 +37,7 @@ ch_core_dot.png
 ch_core_pryc.png
 ch_core_empty.png
 ch_core_white_pixel.png
+ch_core_white_frame32.png
 ch_core_normal.obj
 ch_core_normal_45.obj
 ch_core_kladivo.png

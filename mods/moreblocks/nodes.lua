@@ -413,10 +413,14 @@ local nodes = {
 		furnace_burntime = 22,
 	},
 	]]
+	-- glass: opacity = 40, clean glass: opacity = 20
 	["glow_glass"] = {
 		description = S("Glow Glass"),
 		drawtype = "glasslike_framed_optional",
-		tiles = {"default_glass.png^[colorize:#E9CD61", "default_glass_detail.png^[colorize:#E9CD61"},
+		tiles = {
+			"ch_core_white_pixel.png^[opacity:40^[resize:32x32^(ch_core_white_frame32.png^[multiply:#bbbbbb)",
+			"ch_core_white_pixel.png^[opacity:40",
+		},
 		use_texture_alpha = "blend",
 		paramtype = "light",
 		sunlight_propagates = true,
@@ -428,8 +432,11 @@ local nodes = {
 	["clean_glow_glass"] = {
 		description = S("Clean Glow Glass"),
 		drawtype = "glasslike_framed_optional",
-		tiles = {"moreblocks_clean_glass.png^[colorize:#E9CD61", "moreblocks_clean_glass_detail.png^[colorize:#E9CD61"},
-		use_texture_alpha = "clip",
+		tiles = {
+			"ch_core_white_pixel.png^[opacity:20^[resize:32x32^(ch_core_white_frame32.png^[multiply:#bbbbbb)",
+			"ch_core_white_pixel.png^[opacity:20",
+		},
+		use_texture_alpha = "blend",
 		paramtype = "light",
 		sunlight_propagates = true,
 		is_ground_content = false,
@@ -440,7 +447,10 @@ local nodes = {
 	["trap_glow_glass"] = {
 		description = S("Trap Glow Glass"),
 		drawtype = "glasslike_framed_optional",
-		tiles = {"default_glass.png^[colorize:#E9CD61^moreblocks_trap_box_glass.png", "default_glass_detail.png^[colorize:#E9CD61"},
+		tiles = {
+			"ch_core_white_pixel.png^[opacity:40^[resize:32x32^(ch_core_white_frame32.png^[multiply:#bbbbbb)^moreblocks_trap_box_glass.png",
+			"ch_core_white_pixel.png^[opacity:40",
+		},
 		use_texture_alpha = "blend",
 		paramtype = "light",
 		sunlight_propagates = true,
@@ -454,7 +464,10 @@ local nodes = {
 	["trap_clean_glow_glass"] = {
 		description = S("Trap Clean Glow Glass"),
 		drawtype = "glasslike_framed_optional",
-		tiles = {"moreblocks_clean_glass.png^[colorize:#E9CD61^moreblocks_trap_box_glass.png", "moreblocks_clean_glass_detail.png^[colorize:#E9CD61"},
+		tiles = {
+			"ch_core_white_pixel.png^[opacity:20^[resize:32x32^(ch_core_white_frame32.png^[multiply:#bbbbbb)^moreblocks_trap_box_glass.png",
+			"ch_core_white_pixel.png^[opacity:20",
+		},
 		use_texture_alpha = "clip",
 		paramtype = "light",
 		sunlight_propagates = true,
@@ -468,7 +481,10 @@ local nodes = {
 	["super_glow_glass"] = {
 		description = S("Super Glow Glass"),
 		drawtype = "glasslike_framed_optional",
-		tiles = {"default_glass.png^[colorize:#FFFF78", "default_glass_detail.png^[colorize:#FFFF78"},
+		tiles = {
+			"ch_core_white_pixel.png^[opacity:40^[resize:32x32^ch_core_white_frame32.png",
+			"ch_core_white_pixel.png^[opacity:40",
+		},
 		use_texture_alpha = "blend",
 		paramtype = "light",
 		sunlight_propagates = true,
@@ -480,7 +496,10 @@ local nodes = {
 	["clean_super_glow_glass"] = {
 		description = S("Clean Super Glow Glass"),
 		drawtype = "glasslike_framed_optional",
-		tiles = {"moreblocks_clean_glass.png^[colorize:#FFFF78", "moreblocks_clean_glass_detail.png^[colorize:#FFFF78"},
+		tiles = {
+			"ch_core_white_pixel.png^[opacity:20^[resize:32x32^ch_core_white_frame32.png",
+			"ch_core_white_pixel.png^[opacity:20",
+		},
 		use_texture_alpha = "clip",
 		paramtype = "light",
 		sunlight_propagates = true,
@@ -492,7 +511,10 @@ local nodes = {
 	["trap_super_glow_glass"] = {
 		description = S("Trap Super Glow Glass"),
 		drawtype = "glasslike_framed_optional",
-		tiles = {"default_glass.png^[colorize:#FFFF78^moreblocks_trap_box_glass.png", "default_glass_detail.png^[colorize:#FFFF78"},
+		tiles = {
+			"ch_core_white_pixel.png^[opacity:40^[resize:32x32^ch_core_white_frame32.png^moreblocks_trap_box_glass.png",
+			"ch_core_white_pixel.png^[opacity:40",
+		},
 		use_texture_alpha = "blend",
 		paramtype = "light",
 		sunlight_propagates = true,
@@ -506,7 +528,10 @@ local nodes = {
 	["trap_clean_super_glow_glass"] = {
 		description = S("Trap Clean Super Glow Glass"),
 		drawtype = "glasslike_framed_optional",
-		tiles = {"moreblocks_clean_glass.png^[colorize:#FFFF78^moreblocks_trap_box_glass.png", "moreblocks_clean_glass_detail.png^[colorize:#FFFF78"},
+		tiles = {
+			"ch_core_white_pixel.png^[opacity:20^[resize:32x32^ch_core_white_frame32.png^moreblocks_trap_box_glass.png",
+			"ch_core_white_pixel.png^[opacity:20",
+		},
 		use_texture_alpha = "clip",
 		paramtype = "light",
 		sunlight_propagates = true,
