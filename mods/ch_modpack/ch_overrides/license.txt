@@ -188,7 +188,6 @@ letters_9_overlay.png
 
 basic_materials_brass_ingot.png
 basic_materials_cement_block.png
-basic_materials_concrete_block.png
 bonemeal_bone.png
 bonemeal_gelatin_powder.png
 drinks_bottle_contents.png
@@ -686,3 +685,9 @@ ch_overrides_ui_events.png
 	Source: https://commons.wikimedia.org/wiki/File:P_newspaper.svg
 	License: CC BY-SA 3.0
 	Adapted and modified by Singularis (modifications under CC BY-SA 3.0)
+
+basic_materials_concrete_block.png
+	Author: Singularis
+	License: CC BY-SA 4.0
+	Used source:
+	- https://commons.wikimedia.org/wiki/File:Concrete_floor_03_rough_16k_(Matterfield_and_Rob_Tuytel_via_Poly_Haven).png (Matterfield and Rob Tuytel via Poly Haven, license: CC0)
