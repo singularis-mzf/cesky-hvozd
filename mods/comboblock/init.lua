@@ -37,6 +37,8 @@ local allowed_combos = {
 	[19] = "technic:slab_concrete+streets:slab_asphalt_red",
 	[20] = "technic:slab_concrete+streets:slab_asphalt_blue",
 	[21] = "default:slab_silver_sandstone_block+ch_core:slab_plaster_medium_amber_s50",
+	[22] = "moreblocks:slab_gravel+technic:slab_concrete",
+	[23] = "ch_extras:slab_railway_gravel+technic:slab_concrete",
 }
 
 local function combo_after_change(pos, old_node, new_node, player, nodespec)
@@ -82,7 +84,13 @@ comboblock = {}
 
 local m_name = minetest.get_current_modname()
 local m_path = minetest.get_modpath(m_name)
---	dofile(m_path.. "/i_comboblock_letter.lua" )	
+--	dofile(m_path.. "/i_comboblock_letter.lua" )
+
+
+local groups_to_inherit = {
+	"choppy", "crumbly", "snappy", "oddly_breakable_by_hand", "flammable"
+}
+
 ----------------------------
 --       Functions        --
 ----------------------------
@@ -120,13 +128,22 @@ local m_path = minetest.get_modpath(m_name)
 		return new_name                                             -- Output Single image eg ^[lowpart:50:default_cobble.png
 	end                                                             -- Output Two or more image eg  ^[lowpart:50:default_cobble.png^[lowpart:50:cracked_cobble.png
 
-	local preprocess_description_str = " ("..minetest.translate("moreblocks", "Slab")..", 8/16)"
-	local function preprocess_description(desc)
-		local i = desc:find(preprocess_description_str, 1, true)
-		if i then
-			desc = desc:sub(1, i - 1)..desc:sub(i + preprocess_description_str:len(), -1)
+	local function preprocess_description(slab_name)
+		local material = stairsplus:analyze_shape(slab_name)
+		local ndef = material and core.registered_nodes[material]
+		local description
+		if ndef ~= nil then
+			description = ndef.description
+			if description ~= nil then
+				return "„"..description.."“"
+			end
 		end
-		return "„"..desc.."“"
+		ndef = core.registered_nodes[slab_name]
+		description = ndef.description
+		if description ~= nil then
+			return "„"..description.."“"
+		end
+		return "?"
 	end
 
 	local function preprocess_tiles(tiles)
@@ -418,11 +435,12 @@ for _,v1 in pairs(slab_index) do
 
 	else
 		local v1_def = minetest.registered_nodes[v1]                 -- Makes a copy of the relevant node settings
-		local v1_groups = table.copy(v1_def.groups)                  -- Takes the above and places the groups into its own seperate copy
+		local v1_groups = ch_core.assembly_groups({}, {comboblock = 1}, v1_def.groups, groups_to_inherit)
 		local v1_tiles = preprocess_tiles(v1_def.tiles)              -- v1 tiles table
-		v1_groups.not_in_creative_inventory = nil
-		v1_groups.slab = nil
-		v1_groups.comboblock = 1
+		-- v1_groups.not_in_creative_inventory = nil
+		-- v1_groups.slab = nil
+		-- v1_groups.comboblock = 1
+		local v1_description = v1_def.description or ""
 
 		for i = 2, 6, 1 do 											 -- Checks for image names for each side, If not image name
 			if not v1_tiles[i] then									 -- then copy previous image name in: 1 = Top, 2 = Bottom, 3-6 = Sides
@@ -510,7 +528,7 @@ for _,v1 in pairs(slab_index) do
 							v1_tiles[6].name.."^[resize:"..cs.."x"..cs..v2_tiles[6].name
 						}
 						minetest.register_node(combo_name, {  -- registering the new combo node
-							description = string.format("%02d%s %s", allowed_combo_index, "", preprocess_description(v1_def.description).." na "..preprocess_description(v2_def.description)),
+							description = string.format("%02d", allowed_combo_index).." "..preprocess_description(v1).." na "..preprocess_description(v2),
 							_ch_help = ch_help,
 							_ch_help_group = ch_help_group,
 							tiles = combo_tiles,
@@ -550,7 +568,7 @@ for _,v1 in pairs(slab_index) do
 							v1_tiles[6].name.."^[resize:"..cs.."x"..cs..v2_tiles[6].name
 						}
 						minetest.register_node(combo_name, {
-							description = string.format("%02d%s %s", allowed_combo_index, "", preprocess_description(v1_def.description).." na "..preprocess_description(v2_def.description)),
+							description = string.format("%02d", allowed_combo_index).." "..preprocess_description(v1).." na "..preprocess_description(v2),
 							_ch_help = ch_help,
 							_ch_help_group = ch_help_group,
 							tiles = combo_tiles,

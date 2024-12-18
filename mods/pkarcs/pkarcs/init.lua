@@ -99,7 +99,7 @@ local groups_to_inherit = {
 	"cracky",
 	"crumbly",
 	"flamable",
-	"oddly_breakable_by_hands",
+	"oddly_breakable_by_hand",
 	"snappy",
 }
 
