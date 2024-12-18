@@ -235,6 +235,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPLv2.1 pro kód, CC-BY-SA 3.0 pro média
 * [ContentDB](https://content.minetest.net/packages/gpcf/moretrains/)
 
+## railroad_paraphernalia
+
+* Zdroj: [https://github.com/h-v-smacker/railroad\_paraphernalia](https://github.com/h-v-smacker/railroad\_paraphernalia), revize 520fcb1366259c277ae6d966c0a6d5148bb89c98
+* Původní licence: AGPLv3
+* Licence úprav: AGPLv3
+
 ## Some More Trains (some\_more\_trains)
 
 * Zdroj: [https://github.com/APercy/some\_more\_trains](https://github.com/APercy/some\_more\_trains), revize 326f7e73a73e05e26a4cc25c8cc5acc777429443
