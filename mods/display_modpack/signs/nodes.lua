@@ -119,6 +119,10 @@ local function on_receive_fields_poster(pos, formname, fields, player)
 	end
 end
 
+local function on_punch(pos, node, player, pointed_thing)
+	display_api.update_entities(pos)
+end
+
 -- Text entity for all signs
 display_api.register_display_entity("signs:display_text")
 
@@ -188,7 +192,7 @@ local models = {
 		node_fields = {
 			description = S("Wooden direction sign"),
 			tiles = { "signs_wooden_direction.png" },
-			inventory_image = "signs_wooden_direction_inventory.png",
+			inventory_image = "signs_wooden_direction_inventory.png^[transformFX",
 			signs_other_dir = 'signs:wooden_right_sign',
 			drawtype = "mesh",
 			mesh = "signs_dir_left.obj",
@@ -213,13 +217,11 @@ local models = {
 			          "signs_poster_sides.png", "signs_poster.png" },
 			use_texture_alpha = "opaque",
 			inventory_image = "signs_poster_inventory.png",
-			groups= { dig_immediate = 3 },
+			groups= { dig_immediate = 2 },
 			on_construct = display_api.on_construct,
 			on_rightclick = display_poster,
 			on_receive_fields = on_receive_fields_poster,
-			on_punch = function(pos, node, player, pointed_thing)
-				display_api.update_entities(pos)
-			end,
+			on_punch = on_punch,
 		},
 	},
 	label_small = {
@@ -257,3 +259,14 @@ for name, model in pairs(models)
 do
 	signs_api.register_sign("signs", name, model)
 end
+
+ch_core.register_shape_selector_group({
+	nodes = {
+		"signs:wooden_long_sign",
+		"signs:wooden_left_sign",
+		"signs:wooden_right_sign",
+	},
+	after_change = function(pos, old_node, new_node, player, nodespec)
+		on_punch(pos)
+	end,
+})

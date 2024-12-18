@@ -259,6 +259,31 @@ function signs_api.register_sign(mod, name, model)
 				minetest.chat_send_player(player:get_player_name(), "*** pro odstranění většiny cedulí, štítku, směrovek a plakátů musíte při odstraňování držet Aux1 nebo použít elektrický nástroj")
 				return false
 			end,
+		preserve_metadata = function(pos, oldnode, oldmeta, drops)
+			if #drops == 1 and (oldmeta.display_text or "") ~= "" then
+				local idef = core.registered_items[drops[1]:get_name()]
+				local meta = drops[1]:get_meta()
+				meta:set_string("font", oldmeta.font or "")
+				meta:set_string("display_text", oldmeta.display_text)
+				meta:set_string("infotext", oldmeta.infotext or "")
+				meta:set_string("text", oldmeta.text or "")
+				if idef ~= nil and idef.description ~= nil then
+					meta:set_string("description", idef.description..": "..ch_core.utf8_truncate_right(oldmeta.display_text, 80, "(...)"))
+				end
+			end
+			print("DEBUG: preserve_metadata() called: "..dump2({pos = pos, oldnode = oldnode, oldmeta = oldmeta, drops = drops}))
+		end,
+		after_place_node = function(pos, placer, itemstack, pointed_thing)
+			local itemmeta = itemstack:get_meta()
+			if itemmeta:get_string("display_text") ~= "" then
+				local meta = core.get_meta(pos)
+				meta:set_string("display_text", itemmeta:get_string("display_text"))
+				meta:set_string("font", itemmeta:get_string("font"))
+				meta:set_string("infotext", itemmeta:get_string("infotext"))
+				meta:set_string("text", itemmeta:get_string("text"))
+				display_api.update_entities(pos)
+			end
+		end,
 	}
 
 	-- Node fields override
@@ -267,6 +292,8 @@ function signs_api.register_sign(mod, name, model)
 			for key2, value2 in pairs(value) do
 				fields[key][key2] = value2
 			end
+		elseif (key == "preserve_metadata" or key == "after_place_node") and value == false then
+			fields[key] = nil
 		else
 			fields[key] = value
 		end

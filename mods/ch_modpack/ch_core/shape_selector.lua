@@ -34,6 +34,8 @@ end
         rows = int, -- počet řádek ve formspecu (>= 1),
         check_owner = bool, -- je-li true a má-li blok meta:get_string("owner"), povolí změnu jen
                             -- vlastníkovi/ici a postavám s právem protection_bypass
+        on_change = function(pos, old_node, new_node, player, nodespec),
+            -- callback volaný pro provedení změny (je-li nastaven); vrátí-li false, změna selhala
         after_change = function(pos, old_node, new_node, player, nodespec), -- callback, který bude zavolaný *po* provedení změny
     }
 
@@ -87,6 +89,9 @@ function ch_core.register_shape_selector_group(def)
     end
     if def.after_change ~= nil then
         new_group.after_change = def.after_change
+    end
+    if def.on_change ~= nil then
+        new_group.on_change = def.on_change
     end
     local new_nodes = {}
     for i = 1, count do
@@ -157,7 +162,16 @@ local function formspec_callback(custom_state, player, formname, fields)
                 end
                 local change_node = new_node.name ~= current_node.name or new_node.param2 ~= current_node.param2
                 if change_node then
-                    core.swap_node(pos, new_node)
+                    local change_result, error_message
+                    if custom_state.on_change ~= nil then
+                        change_result, error_message = custom_state.on_change(pos, old_node,
+                            {name = new_node.name, param = old_node.param, param2 = new_node.param2}, player, new_node_spec)
+                    end
+                    if change_result == nil then
+                        core.swap_node(pos, new_node)
+                    elseif change_result == false then
+                        change_node = false
+                    end
                 end
                 fields.quit = "true"
                 core.close_formspec(player_name, formname)
@@ -269,6 +283,9 @@ function ch_core.show_shape_selector(player, pos, node)
     }
     if group.after_change ~= nil then
         custom_state.after_change = group.after_change
+    end
+    if group.on_change ~= nil then
+        custom_state.on_change = group.on_change
     end
     if group.check_owner then
         custom_state.check_owner = true

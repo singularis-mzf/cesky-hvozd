@@ -912,6 +912,18 @@ function signs_lib.check_for_floor(pointed_thing)
 	end
 end
 
+function signs_lib.preserve_metadata(pos, oldnode, oldmeta, drops)
+	if #drops == 1 and (oldmeta.text or "") ~= "" then
+		local idef = core.registered_items[drops[1]:get_name()]
+		local meta = drops[1]:get_meta()
+		meta:set_string("infotext", oldmeta.infotext or "")
+		meta:set_string("text", oldmeta.text)
+		if oldmeta.infotext ~= nil and idef ~= nil and idef.description ~= nil then
+			meta:set_string("description", idef.description..": "..ch_core.utf8_truncate_right(oldmeta.infotext, 80, "(...)"))
+		end
+	end
+end
+
 function signs_lib.after_place_node(pos, placer, itemstack, pointed_thing, locked)
 	local playername = placer:get_player_name()
 
@@ -952,13 +964,24 @@ function signs_lib.after_place_node(pos, placer, itemstack, pointed_thing, locke
 		minetest.swap_node(pos, {name = signname, param2 = 4})
 	end
 
+	local imeta = itemstack:get_meta()
 	local meta = minetest.get_meta(pos)
+	-- restore metadata
+	local old_text = imeta:get_string("text")
+	if old_text ~= "" then
+		meta:set_string("text", old_text)
+		meta:set_string("infotext", imeta:get_string("infotext"))
+	end
+
 	if locked then
 		meta:set_string("owner", playername)
 		meta:set_string("infotext", S("Locked sign, owned by @1\n", ch_core.prihlasovaci_na_zobrazovaci(playername)))
 	end
 	meta:set_string("unifont", 1)
 	meta:set_int("widefont", 1)
+	if old_text ~= "" then
+		signs_lib.update_sign(pos)
+	end
 end
 
 function signs_lib.register_fence_with_sign()
@@ -1007,6 +1030,7 @@ function signs_lib.register_sign(name, raw_def)
 			def.on_punch        = raw_def.on_punch            or signs_lib.update_sign
 		end
 
+		def.preserve_metadata   = raw_def.preserve_metadata   or signs_lib.preserve_metadata
 		def.on_rightclick       = raw_def.on_rightclick       or signs_lib.rightclick_sign
 		def.on_destruct         = raw_def.on_destruct         or signs_lib.destruct_sign
 		def.number_of_lines     = raw_def.number_of_lines     or signs_lib.standard_lines
