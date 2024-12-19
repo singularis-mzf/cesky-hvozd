@@ -323,8 +323,9 @@ local function get_material_description(node_name)
 end
 
 function default.register_fence(name, def)
+	local clear_name = name:gsub("^:", "")
 	minetest.register_craft({
-		output = name .. " 4",
+		output = clear_name .. " 4",
 		recipe = {
 			{ def.material, 'group:stick', def.material },
 			{ def.material, 'group:stick', def.material },
@@ -379,7 +380,7 @@ function default.register_fence(name, def)
 	def.groups.fence = 1
 
 	local base_description = get_material_description(def.material)
-	if base_description ~= nil and name ~= "mobs:fence_wood" then
+	if base_description ~= nil and clear_name ~= "mobs:fence_wood" then
 		def.description = base_description..": plot"
 	end
 
@@ -517,7 +518,6 @@ end
 -- Prevent decay of placed leaves
 
 default.after_place_leaves = function(pos, placer, itemstack, pointed_thing)
-	print("DEBUG: default.after_place_leaves() called at "..minetest.pos_to_string(pos))
 	if placer and placer:is_player() then
 		local node = minetest.get_node(pos)
 		node.param2 = bit.bor(node.param2, 1)

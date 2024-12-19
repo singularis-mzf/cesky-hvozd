@@ -107,7 +107,7 @@ function si_frames.register_frames2(nodename)
         groups = prepare_groups(ndef.groups),
         sounds = ndef.sounds,
     }
-    local texture = ndef.tiles[1] .. (rotate and "^[transform1" or "")
+    local texture = ndef.tiles[1] -- .. (rotate and "^[transform1" or "")
 
     def.tiles = { texture }
     def.drawtype = "mesh"
@@ -120,7 +120,6 @@ function si_frames.register_frames2(nodename)
     def.collisionbox = node_box
 
     for variant, variant_def in pairs(type_of_frames) do
-        print("DEBUG: variant "..variant.." of "..nodename)
         if ch_core.is_shape_allowed(nodename, "si_frames", variant) then
             local vdef = table.copy(def)
             vdef.description = S(variant_def.name, def.description or name)

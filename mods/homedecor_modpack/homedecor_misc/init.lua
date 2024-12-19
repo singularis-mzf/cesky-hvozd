@@ -428,13 +428,13 @@ homedecor_misc.banister_materials = {
 }
 
 local banister_sides = {
-	{"diagonal_left", S("diagonal left"), 2, 1},
-	{"diagonal_right", S("diagonal right"), 2, 3},
-	{"diagonal_left_upper", S("diagonal left upper part"), 1, 1},
-	{"diagonal_left_lower", S("diagonal left lower part"), 3, 1},
-	{"diagonal_right_upper", S("diagonal right upper part"), 1, 3},
-	{"diagonal_right_lower", S("diagonal right lower part"), 3, 3},
-	{"horizontal", S("horizontal"), 0, 0},
+	{"diagonal_left", S("diagonal left"), 2, 1, 3},
+	{"diagonal_right", S("diagonal right"), 2, 3, 4},
+	{"diagonal_left_upper", S("diagonal left upper part"), 1, 1, 5},
+	{"diagonal_left_lower", S("diagonal left lower part"), 3, 1, 7},
+	{"diagonal_right_upper", S("diagonal right upper part"), 1, 3, 6},
+	{"diagonal_right_lower", S("diagonal right lower part"), 3, 3, 8},
+	{"horizontal", S("horizontal"), 0, 0, 1},
 }
 
 for _, sideinfo in ipairs(banister_sides) do
@@ -489,6 +489,27 @@ for _, sideinfo in ipairs(banister_sides) do
 
 			unifieddyes.generate_split_palette_nodes(nn, def2, nil)
 		end
+	end
+end
+
+for _, mat in ipairs(homedecor_misc.banister_materials) do
+	local nodes = {}
+	for _, sideinfo in ipairs(banister_sides) do
+		local group_index = sideinfo[5]
+		nodes[group_index] = "homedecor:banister_"..mat[1].."_"..sideinfo[1]
+	end
+	ch_core.register_shape_selector_group({columns = 2, rows = 4, nodes = nodes})
+end
+
+for _, color in ipairs(unifieddyes.HUES_WITH_GREY) do
+	if color ~= "grey" then
+		local nodes = {}
+		for _, sideinfo in ipairs(banister_sides) do
+			local suffix = sideinfo[1]
+			local group_index = sideinfo[5]
+			nodes[group_index] = "homedecor:banister_wood_"..sideinfo[1].."_"..color
+		end
+		ch_core.register_shape_selector_group({columns = 2, rows = 4, nodes = nodes})
 	end
 end
 

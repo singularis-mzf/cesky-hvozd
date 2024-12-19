@@ -1185,6 +1185,7 @@ function ch_core.register_fence(material, defs)
 			def.inventory_image = "default_fence_overlay.png^"..texture.."^default_fence_overlay.png^[makealpha:255,126,126"
 			def.wield_image = def.inventory_image
 		end
+		print("DEBUG: will call default.register_fence("..name..", "..dump2(def)..")")
 		default.register_fence(name, def)
 	end
 
