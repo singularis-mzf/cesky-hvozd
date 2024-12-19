@@ -554,6 +554,13 @@ minetest.register_chatcommand("info", {
 })
 
 local function vypsat_cas(player_name, param)
+	if type(player_name) == "table" then
+		-- API hack:
+		if player_name[1] ~= nil then
+			ch_core.systemovy_kanal(player_name[1], player_name[2])
+		end
+		return player_name[3], player_name[4]
+	end
 	local result, cas
 	if param == "utc" then
 		cas = ch_core.aktualni_cas()
@@ -573,6 +580,9 @@ local function vypsat_cas(player_name, param)
 	elseif param == "h" or param == "herni" or param == "" then
 		cas = ch_core.herni_cas()
 		result = string.format("%02d:%02d herního času", cas.hodina, cas.minuta)
+	elseif param == "ž" or param == "železniční" or param == "železniční+" or
+		param == "z" or param == "zeleznicni" or param == "zeleznicni+" then
+		result = "železniční čas není dostupný"
 	else
 		return false, "Nerozpoznaný parametr: "..param
 	end
@@ -581,7 +591,7 @@ local function vypsat_cas(player_name, param)
 end
 
 local def = {
-	params = "[utc|utc+|m[ístní]|m[ístní]+|h[erní]|h[erní]+]",
+	params = "[utc|utc+|m[ístní]|m[ístní]+|h[erní]|h[erní]+|ž[elezniční]|ž[elezniční]+]",
 	description = "Vypíše požadovaný druh času (a případně data). Výchozí je „h“ (herní čas).",
 	privs = {},
 	func = vypsat_cas,
