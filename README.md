@@ -214,6 +214,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: uvedeny u jednotlivých souborů stejným způsobem jako v původním módu
 * [ContentDB](https://content.minetest.net/packages/doxygen\_spammer/doxy\_mini\_tram/)
 
+## JR E231series (JR\_E231series\_modpack)
+
+* Zdroj: [https://github.com/h-v-smacker/JR\_E231series\_modpack](https://github.com/h-v-smacker/JR\_E231series\_modpack), revize 8d6401907722ec64029cb6928ccbe559209796a3
+* Původní licence: LGPLv2.1 pro kód, CC BY-SA 3.0 pro média
+* Licence úprav: LGPLv2.1 pro kód, CC BY-SA 3.0 pro média
+
 ## Tieless Tracks (minetest\_tieless\_tracks)
 
 * Zdroj: [https://github.com/SamMatzko/minetest\_tieless\_tracks](https://github.com/SamMatzko/minetest\_tieless\_tracks), revize 0424a3408af080a6f74246fd684227470f9a41c3
