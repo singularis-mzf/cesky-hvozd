@@ -503,6 +503,8 @@ local materials_roof = set(
 	"cottages:brown",
 	"cottages:red",
 	"cottages:reet",
+	"darkage:glass",
+	"darkage:glow_glass",
 	"darkage:slate_tile",
 	"default:acacia_wood",
 	"default:aspen_wood",

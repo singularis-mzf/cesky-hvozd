@@ -417,7 +417,7 @@ local models = {
 		width = 1,
 		height = 1,
 		entity_fields = {
-			size = { x = 2, y = 1 },
+			size = { x = 3, y = 1 },
 			maxlines = 4,
 			color = "#000",
 		},
@@ -435,7 +435,7 @@ local models = {
 		width = 1,
 		height = 1,
 		entity_fields = {
-			size = { x = 2, y = 1 },
+			size = { x = 3, y = 1 },
 			maxlines = 4,
 			color = "#fff",
 		},
@@ -453,7 +453,7 @@ local models = {
 		width = 1,
 		height = 1,
 		entity_fields = {
-			size = { x = 2, y = 1 },
+			size = { x = 3, y = 1 },
 			maxlines = 4,
 			color = "#ffbb00",
 		},
@@ -471,7 +471,7 @@ local models = {
 		width = 1,
 		height = 1,
 		entity_fields = {
-			size = { x = 2, y = 1 },
+			size = { x = 3, y = 1 },
 			maxlines = 4,
 			color = "#00ff00",
 		},
