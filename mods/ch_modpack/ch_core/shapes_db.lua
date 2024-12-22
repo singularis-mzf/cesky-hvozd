@@ -1000,7 +1000,7 @@ function ch_core.get_materials_from_shapes_db(key)
 	if not set["default:stone"] then
 		table.insert(result, "default:stone")
 	end
-	print("DEBUG: get_materials_from_shapes_db("..key..") will return "..#result.." materials")
+	-- print("DEBUG: get_materials_from_shapes_db("..key..") will return "..#result.." materials")
 	return result
 end
 
@@ -1185,7 +1185,6 @@ function ch_core.register_fence(material, defs)
 			def.inventory_image = "default_fence_overlay.png^"..texture.."^default_fence_overlay.png^[makealpha:255,126,126"
 			def.wield_image = def.inventory_image
 		end
-		print("DEBUG: will call default.register_fence("..name..", "..dump2(def)..")")
 		default.register_fence(name, def)
 	end
 

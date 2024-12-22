@@ -553,41 +553,66 @@ minetest.register_chatcommand("info", {
 	end,
 })
 
+local vypsat_cas_param_table = {
+	u = function()
+		local cas = ch_core.aktualni_cas()
+		return string.format("%02d:%02d UTC", cas.utc_hodina, cas.utc_minuta)
+	end,
+	["u+"] = function()
+		local cas = ch_core.aktualni_cas()
+		return string.format("%04d-%02d-%02d %02d:%02d:%02d UTC", cas.utc_rok, cas.utc_mesic, cas.utc_den, cas.utc_hodina, cas.utc_minuta, cas.utc_sekunda)
+	end,
+	m = function()
+		local cas = ch_core.aktualni_cas()
+		return string.format("%02d:%02d:%02d %s", cas.hodina, cas.minuta, cas.sekunda, cas.posun_text)
+	end,
+	["m+"] = function()
+		local cas = ch_core.aktualni_cas()
+		return string.format("%04d-%02d-%02d %02d:%02d:%02d %s", cas.rok, cas.mesic, cas.den, cas.hodina, cas.minuta, cas.sekunda, cas.posun_text)
+	end,
+	h = function()
+		local cas = ch_core.herni_cas()
+		return string.format("%02d:%02d herního času", cas.hodina, cas.minuta)
+	end,
+	["h+"] = function()
+		local cas = ch_core.herni_cas()
+		return string.format("%02d:%02d:%02d herního času (herní den %d)", cas.hodina, cas.minuta, cas.sekunda, cas.day_count)
+	end,
+	["ž"] = function()
+		return "železniční čas není dostupný"
+	end,
+}
+vypsat_cas_param_table["utc"] = vypsat_cas_param_table["u"]
+vypsat_cas_param_table["utc+"] = vypsat_cas_param_table["u+"]
+vypsat_cas_param_table["místní"] = vypsat_cas_param_table["m"]
+vypsat_cas_param_table["mistni"] = vypsat_cas_param_table["m"]
+vypsat_cas_param_table["místní+"] = vypsat_cas_param_table["m+"]
+vypsat_cas_param_table["mistni+"] = vypsat_cas_param_table["m+"]
+vypsat_cas_param_table["herni"] = vypsat_cas_param_table["h"]
+vypsat_cas_param_table["herní"] = vypsat_cas_param_table["h"]
+vypsat_cas_param_table["herni+"] = vypsat_cas_param_table["h+"]
+vypsat_cas_param_table["herní+"] = vypsat_cas_param_table["h+"]
+vypsat_cas_param_table["železniční"] = vypsat_cas_param_table["ž"]
+vypsat_cas_param_table["zeleznicni"] = vypsat_cas_param_table["ž"]
+vypsat_cas_param_table["železniční+"] = vypsat_cas_param_table["ž"]
+vypsat_cas_param_table["zeleznicni+"] = vypsat_cas_param_table["ž"]
+
 local function vypsat_cas(player_name, param)
 	if type(player_name) == "table" then
 		-- API hack:
-		if player_name[1] ~= nil then
-			ch_core.systemovy_kanal(player_name[1], player_name[2])
+		local t = player_name
+		if t[1] ~= nil then
+			ch_core.systemovy_kanal(t[1], t[2])
 		end
-		return player_name[3], player_name[4]
+		return t[3], t[4]
 	end
-	local result, cas
-	if param == "utc" then
-		cas = ch_core.aktualni_cas()
-		result = string.format("%02d:%02d UTC", cas.utc_hodina, cas.utc_minuta)
-	elseif param == "utc+" then
-		cas = ch_core.aktualni_cas()
-		result = string.format("%04d-%02d-%02d %02d:%02d:%02d UTC", cas.utc_rok, cas.utc_mesic, cas.utc_den, cas.utc_hodina, cas.utc_minuta, cas.utc_sekunda)
-	elseif param == "místní" or param == "mistni" or param == "m" then
-		cas = ch_core.aktualni_cas()
-		result = string.format("%02d:%02d:%02d %s", cas.hodina, cas.minuta, cas.sekunda, cas.posun_text)
-	elseif param == "místní+" or param == "mistni+" or param == "m+" then
-		cas = ch_core.aktualni_cas()
-		result = string.format("%04d-%02d-%02d %02d:%02d:%02d %s", cas.rok, cas.mesic, cas.den, cas.hodina, cas.minuta, cas.sekunda, cas.posun_text)
-	elseif param == "h+" or param == "herní+" or param == "herni+" then
-		cas = ch_core.herni_cas()
-		result = string.format("%02d:%02d:%02d herního času (herní den %d)", cas.hodina, cas.minuta, cas.sekunda, cas.day_count)
-	elseif param == "h" or param == "herni" or param == "" then
-		cas = ch_core.herni_cas()
-		result = string.format("%02d:%02d herního času", cas.hodina, cas.minuta)
-	elseif param == "ž" or param == "železniční" or param == "železniční+" or
-		param == "z" or param == "zeleznicni" or param == "zeleznicni+" then
-		result = "železniční čas není dostupný"
+	local f = vypsat_cas_param_table[param]
+	if f ~= nil then
+		ch_core.systemovy_kanal(player_name, f())
+		return true
 	else
 		return false, "Nerozpoznaný parametr: "..param
 	end
-	ch_core.systemovy_kanal(player_name, result)
-	return true
 end
 
 local def = {
