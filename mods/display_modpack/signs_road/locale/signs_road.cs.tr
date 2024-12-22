@@ -33,10 +33,14 @@ Large yellow banner=velká žlutá cedule (5×1 m)
 # Invisible sign
 
 Invisible sign with black text=neviditelná cedule s černým textem (4 řádky)
+Invisible sign with green text=neviditelná cedule s zeleným textem (4 řádky)
+Invisible sign with orange text=neviditelná cedule s oranžovým textem (4 řádky)
 Invisible sign with white text=neviditelná cedule s bílým textem (4 řádky)
 
 # Large invisible banner
 Large invisible banner with black text=velká neviditelná cedule s černým textem
+Large invisible banner with green text=velká neviditelná cedule s zeleným textem
+Large invisible banner with orange text=velká neviditelná cedule s oranžovým textem
 Large invisible banner with white text=velká neviditelná cedule s bílým textem
 
 # Special

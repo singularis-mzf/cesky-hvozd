@@ -107,6 +107,8 @@ local materials_kp = set(
 "darkage:basalt_brick",
 "darkage:basalt_cobble",
 "darkage:chalk",
+"darkage:glass",
+"darkage:glow_glass",
 "darkage:gneiss",
 "darkage:gneiss_brick",
 "darkage:gneiss_cobble",
@@ -236,8 +238,6 @@ local materials_no_kp = set(
 local materials_glass = set(
 	"building_blocks:smoothglass",
 	"building_blocks:woodglass",
-	"darkage:glass",
-	"darkage:glow_glass",
 	"default:glass",
 	"default:obsidian_glass",
 	"moreblocks:clean_glass",

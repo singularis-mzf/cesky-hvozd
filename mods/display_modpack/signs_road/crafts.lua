@@ -29,8 +29,16 @@ local signs_table = {
 	{ "dye:brown", "dye:white", "signs_road:brown_sign", "signs_road:brown_right_sign", "signs_road:brown_large_street_sign" },
 	{ "dye:red", "dye:white", "signs_road:red_sign", "signs_road:red_right_sign", "signs_road:red_large_street_sign" },
 	{ "dye:black", "dye:white", "signs_road:black_sign", "signs_road:black_right_sign", "signs_road:black_large_street_sign"},
-	{ "", "dye:black", "signs_road:inv_sign_black_text", "", "signs_road:invisible_large_street_sign_black_text"},
-	{ "", "dye:white", "signs_road:inv_sign_white_text", "", "signs_road:invisible_large_street_sign_white_text"},
+	-- { "", "dye:black", "signs_road:inv_sign_black_text", "", "signs_road:invisible_large_street_sign_black_text"},
+	-- { "", "dye:white", "signs_road:inv_sign_white_text", "", "signs_road:invisible_large_street_sign_white_text"},
+}
+
+local inv_signs_table = {
+	-- itemstring_rect, itemstring_large?
+	{"signs_road:inv_sign_black_text", "signs_road:invisible_large_street_sign_black_text"},
+	{"signs_road:inv_sign_green_text", "signs_road:invisible_large_street_sign_green_text"},
+	{"signs_road:inv_sign_orange_text", "signs_road:invisible_large_street_sign_orange_text"},
+	{"signs_road:inv_sign_white_text", "signs_road:invisible_large_street_sign_white_text"},
 }
 
 for i, v in ipairs(signs_table) do
@@ -76,7 +84,52 @@ for i, v in ipairs(signs_table) do
 	end
 end
 
--- Various signs
+local empty_row = {"", "", ""}
+
+local inv_small_nodes, inv_large_nodes = {}, {}
+
+for i, v in ipairs(inv_signs_table) do
+	local next_sign_v = inv_signs_table[i + 1] or inv_signs_table[1]
+	core.register_craft({
+		output = next_sign_v[1],
+		recipe = {{v[1]}},
+	})
+	table.insert(inv_small_nodes, v[1])
+	if v[2] ~= nil then
+		local row = {v[1], v[1], ""}
+		core.register_craft({
+			output = v[2],
+			recipe = {row, row, empty_row},
+		})
+		if next_sign_v[2] ~= nil then
+			core.register_craft({
+				output = next_sign_v[2],
+				recipe = {{v[2]}},
+			})
+		end
+		table.insert(inv_large_nodes, v[2])
+	end
+end
+
+local function after_change(pos, old_node, new_node, player, nodespec)
+	display_api.update_entities(pos)
+end
+
+ch_core.register_shape_selector_group({nodes = inv_small_nodes, after_change = after_change})
+ch_core.register_shape_selector_group({nodes = inv_large_nodes, after_change = after_change})
+
+-- Other recipes
+
+for _, color in ipairs({"white", "black", "green", "orange"}) do
+	core.register_craft({
+		output = "signs_road:inv_sign_"..color.."_text 3",
+		recipe = {
+			{"dye:"..color, "dye:"..color, "dye:"..color},
+			{"default:glass", "default:glass", "default:glass"},
+			empty_row,
+		}
+	})
+end
 
 minetest.register_craft({
 	output = 'signs_road:blue_street_sign 4',
