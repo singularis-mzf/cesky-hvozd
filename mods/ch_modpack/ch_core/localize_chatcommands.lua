@@ -76,7 +76,6 @@ local def = {
 	description = "Vypíše vaše práva nebo práva jiné postavy.",
 	func = function(player_name, param)
 		local privs_def = minetest.registered_chatcommands.privs
-		-- print("DEBUG: "..dump2(minetest.registered_chatcommands.privs))
 		return privs_def.func(player_name, ch_core.jmeno_na_prihlasovaci(param))
 	end,
 }

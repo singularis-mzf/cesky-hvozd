@@ -496,7 +496,6 @@ local function cash_pay_from_player(player_name, amount, options)
 	if ziskano ~= amount then
 		if not silent then
 			minetest.log("action", player_name.." failed to pay "..amount.." in cash (got "..(ziskano or "nil")..")")
-			print("DEBUG: "..dump2({ziskano = ziskano, amount = amount, options = options}))
 		end
 		return false, "V inventáři není dost peněz v hotovosti."
 	end

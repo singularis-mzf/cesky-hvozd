@@ -1000,7 +1000,6 @@ function ch_core.get_materials_from_shapes_db(key)
 	if not set["default:stone"] then
 		table.insert(result, "default:stone")
 	end
-	-- print("DEBUG: get_materials_from_shapes_db("..key..") will return "..#result.." materials")
 	return result
 end
 

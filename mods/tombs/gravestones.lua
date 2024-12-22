@@ -61,13 +61,14 @@ local shapes = { --mesh identifier, shape, col
 	name = "_8",
 	description = "obelisk",
 	center_box = tombs.colbox_8_0,
-	offset_box = tombs.colbox_8_1,
+	offset_box = tombs.colbox_8_0,
 	text = true,
 	text_top = -1/32,
 	text_maxlines = 5,
 	text_size = {x = 8/16, y = 12/16},
 	text_pitch = -0.085,
 	text_depth_shift = 0.023,
+	single_variant = true,
 },
 {
 	id = 9,
@@ -76,6 +77,7 @@ local shapes = { --mesh identifier, shape, col
 	center_box = tombs.colbox_9_0,
 	offset_box = tombs.colbox_9_0,
 	text = false,
+	single_variant = true,
 },
 {
 	id = 10,
@@ -196,6 +198,10 @@ local tombstone_common_def = {
 	end,
 }
 
+local function after_change(pos, old_node, new_node, player, nodespec)
+	display_api.update_entities(pos)
+end
+
 function tombs.register_stones(recipe, name, desc, textures, material_def)
 
 	if minetest.registered_nodes[recipe] == nil then
@@ -219,6 +225,8 @@ for i, shape_def in ipairs(shapes) do
 	local centered_col = shape_def.center_box
 	local offset_col = shape_def.offset_box
 	local display_entity
+
+	local is_allowed = ch_core.is_shape_allowed(recipe, "tombs", shape_def.name)
 
 	local def = table.copy(tombstone_common_def)
 
@@ -250,21 +258,29 @@ for i, shape_def in ipairs(shapes) do
 		end
 	end
 
-	def.description = "vystředěný náhrobek ("..shape..") z: "..desc
-	def.mesh = 'tombs'..mesh..'_0.obj'
-	def.selection_box = centered_col
-	def.collision_box = centered_col
-	if display_entity ~= nil then
-		-- display_entity = table.copy(display_entity)
-		display_entity.depth = def.selection_box.fixed[1][3] - display_api.entity_spacing + (shape_def.text_depth_shift or 0)
-		def.display_entities = {[display_entity_name] = display_entity}
-	end
-	def.groups = ch_core.override_groups(groups, {gravestone = shape_def.id + 100, gravestone_centered = shape_def.id})
+	if not shape_def.single_variant then
+		def.description = "vystředěný náhrobek ("..shape..") z: "..desc
+		def.mesh = 'tombs'..mesh..'_0.obj'
+		def.selection_box = centered_col
+		def.collision_box = centered_col
+		if display_entity ~= nil then
+			-- display_entity = table.copy(display_entity)
+			display_entity.depth = def.selection_box.fixed[1][3] - display_api.entity_spacing + (shape_def.text_depth_shift or 0)
+			def.display_entities = {[display_entity_name] = display_entity}
+		end
+		def.groups = ch_core.override_groups(groups, {gravestone = shape_def.id + 100, gravestone_centered = shape_def.id})
 
-	minetest.register_node('tombs:'..string.lower(name)..mesh..'_0', table.copy(def))
+		if is_allowed then
+			minetest.register_node('tombs:'..string.lower(name)..mesh..'_0', table.copy(def))
+		end
+	end
 
 	def.description = "náhrobek ("..shape..") z: "..desc
-	def.mesh = 'tombs'..mesh..'_1.obj'
+	if not shape_def.single_variant then
+		def.mesh = 'tombs'..mesh..'_1.obj'
+	else
+		def.mesh = 'tombs'..mesh..'_0.obj'
+	end
 	def.selection_box = offset_col
 	def.collision_box = offset_col
 	if display_entity ~= nil then
@@ -274,8 +290,17 @@ for i, shape_def in ipairs(shapes) do
 	end
 	def.groups = ch_core.override_groups(groups, {gravestone = shape_def.id, gravestone_normal = shape_def.id})
 
-	if ch_core.is_shape_allowed(recipe, "tombs", shape_def.name) then
-		minetest.register_node('tombs:'..string.lower(name)..mesh..'_1', def)
+	if is_allowed then
+		if not shape_def.single_variant then
+			minetest.register_node('tombs:'..string.lower(name)..mesh..'_1', def)
+			ch_core.register_shape_selector_group({
+				nodes = {'tombs:'..string.lower(name)..mesh..'_0', 'tombs:'..string.lower(name)..mesh..'_1'},
+				after_change = after_change,
+			})
+		else
+			minetest.register_node('tombs:'..string.lower(name)..mesh..'_0', def)
+			minetest.register_alias('tombs:'..string.lower(name)..mesh..'_1', 'tombs:'..string.lower(name)..mesh..'_0')
+		end
 		valid_shapes = valid_shapes + 1
 	end
 end

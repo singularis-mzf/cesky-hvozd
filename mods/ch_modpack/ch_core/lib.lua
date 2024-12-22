@@ -2095,21 +2095,18 @@ function ch_core.utf8_wrap(s, max_chars, options)
 				if r_chars < max_chars or not r_sp_begin then
 					-- žádné mezery => tvrdé dělení
 					table.insert(result, r_text)
-					-- print("DEBUG: emit B ["..#result.."] <"..result[#result]..">")
 					r_text = ""
 					r_chars = 0
 					r_sp_begin, r_sp_end = nil, nil
 				elseif not r_sp_end then
 					-- průběžná skupina mezer => rozdělit zde
 					table.insert(result, r_text:sub(1, r_sp_begin - 1))
-					-- print("DEBUG: emit C ["..#result.."] <"..result[#result]..">")
 					r_text = ""
 					r_chars = 0
 					r_sp_begin, r_sp_end = nil, nil
 				else
 					-- byla skupina mezer => rozdělit tam
 					table.insert(result, r_text:sub(1, r_sp_begin - 1))
-					-- print("DEBUG: emit D ["..#result.."] <"..result[#result]..">")
 					r_text = r_text:sub(r_sp_end + 1, -1)
 					r_chars = ch_core.utf8_length(r_text)
 					r_sp_begin, r_sp_end = nil, nil
@@ -2133,10 +2130,8 @@ function ch_core.utf8_wrap(s, max_chars, options)
 		if r_sp_begin and not r_sp_end then
 			-- průběžná skupina mezer
 			table.insert(result, r_text:sub(1, r_sp_begin - 1))
-			-- print("DEBUG: emit E ["..#result.."] <"..result[#result]..">")
 		else
 			table.insert(result, r_text)
-			-- print("DEBUG: emit F ["..#result.."] <"..result[#result]..">")
 		end
 	end
 	return result
