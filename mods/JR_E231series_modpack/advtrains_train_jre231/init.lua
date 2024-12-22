@@ -1,6 +1,9 @@
 ch_base.open_mod(minetest.get_current_modname())
 local S = attrans
 
+local driver_stand = S("Driver stand")
+local passenger_area = S("Passenger area")
+
 local function jr_set_livery(self, puncher, itemstack,data)
 		-- Get color data
 	local meta = itemstack:get_meta()
@@ -60,13 +63,13 @@ advtrains.register_wagon("KuHa_E231", {
 	},
 	seat_groups = {
 		dstand={
-			name = "Driver Stand",
+			name = driver_stand,
 			access_to = {"pass"},
 			require_doors_open=true,
 			driving_ctrl_access=true,
 		},
 		pass={
-			name = "Passenger area",
+			name = passenger_area,
 			access_to = {"dstand"},
 			require_doors_open=true,
 		},
@@ -90,7 +93,12 @@ advtrains.register_wagon("KuHa_E231", {
 	wagon_span=2.5,
 	is_locomotive=true,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock 4"},
+	drops={
+		"default:steelblock 4",
+		"advtrains:dtrack_atc_placer",
+		"building_blocks:smoothglass"
+		"dlxtrains:bogie",
+	},
 	horn_sound = "advtrains_train_jre231_horn",
 	base_texture = "advtrains_KuHa_E231.png",
 	base_livery = "advtrains_KuHa_E231_livery.png",
@@ -165,7 +173,7 @@ advtrains.register_wagon("MoHa_E231", {
 	},
 	seat_groups = {
 		pass={
-			name = "Passenger area",
+			name = passenger_area,
 			access_to = {},
 			require_doors_open=true,
 		},
@@ -191,8 +199,13 @@ advtrains.register_wagon("MoHa_E231", {
 	base_livery = "advtrains_MoHa_E231_livery.png",
 	set_textures = jr_set_textures,
 	set_livery = jr_set_livery,
-	drops={"default:steelblock 4"},
-}, "jednotka E231: vnitřní článek E231 s pantografem (MoHa)",
+	drops={
+		"default:steelblock 4",
+		"minitram_crafting_recipes:minitram_pantograph",
+		"basic_materials:plastic_sheet",
+		"dlxtrains:bogie",
+	},
+}, "jednotka E231: vnitřní článek E231 s pantografem (MoHa)",
 "advtrains_MoHa_E231_inv.png^advtrains_jre231_inv_overlay_middle.png^advtrains_jre231_inv_overlay_left.png^advtrains_jre231_inv_overlay_right.png^advtrains_jre231_inv_overlay_top.png")
 
 advtrains.register_wagon("SaHa_E231", {
@@ -240,7 +253,7 @@ advtrains.register_wagon("SaHa_E231", {
 	},
 	seat_groups = {
 		pass={
-			name = "Passenger area",
+			name = passenger_area,
 			access_to = {},
 			require_doors_open=true,
 		},
@@ -262,7 +275,11 @@ advtrains.register_wagon("SaHa_E231", {
 	visual_size = {x=1, y=1},
 	wagon_span=2.3,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
-	drops={"default:steelblock 4"},
+	drops={
+		"default:steelblock 5",
+		"basic_materials:plastic_sheet 2",
+		"dlxtrains:bogie",
+	},
 	base_texture = "advtrains_SaHa_E231.png",
 	base_livery = "advtrains_MoHa_E231_livery.png",
 	set_textures = jr_set_textures,
@@ -314,7 +331,7 @@ advtrains.register_wagon("MoHa_E230", {
 	},
 	seat_groups = {
 		pass={
-			name = "Passenger area",
+			name = passenger_area,
 			access_to = {},
 			require_doors_open=true,
 		},
@@ -340,7 +357,11 @@ advtrains.register_wagon("MoHa_E230", {
 	base_livery = "advtrains_MoHa_E231_livery.png",
 	set_textures = jr_set_textures,
 	set_livery = jr_set_livery,
-	drops={"default:steelblock 4"},
+	drops={
+		"default:steelblock 5",
+		"basic_materials:plastic_sheet 2",
+		"dlxtrains:bogie",
+	},
 }, "jednotka E231: vnitřní článek E230 (MoHa)",
 "advtrains_MoHa_E230_inv.png^advtrains_jre231_inv_overlay_middle.png^advtrains_jre231_inv_overlay_left.png^advtrains_jre231_inv_overlay_right.png")
 
