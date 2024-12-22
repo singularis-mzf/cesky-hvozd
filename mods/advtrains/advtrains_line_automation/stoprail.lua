@@ -1,6 +1,8 @@
 -- stoprail.lua
 -- adds "stop rail". Recognized by lzb. (part of behavior is implemented there)
 
+local rwt = assert(advtrains.lines.rwt)
+
 local function to_int(n)
 	--- Disallow floating-point numbers
 	local k = tonumber(n)
@@ -171,7 +173,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		if fields.ioffsetnow and fields.interval ~= "" and fields.interval ~= "0" then
 			local interval = to_int(fields.interval)
 			if 0 < interval and interval <= 3600 then
-				local rwt = assert(advtrains.lines.rwt)
 				local rwtime = rwt.to_secs(rwt.get_time())
 				set_offset = rwtime % interval
 			end
@@ -283,13 +284,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	
 end)
 
-local function should_stop(stdata, train)
-	local n_trainparts = #assert(train.trainparts)
-	local ars = stdata.ars
-	return ars and (stdata.minparts or 0) <= n_trainparts and n_trainparts <= (stdata.maxparts or 128) and
-		(ars.default or advtrains.interlocking.ars_check_rule_match(ars, train))
-end
-
 local adefunc = function(def, preset, suffix, rotation)
 		return {
 			after_place_node=function(pos)
@@ -313,85 +307,9 @@ local adefunc = function(def, preset, suffix, rotation)
 				show_stoprailform(pos, player)
 			end,
 			advtrains = {
-				on_train_approach = function(pos,train_id, train, index, has_entered)
-					if has_entered then return end -- do not stop again!
-					if train.path_cn[index] == 1 then
-						local pe = advtrains.encode_pos(pos)
-						local stdata = advtrains.lines.stops[pe]
-						if stdata and stdata.stn then
-							--[[TODO REMOVE AFTER SOME TIME (only migration)
-							if not stdata.ars then
-								stdata.ars = {default=true}
-							end
-							]]
-							if should_stop(stdata, train) then
-								advtrains.lzb_add_checkpoint(train, index, 2, nil)
-								local stn = advtrains.lines.stations[stdata.stn]
-								local stnname = stn and stn.name or attrans("Unknown Station")
-								train.text_inside = attrans("Next Stop:") .. "\n"..stnname
-								advtrains.interlocking.ars_set_disable(train, true)
-							end
-						end
-					end
-				end,
-				on_train_enter = function(pos, train_id, train, index)
-					if train.path_cn[index] == 1 then
-						local pe = advtrains.encode_pos(pos)
-						local stdata = advtrains.lines.stops[pe]
-						if not stdata then
-							return
-						end
-						
-						if should_stop(stdata, train) then
-							local stn = advtrains.lines.stations[stdata.stn]
-							local stnname = stn and stn.name or attrans("Unknown Station")
-							local line = stdata.line or ""
-							local routingcode = stdata.routingcode or ""
-							local wait = tonumber(stdata.wait) or 0
-							local interval = stdata.interval
-							local ioffset = stdata.ioffset or 0
-							local lastdep = stdata.lastdep
-							local rwt = advtrains.lines.rwt
-							local rwtime = assert(tonumber(rwt.to_secs(rwt.get_time())))
-
-							-- Interval
-							if lastdep ~= nil and interval ~= nil then
-								if lastdep > rwtime then
-									lastdep = rwtime
-								end
-								local normaldep = rwtime + wait
-								local nextdep = lastdep + (interval - (lastdep + (interval - ioffset)) % interval)
-								if normaldep < nextdep then
-									minetest.log("action", "[INFO] The train "..train_id.." will wait for "..(nextdep - normaldep).." additional seconds due to interval at "..core.pos_to_string(pos)..".")
-									wait = wait + (nextdep - normaldep)
-								-- else -- will wait normal time
-								end
-							end
-							stdata.lastdep = rwtime + wait
-
-							-- Send ATC command and set text
-							local command = "B0 W O"..stdata.doors..(stdata.kick and "K" or "").." D"..wait..
-								(stdata.keepopen and " " or " OC ")..(stdata.reverse and "R" or "").." D"..(stdata.ddelay or 1)..
-								" A1 S" ..(stdata.speed or "M")
-							-- print("DEBUG: setting command for train "..train_id.." at rwtime "..rwtime..": "..command)
-							advtrains.atc.train_set_command(train, command, true)
-							train.text_inside = stnname
-							if line == "-" then
-								train.line = nil
-							elseif line ~= "" then
-								train.line = line
-							end
-							if routingcode == "-" then
-								train.routingcode = nil
-							elseif routingcode ~= "" then
-								train.routingcode = routingcode
-							end
-							if tonumber(wait) then
-								minetest.after(tonumber(wait), function() train.text_inside = "" end)
-							end
-						end
-					end
-				end
+				on_train_approach = advtrains.lines.on_train_approach,
+				on_train_enter = advtrains.lines.on_train_enter,
+				on_train_leave = advtrains.lines.on_train_leave,
 			},
 		}
 end
