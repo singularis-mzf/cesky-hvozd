@@ -1,9 +1,5 @@
-local S
-if minetest.get_modpath("intllib") then
-    S = intllib.Getter()
-else
-    S = function(s,a,...)a={a,...}return s:gsub("@(%d+)",function(n)return a[tonumber(n)]end)end
-end
+ch_base.open_mod(minetest.get_current_modname())
+local S = attrans
 
 local function jr_set_livery(self, puncher, itemstack,data)
 		-- Get color data
@@ -122,7 +118,7 @@ advtrains.register_wagon("KuHa_E231", {
 		end
 	end,
 
-}, S("KuHa_E231"), "advtrains_KuHa_E231_inv.png^advtrains_jre231_inv_overlay_right.png^advtrains_jre231_inv_overlay_middle.png")
+}, "jednotka E231: řídicí vůz (KuHa)", "advtrains_KuHa_E231_inv.png^advtrains_jre231_inv_overlay_right.png^advtrains_jre231_inv_overlay_middle.png")
 
 advtrains.register_wagon("MoHa_E231", {
 	mesh="advtrains_MoHa_E231.b3d",
@@ -196,7 +192,8 @@ advtrains.register_wagon("MoHa_E231", {
 	set_textures = jr_set_textures,
 	set_livery = jr_set_livery,
 	drops={"default:steelblock 4"},
-}, S("MoHa_E231"), "advtrains_MoHa_E231_inv.png^advtrains_jre231_inv_overlay_middle.png^advtrains_jre231_inv_overlay_left.png^advtrains_jre231_inv_overlay_right.png^advtrains_jre231_inv_overlay_top.png")
+}, "jednotka E231: vnitřní článek E231 s pantografem (MoHa)",
+"advtrains_MoHa_E231_inv.png^advtrains_jre231_inv_overlay_middle.png^advtrains_jre231_inv_overlay_left.png^advtrains_jre231_inv_overlay_right.png^advtrains_jre231_inv_overlay_top.png")
 
 advtrains.register_wagon("SaHa_E231", {
 	mesh="advtrains_SaHa_E231.b3d",
@@ -270,7 +267,7 @@ advtrains.register_wagon("SaHa_E231", {
 	base_livery = "advtrains_MoHa_E231_livery.png",
 	set_textures = jr_set_textures,
 	set_livery = jr_set_livery,
-}, S("SaHa_E231"), "advtrains_SaHa_E231_inv.png^advtrains_jre231_inv_overlay_left.png^advtrains_jre231_inv_overlay_right.png")
+}, "jednotka E231: vnitřní článek E231 (SaHa)", "advtrains_SaHa_E231_inv.png^advtrains_jre231_inv_overlay_left.png^advtrains_jre231_inv_overlay_right.png")
 
 advtrains.register_wagon("MoHa_E230", {
 	mesh="advtrains_MoHa_E230.b3d",
@@ -344,4 +341,47 @@ advtrains.register_wagon("MoHa_E230", {
 	set_textures = jr_set_textures,
 	set_livery = jr_set_livery,
 	drops={"default:steelblock 4"},
-}, S("MoHa_E230"), "advtrains_MoHa_E230_inv.png^advtrains_jre231_inv_overlay_middle.png^advtrains_jre231_inv_overlay_left.png^advtrains_jre231_inv_overlay_right.png")
+}, "jednotka E231: vnitřní článek E230 (MoHa)",
+"advtrains_MoHa_E230_inv.png^advtrains_jre231_inv_overlay_middle.png^advtrains_jre231_inv_overlay_left.png^advtrains_jre231_inv_overlay_right.png")
+
+-- Crafts:
+
+-- řídicí vůz
+core.register_craft({
+	output = "advtrains:KuHa_E231",
+	recipe = {
+		{"default:steelblock", "default:steelblock", "default:steelblock"},
+		{"", "advtrains:dtrack_atc_placer", "building_blocks:smoothglass"},
+		{"default:steelblock", "dlxtrains:bogie", "default:steelblock"},
+	},
+})
+
+-- vnitřní články
+core.register_craft({
+	output = "advtrains:MoHa_E230",
+	recipe = {
+		{"default:steelblock", "default:steelblock", "default:steelblock"},
+		{"basic_materials:plastic_sheet", "basic_materials:plastic_sheet", ""},
+		{"default:steelblock", "dlxtrains:bogie", "default:steelblock"},
+	},
+})
+core.register_craft({
+	output = "advtrains:SaHa_E231",
+	recipe = {
+		{"default:steelblock", "default:steelblock", "default:steelblock"},
+		{"", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet"},
+		{"default:steelblock", "dlxtrains:bogie", "default:steelblock"},
+	},
+})
+
+-- vnitřní článek s pantografem
+core.register_craft({
+	output = "advtrains:MoHa_E231",
+	recipe = {
+		{"default:steelblock", "minitram_crafting_recipes:minitram_pantograph", "default:steelblock"},
+		{"", "basic_materials:plastic_sheet", ""},
+		{"default:steelblock", "dlxtrains:bogie", "default:steelblock"},
+	},
+})
+
+ch_base.close_mod(minetest.get_current_modname())
