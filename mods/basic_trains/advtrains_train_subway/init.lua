@@ -151,7 +151,7 @@ wagon = table.copy(wagon)
 wagon.textures = {"advtrains_subway_wagon_green.png"}
 advtrains.register_wagon("subway_wagon_green", wagon, S("Green Subway Passenger Wagon"), "advtrains_subway_wagon_green_inv.png")
 
---wagons
+--[[wagons
 minetest.register_craft({
 	output = 'advtrains:subway_wagon',
 	recipe = {
@@ -169,5 +169,13 @@ minetest.register_craft({
 		{'default:steelblock', 'default:steelblock', 'default:steelblock'},
 	},
 })
+]]
+
+for _, name in ipairs({"advtrains:subway_wagon", "advtrains:subway_wagon_green"}) do
+	local idef = assert(core.registered_items[name])
+	core.override_item(name, {
+		groups = ch_core.assembly_groups(idef.groups, {not_in_creative_inventory = 1})
+	})
+end
 
 ch_base.close_mod(minetest.get_current_modname())

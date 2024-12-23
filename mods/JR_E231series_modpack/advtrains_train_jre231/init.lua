@@ -96,7 +96,7 @@ advtrains.register_wagon("KuHa_E231", {
 	drops={
 		"default:steelblock 4",
 		"advtrains:dtrack_atc_placer",
-		"building_blocks:smoothglass"
+		"building_blocks:smoothglass",
 		"dlxtrains:bogie",
 	},
 	horn_sound = "advtrains_train_jre231_horn",
