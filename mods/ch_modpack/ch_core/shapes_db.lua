@@ -82,7 +82,6 @@ local materials_kp = set(
 "building_blocks:Adobe",
 "building_blocks:Tar",
 "building_blocks:fakegrass",
-"building_blocks:grate",
 "ch_core:plaster_blue",
 "ch_core:plaster_cyan",
 "ch_core:plaster_dark_green",

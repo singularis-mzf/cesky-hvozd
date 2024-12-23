@@ -62,6 +62,7 @@ ch_extras_switch_straight.png
 ch_extras_cdoor_item.png
 ch_extras_cdoor_overlay.png
 ch_extras_cdoor_texture.png
+ch_extras_grate32.png
 ch_extras_pile_mask64.png
 ch_extras_pile_overlay_top.png
 ch_extras_pile_overlay_middle.png

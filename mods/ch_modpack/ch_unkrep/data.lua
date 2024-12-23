@@ -805,6 +805,9 @@ reg_node(20241223, "technic:cast_iron_block_technic_cnc_d45_slope_216", "technic
 reg_node(20241223, "technic:cast_iron_block_technic_cnc_d45_slope_216_3", "technic:slope_cast_iron_block_roof45_3")
 reg_node(20241223, "technic:zinc_block_technic_cnc_d45_slope_216", "technic:slope_zinc_block_roof45")
 reg_node(20241223, "technic:zinc_block_technic_cnc_d45_slope_216_3", "technic:slope_zinc_block_roof45_3")
+reg_item("building_blocks:grate", "ch_extras:grate_1")
+reg_item("building_blocks:slope_grate_half", "ch_extras:grate_1")
+reg_item("building_blocks:slope_grate_half_raised", "ch_extras:grate_1")
 
 -- END OF REGISTRATIONS
 commit_aliases_and_lbms()

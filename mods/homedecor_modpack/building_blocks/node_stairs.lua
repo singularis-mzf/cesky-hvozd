@@ -13,6 +13,7 @@ local function building_blocks_stairs(nodename, def)
 	end
 end
 
+--[[
 building_blocks_stairs("building_blocks:grate", {
 	drawtype = "glasslike",
 	description = S("Grate"),
@@ -24,6 +25,7 @@ building_blocks_stairs("building_blocks:grate", {
 	groups = {cracky=1, dig_generic=3},
 	sounds = default.node_sound_metal_defaults(),
 })
+]]
 building_blocks_stairs("building_blocks:smoothglass", {
 	drawtype = "glasslike",
 	description = S("Streak Free Glass"),

@@ -11,7 +11,8 @@ local function can_dig_without_inventory_check(pos, player)
 		minetest.register_protection_violation(pos, pinfo.player_name)
 		return false
 	end
-	return default.can_interact_with_node(player, pos)
+	local result = default.can_interact_with_node(player, pos)
+	return result
 end
 
 local function can_dig_with_inventory_check(pos, player)
@@ -57,6 +58,10 @@ local function on_dig_pickable(pos, node, digger)
 	if minetest.get_meta(pos):get_inventory():is_empty("main") then
 		return minetest.node_dig(pos, node, digger)
 	else
+		local ndef = core.registered_nodes[node.name]
+		if ndef ~= nil and ndef.can_dig ~= nil and not ndef.can_dig(pos, digger) then
+			return false
+		end
 		local player_name = digger:get_player_name()
 		local picked_up, err_msg = wrench.pickup_node(pos, digger)
 		if not picked_up then

@@ -53,6 +53,7 @@ minetest.register_craft({
 		{materials.steel_ingot, "building_blocks:sticks", materials.steel_ingot},
 	}
 })
+--[[
 minetest.register_craft({
 	output = 'building_blocks:grate 1',
 	recipe = {
@@ -60,6 +61,7 @@ minetest.register_craft({
 		{materials.glass_block, materials.glass_block},
 	}
 })
+]]
 
 if not minetest.get_modpath("moreblocks") or not minetest.get_modpath("gloopblocks") then
 	minetest.register_craft({
