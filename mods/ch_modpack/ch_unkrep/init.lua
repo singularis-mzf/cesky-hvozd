@@ -1,15 +1,29 @@
 ch_base.open_mod(minetest.get_current_modname())
 local modpath = minetest.get_modpath(minetest.get_current_modname())
+ch_unkrep = {}
+
+local function init_me()
+	local f, errmsg = loadfile(modpath.."/data.lua")
+	if f ~= nil then
+		f()
+	else
+		error(errmsg or "data.lua: failed!")
+	end
+end
+
+init_me()
 
 local function repair_stack(stack) -- => stack, message
+	if stack:is_empty() then
+		return stack, "prázdná dávka"
+	end
 	local stack_name = stack:get_name()
-	if stack_name == "default:dirt" then
-		stack:set_name("default:snow")
-		return stack, "opraveno"
-	elseif minetest.registered_items[stack_name] ~= nil then
+	if core.registered_items[stack_name] ~= nil then
 		return stack, "tento předmět není neznámý či zastaralý"
+	end
+	if ch_unkrep.repair_itemstack(stack) then
+		return stack, "opraveno"
 	else
-		minetest.log("warning", "Unkrep cannot repair item: "..stack_name)
 		return stack, "tento předmět neumím opravit, obraťte se s ním na Administraci"
 	end
 end
@@ -63,7 +77,7 @@ local def = {
 	drawtype = "normal",
 	tiles = {tile_other, tile_other, tile_other, tile_other, tile_other, tile_front},
 	paramtype = "none",
-	paramtype2 = "4dir",
+	paramtype2 = "facedir",
 	groups = {cracky = 3},
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)

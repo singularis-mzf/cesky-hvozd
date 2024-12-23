@@ -432,12 +432,12 @@ function doors.register(name, def)
 
 		def.mesh = "doors_cdoor_a.obj"
 		def.description = base_description.." (klika vpravo, vystředěné)"
-		minetest.register_node(":" .. name .. "_cd_a", def)
+		minetest.register_node(":" .. name .. "_cd_a", table.copy(def))
 		screwdriver_rightclick_override_list[name.."_cd_a"] = 1
 
 		def.mesh = "doors_cdoor_b.obj"
 		def.description = base_description.." (klika vlevo, vystředěné)"
-		minetest.register_node(":" .. name .. "_cd_b", def)
+		minetest.register_node(":" .. name .. "_cd_b", table.copy(def))
 		screwdriver_rightclick_override_list[name.."_cd_b"] = 1
 
 		-- def = table.copy(def) -- ?
@@ -445,14 +445,14 @@ function doors.register(name, def)
 		def.collision_box = centered_door_box_c
 		def.mesh = "doors_cdoor_a2.obj"
 		def.description = base_description.." (klika vpravo, vystředěné)"
-		minetest.register_node(":" .. name .. "_cd_c", def)
+		minetest.register_node(":" .. name .. "_cd_c", table.copy(def))
 		screwdriver_rightclick_override_list[name.."_cd_c"] = 1
 
 		def.selection_box = centered_door_box_d
 		def.collision_box = centered_door_box_d
 		def.mesh = "doors_cdoor_b2.obj"
 		def.description = base_description.." (klika vlevo, vystředěné)"
-		minetest.register_node(":" .. name .. "_cd_d", def)
+		minetest.register_node(":" .. name .. "_cd_d", table.copy(def))
 		screwdriver_rightclick_override_list[name.."_cd_d"] = 1
 	end
 

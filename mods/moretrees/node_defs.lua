@@ -23,21 +23,6 @@ moretrees.treelist = {
 	{"plumtree",     S("Plum Tree"),      "plum",                  S("Plum"), {-0.2, -0.5, -0.2, 0.2, 0, 0.2}, 0.6 },
 }
 
--- Beech aliases
-
-minetest.register_alias("moretrees:beech_trunk", "default:tree")
-minetest.register_alias("moretrees:beech_planks", "default:wood")
-minetest.register_alias("moretrees:beech_leaves", "default:leaves")
-minetest.register_alias("moretrees:beech_fence", "default:fence_wood")
-minetest.register_alias("moretrees:beech_fence_rail", "default:fence_rail_wood")
-minetest.register_alias("moretrees:beech_gate_closed", "default:gate_wood_closed")
-minetest.register_alias("moretrees:beech_gate_open", "default:gate_wood_open")
-minetest.register_alias("moretrees:beech_mese_post_light", "default:mese_post_light")
-minetest.register_alias("moretrees:beech_trunk_allfaces", "moreblocks:tree_allfaces")
-minetest.register_alias("moretrees:beech_trunk_noface", "moreblocks:tree_noface")
-
--- minetest.register_alias("moretrees:beech_fence", "")
-
 moretrees.treedesc = {
 	beech = {
 		trunk = S("Beech Tree Trunk"),
