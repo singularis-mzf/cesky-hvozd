@@ -188,7 +188,7 @@ for _, recipeitem in ipairs(recipeitems) do
     -- register_shape_selector_group_simple({"slope/_diagfiller22a", "slope/_diagfiller22b", "slope/_diagfiller45"})
 
     -- přepínání spojujících se a přímých tvarů
-    for _, shape in ipairs({"panel/_wall", "panel/_element", "panel/_pole", "slab/_arcade"}) do
+    for _, shape in ipairs({"panel/_wall", "panel/_element", "panel/_pole", "panel/_pole_thin", "slab/_arcade"}) do
         from, to = shape_to_node[shape], shape_to_node[shape.."_flat"]
         if from ~= nil and to ~= nil then
             minetest.register_craft({output = to, recipe = {{from}}})

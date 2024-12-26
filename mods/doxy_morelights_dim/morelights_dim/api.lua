@@ -59,6 +59,11 @@ function morelights_dim.register_dim_variants(node_name)
                                dim_def);
         minetest.register_node(":" .. node_name .. "_morelights_dim_off",
                                off_def);
+        ch_core.register_shape_selector_group({nodes = {
+            {name = node_name, label = "zap"},
+            {name = node_name.."_morelights_dim_dimmed", label = "1/2"},
+            {name = node_name.."_morelights_dim_off", label = "vyp"},
+        }})
     end
 end
 

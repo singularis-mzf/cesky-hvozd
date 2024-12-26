@@ -22,7 +22,7 @@ local function get_attracts_poles_rank(name, ndef)
         if
             not name:match("^digiterms:") and
             not name:match("^ontime_clocks:") and
-            not name:match("^signs_road:inv") and -- no invisible signs
+            -- not name:match("^signs_road:inv") and -- no invisible signs
             not name:match("_on_pole$")
         then
             return 1
@@ -41,7 +41,7 @@ local function get_attracts_poles_rank(name, ndef)
         groups.technic_cnc_valley
     then
             return 1
-    elseif name:match("^itemframes:") and name ~= "itemframes:frame_invis" then
+    elseif name:match("^itemframes:") --[[ and name ~= "itemframes:frame_invis"]] then
         return 1
     end
     return 0
@@ -65,13 +65,13 @@ end
 local function do_override()
     local count = 0
     local names = {}
-    for name, _ in pairs(minetest.registered_nodes) do
+    for name, _ in pairs(core.registered_nodes) do
         if name:find(":") then
             table.insert(names, name)
         end
     end
     for _, name in ipairs(names) do
-        local ndef = minetest.registered_nodes[name]
+        local ndef = core.registered_nodes[name]
         local drawtype = tostring(ndef.drawtype or "normal")
         local new_groups = ndef.groups or {}
         local full_cube_rank = get_full_cube_rank(ndef)
@@ -83,7 +83,7 @@ local function do_override()
             new_groups.attracts_poles = 1
         end
         new_groups["ch_drawtype_"..(ndef.drawtype or "normal")] = 1
-        minetest.override_item(name, {groups = assert(new_groups)})
+        core.override_item(name, {groups = assert(new_groups)})
         count = count + 1
     end
     print("[ch_overrides/drawtype_groups] "..count.." nodes overriden")

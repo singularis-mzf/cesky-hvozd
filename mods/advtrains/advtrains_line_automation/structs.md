@@ -94,3 +94,13 @@ stop = {
     -- používá se v kombinaci s intervalem
     last_dep = int or nil,
 }
+
+local current_passages = {--[[
+    [train_id] = {[1] = rwtime, ..., [n] = rwtime (časy *odjezdu*, kromě koncových zastávek, kde jde o čas příjezdu)}
+]]}
+
+local last_passages = {--[[
+    [linevar] = {
+        [1..10] = {[1] = rwtime, ...} -- jízdy seřazeny od nejstarší (1) po nejnovější (až 10) podle odjezdu z výchozí zastávky
+    }
+]]}

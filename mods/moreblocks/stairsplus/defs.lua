@@ -601,6 +601,34 @@ stairsplus.defs = {
 			check_for_pole = true,
 			not_blocking_trains = true,
 		},
+		["_pole_thin"] = {
+			description = "tenká tyč (spojující se)",
+			node_box = {
+				type = "connected",
+				fixed = {-0.0625, -0.0625, -0.0625, 0.0625, 0.0625, 0.0625},
+				connect_top = {-0.0625, 0.0625, -0.0625, 0.0625, 0.5, 0.0625}, -- +Y
+				connect_bottom = {-0.0625, -0.5, -0.0625, 0.0625, -0.0625, 0.0625}, -- -Y
+				connect_front = {-0.0625, -0.0625, -0.5, 0.0625, 0.0625, -0.0625}, -- -Z
+				connect_left = {-0.5, -0.0625, -0.0625, -0.0625, 0.0625, 0.0625}, -- -X
+				connect_back = {-0.0625, -0.0625, 0.0625, 0.0625, 0.0625, 0.5}, -- +Z
+				connect_right = {0.0625, -0.0625, -0.0625, 0.5, 0.0625, 0.0625}, -- +X
+			},
+			connect_sides = sides_xyz,
+			connects_to = {"group:panel_pole_thin", "group:wall", "group:full_cube_node", "group:attracts_poles"}, -- no fence, no wall
+			extra_groups = {panel_pole_thin = 1},
+			align_style = "world",
+			not_blocking_trains = true,
+		},
+		["_pole_thin_flat"] = {
+			description = "tenká tyč (přímá)",
+			node_box = {
+				type = "fixed",
+				fixed = {-0.0625, -0.5, -0.0625, 0.0625, 0.5, 0.0625},
+			},
+			extra_groups = {panel_pole_thin = 1},
+			align_style = "world",
+			not_blocking_trains = true,
+		},
 		["_banister"] = {
 			description = "zábradlí",
 			node_box = {

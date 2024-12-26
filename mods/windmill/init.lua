@@ -80,6 +80,9 @@ windmill.register_windmill = function( nodename, descr, animation_png, animation
 				{ "",                   craft_material,        "",             },
 		},
 	})
+
+	ch_core.register_shape_selector_group({nodes = {nodename.."_small", nodename.."_small_reverse"}})
+	ch_core.register_shape_selector_group({nodes = {nodename.."_large", nodename.."_large_reverse"}})
 end
 
 

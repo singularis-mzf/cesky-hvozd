@@ -7,11 +7,11 @@ local groups = ch_core.assembly_groups(groups_in_ci, {not_in_creative_inventory 
 local function face(coord, sign)
     local result = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}
     if sign >= 0 then
-        result[coord] = 63/128
-        result[coord + 3] = 65/128
+        result[coord] = 0.5 -- 63/128
+        result[coord + 3] = 0.5 -- 65/128
     else
-        result[coord] = -65/128
-        result[coord + 3] =  -63/128
+        result[coord] = -0.5 -- -65/128
+        result[coord + 3] = -0.5 -- -63/128
     end
     return result
 end
@@ -54,6 +54,8 @@ ch_core.register_nodes({
     paramtype = "light",
     paramtype2 = "color",
     palette = "unifieddyes_palette_extended.png",
+    inventory_image = "ch_extras_grate32.png",
+    wield_image = "ch_extras_grate32.png",
     on_construct = unifieddyes.on_construct,
     on_place = function(itemstack, placer, pointed_thing)
         if pointed_thing.type == "node" then
@@ -131,62 +133,74 @@ ch_core.register_nodes({
         -- 0 / 10 = -y + +z
         node_box = combine(my, pz),
         selection_box = combine(sbmy, sbpz),
+        collision_box = combine(sbmy, sbpz),
         groups = groups_in_ci,
     },
     ["ch_extras:grate_l2"] = {
         -- 1 / 19 = -y + +x
         node_box = combine(my, px),
         selection_box = combine(sbmy, sbpx),
+        collision_box = combine(sbmy, sbpx),
     },
     ["ch_extras:grate_l3"] = {
         -- 2 / 4 = -y + -z
         node_box = combine(my, mz),
         selection_box = combine(sbmy, sbmz),
+        collision_box = combine(sbmy, sbmz),
     },
     ["ch_extras:grate_l4"] = {
         -- 3 / 13 = -y + -x
         node_box = combine(my, mx),
         selection_box = combine(sbmy, sbmx),
+        collision_box = combine(sbmy, sbmx),
     },
     ["ch_extras:grate_l5"] = {
         -- 5 / 18 = -z + +x
         node_box = combine(px, mz),
         selection_box = combine(sbpx, sbmz),
+        collision_box = combine(sbpx, sbmz),
     },
     ["ch_extras:grate_l6"] = {
         -- 6 / 22 = +y + -z
         node_box = combine(py, mz),
         selection_box = combine(sbpy, sbmz),
+        collision_box = combine(sbpy, sbmz),
     },
     ["ch_extras:grate_l7"] = {
         -- 7 / 14 = -x + -z
         node_box = combine(mx, mz),
         selection_box = combine(sbmx, sbmz),
+        collision_box = combine(sbmx, sbmz),
     },
     ["ch_extras:grate_l8"] = {
         -- 8 / 20 = +y + +z
         node_box = combine(py, pz),
         selection_box = combine(sbpy, sbpz),
+        collision_box = combine(sbpy, sbpz),
     },
     ["ch_extras:grate_l9"] = {
         -- 9 / 16 = +x + +z
         node_box = combine(px, pz),
         selection_box = combine(sbpx, sbpz),
+        collision_box = combine(sbpx, sbpz),
     },
     ["ch_extras:grate_l10"] = {
         -- 11 / 12 = -x + +z
         node_box = combine(mx, pz),
         selection_box = combine(sbmx, sbpz),
+        collision_box = combine(sbmx, sbpz),
     },
     ["ch_extras:grate_l11"] = {
         -- 15 / 21 = -x + +y
         node_box = combine(mx, py),
         selection_box = combine(sbmx, sbpy),
+        collision_box = combine(sbmx, sbpy),
     },
     ["ch_extras:grate_l12"] = {
         -- 17 / 23 = +x + +y
         node_box = combine(px, py),
         selection_box = combine(sbpx, sbpy),
+        collision_box = combine(sbpx, sbpy),
     },
 }, {
     {
@@ -254,3 +268,112 @@ ch_core.register_nodedir_group({
     [22] = "ch_extras:grate_l6",
     [23] = "ch_extras:grate_l12",
 })
+
+ch_core.register_nodes({
+    drawtype = "nodebox",
+    tiles = {{name = "ch_extras_grate32.png", backface_culling = true, align_style = "world"}},
+    use_texture_alpha = "clip",
+    is_ground_content = false,
+    sunlight_propagates = true,
+    paramtype = "light",
+    paramtype2 = "color",
+    inventory_image = "blank.png",
+    inventory_overlay = "ch_extras_grate32.png^[multiply:#aaaaaa",
+    wield_image = "ch_extras_grate32.png",
+    palette = "unifieddyes_palette_extended.png",
+    on_construct = unifieddyes.on_construct,
+    -- on_dig = unifieddyes.on_dig,
+    sounds = grate_sounds,
+    drop = {items = {{items = {"ch_extras:grate_flat_1"}, inherit_color = true}}},
+    }, {
+        ["ch_extras:grate_con"] = {
+            description = "lakované pletivo (spojující se)",
+            node_box = {
+                type = "connected",
+                disconnected = {-1/64, -0.5, -1/64, 1/64, 0.5, 1/64},
+                connect_front = {0, -0.5, -0.5, 0, 0.5, 0}, -- -Z
+                connect_left = {-0.5, -0.5, 0, 0, 0.5, 0}, -- -X
+                connect_back = {0, -0.5, 0, 0, 0.5, 0.5}, -- +Z
+                connect_right = {0, -0.5, 0, 0.5, 0.5, 0}, -- +X
+            },
+            selection_box = {
+                type = "connected",
+                disconnected = {-1/32, -0.5, -1/32, 1/32, 0.5, 1/32},
+                connect_front = {-1/32, -0.5, -0.5, 1/32, 0.5, 0}, -- -Z
+                connect_left = {-0.5, -0.5, 0, -1/32, 0.5, 1/32}, -- -X
+                connect_back = {-1/32, -0.5, 0, 1/32, 0.5, 0.5}, -- +Z
+                connect_right = {0, -0.5, -1/32, 0.5, 0.5, 1/32}, -- +X
+            },
+            connect_sides = {"front", "back", "left", "right"},
+            connects_to = {"ch_extras:grate_con", "ch_extras:grate_flat_1", "ch_extras:grate_flat_2"},
+            groups = groups_in_ci,
+            drop = {items = {{items = {"ch_extras:grate_con"}, inherit_color = true}}},
+        },
+        ["ch_extras:grate_flat_1"] = { -- Z
+            description = "lakované pletivo (vystředěné)",
+            node_box = {type = "fixed", fixed = {-0.5, -0.5, 0, 0.5, 0.5, 0}},
+            selection_box = {type = "fixed", fixed = {-0.5, -0.5, -1/32, 0.5, 0.5, 1/32}},
+            collision_box = {type = "fixed", fixed = {-0.5, -0.5, -1/32, 0.5, 0.5, 1/32}},
+            groups = groups_in_ci,
+        },
+        ["ch_extras:grate_flat_2"] = { -- X
+            description = "lakované pletivo (vystředěné)",
+            node_box = {type = "fixed", fixed = {0, -0.5, -0.5, 0, 0.5, 0.5}},
+            selection_box = {type = "fixed", fixed = {-1/32, -0.5, -0.5, 1/32, 0.5, 0.5}},
+            collision_box = {type = "fixed", fixed = {-1/32, -0.5, -0.5, 1/32, 0.5, 0.5}},
+            groups = groups,
+        },
+    },
+    {
+        {
+            output = "ch_extras:grate_con 5",
+            recipe = {
+                {"", "ch_extras:grate_1", ""},
+                {"ch_extras:grate_1", "ch_extras:grate_1", "ch_extras:grate_1"},
+                {"", "ch_extras:grate_1", ""},
+            },
+        }, {
+            output = "ch_extras:grate_flat_1 3",
+            recipe = {
+                {"ch_extras:grate_1", "ch_extras:grate_1", "ch_extras:grate_1"},
+                {"", "", ""},
+                {"", "", ""},
+            },
+        }, {
+            output = "ch_extras:grate_flat_1 3",
+            recipe = {
+                {"ch_extras:grate_1", "", ""},
+                {"ch_extras:grate_1", "", ""},
+                {"ch_extras:grate_1", "", ""},
+            },
+        }, {
+            output = "ch_extras:grate_1",
+            recipe = {{"ch_extras:grate_con"}},
+        }, {
+            output = "ch_extras:grate_flat_1",
+            recipe = {{"ch_extras:grate_flat_1"}},
+        },
+    }
+)
+
+ch_core.register_nodedir_group({
+    [0] = "ch_extras:grate_flat_1",
+    [1] = "ch_extras:grate_flat_2",
+    [2] = "ch_extras:grate_flat_1",
+    [3] = "ch_extras:grate_flat_2",
+})
+
+ch_core.register_shape_selector_group({
+    input_only = {
+        "ch_extras:grate_2",
+        "ch_extras:grate_3",
+        "ch_extras:grate_4",
+        "ch_extras:grate_5",
+        "ch_extras:grate_6",
+    },
+    nodes = {
+        {name = "ch_extras:grate_1", label = "1"},
+        {name = "ch_extras:grate_con", label = "spoj."},
+        {name = "ch_extras:grate_flat_2", label = "X"},
+        {name = "ch_extras:grate_flat_1", label = "Z"},
+    }})

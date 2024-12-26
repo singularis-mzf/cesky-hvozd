@@ -37,6 +37,8 @@ end
         on_change = function(pos, old_node, new_node, player, nodespec),
             -- callback volaný pro provedení změny (je-li nastaven); vrátí-li false, změna selhala
         after_change = function(pos, old_node, new_node, player, nodespec), -- callback, který bude zavolaný *po* provedení změny
+        input_only = {name, ...}, -- seznam dalších bloků, které mohou být změněny na varianty této skupiny,
+                                  -- ale ne naopak; mohou být zadány pouze jmény bloků
     }
 
     Každý nodespec může být:
@@ -111,6 +113,19 @@ function ch_core.register_shape_selector_group(def)
             end
         end
     end
+    if def.input_only ~= nil then
+        for _, name in ipairs(def.input_only) do
+            if type(name) ~= "string" then
+                error("Invalid type of input_only member!")
+            end
+            if new_nodes[name] == nil then
+                new_nodes[name] = true
+                if item_to_shape_selector_group[name] ~= nil then
+                    error(name.." already has registered the shape selector!")
+                end
+            end
+        end
+    end
     -- local new_nodes_count = 0
     for name, _ in pairs(new_nodes) do
         item_to_shape_selector_group[name] = new_group
@@ -135,19 +150,37 @@ local function get_group_count(group)
     return columns * rows
 end
 
+local function check_owner(pos, player_name)
+    if core.check_player_privs(player_name, "protection_bypass") then
+        return true
+    end
+    local owner = core.get_meta(pos):get_string("owner")
+    return owner == player_name or owner == ""
+end
+
+local function record_owner_violation(pos, player_name)
+    ch_core.systemovy_kanal(player_name, "Tento blok patří postavě '"..
+        ch_core.prihlasovaci_na_zobrazovaci(core.get_meta(pos):get_string("owner")).."'!")
+end
+
 local function formspec_callback(custom_state, player, formname, fields)
 	local player_name = player:get_player_name()
     local inv = player:get_inventory()
+    local group = custom_state.group
 	local pos = custom_state.pos
     local old_node = custom_state.old_node
 	local current_node = core.get_node(pos)
     for k, _ in pairs(fields) do
         if k:match("^chg_%d+$") then
             local i = tonumber(k:sub(5, -1))
-            local new_node_spec = custom_state.nodes[i]
+            local new_node_spec = group.nodes[i]
             if new_node_spec ~= nil then
                 if core.is_protected(pos, player_name) then
                     core.record_protection_violation(pos, player_name)
+                    return
+                end
+                if group.check_owner and not check_owner(pos, player_name) then
+                    record_owner_violation(pos, player_name)
                     return
                 end
                 if old_node.name ~= current_node.name or old_node.param2 ~= current_node.param2 then
@@ -162,9 +195,19 @@ local function formspec_callback(custom_state, player, formname, fields)
                 end
                 local change_node = new_node.name ~= current_node.name or new_node.param2 ~= current_node.param2
                 if change_node then
+                    if custom_state.wielded_item ~= nil and not core.is_creative_enabled(player_name) then
+                        local expected_item = custom_state.wielded_item
+                        local wielded_item = player:get_wielded_item()
+                        if wielded_item:get_name() ~= expected_item:get_name() or wielded_item:get_wear() ~= expected_item:get_wear() then
+                            ch_core.systemovy_kanal(player_name, "Dláto se změnilo během výběru! Zkuste to znovu.")
+                            return
+                        end
+                        wielded_item:add_wear_by_uses(200)
+                        player:set_wielded_item(wielded_item)
+                    end
                     local change_result, error_message
-                    if custom_state.on_change ~= nil then
-                        change_result, error_message = custom_state.on_change(pos, old_node,
+                    if group.on_change ~= nil then
+                        change_result, error_message = group.on_change(pos, old_node,
                             {name = new_node.name, param = old_node.param, param2 = new_node.param2}, player, new_node_spec)
                     end
                     if change_result == nil then
@@ -177,8 +220,8 @@ local function formspec_callback(custom_state, player, formname, fields)
                 core.close_formspec(player_name, formname)
                 inv:set_size("ch_shape_selector", 1)
                 inv:set_stack("ch_shape_selector", 1, ItemStack())
-                if change_node and custom_state.after_change ~= nil then
-                    custom_state.after_change(pos, old_node, core.get_node(pos), player, new_node_spec)
+                if change_node and group.after_change ~= nil then
+                    group.after_change(pos, old_node, core.get_node(pos), player, new_node_spec)
                 end
                 return
             end
@@ -186,7 +229,7 @@ local function formspec_callback(custom_state, player, formname, fields)
     end
 end
 
-function ch_core.show_shape_selector(player, pos, node)
+function ch_core.show_shape_selector(player, pos, node, wielded_item)
     local group = item_to_shape_selector_group[assert(node.name)]
     if group == nil then
         return false -- no selector group
@@ -280,49 +323,45 @@ function ch_core.show_shape_selector(player, pos, node)
         pos = assert(pos),
         old_node = node,
         nodes = nodes,
+        group = group,
     }
-    if group.after_change ~= nil then
-        custom_state.after_change = group.after_change
-    end
-    if group.on_change ~= nil then
-        custom_state.on_change = group.on_change
-    end
-    if group.check_owner then
-        custom_state.check_owner = true
+    if wielded_item ~= nil then
+        custom_state.wielded_item = wielded_item
     end
     formspec = table.concat(formspec)..table.concat(formspec2)
     ch_core.show_formspec(player, "ch_core:shape_selector", formspec, formspec_callback, custom_state, {})
     return true
 end
 
+function ch_core.get_shape_selector_group(node_name)
+    local group = item_to_shape_selector_group[assert(node_name)]
+    if group ~= nil then
+        return group.nodes, group.input_only
+    else
+        return nil, nil
+    end
+end
+
 local function chisel_on_use(itemstack, user, pointed_thing)
     if user == nil or pointed_thing.type ~= "node" then
         return -- player and node are required
     end
-    local player_name = user:get_player_name()
     local pos = pointed_thing.under
     local node = core.get_node(pos)
     local group = item_to_shape_selector_group[node.name]
     if group == nil then
         return
     end
+    local player_name = user:get_player_name()
     if core.is_protected(pos, player_name) then
         core.record_protection_violation(pos, player_name)
         return
     end
-    if group.check_owner and not core.check_player_privs(player_name, "protection_bypass") then
-        local meta = core.get_meta(pos)
-        local owner = meta:get_string("owner")
-        if owner ~= "" and owner ~= player_name then
-            ch_core.systemovy_kanal(player_name, "Tento blok patří postavě '"..ch_core.prihlasovaci_na_zobrazovaci(owner).."'!")
-            return
-        end
+    if group.check_owner and not check_owner(pos, player_name) then
+        record_owner_violation(pos, player_name)
+        return
     end
-    if not core.is_creative_enabled(player_name) then
-        itemstack:add_wear_by_uses(200)
-    end
-    ch_core.show_shape_selector(user, pos, node)
-    return itemstack
+    ch_core.show_shape_selector(user, pos, node, itemstack)
 end
 
 local def = {

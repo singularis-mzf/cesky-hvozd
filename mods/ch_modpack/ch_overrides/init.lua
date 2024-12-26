@@ -36,6 +36,7 @@ end
 dofile("aliases.lua")
 dofile("bushy_leaves.lua")
 dofile("chests.lua")
+dofile("chisel_regs.lua")
 dofile("colorable_glass.lua")
 dofile("drawtype_groups.lua")
 dofile("extra_recipes.lua")

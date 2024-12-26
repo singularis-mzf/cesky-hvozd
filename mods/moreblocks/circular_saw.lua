@@ -119,6 +119,9 @@ circular_saw.names = {
 	{"panel", "_pole", 4},
 	{"panel", "_pole_flat", 4},
 
+	{"panel", "_pole_thin", 1},
+	{"panel", "_pole_thin_flat", 1},
+
 	{"slab", "_arcade", 2},
 	{"slab", "_arcade_flat", 2},
 

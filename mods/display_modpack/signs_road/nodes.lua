@@ -413,9 +413,9 @@ local models = {
 		allow_on_pole = true,
 	},
 	inv_sign_black_text = {
-		depth = 1/16,
-		width = 1,
-		height = 1,
+		depth = 1/128,
+		width = 4/16,
+		height = 4/16,
 		entity_fields = {
 			size = { x = 3, y = 1 },
 			maxlines = 4,
@@ -423,17 +423,15 @@ local models = {
 		},
 		node_fields = {
 			description = S("Invisible sign with black text"),
-			tiles = { "signs_road_sides.png^[opacity:0", "signs_road_sides.png^[opacity:0",
-			          "signs_road_sides.png^[opacity:0", "signs_road_sides.png^[opacity:0",
-			          "signs_road_sides.png^[opacity:0", "signs_road_white.png^[opacity:0" },
+			tiles = { "blank.png", "blank.png", "blank.png", "blank.png", "blank.png", "blank.png", },
 			use_texture_alpha = "clip",
 			inventory_image = "signs_road_white.png^[multiply:#999999^(signs_road_letter.png^[multiply:#000000)^default_invisible_node_overlay.png",
 		},
 	},
 	inv_sign_white_text = {
-		depth = 1/16,
-		width = 1,
-		height = 1,
+		depth = 1/128,
+		width = 4/16,
+		height = 4/16,
 		entity_fields = {
 			size = { x = 3, y = 1 },
 			maxlines = 4,
@@ -441,17 +439,15 @@ local models = {
 		},
 		node_fields = {
 			description = S("Invisible sign with white text"),
-			tiles = { "signs_road_sides.png^[opacity:0", "signs_road_sides.png^[opacity:0",
-			          "signs_road_sides.png^[opacity:0", "signs_road_sides.png^[opacity:0",
-			          "signs_road_sides.png^[opacity:0", "signs_road_white.png^[opacity:0" },
+			tiles = { "blank.png", "blank.png", "blank.png", "blank.png", "blank.png", "blank.png", },
 			use_texture_alpha = "clip",
 			inventory_image = "signs_road_white.png^[multiply:#999999^signs_road_letter.png^default_invisible_node_overlay.png",
 		},
 	},
 	inv_sign_orange_text = {
-		depth = 1/16,
-		width = 1,
-		height = 1,
+		depth = 1/128,
+		width = 4/16,
+		height = 4/16,
 		entity_fields = {
 			size = { x = 3, y = 1 },
 			maxlines = 4,
@@ -459,17 +455,15 @@ local models = {
 		},
 		node_fields = {
 			description = S("Invisible sign with orange text"),
-			tiles = { "signs_road_sides.png^[opacity:0", "signs_road_sides.png^[opacity:0",
-			          "signs_road_sides.png^[opacity:0", "signs_road_sides.png^[opacity:0",
-			          "signs_road_sides.png^[opacity:0", "signs_road_white.png^[opacity:0" },
+			tiles = { "blank.png", "blank.png", "blank.png", "blank.png", "blank.png", "blank.png", },
 			use_texture_alpha = "clip",
 			inventory_image = "signs_road_white.png^[multiply:#999999^(signs_road_letter.png^[multiply:#ffbb00)^default_invisible_node_overlay.png",
 		},
 	},
 	inv_sign_green_text = {
-		depth = 1/16,
-		width = 1,
-		height = 1,
+		depth = 1/128,
+		width = 4/16,
+		height = 4/16,
 		entity_fields = {
 			size = { x = 3, y = 1 },
 			maxlines = 4,

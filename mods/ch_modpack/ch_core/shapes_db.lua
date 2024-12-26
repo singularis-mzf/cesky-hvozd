@@ -726,7 +726,9 @@ local alts_panel = set("", "_1", "_2", "_4", "_12", "_15",
 	"_element",
 	"_element_flat",
 	"_pole",
-	"_pole_flat")
+	"_pole_flat",
+	"_pole_thin",
+	"_pole_thin_flat")
 	-- "_banister" (zatím jen pro kámen)
 
 local alts_slab = set("", "_quarter", "_three_quarter", "_1", "_2", "_14", "_15",
@@ -938,7 +940,7 @@ local rules = {
 	}},
 	{set("ch_extras:rope_block"), {
 		cnc  = {set("technic_cnc_diagonal_truss", "technic_cnc_diagonal_truss_cross"), true},
-		panel = {set("_l", "pole", "pole_flat", "_special"), true},
+		panel = {set("_l", "pole", "pole_flat", "_pole_thin", "_pole_thin_flat", "_special"), true},
 		slab = {"_1", true},
 		stair = {"chimney", true},
 	}},

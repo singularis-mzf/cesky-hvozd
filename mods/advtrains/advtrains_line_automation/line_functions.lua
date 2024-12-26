@@ -19,6 +19,16 @@ local simple_modes = {
     [MODE_FINAL_CONTINUE] = MODE_FINAL,
 }
 
+local current_passages = {--[[
+    [train_id] = {[1] = rwtime, ..., [n] = rwtime (časy *odjezdu*, kromě koncových zastávek, kde jde o čas příjezdu)}
+]]}
+
+local last_passages = {--[[
+    [linevar] = {
+        [1..10] = {[1] = rwtime, ...} -- jízdy seřazeny od nejstarší (1) po nejnovější (až 10) podle odjezdu z výchozí zastávky
+    }
+]]}
+
 local debug_print_i = 0
 
 -- LOCAL funkce:
@@ -548,6 +558,11 @@ function al.on_train_enter(pos, train_id, train, index)
             can_start_line = stop_def.mode == MODE_FINAL_CONTINUE
             debug_print("Vlak "..train_id.." skončil jízdu na lince "..ls.linevar..", může pokračovat na jinou linku: "..(can_start_line and "ihned" or "na příští zastávce"))
             train.text_inside = al.get_stop_description(linevar_def.stops[next_index])
+            local current_passage = current_passages[train_id]
+            if current_passage ~= nil then
+                current_passage[next_index] = rwtime
+                current_passages[train_id] = nil
+            end
             al.cancel_linevar(train)
         end
     else
@@ -629,6 +644,28 @@ function al.on_train_leave(pos, train_id, train, index)
         train.text_inside = ""
         if linevar_def ~= nil then
             -- linkový vlak:
+            debug_print("Linkový vlak "..train_id.." odjel ze zastávky s indexem "..ls.linevar_index)
+            if ls.linevar_index == 1 then
+                -- odjezd z výchozí zastávky:
+                local new_passage = {rwtime}
+                current_passages[train_id] = new_passage
+                local passages_by_linevar = last_passages[ls.linevar]
+                if passages_by_linevar == nil then
+                    passages_by_linevar = {new_passage}
+                    last_passages[ls.linevar] = passages_by_linevar
+                else
+                    while #passages_by_linevar >= 10 do
+                        table.remove(passages_by_linevar, 1)
+                    end
+                    table.insert(passages_by_linevar, new_passage)
+                end
+            else
+                -- odjezd z nácestné zastávky
+                local current_passage = current_passages[train_id]
+                if current_passage ~= nil then
+                    current_passage[ls.linevar_index] = rwtime
+                end
+            end
             local next_stop_index, next_stop_data = al.get_next_stop(linevar_def, ls.linevar_index)
             if next_stop_index ~= nil then
                 train.text_inside = al.get_stop_description(nil, next_stop_data)
@@ -745,3 +782,38 @@ local def = {
     end,
 }
 core.register_chatcommand("vlaky", def)
+
+
+-- DEBUG:
+def = {
+    -- params = "",
+    description = "(pro ladění)",
+    privs = {server = true},
+    func = function(player_name, param)
+        print("----")
+        for linevar, passages in pairs(last_passages) do
+            print("LINEVAR "..linevar..":")
+            local linevar_def = al.try_get_linevar_def(linevar)
+            if linevar_def ~= nil then
+                local stops = linevar_def.stops
+                for i, passage in ipairs(passages) do
+                    print("  Passage #"..i..":")
+                    for j, stop in ipairs(stops) do
+                        local s
+                        if passage[j] ~= nil then
+                            s = tostring(passage[j])
+                        else
+                            s = "-"
+                        end
+                        print("  - "..stop.stn.." = "..s.." ["..j.."]")
+                    end
+                end
+            else
+                print("ERROR! definition not found")
+            end
+        end
+        print("----")
+        return true
+    end,
+}
+core.register_chatcommand("odjezdy", def)
