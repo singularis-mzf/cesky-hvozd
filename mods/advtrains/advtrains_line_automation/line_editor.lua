@@ -160,8 +160,8 @@ local function get_formspec(custom_state)
     if pinfo.role ~= "new" then
         if has_rights_to_open_variant then
             if selection_index > 1 then
-                table.insert(formspec, "button[5,15;4.5,0.75;last_passages;posledních 10 jízd...]"..
-                "tooltip[last_passages;Zobrazí přehled časů posledních 10 jízd na dané variantě linky.]")
+                table.insert(formspec, "button[5,15;4.5,0.75;last_passages;poslední jízdy...]"..
+                "tooltip[last_passages;Zobrazí přehled časů několika posledních jízd na dané variantě linky.]")
             end
             table.insert(formspec, "button[10,15;4.5,0.75;save;"..
                 ifthenelse(custom_state.compiled_linevar == nil, "ověřit změny\npřed uložením]", "uložit změny]"))

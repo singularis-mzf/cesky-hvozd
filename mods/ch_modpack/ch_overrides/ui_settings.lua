@@ -357,8 +357,8 @@ local function get_formspec(player, perplayer_formspec)
 			fsgen:table("tplayer", "postava", dropdown.formspec_options, tplayer_index, 3.0))
 	end
 
-	-- Režim usnadnění hry [creative players and players with ch_switchable_creative priv]
-	if tplayer_role == "creative" or tplayer_privs.ch_switchable_creative or tplayer_privs.privs then
+	-- Režim usnadnění hry [creative players]
+	if tplayer_role == "creative" or tplayer_privs.privs then
 		tooltip =
 			"Režim usnadnění hry je dostupný pouze kouzelnickým postavám.\n"..
 			"Činí hru rychlejší a snazší odstraněním některých požadavků a omezení.\n"..
@@ -732,7 +732,7 @@ local function on_player_receive_fields(player, formname, fields)
 		update_formspec = true
 
 	-- 2. CHECKBOXES
-	elseif fields.chs_creative and (tplayer_info.role == "creative" or tplayer_info.privs.ch_switchable_creative or tplayer_info.privs.privs) then
+	elseif fields.chs_creative and (tplayer_info.role == "creative" or tplayer_info.privs.privs) then
 		tplayer_info.privs.creative = ifthenelse(fields.chs_creative == "true", true, nil)
 		minetest.set_player_privs(tplayer_name, tplayer_info.privs)
 		update_formspec = true

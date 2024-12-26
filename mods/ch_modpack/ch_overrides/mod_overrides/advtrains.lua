@@ -8,6 +8,20 @@ ch_core.register_event_type("player_overrun", {
 local repeat_protection = {}
 local has_penalty = core.settings:get_bool("ch_player_overrun_penalty", false)
 
+local function player_overrun_step(player_name)
+    local online_charinfo = ch_core.online_charinfo[player_name]
+    local player = core.get_player_by_name(player_name)
+    if player ~= nil and online_charinfo ~= nil then
+        if player:get_hp() >= 10 then
+            -- remove penalty
+            player:hud_remove(online_charinfo.player_overrun_hud)
+            online_charinfo.player_overrun_hud = nil
+        else
+            core.after(1, player_overrun_step, player_name)
+        end
+    end
+end
+
 local function on_player_overrun(player, train_id, train_direction, train_velocity)
     local player_name = player:get_player_name()
     local now = core.get_us_time()
@@ -20,6 +34,16 @@ local function on_player_overrun(player, train_id, train_direction, train_veloci
     repeat_protection[player_name] = now + 1000000
     if has_penalty then
         player:set_hp(1)
+        local online_charinfo = ch_core.online_charinfo[player_name] or {}
+        online_charinfo.player_overrun_hud = player:hud_add({
+            type = "image",
+            name = "player_overrun_hud",
+            alignment = {x = 1, y = 1},
+            z_index = -390,
+            scale = {x = -100, y = -100},
+            text = "ch_core_white_pixel.png^[multiply:#ff0000^[opacity:50",
+        })
+        core.after(1, player_overrun_step, player_name)
         -- TODO...
     end
     --[[
