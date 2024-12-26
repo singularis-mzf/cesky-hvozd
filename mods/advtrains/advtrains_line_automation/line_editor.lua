@@ -16,9 +16,12 @@ local color_red = core.get_color_escape_sequence("#ff0000")
 local color_green = core.get_color_escape_sequence("#00ff00")
 
 local cancel_linevar = assert(advtrains.lines.cancel_linevar)
+local get_last_passages = assert(advtrains.lines.get_last_passages)
 local get_line_description = assert(advtrains.lines.get_line_description)
 local linevar_decompose = assert(advtrains.lines.linevar_decompose)
 local try_get_linevar_def = assert(advtrains.lines.try_get_linevar_def)
+
+local show_last_passages_formspec -- forward declaration
 
 local function check_rights(pinfo, owner)
     if pinfo.role == "new" or pinfo.role == "none" then
@@ -100,7 +103,8 @@ local function get_formspec(custom_state)
 		return ""
 	end
 
-	local selection_index = custom_state.selection_index
+    local selection_index_raw = custom_state.selection_index
+	local selection_index = selection_index_raw or 1
     local formspec = {
         ch_core.formspec_header({formspec_version = 6, size = {20, 16}, auto_background = true}),
         "label[0.5,0.6;Editor variant linek]"..
@@ -126,7 +130,7 @@ local function get_formspec(custom_state)
             table.insert(formspec, "vypnutá")
         end
     end
-    if selection_index ~= nil then
+    if selection_index_raw ~= nil then
         table.insert(formspec, ";"..selection_index.."]")
     else
         table.insert(formspec, ";]")
@@ -135,7 +139,7 @@ local function get_formspec(custom_state)
         table.insert(formspec, "button[14.5,0.3;3.5,0.75;create;nová varianta...]")
     end
     local has_rights_to_open_variant =
-        pinfo.role == "admin" or (selection_index or 1) == 1 or
+        pinfo.role == "admin" or selection_index == 1 or
         pinfo.player_name == custom_state.linevars[selection_index - 1].owner
 
     if has_rights_to_open_variant then
@@ -155,6 +159,10 @@ local function get_formspec(custom_state)
 
     if pinfo.role ~= "new" then
         if has_rights_to_open_variant then
+            if selection_index > 1 then
+                table.insert(formspec, "button[5,15;4.5,0.75;last_passages;posledních 10 jízd...]"..
+                "tooltip[last_passages;Zobrazí přehled časů posledních 10 jízd na dané variantě linky.]")
+            end
             table.insert(formspec, "button[10,15;4.5,0.75;save;"..
                 ifthenelse(custom_state.compiled_linevar == nil, "ověřit změny\npřed uložením]", "uložit změny]"))
         end
@@ -649,6 +657,14 @@ local function formspec_callback(custom_state, player, formname, fields)
                 ch_core.systemovy_kanal(pinfo.player_name, "Mazání selhalo: "..(errmsg or "Neznámá chyba."))
             end
         end
+    elseif fields.last_passages then
+        local selected_linevar_def = try_get_linevar_def(custom_state.linevars[(custom_state.selection_index or 1) - 1].name)
+        if selected_linevar_def ~= nil then
+            print("DEBUG: selected_linevar_def: "..dump2(selected_linevar_def))
+            assert(selected_linevar_def.name)
+            show_last_passages_formspec(player, selected_linevar_def, assert(selected_linevar_def.name))
+            return
+        end
     end
 
 	if update_formspec then
@@ -656,21 +672,80 @@ local function formspec_callback(custom_state, player, formname, fields)
 	end
 end
 
-local function show_formspec(player)
+local function show_editor_formspec(player, linevar_to_select)
     if player == nil then return false end
 	local custom_state = {
 		player_name = assert(player:get_player_name()),
         evl_scroll = 0,
 	}
-    custom_state_refresh_linevars(custom_state)
-    custom_state_set_selection_index(custom_state, 1)
+    if not custom_state_refresh_linevars(custom_state, linevar_to_select) then
+        custom_state_set_selection_index(custom_state, 1)
+    end
 	ch_core.show_formspec(player, "advtrains_line_automation:editor_linek", get_formspec(custom_state), formspec_callback, custom_state, {})
+end
+
+local function lp_formspec_callback(custom_state, player, formname, fields)
+    if fields.back then
+        show_editor_formspec(player, custom_state.selected_linevar)
+    end
+end
+
+show_last_passages_formspec = function(player, linevar_def, selected_linevar)
+    local formspec = {
+        "formspec_version[6]"..
+        "size[20,10]"..
+        "label[0.5,0.6;Poslední jízdy na variantě linky ",
+        F(assert(linevar_def.name)),
+        "]"..
+        "tablecolumns[text;text;text,width=5;text,width=5;text,width=5;text,width=5;text,width=5;text,width=5;text,width=5;text,width=5;text,width=5;text,width=5]",
+        "table[0.5,1.25;19,8;jizdy;KÓD,DOPRAVNA,1.j.,2.j.,3.j.,4.j.,5.j.,6.j.,7.j.,8.j.,9.j.,10.j."
+    }
+    local passages, stops = get_last_passages(linevar_def)
+    local max_time = {}
+    if passages ~= nil then
+        for i = 1, 10 do
+            if passages[i] == nil then
+                passages[i] = {}
+            end
+        end
+        for i = 1, #stops do -- i = index zastávky
+            table.insert(formspec, ","..F(stops[i][1])..","..F(stops[i][2]))
+            for j = 1, 10 do -- j = index jízdy
+                local time = passages[j][i]
+                if time ~= nil then
+                    table.insert(formspec, ","..time)
+                    if max_time[j] == nil or max_time[j] < time then
+                        max_time[j] = time
+                    end
+                else
+                    table.insert(formspec, ",-")
+                end
+            end
+        end
+        table.insert(formspec, ",,DOBA JÍZDY:")
+        for i = 1, 10 do
+            if max_time[i] ~= nil then
+                table.insert(formspec, ",_"..(max_time[i] - passages[i][1]).."_")
+            else
+                table.insert(formspec, ",-")
+            end
+        end
+    end
+    table.insert(formspec, ";]"..
+        "button[17.75,0.3;1.75,0.75;back;zpět]"..
+        "tooltip[jizdy;Časové údaje jsou v sekundách železničního času.]")
+    formspec = table.concat(formspec)
+    local custom_state = {
+        player_name = player:get_player_name(),
+        selected_linevar = selected_linevar,
+    }
+    ch_core.show_formspec(player, "advtrains_line_automation:posledni_jizdy", formspec, lp_formspec_callback, custom_state, {})
 end
 
 def = {
     -- params = "",
     description = "Otevře editor variant linek",
     privs = {ch_registered_player = true},
-    func = function(player_name, param) show_formspec(minetest.get_player_by_name(player_name)) end,
+    func = function(player_name, param) show_editor_formspec(minetest.get_player_by_name(player_name)) end,
 }
 core.register_chatcommand("linky", def)

@@ -29,6 +29,12 @@ local last_passages = {--[[
     }
 ]]}
 
+local diakritika_na_velka = {
+	["á"] = "Á", ["ä"] = "Ä", ["č"] = "Č", ["ď"] = "Ď", ["é"] = "É", ["Ě"] = "Ě", ["Í"] = "Í", ["ĺ"] = "Ĺ", ["ľ"] = "Ľ",
+	["ň"] = "Ň", ["ó"] = "Ó", ["ô"] = "Ô", ["ŕ"] = "Ŕ", ["ř"] = "Ř", ["š"] = "Š", ["ť"] = "Ť", ["ú"] = "Ú", ["ů"] = "Ů",
+	["ý"] = "Ý", ["ž"] = "Ž",
+}
+
 local debug_print_i = 0
 
 -- LOCAL funkce:
@@ -47,6 +53,24 @@ local function get_station_name(stn)
     else
         return "???"
     end
+end
+
+local function na_velka_pismena(s)
+	local l = #s
+	local i = 1
+	local res = ""
+	local c
+	while i <= l do
+		c = diakritika_na_velka[s:sub(i, i + 1)]
+		if c then
+			res = res .. c
+			i = i + 2
+		else
+			res = res .. s:sub(i, i)
+			i = i + 1
+		end
+	end
+	return string.upper(res)
 end
 
 --[[
@@ -96,7 +120,13 @@ local function line_start(train, stn, departure_rwtime)
     ls.linevar_dep = departure_rwtime
     ls.linevar_last_dep = departure_rwtime
     ls.linevar_last_stn = stn
-    train.text_outside = al.get_line_description(linevar_def, {line_number = true, last_stop = true, last_stop_prefix = "", train_name = true})
+    train.text_outside = al.get_line_description(linevar_def, {
+        line_number = true,
+        last_stop = true,
+        last_stop_prefix = "",
+        last_stop_uppercase = true,
+        train_name = true,
+    })
     -- print("DEBUG: line_start(): "..dump2({train_id = train.id, line_status = ls}))
     return true
 end
@@ -255,6 +285,7 @@ end
         first_stop = bool or nil, -- zahrnout do popisu název výchozí zastávky? nil => false
         last_stop = bool or nil, -- zahrnout do popisu název cílové zastávky? nil => true
         last_stop_prefix = string or nil, -- text před název cílové zastávky; nil => "⇒ "
+        last_stop_uppercase = bool or nil, -- je-li true, název cílové zastávky se před uvedením převede na velká písmena
         train_name = bool or nil, -- zahrnout do popisu jméno vlaku, je-li k dispozici; nil => false
         train_name_prefix = string or nil, -- text před jméno vlaku; nil => "\n"
     }
@@ -281,6 +312,9 @@ function al.get_line_description(linevar_def, options)
         local terminus_index, terminus_data = al.get_terminus(linevar_def, 1, false)
         if terminus_index ~= nil then
             s3 = get_station_name(terminus_data.stn)
+            if options.last_stop_uppercase then
+                s3 = na_velka_pismena(s3)
+            end
         end
         s3 = (options.last_stop_prefix or "⇒ ")..s3
     else
@@ -689,6 +723,28 @@ function al.linevar_decompose(linevar)
     end
     local parts = string.split(linevar, "/", true, 3)
     return parts[1], parts[2] or "", parts[3] or ""
+end
+
+--[[
+    Vrací:
+    a) pokud linevar existuje a má průjezdy:
+        passages, stops:
+        {{[1] = rwtime, ...}...}, {"kód", "název"}...}
+    b) jinak:
+        nil, nil
+]]
+function al.get_last_passages(linevar_def)
+    local lp = last_passages[linevar_def.name]
+    if linevar_def ~= nil and lp ~= nil and lp[1] ~= nil then
+        local passages, stops = {}, {}
+        for i, stop in ipairs(linevar_def.stops) do
+            stops[i] = {stop.stn, get_station_name(stop.stn)}
+        end
+        for i = 1, #lp do
+            passages[i] = table.copy(lp[i])
+        end
+        return passages, stops
+    end
 end
 
 --[[ DEBUG:
