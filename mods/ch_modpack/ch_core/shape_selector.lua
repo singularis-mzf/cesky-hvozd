@@ -342,6 +342,30 @@ function ch_core.get_shape_selector_group(node_name)
     end
 end
 
+function ch_core.fill_shape_selector_equals_set(set, node_name)
+    local group = item_to_shape_selector_group[assert(node_name)]
+    if group == nil then
+        return false
+    end
+    if set ~= nil then
+        local columns, rows = get_group_size(group)
+        local count = columns * rows
+        local nodes = assert(group.nodes)
+        for i = 1, count do
+            local nodespec = nodes[i]
+            if nodespec ~= nil then
+                if type(nodespec) ~= "table" then
+                    -- string
+                    set[nodespec] = true
+                elseif not nodespec.oneway then
+                    set[nodespec.name] = true
+                end
+            end
+        end
+    end
+    return true
+end
+
 local function chisel_on_use(itemstack, user, pointed_thing)
     if user == nil or pointed_thing.type ~= "node" then
         return -- player and node are required

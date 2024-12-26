@@ -44,12 +44,7 @@ local function assert_is_facedir(facedir)
 end
 
 --[[
-Pokud je zadaný blok registrován v systému nodedir a podporuje cílové otočení, vrátí:
-    current_facedir, new_node_name
-Pokud je zadaný blok registrován, ale cílové otočení nepodporuje nebo je zadáno facedir == nil, vrátí:
-    current_facedir, nil
-Pokud není zadaný blok registrován, vrátí:
-    nil, nil
+    Pokud je zadaný blok registrován, vrátí jeho otočení typu facedir, jinak vrací nil.
 ]]
 function ch_core.get_nodedir(nodename)
     local info = node_to_info[assert(nodename)]
@@ -60,6 +55,10 @@ function ch_core.get_nodedir(nodename)
     end
 end
 
+--[[
+    Pokud je zadaný blok registrován a podporuje cílové otočení, vrátí název odpovídajícího cílového bloku.
+    Jinak vrací nil.
+]]
 function ch_core.get_nodedir_nodename(current_nodename, new_facedir)
     local info = node_to_info[assert(current_nodename)]
     if info ~= nil then
@@ -67,6 +66,27 @@ function ch_core.get_nodedir_nodename(current_nodename, new_facedir)
     else
         return nil
     end
+end
+
+--[[
+    Pokud je zadaný blok registrován, nastaví v množině 'set' klíče odpovídající
+    zadanému bloku a jeho ostatním otočením na true.
+    'set' může být nil, v takovém případě jen vrátí návratovou hodnotu, zda je blok registrován.
+    Vrací true, pokud je zadaný blok registrován, jinak false.
+]]
+function ch_core.fill_nodedir_equals_set(set, nodename)
+    local info = node_to_info[assert(nodename)]
+    if info == nil then return false end
+    if set ~= nil then
+        local group, n = info.group
+        for i = 0, 23 do
+            n = group[i]
+            if n ~= nil then
+                set[n] = true
+            end
+        end
+    end
+    return true
 end
 
 -- override screwdriver handler:

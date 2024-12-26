@@ -1448,6 +1448,27 @@ function ch_core.na_mala_pismena(s)
 end
 
 --[[
+Převede všechna písmena v řetězci na velká, funguje i na písmena s diakritikou.
+]]
+function ch_core.na_velka_pismena(s)
+	local l = #s
+	local i = 1
+	local res = ""
+	local c
+	while i <= l do
+		c = diakritika_na_velka[s:sub(i, i + 1)]
+		if c then
+			res = res .. c
+			i = i + 2
+		else
+			res = res .. s:sub(i, i)
+			i = i + 1
+		end
+	end
+	return string.upper(res)
+end
+
+--[[
 Vrátí počet bloků uvnitř oblasti vymezené dvěma krajními body (na pořadí nezáleží).
 Výsledkem je vždy kladné celé číslo.
 ]]
@@ -1667,6 +1688,26 @@ function ch_core.rotate_aabb(aabb, r)
 		end
 	end
 	return result
+end
+
+--[[
+	Otočí axis-aligned bounding box takovým způsobem, jako zadaná facedir-hodnota 0 až 23
+	otočí blok s paramtype2 == "facedir". Vrátí nový aabb. V případě selhání vrátí nil.
+]]
+function ch_core.rotate_aabb_by_facedir(aabb, facedir)
+	if 0 <= facedir and facedir < 24 and facedir_to_rotation_data[facedir] then
+		local a = vector.new(aabb[1], aabb[2], aabb[3])
+		local b = vector.new(aabb[4], aabb[5], aabb[6])
+		local r = facedir_to_rotation_data[facedir]
+		a = vector.rotate(a, r)
+		b = vector.rotate(b, r)
+		return {
+			math.min(a.x, b.x), math.min(a.y, b.y), math.min(a.z, b.z),
+			math.max(a.x, b.x), math.max(a.y, b.y), math.max(a.z, b.z),
+		}
+	else
+		return nil
+	end
 end
 
 --[[

@@ -41,7 +41,6 @@ local def = {
     paramtype = "light",
     paramtype2 = "color",
     palette = "unifieddyes_palette_extended.png",
-    on_construct = unifieddyes.on_construct,
     on_dig = unifieddyes.on_dig,
 
     groups = pole_groups_in_ci,
@@ -227,3 +226,134 @@ core.register_lbm({
     end,
 })
 ]]
+
+-- COLORABLE EDGE-POLES:
+local function rotate_box_by_facedir(box, facedir)
+    local fixed = assert(box.fixed)
+    if type(fixed[1]) == "table" then
+        local result = {}
+        for i, aabb in ipairs(fixed) do
+            result[i] = assert(ch_core.rotate_aabb_by_facedir(aabb, facedir))
+        end
+        return {type = "fixed", fixed = result}
+    else
+        return {type = "fixed", fixed = assert(ch_core.rotate_aabb_by_facedir(fixed, facedir))}
+    end
+end
+
+local ep_node_box = {
+    type = "fixed",
+    fixed = {-17/32, -17/32, -17/32, -15/32, 17/32, -15/32},
+}
+
+local ep_selection_box = {
+    type = "fixed",
+    fixed = {-16/32, -16/32, -16/32, -9/32, 16/32, -9/32},
+}
+
+def = {
+    description = "lakovaná vychýlená tyč I",
+    drawtype = "nodebox",
+    tiles = {{name = pole_texture, backface_culling = true, align_style = "world"}},
+    is_ground_content = false,
+    sunlight_propagates = true,
+    paramtype = "light",
+    paramtype2 = "color",
+    palette = "unifieddyes_palette_extended.png",
+    groups = {cracky = 3, not_blocking_trains = 1, ud_param2_colorable = 1, not_in_creative_inventory = 1},
+    sounds = pole_sounds,
+    on_dig = unifieddyes.on_dig,
+    drop = {items = {{items = {"ch_extras:colorable_edgepole_0"}, inherit_color = true}}},
+}
+
+local node_defs = {
+    ["ch_extras:colorable_edgepole_0"] = {
+        node_box = ep_node_box,
+        selection_box = ep_selection_box,
+        groups = {cracky = 3, not_blocking_trains = 1, ud_param2_colorable = 1},
+    }
+}
+
+for i = 1, 23 do
+    node_defs["ch_extras:colorable_edgepole_"..i] = {
+        node_box = rotate_box_by_facedir(ep_node_box, i),
+        selection_box = rotate_box_by_facedir(ep_selection_box, i),
+    }
+end
+
+ch_core.register_nodes(def, node_defs, {{
+    output = "ch_extras:colorable_edgepole_0 5",
+    recipe = {
+        {"", "moreblocks:panel_steelblock_special", ""},
+        {"moreblocks:panel_steelblock_special", "", "moreblocks:panel_steelblock_special"},
+        {"", "moreblocks:panel_steelblock_special", ""},
+        }
+}})
+
+ep_node_box = {
+    type = "fixed",
+    fixed = {
+        {-17/32, -17/32, -17/32, -15/32, 17/32, -15/32},
+        {-17/32, -17/32, -17/32, 17/32, -15/32, -15/32},
+    },
+}
+ep_selection_box = {
+    type = "fixed",
+    fixed = {
+        {-16/32, -16/32, -16/32, -9/32, 16/32, -9/32},
+        {-16/32, -16/32, -16/32, 16/32, -9/32, -9/32},
+    },
+}
+
+def.description = "lakovaná vychýlená tyč L"
+def.drop = {items = {{items = {"ch_extras:colorable_edgepole_l_0"}, inherit_color = true}}}
+
+node_defs = {
+    ["ch_extras:colorable_edgepole_l_0"] = {
+        node_box = ep_node_box,
+        selection_box = ep_selection_box,
+        groups = {cracky = 3, not_blocking_trains = 1, ud_param2_colorable = 1},
+    },
+}
+
+for i = 1, 23 do
+    node_defs["ch_extras:colorable_edgepole_l_"..i] = {
+        node_box = rotate_box_by_facedir(ep_node_box, i),
+        selection_box = rotate_box_by_facedir(ep_selection_box, i),
+    }
+end
+ch_core.register_nodes(def, node_defs, {
+    {
+        output = "ch_extras:colorable_edgepole_l_0 5",
+        recipe = {
+            {"", "moreblocks:panel_steelblock_l", ""},
+            {"moreblocks:panel_steelblock_l", "", "moreblocks:panel_steelblock_l"},
+            {"", "moreblocks:panel_steelblock_l", ""},
+        }
+    }, {
+        output = "ch_extras:colorable_edgepole_l_0",
+        recipe = {
+            {"ch_extras:colorable_edgepole_0", "ch_extras:colorable_edgepole_0"},
+            {"", ""},
+        },
+    }, {
+        output = "ch_extras:colorable_edgepole_l_0",
+        recipe = {
+            {"ch_extras:colorable_edgepole_0", ""},
+            {"ch_extras:colorable_edgepole_0", ""},
+        },
+    }, {
+        output = "ch_extras:colorable_edgepole_0 2",
+        recipe = {{"ch_extras:colorable_edgepole_l_0"}},
+    }
+})
+
+nodedir_group = {}
+for i = 0, 23 do
+    nodedir_group[i] = "ch_extras:colorable_edgepole_"..i
+end
+ch_core.register_nodedir_group(nodedir_group)
+for i = 0, 23 do
+    nodedir_group[i] = "ch_extras:colorable_edgepole_l_"..i
+end
+ch_core.register_nodedir_group(nodedir_group)

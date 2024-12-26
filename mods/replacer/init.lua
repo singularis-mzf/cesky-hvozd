@@ -1,10 +1,11 @@
 ch_base.open_mod(minetest.get_current_modname())
 
+local ifthenelse = assert(ch_core.ifthenelse)
           
 --[[
     Replacement tool for creative building (Mod for MineTest)
     Copyright (C) 2013 Sokomine
-    Copyright (C) 2022 Singularis
+    Copyright (C) 2022, 2024 Singularis
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -83,7 +84,7 @@ local function replacer_on_place(itemstack, placer, pointed_thing)
 		return itemstack
 	end
 	local player_name = placer:get_player_name()
-	local meta = minetest.deserialize(itemstack:get_metadata())
+	local meta = minetest.deserialize(itemstack:get_meta():get_string(""))
 	local charge = meta and meta.charge
 	if not player_name or not charge or charge < power_usage then
 		return itemstack
@@ -110,18 +111,18 @@ local function replacer_on_place(itemstack, placer, pointed_thing)
 	if not minetest.is_creative_enabled(player_name) then
 		meta.charge = charge - power_usage
 		technic.set_RE_wear(itemstack, meta.charge, max_charge)
-		itemstack:set_metadata(minetest.serialize(meta))
+		itemstack:get_meta():set_string("", minetest.serialize(meta))
 	end
 	return itemstack
 end
 
 local function replacer_on_use(itemstack, user, pointed_thing)
-	print("replacer_on_use")
 	if not user or not pointed_thing then
 		return itemstack
 	end
 	local player_name = user:get_player_name()
-	local meta = minetest.deserialize(itemstack:get_metadata())
+	local imeta = itemstack:get_meta()
+	local meta = minetest.deserialize(imeta:get_string(""))
 	local charge = meta and meta.charge
 	if not player_name or not charge or charge < power_usage then
 		return itemstack
@@ -136,7 +137,7 @@ local function replacer_on_use(itemstack, user, pointed_thing)
 	if not minetest.is_creative_enabled(player_name) then
 		meta.charge = charge - power_usage
 		technic.set_RE_wear(itemstack, meta.charge, max_charge)
-		itemstack:set_metadata(minetest.serialize(meta))
+		imeta:set_string("", minetest.serialize(meta))
 	end
 	return itemstack
 end
@@ -174,6 +175,62 @@ minetest.register_tool( "replacer:replacer",
 	on_refill = technic.refill_RE_charge,
 })
 
+local find_in_inventory_cache = {--[[
+	[player_name] = {
+		node_name = string,
+		set = table (set),
+		result = int or nil,
+	}
+]]}
+
+local function find_in_inventory(player_name, player_inv, listname, node_name, node_param2)
+	local ndef = core.registered_nodes[node_name]
+	local palette_index, set
+	if ndef ~= nil and ndef.paramtype2 ~= nil then
+		palette_index = core.strip_param2_color(node_param2, ndef.paramtype2)
+		if palette_index ~= nil then
+			if type(palette_index) == "number" then
+				palette_index = tostring(palette_index)
+			end
+			if palette_index == ifthenelse(ndef.paramtype2 == "color", "240", "0") then
+				palette_index = "" -- workaround for a wierd color handling
+			end
+		end
+	end
+	-- Try to use the cache
+	local cache = find_in_inventory_cache[player_name]
+	local can_use_cache = cache and cache.node_name == node_name
+	if can_use_cache then
+		set = cache.set
+		if cache.result ~= nil and cache.result <= player_inv:get_size(listname) then
+			local stack = player_inv:get_stack(listname, cache.result)
+			if set[stack:get_name()] and (palette_index == nil or stack:get_meta():get_string("palette_index") == palette_index) then
+				return cache.result -- cache hit!
+			end
+		end
+	else
+		set = {[node_name] = true}
+		ch_core.fill_nodedir_equals_set(set, node_name)
+		ch_core.fill_shape_selector_equals_set(set, node_name)
+		set[""] = nil
+		cache = {
+			node_name = node_name,
+			set = set,
+		}
+		find_in_inventory_cache[player_name] = cache
+	end
+
+	-- Full list scan:
+	for i, stack in ipairs(player_inv:get_list(listname)) do
+		if set[stack:get_name()] and (palette_index == nil or stack:get_meta():get_string("palette_index") == palette_index) then
+			-- match!
+			cache.result = i
+			return i
+		end
+	end
+	-- No match:
+	return nil
+end
 
 replacer.replace = function( itemstack, user, pointed_thing, mode )
 
@@ -247,11 +304,16 @@ replacer.replace = function( itemstack, user, pointed_thing, mode )
 	end
 
 	-- in survival mode, the player has to provide the node he wants to place
-	-- does the player carry at least one of the desired nodes with him?
-	local is_creative = minetest.is_creative_enabled(name)
-	if not is_creative and not user:get_inventory():contains_item("main", daten[1]) then
-		minetest.chat_send_player( name, "Již nemáte žádné další '"..( daten[1] or "?" ).."'. Nahrazení selhalo.")
-		return nil
+	-- does the player carry at least one of the desired nodes with them?
+	local is_creative = core.is_creative_enabled(name)
+	local user_inventory = user:get_inventory()
+	local index_to_take_from
+	if not is_creative then
+		index_to_take_from = find_in_inventory(name, user_inventory, "main", daten[1], daten[3])
+		if index_to_take_from == nil then
+			minetest.chat_send_player( name, "Již nemáte žádné další '"..( daten[1] or "?" ).."'. Nahrazení selhalo.")
+			return nil
+		end
 	end
 
 	-- give the player the item by simulating digging if possible
@@ -276,8 +338,10 @@ replacer.replace = function( itemstack, user, pointed_thing, mode )
 	end
 
 	-- consume the item
-	if not is_creative then
-		user:get_inventory():remove_item("main", daten[1].." 1")
+	if index_to_take_from ~= nil then
+		local stack = user_inventory:get_stack("main", index_to_take_from)
+		stack:take_item(1)
+		user_inventory:set_stack("main", index_to_take_from, stack)
 	end
 	minetest.set_node( pos, { name =  daten[1], param1 = daten[2], param2 = daten[3] } )
 	return nil -- no item shall be removed from inventory
