@@ -41,7 +41,7 @@ local debug_print_i = 0
 -- =========================================================================
 local function debug_print(s)
     debug_print_i = debug_print_i + 1
-    core.chat_send_all("["..debug_print_i.."] "..tostring(s))
+    -- core.chat_send_all("["..debug_print_i.."] "..tostring(s))
     return s
 end
 
