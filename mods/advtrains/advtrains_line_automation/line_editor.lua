@@ -213,7 +213,8 @@ local function get_formspec(custom_state)
         table.insert(formspec,
             "field[0,"..y..";1.25,0.75;s"..n.."_dep;;"..F(stop.dep).."]"..
             "field[1.5,"..y..";2.5,0.75;s"..n.."_stn;;"..F(stop.stn).."]"..
-            "dropdown[4.25,"..y..";4.5,0.75;s"..n.."_mode;normální,na znamení,skrytá (mezilehlá),vypnutá,koncová,koncová skrytá,"..
+            "dropdown[4.25,"..y..";4.5,0.75;s"..n..
+                "_mode;normální,na znamení (experimentální),skrytá (mezilehlá),vypnutá,koncová,koncová skrytá,"..
             "koncová (pokračuje);"..stop.mode..";true]"..
             "field[9,"..y..";1.25,0.75;s"..n.."_track;;"..F(stop.track).."]"..
             "field[10.5,"..y..";3,0.75;s"..n.."_pos;;"..F(stop.pos).."]"..
@@ -230,7 +231,7 @@ local function get_formspec(custom_state)
         "ARS pravidla a zastaví na první zastávkové koleji v dopravně pro odpovídající počet vagonů.\n"..
         "Kód dopravny se na lince může opakovat.]"..
         "tooltip[4.75,0;4.75,1;Režim zastávky: výchozí/normální - vždy zastaví\\;\n"..
-        "na znamení: zastaví na znamení (zatím neimplementováno)\\;\n"..
+        "na znamení: zastaví na znamení (zatím experimentální)\\;\n"..
         "skrytá – vždy zastaví\\, ale nezobrazí se v jízdních řádech\\;\n"..
         "vypnutá – nezastaví (použijte při výlukách nebo při zrušení zastávky)\\;\n"..
         "koncová – vždy zastaví a tím ukončí spoj\\, vlak se stane nelinkovým\\;\n"..

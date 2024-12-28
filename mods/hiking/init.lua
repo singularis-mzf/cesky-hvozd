@@ -76,7 +76,19 @@ local function merge(a, b)
 		c[k] = v
 	end
 	for k, v in pairs(b) do
-		c[k] = v
+		if k == "groups" and c.groups ~= nil then
+			-- merge groups:
+			c.groups = table.copy(c.groups)
+			for group, rank in pairs(v) do
+				if rank ~= 0 then
+					c.groups[group] = rank
+				elseif c.groups[group] ~= nil then
+					c.groups[group] = nil
+				end
+			end
+		else
+			c[k] = v
+		end
 	end
 	return c
 end
@@ -124,7 +136,8 @@ function hiking.register_pole(colour, style)
 		wield_image = inv1,
 		drawtype = "mesh",
 		mesh = "hiking_pole.obj",
-		selection_box = hiking.sign_box
+		selection_box = hiking.sign_box,
+		groups = {not_in_creative_inventory = 1},
 	}))
 
 	minetest.register_node("hiking:pole2_" .. style.id .. colour.name, merge(hiking.basic_properties, {
@@ -135,7 +148,8 @@ function hiking.register_pole(colour, style)
 		wield_image = inv2,
 		drawtype = "mesh",
 		mesh = "hiking_pole_thin.obj",
-		selection_box = hiking.sign_box
+		selection_box = hiking.sign_box,
+		groups = {not_in_creative_inventory = 1},
 	}))
 
 	minetest.register_craft({

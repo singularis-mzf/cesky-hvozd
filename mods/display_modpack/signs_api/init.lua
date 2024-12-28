@@ -326,6 +326,8 @@ function signs_api.register_sign(mod, name, model)
 		if fields.description ~= nil then
 			fields.description = fields.description.." (na tyč)"
 		end
+		fields.groups = table.copy(fields.groups or {})
+		fields.groups.not_in_creative_inventory = 1
 		if fields.drop == nil then
 			fields.drop = mod..":"..name
 		end

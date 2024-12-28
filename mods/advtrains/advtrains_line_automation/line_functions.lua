@@ -549,11 +549,6 @@ function al.on_train_enter(pos, train_id, train, index)
         debug_print("Vlak "..train_id.." zaznamenán: "..stn.." "..core.pos_to_string(pos).." @ "..rwtime)
     end
     local should_stop_result = should_stop(pos, stdata, train)
-    print("[DEBUG] "..dump2({
-        should_stop_result_type = type(should_stop_result),
-        should_stop_result = tostring(should_stop_result),
-        stop_request = tostring(ls.stop_request),
-    }))
     if should_stop_result == nil then
         debug_print("Vlak "..train_id.." projel zastávkou "..stn)
         return

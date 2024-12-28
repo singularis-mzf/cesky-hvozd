@@ -11,7 +11,7 @@ local has_penalty = core.settings:get_bool("ch_player_overrun_penalty", false)
 local function player_overrun_step(player_name)
     local online_charinfo = ch_core.online_charinfo[player_name]
     local player = core.get_player_by_name(player_name)
-    if player ~= nil and online_charinfo ~= nil then
+    if player ~= nil and online_charinfo ~= nil and online_charinfo.player_overrun_hud ~= nil then
         if player:get_hp() >= 10 then
             -- remove penalty
             player:hud_remove(online_charinfo.player_overrun_hud)
