@@ -131,16 +131,22 @@ local function line_start(train, stn, departure_rwtime)
     return true
 end
 
+--[[
+    Vrací:
+    - "true", pokud má vlak zastavit
+    - nil, pokud zastavit nemá
+    - "on_request", pokud má zastavit na znamení, ale znamení zatím nebylo dáno
+]]
 local function should_stop(pos, stdata, train)
     if stdata == nil or stdata.stn == nil then
         -- print("DEBUG: should_stop() == false, because stdata is invalid!")
-        return false -- neplatná data
+        return nil -- neplatná data
     end
 	local n_trainparts = #assert(train.trainparts)
     -- vyhovuje počet vagonů?
     if not ((stdata.minparts or 0) <= n_trainparts and n_trainparts <= (stdata.maxparts or 128)) then
         -- print("DEBUG: should_stop("..stdata.stn..") == false, because n_trainparts is not in interval")
-        return false
+        return nil
     end
     local stn = assert(stdata.stn) -- zastávka stále může být anonymní
 	local ls, linevar_def = al.get_line_status(train)
@@ -152,19 +158,24 @@ local function should_stop(pos, stdata, train)
     if linevar_def ~= nil then
         if next_index == nil then
             -- print("DEBUG: should_stop("..stn..") == false, because linevar=='"..ls.linevar.."' and next_index == nil")
-            return false
+            return nil
         end
         local stop = assert(linevar_def.stops[next_index])
         if stop.pos ~= nil and stop.pos ~= string.format("%d,%d,%d", pos.x, pos.y, pos.z) then
             -- print("DEBUG: should_stop("..stn..") == false, because the stop is limited to position "..stop.pos)
-            return false
+            return nil
         end
         if stop.mode ~= nil and stop.mode == MODE_REQUEST_STOP then
-            -- TODO...
-            ---debug_print("Vlak "..train.id.." by měl zastavit na zastávce na znamení.")
+            if ls.stop_request ~= nil then
+                debug_print("Vlak "..train.id.." zastaví na zastávce na znamení.")
+                return "true"
+            else
+                debug_print("Vlak "..train.id.." možná zastaví na zastávce na znamení.")
+                return "on_request"
+            end
         end
         -- print("DEBUG: should_stop("..stn..") == true for "..linevar_def.name)
-        return true
+        return "true"
         -- local result = next_index ~= nil -- zastávka má index => zastavit
         --[[
         if result then
@@ -179,13 +190,13 @@ local function should_stop(pos, stdata, train)
         local ars = stdata.ars
         -- vyhovuje vlak ARS pravidlům?
         local result = ars and (ars.default or advtrains.interlocking.ars_check_rule_match(ars, train))
-        --[[
         if result then
-            print("DEBUG: should_stop("..stn..") == true, because linevar==nil and ARS rules match")
+            return "true"
+            -- print("DEBUG: should_stop("..stn..") == true, because linevar==nil and ARS rules match")
         else
-            print("DEBUG: should_stop("..stn..") == false, because linevar==nil and ARS rules don't match")
-        end ]]
-        return result
+            return nil
+            -- print("DEBUG: should_stop("..stn..") == false, because linevar==nil and ARS rules don't match")
+        end
     end
 end
 
@@ -489,7 +500,7 @@ function al.on_train_approach(pos, train_id, train, index, has_entered)
     if train.path_cn[index] ~= 1 then return end -- špatný směr
     local pe = advtrains.encode_pos(pos)
     local stdata = advtrains.lines.stops[pe]
-    if should_stop(pos, stdata, train) then
+    if should_stop(pos, stdata, train) ~= nil then
         -- print("DEBUG: on_train_approach(): will stop at station '"..stdata.stn.."'")
         advtrains.lzb_add_checkpoint(train, index, 2, nil)
         if train.line_status.linevar == nil then
@@ -499,6 +510,26 @@ function al.on_train_approach(pos, train_id, train, index, has_entered)
             train.text_inside = attrans("Next Stop:") .. "\n"..stnname
         end
         advtrains.interlocking.ars_set_disable(train, true)
+    end
+end
+
+local function record_skipped_stops(train_id, linevar_def, linevar_index, next_index)
+    assert(linevar_def)
+    if next_index > linevar_index + 1 then
+        local skipped_stops = {}
+        for i = linevar_index + 1, next_index - 1 do
+            local mode = linevar_def.stops[i].mode or MODE_NORMAL
+            if mode ~= MODE_DISABLED then
+                table.insert(skipped_stops, linevar_def.stops[i].stn)
+            end
+        end
+        if #skipped_stops > 0 then
+            core.log("warning", "Train "..train_id.." of line '"..linevar_def.name.."' skipped "..#skipped_stops.." stops: "..
+                table.concat(skipped_stops, ", "))
+        end
+        return #skipped_stops
+    else
+        return 0
     end
 end
 
@@ -517,9 +548,34 @@ function al.on_train_enter(pos, train_id, train, index)
         ls.last_enter = {stn = stn, encpos = pe, rwtime = rwtime}
         debug_print("Vlak "..train_id.." zaznamenán: "..stn.." "..core.pos_to_string(pos).." @ "..rwtime)
     end
-    if not should_stop(pos, stdata, train) then
-        -- průjezd
+    local should_stop_result = should_stop(pos, stdata, train)
+    print("[DEBUG] "..dump2({
+        should_stop_result_type = type(should_stop_result),
+        should_stop_result = tostring(should_stop_result),
+        stop_request = tostring(ls.stop_request),
+    }))
+    if should_stop_result == nil then
         debug_print("Vlak "..train_id.." projel zastávkou "..stn)
+        return
+    elseif should_stop_result == "on_request" then
+        -- projetí zastávky na znamení
+        debug_print("Vlak "..train_id.." projel zastávkou na znamení "..stn)
+        if linevar_def ~= nil and next_index ~= nil then
+            local stop_def = assert(linevar_def.stops[next_index])
+            if stop_def.mode == nil or stop_def.mode ~= MODE_REQUEST_STOP then
+                error("Internal error: mode "..MODE_REQUEST_STOP.." expected, but the real mode is "..tostring(stop_def.mode).."!")
+            end
+            assert(stn ~= "")
+            record_skipped_stops(train_id, linevar_def, ls.linevar_index, next_index)
+            ls.linevar_index = next_index
+            ls.linevar_last_dep = rwtime -- u zastávky na znamení se průjezd počítá jako odjezd
+            ls.linevar_last_stn = stn
+            local next_stop_index, next_stop_data = al.get_next_stop(linevar_def, next_index)
+            train.text_inside = al.get_stop_description(nil, linevar_def.stops[next_stop_index or 0])
+            -- ATC command:
+            local atc_command = "A1 S" ..(stdata.speed or "M")
+            advtrains.atc.train_set_command(train, atc_command, true)
+        end
         return
     end
 
@@ -546,7 +602,10 @@ function al.on_train_enter(pos, train_id, train, index)
     -- print("DEBUG: planned departure: "..planned_departure.." = "..rwtime.." + "..wait)
     stdata.last_dep = planned_departure -- naplánovaný čas odjezdu
     ls.standing_at = pe
-    ls.stop_request = nil
+    if linevar_def == nil or next_index == nil or (linevar_def.stops[next_index].mode or MODE_NORMAL) ~= MODE_HIDDEN then
+        -- zrušit stop_request, pokud jsme nezastavili na skryté zastávce:
+        ls.stop_request = nil
+    end
     -- print("DEBUG: standing ls = "..dump2(ls))
 
     local can_start_line
@@ -561,21 +620,7 @@ function al.on_train_enter(pos, train_id, train, index)
         local stop_def = assert(linevar_def.stops[next_index])
         debug_print("Vlak "..train_id.." je linkový vlak ("..ls.linevar..") a zastavil na své pravidelné zastávce "..stn.." (index = "..next_index..")")
         -- print("DEBUG: train "..train_id.." stopped at regular stop '"..stn.."': "..dump2({stop_def = stop_def}))
-
-        -- zaznamenat přeskočené zastávky:
-        if next_index ~= ls.linevar_index + 1 then
-            local skipped_stops = {}
-            for i = ls.linevar_index + 1, next_index - 1 do
-                local mode = linevar_def.stops[i].mode or MODE_NORMAL
-                if mode ~= MODE_DISABLED then
-                    table.insert(skipped_stops, linevar_def.stops[i].stn)
-                end
-            end
-            if #skipped_stops > 0 then
-                core.log("warning", "Train "..train_id.." of line '"..linevar_def.name.."' skipped "..#skipped_stops.." stops: "..table.concat(skipped_stops, ", "))
-            end
-        end
-
+        record_skipped_stops(train_id, linevar_def, ls.linevar_index, next_index)
         local stop_smode = simple_modes[stop_def.mode or 0]
         if stop_smode == MODE_NORMAL then
             -- mezilehlá zastávka
@@ -660,7 +705,13 @@ function al.on_train_leave(pos, train_id, train, index)
     if ls.standing_at == pe then
         -- vlak stál v této dopravně
         ls.standing_at = nil
-        ls.stop_request = nil
+        if
+            linevar_def == nil or ls.linevar_index == nil or
+            linevar_def.stops[ls.linevar_index] == nil or
+            (linevar_def.stops[ls.linevar_index].mode or MODE_NORMAL) ~= MODE_HIDDEN
+        then
+            ls.stop_request = nil -- zrušit stop_request při odjezdu ze zastávky, pokud není nekoncová skrytá
+        end
         if stn ~= "" then
             -- print("DEBUG: on_train_leave from non-anonymous stop")
             debug_print("Vlak "..train_id.." odjel ze zastávky "..stn)
