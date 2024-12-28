@@ -498,6 +498,8 @@ local materials_for_bank_slopes = set(
 local materials_roof = set(
 	"bakedclay:black",
 	"bakedclay:blue",
+	"basic_materials:cement_block",
+	"basic_materials:concrete_block",
 	"cottages:black",
 	"cottages:brown",
 	"cottages:red",

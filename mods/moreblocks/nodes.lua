@@ -319,7 +319,7 @@ local nodes = {
 		description = S("Trap Glass"),
 		drawtype = "glasslike_framed_optional",
 		tiles = {"default_glass.png^moreblocks_trap_box_glass.png", "default_glass_detail.png"},
-		use_texture_alpha = "blend",
+		use_texture_alpha = "clip",
 		paramtype = "light",
 		sunlight_propagates = true,
 		is_ground_content = false,
@@ -413,7 +413,7 @@ local nodes = {
 		furnace_burntime = 22,
 	},
 	]]
-	-- glass: opacity = 40, clean glass: opacity = 20
+	-- glass: opacity = 40, clean glass: opacity = 0 (20 would be better, be we need "clip", because "blend" is buggy)
 	["glow_glass"] = {
 		description = S("Glow Glass"),
 		drawtype = "glasslike_framed_optional",
@@ -433,10 +433,10 @@ local nodes = {
 		description = S("Clean Glow Glass"),
 		drawtype = "glasslike_framed_optional",
 		tiles = {
-			"ch_core_white_pixel.png^[opacity:20^[resize:32x32^(ch_core_white_frame32.png^[multiply:#bbbbbb)",
-			"ch_core_white_pixel.png^[opacity:20",
+			"ch_core_white_pixel.png^[opacity:0^[resize:32x32^(ch_core_white_frame32.png^[multiply:#bbbbbb)",
+			"ch_core_white_pixel.png^[opacity:0",
 		},
-		use_texture_alpha = "blend",
+		use_texture_alpha = "clip",
 		paramtype = "light",
 		sunlight_propagates = true,
 		is_ground_content = false,
@@ -465,8 +465,8 @@ local nodes = {
 		description = S("Trap Clean Glow Glass"),
 		drawtype = "glasslike_framed_optional",
 		tiles = {
-			"ch_core_white_pixel.png^[opacity:20^[resize:32x32^(ch_core_white_frame32.png^[multiply:#bbbbbb)^moreblocks_trap_box_glass.png",
-			"ch_core_white_pixel.png^[opacity:20",
+			"ch_core_white_pixel.png^[opacity:0^[resize:32x32^(ch_core_white_frame32.png^[multiply:#bbbbbb)^moreblocks_trap_box_glass.png",
+			"ch_core_white_pixel.png^[opacity:0",
 		},
 		use_texture_alpha = "clip",
 		paramtype = "light",
@@ -497,8 +497,8 @@ local nodes = {
 		description = S("Clean Super Glow Glass"),
 		drawtype = "glasslike_framed_optional",
 		tiles = {
-			"ch_core_white_pixel.png^[opacity:20^[resize:32x32^ch_core_white_frame32.png",
-			"ch_core_white_pixel.png^[opacity:20",
+			"ch_core_white_pixel.png^[opacity:0^[resize:32x32^ch_core_white_frame32.png",
+			"ch_core_white_pixel.png^[opacity:0",
 		},
 		use_texture_alpha = "clip",
 		paramtype = "light",
@@ -529,8 +529,8 @@ local nodes = {
 		description = S("Trap Clean Super Glow Glass"),
 		drawtype = "glasslike_framed_optional",
 		tiles = {
-			"ch_core_white_pixel.png^[opacity:20^[resize:32x32^ch_core_white_frame32.png^moreblocks_trap_box_glass.png",
-			"ch_core_white_pixel.png^[opacity:20",
+			"ch_core_white_pixel.png^[opacity:0^[resize:32x32^ch_core_white_frame32.png^moreblocks_trap_box_glass.png",
+			"ch_core_white_pixel.png^[opacity:0",
 		},
 		use_texture_alpha = "clip",
 		paramtype = "light",

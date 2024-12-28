@@ -4,11 +4,21 @@ local modname = minetest.get_current_modname()
 local modpath = minetest.get_modpath(modname)
 ch_containers = {}
 local internal = {
-	default_width = 8,
-	default_height = 4,
-	base = vector.new(-3840, 3744, -3840),
-	offset = vector.new(96, -256, 96),
-	limit = vector.new(80, 2, 80),
+	container_width = 64, -- vnitřní šířka/hloubka kontejneru (měla by být dělitelná 16)
+	container_height = 64, -- vnitřní výška kontejneru (měla by být dělitelná 16)
+	-- *_min udává pozici prvního kontejneru v mřížce:
+	x_min = -3840,
+	y_min = 3488,
+	z_min = -3840,
+	-- *_scale udává, jak daleko bude každý následující kontejner od předchozího:
+	x_scale = 96,
+	y_scale = 256,
+	z_scale = 96,
+	-- *_count udává, kolik kontejnerů se může vytvořit podél každé osy:
+	x_count = 80,
+	y_count = 2,
+	z_count = 80,
+
 	storage = minetest.get_mod_storage(),
 }
 

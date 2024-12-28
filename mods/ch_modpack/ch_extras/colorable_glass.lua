@@ -313,6 +313,7 @@ common_def.connects_to = {"group:ch_colored_glass"}
 -- common_def.on_rotate = on_rotate_walldir
 common_def.groups = ch_core.assembly_groups(colorable_glass_common_groups, {
 	ch_colored_glass_slab = 1,
+	not_blocking_trains = 1,
 	not_in_creative_inventory = 1,
 })
 
