@@ -55,6 +55,20 @@ local function add_linevar(stn, linevar_def)
     return true, nil
 end
 
+local function same_stops(stops1, stops2)
+    assert(stops1)
+    assert(stops2)
+    if #stops1 ~= #stops2 then
+        return false
+    end
+    for i, stop in ipairs(stops1) do
+        if stop.stn ~= stops2[i].stn then
+            return false
+        end
+    end
+    return true
+end
+
 local function replace_linevar(stn, linevar_def)
     local station = advtrains.lines.stations[stn]
     if station == nil or station.linevars == nil then
@@ -62,18 +76,28 @@ local function replace_linevar(stn, linevar_def)
     end
     local linevar = assert(linevar_def.name)
     local linevars = station.linevars
-    if linevars[linevar] == nil then
+    local old_linevar_def = linevars[linevar]
+    if old_linevar_def == nil then
         return false, "Nemohu nahradit, varianta linky '"..linevar.."' dosud neexistuje!"
     end
     linevars[linevar] = linevar_def
-    for train_id, train in pairs(advtrains.trains) do
-        local ls = train.line_status
-        if ls ~= nil and ls.linevar == linevar then
-            core.log("action", "Train "..train_id.." restarted from index "..ls.linevar_index.." due to replacement of linevar '"..linevar.."'.")
-            ls.linevar_index = 1
+    local restart_count = 0
+    if not same_stops(old_linevar_def.stops, linevar_def.stops) then
+        -- změnily se zastávky, musíme restartovat vlaky:
+        for train_id, train in pairs(advtrains.trains) do
+            local ls = train.line_status
+            if ls ~= nil and ls.linevar == linevar then
+                core.log("action", "Train "..train_id.." restarted from index "..ls.linevar_index.." due to replacement of linevar '"..linevar.."'.")
+                ls.linevar_index = 1
+                restart_count = restart_count + 1
+            end
         end
     end
-    return true, nil
+    if restart_count > 0 then
+        return true, restart_count.." vlak/ů restartován/o kvůli změnám"
+    else
+        return true, nil
+    end
 end
 
 local function delete_linevar(stn, linevar)
@@ -581,9 +605,11 @@ local function formspec_callback(custom_state, player, formname, fields)
             if selected_linevar == nil then
                 if to_linevar == nil then
                     -- zcela nová varianta
+                    core.log("action", "Will add a new linevar '"..new_linevar.."'")
                     success, errmsg = add_linevar(new_linevar_station, new_linevar_def)
                 else
                     -- replace
+                    core.log("action", "Will replace an existing linevar '"..new_linevar.."'")
                     success = check_rights(pinfo, to_linevar_def.owner)
                     if success then
                         success, errmsg = replace_linevar(new_linevar_station, new_linevar_def)
@@ -593,6 +619,7 @@ local function formspec_callback(custom_state, player, formname, fields)
                 end
             elseif to_linevar == nil then
                 -- delete and add
+                core.log("action", "Will delete selected linevar '"..selected_linevar.."' and add new linevar '"..new_linevar.."'")
                 success = check_rights(pinfo, selected_linevar_def.owner)
                 if success then
                     success, errmsg = delete_linevar(selected_linevar_station, selected_linevar)
@@ -604,6 +631,7 @@ local function formspec_callback(custom_state, player, formname, fields)
                 end
             elseif selected_linevar ~= to_linevar then
                 -- delete and replace
+                core.log("action", "Will add delete selected linevar '"..selected_linevar.."' and replace existing linevar '"..new_linevar.."'")
                 success = check_rights(pinfo, to_linevar_def.owner)
                 if success then
                     success = check_rights(pinfo, selected_linevar_def.owner)
@@ -620,6 +648,7 @@ local function formspec_callback(custom_state, player, formname, fields)
                 end
             else
                 -- replace
+                core.log("action", "Will replace existing linevar '"..new_linevar.."'")
                 success = check_rights(pinfo, to_linevar_def.owner)
                 if success then
                     success, errmsg = replace_linevar(new_linevar_station, new_linevar_def)
