@@ -83,7 +83,7 @@ function atil.show_route_edit_form(pname, sigd, routeid)
 	form = form.."textlist[0.5,2;7.75,3.9;rtelog;"..table.concat(tab, ",").."]"
 	
 	form = form.."button[0.5,6;3,1;back;<<< Zpět na signalizaci]"
-	form = form.."button[4.5,6;2,1;aspect;Stav signalizace]"
+	form = form.."button[4.5,6;2,1;aspect;Signál...]"
 	form = form.."button[6.5,6;2,1;delete;Smazat cestu]"
 	
 	--atdebug(route.ars)

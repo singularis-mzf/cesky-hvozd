@@ -193,7 +193,7 @@ local fields_to_inherit_from_info = {
 	"selection_box", "collision_box",
 	"connect_sides", "connects_to",
 	"check_for_pole",
-	"paramtype2", "walkable",
+	"paramtype2", "climbable", "walkable",
 	"on_punch", "_ch_help", "_ch_help_group",
 }
 local fields_to_inherit_from_fields = {"is_ground_content", "tiles", "use_texture_alpha", "sounds"}

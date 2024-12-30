@@ -93,6 +93,8 @@ stop = {
     -- žel. čas posledního odjezdu jakéhokoliv zastavivšího vlaku z této zastávkové koleje;
     -- používá se v kombinaci s intervalem
     last_dep = int or nil,
+    -- původně naplánovaná doba stání vlaku vztahující se k last_dep
+    last_wait = int or nil,
 }
 
 local current_passages = {--[[

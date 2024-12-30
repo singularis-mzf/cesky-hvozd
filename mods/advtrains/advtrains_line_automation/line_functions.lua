@@ -20,12 +20,17 @@ local simple_modes = {
 }
 
 local current_passages = {--[[
-    [train_id] = {[1] = rwtime, ..., [n] = rwtime (časy *odjezdu*, kromě koncových zastávek, kde jde o čas příjezdu)}
+    [train_id] = {
+        [1] = rwtime,
+        ...,
+        [n] = rwtime (časy *odjezdu*, kromě koncových zastávek, kde jde o čas příjezdu)
+        wait = int or nil (původně naplánovaná doba čekání na výchozí zastávce)
+    }
 ]]}
 
 local last_passages = {--[[
     [linevar] = {
-        [1..10] = {[1] = rwtime, ...} -- jízdy seřazeny od nejstarší (1) po nejnovější (až 10) podle odjezdu z výchozí zastávky
+        [1..10] = {[1] = rwtime, ..., wait} -- jízdy seřazeny od nejstarší (1) po nejnovější (až 10) podle odjezdu z výchozí zastávky
     }
 ]]}
 
@@ -596,6 +601,7 @@ function al.on_train_enter(pos, train_id, train, index)
     debug_print("Vlak "..train_id.." zastavil na "..stn.." a odjede za "..wait.." sekund ("..planned_departure..").")
     -- print("DEBUG: planned departure: "..planned_departure.." = "..rwtime.." + "..wait)
     stdata.last_dep = planned_departure -- naplánovaný čas odjezdu
+    stdata.last_wait = wait -- naplánovaná doba čekání
     ls.standing_at = pe
     if linevar_def == nil or next_index == nil or (linevar_def.stops[next_index].mode or MODE_NORMAL) ~= MODE_HIDDEN then
         -- zrušit stop_request, pokud jsme nezastavili na skryté zastávce:
@@ -728,6 +734,9 @@ function al.on_train_leave(pos, train_id, train, index)
             if ls.linevar_index == 1 then
                 -- odjezd z výchozí zastávky:
                 local new_passage = {rwtime}
+                if stdata.last_wait ~= nil then
+                    new_passage.wait = stdata.last_wait
+                end
                 current_passages[train_id] = new_passage
                 local passages_by_linevar = last_passages[ls.linevar]
                 if passages_by_linevar == nil then
@@ -775,7 +784,7 @@ end
     Vrací:
     a) pokud linevar existuje a má průjezdy:
         passages, stops:
-        {{[1] = rwtime, ...}...}, {"kód", "název"}...}
+        {{[1] = rwtime, ..., wait = int or nil}...}, {"kód", "název"}...}
     b) jinak:
         nil, nil
 ]]
@@ -838,7 +847,6 @@ end
 local function get_train_position(line_status, linevar_def, rwtime)
     if line_status ~= nil then
         local last_pos_info = get_last_pos(line_status)
-        print("DEBUG: last_pos_info = "..dump2({last_pos_info}))
         local last_pos = last_pos_info.last_pos
         if last_pos ~= nil then
             local result = "„"..get_station_name(last_pos.stn).."“"
@@ -864,6 +872,7 @@ local def = {
         local result = {}
         if not param:match("/") then
             local rwtime = rwt.to_secs(rwt.get_time())
+            local results = {}
             for train_id, train in pairs(advtrains.trains) do
                 local ls, linevar_def = al.get_line_status(train)
                 if linevar_def ~= nil and (param == "" or ls.linevar:sub(1, #param + 1) == param.."/") then
@@ -872,9 +881,14 @@ local def = {
                     if direction_index ~= nil then
                         direction = get_station_name(direction_stop.stn)
                     end
-                    local s = "("..train_id..") ["..linevar_def.line.."] směr „"..direction.."“, poloha: "..get_train_position(ls, linevar_def, rwtime)
-                    table.insert(result, s)
+                    local s = "("..train_id..") ["..linevar_def.line.."] směr „"..direction.."“, poloha: "..
+                        get_train_position(ls, linevar_def, rwtime)
+                    table.insert(results, {key = linevar_def.name.."/"..ls.linevar_index, value = s})
                 end
+            end
+            table.sort(results, function(a, b) return a.key < b.key end)
+            for i, v in ipairs(results) do
+                result[i] = v.value
             end
         end
         if #result == 0 then

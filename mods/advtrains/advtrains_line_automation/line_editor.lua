@@ -142,7 +142,7 @@ local function get_formspec(custom_state)
         pinfo.role == "admin" or selection_index == 1 or
         pinfo.player_name == custom_state.linevars[selection_index - 1].owner
 
-    if has_rights_to_open_variant then
+    if has_rights_to_open_variant and selection_index ~= 1 then
         table.insert(formspec, "button[10.5,0.3;3.5,0.75;delete;smazat variantu]")
     end
     table.insert(formspec, "button_exit[18.75,0.3;0.75,0.75;close;X]"..
@@ -157,6 +157,9 @@ local function get_formspec(custom_state)
     table.insert(formspec, F(custom_state.owner).."]"..
         "checkbox[11.25,7.25;disable_linevar;vypnout;"..custom_state.disable_linevar.."]")
 
+    if custom_state.message ~= "" then
+        table.insert(formspec, "label[0.5,8.25;"..F(custom_state.message).."]")
+    end
     if pinfo.role ~= "new" then
         if has_rights_to_open_variant then
             if selection_index > 1 then
@@ -324,8 +327,10 @@ local function custom_state_set_selection_index(custom_state, new_selection_inde
         custom_state.owner = custom_state.player_name
         custom_state.disable_linevar = "false"
     end
+    custom_state.owner = ch_core.prihlasovaci_na_zobrazovaci(custom_state.owner)
     custom_state.compiled_linevar = nil
     custom_state.evl_scroll = 0
+    custom_state.message = ""
 end
 
 local function num_transform(s)
@@ -459,7 +464,7 @@ local function custom_state_compile_linevar(custom_state)
     custom_state.compiled_linevar = {
         name = line.."/"..stops[1].stn.."/"..rc,
         line = line,
-        owner = owner,
+        owner = ch_core.jmeno_na_prihlasovaci(owner),
         stops = stops,
     }
     if train_name ~= "" then
@@ -539,13 +544,15 @@ local function formspec_callback(custom_state, player, formname, fields)
             local success, errmsg = custom_state_compile_linevar(custom_state)
             if success then
                 -- TODO: zkontrolovat práva a možnost přepsání i zde!
-                ch_core.systemovy_kanal(pinfo.player_name, "Úspěšně ověřeno. Varianta linky může být uložena.")
+                custom_state.message = color_green.."Úspěšně ověřeno. Varianta linky může být uložena."
             else
-                ch_core.systemovy_kanal(pinfo.player_name, "Ověření selhalo: "..(errmsg or "Neznámý důvod"))
+                custom_state.message = color_red.."Ověření selhalo: "..(errmsg or "Neznámý důvod")
             end
             update_formspec = true
         else
             -- pokusit se uložit...
+            custom_state.message = ""
+
             local selection_index = custom_state.selection_index or 1
             local selected_linevar, selected_linevar_def, selected_linevar_station
             local to_linevar, to_linevar_def, to_linevar_station
@@ -622,12 +629,12 @@ local function formspec_callback(custom_state, player, formname, fields)
             end
 
             if success then
-                ch_core.systemovy_kanal(pinfo.player_name, "Varianta linky '"..new_linevar.."' úspěšně uložena.")
+                custom_state.message = color_green.."Varianta linky '"..new_linevar.."' úspěšně uložena."
                 custom_state_refresh_linevars(custom_state, new_linevar)
-                update_formspec = true
             else
-                ch_core.systemovy_kanal(pinfo.player_name, "Ukládání selhalo: "..(errmsg or "Neznámá chyba."))
+                custom_state.message = color_red.."Ukládání selhalo: "..(errmsg or "Neznámá chyba.")
             end
+            update_formspec = true
         end
 
     elseif fields.delete then
@@ -638,7 +645,7 @@ local function formspec_callback(custom_state, player, formname, fields)
         end
         local selection_index = custom_state.selection_index or 1
         local selected_linevar, selected_linevar_def, selected_linevar_station
-        if custom_state.selection_index > 1 and custom_state.linevars[selection_index - 1] ~= nil then
+        if selection_index > 1 and custom_state.linevars[selection_index - 1] ~= nil then
             selected_linevar_def, selected_linevar_station = try_get_linevar_def(custom_state.linevars[selection_index - 1].name)
             if selected_linevar_def ~= nil then
                 selected_linevar = selected_linevar_def.name
@@ -651,17 +658,17 @@ local function formspec_callback(custom_state, player, formname, fields)
                 errmsg = "Nedostatečná práva k variantě linky '"..selected_linevar.."'."
             end
             if success then
-                ch_core.systemovy_kanal(pinfo.player_name, "Varianta linky '"..selected_linevar.."' úspěšně smazána.")
+                custom_state.message = "Varianta linky '"..selected_linevar.."' úspěšně smazána."
                 custom_state_refresh_linevars(custom_state)
-                update_formspec = true
+                custom_state_set_selection_index(custom_state, 1)
             else
-                ch_core.systemovy_kanal(pinfo.player_name, "Mazání selhalo: "..(errmsg or "Neznámá chyba."))
+                custom_state.message = "Mazání selhalo: "..(errmsg or "Neznámá chyba.")
             end
+            update_formspec = true
         end
     elseif fields.last_passages then
         local selected_linevar_def = try_get_linevar_def(custom_state.linevars[(custom_state.selection_index or 1) - 1].name)
         if selected_linevar_def ~= nil then
-            print("DEBUG: selected_linevar_def: "..dump2(selected_linevar_def))
             assert(selected_linevar_def.name)
             show_last_passages_formspec(player, selected_linevar_def, assert(selected_linevar_def.name))
             return
@@ -678,6 +685,7 @@ local function show_editor_formspec(player, linevar_to_select)
 	local custom_state = {
 		player_name = assert(player:get_player_name()),
         evl_scroll = 0,
+        message = "",
 	}
     if not custom_state_refresh_linevars(custom_state, linevar_to_select) then
         custom_state_set_selection_index(custom_state, 1)
@@ -704,18 +712,39 @@ show_last_passages_formspec = function(player, linevar_def, selected_linevar)
     local passages, stops = get_last_passages(linevar_def)
     local max_time = {}
     if passages ~= nil then
-        for i = 1, 10 do
-            if passages[i] == nil then
-                passages[i] = {}
+        for j = 1, 10 do
+            max_time[j] = 0
+            if passages[j] == nil then
+                passages[j] = {}
             end
         end
-        for i = 1, #stops do -- i = index zastávky
+        -- stání na výchozí zastávce:
+        table.insert(formspec, ",,STÁNÍ NA V.Z.:")
+        for j = 1, 10 do
+            local wait = passages[j].wait
+            if wait ~= nil then
+                table.insert(formspec, ","..wait.." s")
+            else
+                table.insert(formspec, ",-")
+            end
+        end
+        -- odjezd z výchozí zastávky:
+        table.insert(formspec, ","..F(stops[1][1])..","..F(stops[1][2]).." (odj.)")
+        for j = 1, 10 do
+            local time = assert(passages[j][1])
+            table.insert(formspec, ",("..time..")")
+            if max_time[j] < time then
+                max_time[j] = time
+            end
+        end
+        -- odjezdy z ostatních zasŧávek:
+        for i = 2, #stops do -- i = index zastávky
             table.insert(formspec, ","..F(stops[i][1])..","..F(stops[i][2]))
             for j = 1, 10 do -- j = index jízdy
                 local time = passages[j][i]
                 if time ~= nil then
-                    table.insert(formspec, ","..time)
-                    if max_time[j] == nil or max_time[j] < time then
+                    table.insert(formspec, ","..(time - passages[j][1]))
+                    if max_time[j] < time then
                         max_time[j] = time
                     end
                 else
