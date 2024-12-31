@@ -828,8 +828,10 @@ local function globalstep(dtime)
         end
         core.safe_file_write(filename, text)
     end
-    data = nil
-    print("DEBUG: unkrep data cleared")
+    if data ~= nil then
+        data = nil
+        print("DEBUG: unkrep data cleared")
+    end
     next_clean_dtime = acc_dtime + 30
 end
 core.register_globalstep(globalstep)

@@ -30,7 +30,7 @@ boards.intllib = S
 local F = function(...) return minetest.formspec_escape(S(...)) end
 
 -- Load font
-dofile(boards.path.."/font_tinycurs.lua")
+-- dofile(boards.path.."/font_tinycurs.lua")
 
 local function set_formspec(pos)
 	local meta = minetest.get_meta(pos)
@@ -61,7 +61,7 @@ models = {
 			size = { x = 1, y = 15/16 },
 			maxlines = 5,
 			color = "#fff",
-			font_name = "tinycurs",
+			font_name = "z003",
 			valign = "top",
 		},
 		node_fields = {
@@ -91,7 +91,7 @@ models = {
 			size = { x = 1, y = 15/16 },
 			maxlines = 5,
 			color = "#fff",
-			font_name = "tinycurs",
+			font_name = "z003",
 			valign = "top",
 		},
 		node_fields = {
