@@ -682,6 +682,7 @@ if dlxtrains_diesel_locomotives.max_wagon_length >= 8.2 then
 		wagon_span=4.1,
 		wheel_positions = {1.8, -1.8},
 		is_locomotive=true,
+		selectionbox = {-0.9, -2.5, -4.1 + 0.25, 0.9, 2.5, 4.1 - 0.25, rotate = true},
 		collisionbox = {-0.5,-0.5,-0.5,0.5,2.5,0.5},
 		coupler_types_front = {chain=true},
 		coupler_types_back = {chain=true},
