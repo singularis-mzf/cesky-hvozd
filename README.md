@@ -253,14 +253,6 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: AGPLv3
 * Licence úprav: AGPLv3
 
-# Doplňky k balíku Display
-
-## Font Old Wizard (font\_oldwizard)
-
-* Zdroj: [https://github.com/pyrollo/font\_oldwizard](https://github.com/pyrollo/font\_oldwizard), revize 8ca8fed909a48869093b4c69067de4aa2aa50c33
-* Původní licence: LGPL 2.1 pro kód, font public domain
-* Bez úprav
-
 # Doplňky k balíku Mesecons
 
 ## Mesecon Register Circuits (mesecons\_regs)
