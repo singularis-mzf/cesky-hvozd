@@ -296,6 +296,7 @@ for _,birdName in ipairs(birdNames) do
 
 end
 
+--[[
 local groups_not_for_birds = {
 	"cracky", "choppy", "crumbly", "oddly_breakable_by_hand"
 }
@@ -309,44 +310,57 @@ local function is_name_for_birds(name)
 	end
 	return true
 end
+]]
 
-local vm_buffer = {}
+local shifts = {
+	-- y = -10
+	vector.new(0, -10, 0),
+	vector.new(-20, -10, -20),
+	vector.new(-20, -10, 0),
+	vector.new(-20, -10, 20),
+	vector.new(0, -10, -20),
+	vector.new(0, -10, 20),
+	vector.new(20, -10, -20),
+	vector.new(20, -10, 0),
+	vector.new(20, -10, 20),
+	-- y = 0
+	vector.new(-20, 0, -20),
+	vector.new(-20, 0, 0),
+	vector.new(-20, 0, 20),
+	vector.new(0, 0, -20),
+	vector.new(0, 0, 20),
+	vector.new(20, 0, -20),
+	vector.new(20, 0, 0),
+	vector.new(20, 0, 20),
+	-- y = 20
+	vector.new(-20, 20, -20),
+	vector.new(-20, 20, 0),
+	vector.new(-20, 20, 20),
+	vector.new(0, 20, -20),
+	vector.new(0, 20, 0),
+	vector.new(0, 20, 20),
+	vector.new(20, 20, -20),
+	vector.new(20, 20, 0),
+	vector.new(20, 20, 20),
+}
+
+-- local vm_buffer = {}
 local function is_place_for_birds(pos)
+	local us = core.get_us_time()
 	if core.get_node(pos).name ~= "air" then
 		return false
 	end
-	local pmin = vector.offset(vector.round(pos), -20, -20, -20)
-	local pmax = vector.offset(pmin, 40, 21, 40)
-	local vm = core.get_voxel_manip(pmin, pmax)
-	local data = vm_buffer
-	vm:get_data(data)
-	local emin, emax = vm:get_emerged_area()
-	local area = VoxelArea(emin, emax)
-	local ystride, zstride = area.ystride, area.zstride
-	local CONTENT_AIR = core.CONTENT_AIR
-	local cid_for_birds = {[CONTENT_AIR] = true}
-	local cid, nfb_pos
-	for zb = (pmin.z - emin.z) * zstride, (pmax.z - emin.z) * zstride, zstride do
-		for yb = (pmin.y - emin.y) * ystride + zb, (pmax.y - emin.y) * ystride + zb, ystride do
-			for idx = (pmin.x - emin.x) + yb + 1, (pmax.x - emin.x) + yb + 1 do
-				cid = data[idx]
-				if cid == nil then
-					core.log("error", "cid == nil".." DEBUG: "..dump2({cid = cid, CONTENT_AIR = core.CONTENT_AIR,
-						nfb_pos = nfb_pos, idx = idx, data_len = #data, zb = zb, yb = yb, ystride = ystride, zstride = zstride,
-						emin = emin, emax = emax, pmin = pmin, pmax = pmax}))
-				elseif cid ~= CONTENT_AIR and cid_for_birds[cid] == nil then
-					local name = core.get_name_from_content_id(cid)
-					if is_name_for_birds(name) then
-						cid_for_birds[cid] = true
-					else
-						nfb_pos = area:position(idx)
-						break
-					end
-				end
-			end
+	core.load_area(vector.offset(pos, -20, -10, -20), vector.offset(pos, 20, 20, 20))
+	for _, shift in ipairs(shifts) do
+		local shifted_pos = vector.add(pos, shift)
+		local is_free, pos2 = core.line_of_sight(pos, shifted_pos)
+		if not is_free then
+			-- print("DEBUG : "..core.pos_to_string(pos).." is not for birds because "..core.get_node(pos2).name.." at "..core.pos_to_string(pos2).."!")
+			return false
 		end
 	end
-	return nfb_pos == nil
+	-- print("DEBUG : "..core.pos_to_string(pos).." is for birds after "..math.ceil((core.get_us_time() - us)).." us.")
+	return true
 end
 
 local spawnOffsetMult = vector.new(20,4,20)

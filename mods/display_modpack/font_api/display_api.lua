@@ -26,46 +26,83 @@ if minetest.get_modpath("display_api") then
 	font_api.on_display_update = function (pos, objref)
 		local meta = minetest.get_meta(pos)
 		local ndef = minetest.registered_nodes[minetest.get_node(pos).name]
+		-- if not ndef then return end
 		local entity = objref:get_luaentity()
-
-		if not entity or not ndef.display_entities[entity.name] then
-			return
-		end
-
+		if not entity then return end
 		local def = ndef.display_entities[entity.name]
-		local font = font_api.get_font(meta:get_string("font") ~= ""
-			and meta:get_string("font") or def.font_name)
+		if not def then return end
 
+		local font = meta:get_string("font")
+		if font ~= "" then
+			font = font_api.get_font(font)
+		else
+			font = font_api.get_font(def.font_name)
+		end
 		local text = meta:get_string(def.meta_text or "display_text")
 
 		-- Compute entity resolution accroding to given attributes
-		local texturew, textureh
-		textureh = font:get_height(def.lines or def.maxlines or 1)
+		local columns, aspect_ratio = def.columns, def.aspect_ratio
 
-		if def.columns then
-			if font.fixedwidth then
-				texturew = def.columns * font.fixedwidth
-				if def.aspect_ratio then
-					minetest.log('warning', "[font_api] 'aspect_ratio' ignored because 'columns' is specified")
-				end
-			else
-				minetest.log('warning', "[font_api] 'columns' ignored because '"..font.name.."' is not a fixed width font.")
+		if def.meta_columns then
+			local new_columns = meta:get_int(def.meta_columns)
+			if new_columns > 0 then
+				columns = new_columns
+			end
+		end
+		if def.meta_aspect_ratio then
+			local new_aspect_ratio = meta:get_float(def.meta_aspect_ratio)
+			if new_aspect_ratio > 0.0 then
+				aspect_ratio = new_aspect_ratio
 			end
 		end
 
-		if not texturew then
-			if not def.aspect_ratio then
+		local textureh = font:get_height(def.lines or def.maxlines or 1)
+		local texturew
+		if columns ~= nil then
+			texturew = columns * (font.fixedwidth or 1)
+		else
+			if not aspect_ratio then
 				minetest.log('warning', "[font_api] No 'aspect_ratio' specified, using default 1.")
+				aspect_ratio = 1
 			end
-			texturew = textureh * def.size.x / def.size.y	/ (def.aspect_ratio or 1)
+			texturew = textureh * def.size.x / def.size.y / (aspect_ratio or 1)
+		end
+
+		local render_style = {
+			lines = def.maxlines or def.lines,
+			halign = def.halign,
+			valign = def.valign,
+			color = def.color,
+		}
+		if def.meta_halign then
+			local new_halign = meta:get_int(def.meta_halign)
+			if new_halign < 0 then
+				render_style.halign = "left"
+			elseif new_halign > 0 then
+				render_style.halign = "right"
+			else
+				render_style.halign = "center"
+			end
+		end
+		if def.meta_valign then
+			local new_valign = meta:get_int(def.meta_valign)
+			if new_valign < 0 then
+				render_style.valign = "top"
+			elseif new_valign > 0 then
+				render_style.valign = "bottom"
+			else
+				render_style.valign = "center"
+			end
+		end
+		if def.meta_color then
+			local new_color = meta:get_string(def.meta_color)
+			if #new_color == 7 and new_color:sub(1, 1) == "#" then
+				render_style.color = new_color
+			end
 		end
 
 		objref:set_properties({
-			textures={ font:render(text, texturew, textureh, {
-				lines = def.maxlines or def.lines,
-				halign = def.halign,
-				valign = def.valign,
-				color = def.color} ) },
+			textures={ font:render(text, texturew, textureh, render_style ) },
 			visual_size = def.size,
 		})
 	end
