@@ -55,8 +55,26 @@ local lcd_collision_box = {
 	}
 }
 
+local lcd3_node_box = {
+	type = "fixed",
+	fixed = {
+		{-23/16, 8/16, 13/32, 23/16, 7/16, 7/16},
+		{-23/16, -13/32, 13/32, 23/16, -8/16, 7/16},
+		{-24/16, 8/16, 13/32, -23/16, -8/16, 7/16},
+		{23/16, 8/16, 13/32, 24/16, -8/16, 7/16},
+		{-24/16, -8/16, 7/16, 24/16, 8/16, 8/16},
+	}
+}
+
+local lcd3_collision_box = {
+	type = "fixed",
+	fixed = {
+		{-24/16, -8/16, 13/32, 24/16, 8/16, 8/16},
+	}
+}
+
 digiterms.register_monitor('digiterms:lcd_monitor', {
-	description = "LCD monitor",
+	description = "LCD monitor (12x6 zn.)",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	sunlight_propagates = false,
@@ -72,6 +90,37 @@ digiterms.register_monitor('digiterms:lcd_monitor', {
 			top = -1/128, right = 1/128,
 			size = { x = 12/16, y = 12/16 },
 			columns = 12, lines = 6,
+			color = "#203020", font_name = digiterms.font, halign="left", valign="top",
+		},
+	},
+	on_place = display_api.on_place,
+}, {
+	tiles = { "digiterms_lcd_sides.png", "digiterms_lcd_sides.png",
+						"digiterms_lcd_sides.png", "digiterms_lcd_sides.png",
+						"digiterms_lcd_back.png",  "digiterms_lcd_front.png" },
+}, {
+	tiles = { "digiterms_lcd_sides.png", "digiterms_lcd_sides.png",
+						"digiterms_lcd_sides.png", "digiterms_lcd_sides.png",
+						"digiterms_lcd_back.png",  "digiterms_lcd_front_off.png" },
+})
+
+digiterms.register_monitor('digiterms:lcd_monitor_3', {
+	description = "LCD monitor (3x1 m, 44x6 zn.)",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	sunlight_propagates = false,
+	drawtype = "mesh",
+	mesh = "digiterms_lcd3.obj",
+	groups = {oddly_breakable_by_hand = 3},
+	collision_box = lcd3_collision_box,
+	selection_box = lcd3_collision_box,
+	display_entities = {
+		["signs:display_text"] = { -- ["digiterms:screen"] = {
+			on_display_update = font_api.on_display_update,
+			depth = 7/16 - display_api.entity_spacing,
+			top = -1/128, right = 1/128,
+			size = { x = 44/16, y = 12/16 },
+			columns = 44, lines = 6,
 			color = "#203020", font_name = digiterms.font, halign="left", valign="top",
 		},
 	},

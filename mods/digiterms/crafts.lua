@@ -60,6 +60,15 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
+	output = "digiterms:lcd_monitor_3 1",
+	recipe = {
+		{"digiterms:lcd_monitor", "digiterms:lcd_monitor", "digiterms:lcd_monitor"},
+		{"", "", ""},
+		{"", "", ""},
+	}
+})
+
+minetest.register_craft({
 	output = "digiterms:cathodic_beige_monitor",
 	recipe = {
 		{body, body, 'dye:yellow'},
