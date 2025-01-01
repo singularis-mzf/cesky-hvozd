@@ -760,19 +760,24 @@ show_last_passages_formspec = function(player, linevar_def, selected_linevar)
         -- odjezd z výchozí zastávky:
         table.insert(formspec, ","..F(stops[1][1])..","..F(stops[1][2]).." (odj.)")
         for j = 1, 10 do
-            local time = assert(passages[j][1])
-            table.insert(formspec, ",("..time..")")
-            if max_time[j] < time then
-                max_time[j] = time
+            local time = passages[j][1]
+            if time ~= nil then
+                table.insert(formspec, ",("..time..")")
+                if max_time[j] < time then
+                    max_time[j] = time
+                end
+            else
+                table.insert(formspec, ",-")
             end
         end
         -- odjezdy z ostatních zasŧávek:
         for i = 2, #stops do -- i = index zastávky
             table.insert(formspec, ","..F(stops[i][1])..","..F(stops[i][2]))
             for j = 1, 10 do -- j = index jízdy
+                local dep_vych = passages[j][1]
                 local time = passages[j][i]
-                if time ~= nil then
-                    table.insert(formspec, ","..(time - passages[j][1]))
+                if time ~= nil and dep_vych ~= nil then
+                    table.insert(formspec, ","..(time - dep_vych))
                     if max_time[j] < time then
                         max_time[j] = time
                     end
@@ -783,7 +788,7 @@ show_last_passages_formspec = function(player, linevar_def, selected_linevar)
         end
         table.insert(formspec, ",,DOBA JÍZDY:")
         for i = 1, 10 do
-            if max_time[i] ~= nil then
+            if max_time[i] ~= 0 then
                 table.insert(formspec, ",_"..(max_time[i] - passages[i][1]).."_")
             else
                 table.insert(formspec, ",-")

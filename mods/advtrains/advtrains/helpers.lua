@@ -516,3 +516,11 @@ function advtrains.after_place_signal(pos, placer, itemstack, pointed_thing)
 	node.param2 = n[2]
 	advtrains.ndb.swap_node(pos, node)
 end
+
+function advtrains.yaw_equals(yaw1, yaw2)
+	if yaw1 ~= nil and yaw2 ~= nil then
+		return math.abs(yaw2 - yaw1) < 1.0e-9
+	else
+		return yaw1 == yaw2
+	end
+end

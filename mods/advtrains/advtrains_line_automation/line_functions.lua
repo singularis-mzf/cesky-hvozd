@@ -379,14 +379,37 @@ end
         text = string,
     }
 ]]
-function al.get_delay_description(line_status, linevar_def)
+function al.get_delay_description(line_status, linevar_def, rwtime)
     assert(line_status)
     if linevar_def == nil then
         return {text = ""}
     end
-    local expected_departure = line_status.linevar_dep + assert(linevar_def.stops[line_status.linevar_index]).dep
+    local stops = linevar_def.stops
+    local expected_departure = line_status.linevar_dep + assert(stops[line_status.linevar_index]).dep
     local real_departure = line_status.linevar_last_dep
     local delay = real_departure - expected_departure
+
+    if rwtime ~= nil then
+        local expected_departure_next
+        for i = line_status.linevar_index + 1, #stops do
+            if stops[i] == nil then
+                break
+            else
+                local mode = stops[i].mode
+                if mode == nil or mode ~= MODE_DISABLED then
+                    expected_departure_next = line_status.linevar_dep + stops[i].dep
+                    break
+                end
+            end
+        end
+        if expected_departure_next ~= nil then
+            local delay2 = rwtime - expected_departure_next
+            if delay2 > delay then
+                delay = delay2
+            end
+        end
+    end
+
     if delay < -1 or delay > 10 then
         return {
             has_delay = true,
@@ -851,7 +874,7 @@ local function get_train_position(line_status, linevar_def, rwtime)
         local last_pos = last_pos_info.last_pos
         if last_pos ~= nil then
             local result = "„"..get_station_name(last_pos.stn).."“"
-            local delay_info = al.get_delay_description(line_status, linevar_def)
+            local delay_info = al.get_delay_description(line_status, linevar_def, rwtime)
             if last_pos_info.type ~= "standing" then
                 result = result.." (před "..(rwtime - last_pos.rwtime).." sekundami)"
             end

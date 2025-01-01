@@ -562,18 +562,20 @@ function wagon:on_step(dtime)
 			end
 		end
 		
+		local wagon_yaw_changed = not advtrains.yaw_equals(self.old_yaw, oyaw)
+
 		if not self.old_velocity_vector 
 				or not vector.equals(velocityvec, self.old_velocity_vector)
 				or not self.old_acceleration_vector 
 				or not vector.equals(accelerationvec, self.old_acceleration_vector)
-				or self.old_yaw~=oyaw
+				or wagon_yaw_changed
 				or updatepct_timer_elapsed then--only send update packet if something changed
 			
 			self.object:set_pos(pos)
 			self.object:set_velocity(velocityvec)
 			self.object:set_acceleration(accelerationvec)
 			
-			if #self.seats > 0 and self.old_yaw ~= oyaw then
+			if #self.seats > 0 and wagon_yaw_changed then
 				if not self.player_yaw then
 					self.player_yaw = {}
 				end
@@ -592,7 +594,7 @@ function wagon:on_step(dtime)
 					end
 				end
 				self.turning = true							 
-			elseif self.old_yaw == oyaw then
+			elseif not wagon_yaw_changed then
 				-- train is no longer turning
 				self.turning = false
 			end
