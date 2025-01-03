@@ -75,6 +75,7 @@ local function after_change(pos, old_node, new_node, player, nodespec)
         core.log("warning", "shape selector group allowed swap from "..old_node.name.."/"..
             old_node.param2.." to "..new_node.name.."/"..new_node.param2..", new node is not stored to AT node db!")
     else
+        local player_name = player and player:get_player_name()
         core.log("action", player_name.." used shape selector to change "..old_node.name.."/"..
             old_node.param2.." to "..new_node.name.."/"..new_node.param2.." at "..core.pos_to_string(pos)..
             ", but nodes are not for AT node db, which is unexpected!")
@@ -124,6 +125,20 @@ if core.get_modpath("advtrains_signals_ks") then
                 "advtrains_signals_ks:sign_pam_"..rot,
             },
             after_change = after_change,
+        })
+        ch_core.register_shape_selector_group({
+            columns = 8,
+            nodes = {
+                {name = "advtrains_signals_ks:mast_mast_"..rot, param2 = 0x0300},
+                {name = "advtrains_signals_ks:mast_mast_"..rot, param2 = 0x0320},
+                {name = "advtrains_signals_ks:mast_mast_"..rot, param2 = 0x0340},
+                {name = "advtrains_signals_ks:mast_mast_"..rot, param2 = 0x0360},
+                {name = "advtrains_signals_ks:mast_mast_"..rot, param2 = 0x0380},
+                {name = "advtrains_signals_ks:mast_mast_"..rot, param2 = 0x03a0},
+                {name = "advtrains_signals_ks:mast_mast_"..rot, param2 = 0x03c0},
+                {name = "advtrains_signals_ks:mast_mast_"..rot, param2 = 0x03e0},
+            },
+            -- after_change = after_change, -- not for node-db!
         })
     end
 end

@@ -5,6 +5,8 @@ ch_base.open_mod(minetest.get_current_modname())
 -- Note that the group value of advtrains_signal is 2, which means "step 2 of signal capabilities"
 -- advtrains_signal=1 is meant for signals that do not implement set_aspect.
 
+local advtrains_signals_ks_mast_tile = {name = "advtrains_signals_ks_mast.png", color = "#8f8f8f"}
+
 local function asp_to_zs3type(asp)
 	local n = tonumber(asp)
 	if not n or n < 4 then return "off" end
@@ -172,7 +174,7 @@ for _, rtab in ipairs({
 			description = attrans("Ks Main Signal"),
 			drawtype = "mesh",
 			mesh = "advtrains_signals_ks_main_smr"..rot..".obj",
-			tiles = {"advtrains_signals_ks_mast.png", "advtrains_signals_ks_head.png", "advtrains_signals_ks_head.png", tile},
+			tiles = {advtrains_signals_ks_mast_tile, "advtrains_signals_ks_head.png", "advtrains_signals_ks_head.png", tile},
 			use_texture_alpha = "opaque",
 
 			paramtype="light",
@@ -217,7 +219,8 @@ for _, rtab in ipairs({
 			description = attrans("Ks Shunting Signal"),
 			drawtype = "mesh",
 			mesh = "advtrains_signals_ks_sht_smr"..rot..".obj",
-			tiles = {"advtrains_signals_ks_mast.png", "advtrains_signals_ks_head.png", "advtrains_signals_ks_head.png", "advtrains_signals_ks_ltm_"..typ..".png"},
+			tiles = {advtrains_signals_ks_mast_tile, "advtrains_signals_ks_head.png",
+				"advtrains_signals_ks_head.png", "advtrains_signals_ks_ltm_"..typ..".png"},
 			use_texture_alpha = "opaque",
 
 			paramtype="light",
@@ -370,7 +373,8 @@ for _, rtab in ipairs({
 		}) do
 		local def = {
 			drawtype = "mesh",
-			tiles = {"advtrains_signals_ks_mast.png","advtrains_signals_ks_head.png","advtrains_signals_ks_sign_"..typ..".png^[invert:rgb^[noalpha"},
+			tiles = {advtrains_signals_ks_mast_tile,"advtrains_signals_ks_head.png",
+				"advtrains_signals_ks_sign_"..typ..".png^[invert:rgb^[noalpha"},
 			use_texture_alpha = "opaque",
 			paramtype = "light",
 			sunlight_propagates = true,
@@ -420,7 +424,8 @@ for _, rtab in ipairs({
 		sunlight_propagates=true,
 		--light_source = 4,
 		
-		paramtype2 = "facedir",
+		paramtype2 = "colorfacedir",
+		palette = "advtrains_signals_ks_mast_palette.png",
 		selection_box = {
 			type = "fixed",
 			fixed = {rtab.sbox, {-1/4, -1/2, -1/4, 1/4, -7/16, 1/4}}

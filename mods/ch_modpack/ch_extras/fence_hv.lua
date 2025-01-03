@@ -2,6 +2,7 @@
 ---------------------------------------------------------------
 if not minetest.get_modpath("technic") then return end
 
+--[[
 default.register_fence("ch_extras:fence_hv", {
     description = "výstražný plot",
     texture = "technic_hv_cable.png^[colorize:#91754d:40",
@@ -23,3 +24,4 @@ default.register_fence_rail("ch_extras:fence_rail_hv", {
     groups = {choppy = 2, oddly_breakable_by_hand = 2},
     sounds = default.node_sound_wood_defaults(),
 })
+]]

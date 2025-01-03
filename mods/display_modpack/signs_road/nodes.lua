@@ -86,6 +86,7 @@ local function inv_sign_def(defs)
 			inventory_image = "signs_road_white.png^[multiply:#999999^(signs_road_letter.png^[multiply:"..defs.text_color..
 				")^default_invisible_node_overlay.png",
 		},
+		allow_on_pole = true,
 	}
 end
 
@@ -325,14 +326,14 @@ local models = {
 signs_api.shape_selector_mode = "suppress"
 for name, model in pairs(models)
 do
-	if name:match("_left_") or name:match("_right_") then
+	if name:match("^inv") or name:match("_left_") or name:match("_right_") then
 		signs_api.register_sign("signs_road", name, model)
 	end
 end
 signs_api.shape_selector_mode = "with_dirsigns"
 for name, model in pairs(models)
 do
-	if not (name:match("_left_") or name:match("_right_")) then
+	if not (name:match("^inv") or name:match("_left_") or name:match("_right_")) then
 		signs_api.register_sign("signs_road", name, model)
 	end
 end

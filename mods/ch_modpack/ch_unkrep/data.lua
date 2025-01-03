@@ -810,6 +810,8 @@ reg_item("building_blocks:slope_grate_half", "ch_extras:grate_1")
 reg_item("building_blocks:slope_grate_half_raised", "ch_extras:grate_1")
 
 reg_node(20241230, "solidcolor:solid_block", "ch_extras:colorable_plastic")
+reg_node(20250102, "ch_extras:fence_hv", "technic:panel_warning_block_pole_flat")
+reg_node(20250102, "ch_extras:fence_rail_hv", "technic:panel_warning_block_pole")
 
 -- END OF REGISTRATIONS
 commit_aliases_and_lbms()

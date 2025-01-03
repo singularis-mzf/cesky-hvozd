@@ -95,6 +95,7 @@ for i, v in ipairs(inv_signs_table) do
 		recipe = {{v[1]}},
 	})
 	table.insert(inv_small_nodes, v[1])
+	table.insert(inv_small_nodes, v[1].."_on_pole")
 	if v[2] ~= nil then
 		local row = {v[1], v[1], ""}
 		core.register_craft({
@@ -115,7 +116,7 @@ local function after_change(pos, old_node, new_node, player, nodespec)
 	display_api.update_entities(pos)
 end
 
-ch_core.register_shape_selector_group({nodes = inv_small_nodes, after_change = after_change})
+ch_core.register_shape_selector_group({nodes = inv_small_nodes, after_change = after_change, columns = 2})
 ch_core.register_shape_selector_group({nodes = inv_large_nodes, after_change = after_change})
 
 -- Other recipes
