@@ -28,7 +28,7 @@ minetest.register_craft{
 
 if has_unifieddyes then
 	def = {
-		description = "barvitelné linoleum",
+		description = "lakované linoleum",
 		drawtype = "normal",
 		tiles = {"ch_decor_colorable_wood_tile.png"},
 		is_ground_content = false,

@@ -10,7 +10,7 @@ local function tile1_after_place_node(pos, placer, itemstack, pointed_thing)
 end
 
 local def = {
-	description = "barvitelná mozaika na dlažbu",
+	description = "lakovaná mozaika na dlažbu",
 	drawtype = "normal",
 	tiles = {{name = "ch_extras_tile1.png", backface_culling = true}},
 	paramtype = "light",
@@ -57,7 +57,7 @@ for _, ldef in ipairs(plasters) do
 	local tile_overlay = {name = "ch_core_clay.png^[opacity:0:^[lowpart:50:ch_core_clay.png", backface_culling = true, color = ldef.color}
 	local tile_bottom = {name = "ch_core_clay.png", backface_culling = true, color = ldef.color}
 	def = {
-		description = "barvitelná mozaika na "..ldef.description6.." (nejde otáčet)",
+		description = "lakovaná mozaika na "..ldef.description6.." (nejde otáčet)",
 		drawtype = "normal",
 		tiles = {
 			tile_top, tile_bottom, tile_top, tile_top, tile_top, tile_top,

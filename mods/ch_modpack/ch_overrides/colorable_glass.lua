@@ -27,7 +27,7 @@ local function register_colorable_alternative_node(new_node_name, old_node_name,
 		error("airbrush_replacement_node of "..old_node_name.." is already set to: "..old_def.airbrush_replacement_node.."!")
 	end
 	if new_description == nil then
-		new_description = (old_def.description or "").." (barvitelný blok)"
+		new_description = (old_def.description or "").." (lakovaný blok)"
 	end
 	local new_def = {
 		description = new_description,
@@ -75,29 +75,29 @@ local function register_colorable_alternative_node(new_node_name, old_node_name,
 	})
 end
 
-register_colorable_alternative_node("ch_overrides:glass_colorable", "default:glass", "sklo (barvitelné)", {
+register_colorable_alternative_node("ch_overrides:glass_colorable", "default:glass", "sklo (lakované)", {
 	tiles = {
 		{name = "default_glass.png"},
 		{name = "default_glass_detail.png", color = "white"},
 	},
 })
-register_colorable_alternative_node("ch_overrides:glow_glass_colorable", "moreblocks:glow_glass", "svítící sklo (barvitelné)", {
+register_colorable_alternative_node("ch_overrides:glow_glass_colorable", "moreblocks:glow_glass", "svítící sklo (lakované)", {
 	tiles = {
 		{name = "default_glass.png"},
 		{name = minetest.registered_nodes["moreblocks:glow_glass"].tiles[2], color = "white"},
 	},
 })
-register_colorable_alternative_node("ch_overrides:super_glow_glass_colorable", "moreblocks:super_glow_glass", "supersvítící sklo (barvitelné)", {
+register_colorable_alternative_node("ch_overrides:super_glow_glass_colorable", "moreblocks:super_glow_glass", "supersvítící sklo (lakované)", {
 	tiles = {
 		{name = "default_glass.png"},
 		{name = minetest.registered_nodes["moreblocks:super_glow_glass"].tiles[2], color = "white"},
 	},
 })
 
-register_colorable_alternative_node("ch_overrides:clean_glass_colorable", "moreblocks:clean_glass", "čisté sklo (barvitelné)")
-register_colorable_alternative_node("ch_overrides:clean_glow_glass_colorable", "moreblocks:clean_glow_glass", "čisté svítící sklo (barvitelné)", {
+register_colorable_alternative_node("ch_overrides:clean_glass_colorable", "moreblocks:clean_glass", "čisté sklo (lakované)")
+register_colorable_alternative_node("ch_overrides:clean_glow_glass_colorable", "moreblocks:clean_glow_glass", "čisté svítící sklo (lakované)", {
 	tiles = minetest.registered_nodes["moreblocks:clean_glass"].tiles,
 })
-register_colorable_alternative_node("ch_overrides:clean_super_glow_glass_colorable", "moreblocks:clean_super_glow_glass", "čisté supersvítící sklo (barvitelné)", {
+register_colorable_alternative_node("ch_overrides:clean_super_glow_glass_colorable", "moreblocks:clean_super_glow_glass", "čisté supersvítící sklo (lakované)", {
 	tiles = minetest.registered_nodes["moreblocks:clean_glass"].tiles,
 })

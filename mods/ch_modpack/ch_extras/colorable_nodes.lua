@@ -15,39 +15,39 @@ ch_core.register_nodes({
     on_dig = unifieddyes.on_dig,
 }, {
     ["ch_extras:colorable_plastic"] = {
-        description = "blok plastu (barvitelný)",
+        description = "blok plastu (lakovaný)",
         tiles = {"ch_core_white_pixel.png"},
         groups = {dig_immediate = 2, ud_param2_colorable = 1}
     },
     ["ch_extras:colorable_plaster"] = {
-        description = "blok omítky (barvitelný)",
+        description = "blok omítky (lakovaný)",
         tiles = {"ch_core_clay.png"},
         groups = {cracky = 1, plaster = 1, ud_param2_colorable = 1},
     },
     ["ch_extras:colorable_cobble"] = {
-        description = "barvitelný dlažební kámen",
+        description = "lakovaný dlažební kámen",
         tiles = {"default_cobble.png"},
         groups = {cracky = 3, stone = 2, ud_param2_colorable = 1},
     },
     ["ch_extras:colorable_stone_block"] = {
-        description = "barvitelný kamenný blok",
+        description = "lakovaný kamenný blok",
         tiles = {"ch_extras_stone_block.png"},
         groups = {cracky = 2, stone = 1, ud_param2_colorable = 1},
     },
     ["ch_extras:colorable_stone_brick"] = {
-        description = "barvitelné kamenné cihly",
+        description = "lakované kamenné cihly",
         tiles = {"default_stone_brick.png^[brighten"},
         groups = {cracky = 2, stone = 1, ud_param2_colorable = 1},
     },
     ["ch_extras:colorable_stone_brick_2"] = {
-        description = "barvitelné kamenné cihly (textury otočené o 90°)",
+        description = "lakované kamenné cihly (textury otočené o 90°)",
         tiles = {"default_stone_brick.png^[brighten^[transformR90"},
         groups = {cracky = 2, stone = 1, ud_param2_colorable = 1},
         drop = {items = {{items = {"ch_extras:colorable_stone_brick"}, inherit_color = true}}},
         on_dig = core.node_dig,
     },
     ["ch_extras:colorable_texture"] = {
-        description = "barvitelný texturovaný blok",
+        description = "lakovaný texturovaný blok",
         tiles = {"ch_extras_small_noise.png"},
         groups = {cracky = 2, oddly_breakable_by_hand = 2, ud_param2_colorable = 1},
     }

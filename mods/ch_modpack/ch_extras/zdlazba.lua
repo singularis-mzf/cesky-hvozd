@@ -45,7 +45,7 @@ minetest.register_craft({
 
 if minetest.get_modpath("unifieddyes") then
 	def = table.copy(def)
-	def.description = "barvitelná zámková dlažba"
+	def.description = "barevná zámková dlažba"
 	def.tiles = {{name = "ch_extras_zdlazba.png^[invert:rgb^[multiply:#AAAAAA^[invert:rgb"}}
 	def.paramtype2 = "color4dir"
 	def.palette = "unifieddyes_palette_color4dir.png"
@@ -55,7 +55,7 @@ if minetest.get_modpath("unifieddyes") then
 
 	minetest.register_node("ch_extras:colorable_zdlazba", table.copy(def))
 
-	def.description = "barvitelná zámková dlažba (kryt)"
+	def.description = "barevná zámková dlažba (kryt)"
 	def.drawtype = "nodebox"
 	def.node_box = {
 		type = "fixed",

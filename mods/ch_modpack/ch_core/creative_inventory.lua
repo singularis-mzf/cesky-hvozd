@@ -13,7 +13,7 @@ local partition_defs = {
 		groups = none,
 		items = {"moreblocks:circular_saw", "unifieddyes:airbrush", "bike:painter",
                  "advtrains:trackworker", "wrench:wrench", "replacer:replacer",
-                 "ch_extras:total_station", "ch_extras:jumptool", "ch_extras:teleporter_unsellable", "wine:wine_barrel",
+                 "ch_extras:total_station", "ch_extras:jumptool", "ch_extras:teleporter_unsellable",
                  "technic:mining_drill", "technic:mining_drill_mk2", "technic:mining_drill_mk3",
                  "bridger:scaffolding", "ch_core:chisel",
 				 "orienteering:builder_compass_1", "ch_extras:lupa", "ch_extras:periskop",
@@ -389,7 +389,7 @@ local categories = {
 		},
 	},
 	{
-		description = "barvitelné předměty",
+		description = "lakované předměty",
 		condition = function(itemstring, name, def, groups, palette_index)
 			return (groups.ud_param2_colorable or 0) > 0 and not is_experimental(name, groups)
 		end,

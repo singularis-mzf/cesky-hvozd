@@ -42,12 +42,12 @@ end
 dofile("3dprint.lua") -- 3D tisk (jen funkce, samotné bloky jsou definovány jinde)
 dofile("anchor.lua") -- soukromá světová kotva
 -- dofile("balikovna.lua") -- rozepsáno
-dofile_ud("colorable_nodes.lua") -- další barvitelné bloky
-dofile_ud("colorable_doors.lua") -- barvitelné dveře
-dofile_ud("colorable_fence.lua") -- barvitelný plot -- : colorable_nodes.lua
+dofile_ud("colorable_nodes.lua") -- další lakované bloky
+dofile_ud("colorable_doors.lua") -- lakované dveře
+dofile_ud("colorable_fence.lua") -- lakovaný plot -- : colorable_nodes.lua
 dofile_ud("colorable_grate.lua") -- lakované pletivo
-dofile_ud("colorable_glass.lua") -- barvitelné sklo
-dofile_ud("colorable_pole.lua") -- barvitelná tyč
+dofile_ud("colorable_glass.lua") -- barevné sklo
+dofile_ud("colorable_pole.lua") -- lakovaná tyč
 dofile("covers.lua") -- pokrývky
 dofile("craftitems.lua") -- předměty (různé)
 dofile_ud("dice.lua") -- hrací kostka

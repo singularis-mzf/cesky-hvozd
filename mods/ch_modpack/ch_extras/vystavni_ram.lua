@@ -22,7 +22,7 @@ local function generate_vb_nodebox(thickness, y_shift, shrink)
 end
 
 local def = {
-	description = "výstavní rám (barvitelný)",
+	description = "výstavní rám (lakovaný)",
 	drawtype = "nodebox",
 	tiles = {{name = "ch_core_white_pixel.png", backface_culling = true}},
 	use_texture_alpha = "opaque",

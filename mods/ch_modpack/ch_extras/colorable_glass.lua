@@ -273,7 +273,7 @@ local common_def = {
 ch_core.register_nodes(common_def, {
 	-- Tónované sklo (celý blok, normální tloušťka)
 	["ch_extras:colorable_glass"] = {
-		description = "tónované sklo (blok, barvitelné)",
+		description = "tónované sklo (blok, barevné)",
 		tiles = colorable_glass_tiles_normal,
 		inventory_image = inventory_image_normal,
 		wield_image = inventory_image_normal,
@@ -282,7 +282,7 @@ ch_core.register_nodes(common_def, {
 	},
 	-- Tónované sklo (celý blok, tlustší)
 	["ch_extras:colorable_glass_thick"] = {
-		description = "tlustší tónované sklo (blok, barvitelné)",
+		description = "tlustší tónované sklo (blok, barevné)",
 		tiles = colorable_glass_tiles_thick,
 		inventory_image = inventory_image_thick,
 		wield_image = inventory_image_thick,
@@ -363,7 +363,7 @@ local def_5 = {
 }
 
 -- DESKY / NORMÁLNÍ TLOUŠŤKA:
-common_def.description = "tónované sklo (deska 1/16, barvitelná)"
+common_def.description = "tónované sklo (deska 1/16, barevné)"
 common_def.tiles = colorable_glass_tiles_normal_half
 common_def.inventory_image = inventory_image_normal
 -- common_def.walldir_nodes = walldir_nodes_normal
@@ -395,7 +395,7 @@ ch_core.register_nodes(common_def,
 })
 
 -- DESKY / VĚTŠÍ TLOUŠŤKA:
-common_def.description = "tlustší tónované sklo (deska 1/16, barvitelná)"
+common_def.description = "tlustší tónované sklo (deska 1/16, barevné)"
 common_def.tiles = colorable_glass_tiles_thick_half
 common_def.inventory_image = inventory_image_thick
 common_def.wield_image = inventory_image_thick

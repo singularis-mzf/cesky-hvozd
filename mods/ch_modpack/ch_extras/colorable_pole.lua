@@ -1,4 +1,4 @@
--- barvitelná tyč
+-- lakovaná tyč
 ------------------
 local ifthenelse = assert(ch_core.ifthenelse)
 local pole_texture = "ch_core_clay.png"
@@ -19,7 +19,7 @@ local drop_pole_flat = {items = {{items = {"ch_extras:colorable_pole_flat"}, inh
 local drop_pole_thin_flat = {items = {{items = {"ch_extras:colorable_pole_thin_flat"}, inherit_color = true}}}
 
 local def = {
-    description = "barvitelná tyč (spojující se)",
+    description = "lakovaná tyč (spojující se)",
     drawtype = "nodebox",
     tiles = {
         {name = pole_texture, backface_culling = true, align_style = "world"},
@@ -50,7 +50,7 @@ local def = {
 
 core.register_node("ch_extras:colorable_pole", table.copy(def))
 
-def.description = "tenká barvitelná tyč (spojující se)"
+def.description = "tenká lakovaná tyč (spojující se)"
 def.node_box = {
     type = "connected",
     fixed = {-0.0625, -0.0625, -0.0625, 0.0625, 0.0625, 0.0625},
@@ -67,7 +67,7 @@ def.groups = pole_groups_thin_in_ci
 core.register_node("ch_extras:colorable_pole_thin", def)
 
 def = {
-    description = "barvitelná tyč (přímá)",
+    description = "lakovaná tyč (přímá)",
     drawtype = "nodebox",
     tiles = {{name = pole_texture, backface_culling = true, align_style = "world"}},
     is_ground_content = false,
@@ -109,7 +109,7 @@ ch_core.register_nodes(def, {
         check_for_pole = true,
     },
     ["ch_extras:colorable_pole_thin_flat"] = { -- Y
-        description = "tenká barvitelná tyč (přímá)",
+        description = "tenká lakovaná tyč (přímá)",
         node_box = {
             type = "fixed",
             fixed = {-0.0625, -0.5, -0.0625, 0.0625, 0.5, 0.0625},
@@ -118,7 +118,7 @@ ch_core.register_nodes(def, {
         drop = drop_pole_thin_flat,
     },
     ["ch_extras:colorable_pole_thin_flat_2"] = { -- X
-        description = "tenká barvitelná tyč (přímá)",
+        description = "tenká lakovaná tyč (přímá)",
         node_box = {
             type = "fixed",
             fixed = {-0.5, -0.0625, -0.0625, 0.5, 0.0625, 0.0625},
@@ -127,7 +127,7 @@ ch_core.register_nodes(def, {
         drop = drop_pole_thin_flat,
     },
     ["ch_extras:colorable_pole_thin_flat_3"] = { -- Z
-        description = "tenká barvitelná tyč (přímá)",
+        description = "tenká lakovaná tyč (přímá)",
         node_box = {
             type = "fixed",
             fixed = {-0.0625, -0.0625, -0.5, 0.0625, 0.0625, 0.5},

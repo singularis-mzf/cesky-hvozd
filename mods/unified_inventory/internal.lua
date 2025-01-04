@@ -421,6 +421,7 @@ local filter_translate = {
 	["typ:oblečení"] = "group:clothing", -- vše oblékatelné včetně obuvi, ale kromě plášťů
 	["typ:kmeny"] = "group:tree",
 	["typ:květiny"] = "group:flower", -- včetně bonsají
+	["typ:lakované"] = "group:ud_param2_colorable",
 	["typ:listí_a_jehličí"] = "group:leaves", -- včetně břečťanu a liány
 	["typ:lokomotivy"] = "group:at_loco",
 	["typ:na_cnc"] = "group:na_cnc",
