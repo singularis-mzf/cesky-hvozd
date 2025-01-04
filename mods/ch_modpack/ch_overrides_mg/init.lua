@@ -3,6 +3,7 @@ ch_base.open_mod(minetest.get_current_modname())
 local dofile = ch_core.compile_dofile()
 
 dofile("builtin_item.lua") -- upraví chování předmětů na zemi
+dofile("dirt_with_x.lua") -- upraví textury hlíny
 dofile("mese_crystals.lua") -- použije model (mesh) k zobrazení krystalů mese, umožní jejich umístění do herního světa
 dofile("snow.lua") -- použije model (mesh) k zobrazení sněhu
 
