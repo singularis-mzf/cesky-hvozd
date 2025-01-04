@@ -346,7 +346,6 @@ default_coniferous_litter.png
 default_coniferous_litter_side.png
 default_mese_post_light_side.png
 default_mese_post_light_side_dark.png
-default_rainforest_litter.png
 default_rainforest_litter_side.png
 unknown_item.png
 unknown_node.png
@@ -404,7 +403,6 @@ default_bookshelf.png
 default_glass.png
 default_glass_alt.png
 default_glass_detail.png
-default_junglewood.png
 default_pine_wood.png
 default_mese_block.png
 default_wood.png
@@ -470,6 +468,61 @@ dfcaverns_glow_mese.png
 	Source: https://github.com/FaceDeer/dfcaverns
 	License: MIT
 
+default_rainforest_litter.png
+	Author: Fhelron
+	Source: https://content.luanti.org/packages/Fhelron/realfantasy/
+	License: CC BY-SA 4.0
+
+default_junglewood.png
+	Author: Fhelron
+	Source: https://content.luanti.org/packages/Fhelron/realfantasy/
+	License: CC BY-SA 4.0
+	Modified by Singularis under the same license
+
+default_jungletree.png
+	Author: tinnéh
+	Source: https://gitlab.com/22-42/defaultpack-remastered
+	License: CC BY-SA 4.0
+
+default_jungletree_top.png
+	Copyright (C) 2010-2022:
+		celeron55, Perttu Ahola <celeron55@gmail.com>
+		Cisoun
+		G4JC
+		VanessaE
+		RealBadAngel
+		Calinou
+		MirceaKitsune
+		Jordach
+		PilzAdam
+		jojoa1997
+		InfinityProject
+		Splizard
+		Zeg9
+		paramat
+		BlockMen
+		sofar
+		Neuromancer
+		Gambit
+		asl97
+		KevDoy
+		Mito551
+		GreenXenith
+		kaeza
+		kilbith
+		tobyplowy
+		CloudyProton
+		TumeniNodes
+		Mossmanikin
+		random-geek
+		Extex101
+		An0n3m0us
+		rudzik8
+	Source: Graceful 32x (texture pack)
+	License: CC BY-SA 3.0
+	Modified by Singularis under the same license
+
+----
 (zatím nic)
 	Author: Singularis
 	License: CC BY-SA 3.0

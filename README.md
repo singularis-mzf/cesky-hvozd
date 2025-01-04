@@ -28,6 +28,7 @@ Význam adresářů je následující:
 * **mods\_původní** — Módy a balíky módů v původní (neupravené) podobě, jak byly získány ze zdroje. (Jen adresáře .git a .github byly ze všech módů odstraněny.)
 * **mods** — Aktuální kód módů upravených pro Český hvozd. Některé módy (např. „ch\_core“) jsou zde zcela nové.
 * **ostatní\_zdroje** — Módy a sady textur, z nichž pochází některé úpravy a části v ostatních módech v adresáři „mods“. (Podrobnosti jsou uvedeny níže.)
+* **ostatní\_zdroje\_sha256** – Totéž, co ostatní\_zdroje, ale namísto souborů jsou uvedeny soupisy jejich SHA256 heší. Důvodem je, že tyto zdroje jsou obzvlášť objemné a byla z nich použita jen malá část.
 
 Některé licence vyžadují uvést, zda bylo dílo upraveno.
 To poznáte srovnáním obsahu módu v adresáři *mods* (resp. *minetest\_game*)
@@ -1200,6 +1201,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Zdroj: [https://github.com/DonBatman/cutepie](https://github.com/DonBatman/cutepie), revize 55d77d983d7f47eea9a2d61c94229af8e00ab30f
 * Původní licence: DWYWPL
 
+## Defaultpack Remastered (defaultpack-remastered)
+
+* Zdroj: [https://gitlab.com/22-42/defaultpack-remastered](https://gitlab.com/22-42/defaultpack-remastered), revize 68672a3fed0826ff05497de34705b4e631a691c2
+* Původní licence: část CC BY-SA 4.0, část CC BY-SA 3.0
+* [ContentDB](https://content.luanti.org/packages/tinneh/defaultpack\_remastered/)
+
 ## Digistuff (digistuff)
 
 * Zdroj: [https://cheapiesystems.com/git/digistuff](https://cheapiesystems.com/git/digistuff), revize 32641893e75f11903489a38a201bd661c8f99b50
@@ -1372,9 +1379,9 @@ Z následujících zdrojů jsou v repozitáři pouze kontrolní součty soubor
 
 ## Real Fantasy (realfantasy)
 
-* Zdroj: [https://content.minetest.net/packages/Fhelron/realfantasy/](https://content.minetest.net/packages/Fhelron/realfantasy/), verze 1.0
+* Zdroj: [https://content.luanti.org/packages/Fhelron/realfantasy/](https://content.luanti.org/packages/Fhelron/realfantasy/), verze 1.1
 * Původní licence: CC BY-SA 4.0
-* [ContentDB](https://content.minetest.net/packages/Fhelron/realfantasy/)
+* [ContentDB](https://content.luanti.org/packages/Fhelron/realfantasy/)
 
 ## SharpNet Photo Realism (sharpnet\_textures)
 
