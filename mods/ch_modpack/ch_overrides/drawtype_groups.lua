@@ -76,7 +76,7 @@ local function do_override()
         local new_groups = ndef.groups or {}
         local full_cube_rank = get_full_cube_rank(ndef)
         local attracts_poles_rank = get_attracts_poles_rank(name, ndef)
-        if full_cube_rank ~= 0 then
+        if full_cube_rank ~= 0 and not name:match("^towercrane:") then
             new_groups.full_cube_node = 1
         end
         if attracts_poles_rank ~= 0 then

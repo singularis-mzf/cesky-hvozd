@@ -56,7 +56,52 @@ if minetest.get_modpath("display_api") then
 			end
 		end
 
+		local render_style = {
+			lines = def.maxlines or def.lines,
+			halign = def.halign,
+			valign = def.valign,
+			color = def.color,
+		}
+		if def.meta_halign then
+			local new_halign = meta:get_int(def.meta_halign)
+			if new_halign == 2 then
+				render_style.halign = "left"
+			elseif new_halign == 3 then
+				render_style.halign = "right"
+			else
+				render_style.halign = "center"
+			end
+		end
+		if def.meta_valign then
+			local new_valign = meta:get_int(def.meta_valign)
+			if new_valign == 2 then
+				render_style.valign = "top"
+			elseif new_valign == 3 then
+				render_style.valign = "bottom"
+			else
+				render_style.valign = "center"
+			end
+		end
+		if def.meta_color then
+			local new_color = meta:get_string(def.meta_color)
+			if #new_color == 6 and not new_color:match("[^0123456789ABCDEFabcdef]") then
+				render_style.color = "#"..new_color
+			end
+		end
 		local textureh = font:get_height(def.lines or def.maxlines or 1)
+		if def.meta_lines then
+			local new_lines = meta:get_int(def.meta_lines)
+			if new_lines == 0 then
+				if def.meta_lines_default ~= nil and def.meta_lines_default > 0 then
+					new_lines = def.meta_lines_default
+				end
+			end
+			if new_lines > 0 then
+				render_style.lines = new_lines
+				textureh = font:get_height(new_lines)
+			end
+		end
+
 		local texturew
 		if columns ~= nil then
 			texturew = columns * (font.fixedwidth or 1)
@@ -66,39 +111,6 @@ if minetest.get_modpath("display_api") then
 				aspect_ratio = 1
 			end
 			texturew = textureh * def.size.x / def.size.y / (aspect_ratio or 1)
-		end
-
-		local render_style = {
-			lines = def.maxlines or def.lines,
-			halign = def.halign,
-			valign = def.valign,
-			color = def.color,
-		}
-		if def.meta_halign then
-			local new_halign = meta:get_int(def.meta_halign)
-			if new_halign < 0 then
-				render_style.halign = "left"
-			elseif new_halign > 0 then
-				render_style.halign = "right"
-			else
-				render_style.halign = "center"
-			end
-		end
-		if def.meta_valign then
-			local new_valign = meta:get_int(def.meta_valign)
-			if new_valign < 0 then
-				render_style.valign = "top"
-			elseif new_valign > 0 then
-				render_style.valign = "bottom"
-			else
-				render_style.valign = "center"
-			end
-		end
-		if def.meta_color then
-			local new_color = meta:get_string(def.meta_color)
-			if #new_color == 7 and new_color:sub(1, 1) == "#" then
-				render_style.color = new_color
-			end
 		end
 
 		objref:set_properties({

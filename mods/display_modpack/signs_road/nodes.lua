@@ -26,6 +26,7 @@ local prefix5 = "[combine:32x32:-16,-16=ch_core_5.png^"
 
 local colored_sign_entity_size = { x = 1, y = 6/16 }
 local invisible_sign_entity_size = { x = 3, y = 12/16 }
+local invisible_sign_full_entity_size = { x = 3, y = 1 }
 local large_sign_size = { x = 4, y = 12/16 }
 local dir_sign_entity_size = { x = 12/16, y = 6/16 }
 
@@ -53,9 +54,13 @@ local function colored_sign_def(defs)
 		height = 7/16,
 		entity_fields = {
 			size = colored_sign_entity_size,
-			maxlines = 2,
+			maxlines = 3,
+			meta_lines_default = 2,
 			color = assert(defs.text_color),
 			meta_color = "sign_text_color",
+			meta_lines = "sign_lines",
+			meta_halign = "sign_halign",
+			meta_valign = "sign_valign",
 			aspect_ratio = 1/2,
 		},
 		node_fields = {
@@ -74,10 +79,15 @@ local function inv_sign_def(defs)
 		width = 4/16,
 		height = 4/16,
 		entity_fields = {
-			size = invisible_sign_entity_size,
-			maxlines = 4,
+			size = ifthenelse(defs.full_height, invisible_sign_full_entity_size, invisible_sign_entity_size),
+			maxlines = ifthenelse(defs.full_height, 8, 4),
+			meta_lines_default = ifthenelse(defs.full_height, 5, 4),
 			color = assert(defs.text_color),
 			aspect_ratio = 1/2,
+			meta_color = "sign_text_color",
+			meta_lines = "sign_lines",
+			meta_halign = "sign_halign",
+			meta_valign = "sign_valign",
 		},
 		node_fields = {
 			description = assert(defs.description),
@@ -98,9 +108,14 @@ local function large_sign_def(defs)
 		width = 64/16,
 		height = 12/16,
 		entity_fields = {
-			maxlines = 1,
+			maxlines = 4,
+			meta_lines_default = 1,
 			color = assert(defs.text_color),
 			aspect_ratio = 1/2,
+			meta_color = "sign_text_color",
+			meta_lines = "sign_lines",
+			meta_halign = "sign_halign",
+			meta_valign = "sign_valign",
 		},
 		node_fields = {
 			description = assert(defs.description),
@@ -118,9 +133,14 @@ local function large_inv_sign_def(defs)
 		width = 64/16,
 		height = 12/16,
 		entity_fields = {
-			maxlines = 1,
+			maxlines = 4,
+			meta_lines_default = 1,
 			color = assert(defs.text_color),
 			aspect_ratio = 1/2,
+			meta_color = "sign_text_color",
+			meta_lines = "sign_lines",
+			meta_halign = "sign_halign",
+			meta_valign = "sign_valign",
 		},
 		node_fields = {
 			description = assert(defs.description),
@@ -179,9 +199,14 @@ local function dir_sign_def(prefix, dir, defs)
 		entity_fields = {
 			right = entity_pos_right,
 			size = dir_sign_entity_size,
-			maxlines = 2,
+			maxlines = 4,
+			meta_lines_default = 2,
 			aspect_ratio = 1/2,
 			color = assert(defs.text_color),
+			meta_color = "sign_text_color",
+			meta_lines = "sign_lines",
+			meta_halign = "sign_halign",
+			meta_valign = "sign_valign",
 		},
 		node_fields = node_fields,
 		allow_on_pole = true,
@@ -219,6 +244,8 @@ local function black_dir_sign_def(dir)
 			size = { x = 1, y = 3/16 },
 			maxlines = 1,
 			color = "#000",
+			meta_color = "sign_text_color",
+			meta_halign = "sign_halign",
 		},
 		node_fields = node_fields,
 		allow_on_pole = true,
@@ -233,10 +260,13 @@ local models = {
 	black_large_street_sign = large_sign_def({description = S("Large black banner"), sign_color = "#000000", text_color = "#fff"}),
 	yellow_large_street_sign = large_sign_def({description = S("Large yellow banner"), sign_color = "#fbdf00", text_color = "#000"}),
 	brown_large_street_sign = large_sign_def({description = S("Large brown banner"), sign_color = "#754222", text_color = "#fff"}),
+	--[[
 	invisible_large_street_sign_black_text = large_inv_sign_def({description = S("Large invisible banner with black text"), text_color = "#000000"}),
 	invisible_large_street_sign_white_text = large_inv_sign_def({description = S("Large invisible banner with white text"), text_color = "#ffffff"}),
 	invisible_large_street_sign_green_text = large_inv_sign_def({description = S("Large invisible banner with green text"), text_color = "#00ff00"}),
 	invisible_large_street_sign_orange_text = large_inv_sign_def({description = S("Large invisible banner with orange text"), text_color = "#ffbb00"}),
+	]]
+	invisible_large_street_sign = large_inv_sign_def({description = "velká neviditelná cedule (5x1 m)", text_color = "#ffffff"}),
 	white_sign = colored_sign_def({description = S("White road sign"), text_color = "#000",
 		front_tile = "signs_road_white.png", inventory_image = "signs_road_white.png"}),
 	white_end_sign = colored_sign_def({description = S("White road end sign"), text_color = "#000",
@@ -254,10 +284,14 @@ local models = {
 	orange_sign = colored_sign_def({description = S("Orange road sign"), text_color = "#000",
 		front_tile = "signs_road_white.png^[multiply:#9d2d0a", other_tile = "signs_road_sides.png^[multiply:#9d2d0a",
 		inventory_image = "signs_road_white.png^[multiply:#9d2d0a"}),
+		--[[
 	inv_sign_black_text = inv_sign_def({description = S("Invisible sign with black text"), text_color = "#000000"}),
 	inv_sign_white_text = inv_sign_def({description = S("Invisible sign with white text"), text_color = "#ffffff"}),
 	inv_sign_orange_text = inv_sign_def({description = S("Invisible sign with orange text"), text_color = "#ffbb00"}),
 	inv_sign_green_text = inv_sign_def({description = S("Invisible sign with green text"), text_color = "#00ff00"}),
+	]]
+	inv_sign = inv_sign_def({description = "neviditelná cedule", text_color = "#ffffff"}),
+	inv_sign_full = inv_sign_def({description = "neviditelná cedule (plná výška)", text_color = "#ffffff"}),
 
 	-- Direction signs:
 	white_right_sign = dir_sign_def("white", "right", {description = S("White direction sign"), text_color = "#000000"}),

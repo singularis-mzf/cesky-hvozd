@@ -370,6 +370,16 @@ minetest.register_node(":streets:light_hanging"..variant.."_on", {
 	-- digiline = def_digiline,
 	mesecons = def_mesecons
 })
+
+for _, state in ipairs({"on", "off"}) do
+	ch_core.register_shape_selector_group({
+		nodes = {
+			"streets:light_horizontal"..variant.."_"..state,
+			"streets:light_hanging"..variant.."_"..state,
+			"streets:light_vertical"..variant.."_"..state,
+		}
+	})
+end
 end
 
 minetest.register_craft({

@@ -1,5 +1,8 @@
 local ifthenelse = assert(ch_core.ifthenelse)
 
+local has_display_api = core.get_modpath("display_api")
+local has_signs_api = core.get_modpath("signs_api")
+
 local filename = core.get_worldpath().."/ch_unkrep.dat"
 local acc_dtime = 0
 local next_clean_dtime = 0
@@ -398,6 +401,41 @@ local tool_param2_to_194 = reg_upgrade_tool(function(type, ...)
         local pos, old_node, new_node = ...
         new_node = 194
         core.swap_node(pos, new_node)
+        return true
+    else
+        return false
+    end
+end)
+
+local old_sign_to_text_color = {
+    ["signs_road:inv_sign_white_text"] = "ffffff",
+    ["signs_road:inv_sign_black_text"] = "000000",
+    ["signs_road:inv_sign_green_text"] = "00ff00",
+    ["signs_road:inv_sign_orange_text"] = "ffbb00",
+    ["signs_road:invisible_large_street_sign_white_text"] = "ffffff",
+    ["signs_road:invisible_large_street_sign_black_text"] = "000000",
+    ["signs_road:invisible_large_street_sign_green_text"] = "00ff00",
+    ["signs_road:invisible_large_street_sign_orange_text"] = "ffbb00",
+}
+
+local tool_update_inv_signs = reg_upgrade_tool(function(type, ...)
+    if type == "item" then
+        local itemstack, old_name, new_name = ...
+        itemstack:set_name(new_name)
+        return true
+    elseif type == "node" then
+        local pos, old_node, new_node = ...
+        local new_color = old_sign_to_text_color[old_node.name]
+        if new_color ~= nil then
+            core.get_meta(pos):set_string("sign_text_color", new_color)
+        end
+        core.swap_node(pos, new_node)
+        if has_signs_api then
+            signs_api.set_formspec(pos)
+        end
+        if has_display_api then
+            display_api.update_entities(pos)
+        end
         return true
     else
         return false
@@ -810,8 +848,16 @@ reg_item("building_blocks:slope_grate_half", "ch_extras:grate_1")
 reg_item("building_blocks:slope_grate_half_raised", "ch_extras:grate_1")
 
 reg_node(20241230, "solidcolor:solid_block", "ch_extras:colorable_plastic")
-reg_node(20250102, "ch_extras:fence_hv", "technic:panel_warning_block_pole_flat")
-reg_node(20250102, "ch_extras:fence_rail_hv", "technic:panel_warning_block_pole")
+reg_node(20250103, "ch_extras:fence_hv", "technic:panel_warning_block_pole_flat")
+reg_node(20250103, "ch_extras:fence_rail_hv", "technic:panel_warning_block_pole")
+reg_node(20250103, "signs_road:inv_sign_white_text", "signs_road:inv_sign", tool_update_inv_signs)
+reg_node(20250103, "signs_road:inv_sign_black_text", "signs_road:inv_sign", tool_update_inv_signs)
+reg_node(20250103, "signs_road:inv_sign_green_text", "signs_road:inv_sign", tool_update_inv_signs)
+reg_node(20250103, "signs_road:inv_sign_orange_text", "signs_road:inv_sign", tool_update_inv_signs)
+reg_node(20250103, "signs_road:invisible_large_street_sign_white_text", "signs_road:invisible_large_street_sign", tool_update_inv_signs)
+reg_node(20250103, "signs_road:invisible_large_street_sign_black_text", "signs_road:invisible_large_street_sign", tool_update_inv_signs)
+reg_node(20250103, "signs_road:invisible_large_street_sign_green_text", "signs_road:invisible_large_street_sign", tool_update_inv_signs)
+reg_node(20250103, "signs_road:invisible_large_street_sign_orange_text", "signs_road:invisible_large_street_sign", tool_update_inv_signs)
 
 -- END OF REGISTRATIONS
 commit_aliases_and_lbms()

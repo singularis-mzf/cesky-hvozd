@@ -33,14 +33,6 @@ local signs_table = {
 	-- { "", "dye:white", "signs_road:inv_sign_white_text", "", "signs_road:invisible_large_street_sign_white_text"},
 }
 
-local inv_signs_table = {
-	-- itemstring_rect, itemstring_large?
-	{"signs_road:inv_sign_black_text", "signs_road:invisible_large_street_sign_black_text"},
-	{"signs_road:inv_sign_green_text", "signs_road:invisible_large_street_sign_green_text"},
-	{"signs_road:inv_sign_orange_text", "signs_road:invisible_large_street_sign_orange_text"},
-	{"signs_road:inv_sign_white_text", "signs_road:invisible_large_street_sign_white_text"},
-}
-
 for i, v in ipairs(signs_table) do
 	local dye_back, dye_front, itemstring_rect, itemstring_right, itemstring_large = unpack(v)
 	if itemstring_right ~= "" then
@@ -86,51 +78,42 @@ end
 
 local empty_row = {"", "", ""}
 
-local inv_small_nodes, inv_large_nodes = {}, {}
-
-for i, v in ipairs(inv_signs_table) do
-	local next_sign_v = inv_signs_table[i + 1] or inv_signs_table[1]
-	core.register_craft({
-		output = next_sign_v[1],
-		recipe = {{v[1]}},
-	})
-	table.insert(inv_small_nodes, v[1])
-	table.insert(inv_small_nodes, v[1].."_on_pole")
-	if v[2] ~= nil then
-		local row = {v[1], v[1], ""}
-		core.register_craft({
-			output = v[2],
-			recipe = {row, row, empty_row},
-		})
-		if next_sign_v[2] ~= nil then
-			core.register_craft({
-				output = next_sign_v[2],
-				recipe = {{v[2]}},
-			})
-		end
-		table.insert(inv_large_nodes, v[2])
-	end
-end
-
 local function after_change(pos, old_node, new_node, player, nodespec)
 	display_api.update_entities(pos)
 end
 
-ch_core.register_shape_selector_group({nodes = inv_small_nodes, after_change = after_change, columns = 2})
-ch_core.register_shape_selector_group({nodes = inv_large_nodes, after_change = after_change})
+ch_core.register_shape_selector_group({
+	columns = 2,
+	after_change = after_change,
+	nodes = {
+		"signs_road:inv_sign", "signs_road:inv_sign_on_pole",
+		"signs_road:inv_sign_full", "signs_road:inv_sign_full_on_pole",
+	},
+})
 
 -- Other recipes
 
-for _, color in ipairs({"white", "black", "green", "orange"}) do
-	core.register_craft({
-		output = "signs_road:inv_sign_"..color.."_text 3",
-		recipe = {
-			{"dye:"..color, "dye:"..color, "dye:"..color},
-			{"default:glass", "default:glass", "default:glass"},
-			empty_row,
-		}
-	})
-end
+core.register_craft({
+	output = "signs_road:inv_sign 3",
+	recipe = {
+		{"group:dye", "group:dye", "group:dye"},
+		{"default:glass", "default:glass", "default:glass"},
+		empty_row,
+	}
+})
+
+core.register_craft({output = "signs_road:inv_sign_on_pole", recipe = {{"signs_road:inv_sign"}}})
+core.register_craft({output = "signs_road:inv_sign_full", recipe = {{"signs_road:inv_sign_on_pole"}}})
+core.register_craft({output = "signs_road:inv_sign_full_on_pole", recipe = {{"signs_road:inv_sign_full"}}})
+core.register_craft({output = "signs_road:inv_sign", recipe = {{"signs_road:inv_sign_full_on_pole"}}})
+
+core.register_craft({
+	output = "signs_road:invisible_large_street_sign",
+	recipe = {
+		{"signs_road:inv_sign", "signs_road:inv_sign"},
+		{"signs_road:inv_sign", "signs_road:inv_sign"},
+	},
+})
 
 minetest.register_craft({
 	output = 'signs_road:blue_street_sign 4',

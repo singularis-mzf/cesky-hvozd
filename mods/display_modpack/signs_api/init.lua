@@ -43,41 +43,229 @@ function signs_api.set_display_text(pos, text, font)
 	display_api.update_entities(pos)
 end
 
+local number_enum_cache = {
+	"1",
+	"1,2",
+	"1,2,3",
+	"1,2,3,4",
+	"1,2,3,4,5",
+	"1,2,3,4,5,6",
+	"1,2,3,4,5,6,7",
+	"1,2,3,4,5,6,7,8",
+	"1,2,3,4,5,6,7,8,9",
+}
+
+local function get_number_enum(n)
+	if n <= 9 then
+		return number_enum_cache[n] or assert(number_enum_cache[6])
+	else
+		local result = {assert(number_enum_cache[9])}
+		for i = 10, n do
+			result[i - 8] = tostring(i)
+		end
+		return table.concat(result, ",")
+	end
+end
+
 function signs_api.set_formspec(pos)
 	local meta = minetest.get_meta(pos)
 	local ndef = minetest.registered_nodes[minetest.get_node(pos).name]
-	if ndef and ndef.display_entities
-	   and ndef.display_entities["signs:display_text"] then
-		local maxlines = ndef.display_entities["signs:display_text"].maxlines
-		local fs, y
-
-		if maxlines == 1 then
-			fs = "field[0.5,0.7;5.5,1;display_text;"..F("Text")..
-				";${display_text}]"
-			y = 1.2
-		else
-			local extralabel = ""
-			if maxlines then
-				extralabel = minetest.formspec_escape(" " .. S("(first @1 lines only)", maxlines))
+	if ndef and ndef.display_entities and ndef.display_entities["signs:display_text"] then
+		local edef = ndef.display_entities["signs:display_text"]
+		local formspec = {
+			"formspec_version[6]"..
+			"size[11,7.5]"..
+			default.gui_bg..
+			default.gui_bg_img..default.gui_slots..
+			"style_type[textarea;font=mono]"..
+			"textarea[0.5,0.5;10,1;;;         |         |         |         |         |]"..
+			"textarea[0.5,1;10,2.25;display_text;;",
+			core.formspec_escape(meta:get_string("display_text")),
+			"]"..
+			"style_type[textarea;font=normal]"..
+			"style[font_field,lastchange_field;border=false]",
+		}
+		if edef.meta_lines then
+			local lines = meta:get_int(edef.meta_lines)
+			if lines < 1 then
+				lines = edef.meta_lines_default or edef.maxlines or edef.lines or 1
 			end
-
-			fs = "textarea[0.5,0.7;5.5,2;display_text;"..F("Text")..""..
-					extralabel..";${display_text}]"
-			y = 2.4
+			table.insert(formspec, "label[0.5,3.75;řádků:]"..
+				"dropdown[1.5,3.5;1,0.5;lines;")
+			table.insert(formspec, get_number_enum(edef.maxlines or 6))
+			table.insert(formspec, ";"..lines..";true]"..
+				"tooltip[lines;Maximální počet řádků\\, který cedule zobrazí.\n"..
+				"Toto nastavení ovlivňuje velikost písma: čím více řádků\\, tím menší písmo.]")
+		elseif edef.maxlines then
+			table.insert(formspec, "label[0.5,3.75;řádků: "..edef.maxlines.."]")
 		end
-
-		fs = fs.."button[1,"..y..";2,1;font;"..F("Font").."]"
-		fs = fs.."button_exit[3,"..y..";2,1;ok;"..F("Write").."]"
-		y = y + 0.8
-		fs = "size[6,"..y.."]"..default.gui_bg..
-			default.gui_bg_img..default.gui_slots..fs
-
+		if edef.meta_halign then
+			table.insert(formspec,
+				"label[2.75,3.75;vodorovně:]"..
+				"dropdown[4.5,3.5;2.25,0.5;halign;na střed,vlevo,vpravo;"..meta:get_int(edef.meta_halign)..";true]")
+		end
+		if edef.meta_valign then
+			table.insert(formspec,
+				"label[7,3.75;svisle:]"..
+				"dropdown[8,3.5;2.5,0.5;valign;na střed,nahoře,dole;"..meta:get_int(edef.meta_valign)..";true]")
+		end
+		table.insert(formspec,
+			"label[0.5,4.5;písmo: "..core.formspec_escape(meta:get_string("font")).."]"..
+			"button[2.75,4.3;2,0.5;font;změnit písmo]"..
+			"label[0.5,5.25;ceduli spravuje:]"..
+			"field[2.75,5;2.5,0.5;owner;;"..ch_core.prihlasovaci_na_zobrazovaci(meta:get_string("owner")).."]"..
+			"tooltip[owner;Kdo ceduli spravuje může nastavit jen Administrace\\, pokud má však cedule normální úroveň přístupu\\,\n"..
+			"může na ni psát kterákoliv přijatá postava.]"..
+			"label[5.5,5.25;přístup:]"..
+			"dropdown[7,5;3,0.5;access_level;normální,sdílená cedule,zamčená cedule;"..meta:get_int("access_level")..";true]"..
+			"tooltip[access_level;Úroveň přístupu může nastavit jen správce/yně cedule nebo Administrace.\n"..
+			"Normální a sdílené cedule může měnit či vytěžit jakákoliv přijatá postava\\, zamčené cedule jen správce/yně či Administrace.]")
+		if edef.meta_color then
+			table.insert(formspec,
+				"label[0.5,6;barva textu:]"..
+				"field[2.25,5.75;1.5,0.5;color;;"..meta:get_string(edef.meta_color).."]"..
+				"tooltip[color;Barva se zadává ve formátu RRGGBB (bez mřížky). Vyprázdněním pole nastavíte výchozí barvu textu.]"..
+				"image_button[4,5.65;0.75,0.75;\\[combine:8x8:1\\,1=ch_core_white_pixel.png\\\\^\\[resize\\\\:6x6^\\[multiply:#000000;black;]"..
+				"image_button[4.75,5.65;0.75,0.75;\\[combine:8x8:1\\,1=ch_core_white_pixel.png\\\\^\\[resize\\\\:6x6^\\[multiply:#ffffff;white;]"..
+				"image_button[5.5,5.65;0.75,0.75;\\[combine:8x8:1\\,1=ch_core_white_pixel.png\\\\^\\[resize\\\\:6x6^\\[multiply:#00ff00;green;]"..
+				"image_button[6.25,5.65;0.75,0.75;\\[combine:8x8:1\\,1=ch_core_white_pixel.png\\\\^\\[resize\\\\:6x6^\\[multiply:#ffbb00;orange;]")
+		elseif edef.color then
+			table.insert(formspec,
+				"label[0.5,6;barva textu: "..core.formspec_escape(edef.color).."]")
+		end
+		table.insert(formspec,
+			"label[0.5,6.75;poslední změna: "..core.formspec_escape(meta:get_string("last_change")).."]"..
+			"button_exit[7.5,6.25;3,0.75;ok;uložit a zavřít]")
+		local fs = table.concat(formspec)
 		meta:set_string("formspec", fs)
 	end
 end
 
+core.register_lbm({
+	label = "Update display_api formspecs",
+	name = "signs_api:update_formspecs_20250104",
+	nodenames = {"group:display_api"},
+	bulk_action = function(pos_list, dtime_s)
+		for _, pos in ipairs(pos_list) do
+			signs_api.set_formspec(pos)
+		end
+	end,
+})
+
+-- access_level:
+-- 0 = not set (= public)
+-- 1 = public
+-- 2 = shared (currently = public)
+-- 3 = locked (only owner/admin can make changes)
+
 function signs_api.on_receive_fields(pos, formname, fields, player)
-	if not minetest.is_protected(pos, player:get_player_name()) then
+	if minetest.is_protected(pos, player:get_player_name()) or not fields then
+		return
+	end
+	local ndef = core.registered_nodes[core.get_node(pos).name]
+	if not ndef or not ndef.display_entities or not ndef.display_entities["signs:display_text"] then
+		return
+	end
+	local meta = core.get_meta(pos)
+	local owner = meta:get_string("owner")
+	local player_name = player:get_player_name()
+	local player_is_admin = ch_core.get_player_role(player_name) == "admin"
+	local player_is_owner = owner ~= "" and owner == player_name
+	-- check access_level:
+	if not player_is_admin and meta:get_int("access_level") == 3 and not player_is_owner then
+		return
+	end
+
+	local changes = {}
+	local edef = ndef.display_entities["signs:display_text"]
+	-- text:
+	if fields.display_text then
+		if fields.display_text ~= meta:get_string("display_text") then
+			table.insert(changes, "display_text to >>>"..fields.display_text.."<<<")
+		end
+		signs_api.set_display_text(pos, fields.display_text)
+	end
+	-- lines:
+	if edef.meta_lines and fields.lines then
+		local new_value = tonumber(fields.lines) or 0
+		if new_value > 0 and new_value ~= meta:get_int(edef.meta_lines) then
+			meta:set_int(edef.meta_lines, new_value)
+			table.insert(changes, "lines to "..new_value)
+		end
+	end
+	-- halign:
+	if edef.meta_halign and fields.halign then
+		local new_value = tonumber(fields.halign) or 1
+		if new_value ~= meta:get_int(edef.meta_halign) then
+			meta:set_int(edef.meta_halign, new_value)
+			table.insert(changes, "halign to "..new_value)
+		end
+	end
+	-- valign:
+	if edef.meta_valign and fields.valign then
+		local new_value = tonumber(fields.valign) or 1
+		if new_value ~= meta:get_int(edef.meta_valign) then
+			meta:set_int(edef.meta_valign, new_value)
+			table.insert(changes, "valign to "..new_value)
+		end
+	end
+	-- owner:
+	if player_is_admin and fields.owner then
+		local new_owner = ch_core.jmeno_na_prihlasovaci(fields.owner)
+		if new_owner ~= owner then
+			owner = new_owner
+			table.insert(changes, "owner to "..new_owner)
+		end
+		meta:set_string("owner", new_owner)
+	end
+	-- access level:
+	if (player_is_owner or player_is_admin) and fields.access_level then
+		local new_value = tonumber(fields.access_level)
+		if new_value ~= nil and new_value ~= 0 and new_value ~= meta:get_int("access_level") then
+			table.insert(changes, "access_level to "..new_value)
+			meta:set_int("access_level", new_value)
+		end
+	end
+	-- color:
+	if edef.meta_color then
+		local new_color
+		if fields.black then
+			new_color = "000000"
+		elseif fields.white then
+			new_color = "ffffff"
+		elseif fields.green then
+			new_color = "00ff00"
+		elseif fields.orange then
+			new_color = "ffbb00"
+		elseif fields.color and (#fields.color == 0 or (#fields.color == 6 and not fields.color:match("[^0123456789ABCDEFabcdef]"))) then
+			new_color = fields.color
+		end
+		if new_color ~= nil and new_color ~= meta:get_string(edef.meta_color) then
+			meta:set_string(edef.meta_color, new_color)
+			table.insert(changes, "color to #"..new_color)
+		end
+	end
+
+	-- last change:
+	if #changes > 0 then
+		local cas = ch_core.aktualni_cas()
+		meta:set_string("last_change", string.format("%04d-%02d-%02d %s",
+			cas.rok, cas.mesic, cas.den, ch_core.prihlasovaci_na_zobrazovaci(player_name)))
+		core.log("action", player_name.." changed a sign at "..core.pos_to_string(pos)..":\n- "..table.concat(changes, "\n- "))
+		signs_api.set_formspec(pos)
+		display_api.update_entities(pos)
+	end
+
+	if fields.font then
+		font_api.show_font_list(player, pos, function(player_name, pos) signs_api.set_formspec(pos) end)
+	end
+
+	--[[
+		if fields.font then
+			signs_api.set_display_text(pos, fields.display_text)
+			font_api.show_font_list(player, pos)
+		elseif fields.ok then
+
 		if fields and (fields.ok or fields.key_enter) then
 			signs_api.set_display_text(pos, fields.display_text)
 		end
@@ -85,7 +273,7 @@ function signs_api.on_receive_fields(pos, formname, fields, player)
 			signs_api.set_display_text(pos, fields.display_text)
 			font_api.show_font_list(player, pos)
 		end
-	end
+		]]
 end
 
 -- On place callback for direction signs
@@ -249,7 +437,17 @@ function signs_api.register_sign(mod, name, model)
 			end,
 		can_dig = function(pos, player)
 				local controls = player and player:is_player() and player:get_player_control()
-				if not controls or controls.aux1 then return true end
+				if not controls or controls.aux1 then
+					local meta = core.get_meta(pos)
+					if meta:get_int("access_level") == 3 then
+						local owner = meta:get_string("owner")
+						if player:get_player_name() ~= owner and not core.check_player_privs(player, "protection_bypass") then
+							minetest.chat_send_player(player:get_player_name(), "Tato cedule je zamčená a patří postavě: "..ch_core.prihlasovaci_na_zobrazovaci(owner).."!")
+							return false
+						end
+					end
+					return true
+				end
 				if minetest.get_modpath("technic") then
 					local wielded_item = player:get_wielded_item()
 					if not wielded_item:is_empty() and technic.power_tools[wielded_item:get_name()] then
@@ -262,6 +460,8 @@ function signs_api.register_sign(mod, name, model)
 		preserve_metadata = function(pos, oldnode, oldmeta, drops)
 			if #drops == 1 and (oldmeta.display_text or "") ~= "" then
 				local idef = core.registered_items[drops[1]:get_name()]
+				local ndef = core.registered_nodes[oldnode.name]
+				local edef = ndef and ndef.display_entities and ndef.display_entities["signs:display_text"]
 				local meta = drops[1]:get_meta()
 				meta:set_string("font", oldmeta.font or "")
 				meta:set_string("display_text", oldmeta.display_text)
@@ -270,19 +470,58 @@ function signs_api.register_sign(mod, name, model)
 				if idef ~= nil and idef.description ~= nil then
 					meta:set_string("description", idef.description..": "..ch_core.utf8_truncate_right(oldmeta.display_text, 80, "(...)"))
 				end
+				if edef ~= nil then
+					if edef.meta_color then
+						meta:set_string("meta_color", oldmeta[edef.meta_color] or "")
+					end
+					if edef.meta_halign then
+						meta:set_int("meta_halign", oldmeta[edef.meta_halign] or 0)
+					end
+					if edef.meta_lines then
+						meta:set_int("meta_lines", oldmeta[edef.meta_lines] or 0)
+					end
+					if edef.meta_valign then
+						meta:set_int("meta_valign", oldmeta[edef.meta_valign] or 0)
+					end
+				end
 			end
-			print("DEBUG: preserve_metadata() called: "..dump2({pos = pos, oldnode = oldnode, oldmeta = oldmeta, drops = drops}))
 		end,
 		after_place_node = function(pos, placer, itemstack, pointed_thing)
+			local new_owner = (placer and placer:get_player_name()) or ""
+			local meta = core.get_meta(pos)
+			meta:set_int("access_level", 1)
+			meta:set_string("owner", new_owner)
+
 			local itemmeta = itemstack:get_meta()
 			if itemmeta:get_string("display_text") ~= "" then
-				local meta = core.get_meta(pos)
+				local ndef = core.registered_nodes[core.get_node(pos).name]
+				local edef = ndef and ndef.display_entities and ndef.display_entities["signs:display_text"]
 				meta:set_string("display_text", itemmeta:get_string("display_text"))
 				meta:set_string("font", itemmeta:get_string("font"))
+				meta:set_string("last_change", itemmeta:get_string("last_change"))
 				meta:set_string("infotext", itemmeta:get_string("infotext"))
 				meta:set_string("text", itemmeta:get_string("text"))
+				if edef ~= nil then
+					if edef.meta_color then
+						meta:set_string(edef.meta_color, itemmeta:get_string("meta_color"))
+					end
+					if edef.meta_halign then
+						meta:set_int(edef.meta_halign, itemmeta:get_int("meta_halign"))
+					end
+					if edef.meta_lines then
+						local value = itemmeta:get_int("meta_lines")
+						if value == 0 and edef.meta_lines_default ~= nil and edef.meta_lines_default > 0 then
+							value = edef.meta_lines_default
+						end
+						meta:set_int(edef.meta_lines, value)
+					end
+					if edef.meta_valign then
+						meta:set_int(edef.meta_valign, itemmeta:get_int("meta_valign"))
+					end
+				end
 				display_api.update_entities(pos)
 			end
+			signs_api.set_formspec(pos)
 		end,
 	}
 
