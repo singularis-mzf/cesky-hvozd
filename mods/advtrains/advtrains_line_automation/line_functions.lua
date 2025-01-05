@@ -102,6 +102,43 @@ local function find_next_index(line_status, linevar_def, stn)
     end
 end
 
+-- Vrací kódy výchozí a cílové stanice k zobrazení cestujícím: stn_first (string), stn_terminus (string)
+-- Předané linevar_def musí obsahovat platný seznam 'stops', ale nemusí obsahovat nic jiného (nemusí to být platná definice).
+-- V případě chyby vrací nil, nil.
+local function get_first_last_stations(linevar_def)
+    local stops = assert(linevar_def.stops)
+    assert(stops[1])
+    assert(stops[2]) -- každá definice linky musí obsahovat alespoň dvě zastávky
+    local i_first, i_last, i_firstx, i_lastx
+    for i, stop in ipairs(stops) do
+        local mode = stop.mode or MODE_NORMAL
+        if mode ~= MODE_DISABLED then
+            if i_first == nil then
+                if mode ~= MODE_HIDDEN and mode ~= MODE_FINAL_HIDDEN then
+                    i_first = i -- první neskrytá zastávka
+                end
+                if i_firstx == nil then
+                    i_firstx = i -- první nevypnutá zastávka (může být skrytá)
+                end
+            end
+            i_lastx = i
+            if mode == MODE_NORMAL or mode == MODE_REQUEST_STOP or mode == MODE_FINAL or mode == MODE_FINAL_CONTINUE then
+                i_last = i
+            end
+            if mode == MODE_FINAL or mode == MODE_FINAL_CONTINUE or mode == MODE_FINAL_HIDDEN then
+                break
+            end
+        end
+    end
+    if i_first ~= nil and i_last ~= nil then
+        return stops[i_first].stn, stops[i_last].stn
+    elseif i_firstx ~= nil and i_lastx ~= nil then
+        return stops[i_firstx].stn, stops[i_lastx].stn
+    else
+        return nil, nil
+    end
+end
+
 --[[
     Používá se na *nelinkový* vlak stojící na *neanonymní* zastávce.
     Zahájí jízdu na lince nalezené podle kombinace line/stn/rc, nebo vrátí false.
@@ -125,6 +162,7 @@ local function line_start(train, stn, departure_rwtime)
     ls.linevar_dep = departure_rwtime
     ls.linevar_last_dep = departure_rwtime
     ls.linevar_last_stn = stn
+    ls.linevar_past = nil
     train.text_outside = al.get_line_description(linevar_def, {
         line_number = true,
         last_stop = true,
@@ -308,7 +346,8 @@ end
 ]]
 function al.get_line_description(linevar_def, options)
     local line, stn = al.linevar_decompose(linevar_def.name)
-    if line == nil then
+    local first_stn, last_stn = get_first_last_stations(linevar_def)
+    if line == nil or first_stn == nil or last_stn == nil then
         return "???"
     end
     if options == nil then options = {} end
@@ -318,23 +357,27 @@ function al.get_line_description(linevar_def, options)
     else
         s1 = ""
     end
-    if options.first_stop then
-        s2 = get_station_name(stn).." "
+    if first_stn == last_stn and options.first_stop and (options.last_stop == nil or options.last_stop) then
+        s2 = get_station_name(last_stn)
+        if options.last_stop_uppercase then
+            s2 = na_velka_pismena(s2)
+        end
+        s3 = " (okružní)"
     else
-        s2 = ""
-    end
-    if options.last_stop == nil or options.last_stop then
-        s3 = "???"
-        local terminus_index, terminus_data = al.get_terminus(linevar_def, 1, false)
-        if terminus_index ~= nil then
-            s3 = get_station_name(terminus_data.stn)
+        if options.first_stop then
+            s2 = get_station_name(first_stn).." "
+        else
+            s2 = ""
+        end
+        if options.last_stop == nil or options.last_stop then
+            s3 = get_station_name(last_stn)
             if options.last_stop_uppercase then
                 s3 = na_velka_pismena(s3)
             end
+            s3 = (options.last_stop_prefix or "⇒ ")..s3
+        else
+            s3 = ""
         end
-        s3 = (options.last_stop_prefix or "⇒ ")..s3
-    else
-        s3 = ""
     end
     if options.train_name and linevar_def.train_name ~= nil then
         s4 = (options.train_name_prefix or "\n")..linevar_def.train_name
@@ -347,22 +390,29 @@ end
 function al.get_stop_description(stop_data, next_stop_data)
     local s1, s2 = "", ""
     if stop_data ~= nil then
-        local mode = stop_data.mode or MODE_NORMAL
+        local mode = stop_data.mode
         if mode ~= MODE_DISABLED and mode ~= MODE_HIDDEN and mode ~= MODE_FINAL_HIDDEN then
             s1 = get_station_name(stop_data.stn)
-            if mode == MODE_FINAL or mode == MODE_FINAL_CONTINUE then
+            --[[
+            if
+                mode == MODE_FINAL or mode == MODE_FINAL_CONTINUE or
+                (next_stop_data ~= nil and next_stop_data.mode == MODE_FINAL_HIDDEN)
+            then
                 s2 = "Koncová zastávka"
             end
+            ]]
         end
     end
     if next_stop_data ~= nil then
-        local mode = next_stop_data.mode or MODE_NORMAL
+        local mode = next_stop_data.mode
         if mode ~= MODE_DISABLED and mode ~= MODE_HIDDEN and mode ~= MODE_FINAL_HIDDEN then
             s2 = "Příští zastávka/stanice: "..get_station_name(next_stop_data.stn)
             if mode == MODE_REQUEST_STOP then
                 s2 = s2.." (na znamení)"
             end
         end
+    else
+        s2 = "Koncová zastávka"
     end
     if s1 ~= "" and s2 ~= "" then
         return s1.."\n"..s2
@@ -491,6 +541,14 @@ function al.get_line_status(train)
     local ls = train.line_status
     if ls.linevar == nil then
         -- nelinkový vlak
+        local linevar_past = ls.linevar_past
+        if linevar_past ~= nil then
+            local rwtime = rwt.to_secs(rwt.get_time())
+            if train.line ~= linevar_past.line or rwtime - linevar_past.arrival >= 86400 then
+                -- smazat linevar_past, pokud se změnilo označení linky nebo uplynulo 24 hodin
+                ls.linevar_past = nil
+            end
+        end
         return ls, nil
     end
     local rwtime = rwt.to_secs(rwt.get_time())
@@ -513,11 +571,6 @@ function al.get_line_status(train)
             core.log("warning", "Train "..train.id.." put out of linevar '"..ls.linevar.."', because its line changed to '"..tostring(train.line).."'.")
             al.cancel_linevar(train)
             linevar_def = nil
-        else
-            -- [DEBUG:] TEMPORARY:
-            if linevar_def.line == nil then
-                linevar_def.line = assert(train.line)
-            end
         end
     end
     return ls, linevar_def
@@ -659,7 +712,7 @@ function al.on_train_enter(pos, train_id, train, index)
         else
             -- koncová zastávka
             can_start_line = stop_def.mode == MODE_FINAL_CONTINUE
-            core.log("action", "Train "..train_id.." arrived to the final station "..stop_def.stn.." of linevar "..ls.linevar.." after "..(rwtime - ls.linevar_dep).." seconds.")
+            core.log("action", "Train "..train_id.." arrived at the final station "..stop_def.stn.." of linevar "..ls.linevar.." after "..(rwtime - ls.linevar_dep).." seconds.")
             debug_print("Vlak "..train_id.." skončil jízdu na lince "..ls.linevar..", může pokračovat na jinou linku: "..(can_start_line and "ihned" or "na příští zastávce"))
             train.text_inside = al.get_stop_description(linevar_def.stops[next_index])
             local current_passage = current_passages[train_id]
@@ -668,6 +721,15 @@ function al.on_train_enter(pos, train_id, train, index)
                 current_passages[train_id] = nil
             end
             al.cancel_linevar(train)
+            -- vyplnit linevar_past:
+            if train.line ~= nil and train.line ~= "" then
+                ls.linevar_past = {
+                    line = assert(linevar_def.line),
+                    linevar = assert(linevar_def.name),
+                    station = stn,
+                    arrival = rwtime,
+                }
+            end
         end
     else
         -- linkový vlak zastavil na neznámé zastávce (nemělo by nastat)
@@ -887,34 +949,52 @@ local function get_train_position(line_status, linevar_def, rwtime)
     return "???"
 end
 
+local function vlaky(param, past_trains_too)
+    local result = {}
+    if param:match("/") then
+        return result -- parametr nesmí obsahovat '/'
+    end
+    local train_line_prefix
+    if param ~= "" then
+        train_line_prefix = param.."/"
+    end
+    local rwtime = rwt.to_secs(rwt.get_time())
+    local results = {}
+    for train_id, train in pairs(advtrains.trains) do
+        local ls, linevar_def = al.get_line_status(train)
+        if linevar_def ~= nil then
+            if train_line_prefix == nil or train_line_prefix == ls.linevar:sub(1, #train_line_prefix) then
+                local direction_index, direction_stop = al.get_terminus(linevar_def, ls.linevar_index, false)
+                local direction = "???"
+                if direction_index ~= nil then
+                    direction = get_station_name(direction_stop.stn)
+                end
+                local s = "("..train_id..") ["..linevar_def.line.."] směr „"..direction.."“, poloha: "..
+                    get_train_position(ls, linevar_def, rwtime)
+                table.insert(results, {key = linevar_def.name.."/"..ls.linevar_index, value = s})
+            end
+        elseif past_trains_too and ls.linevar_past ~= nil and (train_line_prefix == nil or ls.linevar_past.line == param) then
+            local age = rwtime - ls.linevar_past.arrival
+            table.insert(results, {
+                key = string.format("%s/~/%s/%05d", ls.linevar_past.line, ls.linevar_past.station, age),
+                value = "("..train_id..") ["..ls.linevar_past.line.."] služební, poloha: "..get_station_name(ls.linevar_past.station).." (před "..age.." sekundami)",
+            })
+        end
+    end
+    table.sort(results, function(a, b) return a.key < b.key end)
+    for i, v in ipairs(results) do
+        result[i] = v.value
+    end
+    return result
+end
+
 -- příkaz /vlaky
 local def = {
     params = "[linka]",
     description = "Vypíše všechny linkové vlaky na zadané lince (resp. na všech linkách)",
     privs = {},
     func = function(player_name, param)
-        local result = {}
-        if not param:match("/") then
-            local rwtime = rwt.to_secs(rwt.get_time())
-            local results = {}
-            for train_id, train in pairs(advtrains.trains) do
-                local ls, linevar_def = al.get_line_status(train)
-                if linevar_def ~= nil and (param == "" or ls.linevar:sub(1, #param + 1) == param.."/") then
-                    local direction_index, direction_stop = al.get_terminus(linevar_def, ls.linevar_index, false)
-                    local direction = "???"
-                    if direction_index ~= nil then
-                        direction = get_station_name(direction_stop.stn)
-                    end
-                    local s = "("..train_id..") ["..linevar_def.line.."] směr „"..direction.."“, poloha: "..
-                        get_train_position(ls, linevar_def, rwtime)
-                    table.insert(results, {key = linevar_def.name.."/"..ls.linevar_index, value = s})
-                end
-            end
-            table.sort(results, function(a, b) return a.key < b.key end)
-            for i, v in ipairs(results) do
-                result[i] = v.value
-            end
-        end
+        local result = vlaky(param, false)
         if #result == 0 then
             return false, "Nenalezen žádný odpovídající vlak."
         end
@@ -922,7 +1002,19 @@ local def = {
     end,
 }
 core.register_chatcommand("vlaky", def)
-
+def = {
+    params = "[linka]",
+    description = "Vypíše všechny linkové vlaky na zadané lince (resp. na všech linkách) a ty, které nedávno jízdu na lince ukončily",
+    privs = {ch_registered_player = true},
+    func = function(player_name, param)
+        local result = vlaky(param, true)
+        if #result == 0 then
+            return false, "Nenalezen žádný odpovídající vlak."
+        end
+        return true, "Nalezeno "..#result.." vlaků:\n- "..table.concat(result, "\n- ")
+    end,
+}
+core.register_chatcommand("vlaky+", def)
 
 -- DEBUG:
 def = {

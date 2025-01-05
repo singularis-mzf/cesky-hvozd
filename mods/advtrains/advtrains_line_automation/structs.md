@@ -25,6 +25,19 @@ train = {
         -- nastaví se na 1 v případě, že "bylo dáno znamení", aby vlak zastavil
         stop_request = 1 or nil,
 
+        -- údaje o poslední skončené jízdě na lince, dokud se nezmění číslo linky a dokud neuplyne 24 žel. hodin (cyklů)
+        -- nevyplní se, pokud vlak skončí jízdu jinak než zastavením na koncové zastávce
+        linevar_past = {
+            -- označení linky (LINE z linevar)
+            line = string,
+            -- linevar poslední jízdy na lince
+            linevar = string,
+            -- kód koncové zastávky, kde vlak skončil jízdu na lince
+            station = string,
+            -- žel. čas příjezdu na koncovou zastávku
+            arrival = int,
+        } or nil,
+
         -- Následující pole jsou vyplněna jen u linkových vlaků:
         -- ===========================
         -- varianta linky LINE/STCODE/RC

@@ -663,10 +663,11 @@ function advtrains.interlocking.show_signalling_form(sigd, pname, sel_rte, calle
 			form = form.."label[0.5,2.5;"..attrans("Routes:").."]"
 			form = form.."textlist[0.5,3;5,3;rtelist;"..table.concat(strtab, ",").."]"
 			if sel_rte then
-				form = form.."button[0.5,6;  5,1;setroute;"..attrans("Set Route").."]"
+				form = form.."button[0.5,6;5,1;setroute;"..attrans("Set Route").."]"
 				form = form.."button[0.5,7;2,1;dsproute;"..attrans("Show").."]"
 				if hasprivs then
 					form = form.."button[3.5,7;2,1;editroute;"..attrans("Edit").."]"
+					-- form = form.."button[5.75,3;1,1;routeup;^]"
 				end
 			else
 				if tcbs.ars_disabled then
