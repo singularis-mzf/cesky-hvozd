@@ -30,8 +30,10 @@ local function mydofile(filename)
 	return f(internal)
 end
 
-mydofile("nodes.lua")
 mydofile("formspec.lua")
 mydofile("functions.lua")
+mydofile("nodes.lua")
+mydofile("startup.lua")
+-- mydofile("digger.lua")
 
 ch_base.close_mod(minetest.get_current_modname())
