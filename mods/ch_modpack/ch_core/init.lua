@@ -7,6 +7,7 @@ ch_core = {
 
 	ap_interval = 15, -- interval pro podmód „ap“
 	cas = 0,
+	gs_tasks = {},
 	inventory_size = {
 		normal = 32,
 		extended = 64,
@@ -137,6 +138,13 @@ local has_wielded_light = minetest.get_modpath("wielded_light")
 local custom_globalsteps = {}
 local last_ap_timestamp = 0
 local use_forbidden_height = ifthenelse(minetest.settings:get_bool("ch_forbidden_height", false), true, false)
+local gs_task
+local gs_task_next_step
+local gs_handler = {
+	cancel = "on_cancelled",
+	finished = "on_finished",
+	failed = "on_failed",
+}
 
 local stepheight_low = {stepheight = 0.3}
 local stepheight_high = {stepheight = 1.1}
@@ -446,7 +454,47 @@ local function globalstep(dtime)
 			end
 		end
 	end
+
+	-- globalstep tasks:
+	if gs_task ~= nil then
+		-- run the step
+		local context = gs_task.context
+		local step = gs_task.steps[gs_task_next_step]
+		local n_steps = #gs_task.steps
+		local result = gs_task.on_step(context, step, gs_task_next_step, n_steps)
+		local handler = gs_handler[result] -- if this crashes on nil, add 'or ""'
+		if handler == nil then
+			if gs_task_next_step < n_steps then
+				-- příště pokračovat dalším krokem stejného úkolu
+				gs_task_next_step = gs_task_next_step + 1
+			else
+				-- úkol dokončen
+				handler = "on_finished"
+			end
+		end
+		if handler ~= nil then
+			-- zavolat obsluhu a skončit
+			handler = gs_task[handler]
+			if handler ~= nil then
+				handler(context, gs_task_next_step, n_steps)
+			end
+			gs_task = nil
+		end
+
+	elseif ch_core.gs_tasks[1] ~= nil then
+		-- vyzvednout další úkol a zavolat jeho on_start()
+		gs_task = ch_core.gs_tasks[1]
+		gs_task_next_step = 1
+		table.remove(ch_core.gs_tasks, 1)
+		if gs_task.on_start ~= nil then
+			local result = gs_task.on_start(gs_task.context)
+			local handler = gs_handler[result] -- if this crashes on nil, add 'or ""'
+			if handler ~= nil then
+				gs_task = nil
+			end
+		end
+	end
 end
-minetest.register_globalstep(globalstep)
+core.register_globalstep(globalstep)
 
 ch_base.close_mod(minetest.get_current_modname())
