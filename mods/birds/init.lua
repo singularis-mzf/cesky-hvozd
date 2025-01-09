@@ -405,7 +405,7 @@ minetest.register_globalstep(function(dtime)
 		local p = list[math.ceil(math.random()*#list)]
 		local pos = p:get_pos()
 		
-		if pos.y > spawn_y-80 then
+		if pos.y > spawn_y-80 and pos.y < 3000 then
 			if pos.y > spawn_y then
 				pos.y = pos.y + math.random()*spawn_y_variance*2 - spawn_y_variance
 			else

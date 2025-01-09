@@ -315,7 +315,7 @@ minetest.register_node("towercrane:base", {
 	end,
 
 	can_dig = function(pos, player)
-		if minetest.check_player_privs(player, "server") then
+		if player == nil or minetest.check_player_privs(player, "server") then
 			return true
 		end
 		if is_crane_running(pos) then

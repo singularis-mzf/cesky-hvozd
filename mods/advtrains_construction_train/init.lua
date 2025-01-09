@@ -1,5 +1,7 @@
 ch_base.open_mod(minetest.get_current_modname())
+
 local S = attrans
+local has_comboblock = core.get_modpath("comboblock")
 
 function round_down(pos)
    return {x=math.floor(pos.x), y=math.floor(pos.y), z=math.floor(pos.z)}
@@ -18,6 +20,31 @@ function parse_attributes(s)
 		end
 	end
 	return result
+end
+
+local function first_registered_node(list)
+	for _, name in ipairs(list) do
+		if core.registered_nodes[name] ~= nil then
+			return name
+		end
+	end
+	return "air"
+end
+
+local function remove_node(pos)
+	local old_node = core.get_node(pos)
+	local ndef = core.registered_nodes[old_node.name]
+	if ndef ~= nil and ndef.diggable ~= false then
+		return core.remove_node(pos)
+	end
+end
+
+local function set_node(pos, node)
+	local old_node = core.get_node(pos)
+	local ndef = core.registered_nodes[old_node.name]
+	if ndef ~= nil and ndef.diggable ~= false then
+		return core.set_node(pos, node)
+	end
 end
 
 advtrains.register_wagon("construction_train", {
@@ -127,9 +154,14 @@ advtrains.register_wagon("construction_train", {
 		end ]]
 		local gravel_node -- "železniční" => use railway_gravel
 		if attributes.zeleznicni and minetest.registered_nodes["ch_core:railway_gravel"] then
-			gravel_node = {name = "ch_core:railway_gravel"}
+			gravel_node = {name = first_registered_node({
+				"comboblock:slab_gravel_onc_slab_concrete",
+				"ch_core:railway_gravel",
+				"default:gravel"}) }
 		else
-			gravel_node = {name = "default:gravel"}
+			gravel_node = {name = first_registered_node({
+				"comboblock:slab_railway_gravel_onc_slab_concrete",
+				"default:gravel"})}
 		end
 		local cobble_node = {name = "default:cobble"}
 		for x = -1,1 do
@@ -137,10 +169,10 @@ advtrains.register_wagon("construction_train", {
 				local ps = vector.offset(rpos, x, 0, z)
 				local name = minetest.get_node(ps).name
 				if (not tracks_below) or (minetest.get_item_group(name, "not_blocking_trains") ==  0 and minetest.registered_nodes[name].walkable) then
-					minetest.set_node(ps, gravel_node)
+					set_node(ps, gravel_node)
 					ps.y = ps.y-1
 					if not minetest.registered_nodes[minetest.get_node(ps).name].walkable then
-						minetest.set_node(ps, cobble_node)
+						set_node(ps, cobble_node)
 					end
 				end
 			end
@@ -155,8 +187,8 @@ advtrains.register_wagon("construction_train", {
 						if node ~= nil and node.name ~= "air" then
 							local ndef = minetest.registered_nodes[node.name]
 							if ndef ~= nil and ndef.buildable_to then
-								minetest.remove_node(ps)
-								minetest.check_for_falling(ps)
+								remove_node(ps)
+								core.check_for_falling(ps)
 							end
 						end
 					end

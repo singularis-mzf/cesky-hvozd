@@ -1,17 +1,11 @@
 local internal = ...
 
-local ifthenelse = assert(ch_core.ifthenelse)
 local c_width, c_height = internal.container_width, internal.container_height
 local x_min, y_min, z_min = internal.x_min, internal.y_min, internal.z_min
 local x_scale, y_scale, z_scale = internal.x_scale, internal.y_scale, internal.z_scale
 local x_count, y_count, z_count = internal.x_count, internal.y_count, internal.z_count
-local total_count = x_count * y_count * z_count
 local storage = assert(internal.storage)
-local free_queue_length = 10
-
-local STATUS_NONE = 0
-local STATUS_EMERGING = 1
-local STATUS_EMERGED = 2
+local free_queue_length = assert(internal.free_queue_length)
 
 local container_data = {--[[
     Data kontejnerů v paměti:
@@ -32,149 +26,71 @@ local public_containers = {--[[
     }, ...
 ]]}
 
-local function get_public_containers(id_to_find)
-    if public_containers[1] == nil then
-        return public_containers, nil -- žádné veřejné kontejnery
-    end
-    local now = core.get_us_time()
-    local n = #public_containers
-    local found_index
-    local i = 1
-    while i < #public_containers do
-        local record = public_containers[i]
-        if record.public_until <= now then
-            -- záznam vypršel, nutno uklidit
-            table.remove(public_containers, i)
-        else
-            if record.id == id_to_find then
-                found_index = i
-            end
-            i = i + 1
-        end
-    end
-    return public_containers, found_index
-end
-
+-- MÍSTNÍ FUNKCE
+-- ========================================================================
 --[[
-local function add_container_owner(new_owner)
-    assert(new_owner ~= nil and new_owner ~= "" and container_data[new_owner] == nil)
-    local owners = storage:get_string("owners")
-    if owners ~= "" then
-        owners = owners..new_owner.."|"
-    else
-        owners = "|"..new_owner.."|" -- first owner
-    end
-    storage:set_string("owners")
-    local result = {}
-    container_data[new_owner] = result
-    return result
-end
+    Vrátí výsledek celočíselného dělení a jeho zbytek.
 ]]
-
-local function get_container_data(owner)
-    assert(owner ~= nil and owner ~= "")
-    local result = container_data[owner]
-    if result == nil and ch_core.offline_charinfo[owner] ~= nil then
-        local owners = storage:get_string("owners")
-        if owners ~= "" then
-            owners = owners..owner.."|"
-        else
-            owners = "|"..owner.."|" -- first owner
-        end
-        storage:set_string("owners", owners)
-        result = {}
-        container_data[owner] = result
-    end
-    return result
-end
-internal.get_container_data = get_container_data
-
-local function save_container_data(owner)
-    if owner == nil then
-        -- uložit vše:
-        for xowner, _ in pairs(container_data) do
-            save_container_data(xowner)
-            return
-        end
-    end
-    assert(owner ~= "")
-    local containers = {}
-    if container_data[owner] ~= nil and container_data[owner][1] ~= nil then
-        for i, cdata in ipairs(container_data[owner]) do
-            containers[i] = {id = cdata.id, name = cdata.name}
-        end
-    end
-    storage:set_string("cdata_"..owner, assert(core.serialize(containers)))
-end
-internal.save_container_data = save_container_data
-
-function internal.load_container_data()
-    local owners = storage:get_string("owners"):split("|", false)
-    local new_data = {}
-    local owner_count, total_count = 0, 0
-    for _, owner in ipairs(owners) do
-        local t = assert(core.deserialize(storage:get_string("cdata_"..owner)))
-        assert(type(t) == "table")
-        new_data[owner] = t
-        owner_count = owner_count + 1
-        total_count = total_count + #t
-    end
-    container_data = new_data
-    core.log("action", "[ch_containers] "..total_count.." containers of "..owner_count.." owners loaded.")
-end
-
---[[
-	container_width = 64, -- vnitřní šířka/hloubka kontejneru (měla by být dělitelná 16)
-	container_height = 64, -- vnitřní výška kontejneru (měla by být dělitelná 16)
-	-- *_min udává pozici prvního kontejneru v mřížce:
-	x_min = -3840,
-	y_min = 3488,
-	z_min = -3840,
-	-- *_scale udává, jak daleko bude každý následující kontejner od předchozího:
-	x_scale = 96,
-	y_scale = 256,
-	z_scale = 96,
-	-- *_count udává, kolik kontejnerů se může vytvořit podél každé osy:
-	x_count = 80,
-	y_count = 2,
-	z_count = 80,
-
-    Metadata kontejnerů:
-        string {container_id}_owner -- vlastník/ice kontejneru
-        string {container_id}_next_free
-            -- je-li kontejner prázdný, udává ID následujícího prázdného kontejneru ve frontě
-            -- poslední prázdný kontejner ve frontě má toto pole nastaveno na hodnotu ";"
-        string next_free -- udává ID prvního prázdného kontejneru ve frontě
-        int ap_x, ap_y, ap_z -- pozice posledního umístěného přístupového terminálu (pro návrat z kontejnerů)
-]]
-
 local function divrem(a, b)
     local rem = a % b
     return (a - rem) / b, rem
 end
 
-function internal.get_random_container_id()
-    return string.format("c%03d%03d%03d", math.random(0, x_count), math.random(0, y_count), math.random(0, z_count))
+--[[
+    Vrátí seznam 'public_containers' poté, co z něj odklidí kontejnery, jejichž zveřejnění již vypršelo.
+    Jako druhou hodnotu vrací výstup core.get_us_time() použitý při posuzování, zda zveřejnění kontejnerů již vypršelo.
+]]
+local function get_public_containers()
+    local n = #public_containers
+    local now = core.get_us_time()
+    if n > 0 then
+        for i = n, 1, -1 do
+            if public_containers[i].public_until <= now then
+                table.remove(public_containers, i)
+            end
+        end
+    end
+    return public_containers, now
 end
-local get_random_container_id = internal.get_random_container_id
 
-function internal.get_container_id(pos)
-    pos = vector.round(pos)
-    if
-        x_min <= pos.x and pos.x <= x_min + (x_count - 1) * x_scale + c_width - 1 and
-        z_min <= pos.z and pos.z <= z_min + (z_count - 1) * z_scale + c_width - 1 and
-        y_min <= pos.y and pos.y <= y_min + (y_count - 1) * y_scale + c_height - 1
-    then
-        local i_x, r_x = divrem(pos.x - x_min, x_scale)
-        local i_y, r_y = divrem(pos.y - y_min, y_scale)
-        local i_z, r_z = divrem(pos.z - z_min, z_scale)
-        if r_x < c_width and r_y < c_height and r_z < c_width then
-            return string.format("c%03d%03d%03d", i_x, i_y, i_z)
+--[[
+    Je-li zadaný kontejner právě veřejný, vrátí požadovaný result_type:
+    "index" => int (index do pole public_containers)
+    "record" => table (záznam v poli public_containers)
+    "ttl" => float (desetinný počet sekund, jak dlouho kontejner ještě bude veřejný)
+    "bool" => true
+    Není-li zadaný kontejner veřejný, vrací nil.
+]]
+local function find_public_container(container_id, result_type)
+    assert(container_id ~= nil and container_id ~= "")
+    if public_containers[1] == nil then
+        print("DEBUG: nil (zadne verejne kontejnery)")
+        return nil -- žádné veřejné kontejnery
+    end
+    local pc, now = get_public_containers()
+    for i, record in ipairs(pc) do
+        print("DEBUG: will test public container: "..record.id.." (container_id == "..container_id..")")
+        if record.id == container_id then
+            if result_type == "bool" or result_type == nil then
+                return true
+            elseif result_type == "index" then
+                return i
+            elseif result_type == "record" then
+                return record
+            elseif result_type == "ttl" then
+                return (record.public_until - now) / 1000000
+            else
+                return record
+            end
         end
     end
 end
-local get_container_id = internal.get_container_id
 
+--[[
+    container_id = string,
+    Je-li zadané ID platné (kontejner nemusí existovat), vrátí jeho minp a maxp,
+    jinak vrátí nil.
+]]
 local function get_container_by_id(container_id)
     local x, y, z = container_id:match("^c(%d%d%d)(%d%d%d)(%d%d%d)$")
     if x == nil then
@@ -192,6 +108,195 @@ local function get_container_by_id(container_id)
     end
 end
 
+--[[
+    container_id = string,
+    attempt_index = int, -- při prvním volání musí mít hodnotu 1
+
+    Pomocná funkce, která zkontroluje, zda je oblast zadaného kontejneru vygenerována,
+    a pokud ano, vloží ho do fronty prázdných (připravených) kontejnerů.
+]]
+local function add_emerged(container_id, attempt_index)
+    if internal.is_container_emerged(container_id) then
+        storage:set_string(container_id.."_next_free", ";")
+        local old_queue = internal.get_emerged_queue()
+        core.log("action", "[ch_containers] container "..container_id.." emerged, will put it to the queue (old queue length was "..#old_queue..")")
+        if old_queue[1] ~= nil then
+            -- neprázdná fronta, přidat na konec
+            local last_free = old_queue[#old_queue]
+            storage:set_string(last_free.."_next_free", container_id)
+        else
+            storage:set_string("next_free", container_id)
+        end
+    elseif attempt_index < 10 then
+        core.log("warning", "Container "..container_id.." not emerged (attempt "..attempt_index.."), will try again after 10 seconds.")
+        core.after(10, add_emerged, container_id, attempt_index + 1)
+    else
+        core.log("error", "Container "..container_id.." not emerged after 10 attempts!")
+    end
+end
+
+local emerge_new_set = {}
+
+-- Na zadané pozici zadá operaci 'emerge'. Později se pozice přidá do fronty připravených kontejnerů.
+local function emerge_new()
+    local container_id
+    repeat
+        container_id = internal.get_random_container_id()
+    until not emerge_new_set[container_id] and storage:get_string(container_id.."_owner") == ""
+    emerge_new_set[container_id] = true
+    print("DEBUG: emerge_new("..container_id..")")
+    local minp, maxp = get_container_by_id(container_id)
+    if minp == nil then
+        core.log("error", "emerge_new() failed for container_id '"..container_id.."'!")
+        return -- error!
+    end
+    minp.x = minp.x - 16
+    minp.y = minp.y - 16
+    minp.z = minp.z - 16
+    maxp.x = maxp.x + 16
+    maxp.y = maxp.y + 16
+    maxp.z = maxp.z + 16
+    core.log("action", "[ch_containers] starting emerging area: x("..minp.x..".."..maxp.x.."), y("..minp.y..".."..maxp.y.."), z("..
+        minp.z..".."..maxp.z..") for container "..container_id)
+    core.emerge_area(minp, maxp)
+    core.after(10, add_emerged, container_id, 1)
+    return container_id
+end
+
+--[[
+    Je-li fronta připravených kontejnerů příliš krátká, zavolá emerge_new() pro její prodloužení.
+    Toto opakuje každou sekundu, dokud se nedosáhne požadované délky.
+]]
+local function ensure_free_queue_length()
+    local queue = internal.get_emerged_queue()
+    if #queue >= free_queue_length then
+        return
+    end
+    local new_id = emerge_new()
+    if new_id == nil then
+        return -- error
+    end
+    core.log("action", "[ch_containers] ensure_free_queue_length() will emerge container '"..new_id..
+        "', because the queue length is only "..#queue)
+    core.after(1, ensure_free_queue_length)
+end
+
+--[[
+    Pomocná funkce, která se spouští před zahájením běhu světa.
+    Načítá perzistentní data.
+]]
+local function on_mods_loaded()
+    core.after(1, ensure_free_queue_length)
+    local owners = storage:get_string("owners"):split("|", false)
+    local new_data = {}
+    local owner_count, total_count = 0, 0
+    for _, owner in ipairs(owners) do
+        local data = storage:get_string("cdata_"..owner)
+        if data ~= "" then
+            local t = core.deserialize(data)
+            if t == nil then
+                core.log("error", "[ch_containers] Data from 'cdata_"..owner.."' not deserialized: >>>"..data.."<<<")
+            else
+                assert(type(t) == "table")
+                new_data[owner] = t
+                owner_count = owner_count + 1
+                total_count = total_count + #t
+                for _, record in ipairs(t) do
+                    if storage:get_string(record.id.."_owner") ~= owner then
+                        core.log("error", "Owner inconsistency for container '"..record.id..": '"..storage:get_string(record.id.."_owner")..
+                            "' in metadata, but '"..owner.."' in a table!")
+                    end
+                end
+            end
+        end
+    end
+    container_data = new_data
+    core.log("action", "[ch_containers] "..total_count.." containers of "..owner_count.." owners loaded.")
+end
+core.register_on_mods_loaded(on_mods_loaded)
+
+
+
+-- INTERNÍ FUNKCE
+-- =================================================
+
+--[[
+    owner = string,
+
+    Vrací seznam dat kontejnerů dané postavy.
+    Je v podstatě bezpečným obalem nad: container_data[owner].
+    Pokud takový seznam dosud neexistuje, vytvoří ho.
+]]
+function internal.get_containers(owner)
+    assert(owner ~= nil and owner ~= "")
+    local result = container_data[owner]
+    if result == nil and ch_core.offline_charinfo[owner] ~= nil then
+        local owners = storage:get_string("owners")
+        if owners ~= "" then
+            owners = owners..owner.."|"
+        else
+            owners = "|"..owner.."|" -- first owner
+        end
+        storage:set_string("owners", owners)
+        result = {}
+        container_data[owner] = result
+    end
+    return result
+end
+local get_containers = internal.get_containers
+
+--[[
+    owner = string or nil,
+
+    Uloží data kontejnerů dané postavy, nebo všech postav.
+]]
+function internal.save_container_data(owner)
+    if owner == nil then
+        -- uložit vše:
+        for xowner, _ in pairs(container_data) do
+            internal.save_container_data(xowner)
+        end
+        return
+    end
+    assert(owner ~= "")
+    local containers = {}
+    if container_data[owner] ~= nil and container_data[owner][1] ~= nil then
+        for i, cdata in ipairs(container_data[owner]) do
+            containers[i] = {id = cdata.id, name = cdata.name}
+        end
+    end
+    storage:set_string("cdata_"..owner, assert(core.serialize(containers)))
+end
+local save_container_data = internal.save_container_data
+
+-- Vrátí platné ID náhodného kontejneru. Kontejner může a nemusí existovat.
+function internal.get_random_container_id()
+    return string.format("c%03d%03d%03d", math.random(0, x_count - 1), math.random(0, y_count - 1), math.random(0, z_count - 1))
+end
+
+-- Je-li pozice uvnitř některého kontejneru, vrátí jeho ID, jinak vrátí nil.
+function internal.get_container_id(pos)
+    pos = vector.round(pos)
+    if
+        x_min <= pos.x and pos.x <= x_min + (x_count - 1) * x_scale + c_width - 1 and
+        z_min <= pos.z and pos.z <= z_min + (z_count - 1) * z_scale + c_width - 1 and
+        y_min <= pos.y and pos.y <= y_min + (y_count - 1) * y_scale + c_height - 1
+    then
+        local i_x, r_x = divrem(pos.x - x_min, x_scale)
+        local i_y, r_y = divrem(pos.y - y_min, y_scale)
+        local i_z, r_z = divrem(pos.z - z_min, z_scale)
+        if r_x < c_width and r_y < c_height and r_z < c_width then
+            return string.format("c%03d%03d%03d", i_x, i_y, i_z)
+        end
+    end
+end
+
+--[[
+    Vrací:
+    - true, pokud je oblast zadaného kontejneru zcela dostupná (načtená a vygenerovaná).
+    - false, pokud není
+    - nil, pokud zadané ID nepojmenovává platný kontejner
+]]
 function internal.is_container_emerged(container_id)
     local minp, maxp = get_container_by_id(container_id)
     if minp == nil or maxp == nil then
@@ -214,6 +319,7 @@ function internal.is_container_emerged(container_id)
     return true
 end
 
+-- Vrátí seznam (table) s ID nových kontejnerů připravených k použití.
 function internal.get_emerged_queue()
     local result = {}
     local s = storage:get_string("next_free")
@@ -224,61 +330,33 @@ function internal.get_emerged_queue()
     return result
 end
 
-local function add_emerged(container_id, attempt_index)
-    if attempt_index == nil then
-        attempt_index = 1
-    end
-    if internal.is_container_emerged(container_id) then
-        storage:set_string(container_id.."_next_free", ";")
-        local old_queue = internal.get_emerged_queue()
-        core.log("action", "[ch_containers] container "..container_id.." emerged, will put it to the queue (old queue length was "..#old_queue..")")
-        if old_queue[1] ~= nil then
-            -- neprázdná fronta, přidat na konec
-            local last_free = old_queue[#old_queue]
-            storage:set_string(last_free.."_next_free", container_id)
-        else
-            storage:set_string("next_free", container_id)
-        end
-    elseif attempt_index < 10 then
-        core.log("warning", "Container "..container_id.." not emerged (attempt "..attempt_index.."), will try again after 10 seconds.")
-        core.after(10, add_emerged, container_id, attempt_index + 1)
-    else
-        core.log("error", "Container "..container_id.." not emerged after 10 attempts!")
-    end
-end
+--[[
+    new_owner = string, -- Vlastník/ice pro nový kontejner.
+    container_name = string or nil, -- Název nového kontejneru (nil => použije se prázdný název).
 
-function internal.emerge_new(container_id)
-    print("DEBUG: emerge_new("..container_id..")")
-    if storage:get_string(container_id.."_owner") ~= "" then
-        error("Existing container "..container_id.." set to be emerged!")
-    end
-    local begin = get_container_by_id(container_id)
-    if begin == nil then
-        return
-    end
-    local min, max = vector.offset(begin, -16, -16, -16), vector.offset(begin, c_width + 15, c_height + 15, c_width + 15)
-    core.log("action", "[ch_containers] starting emerging area: x("..min.x..".."..max.x.."), y("..min.y..".."..max.y.."), z("..
-        min.z..".."..max.z..") for container "..container_id)
-    core.emerge_area(min, max)
-    core.after(10, add_emerged, container_id)
-end
+    Vytvoří kompletní, okamžitě použitelný kontejner a nastaví mu vlastníka/ici a název.
 
+    V případě úspěchu vrací:
+    - container_id = string,
+    - minp = vector,
+    - maxp = vector,
+
+    V případě neúspěchu vrací:
+    - nil
+    - error_message = string or nil
+]]
 function internal.create_new_container(new_owner, container_name)
     assert(new_owner ~= nil and new_owner ~= "")
-    local containers = get_container_data(new_owner)
+    local containers = get_containers(new_owner)
     if containers == nil then
         return nil, "Neplatná uživatelská data" -- pravděpodobně chybné uživatelské jméno
     end
 
     -- naplánovat vygenerování dalšího kontejneru do fronty:
-    local new_id = get_random_container_id()
-    while storage:get_string(new_id.."_owner") ~= "" or storage:get_string(new_id.."_next_free") ~= "" do
-        new_id = get_random_container_id()
-    end
-    internal.emerge_new(new_id)
+    emerge_new()
 
     -- vzít kontejner z fronty:
-    new_id = storage:get_string("next_free")
+    local new_id = storage:get_string("next_free")
     if new_id == "" then
         core.log("error", "pop_emerged() called, but no free container is available in the queue!")
         return nil, "Vytváření kontejneru selhalo" -- žádný dostupný kontejner!
@@ -335,9 +413,9 @@ function internal.create_new_container(new_owner, container_name)
         end
     end
     core.bulk_set_node(ceiling_nodes, {name = "ch_containers:ceiling"})
-    core.bulk_set_node(floor_nodes, {name = "ch_containers:floor"})
-    core.bulk_set_node(wall_nodes, {name = "ch_containers:wall"})
-    core.bulk_set_node(cp_nodes, {name = "ch_containers:control_panel"})
+    core.bulk_set_node(floor_nodes, {name = "ch_containers:floor", param2 = 247})
+    core.bulk_set_node(wall_nodes, {name = "ch_containers:wall", param2 = 247})
+    core.bulk_set_node(cp_nodes, {name = "ch_containers:control_panel", param2 = 156})
     -- zapsat kontejner do seznamu:
     table.insert(containers, {id = new_id, name = container_name or ""})
     save_container_data(new_owner)
@@ -345,9 +423,14 @@ function internal.create_new_container(new_owner, container_name)
     return new_id, minp, maxp
 end
 
+--[[
+    owner = string or nil,
+
+    Vrátí počet kontejnerů daného vlastníka/ice, nebo celkový počet všech vlastněných kontejnerů.
+]]
 function internal.get_container_count(owner)
     if owner ~= nil then
-        local containers = get_container_data(owner)
+        local containers = get_containers(owner)
         if containers ~= nil then
             return #containers
         else
@@ -355,26 +438,74 @@ function internal.get_container_count(owner)
         end
     else
         local result = 0
-        for owner, containers in pairs(container_data) do
+        for _, containers in pairs(container_data) do
             result = result + #containers
         end
         return result
     end
 end
 
+--[[
+    owner = string or nil, -- konkrétní vlastník/ice; není-li zadán, vrátí všechny kontejnery
+    include_public_containers = bool or nil, -- je-li true, přidá také veřejné kontejnery ostatních vlastníků/ic
+        (platí pouze, pokud owner == nil)
+
+    Vrací seznam, kde každá položka obsahuje:
+    {
+        id = string, -- ID kontejneru
+        name = string, -- název kontejneru
+        owner = string, -- vlastník/ice kontejneru
+        index = int, -- index v seznamu daného vlastníka/ice
+        ttl = float or nil, -- pro veřejné kontejnery: jak dlouho ještě budou veřejné (v sekundách)
+    }
+]]
 function internal.get_container_list(owner, include_public_containers)
     local result = {}
     if owner ~= nil then
-        local containers = get_container_data(owner)
-        if containers ~= nil and containers[1] ~= nil then
+        local containers = get_containers(owner)
+        if containers ~= nil then
             for i, container in ipairs(containers) do
-                result[i] = {id = container.id, name = container.name, owner = owner}
+                result[i] = {
+                    id = container.id,
+                    name = container.name,
+                    owner = owner,
+                    index = i,
+                }
+            end
+        end
+        if include_public_containers then
+            local pc, now = get_public_containers()
+            for _, record in ipairs(pc) do
+                if record.owner ~= owner then
+                    local index = 0
+                    local other_containers = get_containers(record.owner)
+                    if other_containers ~= nil then
+                        for i, container in ipairs(other_containers) do
+                            if container.id == record.id then
+                                index = i
+                                break
+                            end
+                        end
+                    end
+                    table.insert(result, {
+                        id = record.id,
+                        name = record.name,
+                        owner = record.owner,
+                        index = index,
+                        ttl = (record.public_until - now) / 1000000,
+                    })
+                end
             end
         end
     else
-        for owner, containers in pairs(container_data) do
-            for _, container in ipairs(containers) do
-                table.insert(result, {id = container.id, name = container.name, owner = owner})
+        for xowner, containers in pairs(container_data) do
+            for i, container in ipairs(containers) do
+                table.insert(result, {
+                    id = container.id,
+                    name = container.name,
+                    owner = xowner,
+                    index = i,
+                })
             end
         end
     end
@@ -382,15 +513,42 @@ function internal.get_container_list(owner, include_public_containers)
 end
 
 --[[
-    Vrací:
+    Vrátí, zda container_id označuje veřejný kontejner s alespoň zadanou dobou životnosti.
+]]
+function internal.is_public_container(container_id, min_ttl)
+    if container_id == nil or container_id == "" then
+        print("DEBUG: false, because container_id is nil or empty!")
+        return false
+    end
+    local ttl = find_public_container(container_id, "ttl")
+    if not ttl then
+        print("DEBUG: false, because ttl is nil")
+        return false
+    end
+    if min_ttl == nil then
+        print("DEBUG: true")
+        return true
+    end
+    if ttl >= min_ttl then
+        print("DEBUG: true (ttl >= min_ttl)")
+        return true
+    else
+        print("DEBUG: false (ttl < min_ttl): "..dump2({ttl, min_ttl}))
+        return false
+    end
+end
+
+--[[
+    Vrací základní informace o daném kontejneru:
     {
         id = string, -- container_id
         name = string, -- jméno kontejneru
         owner = string, -- vlastník/ice kontejneru,
         index = int, -- index kontejneru v owner_data,
         pos = vector, -- základní (minp) pozice kontejneru
-        is_public = int or nil, -- index do public_containers, je-li kontejner veřejný
+        is_public = int or nil, -- je-li kontejner veřejný, index do public_containers
     }
+    Pokud kontejner neexistuje, vrátí nil.
 ]]
 function internal.get_basic_info(container_id)
     local owner = storage:get_string(container_id.."_owner")
@@ -398,16 +556,15 @@ function internal.get_basic_info(container_id)
         print("DEBUG: get_basic_info() called for '"..container_id.."' that has no _owner set!")
         return nil -- kontejner neexistuje
     end
-    for i, cdata in ipairs(get_container_data(owner) or {}) do
+    for i, cdata in ipairs(get_containers(owner) or {}) do
         if cdata.id == container_id then
-            local _public_containers, is_public = get_public_containers(container_id)
             return {
                 id = container_id,
                 name = cdata.name,
                 owner = owner,
                 index = i,
                 pos = assert(get_container_by_id(container_id)),
-                is_public = is_public
+                is_public = find_public_container(container_id, "index"),
             }
         end
     end
@@ -415,21 +572,24 @@ function internal.get_basic_info(container_id)
     return nil -- kontejner nenalezen
 end
 
+--[[
+    Vrací podrobné informace o daném kontejneru.
+    (Zatím totéž, co get_basic_info().)
+]]
 function internal.get_full_info(container_id)
     local owner = storage:get_string(container_id.."_owner")
     if owner == "" then
         return nil -- kontejner neexistuje
     end
-    for i, cdata in ipairs(get_container_data(owner) or {}) do
+    for i, cdata in ipairs(get_containers(owner) or {}) do
         if cdata.id == container_id then
-            local _public_containers, is_public = get_public_containers(container_id)
             return {
                 id = container_id,
                 name = cdata.name,
                 owner = owner,
                 index = i,
                 pos = assert(get_container_by_id(container_id)),
-                is_public = is_public,
+                is_public = find_public_container(container_id, "index"),
                 -- TODO...
             }
         end
@@ -438,6 +598,15 @@ function internal.get_full_info(container_id)
     return nil -- kontejner nenalezen
 end
 
+--[[
+    container_id = string, -- ID kontejneru
+    player = PlayerRef, -- hráčská postava
+    teleport_options = table or nil, -- nastavení pro ch_core.teleport_player()
+
+    Přenese zadanou postavu do zadaného kontejneru, pokud ten existuje.
+
+    Vrací true v případě úspěchu; nil, error_message v případě selhání.
+]]
 function internal.enter_container(container_id, player, teleport_options)
     if player == nil then
         return false, "Vnitřní chyba: hráčská postava není nastavena"
@@ -465,6 +634,14 @@ function internal.enter_container(container_id, player, teleport_options)
     return ch_core.teleport_player(teleport_options)
 end
 
+--[[
+    player = PlayerRef, -- hráčská postava
+    teleport_options = table or nil, -- nastavení pro ch_core.teleport_player()
+
+    Přenese zadanou postavu na uloženou pozici přístupového bodu.
+
+    Vrací true v případě úspěchu; nil, error_message v případě selhání.
+]]
 function internal.leave_container(player, teleport_options)
     if player == nil or not core.is_player(player) or player:get_attach() ~= nil then
         return false, "Hráčská postava není platná nebo je vázaná na jiný objekt."
@@ -482,10 +659,17 @@ function internal.leave_container(player, teleport_options)
     return ch_core.teleport_player(teleport_options)
 end
 
+--[[
+    Uvolní zadaný kontejner od jeho vlastníka/ice a vloží ho do fronty k použití jako prázdný.
+    Kontejner nesmí být v té chvíli veřejný.
+]]
 function internal.release_container(container_id)
     local minp, maxp = internal.get_container_by_id(container_id)
     if minp == nil or maxp == nil then
         return false, "Neplatný kontejner."
+    end
+    if find_public_container(container_id, "bool") then
+        return false, "Kontejner je veřejný."
     end
     local owner = storage:get_string(container_id.."_owner")
     if owner == "" then
@@ -495,7 +679,7 @@ function internal.release_container(container_id)
             return false, "Kontejner již je volný."
         end
     end
-    local data = internal.get_container_data(owner)
+    local data = internal.get_containers(owner)
     if data ~= nil then
         for i, record in ipairs(data) do
             if record.id == container_id then
@@ -537,7 +721,7 @@ function internal.set_properties(container_id, properties, player_name)
         end
     end
 
-    local owner_data = internal.get_container_data(info.owner)
+    local owner_data = internal.get_containers(info.owner)
     local owner_to_save_1, owner_to_save_2
     local will_change_name = properties.name ~= nil and properties.name ~= info.name
     local will_change_owner = properties.owner ~= nil and properties.owner ~= info.owner
@@ -547,7 +731,7 @@ function internal.set_properties(container_id, properties, player_name)
         if ch_core.offline_charinfo[properties.owner] == nil then
             return false, "Postava '"..properties.owner.."' neexistuje!"
         end
-        new_owner_data = internal.get_container_data(properties.owner)
+        new_owner_data = internal.get_containers(properties.owner)
         if new_owner_data == nil then
             return false, "Nepodařilo se načíst data kontejnerů postavy '"..properties.owner.."'!"
         end
@@ -570,9 +754,9 @@ function internal.set_properties(container_id, properties, player_name)
         owner_to_save_2 = info.owner
         storage:set_string(container_id.."_owner", properties.owner)
         -- update public_containers:
-        for _, record in ipairs(public_containers) do
-            if record.id == container_id then
-                record.owner = info.owner
+        for _, pc_record in ipairs(public_containers) do
+            if pc_record.id == container_id then
+                pc_record.owner = info.owner
                 break
             end
         end
@@ -580,18 +764,23 @@ function internal.set_properties(container_id, properties, player_name)
 
     -- public_until
     if properties.public_until ~= nil then
+        print("DEBUG: will try to set public_until to "..properties.public_until)
         local now = core.get_us_time()
         local pc_i = info.is_public
         if not pc_i then
             if properties.public_until > now then
                 -- add to the list:
+                print("DEBUG: add to the list ("..properties.public_until.." > "..now.." and info.is_public == nil)")
                 table.insert(public_containers, {id = container_id, name = info.name, owner = info.owner, public_until = properties.public_until})
+                print("DEBUG: added: "..dump2(public_containers))
             end
         elseif properties.public_until <= now then
             -- remove from the list:
+            print("DEBUG: will remove from the list at index "..pc_i)
             table.remove(public_containers, pc_i)
         else
             -- change the value in the list:
+            print("DEBUG: will change value in the list at index "..pc_i.." to "..properties.public_until)
             public_containers[pc_i].public_until = properties.public_until
         end
     end

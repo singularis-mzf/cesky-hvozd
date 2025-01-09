@@ -21,3 +21,9 @@ area_containers_wall.png
 	License: CC-BY-SA 3.0
 	Used source:
 	- area_containers_wall.png from "Area Containers" mod, under CC BY-SA 3.0
+
+ch_containers_piepad.png
+	Author: Singularis
+	License: CC-BY-SA-4.0
+	Used source:
+	- computers_piepad_inv.png from "Homedecor Workshop" modpack, under MIT (license of the mod) + CC-BY-SA-4.0 (license of the modpack)

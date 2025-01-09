@@ -5,6 +5,10 @@ local ifthenelse = ch_core.ifthenelse
 local ui = assert(unified_inventory)
 -- local white, light_gray, light_green = ch_core.colors.white, ch_core.colors.light_gray, ch_core.colors.light_green
 
+local function is_forbidden_y(y)
+	return 3400 <= y and y <= 4000 -- zákaz evidence staveb v kontejnerech
+end
+
 local stav_to_color = {
 	rozestaveno = "#cccc00",
 	hotovo = "#ffffff",
@@ -227,7 +231,7 @@ local function get_ui_formspec(player, perplayer_formspec)
 	table.insert(formspec, ";"..stavby_charinfo.active_filter..";true]")
 
 	-- tlačítko „nová stavba zde“:
-	if ch_core.stavby_get(player_pos) == nil then
+	if ch_core.stavby_get(player_pos) == nil and not is_forbidden_y(player_pos.y) then
 		table.insert(formspec, "button[13,-0.7;4,0.6;ch_stavby_nova;nová stavba zde]"..
 			"tooltip[ch_stavby_nova;založit novou stavbu na pozici "..player_pos.x.."\\,"..player_pos.y.."\\,"..player_pos.z.."]")
 	end
@@ -377,6 +381,10 @@ local function new_formspec_callback(custom_state, player, formname, fields)
 		local urceni = assert(custom_state.urceni_list[custom_state.urceni])
 		local stav = assert(custom_state.stav_list[custom_state.stav])
 		local player_name = player:get_player_name()
+		if is_forbidden_y(custom_state.pos.y) then
+			ch_core.systemovy_kanal(player_name, "V této výškové úrovni nelze evidovat stavby!")
+			return
+		end
 		local result = ch_core.stavby_add(custom_state.pos, urceni, stav, assert(fields.nazev), assert(fields.druh),
 			player_name, assert(fields.zamer))
 		if result == nil then

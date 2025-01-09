@@ -1,8 +1,8 @@
-ch_base.open_mod(minetest.get_current_modname())
+ch_base.open_mod(core.get_current_modname())
 
-local modname = minetest.get_current_modname()
-local modpath = minetest.get_modpath(modname)
-ch_containers = {}
+local modname = core.get_current_modname()
+local modpath = core.get_modpath(modname)
+-- ch_containers = {}
 local internal = {
 	container_width = 64, -- vnitřní šířka/hloubka kontejneru (měla by být dělitelná 16)
 	container_height = 64, -- vnitřní výška kontejneru (měla by být dělitelná 16)
@@ -19,7 +19,9 @@ local internal = {
 	y_count = 2,
 	z_count = 80,
 
-	storage = minetest.get_mod_storage(),
+	free_queue_length = 20, -- požadovaná délka fronty kontejnerů připravených k použití
+
+	storage = core.get_mod_storage(),
 }
 
 local function mydofile(filename)
@@ -33,7 +35,6 @@ end
 mydofile("formspec.lua")
 mydofile("functions.lua")
 mydofile("nodes.lua")
-mydofile("startup.lua")
 -- mydofile("digger.lua")
 
-ch_base.close_mod(minetest.get_current_modname())
+ch_base.close_mod(core.get_current_modname())

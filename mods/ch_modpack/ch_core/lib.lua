@@ -1107,6 +1107,58 @@ function ch_core.get_ui_form_template(id, player_viewname, title, scrollbars, pe
 end
 
 --[[
+	Vrátí t[k1]. Pokud je to nil, vyplní t[k1] = {} a vrátí přiřazenou tabulku.
+]]
+function ch_core.goa1(t, k)
+	local r = t[k]
+	if r ~= nil then return r end
+	r = {}
+	t[k] = r
+	return r
+end
+
+--[[
+	Vrátí t[k1][k2]. Pokud některá z položek chybí, vyplní ji novou prázdnou tabulkou.
+]]
+function ch_core.goa2(t, k1, k2)
+	local r1 = t[k1]
+	if r1 == nil then
+		r1 = {}
+		t[k1] = {[k2] = r1}
+		return r1
+	end
+	local r2 = r1[k2]
+	if r2 == nil then
+		r2 = {}
+		r1[k2] = r2
+		return r2
+	end
+	return r2
+end
+local goa2 = ch_core.goa2
+
+--[[
+	Vrátí t[k1][k2][k3]. Pokud některá z položek chybí, vyplní ji novou prázdnou tabulkou.
+]]
+function ch_core.goa3(t, k1, k2, k3)
+	local r = t[k1]
+	if r ~= nil then
+		return goa2(r, k2, k3)
+	else
+		r = {}
+		t[k1] = {[k2] = {[k3] = r}}
+		return r
+	end
+end
+
+--[[
+	Vrátí t[k1][k2][k3][k4]. Pokud některá z položek chybí, vyplní ji novou prázdnou tabulkou.
+]]
+function ch_core.goa4(t, k1, k2, k3, k4)
+	return goa2(goa2(t, k1, k2), k3, k4)
+end
+
+--[[
 Vrátí herní čas ve struktuře:
 {
 	day_count = int -- návratová hodnota funkce minetest.get_day_count()

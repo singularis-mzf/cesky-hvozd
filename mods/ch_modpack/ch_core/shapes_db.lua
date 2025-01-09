@@ -697,10 +697,14 @@ local platform_materials_exceptions = set(
 	"moretrees:oak_planks"
 )
 
-local materials_under_rails = set(
+local materials_for_diagfillers = set(
+	"building_blocks:Tar",
+	"default:dry_dirt",
 	"ch_extras:bright_gravel",
 	"ch_extras:railway_gravel",
-	"default:gravel"
+	"default:gravel",
+	"streets:asphalt_blue",
+	"streets:asphalt_red"
 )
 
 local materials_for_si_frames = set(
@@ -862,10 +866,9 @@ local sns_slabs = set("", "_quarter", "_three_quarter", "_1", "_2", "_14", "_15"
 local sns_slopes = set("", "_half", "_half_raised",
 	"_inner", "_inner_half", "_inner_half_raised", "_inner_cut", "_inner_cut_half", "_inner_cut_half_raised",
 	"_outer", "_outer_half", "_outer_half_raised", "_outer_cut", "_outer_cut_half", "_cut",
-	"_slab", -- trojúhelník
 	"_tripleslope")
 
-local wool_slopes = set("", "_half", "_half_raised", "_slab")
+local wool_slopes = set("", "_half", "_half_raised")
 
 local roof_slopes = set("_roof22", "_roof22_raised", "_roof22_3", "_roof22_raised_3", "_roof45", "_roof45_3")
 
@@ -930,7 +933,8 @@ local rules = {
 	{materials_for_manholes, "streets", set("manhole", "stormdrain"), true},
 	{materials_for_manholes_only, "streets", "manhole", true},
 	{materials_for_si_frames, "si_frames", alts_si_frames, true},
-	{materials_under_rails, "slope", alts_diagfiller, true},
+	{materials_for_diagfillers, "slope", alts_diagfiller, true},
+	{set("default:gravel", "ch_extras:railway_gravel"), "slope", "_slab", true},
 
 	{platform_materials_exceptions , "advtrains", set("platform_high", "platform_low"), true},
 	{platform_materials, "advtrains", alts_advtrains, true},
