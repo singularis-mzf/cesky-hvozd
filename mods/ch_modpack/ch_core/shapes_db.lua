@@ -6,7 +6,13 @@ local ifthenelse = ch_core.ifthenelse
 local function set(...)
 	local i, result, t = 1, {}, {...}
 	while t[i] ~= nil do
-		result[t[i]] = true
+		if type(t[i]) == "table" then
+			for k, v in pairs(t[i]) do
+				result[k] = v
+			end
+		else
+			result[t[i]] = true
+		end
 		i = i + 1
 	end
 	return result
@@ -24,6 +30,7 @@ local function union(...)
 end
 
 local materials_kp = set(
+	-- základní seznam materiálů na kotoučovou pilu (budou povoleny obvyklé tvary)
 "artdeco:1a",
 "artdeco:1b",
 "artdeco:1c",
@@ -231,10 +238,12 @@ local materials_kp = set(
 )
 
 local materials_no_kp = set(
+	-- materiály vyloučené z kotoučové pily (nebudou povoleny žádné tvary):
 	"moretrees:palm_planks"
 )
 
 local materials_glass = set(
+	-- sklo (kromě středověkého):
 	"building_blocks:smoothglass",
 	"building_blocks:woodglass",
 	"default:glass",
@@ -248,50 +257,57 @@ local materials_glass = set(
 	"moreblocks:super_glow_glass"
 )
 
+local materials_crumbly = set(
+	-- sypké materiály (např. písek, hlína, štěrk):
+	"artdeco:whitegardenstone",
+	"charcoal:charcoal_block",
+	"ch_extras:bright_gravel",
+	"ch_extras:railway_gravel",
+	"default:coalblock",
+	"default:desert_sand",
+	"default:dirt_with_coniferous_litter",
+	"default:dirt_with_grass",
+	"default:dirt_with_rainforest_litter",
+	"default:dry_dirt",
+	"default:dry_dirt_with_dry_grass",
+	"default:gravel",
+	"default:sand",
+	"default:silver_sand",
+	"default:snowblock",
+	"farming:hemp_block",
+	"farming:straw",
+	"summer:sabbia_mare"
+)
+
 local materials_sns = set(
-"artdeco:whitegardenstone",
-"charcoal:charcoal_block",
-"ch_extras:bright_gravel",
-"ch_extras:railway_gravel",
-"default:coalblock",
-"default:desert_sand",
-"default:dirt_with_coniferous_litter",
-"default:dirt_with_grass",
-"default:dirt_with_rainforest_litter",
-"default:dry_dirt",
-"default:dry_dirt_with_dry_grass",
-"default:gravel",
-"default:sand",
-"default:silver_sand",
-"default:snowblock",
-"farming:hemp_block",
-"farming:straw",
-"mobs:honey_block",
-"moretrees:ebony_trunk_allfaces",
-"moretrees:poplar_trunk_allfaces",
-"summer:sabbia_mare"
+	-- materiály s omezeným sortimentem tvarů:
+	"mobs:honey_block",
+	"moretrees:ebony_trunk_allfaces",
+	"moretrees:poplar_trunk_allfaces"
 )
 
 local materials_wool = set(
-"wool:black",
-"wool:blue",
-"wool:brown",
-"wool:cyan",
-"wool:dark_green",
-"wool:dark_grey",
-"wool:green",
-"wool:grey",
-"wool:magenta",
-"wool:orange",
-"wool:pink",
-"wool:red",
-"wool:violet",
-"wool:white",
-"wool:yellow",
-"moreblocks:split_stone_tile" -- the same shapes as wool
+	-- vlna (+ split_stone_tile)
+	"wool:black",
+	"wool:blue",
+	"wool:brown",
+	"wool:cyan",
+	"wool:dark_green",
+	"wool:dark_grey",
+	"wool:green",
+	"wool:grey",
+	"wool:magenta",
+	"wool:orange",
+	"wool:pink",
+	"wool:red",
+	"wool:violet",
+	"wool:white",
+	"wool:yellow",
+	"moreblocks:split_stone_tile" -- the same shapes as wool
 )
 
 local materials_cnc = set(
+	-- materiály na kotoučovou pilu
 "bakedclay:black",
 "bakedclay:blue",
 "bakedclay:brown",
@@ -365,129 +381,133 @@ local materials_cnc = set(
 )
 
 local materials_pillars = set(
+	-- materiály na pilíře
 	"bakedclay:black",
 	"basic_materials:brass_block",
-"basic_materials:cement_block",
-"basic_materials:concrete_block",
-"bridger:block_white",
-"bridger:block_steel",
-"bridger:block_red",
-"bridger:block_green",
-"bridger:block_yellow",
-"ch_core:plaster_blue",
-"ch_core:plaster_cyan",
-"ch_core:plaster_dark_green",
-"ch_core:plaster_dark_grey",
-"ch_core:plaster_green",
-"ch_core:plaster_grey",
-"ch_core:plaster_medium_amber_s50",
-"ch_core:plaster_orange",
-"ch_core:plaster_pink",
-"ch_core:plaster_red",
-"ch_core:plaster_white",
-"ch_core:plaster_yellow",
-"ch_extras:marble",
-"darkage:basalt",
-"darkage:basalt_brick",
-"darkage:basalt_cobble",
-"darkage:marble",
-"darkage:ors_brick",
-"darkage:serpentine",
-"darkage:stone_brick",
-"default:acacia_wood",
-"default:aspen_wood",
-"default:bronzeblock",
-"default:copperblock",
-"default:desert_cobble",
-"default:desert_sandstone",
-"default:desert_sandstone_brick",
-"default:desert_stone",
-"default:desert_stonebrick",
-"default:goldblock",
-"default:junglewood",
-"default:obsidian",
-"default:pine_wood",
-"default:silver_sandstone",
-"default:silver_sandstone_brick",
-"default:steelblock",
-"default:stone",
-"default:stonebrick",
-"default:wood",
-"moreblocks:copperpatina",
-"moretrees:date_palm_planks",
-"moretrees:ebony_planks",
-"moretrees:plumtree_planks",
-"moretrees:poplar_planks",
-"moretrees:spruce_planks",
-"technic:cast_iron_block",
-"technic:marble"
+	"basic_materials:cement_block",
+	"basic_materials:concrete_block",
+	"bridger:block_white",
+	"bridger:block_steel",
+	"bridger:block_red",
+	"bridger:block_green",
+	"bridger:block_yellow",
+	"ch_core:plaster_blue",
+	"ch_core:plaster_cyan",
+	"ch_core:plaster_dark_green",
+	"ch_core:plaster_dark_grey",
+	"ch_core:plaster_green",
+	"ch_core:plaster_grey",
+	"ch_core:plaster_medium_amber_s50",
+	"ch_core:plaster_orange",
+	"ch_core:plaster_pink",
+	"ch_core:plaster_red",
+	"ch_core:plaster_white",
+	"ch_core:plaster_yellow",
+	"ch_extras:marble",
+	"darkage:basalt",
+	"darkage:basalt_brick",
+	"darkage:basalt_cobble",
+	"darkage:marble",
+	"darkage:ors_brick",
+	"darkage:serpentine",
+	"darkage:stone_brick",
+	"default:acacia_wood",
+	"default:aspen_wood",
+	"default:bronzeblock",
+	"default:copperblock",
+	"default:desert_cobble",
+	"default:desert_sandstone",
+	"default:desert_sandstone_brick",
+	"default:desert_stone",
+	"default:desert_stonebrick",
+	"default:goldblock",
+	"default:junglewood",
+	"default:obsidian",
+	"default:pine_wood",
+	"default:silver_sandstone",
+	"default:silver_sandstone_brick",
+	"default:steelblock",
+	"default:stone",
+	"default:stonebrick",
+	"default:wood",
+	"moreblocks:copperpatina",
+	"moretrees:date_palm_planks",
+	"moretrees:ebony_planks",
+	"moretrees:plumtree_planks",
+	"moretrees:poplar_planks",
+	"moretrees:spruce_planks",
+	"technic:cast_iron_block",
+	"technic:marble"
 )
 
-local materials_for_arcades = set("bakedclay:black",
-"bakedclay:blue",
-"bakedclay:brown",
-"bakedclay:cyan",
-"bakedclay:dark_green",
-"bakedclay:dark_grey",
-"bakedclay:green",
-"bakedclay:grey",
-"bakedclay:magenta",
-"bakedclay:natural",
-"bakedclay:orange",
-"bakedclay:pink",
-"bakedclay:red",
-"bakedclay:violet",
-"bakedclay:white",
-"bakedclay:yellow",
-"basic_materials:cement_block",
-"basic_materials:concrete_block",
-"bridger:block_green",
-"bridger:block_red",
-"bridger:block_steel",
-"bridger:block_white",
-"bridger:block_yellow",
-"ch_core:plaster_blue",
-"ch_core:plaster_cyan",
-"ch_core:plaster_dark_green",
-"ch_core:plaster_dark_grey",
-"ch_core:plaster_green",
-"ch_core:plaster_grey",
-"ch_core:plaster_medium_amber_s50",
-"ch_core:plaster_orange",
-"ch_core:plaster_pink",
-"ch_core:plaster_red",
-"ch_core:plaster_white",
-"ch_core:plaster_yellow",
-"ch_extras:marble",
-"cottages:black",
-"cottages:brown",
-"cottages:red",
-"cottages:reet",
-"darkage:marble",
-"default:acacia_wood",
-"default:aspen_wood",
-"default:copperblock",
-"default:desert_stone",
-"default:goldblock",
-"default:ice",
-"default:junglewood",
-"default:meselamp",
-"default:pine_wood",
-"default:silver_sandstone",
-"default:steelblock",
-"default:stone",
-"default:wood",
-"summer:granite",
-"summer:graniteA",
-"summer:graniteB",
-"summer:graniteBC",
-"summer:graniteP",
-"summer:graniteR",
-"technic:marble",
-"technic:warning_block"
+local materials_for_arcades = set(
+	-- materiály na překlady zdí:
+	"bakedclay:black",
+	"bakedclay:blue",
+	"bakedclay:brown",
+	"bakedclay:cyan",
+	"bakedclay:dark_green",
+	"bakedclay:dark_grey",
+	"bakedclay:green",
+	"bakedclay:grey",
+	"bakedclay:magenta",
+	"bakedclay:natural",
+	"bakedclay:orange",
+	"bakedclay:pink",
+	"bakedclay:red",
+	"bakedclay:violet",
+	"bakedclay:white",
+	"bakedclay:yellow",
+	"basic_materials:cement_block",
+	"basic_materials:concrete_block",
+	"bridger:block_green",
+	"bridger:block_red",
+	"bridger:block_steel",
+	"bridger:block_white",
+	"bridger:block_yellow",
+	"ch_core:plaster_blue",
+	"ch_core:plaster_cyan",
+	"ch_core:plaster_dark_green",
+	"ch_core:plaster_dark_grey",
+	"ch_core:plaster_green",
+	"ch_core:plaster_grey",
+	"ch_core:plaster_medium_amber_s50",
+	"ch_core:plaster_orange",
+	"ch_core:plaster_pink",
+	"ch_core:plaster_red",
+	"ch_core:plaster_white",
+	"ch_core:plaster_yellow",
+	"ch_extras:marble",
+	"cottages:black",
+	"cottages:brown",
+	"cottages:red",
+	"cottages:reet",
+	"darkage:marble",
+	"default:acacia_wood",
+	"default:aspen_wood",
+	"default:copperblock",
+	"default:desert_stone",
+	"default:goldblock",
+	"default:ice",
+	"default:junglewood",
+	"default:meselamp",
+	"default:pine_wood",
+	"default:silver_sandstone",
+	"default:steelblock",
+	"default:stone",
+	"default:wood",
+	"summer:granite",
+	"summer:graniteA",
+	"summer:graniteB",
+	"summer:graniteBC",
+	"summer:graniteP",
+	"summer:graniteR",
+	"technic:marble",
+	"technic:warning_block"
 )
 
 local materials_for_bank_slopes = set(
+	-- materiály podporující pobřežní svahy:
 	"basic_materials:cement_block",
 	"default:dirt",
 	"default:gravel",
@@ -496,6 +516,7 @@ local materials_for_bank_slopes = set(
 )
 
 local materials_roof = set(
+	-- materiály podporující střešní tvary:
 	"bakedclay:black",
 	"bakedclay:blue",
 	"basic_materials:cement_block",
@@ -524,11 +545,13 @@ local materials_roof = set(
 )
 
 local materials_zdlazba = set(
+	-- zámková dlažba:
 	"ch_extras:cervzdlazba",
 	"ch_extras:zdlazba"
 )
 
 local materials_tombs = set(
+	-- materiály podporující náhrobky:
 	"bakedclay:black",
 	"bakedclay:blue",
 	"bakedclay:cyan",
@@ -556,104 +579,113 @@ local materials_tombs = set(
 )
 
 local materials_for_manholes = set(
-"bakedclay:black",
-"bakedclay:blue",
-"bakedclay:brown",
-"bakedclay:cyan",
-"bakedclay:dark_green",
-"bakedclay:dark_grey",
-"bakedclay:green",
-"bakedclay:grey",
-"bakedclay:magenta",
-"bakedclay:natural",
-"bakedclay:orange",
-"bakedclay:pink",
-"bakedclay:red",
-"bakedclay:violet",
-"bakedclay:white",
-"bakedclay:yellow",
-"basic_materials:brass_block",
-"basic_materials:cement_block",
-"basic_materials:concrete_block",
-"building_blocks:Adobe",
-"building_blocks:Tar",
-"ch_core:plaster_blue",
-"ch_core:plaster_cyan",
-"ch_core:plaster_dark_green",
-"ch_core:plaster_dark_grey",
-"ch_core:plaster_green",
-"ch_core:plaster_grey",
-"ch_core:plaster_medium_amber_s50",
-"ch_core:plaster_orange",
-"ch_core:plaster_pink",
-"ch_core:plaster_red",
-"ch_core:plaster_white",
-"ch_core:plaster_yellow",
-"ch_extras:marble",
-"ch_extras:particle_board_grey",
-"darkage:basalt",
-"darkage:basalt_brick",
-"darkage:basalt_cobble",
-"darkage:chalk",
-"darkage:gneiss",
-"darkage:gneiss_brick",
-"darkage:gneiss_cobble",
-"darkage:marble",
-"darkage:marble_tile",
-"darkage:ors",
-"darkage:ors_brick",
-"darkage:ors_cobble",
-"darkage:schist",
-"darkage:serpentine",
-"darkage:slate",
-"darkage:slate_brick",
-"darkage:slate_cobble",
-"darkage:slate_tile",
-"darkage:stone_brick",
-"default:brick",
-"default:cobble",
-"default:obsidian",
-"default:obsidian_block",
-"default:obsidianbrick",
-"default:silver_sandstone",
-"default:silver_sandstone_block",
-"default:silver_sandstone_brick",
-"default:steelblock",
-"default:stone",
-"default:stone_block",
-"default:stonebrick",
-"moreblocks:cactus_brick",
-"moreblocks:cactus_checker",
-"moreblocks:circle_stone_bricks",
-"moreblocks:coal_checker",
-"moreblocks:coal_stone",
-"moreblocks:coal_stone_bricks",
-"moreblocks:cobble_compressed",
-"moreblocks:copperpatina",
-"moreblocks:desert_cobble_compressed",
-"moreblocks:iron_stone",
-"moreblocks:iron_stone_bricks",
-"streets:asphalt_blue",
-"streets:asphalt_red",
-"summer:granite",
-"summer:graniteA",
-"summer:graniteB",
-"summer:graniteBC",
-"summer:graniteP",
-"summer:graniteR",
-"technic:blast_resistant_concrete",
-"technic:carbon_steel_block",
-"technic:cast_iron_block",
-"technic:granite",
-"technic:marble",
-"technic:marble_bricks",
-"technic:warning_block",
-"xdecor:wood_tile",
-"ch_extras:cervzdlazba",
-"ch_extras:zdlazba"
+	-- materiály podporující oba druhy průlezů:
+	"bakedclay:black",
+	"bakedclay:blue",
+	"bakedclay:brown",
+	"bakedclay:cyan",
+	"bakedclay:dark_green",
+	"bakedclay:dark_grey",
+	"bakedclay:green",
+	"bakedclay:grey",
+	"bakedclay:magenta",
+	"bakedclay:natural",
+	"bakedclay:orange",
+	"bakedclay:pink",
+	"bakedclay:red",
+	"bakedclay:violet",
+	"bakedclay:white",
+	"bakedclay:yellow",
+	"basic_materials:brass_block",
+	"basic_materials:cement_block",
+	"basic_materials:concrete_block",
+	"building_blocks:Adobe",
+	"building_blocks:Tar",
+	"ch_core:plaster_blue",
+	"ch_core:plaster_cyan",
+	"ch_core:plaster_dark_green",
+	"ch_core:plaster_dark_grey",
+	"ch_core:plaster_green",
+	"ch_core:plaster_grey",
+	"ch_core:plaster_medium_amber_s50",
+	"ch_core:plaster_orange",
+	"ch_core:plaster_pink",
+	"ch_core:plaster_red",
+	"ch_core:plaster_white",
+	"ch_core:plaster_yellow",
+	"ch_extras:marble",
+	"ch_extras:particle_board_grey",
+	"darkage:basalt",
+	"darkage:basalt_brick",
+	"darkage:basalt_cobble",
+	"darkage:chalk",
+	"darkage:gneiss",
+	"darkage:gneiss_brick",
+	"darkage:gneiss_cobble",
+	"darkage:marble",
+	"darkage:marble_tile",
+	"darkage:ors",
+	"darkage:ors_brick",
+	"darkage:ors_cobble",
+	"darkage:schist",
+	"darkage:serpentine",
+	"darkage:slate",
+	"darkage:slate_brick",
+	"darkage:slate_cobble",
+	"darkage:slate_tile",
+	"darkage:stone_brick",
+	"default:brick",
+	"default:cobble",
+	"default:obsidian",
+	"default:obsidian_block",
+	"default:obsidianbrick",
+	"default:silver_sandstone",
+	"default:silver_sandstone_block",
+	"default:silver_sandstone_brick",
+	"default:steelblock",
+	"default:stone",
+	"default:stone_block",
+	"default:stonebrick",
+	"moreblocks:cactus_brick",
+	"moreblocks:cactus_checker",
+	"moreblocks:circle_stone_bricks",
+	"moreblocks:coal_checker",
+	"moreblocks:coal_stone",
+	"moreblocks:coal_stone_bricks",
+	"moreblocks:cobble_compressed",
+	"moreblocks:copperpatina",
+	"moreblocks:desert_cobble_compressed",
+	"moreblocks:iron_stone",
+	"moreblocks:iron_stone_bricks",
+	"streets:asphalt_blue",
+	"streets:asphalt_red",
+	"summer:granite",
+	"summer:graniteA",
+	"summer:graniteB",
+	"summer:graniteBC",
+	"summer:graniteP",
+	"summer:graniteR",
+	"technic:blast_resistant_concrete",
+	"technic:carbon_steel_block",
+	"technic:cast_iron_block",
+	"technic:granite",
+	"technic:marble",
+	"technic:marble_bricks",
+	"technic:warning_block",
+	"xdecor:wood_tile",
+	"ch_extras:cervzdlazba",
+	"ch_extras:zdlazba"
+)
+
+local materials_asphalt = set(
+	-- asfalt:
+	"building_blocks:Tar",
+	"streets:asphalt_blue",
+	"streets:asphalt_red"
 )
 
 local materials_for_manholes_only = set(
+	-- materiály podporující pouze jeden druh průlezu:
 	"default:wood",
 	"default:acacia_wood",
 	"default:aspen_wood",
@@ -661,6 +693,7 @@ local materials_for_manholes_only = set(
 	"default:pine_wood")
 
 local platform_materials = set(
+	-- materiály podporující nástupní hrany:
 	"basic_materials:cement_block",
 	"basic_materials:concrete_block",
 	"ch_core:plaster_blue",
@@ -692,12 +725,14 @@ local platform_materials = set(
 	"technic:marble"
 )
 local platform_materials_exceptions = set(
+	-- materiály podporující vybrané druhy nástupních hran:
 	"default:wood",
 	"default:junglewood",
 	"moretrees:oak_planks"
 )
 
 local materials_for_diagfillers = set(
+	-- materiály podporující diagonální výplně:
 	"building_blocks:Tar",
 	"default:dry_dirt",
 	"ch_extras:bright_gravel",
@@ -708,6 +743,7 @@ local materials_for_diagfillers = set(
 )
 
 local materials_for_si_frames = set(
+	-- materiály podporující okenní rámy:
 	"default:acacia_wood",
 	"default:aspen_wood",
 	"default:junglewood",
@@ -715,9 +751,11 @@ local materials_for_si_frames = set(
 	"default:wood"
 )
 
-local materials_all = union(materials_cnc, materials_kp, materials_no_kp, materials_glass, materials_sns, materials_wool, materials_roof,
-	materials_zdlazba, platform_materials, platform_materials_exceptions,
+local materials_all = union(materials_cnc, materials_kp, materials_no_kp, materials_glass, materials_crumbly, materials_sns,
+	materials_wool, materials_roof, materials_zdlazba, platform_materials, platform_materials_exceptions,
 	set("default:sandstone", "default:sandstonebrick", "default:sandstone_block", "ch_extras:rope_block"))
+
+local roof_slopes = set("_roof22", "_roof22_raised", "_roof22_3", "_roof22_raised_3", "_roof45", "_roof45_3")
 
 local alts_micro = set("", "_1", "_2", "_4", "_12", "_15")
 
@@ -758,12 +796,14 @@ local alts_slope = set("", "_half", "_half_raised",
 	"_cut2", -- šikmá hradba
 	"_beveled", -- zkosená deska
 	"_valley"
+	-- , "_quarter"
+	-- , "_quarter_raised"
 )
 
 local alts_stair = set("", "_inner", "_outer", "_alt", "_alt_1", "_alt_2", "_alt_4",
 	"_triple", -- schody (schod 1/3 m)
 	"_chimney", -- úzký komín
-	"_wchimney") -- široký komín
+	"_wchimney") -- široký komín/průlez
 
 local no_cnc = set(
 	-- vypnuté tvary soustruhu:
@@ -783,27 +823,27 @@ local no_cnc = set(
 )
 
 local alts_cnc = set(
-"technic_cnc_oblate_spheroid",
-"technic_cnc_sphere",
-"technic_cnc_cylinder",
-"technic_cnc_twocurvededge",
-"technic_cnc_onecurvededge",
-"technic_cnc_spike",
-"technic_cnc_pyramid",
-"technic_cnc_arch216",
-"technic_cnc_arch216_flange",
-"technic_cnc_sphere_half",
-"technic_cnc_block_fluted",
-"technic_cnc_diagonal_truss",
-"technic_cnc_diagonal_truss_cross",
-"technic_cnc_opposedcurvededge",
-"technic_cnc_cylinder_half",
-"technic_cnc_cylinder_half_corner",
-"technic_cnc_circle",
-"technic_cnc_oct",
-"technic_cnc_peek",
+	"technic_cnc_oblate_spheroid",
+	"technic_cnc_sphere",
+	"technic_cnc_cylinder",
+	"technic_cnc_twocurvededge",
+	"technic_cnc_onecurvededge",
+	"technic_cnc_spike",
+	"technic_cnc_pyramid",
+	"technic_cnc_arch216",
+	"technic_cnc_arch216_flange",
+	"technic_cnc_sphere_half",
+	"technic_cnc_block_fluted",
+	"technic_cnc_diagonal_truss",
+	"technic_cnc_diagonal_truss_cross",
+	"technic_cnc_opposedcurvededge",
+	"technic_cnc_cylinder_half",
+	"technic_cnc_cylinder_half_corner",
+	"technic_cnc_circle",
+	"technic_cnc_oct",
+	"technic_cnc_peek",
 -- "technic_cnc_valley",
-"technic_cnc_bannerstone"
+	"technic_cnc_bannerstone"
 )
 
 local alts_tombs = set("_0", "_1", "_2", "_5", "_7", "_8", "_9", "_10", "_12", "_13", "_14")
@@ -822,18 +862,9 @@ local wool_slabs = set("", "_quarter", "_three_quarter", "_1", "_2", "_14", "_15
 
 local glass_micro = set("_1", "_2")
 
-local glass_panel = set("_1", "_2",
-	"_special", -- vychýlená tyč I
-	"_l", -- vychýlená tyč L
-	"_wide_1")
-
+local glass_panel = set("_1", "_2", "_special", "_l", "_wide_1")
 local glass_slab = set("", "_1", "_2",  "_two_sides", "_three_sides", "_three_sides_u", "_triplet", "_two_sides_half", "_three_sides_half")
-
-local glass_slope = set("", "_half", "_half_raised", "_outer", "_outer_half", "_outer_half_raised",
-	"_tripleslope",
-	"_cut2", -- šikmá hradba
-	"_roof22", "_roof22_raised", "_roof22_3", "_roof22_raised_3", "_roof45", "_roof45_3" -- roof slopes
-)
+local glass_slope = set("", "_half", "_half_raised", "_outer", "_outer_half", "_outer_half_raised", "_tripleslope", "_cut2", roof_slopes)
 
 local glass_no_cnc = set(
 	"technic_cnc_circle",
@@ -860,7 +891,6 @@ local glass_no_cnc = set(
 )
 
 local sns_micro = set("_1", "_2")
-
 local sns_slabs = set("", "_quarter", "_three_quarter", "_1", "_2", "_14", "_15", "_rcover")
 
 local sns_slopes = set("", "_half", "_half_raised",
@@ -868,13 +898,16 @@ local sns_slopes = set("", "_half", "_half_raised",
 	"_outer", "_outer_half", "_outer_half_raised", "_outer_cut", "_outer_cut_half", "_cut",
 	"_tripleslope")
 
+local crumbly_micro = sns_micro
+local crumbly_slabs = sns_slabs
+local crumbly_slopes = set(sns_slopes, "_quarter", "_quarter_raised")
+
 local wool_slopes = set("", "_half", "_half_raised")
 
-local roof_slopes = set("_roof22", "_roof22_raised", "_roof22_3", "_roof22_raised_3", "_roof45", "_roof45_3")
-
-local bank_slopes = set("", "_cut", "_half", "_half_raised",
-"_inner", "_inner_half", "_inner_half_raised", "_inner_cut", "_inner_cut_half", "_inner_cut_half_raised",
-"_outer", "_outer_half", "_outer_half_raised")
+local bank_slopes = set(
+	"", "_cut", "_half", "_half_raised",
+	"_inner", "_inner_half", "_inner_half_raised", "_inner_cut", "_inner_cut_half", "_inner_cut_half_raised",
+	"_outer", "_outer_half", "_outer_half_raised")
 
 -- ============================================================================
 local rules = {
@@ -921,6 +954,11 @@ local rules = {
 		slab = {sns_slabs, true},
 		slope = {sns_slopes, true},
 	}},
+	{materials_crumbly, {
+		micro = {crumbly_micro, true},
+		slab = {crumbly_slabs, true},
+		slope = {crumbly_slopes, true},
+	}},
 
 	{"streets:asphalt_yellow", "streets", "*", false},
 
@@ -938,6 +976,7 @@ local rules = {
 
 	{platform_materials_exceptions , "advtrains", set("platform_high", "platform_low"), true},
 	{platform_materials, "advtrains", alts_advtrains, true},
+	{platform_materials, "slope", set("_quarter", "_quarter_raised"), true},
 
 	-- žlutý pískovec (omezený sortiment tvarů):
 	{set("default:sandstone", "default:sandstonebrick", "default:sandstone_block"), {

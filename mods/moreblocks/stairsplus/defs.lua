@@ -66,6 +66,26 @@ local box_slope_half_raised = {
 	}
 }
 
+local box_slope_quarter = {
+	type = "fixed",
+	fixed = {
+		{-0.5, -0.5,   -1.5,  0.5, -0.375, 0.5},
+		{-0.5, -0.375, -1, 0.5, -0.25,  0.5},
+		{-0.5, -0.25,  -0.5,    0.5, -0.125, 0.5},
+		{-0.5, -0.125, 0, 0.5,  0,     0.5},
+	}
+}
+
+local box_slope_quarter_raised = {
+	type = "fixed",
+	fixed = {
+		{-0.5, -0.5,  -1.5,  0.5, 0.125, 0.5},
+		{-0.5, 0.125, -1, 0.5, 0.25,  0.5},
+		{-0.5, 0.25,  -0.5,    0.5, 0.375, 0.5},
+		{-0.5, 0.375, 0, 0.5,  0.5,     0.5},
+	}
+}
+
 local box_slope_slab = {
 	type = "fixed",
 	fixed = {
@@ -1002,6 +1022,23 @@ stairsplus.defs = {
 			collision_box = box_slope_slab_half_raised,
 			selection_box = box_slope_slab_half_raised,
 		}, ]]
+
+		--==============================================================
+
+		["_quarter"] = {
+			description = "svah 14°, spodní díl",
+			mesh = "moreblocks_slope_quarter.obj",
+			collision_box = box_slope_quarter,
+			selection_box = box_slope_quarter,
+			not_blocking_trains = true,
+		},
+		["_quarter_raised"] = {
+			description = "svah 14°, horní díl",
+			mesh = "moreblocks_slope_quarter_raised.obj",
+			collision_box = box_slope_quarter_raised,
+			selection_box = box_slope_quarter_raised,
+			not_blocking_trains = true,
+		},
 
 		--==============================================================
 
