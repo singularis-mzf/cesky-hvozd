@@ -138,7 +138,6 @@ get_list_formspec = function(custom_state)
             table.insert(formspec,
                 "label[0.5,8.5;spravuje:\n"..selected_container.fs_owner_viewname.."]")
         end
-        local is_public = internal.is_public_container(selected_container.id, 1)
         if
             player_role == "admin" or
             custom_state.player_name == selected_container.owner or
@@ -166,7 +165,6 @@ get_control_formspec = function(custom_state)
     if info == nil then
         return "" -- ERROR!
     end
-    print("DEBUG: info = "..dump2({info = info, custom_state = custom_state}))
     local formspec = {
         ch_core.formspec_header({formspec_version = 6, size = {20, 11.5}, auto_background = true}),
         "label[0.5,0.6;Ovládací panel kontejneru: "..F(info.name).."]"..
@@ -275,7 +273,6 @@ local function find_selected_container(custom_state)
 end
 
 list_formspec_callback = function(custom_state, player, formname, fields)
-    print("DEBUG: "..dump2({name = "list_formspec_callback", custom_state = custom_state, fields = fields, formname = formname}))
     local player_name = custom_state.player_name
     local player_role = ch_core.get_player_role(player)
     local is_admin = player_role == "admin"
@@ -295,8 +292,6 @@ list_formspec_callback = function(custom_state, player, formname, fields)
             custom_state.selected_id = new_selected_id
             if table_event.type == "CHG" and old_selected_id ~= new_selected_id then
                 return get_list_formspec(custom_state)
-            -- else
-                -- print("DEBUG: selected container did not change ("..new_selected_id..")")
             end
         end
     end
@@ -423,7 +418,6 @@ end
 
 
 control_formspec_callback = function(custom_state, player, formname, fields)
-    print("DEBUG: "..dump2({name = "control_formspec_callback", custom_state = custom_state, fields = fields, formname = formname}))
     local container_info = internal.get_basic_info(custom_state.container_id)
     if container_info == nil then
         return
@@ -475,7 +469,6 @@ end
 
 
 create_formspec_callback = function(custom_state, player, formname, fields)
-    print("DEBUG: "..dump2({name = "create_formspec_callback", custom_state = custom_state, fields = fields, formname = formname}))
     local player_role = ch_core.get_player_role(player)
     if player_role == "new" then
         return

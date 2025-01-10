@@ -30,11 +30,12 @@ local public_containers = {--[[
 -- ========================================================================
 --[[
     Vrátí výsledek celočíselného dělení a jeho zbytek.
-]]
+] ]
 local function divrem(a, b)
     local rem = a % b
     return (a - rem) / b, rem
 end
+]]
 
 --[[
     Vrátí seznam 'public_containers' poté, co z něj odklidí kontejnery, jejichž zveřejnění již vypršelo.
@@ -64,12 +65,10 @@ end
 local function find_public_container(container_id, result_type)
     assert(container_id ~= nil and container_id ~= "")
     if public_containers[1] == nil then
-        print("DEBUG: nil (zadne verejne kontejnery)")
         return nil -- žádné veřejné kontejnery
     end
     local pc, now = get_public_containers()
     for i, record in ipairs(pc) do
-        print("DEBUG: will test public container: "..record.id.." (container_id == "..container_id..")")
         if record.id == container_id then
             if result_type == "bool" or result_type == nil then
                 return true
@@ -92,17 +91,19 @@ end
     jinak vrátí nil.
 ]]
 local function get_container_by_id(container_id)
-    local x, y, z = container_id:match("^c(%d%d%d)(%d%d%d)(%d%d%d)$")
+    local x, y, z = container_id:match("^c(%x%x%x)(%x%x%x)(%x%x%x)$")
     if x == nil then
         return nil
     end
-    x, y, z = tonumber(x), tonumber(y), tonumber(z)
-    assert(x)
-    assert(y)
-    assert(z)
-    if x < x_count and y < y_count and z < z_count then
-        local begin = vector.new(x_min + x * x_scale, y_min + y * y_scale, z_min + z * z_scale)
-        return begin, vector.offset(begin, c_width - 1, c_height - 1, c_width - 1)
+    x = 16 * assert(tonumber("0x"..x)) - 32768
+    y = 16 * assert(tonumber("0x"..y)) - 32768
+    z = 16 * assert(tonumber("0x"..z)) - 32768
+    if
+        x_min <= x and x <= x_min + x_scale * (x_count - 1) and
+        y_min <= y and y <= y_min + y_scale * (y_count - 1) and
+        z_min <= z and z <= z_min + z_scale * (z_count - 1)
+    then
+        return vector.new(x, y, z), vector.new(x + c_width - 1, y + c_height - 1, z + c_width - 1)
     else
         return nil
     end
@@ -111,25 +112,30 @@ end
 --[[
     container_id = string,
     attempt_index = int, -- při prvním volání musí mít hodnotu 1
+    insert_first = bool or nil, -- zda vložit na začátek fronty (true), nebo na konec (false, nil)
 
     Pomocná funkce, která zkontroluje, zda je oblast zadaného kontejneru vygenerována,
     a pokud ano, vloží ho do fronty prázdných (připravených) kontejnerů.
 ]]
-local function add_emerged(container_id, attempt_index)
+local function add_emerged(container_id, attempt_index, insert_first)
     if internal.is_container_emerged(container_id) then
         storage:set_string(container_id.."_next_free", ";")
         local old_queue = internal.get_emerged_queue()
         core.log("action", "[ch_containers] container "..container_id.." emerged, will put it to the queue (old queue length was "..#old_queue..")")
-        if old_queue[1] ~= nil then
-            -- neprázdná fronta, přidat na konec
-            local last_free = old_queue[#old_queue]
-            storage:set_string(last_free.."_next_free", container_id)
-        else
+        if old_queue[1] == nil then
+            -- prázdná fronta, speciální případ
             storage:set_string("next_free", container_id)
+        elseif insert_first then
+            -- neprázdná fronta, přidat na začátek
+            storage:set_string(container_id.."_next_free", old_queue[1])
+            storage:set_string("next_free", container_id)
+        else
+            -- neprázdná fronta, přidat na konec
+            storage:set_string(old_queue[#old_queue].."_next_free", container_id)
         end
     elseif attempt_index < 10 then
         core.log("warning", "Container "..container_id.." not emerged (attempt "..attempt_index.."), will try again after 10 seconds.")
-        core.after(10, add_emerged, container_id, attempt_index + 1)
+        core.after(10, add_emerged, container_id, attempt_index + 1, insert_first)
     else
         core.log("error", "Container "..container_id.." not emerged after 10 attempts!")
     end
@@ -137,14 +143,14 @@ end
 
 local emerge_new_set = {}
 
--- Na zadané pozici zadá operaci 'emerge'. Později se pozice přidá do fronty připravených kontejnerů.
+-- Na náhodné nové pozici zadá operaci 'emerge'. Později se pozice přidá do fronty připravených kontejnerů.
+-- Vrací vygenerované ID.
 local function emerge_new()
     local container_id
     repeat
         container_id = internal.get_random_container_id()
     until not emerge_new_set[container_id] and storage:get_string(container_id.."_owner") == ""
     emerge_new_set[container_id] = true
-    print("DEBUG: emerge_new("..container_id..")")
     local minp, maxp = get_container_by_id(container_id)
     if minp == nil then
         core.log("error", "emerge_new() failed for container_id '"..container_id.."'!")
@@ -160,6 +166,40 @@ local function emerge_new()
         minp.z..".."..maxp.z..") for container "..container_id)
     core.emerge_area(minp, maxp)
     core.after(10, add_emerged, container_id, 1)
+    return container_id
+end
+
+--[[
+    Na zadané pozici zadá operaci 'emerge'. Později se pozice přidá na začátek(!) fronty připravených kontejnerů.
+    Vrací:
+    success, error_message
+]]
+local function emerge(container_id)
+    assert(container_id)
+    local minp, maxp = get_container_by_id(container_id)
+    if minp == nil then
+        return false, "Není platné container_id!"
+    end
+    if storage:get_string(container_id.."_owner") ~= "" then
+        return false, "Kontejner již existuje a patří postavě "..ch_core.prihlasovaci_na_zobrazovaci(storage:get_string(container_id.."_owner"))
+    end
+    if storage:get_string(container_id.."_next_free") ~= "" then
+        return false, "Kontejner již je ve frontě připravených kontejnerů."
+    end
+    if emerge_new_set[container_id] then
+        return false, "Operace emerge na daný kontejner již byla spuštěna!"
+    end
+    emerge_new_set[container_id] = true
+    minp.x = minp.x - 16
+    minp.y = minp.y - 16
+    minp.z = minp.z - 16
+    maxp.x = maxp.x + 16
+    maxp.y = maxp.y + 16
+    maxp.z = maxp.z + 16
+    core.log("action", "[ch_containers] starting emerging area: x("..minp.x..".."..maxp.x.."), y("..minp.y..".."..maxp.y.."), z("..
+        minp.z..".."..maxp.z..") for container "..container_id)
+    core.emerge_area(minp, maxp)
+    core.after(5, add_emerged, container_id, 1, true)
     return container_id
 end
 
@@ -271,25 +311,61 @@ local save_container_data = internal.save_container_data
 
 -- Vrátí platné ID náhodného kontejneru. Kontejner může a nemusí existovat.
 function internal.get_random_container_id()
-    return string.format("c%03d%03d%03d", math.random(0, x_count - 1), math.random(0, y_count - 1), math.random(0, z_count - 1))
+    return string.format("c%03x%03x%03x",
+        (x_min + x_scale * math.random(0, x_count - 1) + 32768) / 16,
+        (y_min + y_scale * math.random(0, y_count - 1) + 32768) / 16,
+        (z_min + z_scale * math.random(0, z_count - 1) + 32768) / 16)
 end
 
--- Je-li pozice uvnitř některého kontejneru, vrátí jeho ID, jinak vrátí nil.
-function internal.get_container_id(pos)
-    pos = vector.round(pos)
+-- Je-li pozice uvnitř některého kontejneru (nemusí existovat), vrátí jeho ID, jinak vrátí nil.
+function internal.get_container_id(pos, arg)
+    local x, y, z = math.floor(pos.x), math.floor(pos.y), math.floor(pos.z)
+    local rx, ry, rz = (x - x_min) % x_scale, (y - y_min) % y_scale, (z - z_min) % z_scale
     if
-        x_min <= pos.x and pos.x <= x_min + (x_count - 1) * x_scale + c_width - 1 and
-        z_min <= pos.z and pos.z <= z_min + (z_count - 1) * z_scale + c_width - 1 and
-        y_min <= pos.y and pos.y <= y_min + (y_count - 1) * y_scale + c_height - 1
+        x_min <= x and x < x_min + x_scale * x_count and
+        y_min <= y and y < y_min + y_scale * y_count and
+        z_min <= z and z < z_min + z_scale * z_count and
+        rx < c_width and
+        ry < c_height and
+        rz < c_width
     then
-        local i_x, r_x = divrem(pos.x - x_min, x_scale)
-        local i_y, r_y = divrem(pos.y - y_min, y_scale)
-        local i_z, r_z = divrem(pos.z - z_min, z_scale)
-        if r_x < c_width and r_y < c_height and r_z < c_width then
-            return string.format("c%03d%03d%03d", i_x, i_y, i_z)
-        end
+        x = (x - rx + 32768) / 16
+        y = (y - ry + 32768) / 16
+        z = (z - rz + 32768) / 16
+        assert(x == math.floor(x))
+        assert(y == math.floor(y))
+        assert(z == math.floor(z))
+        assert(0 <= x and x <= 0xfff)
+        assert(0 <= y and y <= 0xfff)
+        assert(0 <= z and z <= 0xfff)
+        return string.format("c%03x%03x%03x", x, y, z)
     end
 end
+
+--[[ Self-test:
+if true then
+    local minp, maxp = get_container_by_id("c7108da710")
+    assert(minp.x == -3840)
+    assert(minp.y == 3488)
+    assert(minp.z == -3840)
+    local id = internal.get_container_id(minp)
+    assert(id == "c7108da710")
+end
+for i = 1, 4 do
+    local id = internal.get_random_container_id()
+    local minp, maxp = get_container_by_id(id)
+    local id1 = internal.get_container_id(minp, "id1")
+    local id2 = internal.get_container_id(maxp, "id2")
+    local id3 = internal.get_container_id(vector.offset(maxp, 63/64, 63/64, 63/64), "id3")
+    local id4 = internal.get_container_id(vector.offset(maxp, 1, 1, 1), "id4")
+    assert(id ~= nil)
+    assert(id1 == id)
+    assert(id2 == id)
+    assert(id3 == id)
+    assert(id4 == nil)
+end
+]]
+
 
 --[[
     Vrací:
@@ -369,7 +445,7 @@ function internal.create_new_container(new_owner, container_name)
     storage:set_string(new_id.."_next_free", "")
 
     -- vygenerovat stěny kontejneru:
-    print("DEBUG: WILL GENERATE CONTAINER "..core.pos_to_string(minp)..".."..core.pos_to_string(maxp))
+    -- print("WILL GENERATE CONTAINER "..new_id.." at "..core.pos_to_string(minp)..".."..core.pos_to_string(maxp))
     local ceiling_nodes = {}
     local floor_nodes = {}
     local wall_nodes = {}
@@ -419,7 +495,7 @@ function internal.create_new_container(new_owner, container_name)
     -- zapsat kontejner do seznamu:
     table.insert(containers, {id = new_id, name = container_name or ""})
     save_container_data(new_owner)
-    print("DEBUG: create_new_container("..new_owner..", "..(container_name or "nil").." finished.")
+    -- print("create_new_container("..new_owner..", "..(container_name or "nil").." finished.")
     return new_id, minp, maxp
 end
 
@@ -517,25 +593,10 @@ end
 ]]
 function internal.is_public_container(container_id, min_ttl)
     if container_id == nil or container_id == "" then
-        print("DEBUG: false, because container_id is nil or empty!")
         return false
     end
     local ttl = find_public_container(container_id, "ttl")
-    if not ttl then
-        print("DEBUG: false, because ttl is nil")
-        return false
-    end
-    if min_ttl == nil then
-        print("DEBUG: true")
-        return true
-    end
-    if ttl >= min_ttl then
-        print("DEBUG: true (ttl >= min_ttl)")
-        return true
-    else
-        print("DEBUG: false (ttl < min_ttl): "..dump2({ttl, min_ttl}))
-        return false
-    end
+    return ttl and (min_ttl == nil or ttl >= min_ttl)
 end
 
 --[[
@@ -553,7 +614,6 @@ end
 function internal.get_basic_info(container_id)
     local owner = storage:get_string(container_id.."_owner")
     if owner == "" then
-        print("DEBUG: get_basic_info() called for '"..container_id.."' that has no _owner set!")
         return nil -- kontejner neexistuje
     end
     for i, cdata in ipairs(get_containers(owner) or {}) do
@@ -612,11 +672,9 @@ function internal.enter_container(container_id, player, teleport_options)
         return false, "Vnitřní chyba: hráčská postava není nastavena"
     end
     if not core.is_player(player) then
-        print("DEBUG: "..dump2({player = player, x = "x", is_player = {core.is_player(player)}}))
         return false, "Hráčská postava není platná."
     end
     if player:get_attach() ~= nil then
-        print("DEBUG: "..dump2({player:get_attach()}))
         return false, "Hráčská postava je vázaná na jiný objekt."
     end
     local container_pos = get_container_by_id(container_id)
@@ -764,23 +822,18 @@ function internal.set_properties(container_id, properties, player_name)
 
     -- public_until
     if properties.public_until ~= nil then
-        print("DEBUG: will try to set public_until to "..properties.public_until)
         local now = core.get_us_time()
         local pc_i = info.is_public
         if not pc_i then
             if properties.public_until > now then
                 -- add to the list:
-                print("DEBUG: add to the list ("..properties.public_until.." > "..now.." and info.is_public == nil)")
                 table.insert(public_containers, {id = container_id, name = info.name, owner = info.owner, public_until = properties.public_until})
-                print("DEBUG: added: "..dump2(public_containers))
             end
         elseif properties.public_until <= now then
             -- remove from the list:
-            print("DEBUG: will remove from the list at index "..pc_i)
             table.remove(public_containers, pc_i)
         else
             -- change the value in the list:
-            print("DEBUG: will change value in the list at index "..pc_i.." to "..properties.public_until)
             public_containers[pc_i].public_until = properties.public_until
         end
     end
@@ -794,3 +847,15 @@ function internal.set_properties(container_id, properties, player_name)
     end
     return true
 end
+
+local def = {
+    params = "<id_kontejneru>",
+    description = "Zadá k vytvoření požadovaný kontejner. Pouze pro účely testování a ladění serveru.",
+    privs = {server = true},
+    func = function(player_name, param)
+        return emerge(param)
+    end,
+}
+
+core.register_chatcommand("vytvořkontejner", def)
+core.register_chatcommand("vytvorkontejner", def)

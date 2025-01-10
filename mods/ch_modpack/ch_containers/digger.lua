@@ -94,7 +94,7 @@ local function globalstep(dtime)
         return
     end
     local count = subtask[2] - 1
-    print("DEBUG: subtask ["..queue_begin.."] started: "..core.pos_to_string(pos).."/"..count)
+    -- print("subtask ["..queue_begin.."] started: "..core.pos_to_string(pos).."/"..count)
     local y_end = pos.y - count + 1
     local pos_end = vector.new(pos.x, y_end, pos.z)
     core.load_area(pos, pos_end)
@@ -111,7 +111,7 @@ local function globalstep(dtime)
             core.log("error", "Unknown node "..node.name.." at "..core.pos_to_string(pos).." will be removed!")
             core.remove_node(pos)
         else
-            print("DEBUG: will dig '"..node.name.."' at "..core.pos_to_string(pos))
+            -- print("will dig '"..node.name.."' at "..core.pos_to_string(pos))
             if core.registered_nodes[node.name].on_dig(pos, node, player) then
                 digged_count = digged_count + 1
             else
@@ -135,7 +135,7 @@ local function globalstep(dtime)
         player_name_to_hud_id[player_name] = player:hud_add(def)
     end
 
-    print("DEBUG: subtask ["..queue_begin.."] finished: "..digged_count.." digged nodes, "..not_digged_count.." not digged nodes, "..ignore_count.." ignores.")
+    -- print("subtask ["..queue_begin.."] finished: "..digged_count.." digged nodes, "..not_digged_count.." not digged nodes, "..ignore_count.." ignores.")
     queue[queue_begin] = nil
     queue_begin = queue_begin + 1
 end
