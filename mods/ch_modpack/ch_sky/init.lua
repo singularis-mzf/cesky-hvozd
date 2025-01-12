@@ -281,7 +281,7 @@ local function on_globalstep(dtime)
 	end
 	dtime_acc = dtime_acc - 1
 
-	local herni_cas = ch_core.herni_cas() or {}
+	local herni_cas = ch_time.herni_cas() or {}
 	local global_day_night_ratio = herni_cas.day_night_ratio or 1.0
 
 	for _, player in ipairs(minetest.get_connected_players()) do
@@ -310,7 +310,7 @@ local function on_joinplayer(player, _last_login)
 	}
 	local offline_charinfo = ch_core.offline_charinfo[player_name]
 	if offline_charinfo == nil or offline_charinfo.no_ch_sky ~= 1 then
-		update_ch_sky(player, player_name, online_charinfo.sky_info, (ch_core.herni_cas() or {}).day_night_ratio or 1.0)
+		update_ch_sky(player, player_name, online_charinfo.sky_info, (ch_time.herni_cas() or {}).day_night_ratio or 1.0)
 	else
 		online_charinfo.sky_info.ch_sky_enabled = false
 	end

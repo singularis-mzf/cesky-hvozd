@@ -25,12 +25,11 @@ local function log(message, level)
 end
 
 local function get_wa_time()
-	return math.max(0, math.min(2147483647, os.time() - wa_epoch_start))
+	return math.max(0, math.min(2147483647, ch_time.time() - wa_epoch_start))
 end
 
 local function wa_time_to_string(wa_time)
-	local c = ch_core.cas_na_strukturu(wa_time + wa_epoch_start)
-	return string.format("%04d-%02d-%02dT%02d:%02d:%02d%s", c.rok, c.mesic, c.den, c.hodina, c.minuta, c.sekunda, c.posun_text)
+	return ch_time.na_strukturu(wa_time + wa_epoch_start):YYYY_MM_DDTHH_MM_SSZZZ()
 end
 
 local function wa_add_record(meta, str, wa_time)

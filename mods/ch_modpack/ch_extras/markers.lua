@@ -21,11 +21,11 @@ end
 local function marker_after_place_node(pos, placer, itemstack, pointed_thing)
 	local meta = minetest.get_meta(pos)
 	local player_name = placer and placer.get_player_name and placer:get_player_name()
-	local cas = ch_core.aktualni_cas()
+	local cas = ch_time.aktualni_cas()
 	if player_name then
 		meta:set_string("owner", player_name)
 	end
-	meta:set_string("date", string.format("%d. %d. %d", cas.den, cas.mesic, cas.rok))
+	meta:set_string("date", cas:YYYY_MM_DD())
 	marker_update(pos, meta)
 end
 

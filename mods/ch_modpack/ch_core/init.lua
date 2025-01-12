@@ -1,6 +1,6 @@
-ch_base.open_mod(minetest.get_current_modname())
+ch_base.open_mod(core.get_current_modname())
 
-local modpath = minetest.get_modpath("ch_core")
+local modpath = core.get_modpath("ch_core")
 ch_core = {
 	storage = minetest.get_mod_storage(),
 	submods_loaded = {}, -- submod => true
@@ -42,13 +42,14 @@ ch_core = {
 	overridable = {
 		-- funkce a proměnné, které mohou být přepsány z ostatních módů
 		reset_bank_account = function(player_name) return end,
-		time_speed_day = 26, -- 24,
-		time_speed_night = 132, -- 48,
 		trash_all_sound = "", -- zvuk k přehrání při mazání více předmětů
 		trash_one_sound = "", -- zvuk k přehrání při mazání jednoho předmětu
 		chyba_handler = function(player, text) return end,
 	},
 }
+
+ch_time.set_time_speed_during_day(26) -- was 24
+ch_time.set_time_speed_during_night(132) -- was 48
 
 local current_submod
 
@@ -117,27 +118,25 @@ dofile(modpath .. "/creative_inventory.lua") -- : lib
 dofile(modpath .. "/kos.lua") -- : lib
 
 
--- KOHOUT: při přechodu mezi dnem a nocí přehraje zvuk
-
-local ifthenelse = ch_core.ifthenelse
+local ifthenelse = assert(ch_core.ifthenelse)
 local last_timeofday = 0 -- pravděpodobně se pokusí něco přehrát v prvním globalstepu,
 -- ale to nevadí, protöže v tu chvíli stejně nemůže být ještě nikdo online.
 local abs = math.abs
-local get_timeofday = minetest.get_timeofday
+local get_timeofday = core.get_timeofday
 local gain_1 = {gain = 1.0}
 local head_bone_name = "Head"
 local head_bone_override = {
 	position = {vec = vector.new(0, 6.35, 0), absolute = true},
 	rotation = {vec = vector.zero(), absolute = true},
 }
-local emoting = (minetest.get_modpath("emote") and emote.emoting) or {}
+local emoting = (core.get_modpath("emote") and emote.emoting) or {}
 local globstep_dtime_accumulated = 0.0
 local hud_dtime_accumulated = 0.0
-local get_us_time = minetest.get_us_time
-local has_wielded_light = minetest.get_modpath("wielded_light")
+local get_us_time = assert(core.get_us_time)
+local has_wielded_light = core.get_modpath("wielded_light")
 local custom_globalsteps = {}
 local last_ap_timestamp = 0
-local use_forbidden_height = ifthenelse(minetest.settings:get_bool("ch_forbidden_height", false), true, false)
+local use_forbidden_height = ifthenelse(core.settings:get_bool("ch_forbidden_height", false), true, false)
 local gs_task
 local gs_task_next_step
 local gs_handler = {
@@ -173,11 +172,13 @@ local function globalstep(dtime)
 	if globstep_dtime_accumulated == 0 then
 		-- první globalstep:
 		ch_core.update_creative_inventory(true)
+		globstep_dtime_accumulated = globstep_dtime_accumulated + dtime
+		return
 	end
 
 	globstep_dtime_accumulated = globstep_dtime_accumulated + dtime
 	ch_core.cas = globstep_dtime_accumulated
-	local ch_core_cas = ch_core.cas
+	local ch_core_cas = globstep_dtime_accumulated
 	local us_time = get_us_time()
 
 	-- DEN: 5:30 .. 19:00
@@ -187,11 +188,17 @@ local function globalstep(dtime)
 	if byla_noc and not je_noc then
 		-- Ráno
 		minetest.sound_play("birds", gain_1)
-		minetest.settings:set("time_speed", tostring(ch_core.overridable.time_speed_day))
+		local new_speed = ch_time.get_time_speed_during_day()
+		if new_speed ~= nil then
+			core.settings:set("time_speed", tostring(new_speed))
+		end
 	elseif not byla_noc and je_noc then
 		-- Noc
-		minetest.sound_play("owl", gain_1)
-		minetest.settings:set("time_speed", tostring(ch_core.overridable.time_speed_night))
+		core.sound_play("owl", gain_1)
+		local new_speed = ch_time.get_time_speed_during_night()
+		if new_speed ~= nil then
+			core.settings:set("time_speed", tostring(new_speed))
+		end
 	end
 	last_timeofday = tod
 
@@ -207,7 +214,7 @@ local function globalstep(dtime)
 	end
 
 	-- PRO KAŽDÉHO HRÁČE/KU:
-	local connected_players = minetest.get_connected_players()
+	local connected_players = core.get_connected_players()
 	for _, player in pairs(connected_players) do
 		local player_name = player:get_player_name()
 		local player_pos = player:get_pos()

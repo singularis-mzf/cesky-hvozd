@@ -261,9 +261,8 @@ function signs_api.on_receive_fields(pos, formname, fields, player)
 
 	-- last change:
 	if #changes > 0 then
-		local cas = ch_core.aktualni_cas()
-		meta:set_string("last_change", string.format("%04d-%02d-%02d %s",
-			cas.rok, cas.mesic, cas.den, ch_core.prihlasovaci_na_zobrazovaci(player_name)))
+		local cas = ch_time.aktualni_cas()
+		meta:set_string("last_change", cas:YYYY_MM_DD().." "..ch_core.prihlasovaci_na_zobrazovaci(player_name))
 		core.log("action", player_name.." changed a sign at "..core.pos_to_string(pos)..":\n- "..table.concat(changes, "\n- "))
 		signs_api.set_formspec(pos)
 		display_api.update_entities(pos)

@@ -316,7 +316,7 @@ api.register_purchase_mechanic({
 		elseif (pay_money ~= nil or player_removed:is_empty()) and shop:allow_returns() and shop_removed:get_count() == 1 and (minetest.get_item_group(shop_removed:get_name(), "clothing") ~= 0 or minetest.get_item_group(shop_removed:get_name(), "cape") ~= 0) then
 			-- clothing:
 			local meta = shop_removed:get_meta()
-			meta:set_int("ch_buy_timestamp", assert(ch_core.aktualni_cas().znamka32))
+			meta:set_int("ch_buy_timestamp", assert(ch_time.aktualni_cas():znamka32()))
 			meta:set_int("ch_buy_id", math.random(1, 2147483647))
 			meta:set_int("ch_buy_price", math.min(pay_money or 0, 2147483647))
 			meta:set_string("count_meta", "#")

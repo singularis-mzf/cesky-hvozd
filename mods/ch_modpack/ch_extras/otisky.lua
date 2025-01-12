@@ -12,10 +12,10 @@ local function otisky(player, pos, range, seconds, limit)
 			if actor:sub(1,7) == "player:" then
 				actor = ch_core.prihlasovaci_na_zobrazovaci(actor:sub(8,-1))
 			end
-			local cas = ch_core.cas_na_strukturu(record.time)
+			local cas = ch_time.cas_na_strukturu(record.time + ch_time.get_time_shift())
 			local oldnode, newnode = record.oldnode, record.newnode
 			table.insert(records, string.format("#aaaaaa,%04d-%02d-%02d,#ffff00,%02d:%02d:%02d,%s,#00ff00,%s,#ffffff,%s/%s => %s/%s,%s",
-				cas.rok, cas.mesic, cas.den, cas.hodina, cas.minuta, cas.sekunda, cas.posun_text,
+				cas.rok, cas.mesic, cas.den, cas.hodina, cas.minuta, cas.sekunda, cas:posun_text(),
 				F(actor), F(oldnode.name), oldnode.param2, F(newnode.name), newnode.param2, F(minetest.pos_to_string(pos))))
 		end
 	end

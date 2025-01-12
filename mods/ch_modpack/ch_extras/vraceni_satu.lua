@@ -38,7 +38,7 @@ local def = {
 			ch_core.systemovy_kanal(player_name, "Tyto šaty nejsou označeny k vyzkoušení.")
 			return
 		end
-		local now = ch_core.aktualni_cas().znamka32
+		local now = ch_time.aktualni_cas():znamka32()
 		local buy_timestamp = meta:get_int("ch_buy_timestamp")
 		if now - buy_timestamp > 600 then
 			ch_core.systemovy_kanal(player_name, "Na vrácení je příliš pozdě. Tyto šaty byly vydány obchodním terminálem před "..math.floor((now - buy_timestamp) / 60).." minutami.")

@@ -79,7 +79,7 @@ local function is_flag_inactive(flag_name)
 	if flag_def == nil or flag_def.on_holiday == nil then
 		return nil -- unknown or non-dynamic flag
 	end
-	local now = ch_core.aktualni_cas()
+	local now = ch_time.aktualni_cas()
 	if is_holiday(flag_def.on_holiday, now.rok, now.mesic, now.den) then
 		return false
 	else

@@ -339,8 +339,9 @@ local acc_time = 0
 local function on_step(dtime)
 	acc_time = acc_time + dtime
 	if acc_time > 0.5 then
-		local cas = ch_core.aktualni_cas()
-		local text = string.format("%s\n%d. %s %s\n%02d:%02d %s", cas.den_v_tydnu_nazev, cas.den, cas.nazev_mesice_2, cas.rok, cas.hodina, cas.minuta, cas.posun_text)
+		local cas = ch_time.aktualni_cas()
+		local text = string.format("%s\n%d. %s %s\n%02d:%02d %s",
+			cas:den_v_tydnu_nazev(), cas.den, cas:nazev_mesice(2), cas.rok, cas.hodina, cas.minuta, cas:posun_text())
 		for player_name, record in pairs(datetime_huds) do
 			local player = minetest.get_player_by_name(player_name)
 			if player ~= nil then

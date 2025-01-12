@@ -113,7 +113,7 @@ local function update_state(pos, node, _cheese)
 	if target_time ~= 0 then
 		new_name = _cheese.rack_with_aging_cheese
 	elseif has_current_cheese and has_input then
-		local now = ch_core.aktualni_cas().znamka32
+		local now = ch_time.aktualni_cas():znamka32()
 		target_time = now + _cheese.aging_time + math.random(-3, 3)
 		meta:set_int("target_time", target_time)
 		timer:start(4)
@@ -202,7 +202,7 @@ local function on_timer_inner(pos, meta, _cheese, target_time, current_cheese)
 	end
 
 	-- 3. check, if the target_time has been reached
-	local now = ch_core.aktualni_cas().znamka32
+	local now = ch_time.aktualni_cas():znamka32()
 	if now < target_time then
 		return true -- try again
 	end

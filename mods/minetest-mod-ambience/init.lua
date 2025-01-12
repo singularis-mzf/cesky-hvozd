@@ -108,7 +108,7 @@ end)
 -- plays music and selects sound set
 local get_ambience = function(player, tod, name)
 
-	local day_night_ratio = player:get_day_night_ratio() or ch_core.herni_cas().day_night_ratio or 1.0
+	local day_night_ratio = player:get_day_night_ratio() or ch_time.herni_cas().day_night_ratio or 1.0
 
 	-- play server or local music if music enabled and music not already playing
 	if play_music and MUSICVOLUME > 0 and

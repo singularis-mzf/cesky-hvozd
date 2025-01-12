@@ -141,8 +141,8 @@ function utils.set_amount_to_storage(key, amount)
 end
 
 function ch_bank.get_current_bank_day()
-	local cas = ch_core.aktualni_cas()
-	return string.format("%04d-%02d-%02d", cas.rok, cas.mesic, cas.den), cas
+	local cas = ch_time.aktualni_cas()
+	return cas:YYYY_MM_DD(), cas
 end
 local get_current_bank_day = ch_bank.get_current_bank_day
 

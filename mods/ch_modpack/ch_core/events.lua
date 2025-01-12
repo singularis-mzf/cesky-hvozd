@@ -13,8 +13,8 @@ local sendable_event_types_cache = {--[[
 ]]}
 
 local function get_timestamp()
-	local cas = ch_core.aktualni_cas()
-	return string.format("%04d-%02d-%02d %02d:%02d:%02d", cas.rok, cas.mesic, cas.den, cas.hodina, cas.minuta, cas.sekunda), cas
+	local cas = ch_time.aktualni_cas()
+	return cas:YYYY_MM_DD_HH_MM_SS(), cas
 end
 
 local function timestamp_to_date(timestamp)
@@ -35,7 +35,7 @@ end
 
 local events_month_id -- ID aktuálního měsíce (aktualizuje se ve funkci add_event())
 local events = function()
-    local cas = ch_core.aktualni_cas()
+    local cas = ch_time.aktualni_cas()
     local rok, mesic = cas.rok, cas.mesic
     local result, result_month_id = {}, string.format("%04d-%02d", rok, mesic)
     for i = 1, 3 do

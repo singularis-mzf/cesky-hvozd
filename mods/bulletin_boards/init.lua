@@ -66,37 +66,17 @@ if f then
 end
 
 local function get_current_date()
-	local cas = ch_core.aktualni_cas()
-	local dfmt = "%04d-%02d-%02d"
-	return dfmt:format(cas.rok, cas.mesic, cas.den)
+	return ch_time.aktualni_cas():YYYY_MM_DD()
 end
 
 local function get_date_after_n_days(n)
-	local dfmt = "%04d-%02d-%02d"
-	local cas = ch_core.aktualni_cas()
-	local ch_date = dfmt:format(cas.rok, cas.mesic, cas.den)
-	local tm = os.time()
-	local t = os.date("!*t", tm)
-	local date = dfmt:format(t.year, t.month, t.day)
-	local shifts_minus, shifts_plus = 0, 0
-	while date < ch_date do
-		tm = tm - 12 * 3600
-		t = os.date("!*t", tm)
-		date = dfmt:format(t.year, t.month, t.day)
-		shifts_minus = shifts_minus + 1
+	local cas1 = ch_time.aktualni_cas()
+	local cas2 = cas1:za_n_sekund(n * 86400)
+	local rozdil = cas2:posun_cislo() - cas1:posun_cislo()
+	if rozdil ~= 0 then
+		cas2 = cas2:za_n_sekund(-3600 * rozdil)
 	end
-	while date > ch_date do
-		tm = tm + 12 * 3600
-		t = os.date("!*t", tm)
-		date = dfmt:format(t.year, t.month, t.day)
-		shifts_plus = shifts_plus + 1
-	end
-	if shifts_minus > 0 or shifts_plus > 0 then
-		minetest.log("warning", "[bulletin_boards] get_date_after_n_days() had to do shifts: minus="..shifts_minus..", plus="..shifts_plus)
-	end
-	tm = tm + 86400 * n
-	t = os.date("!*t", tm)
-	return dfmt:format(t.year, t.month, t.day)
+	return cas2:YYYY_MM_DD()
 end
 
 local function can_add_bulletin(player, board)
@@ -540,7 +520,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				ch_core.systemovy_kanal(player_name, "K vyvěšení příspěvku vám chybí nástěnkou požadovaná platba!")
 				break
 			else
-				local cas = ch_core.aktualni_cas()
+				local cas = ch_time.aktualni_cas()
 				local validity = fields.platnost
 				if validity ~= nil then
 					validity = tonumber(validity)

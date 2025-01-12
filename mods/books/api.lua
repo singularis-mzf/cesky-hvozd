@@ -791,7 +791,7 @@ function shared.publish_book(book_item, edition) -- => IČK, error_message
 	local global_data = ch_core.global_data
 	ick = global_data.pristi_ick
 	global_data.pristi_ick = ick + 1
-	local cas = ch_core.aktualni_cas()
+	local cas = ch_time.aktualni_cas()
 	local metadata = {
 		"IČK: <"..ick..">\n",
 		"Titul: <"..title..">\n",
@@ -799,7 +799,7 @@ function shared.publish_book(book_item, edition) -- => IČK, error_message
 		"Autor/ka: <"..author..">\n",
 		"Knihu vydal/a: <"..ch_core.prihlasovaci_na_zobrazovaci(owner).."> ("..owner..")\n",
 		"Copyright: <"..meta:get_string("copyright")..">\n",
-		string.format("Čas vydání: %04d-%02d-%02dT%02d:%02d:%02d%s\n", cas.rok, cas.mesic, cas.den, cas.hodina, cas.minuta, cas.sekunda, cas.posun_text),
+		"Čas vydání: "..cas:YYYY_MM_DDTHH_MM_SS_ZZZ().."\n",
 	}
 	local new_book_info = {
 		new_expiration = minetest.get_us_time() + 43200000000, -- 12 hours
@@ -1012,8 +1012,8 @@ local function formspec_callback(custom_state, player, formname, fields)
 			book.ick = ""
 			book.edition = ""
 		end
-		local cas = ch_core.aktualni_cas()
-		local last_edit = string.format("%d. %s %d (%s)", cas.den, cas.nazev_mesice_2, cas.rok, cas.den_v_tydnu_nazev)
+		local cas = ch_time.aktualni_cas()
+		local last_edit = string.format("%d. %s %d (%s)", cas.den, cas:nazev_mesice(2), cas.rok, cas:den_v_tydnu_nazev())
 		if player_name == owner then
 			meta:set_string("lastedit", last_edit)
 		else
@@ -1024,8 +1024,8 @@ local function formspec_callback(custom_state, player, formname, fields)
 			local new_text = string.format("%s\n-- %s / %d. %s %d %02d:%02d:%02d %s",
 				ch_core.utf8_truncate_right(fields.text or "", 2048), -- limit for appending
 				ch_core.prihlasovaci_na_zobrazovaci(player_name),
-				cas.den, cas.nazev_mesice_2, cas.rok, cas.hodina, cas.minuta, cas.sekunda,
-				cas.posun_text)
+				cas.den, cas:nazev_mesice(2), cas.rok, cas.hodina, cas.minuta, cas.sekunda,
+				cas:posun_text())
 			if #old_text == 0 then
 				book.text = new_text -- no old text
 			elseif access_level == APPEND_ONLY then

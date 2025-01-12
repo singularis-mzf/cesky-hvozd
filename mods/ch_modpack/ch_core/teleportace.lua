@@ -356,8 +356,8 @@ local function stavim(player_name, pos)
 		return false, "Pro nastavení pozice příkazem /stavím musíte mít do 100 metrů vámi spravovanou stavbu, která není opuštěná nebo ke smazání, "..
 			"nebo musí být do 20 metrů cizí stavba, která je rozestavěná nebo v rekonstrukci."
 	end
-	local cas = ch_core.aktualni_cas()
-	local dnes = string.format("%04d-%02d-%02d", cas.rok, cas.mesic, cas.den)
+	local cas = ch_time.aktualni_cas()
+	local dnes = cas:YYYY_MM_DD()
 	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
 	if not offline_charinfo then
 		return false, "Interní údaje nebyly nalezeny!"

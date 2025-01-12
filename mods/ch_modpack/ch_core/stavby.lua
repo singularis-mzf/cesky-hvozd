@@ -141,7 +141,7 @@ function ch_core.stavby_add(pos, urceni, stav, nazev, druh, player_name, zamer)
     if nazev == nil or nazev == "" then nazev = "Bez názvu" end
     if druh == nil then druh = "" end
     assert(player_name ~= nil)
-    local cas = ch_core.aktualni_cas()
+    local cas = ch_time.aktualni_cas()
     local new_record = {
         key = key,
         pos = assert(key_to_pos(key)),
@@ -152,8 +152,8 @@ function ch_core.stavby_add(pos, urceni, stav, nazev, druh, player_name, zamer)
         spravuje = player_name,
         stav = stav,
         historie = {
-            string.format("%04d-%02d-%02d založeno (správa: %s, stav: %s)",
-                cas.rok, cas.mesic, cas.den, ch_core.prihlasovaci_na_zobrazovaci(player_name), assert(ch_core.stavy_staveb[stav]))
+            string.format("%s založeno (správa: %s, stav: %s)",
+                cas:YYYY_MM_DD(), ch_core.prihlasovaci_na_zobrazovaci(player_name), assert(ch_core.stavy_staveb[stav]))
         },
         zamer = zamer or "",
     }

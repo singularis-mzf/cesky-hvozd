@@ -564,8 +564,7 @@ local function edit_formspec_callback(custom_state, player, formname, fields)
 
 	if fields.ulozit then
 		local pocet_zmen = 0
-		local datum = ch_core.aktualni_cas()
-		datum = string.format("%04d-%02d-%02d", datum.rok, datum.mesic, datum.den)
+		local datum = ch_time.aktualni_cas():YYYY_MM_DD()
 		local urceni, stav = custom_state.urceni_list[custom_state.urceni], custom_state.stav_list[custom_state.stav]
 		local player_name = player:get_player_name()
 		local player_viewname = ch_core.prihlasovaci_na_zobrazovaci(player_name)

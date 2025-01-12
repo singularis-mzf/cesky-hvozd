@@ -302,8 +302,8 @@ local function after_joinplayer_5min(player_name, join_timestamp)
 	if online_charinfo == nil or online_charinfo.join_timestamp ~= join_timestamp or minetest.get_player_by_name(player_name) == nil then
 		return -- player probably already logged out
 	end
-	local cas = ch_core.aktualni_cas()
-	local dnes = string.format("%04d-%02d-%02d", cas.rok, cas.mesic, cas.den)
+	local cas = ch_time.aktualni_cas()
+	local dnes = cas:YYYY_MM_DD()
 	local last_ann_shown_date = offline_charinfo.last_ann_shown_date or "1970-01-01"
 	if last_ann_shown_date >= dnes then return end
 	local events = ch_core.get_events_for_player(player_name, event_types, 10, last_ann_shown_date)
@@ -348,7 +348,7 @@ local function on_joinplayer_pomodoro(player, player_name, online_charinfo)
 			end
 		end
 	end
-	ch_core.herni_cas_nastavit(6, 0, 0)
+	ch_time.herni_cas_nastavit(6, 0, 0)
 	return true
 end
 

@@ -659,6 +659,7 @@ local def = {
 minetest.register_chatcommand("návodyznovu", def)
 minetest.register_chatcommand("navodyznovu", def)
 
+--[[
 def = {
 	description = "Nastaví posun zobrazovaného času.",
 	privs = {server = true},
@@ -676,6 +677,7 @@ def = {
 
 minetest.register_chatcommand("posunčasu", def)
 minetest.register_chatcommand("posuncasu", def)
+]]
 
 def = {
 	description = "Odstraní údaje o postavě uložené v systému ch_core. Postava nesmí být ve hře.",

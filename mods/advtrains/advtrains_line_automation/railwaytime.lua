@@ -311,23 +311,13 @@ end
 
 advtrains.lines.rwt = rwt
 
--- chat command
-if core.registered_chatcommands["cas"] then
-	local old_func = assert(core.registered_chatcommands["cas"].func)
-	local function new_func(player_name, param)
-		local result
-		if param == "ž+" or param == "z+" or param == "železniční+" or param == "zeleznicni+" then
-			local rwtime = rwt.get_time()
-			result = "železniční čas: "..rwt.to_string(rwtime).." ("..rwt.to_secs(rwtime)..")"
-		elseif param == "ž" or param == "z" or param == "železniční" or param == "zeleznicni" then
-			result = "železniční čas: "..rwt.to_string(rwt.get_time(), true)
-		else
-			return old_func(player_name, param)
-		end
-		old_func({player_name, result})
-		return true
-	end
-	local override = {func = new_func}
-	core.override_chatcommand("čas", override)
-	core.override_chatcommand("cas", override)
+if core.get_modpath("ch_time") then
+	ch_time.set_rwtime_callback(function()
+		local rwtime = rwt.get_time()
+		return {
+			secs = rwt.to_secs(rwtime),
+			string = rwt.to_string(rwtime, true),
+			string_extended = rwt.to_string(rwtime),
+		}
+	end)
 end

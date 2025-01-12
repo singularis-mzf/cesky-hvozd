@@ -61,10 +61,10 @@ local function on_punch_gooseberry(pos, node, puncher, pointed_thing)
 			return
 		end
 		local meta = minetest.get_meta(pos)
-		local cas = ch_core.aktualni_cas()
+		local cas = ch_time.aktualni_cas()
 		local limit = meta:get_int("berry_limit")
-		if limit < cas.znamka32 + berries_on_bush * grow_interval and math.random(0, 9) < 8 then
-			meta:set_int("berry_limit", math.max(limit, cas.znamka32) + grow_interval)
+		if limit < cas:znamka32() + berries_on_bush * grow_interval and math.random(0, 9) < 8 then
+			meta:set_int("berry_limit", math.max(limit, cas:znamka32()) + grow_interval)
 			local inv = puncher:get_inventory()
 			local remains = inv:add_item("main", ItemStack("bushes:gooseberry"))
 			if not remains:is_empty() then
