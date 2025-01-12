@@ -715,4 +715,70 @@ def = {
 minetest.register_chatcommand("shýbat", def)
 minetest.register_chatcommand("shybat", def)
 
+def = {
+	description = "Zaznamená do příslušného souboru co nejvíc údajů o aktuálním stavu hráčské postavy. Pouze pro Administraci.",
+	params = "<Jmeno_postavy>",
+	privs = {server = true},
+	func = function(admin_name, player_name)
+		local player = core.get_player_by_name(player_name)
+		if player == nil then
+			return false, "Postava neexistuje!"
+		end
+		player_name = player:get_player_name()
+		local inv = player:get_inventory()
+		local result = {
+			player_name = player_name,
+			pos = player:get_pos(),
+			velocity = player:get_velocity(),
+			hp = player:get_hp(),
+			inv_main = inv:get_list("main"),
+			inv_craft = inv:get_list("craft"),
+			wield_index = player:get_wield_index(),
+			armor_groups = player:get_armor_groups(),
+			animation = player:get_animation(),
+			attachment = {player:get_attach()},
+			children = player:get_children(),
+			bone_overrides = player:get_bone_overrides(),
+			properties = player:get_properties(),
+			is_player = player:is_player(),
+			nametag_attributes = player:get_nametag_attributes(),
+			look_dir = player:get_look_dir(),
+			look_vertical = player:get_look_vertical(),
+			look_horizontal = player:get_look_horizontal(),
+			breath = player:get_breath(),
+			fov = {player:get_fov()},
+			meta = player:get_meta():to_table(),
+			player_control = player:get_player_control(),
+			player_control_bits = player:get_player_control_bits(),
+			physics_override = player:get_physics_override(),
+			huds = player:hud_get_all(),
+			hud_flags = player:hud_get_flags(),
+			hotbar_size = player:hud_get_hotbar_itemcount(),
+			hotbar_image = player:hud_get_hotbar_image(),
+			hotbar_selected_image = player:hud_get_hotbar_selected_image(),
+			sky = player:get_sky(),
+			sun = player:get_sun(),
+			moon = player:get_moon(),
+			stars = player:get_stars(),
+			clouds = player:get_clouds(),
+			day_night_ratio_override = player:get_day_night_ratio(),
+			local_animation = {player:get_local_animation()},
+			eye_offset = {player:get_eye_offset()},
+			lighting = player:get_lighting(),
+			flags = player:get_flags(),
+			online_charinfo = ch_core.online_charinfo[player_name] or "nil",
+			offline_charinfo = ch_core.offline_charinfo[player_name] or "nil",
+		}
+		result = dump2(result)
+		local parts = string.split(result, "\n_[")
+		table.sort(parts)
+		result = table.concat(parts, "\n_[")
+		local path = core.get_worldpath().."/_dump_"..player_name..".txt"
+		core.safe_file_write(path, result)
+		return true, "Zaznamenáno do: "..path
+	end,
+}
+
+core.register_chatcommand("dumpplayer", def)
+
 ch_core.close_submod("data")

@@ -153,15 +153,15 @@ advtrains.register_wagon("construction_train", {
 			end
 		end ]]
 		local gravel_node -- "železniční" => use railway_gravel
-		if attributes.zeleznicni and minetest.registered_nodes["ch_core:railway_gravel"] then
-			gravel_node = {name = first_registered_node({
-				"comboblock:slab_gravel_onc_slab_concrete",
-				"ch_core:railway_gravel",
-				"default:gravel"}) }
-		else
+		if attributes.zeleznicni then
 			gravel_node = {name = first_registered_node({
 				"comboblock:slab_railway_gravel_onc_slab_concrete",
+				"ch_core:railway_gravel",
 				"default:gravel"})}
+		else
+			gravel_node = {name = first_registered_node({
+				"comboblock:slab_gravel_onc_slab_concrete",
+				"default:gravel"}) }
 		end
 		local cobble_node = {name = "default:cobble"}
 		for x = -1,1 do

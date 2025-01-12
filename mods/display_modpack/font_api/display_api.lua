@@ -62,6 +62,7 @@ if minetest.get_modpath("display_api") then
 			valign = def.valign,
 			color = def.color,
 		}
+		local texture_modifier
 		if def.meta_halign then
 			local new_halign = meta:get_int(def.meta_halign)
 			if new_halign == 2 then
@@ -73,13 +74,26 @@ if minetest.get_modpath("display_api") then
 			end
 		end
 		if def.meta_valign then
-			local new_valign = meta:get_int(def.meta_valign)
-			if new_valign == 2 then
-				render_style.valign = "top"
-			elseif new_valign == 3 then
-				render_style.valign = "bottom"
-			else
+			local new_valign_value = meta:get_int(def.meta_valign)
+			if new_valign_value > 0 then
+				new_valign_value = new_valign_value - 1
+			end
+			local new_valign = new_valign_value % 3 -- 0, 1, 2
+			local texmod_variant = (new_valign_value - new_valign) / 3 -- 0, 1, 2, 3
+
+			if new_valign == 0 then
 				render_style.valign = "center"
+			elseif new_valign == 1 then
+				render_style.valign = "top"
+			elseif new_valign == 2 then
+				render_style.valign = "bottom"
+			end
+			if texmod_variant == 1 then
+				texture_modifier = "^[transformR180"
+			elseif texmod_variant == 2 then
+				texture_modifier = "^[transformFY"
+			elseif texmod_variant == 3 then
+				texture_modifier = "^[transformFX"
 			end
 		end
 		if def.meta_color then
@@ -112,9 +126,12 @@ if minetest.get_modpath("display_api") then
 			end
 			texturew = textureh * def.size.x / def.size.y / (aspect_ratio or 1)
 		end
-
+		local texture = font:render(text, texturew, textureh, render_style)
+		if texture_modifier ~= nil then
+			texture = texture..texture_modifier
+		end
 		objref:set_properties({
-			textures={ font:render(text, texturew, textureh, render_style ) },
+			textures = {texture},
 			visual_size = def.size,
 		})
 	end

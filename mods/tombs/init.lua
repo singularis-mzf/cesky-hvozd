@@ -11,8 +11,8 @@ dofile(minetest.get_modpath('tombs')..'/chisel.lua')
 
 -- materials
 
-local color_gold = "#C0AA1C"
-local color_white = "#FFFFFF"
+local color_gold = "#c0aa1c"
+local color_white = "#ffffff"
 
 local materials = {
 	["bakedclay:black"] = {color = color_gold},

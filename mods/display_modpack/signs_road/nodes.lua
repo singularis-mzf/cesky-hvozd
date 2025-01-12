@@ -80,7 +80,7 @@ local function inv_sign_def(defs)
 		height = 4/16,
 		entity_fields = {
 			size = ifthenelse(defs.full_height, invisible_sign_full_entity_size, invisible_sign_entity_size),
-			maxlines = ifthenelse(defs.full_height, 8, 4),
+			maxlines = 8,
 			meta_lines_default = ifthenelse(defs.full_height, 5, 4),
 			color = assert(defs.text_color),
 			aspect_ratio = 1/2,
@@ -291,7 +291,7 @@ local models = {
 	inv_sign_green_text = inv_sign_def({description = S("Invisible sign with green text"), text_color = "#00ff00"}),
 	]]
 	inv_sign = inv_sign_def({description = "neviditelná cedule", text_color = "#ffffff"}),
-	inv_sign_full = inv_sign_def({description = "neviditelná cedule (plná výška)", text_color = "#ffffff"}),
+	inv_sign_full = inv_sign_def({description = "neviditelná cedule (plná výška)", text_color = "#ffffff", full_height = true}),
 
 	-- Direction signs:
 	white_right_sign = dir_sign_def("white", "right", {description = S("White direction sign"), text_color = "#000000"}),

@@ -266,7 +266,7 @@ local function globalstep(dtime)
 				end
 			end
 
-			-- VĚZENÍ:
+			-- VĚZENÍ, zakázaná výška:
 			if --[[ ch_core.submods_loaded["vezeni"] and ]] offline_charinfo.trest > 0 then
 				ch_core.vykon_trestu(player, player_pos, us_time, online_charinfo)
 			elseif use_forbidden_height and player_pos.y >= 1024 and player_pos.y <= 1256 then
@@ -412,11 +412,22 @@ local function globalstep(dtime)
 					ap.look_v_gen = ap.look_v_gen + 1
 				end
 
-				for _, rezim in ipairs({"mistni", "celoserverovy", "sepot", "soukromy"}) do
-					local last = ch_core["last_"..rezim]
-					if last.char == player_name then
-						ap["chat_"..rezim.."_gen"] = last.char_gen
-					end
+				local last
+				last = ch_core.last_mistni
+				if last.char == player_name then
+					ap.chat_mistni_gen = last.char_gen
+				end
+				last = ch_core.last_celoserverovy
+				if last.char == player_name then
+					ap.chat_celoserverovy_gen = last.char_gen
+				end
+				last = ch_core.last_sepot
+				if last.char == player_name then
+					ap.chat_sepot_gen = last.char_gen
+				end
+				last = ch_core.last_soukromy
+				if last.char == player_name then
+					ap.chat_soukromy_gen = last.char_gen
 				end
 
 				if process_ap then

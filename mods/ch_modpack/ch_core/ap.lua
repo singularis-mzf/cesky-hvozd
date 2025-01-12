@@ -293,6 +293,7 @@ function ch_core.ap_init(player, online_charinfo, offline_charinfo)
 	online_charinfo.ap = table.copy(ap)
 	online_charinfo.ap1 = ap
 	online_charinfo.ap2 = ap
+	online_charinfo.ap3 = ap
 	online_charinfo.ap_modify_timestamp = minetest.get_us_time()
 
 	return true
@@ -374,13 +375,18 @@ function ch_core.ap_add(player_name, offline_charinfo, points_to_add, debug_coef
 end
 
 function ch_core.ap_update(player, online_charinfo, offline_charinfo)
-	local result, ap, ap1, ap2 = 0, online_charinfo.ap, online_charinfo.ap1, online_charinfo.ap2
+	local result, ap, ap1, ap2, ap3 = 0, online_charinfo.ap, online_charinfo.ap1, online_charinfo.ap2, online_charinfo.ap3
 
 	-- posunout struktury
 	local ap_new = table.copy(ap)
+	online_charinfo.ap3 = ap2
 	online_charinfo.ap2 = ap1
 	online_charinfo.ap1 = ap
 	online_charinfo.ap = ap_new
+
+	local control_diff_1 = ap.control_gen - ap1.control_gen
+	local control_diff_2 = ap1.control_gen - ap2.control_gen
+	local control_diff_3 = ap2.control_gen - ap3.control_gen
 
 	-- aktivity
 	local act_book = ap.book_gen > ap1.book_gen
@@ -388,7 +394,13 @@ function ch_core.ap_update(player, online_charinfo, offline_charinfo)
 	local act_craft = ap.craft_gen > ap1.craft_gen
 	local act_dig = ap.dig_gen > ap1.dig_gen and (not ap.dig_pos or not ap1.dig_pos or not ap2.dig_pos or vector.angle(vector.subtract(ap2.dig_pos, ap1.dig_pos), vector.subtract(ap1.dig_pos, ap.dig_pos)) ~= 0)
 	local act_place = ap.place_gen - ap1.place_gen > 1
-	local act_walk = (ap.look_h_gen - ap1.look_h_gen) + (ap.look_v_gen - ap1.look_v_gen) > 2 and ap.velocity_x_gen - ap1.velocity_x_gen > 8 and ap.velocity_z_gen - ap1.velocity_z_gen > 8 and ap.control_gen > ap1.control_gen
+	local act_walk =
+		(ap.look_h_gen - ap1.look_h_gen) + (ap.look_v_gen - ap1.look_v_gen) > 2 and
+		ap.velocity_x_gen - ap1.velocity_x_gen > 8 and
+		ap.velocity_z_gen - ap1.velocity_z_gen > 8 and
+		control_diff_1 ~= control_diff_2 and
+		control_diff_2 ~= control_diff_3 and
+		control_diff_3 ~= control_diff_1
 
 	local act_any = act_chat or act_craft or act_dig or act_place or act_walk
 	local debug_coef_changes = {}

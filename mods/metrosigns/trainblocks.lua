@@ -16,8 +16,10 @@
 if not HAVE_TRAINBLOCKS_FLAG and
         (metrosigns.create_all_flag or metrosigns.create_trainblocks_flag) then
 
+			--[[
 	local display_entity_name = "tombs:text"
 	display_api.register_display_entity(display_entity_name)
+	]]
 
     local category = "tramvajové cedule"
     metrosigns.register_category(category)
@@ -25,8 +27,10 @@ if not HAVE_TRAINBLOCKS_FLAG and
 	local _ch_help = "Tyto směrovky jsou barvitelné barvicí pistolí.\nPro výběr barvy je nutno Shift+pravý klik, protože jen pravý klik otevře okno s textem."
 	local _ch_help_group = "mtsgns"
 
+	--[[
 	local box_groups = {cracky = 3}
 	local box_light_source = 10
+	]]
 
     minetest.register_node("metrosigns:tb_sign_station", {
         description = "značka stanice",
@@ -113,6 +117,7 @@ if not HAVE_TRAINBLOCKS_FLAG and
         category, "metrosigns:tb_sign_station_exit_right", metrosigns.writer.sign_units
     )
 
+	--[[
 	local function on_construct(pos)
 		local node = minetest.get_node(pos)
 		local ndef = minetest.registered_nodes[node.name]
@@ -174,85 +179,103 @@ if not HAVE_TRAINBLOCKS_FLAG and
 			font_api.show_font_list(sender, pos)
 		end
 	end
-	local def = {
-		description = "svítící barvitelná směrovka vlevo",
-		tiles = {
-			"ch_core_white_pixel.png^[resize:32x32",
-			"ch_core_white_pixel.png^[resize:32x32",
-			"ch_core_white_pixel.png^[resize:32x32",
-			"ch_core_white_pixel.png^[resize:32x32",
-			"ch_core_white_pixel.png^[resize:32x32",
-			"ch_core_white_pixel.png^[resize:32x32",
+	]]
+	local def = 		{
+		depth = -2/16,
+		width = 1,
+		height = 1,
+		entity_fields = {
+			depth = -2/16, -- right
+			top = 0/32, -- top?
+			right = 5.75/16, -- depth
+			aspect_ratio = 1/2, -- font width
+			yaw = math.pi / 2,
+			size = {x = 9/16, y = 8/16},
+			maxlines = 6,
+			meta_lines_default = 2,
+			meta_color = "sign_text_color",
+			meta_lines = "sign_lines",
+			meta_halign = "sign_halign",
+			meta_valign = "sign_valign",
+			on_display_update = font_api.on_display_update,
 		},
-		overlay_tiles = {
-			{name = "metrosigns_ch_sign_overlay.png", color = "white", backface_culling = false},
-			{name = "metrosigns_ch_sign_overlay.png", color = "white", backface_culling = false},
-			{name = "metrosigns_ch_exit_sign_overlay_black.png^[transformR90", color = "white", backface_culling = false},
-			{name = "metrosigns_ch_exit_sign_overlay_black.png^[transformR270", color = "white", backface_culling = false},
-			{name = "metrosigns_ch_sign_overlay.png^[transformR90", color = "white", backface_culling = false},
-			{name = "metrosigns_ch_sign_overlay.png^[transformR270", color = "white", backface_culling = false},
-		},
-		drawtype = "nodebox",
-		inventory_image = "ch_core_white_pixel.png^[resize:32x32^metrosigns_ch_exit_sign_overlay_black.png^[transformFX",
-		is_ground_content = false,
-		light_source = 5,
-		node_box = {
-			type = "fixed",
-			fixed = {
-				-- {-8/16, -5/16, 6/16,  8/16,  5/16, 8/16},
-				{ 6/16, -8/16, -5/16, 8/16, 8/16, 5/16 },
+		node_fields = {
+			description = "svítící barvitelná směrovka vlevo",
+			tiles = {
+				"ch_core_white_pixel.png^[resize:32x32",
+				"ch_core_white_pixel.png^[resize:32x32",
+				"ch_core_white_pixel.png^[resize:32x32",
+				"ch_core_white_pixel.png^[resize:32x32",
+				"ch_core_white_pixel.png^[resize:32x32",
+				"ch_core_white_pixel.png^[resize:32x32",
 			},
-		},
-		paramtype = "light",
-		paramtype2 = "colorwallmounted",
-		groups = {cracky = 3, ud_param2_colorable = 1},
-		palette = "unifieddyes_palette_colorwallmounted.png",
-		after_place_node = after_place_node,
-		on_dig = unifieddyes.on_dig,
-		on_construct = on_construct,
-		on_destruct = display_api.on_destruct,
-		on_rotate = display_api.on_rotate,
-		on_place = display_api.on_place,
-		on_punch = display_api.update_entities,
-		on_receive_fields = on_receive_fields,
-		display_entities = {
-			[display_entity_name] = {
-				depth = -2/16, -- right
-				top = 0/32, -- top?
-				right = 5.75/16, -- depth
-				aspect_ratio = 0.3, -- font width
-				yaw = math.pi / 2,
-				size = {x = 9/16, y = 8/16},
-				maxlines = 2,
-				on_display_update = font_api.on_display_update,
+			overlay_tiles = {
+				{name = "metrosigns_ch_sign_overlay.png", color = "white", backface_culling = false},
+				{name = "metrosigns_ch_sign_overlay.png", color = "white", backface_culling = false},
+				{name = "metrosigns_ch_exit_sign_overlay_black.png^[transformR90", color = "white", backface_culling = false},
+				{name = "metrosigns_ch_exit_sign_overlay_black.png^[transformR270", color = "white", backface_culling = false},
+				{name = "metrosigns_ch_sign_overlay.png^[transformR90", color = "white", backface_culling = false},
+				{name = "metrosigns_ch_sign_overlay.png^[transformR270", color = "white", backface_culling = false},
 			},
-		},
-		_ch_help = _ch_help,
-		_ch_help_group = _ch_help_group,
+			drawtype = "nodebox",
+			inventory_image = "ch_core_white_pixel.png^[resize:32x32^metrosigns_ch_exit_sign_overlay_black.png^[transformFX",
+			is_ground_content = false,
+			light_source = 5,
+			node_box = {
+				type = "fixed",
+				fixed = {
+					-- {-8/16, -5/16, 6/16,  8/16,  5/16, 8/16},
+					{ 6/16, -8/16, -5/16, 8/16, 8/16, 5/16 },
+				},
+			},
+			paramtype = "light",
+			paramtype2 = "colorwallmounted",
+			groups = {cracky = 3, ud_param2_colorable = 1},
+			palette = "unifieddyes_palette_colorwallmounted.png",
+			-- after_place_node = after_place_node,
+			-- on_dig = unifieddyes.on_dig,
+			_ch_help = _ch_help,
+			_ch_help_group = _ch_help_group,
+		}
 	}
-	minetest.register_node("metrosigns:sign_exit_left", table.copy(def))
+	signs_api.register_sign(":metrosigns", "sign_exit_left", table.copy(def))
+	-- minetest.register_node("metrosigns:sign_exit_left", table.copy(def))
 	metrosigns.register_sign(category, "metrosigns:sign_exit_left", metrosigns.writer.sign_units)
 
-	def.description = "svítící barvitelná směrovka vpravo"
-	def.overlay_tiles = {
-		def.overlay_tiles[1],
-		def.overlay_tiles[2],
-		def.overlay_tiles[4],
-		def.overlay_tiles[3],
-		def.overlay_tiles[6],
-		def.overlay_tiles[5],
+	def.node_fields = table.copy(def.node_fields)
+	def.node_fields.description = "svítící barvitelná směrovka vpravo"
+	def.node_fields.overlay_tiles = {
+		def.node_fields.overlay_tiles[1],
+		def.node_fields.overlay_tiles[2],
+		def.node_fields.overlay_tiles[4],
+		def.node_fields.overlay_tiles[3],
+		def.node_fields.overlay_tiles[6],
+		def.node_fields.overlay_tiles[5],
 	}
-	def.inventory_image = "ch_core_white_pixel.png^[resize:32x32^metrosigns_ch_exit_sign_overlay_black.png"
-	local x = table.copy(def.display_entities[display_entity_name])
-	x.depth = -x.depth
-	def.display_entities = {[display_entity_name] = x}
-	minetest.register_node("metrosigns:sign_exit_right", table.copy(def))
+	def.node_fields.inventory_image = "ch_core_white_pixel.png^[resize:32x32^metrosigns_ch_exit_sign_overlay_black.png"
+	def.entity_fields = table.copy(def.entity_fields)
+	def.entity_fields.depth = -def.entity_fields.depth
+	signs_api.register_sign(":metrosigns", "sign_exit_right", def)
 	metrosigns.register_sign(category, "metrosigns:sign_exit_right", metrosigns.writer.sign_units)
 
-	ch_core.register_shape_selector_group({nodes = {"metrosigns:tb_sign_station_exit_left", "metrosigns:tb_sign_station_exit_right"}})
+	local sign_station_exit_nodes = {"metrosigns:tb_sign_station_exit_left", "metrosigns:tb_sign_station_exit_right"}
+	local sign_exit_nodes = {"metrosigns:sign_exit_left", "metrosigns:sign_exit_right"}
+	for _, name in ipairs(sign_exit_nodes) do
+		local old_after_place_node = assert(core.registered_nodes[name].after_place_node)
+		core.override_item(name, {
+			after_place_node = function(...)
+				unifieddyes.fix_rotation_nsew(...)
+				return old_after_place_node(...)
+			end,
+		})
+	end
+
+	ch_core.register_shape_selector_group({
+		nodes = sign_station_exit_nodes,
+	})
 	ch_core.register_shape_selector_group({
 		columns = 2,
-		nodes = {"metrosigns:sign_exit_left", "metrosigns:sign_exit_right"},
+		nodes = sign_exit_nodes,
 		after_change = function(pos, old_node, new_node, player, nodespec)
 			local old_def, new_def = core.registered_nodes[old_node.name], core.registered_nodes[new_node.name]
 			if old_def.display_entities ~= nil and new_def.display_entities ~= nil then

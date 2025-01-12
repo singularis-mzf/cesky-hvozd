@@ -107,7 +107,12 @@ function signs_api.set_formspec(pos)
 		if edef.meta_valign then
 			table.insert(formspec,
 				"label[7,3.75;svisle:]"..
-				"dropdown[8,3.5;2.5,0.5;valign;na střed,nahoře,dole;"..meta:get_int(edef.meta_valign)..";true]")
+				"dropdown[8,3.5;2.5,0.5;valign;"..
+				"na střed,nahoře,dole,"..
+				"na střed (R180),dole (R180),nahoře (R180),"..
+				"na střed (FY),dole (FY),nahoře (FY),"..
+				"na střed (FX),nahoře (FX),dole (FX);"..
+				meta:get_int(edef.meta_valign)..";true]")
 		end
 		table.insert(formspec,
 			"label[0.5,4.5;písmo: "..core.formspec_escape(meta:get_string("font")).."]"..
@@ -128,7 +133,13 @@ function signs_api.set_formspec(pos)
 				"image_button[4,5.65;0.75,0.75;\\[combine:8x8:1\\,1=ch_core_white_pixel.png\\\\^\\[resize\\\\:6x6^\\[multiply:#000000;black;]"..
 				"image_button[4.75,5.65;0.75,0.75;\\[combine:8x8:1\\,1=ch_core_white_pixel.png\\\\^\\[resize\\\\:6x6^\\[multiply:#ffffff;white;]"..
 				"image_button[5.5,5.65;0.75,0.75;\\[combine:8x8:1\\,1=ch_core_white_pixel.png\\\\^\\[resize\\\\:6x6^\\[multiply:#00ff00;green;]"..
-				"image_button[6.25,5.65;0.75,0.75;\\[combine:8x8:1\\,1=ch_core_white_pixel.png\\\\^\\[resize\\\\:6x6^\\[multiply:#ffbb00;orange;]")
+				"image_button[6.25,5.65;0.75,0.75;\\[combine:8x8:1\\,1=ch_core_white_pixel.png\\\\^\\[resize\\\\:6x6^\\[multiply:#ffbb00;orange;]"..
+				"image_button[7,5.65;0.75,0.75;\\[combine:8x8:1\\,1=ch_core_white_pixel.png\\\\^\\[resize\\\\:6x6^\\[multiply:#c0aa1c;gold;]"..
+				"tooltip[black;barva textu: černá]"..
+				"tooltip[white;barva textu: bílá]"..
+				"tooltip[green;barva textu: zelená]"..
+				"tooltip[orange;barva textu: oranžová]"..
+				"tooltip[gold;barva textu: zlatá]")
 		elseif edef.color then
 			table.insert(formspec,
 				"label[0.5,6;barva textu: "..core.formspec_escape(edef.color).."]")
@@ -237,6 +248,8 @@ function signs_api.on_receive_fields(pos, formname, fields, player)
 			new_color = "00ff00"
 		elseif fields.orange then
 			new_color = "ffbb00"
+		elseif fields.gold then
+			new_color = "c0aa1c"
 		elseif fields.color and (#fields.color == 0 or (#fields.color == 6 and not fields.color:match("[^0123456789ABCDEFabcdef]"))) then
 			new_color = fields.color
 		end

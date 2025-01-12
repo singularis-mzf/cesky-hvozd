@@ -363,6 +363,7 @@ local box_valley = {
 
 local sides_xy = {"front", "back", "left", "right"}
 local sides_xyz = {"front", "back", "left", "right", "top", "bottom"}
+local sides_xytop = {"front", "back", "left", "right", "top"}
 
 --==============================================================
 
@@ -553,9 +554,10 @@ stairsplus.defs = {
 				connect_back = {-0.125, -0.5, 0.125, 0.125, 0.5005, 0.5}, -- +Z
 				connect_right = {0.125, -0.5, -0.125, 0.5, 0.5005, 0.125}, -- +X
 			},
-			extra_groups = {wall = 1},
+			extra_groups = {wall = 1, wall_connecting = 1},
 			align_style = "world",
-			connects_to = {"group:wall"},
+			connects_to = {"group:wall_flat", "group:wall_connecting",
+				"group:element_connecting", "group:panel_pole_connecting", "group:panel_pole_thin_connecting"},
 			connect_sides = sides_xy,
 		},
 		["_wall_flat"] = {
@@ -565,22 +567,24 @@ stairsplus.defs = {
 				fixed = {-0.5, -0.5, -0.125, 0.5, 0.5005, 0.125},
 			},
 			align_style = "world",
-			extra_groups = {wall = 1},
+			extra_groups = {wall = 1, wall_flat = 1},
 		},
 		["_element"] = {
 			description = "nízká zeď (spojující se)",
 			node_box = {
 				type = "connected",
 				fixed = {-0.125, -0.5, -0.125, 0.125, 0.0, 0.125},
+				connect_top = {-0.125, 0.0, -0.125, 0.125, 0.5, 0.125}, -- +Y
 				connect_front = {-0.125, -0.5, -0.5, 0.125, 0.0, -0.125}, -- -Z
 				connect_left = {-0.5, -0.5, -0.125, -0.125, 0.0, 0.125}, -- -X
 				connect_back = {-0.125, -0.5, 0.125, 0.125, 0.0, 0.5}, -- +Z
 				connect_right = {0.125, -0.5, -0.125, 0.5, 0.0, 0.125}, -- +X
 			},
-			connect_sides = sides_xy,
-			connects_to = {"group:short_wall"},
+			connect_sides = sides_xytop,
+			connects_to = {"group:element_connecting", "group:element_flat", "group:wall_connecting",
+				"group:panel_pole_flat", "group:panel_pole_thin_flat", "group:arcade"},
 			align_style = "world",
-			extra_groups = {short_wall = 1},
+			extra_groups = {element_connecting = 1},
 		},
 		["_element_flat"] = {
 			description = "nízká zeď (přímá)",
@@ -589,7 +593,7 @@ stairsplus.defs = {
 				fixed = {-0.5, -0.5, -0.125, 0.5, 0.0, 0.125},
 			},
 			align_style = "world",
-			extra_groups = {short_wall = 1},
+			extra_groups = {element_flat = 1},
 		},
 		["_pole"] = {
 			description = "tyč (spojující se)",
@@ -604,8 +608,9 @@ stairsplus.defs = {
 				connect_right = {0.125, -0.125, -0.125, 0.5, 0.125, 0.125}, -- +X
 			},
 			connect_sides = sides_xyz,
-			connects_to = {"group:panel_pole", "group:full_cube_node", "group:attracts_poles"}, -- no fence, no wall
-			extra_groups = {panel_pole = 1},
+			connects_to = {"group:panel_pole", "group:full_cube_node", "group:attracts_poles",
+				"group:wall_connecting", "group:element_connecting"},
+			extra_groups = {panel_pole = 1, panel_pole_connecting = 1},
 			align_style = "world",
 			check_for_pole = true,
 			not_blocking_trains = true,
@@ -616,7 +621,7 @@ stairsplus.defs = {
 				type = "fixed",
 				fixed = {-0.125, -0.5, -0.125, 0.125, 0.5, 0.125},
 			},
-			extra_groups = {panel_pole = 1},
+			extra_groups = {panel_pole = 1, panel_pole_flat = 1},
 			align_style = "world",
 			check_for_pole = true,
 			not_blocking_trains = true,
@@ -634,8 +639,10 @@ stairsplus.defs = {
 				connect_right = {0.0625, -0.0625, -0.0625, 0.5, 0.0625, 0.0625}, -- +X
 			},
 			connect_sides = sides_xyz,
-			connects_to = {"group:panel_pole_thin", "group:wall", "group:full_cube_node", "group:attracts_poles"}, -- no fence, no wall
-			extra_groups = {panel_pole_thin = 1},
+			connects_to = {"group:panel_pole_thin_connecting", "group:panel_pole_thin_flat",
+				"group:wall", "group:full_cube_node", "group:attracts_poles",
+				"group:element_connecting"}, -- no fence, no wall
+			extra_groups = {panel_pole_thin_connecting = 1},
 			align_style = "world",
 			not_blocking_trains = true,
 		},
@@ -645,7 +652,7 @@ stairsplus.defs = {
 				type = "fixed",
 				fixed = {-0.0625, -0.5, -0.0625, 0.0625, 0.5, 0.0625},
 			},
-			extra_groups = {panel_pole_thin = 1},
+			extra_groups = {panel_pole_thin_flat = 1},
 			align_style = "world",
 			not_blocking_trains = true,
 		},
@@ -845,7 +852,7 @@ stairsplus.defs = {
 			},
 			align_style = "world",
 			connect_sides = sides_xy,
-			connects_to = {"group:arcade"},
+			connects_to = {"group:arcade", "group:element_connecting"},
 			extra_groups = {arcade = 1},
 		},
 		["_arcade_flat"] = {

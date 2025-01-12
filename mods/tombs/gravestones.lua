@@ -125,6 +125,7 @@ local tombstone_common_def = {
 	drawtype = 'mesh',
 	paramtype = 'light',
 	paramtype2 = 'facedir',
+	--[[
 	on_construct = function(pos)
 		local node = minetest.get_node(pos)
 		local ndef = minetest.registered_nodes[node.name]
@@ -162,11 +163,12 @@ local tombstone_common_def = {
 	end,
 	on_destruct = display_api.on_destruct,
 	on_rotate = display_api.on_rotate,
+	]]
 	on_place = function(itemstack, placer, pointed_thing)
 		minetest.rotate_node(itemstack, placer, pointed_thing)
 		return display_api.on_place(itemstack, placer, pointed_thing)
 	end,
-
+--[[
 	after_place_node = function(pos, placer)
 		minetest.get_meta(pos):set_string('owner',placer:get_player_name())
 	end,
@@ -196,6 +198,7 @@ local tombstone_common_def = {
 			font_api.show_font_list(sender, pos)
 		end
 	end,
+	]]
 }
 
 local function after_change(pos, old_node, new_node, player, nodespec)
@@ -249,6 +252,9 @@ for i, shape_def in ipairs(shapes) do
 			size = text_size,
 			maxlines = shape_def.text_maxlines or 1,
 			on_display_update = font_api.on_display_update,
+			meta_color = "sign_text_color",
+			meta_halign = "sign_halign",
+			meta_valign = "sign_valign",
 		}
 		if shape_def.text_pitch then
 			display_entity.pitch = shape_def.text_pitch
@@ -266,12 +272,24 @@ for i, shape_def in ipairs(shapes) do
 		if display_entity ~= nil then
 			-- display_entity = table.copy(display_entity)
 			display_entity.depth = def.selection_box.fixed[1][3] - display_api.entity_spacing + (shape_def.text_depth_shift or 0)
-			def.display_entities = {[display_entity_name] = display_entity}
+			-- def.display_entities = {[display_entity_name] = display_entity}
 		end
 		def.groups = ch_core.override_groups(groups, {gravestone = shape_def.id + 100, gravestone_centered = shape_def.id})
 
 		if is_allowed then
-			minetest.register_node('tombs:'..string.lower(name)..mesh..'_0', table.copy(def))
+			if display_entity == nil then
+				core.register_node('tombs:'..string.lower(name)..mesh..'_0', table.copy(def))
+			else
+				signs_api.register_sign(
+					":tombs",
+					string.lower(name)..mesh..'_0',
+					{
+						width = 1, height = 1, depth = 1,
+						node_fields = def,
+						entity_fields = display_entity,
+					}
+				)
+			end
 		end
 	end
 
@@ -284,21 +302,45 @@ for i, shape_def in ipairs(shapes) do
 	def.selection_box = offset_col
 	def.collision_box = offset_col
 	if display_entity ~= nil then
-		display_entity = table.copy(display_entity)
+		-- display_entity = table.copy(display_entity)
 		display_entity.depth = def.selection_box.fixed[1][3] - display_api.entity_spacing + (shape_def.text_depth_shift or 0)
-		def.display_entities = {[display_entity_name] = display_entity}
+		-- def.display_entities = {[display_entity_name] = display_entity}
 	end
 	def.groups = ch_core.override_groups(groups, {gravestone = shape_def.id, gravestone_normal = shape_def.id})
 
 	if is_allowed then
 		if not shape_def.single_variant then
-			minetest.register_node('tombs:'..string.lower(name)..mesh..'_1', def)
+			if display_entity == nil then
+				core.register_node('tombs:'..string.lower(name)..mesh..'_1', def)
+			else
+				signs_api.register_sign(
+					":tombs",
+					string.lower(name)..mesh..'_1',
+					{
+						width = 1, height = 1, depth = 1,
+						node_fields = def,
+						entity_fields = display_entity,
+					}
+				)
+			end
 			ch_core.register_shape_selector_group({
 				nodes = {'tombs:'..string.lower(name)..mesh..'_0', 'tombs:'..string.lower(name)..mesh..'_1'},
 				after_change = after_change,
 			})
 		else
-			minetest.register_node('tombs:'..string.lower(name)..mesh..'_0', def)
+			if display_entity == nil then
+				core.register_node('tombs:'..string.lower(name)..mesh..'_0', def)
+			else
+				signs_api.register_sign(
+					":tombs",
+					string.lower(name)..mesh..'_0',
+					{
+						width = 1, height = 1, depth = 1,
+						node_fields = def,
+						entity_fields = display_entity,
+					}
+				)
+			end
 			minetest.register_alias('tombs:'..string.lower(name)..mesh..'_1', 'tombs:'..string.lower(name)..mesh..'_0')
 		end
 		valid_shapes = valid_shapes + 1

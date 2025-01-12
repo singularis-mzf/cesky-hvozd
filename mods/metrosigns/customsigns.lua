@@ -33,8 +33,13 @@ if HAVE_SIGNS_API_FLAG and (metrosigns.create_all_flag or metrosigns.create_text
 
                 entity_fields = {
                     size = {x = width, y = 12 / 16},
-                    maxlines = 3,
+                    maxlines = 5,
+                    meta_lines_default = 3,
                     color = "#000",
+                    meta_color = "sign_text_color",
+                    meta_lines = "sign_lines",
+                    meta_halign = "sign_halign",
+                    meta_valign = "sign_valign",
                 },
                 node_fields = {
                     description = "cedule do metra (šířka " .. width .. " m)",
@@ -69,8 +74,13 @@ if HAVE_SIGNS_API_FLAG and (metrosigns.create_all_flag or metrosigns.create_text
 
                 entity_fields = {
                     size = {x = width, y = 12 / 16},
-                    maxlines = 3,
+                    maxlines = 5,
+                    meta_lines_default = 3,
                     color = "#000",
+                    meta_color = "sign_text_color",
+                    meta_lines = "sign_lines",
+                    meta_halign = "sign_halign",
+                    meta_valign = "sign_valign",
                 },
                 node_fields = {
                     description = "zvýrazněná cedule do metra (šířka " .. width .. " m)",
