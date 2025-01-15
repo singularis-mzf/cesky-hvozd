@@ -1,4 +1,4 @@
-local ifthenelse = assert(ch_core.ifthenelse)
+-- local ifthenelse = assert(ch_core.ifthenelse)
 local grate_sounds = default.node_sound_metal_defaults()
 
 local groups_in_ci = {cracky = 3, ud_param2_colorable = 1, not_blocking_trains = 1}

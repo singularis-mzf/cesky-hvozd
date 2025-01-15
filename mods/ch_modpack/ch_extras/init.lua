@@ -48,11 +48,12 @@ dofile_ud("colorable_fence.lua") -- lakovaný plot -- : colorable_nodes.lua
 dofile_ud("colorable_grate.lua") -- lakované pletivo
 dofile_ud("colorable_glass.lua") -- barevné sklo
 dofile_ud("colorable_pole.lua") -- lakovaná tyč
+dofile_ud("colorable_walls.lua") -- lakovaná zeď
 dofile("covers.lua") -- pokrývky
 dofile("craftitems.lua") -- předměty (různé)
 dofile_ud("dice.lua") -- hrací kostka
 dofile("doors.lua") -- různé dveře
-dofile("fence_hv.lua") -- výstražný plot
+-- dofile("fence_hv.lua") -- výstražný plot
 dofile("flags.lua") -- česká a slovenská vlajka (node_box)
 dofile("geokes.lua") -- geokeš a související značky
 dofile("gravel.lua") -- světlý a železniční štěrk

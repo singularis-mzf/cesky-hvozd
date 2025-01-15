@@ -1,7 +1,5 @@
 -- lakovaný plot
 ------------------
-local ifthenelse = assert(ch_core.ifthenelse)
-
 local texture = "ch_extras_colorable_fence.png"
 ch_core.register_fence("ch_extras:colorable_texture", {
 	fence = {

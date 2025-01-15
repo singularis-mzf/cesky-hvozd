@@ -2,7 +2,6 @@
 
 local epsilon = 0.001
 local e2 = 1 / 16
-local def
 
 local function gen_walldir(args)
 	local result = table.copy(args)
@@ -238,22 +237,13 @@ local colorable_glass_common_groups = {
 	oddly_breakable_by_hand = 2, ud_param2_colorable = 1,
 }
 
-local function walldir_on_dig(pos, node, digger)
-	local ndef = minetest.registered_nodes[node.name]
-	local walldir_nodes = ndef and ndef.walldir_nodes
-	local base_node = walldir_nodes and walldir_nodes[0]
-	if base_node ~= nil then
-		node.name = base_node
-		minetest.swap_node(pos, node)
-	end
-	return unifieddyes.on_dig(pos, node, digger)
-end
-
+--[[
 local walldir_nodes_normal, walldir_nodes_thick = {}, {}
 for i = 0, 5 do
 	walldir_nodes_normal[i] = "ch_extras:colorable_glass_front_"..i
 	walldir_nodes_thick[i] = "ch_extras:colorable_glass_thick_front_"..i
 end
+]]
 
 local common_def = {
 	-- common defs:

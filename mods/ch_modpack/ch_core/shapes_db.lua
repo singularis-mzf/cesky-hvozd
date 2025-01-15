@@ -748,7 +748,23 @@ local materials_for_si_frames = set(
 	"default:aspen_wood",
 	"default:junglewood",
 	"default:pine_wood",
-	"default:wood"
+	"default:wood",
+	"bakedclay:black",
+	"bakedclay:blue",
+	"bakedclay:brown",
+	"bakedclay:cyan",
+	"bakedclay:dark_green",
+	"bakedclay:dark_grey",
+	"bakedclay:green",
+	"bakedclay:grey",
+	"bakedclay:magenta",
+	"bakedclay:natural",
+	"bakedclay:orange",
+	"bakedclay:pink",
+	"bakedclay:red",
+	"bakedclay:violet",
+	"bakedclay:white",
+	"bakedclay:yellow"
 )
 
 local materials_all = union(materials_cnc, materials_kp, materials_no_kp, materials_glass, materials_crumbly, materials_sns,

@@ -166,7 +166,7 @@ local function get_formspec(custom_state)
         pinfo.role == "admin" or selection_index == 1 or
         pinfo.player_name == custom_state.linevars[selection_index - 1].owner
 
-    if has_rights_to_open_variant and selection_index ~= 1 then
+    if selection_index > 1 and has_rights_to_open_variant then
         table.insert(formspec, "button[10.5,0.3;3.5,0.75;delete;smazat variantu]")
     end
     table.insert(formspec, "button_exit[18.75,0.3;0.75,0.75;close;X]"..
@@ -184,18 +184,15 @@ local function get_formspec(custom_state)
     if custom_state.message ~= "" then
         table.insert(formspec, "label[0.5,8.25;"..F(custom_state.message).."]")
     end
-    if pinfo.role ~= "new" then
-        if has_rights_to_open_variant then
-            if selection_index > 1 then
-                table.insert(formspec, "button[5,15;4.5,0.75;last_passages;poslední jízdy...]"..
-                "tooltip[last_passages;Zobrazí přehled časů několika posledních jízd na dané variantě linky.]")
-            end
-            table.insert(formspec, "button[10,15;4.5,0.75;save;"..
-                ifthenelse(custom_state.compiled_linevar == nil, "ověřit změny\npřed uložením]", "uložit změny]"))
-        end
-        table.insert(formspec, "button[15,15.25;4,0.5;reset;vrátit změny]")
+    if selection_index > 1 then
+        table.insert(formspec, "button[5,15;4.5,0.75;last_passages;poslední jízdy...]"..
+        "tooltip[last_passages;Zobrazí přehled časů několika posledních jízd na dané variantě linky.]")
     end
-
+    if has_rights_to_open_variant then
+        table.insert(formspec, "button[10,15;4.5,0.75;save;"..
+            ifthenelse(custom_state.compiled_linevar == nil, "ověřit změny\npřed uložením]", "uložit změny]"))
+    end
+    table.insert(formspec, "button[15,15.25;4,0.5;reset;vrátit změny]")
     table.insert(formspec, "tooltip[line;"..
         "Označení linky. Musí být neprázdné. Varianta linky bude použita pouze na vlaky s tímto označením linky.]"..
         "tooltip[rc;Směrový kód. Může být prázdný. Varianta linky bude použita pouze na vlaky\\,\n"..
@@ -809,7 +806,7 @@ end
 def = {
     -- params = "",
     description = "Otevře editor variant linek",
-    privs = {ch_registered_player = true},
+    privs = {ch_registered_player = true, railway_operator = true},
     func = function(player_name, param) show_editor_formspec(minetest.get_player_by_name(player_name)) end,
 }
 core.register_chatcommand("linky", def)

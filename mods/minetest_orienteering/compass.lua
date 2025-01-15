@@ -194,7 +194,7 @@ local function show_bc_formspec(player_name, options)
 	elseif formspec_variant == "open_compass" then
 		table.insert(formspec, "button[4.0,1.0;4,1;lock;zamknout kompas]")
 	elseif formspec_variant == "admin" then
-		table.insert(formspec, "button[4.0,1.0;4,1;unlock;odemknout kompas ("..F(ch_core.prihlasovaci_na_zobrazovaci(owner))..")]")
+		table.insert(formspec, "button[4.0,1.0;4,1;unlock;odemknout kompas\n("..F(ch_core.prihlasovaci_na_zobrazovaci(owner))..")]")
 	elseif formspec_variant == "owner" then
 		table.insert(formspec, "button[4.0,1.0;4,1;unlock;odemknout kompas]")
 	end

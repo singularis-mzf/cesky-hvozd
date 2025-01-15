@@ -847,7 +847,6 @@ reg_item("building_blocks:grate", "ch_extras:grate_1")
 reg_item("building_blocks:slope_grate_half", "ch_extras:grate_1")
 reg_item("building_blocks:slope_grate_half_raised", "ch_extras:grate_1")
 
-reg_node(20241230, "solidcolor:solid_block", "ch_extras:colorable_plastic")
 reg_node(20250103, "ch_extras:fence_hv", "technic:panel_warning_block_pole_flat")
 reg_node(20250103, "ch_extras:fence_rail_hv", "technic:panel_warning_block_pole")
 reg_node(20250103, "signs_road:inv_sign_white_text", "signs_road:inv_sign", tool_update_inv_signs)
@@ -858,6 +857,13 @@ reg_node(20250103, "signs_road:invisible_large_street_sign_white_text", "signs_r
 reg_node(20250103, "signs_road:invisible_large_street_sign_black_text", "signs_road:invisible_large_street_sign", tool_update_inv_signs)
 reg_node(20250103, "signs_road:invisible_large_street_sign_green_text", "signs_road:invisible_large_street_sign", tool_update_inv_signs)
 reg_node(20250103, "signs_road:invisible_large_street_sign_orange_text", "signs_road:invisible_large_street_sign", tool_update_inv_signs)
+
+reg_node(20250113, "solidcolor:solid_block", "ch_extras:colorable_plastic")
+reg_node(20250113, "solidcolor:clay_block", "ch_extras:colorable_plaster")
+reg_node(20250113, "solidcolor:cobble_block", "ch_extras:colorable_cobble")
+reg_node(20250113, "solidcolor:stoneblock_block", "ch_extras:colorable_stone_block")
+reg_node(20250113, "solidcolor:stonebrick_block", "ch_extras:colorable_stone_brick")
+reg_node(20250113, "solidcolor:noise_block", "ch_extras:colorable_texture")
 
 -- END OF REGISTRATIONS
 commit_aliases_and_lbms()

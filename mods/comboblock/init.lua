@@ -15,30 +15,30 @@ ch_base.open_mod(minetest.get_current_modname())
 -------------------------------------------------------------------------------------
 
 -- list of allowed combo blocks (do not change order!)
-local allowed_combos = {
-	[1] = "bakedclay:slab_baked_clay_natural+darkage:slab_ors_brick",
-	[2] = "moreblocks:slab_cactus_brick+moreblocks:slab_cobble",
-	[3] = "darkage:slab_ors_brick+wool:slab_brown",
-	[4] = "bakedclay:slab_baked_clay_red+darkage:slab_ors_brick",
-	[5] = "bakedclay:slab_baked_clay_brown+darkage:slab_ors_brick",
-	[6] = "ch_core:slab_plaster_white+xdecor:slab_wood_tile",
-	[7] = "ch_core:slab_plaster_white+ch_core:slab_plaster_blue",
-	[8] = "ch_core:slab_plaster_white+ch_core:slab_plaster_cyan",
-	[9] = "ch_core:slab_plaster_white+ch_core:slab_plaster_dark_green",
-	[10] = "ch_core:slab_plaster_white+ch_core:slab_plaster_dark_grey",
-	[11] = "ch_core:slab_plaster_white+ch_core:slab_plaster_grey",
-	[12] = "ch_core:slab_plaster_white+ch_core:slab_plaster_medium_amber_s50",
-	[13] = "ch_core:slab_plaster_white+ch_core:slab_plaster_orange",
-	[14] = "ch_core:slab_plaster_white+ch_core:slab_plaster_pink",
-	[15] = "ch_core:slab_plaster_white+ch_core:slab_plaster_red",
-	[16] = "ch_core:slab_plaster_white+ch_core:slab_plaster_green",
-	[17] = "ch_core:slab_plaster_white+ch_core:slab_plaster_yellow",
-	[18] = "technic:slab_concrete+building_blocks:slab_Tar",
-	[19] = "technic:slab_concrete+streets:slab_asphalt_red",
-	[20] = "technic:slab_concrete+streets:slab_asphalt_blue",
-	[21] = "default:slab_silver_sandstone_block+ch_core:slab_plaster_medium_amber_s50",
-	[22] = "moreblocks:slab_gravel+technic:slab_concrete",
-	[23] = "ch_extras:slab_railway_gravel+technic:slab_concrete",
+local combos = {
+	[1] = {a = "bakedclay:slab_baked_clay_natural", b = "darkage:slab_ors_brick", ts = 64},
+	[2] = {a = "moreblocks:slab_cactus_brick", b = "moreblocks:slab_cobble", ts = 64},
+	[3] = {a = "darkage:slab_ors_brick", b = "wool:slab_brown", ts = 64},
+	[4] = {a = "bakedclay:slab_baked_clay_red", b = "darkage:slab_ors_brick", ts = 64},
+	[5] = {a = "bakedclay:slab_baked_clay_brown", b = "darkage:slab_ors_brick", ts = 64},
+	[6] = {a = "ch_core:slab_plaster_white", b = "xdecor:slab_wood_tile", ts = 64},
+	[7] = {a = "ch_core:slab_plaster_white", b = "ch_core:slab_plaster_blue", ts = 64},
+	[8] = {a = "ch_core:slab_plaster_white", b = "ch_core:slab_plaster_cyan", ts = 64},
+	[9] = {a = "ch_core:slab_plaster_white", b = "ch_core:slab_plaster_dark_green", ts = 64},
+	[10] = {a = "ch_core:slab_plaster_white", b = "ch_core:slab_plaster_dark_grey", ts = 64},
+	[11] = {a = "ch_core:slab_plaster_white", b = "ch_core:slab_plaster_grey", ts = 64},
+	[12] = {a = "ch_core:slab_plaster_white", b = "ch_core:slab_plaster_medium_amber_s50", ts = 64},
+	[13] = {a = "ch_core:slab_plaster_white", b = "ch_core:slab_plaster_orange", ts = 64},
+	[14] = {a = "ch_core:slab_plaster_white", b = "ch_core:slab_plaster_pink", ts = 64},
+	[15] = {a = "ch_core:slab_plaster_white", b = "ch_core:slab_plaster_red", ts = 64},
+	[16] = {a = "ch_core:slab_plaster_white", b = "ch_core:slab_plaster_green", ts = 64},
+	[17] = {a = "ch_core:slab_plaster_white", b = "ch_core:slab_plaster_yellow", ts = 64},
+	[18] = {a = "technic:slab_concrete", b = "building_blocks:slab_Tar", ts = 128},
+	[19] = {a = "technic:slab_concrete", b = "streets:slab_asphalt_red", ts = 128},
+	[20] = {a = "technic:slab_concrete", b = "streets:slab_asphalt_blue", ts = 128},
+	[21] = {a = "default:slab_silver_sandstone_block", b = "ch_core:slab_plaster_medium_amber_s50", ts = 64},
+	[22] = {a = "moreblocks:slab_gravel", b = "technic:slab_concrete", ts = 128},
+	[23] = {a = "ch_extras:slab_railway_gravel", b = "technic:slab_concrete", ts = 128},
 }
 
 local function combo_after_change(pos, old_node, new_node, player, nodespec)
@@ -53,21 +53,21 @@ local function combo_after_change(pos, old_node, new_node, player, nodespec)
 	end
 end
 
-local allowed_combos_tmp = {}
+local allowed_combos = {}
 local shape_selector_groups = {}
-for i, v in ipairs(allowed_combos) do
-	local a, b = v:match("^([^+]+)%+([^+]+)$")
-	if not a then
+for i, v in ipairs(combos) do
+	local a, b = assert(v.a), assert(v.b)
+	if not a or not b then
 		error("allowed_combos: Invalid format for index "..i)
 	end
-	local x = allowed_combos_tmp[a.."+"..b] or allowed_combos[b.."+"..a]
+	local n = a.."+"..b
+	local x = allowed_combos[n] or allowed_combos[b.."+"..a]
 	if x then
-		error("allowed_combos: Duplicity at ["..i.."] = ["..x.."] = "..v)
+		error("allowed_combos: Duplicity at ["..i.."] = ["..x.."] = "..dump2(v))
 	end
-	allowed_combos_tmp[v] = i
-	shape_selector_groups[v] = {columns = 4, rows = 1, nodes = {}, after_change = combo_after_change}
+	allowed_combos[n] = i
+	shape_selector_groups[n] = {columns = 4, rows = 1, nodes = {}, after_change = combo_after_change}
 end
-allowed_combos = allowed_combos_tmp
 
 local ch_help = "Kombinované bloky získáte položením desky (8/16) jednoho typu\nna desku (8/16) druhého typu. Jen některé kombinace jsou dovoleny.\nZáleží na pořadí; při položení v opačném pořadí získáte jiný blok. Výsledný blok lze otáčet."
 local ch_help_group = "comboblock"
@@ -76,7 +76,6 @@ local ch_help_group = "comboblock"
 --        Settings        --
 ----------------------------
 local S = minetest.get_translator(minetest.get_current_modname())
-local cs = 64
 local node_count = 0
 local existing_node_count = 0
 local to_many_nodes = false
@@ -99,7 +98,7 @@ local groups_to_inherit = {
 	----------------------------
 	-- Add "^[lowpart:50:" and resize to all image names
 	-- against source node for V2 (bottoms)
-	local function add_lowpart(tiles)
+	local function add_lowpart(tiles, ts)
 
 		if type(tiles) == "table" then
 			tiles = tiles.name
@@ -120,7 +119,7 @@ local groups_to_inherit = {
 				else
 					new_name = new_name..
 							   "^[lowpart:50:"..name_split[i]..            -- overlay lower 50%
-							   "\\^[resize\\:"..cs.."x"..cs                -- resize image to comboblock scale
+							   "\\^[resize\\:"..ts.."x"..ts                -- resize image to comboblock scale
 
 				end
 				i=i+1
@@ -164,6 +163,30 @@ local groups_to_inherit = {
 			end
 		end
 		return result
+	end
+
+	local function preprocess_tiles_v2(tiles, ts)
+		assert(ts)
+		tiles = preprocess_tiles(tiles)
+		for i = 2, 6, 1 do 											 -- Checks for image names for each side, If not image name
+			if not tiles[i] and i <= 2 then						 -- then copy previous image name in: 1 = Top, 2 = Bottom, 3-6 = Sides
+				tiles[i] = tiles[i-1]
+
+			elseif i >= 3 then
+
+				if not tiles[i] then
+					if type(tiles[i-1]) == "table" then
+						tiles[i] = table.copy(tiles[i-1])        	 -- must be table copy as we don't want a pointer
+					else
+						tiles[i] = { name = tiles[i-1] }
+					end
+					tiles[i].name = add_lowpart(tiles[i], ts)  	 -- only need to do this once as 4,5,6 are basically copy of 3
+				else
+					tiles[i].name = add_lowpart(tiles[i], ts)  	  -- If node has images specified for each slot have to add  string to the front of those
+				end
+			end
+		end
+		return tiles
 	end
 
 	-------------------------
@@ -463,26 +486,6 @@ for _,v1 in pairs(slab_index) do
 			else ]]
 
 				local v2_def = minetest.registered_nodes[v2]       -- this creates a second copy of all slabs and is identical to v1
-				local v2_tiles = preprocess_tiles(v2_def.tiles)
-
-				for i = 2, 6, 1 do 											 -- Checks for image names for each side, If not image name
-					if not v2_tiles[i] and i <= 2 then						 -- then copy previous image name in: 1 = Top, 2 = Bottom, 3-6 = Sides
-						v2_tiles[i] = v2_tiles[i-1]
-
-					elseif i >= 3 then
-
-						if not v2_tiles[i] then
-							if type(v2_tiles[i-1]) == "table" then
-								v2_tiles[i] = table.copy(v2_tiles[i-1])        	 -- must be table copy as we don't want a pointer
-							else
-								v2_tiles[i] = { name = v2_tiles[i-1] }
-							end
-							v2_tiles[i].name = add_lowpart(v2_tiles[i])    	 -- only need to do this once as 4,5,6 are basically copy of 3
-						else
-							v2_tiles[i].name = add_lowpart(v2_tiles[i])	   	  -- If node has images specified for each slot have to add  string to the front of those
-						end
-					end
-				end
 
 				-- Register nodes --
 
@@ -499,10 +502,11 @@ for _,v1 in pairs(slab_index) do
 																											  -- returns value nil if not otherwise returns integar see lua string.find
 
 				local combo_name = "comboblock:"..v1:split(":")[2].."_onc_"..v2:split(":")[2]
-				local allowed_combo_index, allowed_combo_index_suffix
+				local allowed_combo_index, allowed_combo_index_suffix, allowed_combo
 				allowed_combo_index = allowed_combos[v1.."+"..v2]
 				if allowed_combo_index then
 					allowed_combo_index_suffix = "A"
+					allowed_combo = assert(combos[allowed_combo_index])
 					local ss_nodes = shape_selector_groups[v1.."+"..v2].nodes
 					ss_nodes[1] = combo_name
 					ss_nodes[3] = {name = v1, oneway = true}
@@ -511,21 +515,28 @@ for _,v1 in pairs(slab_index) do
 					allowed_combo_index = allowed_combos[v2.."+"..v1]
 					if allowed_combo_index then
 						allowed_combo_index_suffix = "B"
+						allowed_combo = assert(combos[allowed_combo_index])
 						local ss_nodes = shape_selector_groups[v2.."+"..v1].nodes
 						ss_nodes[2] = combo_name
 						ss_nodes[3] = {name = v2, oneway = true}
 						ss_nodes[4] = {name = v1, oneway = true}
 					end
 				end
+				local ts, v2_tiles
+				if allowed_combo ~= nil then
+					ts = allowed_combo.ts
+					v2_tiles = preprocess_tiles_v2(v2_def.tiles, ts)
+				end
 				if not allowed_combo_index then
 					-- not allowed
 				elseif v1_is_glass and v2_is_glass then                                                           -- glass_glass nodes so drawtype = glasslike
-						local combo_tiles = {v1_tiles[1].name.."^[resize:"..cs.."x"..cs,
-							v2_tiles[2].name.."^[resize:"..cs.."x"..cs,
-							v1_tiles[3].name.."^[resize:"..cs.."x"..cs..v2_tiles[3].name,                      -- Stairs registers it's tiles slightly differently now
-							v1_tiles[4].name.."^[resize:"..cs.."x"..cs..v2_tiles[4].name,                      -- in a nested table structure and now makes use of
-							v1_tiles[5].name.."^[resize:"..cs.."x"..cs..v2_tiles[5].name,                      -- align_style = "world" for most slabs....I think
-							v1_tiles[6].name.."^[resize:"..cs.."x"..cs..v2_tiles[6].name
+						local combo_tiles = {
+							v1_tiles[1].name.."^[resize:"..ts.."x"..ts,
+							v2_tiles[2].name.."^[resize:"..ts.."x"..ts,
+							v1_tiles[3].name.."^[resize:"..ts.."x"..ts..v2_tiles[3].name,                      -- Stairs registers it's tiles slightly differently now
+							v1_tiles[4].name.."^[resize:"..ts.."x"..ts..v2_tiles[4].name,                      -- in a nested table structure and now makes use of
+							v1_tiles[5].name.."^[resize:"..ts.."x"..ts..v2_tiles[5].name,                      -- align_style = "world" for most slabs....I think
+							v1_tiles[6].name.."^[resize:"..ts.."x"..ts..v2_tiles[6].name
 						}
 						minetest.register_node(combo_name, {  -- registering the new combo node
 							description = string.format("%02d", allowed_combo_index).." "..preprocess_description(v1).." na "..preprocess_description(v2),
@@ -560,12 +571,12 @@ for _,v1 in pairs(slab_index) do
 						})
 
 				elseif not v1_is_glass and not v2_is_glass then -- normal nodes
-						local combo_tiles = {v1_tiles[1].name.."^[resize:"..cs.."x"..cs,
-							v2_tiles[2].name.."^[resize:"..cs.."x"..cs,
-							v1_tiles[3].name.."^[resize:"..cs.."x"..cs..v2_tiles[3].name,						-- Stairs registers it's tiles slightly differently now
-							v1_tiles[4].name.."^[resize:"..cs.."x"..cs..v2_tiles[4].name,						-- in a nested table structure and now makes use of
-							v1_tiles[5].name.."^[resize:"..cs.."x"..cs..v2_tiles[5].name,						-- align_style = "world" for most slabs....I think
-							v1_tiles[6].name.."^[resize:"..cs.."x"..cs..v2_tiles[6].name
+						local combo_tiles = {v1_tiles[1].name.."^[resize:"..ts.."x"..ts,
+							v2_tiles[2].name.."^[resize:"..ts.."x"..ts,
+							v1_tiles[3].name.."^[resize:"..ts.."x"..ts..v2_tiles[3].name,						-- Stairs registers it's tiles slightly differently now
+							v1_tiles[4].name.."^[resize:"..ts.."x"..ts..v2_tiles[4].name,						-- in a nested table structure and now makes use of
+							v1_tiles[5].name.."^[resize:"..ts.."x"..ts..v2_tiles[5].name,						-- align_style = "world" for most slabs....I think
+							v1_tiles[6].name.."^[resize:"..ts.."x"..ts..v2_tiles[6].name
 						}
 						minetest.register_node(combo_name, {
 							description = string.format("%02d", allowed_combo_index).." "..preprocess_description(v1).." na "..preprocess_description(v2),

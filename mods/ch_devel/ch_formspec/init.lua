@@ -140,24 +140,50 @@ core.register_on_player_receive_fields(on_player_receive_fields)
 
 local CompiledFields = {}
 
+local function update_raw(name, context, fields, default)
+	if fields[name] ~= nil then
+		context[name] = fields[name]
+	elseif context[name] == nil then
+		context[name] = default or ""
+	end
+end
+
 function ch_core.compile_fields(fdef)
-    local result = {}
-    setmetatable(result, {__index = CompiledFields})
+    local result = setmetatable({}, {__index = CompiledFields})
+	--[[
+		result = {
+			{
+				name, function(name, context, fields)
+			}...
+		}
+	]]
     for _, def in ipairs(fdef) do
         if type(def) == "table" then
             local t = def[1] or "nil"
-            local name = def[2]
+            local name = assert(def[2])
             local default = def[3]
             local option = def[4]
             if t == "animated_image" then
                 table.insert(result, {"animated_image", assert(name), default or 1})
-            elseif t == "field" or t == "textarea" then
-                table.insert(result, {"field", assert(name), default or ""})
+            elseif t == "field" or t == "textarea" or t == "checkbox" then
+                table.insert(result, {"field", name, default or ""})
             elseif t == "textlist" then
                 -- TODO
             elseif t == "tabheader" then
             elseif t == "dropdown" then
-            elseif t == "checkbox" then
+				if type(option) == "table" then
+					table.insert(result, {name, function(name, context, fields, default)
+						if fields[name] ~= nil then
+							local new_value = fields[name]
+							new_value = option[new_value] or new_value
+							context[name] = new_value
+						elseif context[name] == nil then
+							context[name] = default or ""
+						end
+					end})
+				else
+					table.insert(result, {name, update_raw})
+				end
             elseif t == "scrollbar" then
             elseif t == "table" then
                 if option == nil or option == "row" then

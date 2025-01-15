@@ -7,8 +7,9 @@ globals = {}
 
 read_globals = {
 	anvil = {fields = {"make_unrepairable"}},
+	ch_base = {fields = {"open_mod", "close_mod"}},
 	ch_core = {fields = {
-		"aktualni_cas", "ap_add", "assembly_groups", "cas_na_strukturu", "compile_dofile",
+		"ap_add", "assembly_groups", "compile_dofile",
 		"formspec_header",
 		"get_or_add",
 		"get_player_role", "ifthenelse", "item_eat", "jmeno_na_prihlasovaci", -- "online_charinfo", "offline_charinfo",
@@ -16,12 +17,11 @@ read_globals = {
 		"register_nodes",
 		"show_aabb", "show_formspec", "systemovy_kanal",
 		"start_ch_timer", "teleport_player",
-		"rotate_boxes_for_walldir",
-		"rotate_connected_boxes_for_walldir",
-		"rotate_connect_sides_for_walldir",
-		"on_rotate_walldir",
+		"register_fence",
+		"register_nodedir_group",
+		"register_shape_selector_group",
+		"rotate_aabb_by_facedir",
 		"update_formspec",
-		"walldir_to_facedir",
 		online_charinfo = {
 			read_only = false,
 			other_fields = true,
@@ -31,6 +31,9 @@ read_globals = {
 		}, colors = {fields = {
 			"black", "blue", "green", "cyan", "red", "magenta", "brown", "yellow","light_gray","dark_gray", "light_blue",
 			"light_green", "light_cyan", "light_red", "light_magenta", "light_yellow", "white"}},
+	}},
+	ch_time = {fields = {
+		"aktualni_cas", "get_time_shift", "na_strukturu", "time",
 	}},
 	default = {fields = {
 		"node_sound_leaves_defaults",
@@ -131,4 +134,5 @@ read_globals = {
 
 	"ItemStack", "Raycast", "dump2"
 }
+read_globals.core = read_globals.minetest
 files["3dprint.lua"].ignore = {"_inv"}

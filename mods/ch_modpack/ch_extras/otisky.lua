@@ -3,16 +3,17 @@
 local F = minetest.formspec_escape
 
 local function otisky(player, pos, range, seconds, limit)
-	local node = minetest.get_node(pos)
+	local node = core.get_node(pos)
+	local actions = core.rollback_get_node_actions(pos, range, seconds, limit)
 	local records = {}
 
-	for _, record in ipairs(minetest.rollback_get_node_actions(pos, range, seconds, limit)) do
+	for _, record in ipairs(actions or {}) do
 		if record.newnode.name ~= record.oldnode.name or record.newnode.param2 ~= record.newnode.param2 then
 			local actor = record.actor
 			if actor:sub(1,7) == "player:" then
 				actor = ch_core.prihlasovaci_na_zobrazovaci(actor:sub(8,-1))
 			end
-			local cas = ch_time.cas_na_strukturu(record.time + ch_time.get_time_shift())
+			local cas = ch_time.na_strukturu(record.time + ch_time.get_time_shift())
 			local oldnode, newnode = record.oldnode, record.newnode
 			table.insert(records, string.format("#aaaaaa,%04d-%02d-%02d,#ffff00,%02d:%02d:%02d,%s,#00ff00,%s,#ffffff,%s/%s => %s/%s,%s",
 				cas.rok, cas.mesic, cas.den, cas.hodina, cas.minuta, cas.sekunda, cas:posun_text(),

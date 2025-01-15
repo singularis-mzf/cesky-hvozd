@@ -41,6 +41,15 @@ local def = {
 	description = "periskop",
 	inventory_image = "ch_extras_periskop.png",
 	wield_image = "ch_core_white_pixel.png^[opacity:0",
+	range = 0,
+	liquids_pointable = false,
+	pointabilities = {nodes = {
+		["group:cracky"] = false,
+		["group:snappy"] = false,
+		["group:crumbly"] = false,
+		["group:oddly_breakable_by_hand"] = false,
+		["group:dig_immediate"] = false,
+	}, objects = {}},
 	groups = {tool = 1},
 	_ch_help = "když periskop držíte v ruce, umožní vám shlížet na svět z výšky,\n"..
 "ačkoliv se ve skutečnosti pohybujete stále po zemi;\n"..
