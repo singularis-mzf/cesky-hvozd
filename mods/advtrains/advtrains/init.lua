@@ -690,7 +690,7 @@ function advtrains.save(remove_players_from_wagons)
 	if has_luaautomation and atlatc then
 		atlatc.save()
 	end
-	local message = "Saved advtrains save files, took",math.floor((os.clock()-t1) * 1000),"ms"
+	local message = "Saved advtrains save files, took "..tostring(math.floor((os.clock()-t1) * 1000)).."ms"
 	if rwtime ~= nil then
 		message = message.." rwtime="..rwtime
 	end

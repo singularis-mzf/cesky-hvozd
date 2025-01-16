@@ -287,7 +287,7 @@ local loaded_after_place = function(pos, itemstack)
 
 	-- Older versions of Digtron used this deprecated method for saving layout data on items.
 	-- Maintain backward compatibility here.
-	local deprecated_metadata = itemstack:get_metadata()
+	local deprecated_metadata = itemstack:get_string("")
 	if deprecated_metadata ~= "" then
 		deprecated_metadata = minetest.deserialize(deprecated_metadata)
 		local meta = minetest.get_meta(pos)

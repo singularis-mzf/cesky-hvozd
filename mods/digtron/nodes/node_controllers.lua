@@ -72,7 +72,7 @@ minetest.register_node("digtron:controller", {
 	end,
 	
 	on_timer = function(pos, elapsed)
-		minetest.get_meta(pos):set_string("waiting", nil)
+		minetest.get_meta(pos):set_string("waiting", "")
 	end,
 })
 
@@ -173,7 +173,7 @@ local function auto_cycle(pos)
 	meta:set_int("cycles", cycle)
 	status = status .. "\n" .. S("Cycles remaining: @1", cycle)
 	meta:set_string("infotext", status)
-	meta:set_string("lateral_done", nil)
+	meta:set_string("lateral_done", "")
 	
 	if cycle > 0 then
 		minetest.after(meta:get_int("period"), auto_cycle, newpos)
@@ -269,8 +269,8 @@ minetest.register_node("digtron:auto_controller", {
 			if sender:is_player() and cycles > 0 then
 				meta:set_string("triggering_player", sender:get_player_name())
 				if fields.execute then
-					meta:set_string("waiting", nil)
-					meta:set_string("formspec", nil)
+					meta:set_string("waiting", "")
+					meta:set_string("formspec", "")
 					auto_cycle(pos)
 				end
 			end

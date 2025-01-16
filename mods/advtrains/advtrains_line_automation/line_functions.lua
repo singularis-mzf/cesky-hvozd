@@ -958,7 +958,11 @@ local function vlaky(param, past_trains_too)
         train_line_prefix = param.."/"
     end
     local rwtime = rwt.to_secs(rwt.get_time())
+    local players_per_train = {}
     local results = {}
+    for player_name, train_id in pairs(advtrains.player_to_train_mapping) do
+        results[train_id] = (results[train_id] or 0) + 1
+    end
     for train_id, train in pairs(advtrains.trains) do
         local ls, linevar_def = al.get_line_status(train)
         if linevar_def ~= nil then
@@ -970,13 +974,21 @@ local function vlaky(param, past_trains_too)
                 end
                 local s = "("..train_id..") ["..linevar_def.line.."] směr „"..direction.."“, poloha: "..
                     get_train_position(ls, linevar_def, rwtime)
+                if results[train_id] ~= nil then
+                    s = s.." ["..results[train_id].." cestující/ch]"
+                end
                 table.insert(results, {key = linevar_def.name.."/"..ls.linevar_index, value = s})
             end
         elseif past_trains_too and ls.linevar_past ~= nil and (train_line_prefix == nil or ls.linevar_past.line == param) then
             local age = rwtime - ls.linevar_past.arrival
+            local s = "("..train_id..") ["..ls.linevar_past.line.."] služební, poloha: "..
+                get_station_name(ls.linevar_past.station).." (před "..age.." sekundami)"
+            if results[train_id] ~= nil then
+                s = s.." ["..results[train_id].." cestující/ch]"
+            end
             table.insert(results, {
                 key = string.format("%s/~/%s/%05d", ls.linevar_past.line, ls.linevar_past.station, age),
-                value = "("..train_id..") ["..ls.linevar_past.line.."] služební, poloha: "..get_station_name(ls.linevar_past.station).." (před "..age.." sekundami)",
+                value = s,
             })
         end
     end
