@@ -932,7 +932,7 @@ for _, wagon in pairs(wagons) do
 		visual_size = {x=1, y=1},
 		wagon_span=3,
 		wheel_positions = {1.9, -1.9},
-		selectionbox = {-0.9, -2.5, -2.75, 0.9, 2.5, 2.75, rotate = true},
+		-- selectionbox = {-0.9, -2.5, -2.75, 0.9, 2.5, 2.75, rotate = true},
 		collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 		coupler_types_front = {chain=true},
 		coupler_types_back = {chain=true},

@@ -74,7 +74,7 @@ advtrains.register_wagon("mese_trains_mesejet:mese_trains_mesejet_wagon", {
 	visual_size = {x = 1, y = 1},
 	wagon_span = 2.96,
 	collisionbox = {-1.0, -0.5, -1.0, 1.0, 2.5, 1.0},
-	selectionbox = {-0.8, -0.5, -2.6, 0.8, 2.5, 2.6, rotate = true},
+	-- selectionbox = {-0.8, -0.5, -2.6, 0.8, 2.5, 2.6, rotate = true},
 	drops = {
 		"default:steelblock 2",
 		"default:steel_ingot",
