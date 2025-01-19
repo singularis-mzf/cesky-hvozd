@@ -1,9 +1,10 @@
 local S = minetest.get_translator("unified_inventory")
 local F = minetest.formspec_escape
 local ui = unified_inventory
+local recipes_processed = false
 
 -- Create detached creative inventory after loading all mods
-minetest.after(0.01, function()
+minetest.after(0.10, function()
 	local rev_aliases = {}
 	for source, target in pairs(minetest.registered_aliases) do
 		if not rev_aliases[target] then rev_aliases[target] = {} end
@@ -150,6 +151,9 @@ minetest.after(0.01, function()
 
 	-- Step 2: Find all matching items for the given spec (groups)
 	local function get_matching_spec_items(specname)
+		if specname == "" then
+			return {}
+		end
 		if specname:sub(1,6) ~= "group:" then
 			return { [specname] = true }
 		end
@@ -184,17 +188,22 @@ minetest.after(0.01, function()
 				-- Get items that fit into this spec (group or item name)
 				local specname = ItemStack(spec):get_name()
 				for item_name, _ in pairs(get_matching_spec_items(specname)) do
-					ingredient_items[item_name] = true
+					if item_name ~= "" then
+						ingredient_items[item_name] = true
+					end
 				end
 			end
 			for name, _ in pairs(ingredient_items) do
-				if not ui.crafts_for.usage[name] then
-					ui.crafts_for.usage[name] = {}
+				local cfu = ui.crafts_for.usage[name]
+				if cfu == nil then
+					cfu = {}
+					ui.crafts_for.usage[name] = cfu
 				end
-				table.insert(ui.crafts_for.usage[name], recipe)
+				table.insert(cfu, recipe)
 			end
 		end
 	end
+	recipes_processed = true
 
 	for _, callback in ipairs(ui.initialized_callbacks) do
 		callback()
@@ -261,11 +270,17 @@ function ui.register_craft(options)
 		options = { type = "shapeless", items = options.items, output = options.output, width = 0 }
 	end
 	local item_name = itemstack:get_name()
+	if item_name == "" then
+		return
+	end
 	if not ui.crafts_for.recipe[item_name] then
 		ui.crafts_for.recipe[item_name] = {}
 	end
 	table.insert(ui.crafts_for.recipe[item_name],options)
 
+	if recipes_processed then
+		core.log("warning", "ui.register_craft() called after recipes has been processed!\n"..dump2(options))
+	end
 	for _, callback in ipairs(ui.craft_registered_callbacks) do
 		callback(item_name, options)
 	end
