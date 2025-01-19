@@ -14,25 +14,20 @@ function convert(prefix, n)
 	# 17, 23
 	if (prefix == "v") {
 		if (n == 1) {
-			x = -$4; y = $3; z = -$2;
-			nx = $4; ny = $3; nz = $2;
+			x = $3; y = -$4; z = -$2;
 		} else if (n == 2) {
 			x = -$2; y = $3; z = -$4;
 			nx = $2; ny = $3; xz = $4;
 		} else if (n == 3) {
-			x = $4; y = $3; z = $2;
-			nx = $4; ny = $3; nz = $2;
+			x = -$3; y = -$4; z = $2;
 		} else if (n == 5) {
-			#x = $4; y = -$3; z = $2;
 			x = -$4; y = -$2; z = $3;
 		} else if (n == 6) {
-			x = -$2; y = -$3; z = -$4;
-			nx = $2; ny = $3; nz = $4;
+			x = -$2; y = $4; z = $3;
 		} else if (n == 7) {
 			x = -$3; y = -$2; z = -$4;
 		} else if (n == 8) {
-			x = $2; y = -$3; z = $4;
-			nx = $2; ny = $3; nz = $4;
+			x = $2; y = $4; z = -$3;
 		} else if (n == 9) {
 			x = $3; y = -$2; z = $4;
 		} else if (n == 11) {
@@ -42,8 +37,6 @@ function convert(prefix, n)
 		} else if (n == 17) {
 			x = -$4; y = -$3; z = -$2;
 		}
-	} else if (prefix == "f" && (n == 1 || n == 3 || n == 6 || n == 8)) {
-		$0 = "f " $5 " " $4 " " $3 " " $2
 	}
 }
 function out(prefix, a, b)
