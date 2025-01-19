@@ -17,6 +17,20 @@ local function color_to_description(colorname)
 	end
 end
 
+local function get_dye_item(inv, listname, dye_item_name)
+	if inv:contains_item(listname, dye_item_name) then
+		return ItemStack(dye_item_name)
+	end
+	for _, stack in ipairs(inv:get_list(listname)) do
+		local name = stack:get_name()
+		if name ~= "" and core.get_item_group(name, "dye") ~= 0 then
+			stack:set_count(1)
+			return stack
+		end
+	end
+	return ItemStack()
+end
+
 local function get_palette(ndef)
 	if ndef == nil then
 		return nil
@@ -104,16 +118,20 @@ function unifieddyes.on_airbrush(itemstack, player, pointed_thing)
 	end
 
 	local idx, hue = unifieddyes.getpaletteidx(painting_with, palette)
-	local inv = player:get_inventory()
-	if (not minetest.is_creative_enabled(player_name)) and not inv:contains_item("main", painting_with) then
-		local suff = ""
-		if not idx then
-			suff = "  " .. S("Besides, @1 can't be applied to that node.", color_to_description(painting_with))
+	local inv, dye_item
+	if not core.is_creative_enabled(player_name) then
+		inv = player:get_inventory()
+		dye_item = get_dye_item(inv, "main", painting_with)
+		if dye_item:is_empty() then
+			local suff = ""
+			if not idx then
+				suff = "  " .. S("Besides, @1 can't be applied to that node.", color_to_description(painting_with))
+			end
+			minetest.chat_send_player(
+				player_name, S("*** You're in survival mode, and you're out of @1.", color_to_description(painting_with))..suff
+			)
+			return
 		end
-		minetest.chat_send_player(
-			player_name, S("*** You're in survival mode, and you're out of @1.", color_to_description(painting_with))..suff
-		)
-		return
 	end
 
 	if not idx then
@@ -159,8 +177,8 @@ function unifieddyes.on_airbrush(itemstack, player, pointed_thing)
 		return
 	end
 	minetest.swap_node(pos, {name = name, param2 = fdir + idx})
-	if not minetest.is_creative_enabled(player_name) then
-		inv:remove_item("main", painting_with)
+	if inv ~= nil then
+		inv:remove_item("main", dye_item)
 		return
 	end
 end

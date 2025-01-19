@@ -18,39 +18,13 @@ local CLIP = "clip"
 local stairway_groups = {cracky = 2}
 
 local function register_node(mode, nodename, def)
-	if mode == "simple" then
-		return minetest.register_node(nodename, def)
-	elseif mode == "4dir" then
-		def.paramtype2 = "color4dir"
-		def.palette = "unifieddyes_palette_color4dir.png"
-		def.groups = def.groups and table.copy(def.groups) or {}
-		def.groups.ud_param2_colorable = 1
-		def.on_dig = unifieddyes.on_dig
-		minetest.register_node(nodename, def)
-		return
-	elseif mode == "split" then
-		def.paramtype2 = "colorfacedir"
-		def.palette = "unifieddyes_palette_greys.png"
-		def.airbrush_replacement_node = nodename.."_grey"
-		def.groups = def.groups and table.copy(def.groups) or {}
-		def.groups.ud_param2_colorable = 1
-		def.on_dig = unifieddyes.on_dig
-		def.groups.not_in_creative_inventory = 1
-		unifieddyes.generate_split_palette_nodes(nodename, def)
-		minetest.register_alias(nodename, nodename.."_grey")
-		def.groups.not_in_creative_inventory = nil
-		minetest.override_item(nodename.."_grey", {groups = def.groups})
-		return
-	elseif mode == "extended" then
-		def.paramtype2 = "color"
-		def.palette = "unifieddyes_palette_extended.png"
-		def.groups = def.groups and table.copy(def.groups) or {}
-		def.groups.ud_param2_colorable = 1
-		def.on_dig = unifieddyes.on_dig
-		return minetest.register_node(nodename, def)
-	else
-		error("Unknown mode '"..mode.."'!")
-	end
+	assert(mode == "4dir")
+	def.paramtype2 = "color4dir"
+	def.palette = "unifieddyes_palette_color4dir.png"
+	def.groups = def.groups and table.copy(def.groups) or {}
+	def.groups.ud_param2_colorable = 1
+	def.on_dig = unifieddyes.on_dig
+	core.register_node(nodename, def)
 end
 
 local grating_border = 17/32
@@ -124,6 +98,15 @@ ch_core.register_nodes({
 		node_box = {type = "fixed", fixed = {-grating_border, 14/32, -grating_border,  grating_border, 15/32, grating_border}},
 		selection_box = {type = "fixed", fixed = {-16/32, 10/32, -16/32,  16/32, 16/32, 16/32}},
 	},
+}, {
+	{
+		output = "techpack_stairway:grating 6",
+		recipe = {
+			{"", "", ""},
+			{"dye:dark_grey", "", "default:coal_lump"},
+			{"default:steel_ingot", "default:tin_ingot", "default:steel_ingot"},
+		},
+	}
 })
 
 local nodedir_group = {}
@@ -136,38 +119,6 @@ for i = 1, 6 do
 end
 
 ch_core.register_nodedir_group(nodedir_group)
-
---[[register_node("4dir", "techpack_stairway:grating", {
-	description = S("TechPack Grating"),
-	tiles = {
-		'techpack_stairway_bottom.png',
-		'techpack_stairway_bottom.png',
-		'techpack_stairway_side.png',
-	},
-	drawtype = "nodebox",
-	node_box = {
-		type = "fixed",
-		fixed = {
-			{-17/32, -15/32, -17/32,  17/32, -14/32, 17/32}
-		},
-	},
-
-	selection_box = {
-		type = "fixed",
-		fixed = {
-			{-16/32, -16/32, -16/32,  16/32, -10/32, 16/32},
-		},
-	},
-	
-	--climbable = true,
-	paramtype2 = "facedir",
-	paramtype = "light",
-	use_texture_alpha = CLIP,
-	sunlight_propagates = true,
-	is_ground_content = false,
-	groups = stairway_groups,
-	sounds = default.node_sound_metal_defaults(),
-})]]
 
 register_node("4dir", "techpack_stairway:handrail1", {
 	description = S("TechPack Handrail 1"),
@@ -480,139 +431,112 @@ register_node("4dir", "techpack_stairway:stairway", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
-register_node("4dir", "techpack_stairway:ladder1", {
-	description = S("TechPack Ladder 1"),
+ch_core.register_nodes({
+	drawtype = "nodebox",
 	tiles = {
 		'techpack_stairway_steps.png',
 		'techpack_stairway_steps.png',
 		'techpack_stairway_ladder.png',
 	},
-	drawtype = "nodebox",
-	node_box = {
-		type = "fixed",
-		fixed = {
-			{-17/32, -17/32,  15/32,  17/32,  17/32,  17/32},
-			{-17/32, -17/32, -17/32, -15/32,  17/32,  17/32},
-			{-17/32, -17/32, -17/32,  17/32,  17/32, -15/32},
-			{ 15/32, -17/32, -17/32,  17/32,  17/32,  17/32},
-		},
-	},
+	use_texture_alpha = CLIP,
+	paramtype = "light",
+	paramtype2 = "color4dir",
+	palette = "unifieddyes_palette_color4dir.png",
+	sunlight_propagates = true,
+	is_ground_content = false,
 	selection_box = {
 		type = "fixed",
 		fixed = {-8/16, -8/16, -8/16,  8/16, 8/16, 8/16},
 	},
-
-	climbable = true,
-	paramtype2 = "facedir",
-	paramtype = "light",
-	use_texture_alpha = CLIP,
-	sunlight_propagates = true,
-	is_ground_content = false,
-	groups = stairway_groups,
+	groups = ch_core.assembly_groups(stairway_groups, {ud_param2_colorable = 1}),
 	sounds = default.node_sound_metal_defaults(),
-})
-
-register_node("4dir", "techpack_stairway:ladder2", {
-	description = S("TechPack Ladder 2"),
-	tiles = {
-		'techpack_stairway_steps.png',
-		'techpack_stairway_steps.png',
-		'techpack_stairway_ladder.png',
-	},
-	drawtype = "nodebox",
-	node_box = {
-		type = "fixed",
-		fixed = {
-			{-17/32, -17/32,  15/32,  17/32,  17/32,  17/32},
-			{-17/32, -17/32, -17/32, -15/32,  17/32,  17/32},
-			--{-17/32, -17/32, -17/32,  17/32,  17/32, -15/32},
-			{ 15/32, -17/32, -17/32,  17/32,  17/32,  17/32},
+	on_dig = unifieddyes.on_dig,
+}, {
+	["techpack_stairway:ladder1"] = {
+		description = S("TechPack Ladder 1"),
+		node_box = {
+			type = "fixed",
+			fixed = {
+				{-17/32, -17/32,  15/32,  17/32,  17/32,  17/32},
+				{-17/32, -17/32, -17/32, -15/32,  17/32,  17/32},
+				{-17/32, -17/32, -17/32,  17/32,  17/32, -15/32},
+				{ 15/32, -17/32, -17/32,  17/32,  17/32,  17/32},
+			},
 		},
 	},
-
-	selection_box = {
-		type = "fixed",
-		fixed = {-8/16, -8/16, -8/16,  8/16, 8/16, 8/16},
-	},
-
-	climbable = true,
-	paramtype2 = "facedir",
-	paramtype = "light",
-	use_texture_alpha = CLIP,
-	sunlight_propagates = true,
-	is_ground_content = false,
-	groups = stairway_groups,
-	sounds = default.node_sound_metal_defaults(),
-})
-
-register_node("4dir", "techpack_stairway:ladder3", {
-    description = S("TechPack Ladder 3"),
-    tiles = {
-        'techpack_stairway_steps.png',
-        'techpack_stairway_steps.png',
-        'techpack_stairway_ladder.png',
-    },
-    drawtype = "nodebox",
-    node_box = {
-        type = "fixed",
-        fixed = {
-            {-17/32, -17/32,  15/32,  17/32,  17/32,  17/32},
-            --{-17/32, -17/32, -17/32, -15/32,  17/32,  17/32},
-            --{-17/32, -17/32, -17/32,  17/32,  17/32, -15/32},
-            { 15/32, -17/32, -17/32,  17/32,  17/32,  17/32},
-        },
-    },
-
-    selection_box = {
-        type = "fixed",
-        fixed = {-8/16, -8/16, -8/16,  8/16, 8/16, 8/16},
-    },
-
-    climbable = true,
-    paramtype2 = "facedir",
-    paramtype = "light",
-	use_texture_alpha = CLIP,
-    sunlight_propagates = true,
-    is_ground_content = false,
-    groups = stairway_groups,
-    sounds = default.node_sound_metal_defaults(),
-})
-
-register_node("4dir", "techpack_stairway:ladder4", {
-	description = S("TechPack Ladder 4"),
-	tiles = {
-		'techpack_stairway_ladder.png',
-	},
-	drawtype = "nodebox",
-	node_box = {
-		type = "fixed",
-		fixed = {
-            {-17/32, -17/32,  15/32,  17/32,  17/32,  17/32},
-            --{-17/32, -17/32, -17/32, -15/32,  17/32,  17/32},
-            --{-17/32, -17/32, -17/32,  17/32,  17/32, -15/32},
-            --{ 15/32, -17/32, -17/32,  17/32,  17/32,  17/32},
+	["techpack_stairway:ladder2"] = {
+		description = S("TechPack Ladder 2"),
+		node_box = {
+			type = "fixed",
+			fixed = {
+				{-17/32, -17/32,  15/32,  17/32,  17/32,  17/32},
+				{-17/32, -17/32, -17/32, -15/32,  17/32,  17/32},
+				--{-17/32, -17/32, -17/32,  17/32,  17/32, -15/32},
+				{ 15/32, -17/32, -17/32,  17/32,  17/32,  17/32},
+			},
 		},
 	},
-
-	selection_box = {
-		type = "fixed",
-		fixed = {-8/16, -8/16, 6/16,  8/16, 8/16, 8/16},
+	["techpack_stairway:ladder3"] = {
+		description = S("TechPack Ladder 3"),
+		node_box = {
+			type = "fixed",
+			fixed = {
+				{-17/32, -17/32,  15/32,  17/32,  17/32,  17/32},
+				--{-17/32, -17/32, -17/32, -15/32,  17/32,  17/32},
+				--{-17/32, -17/32, -17/32,  17/32,  17/32, -15/32},
+				{ 15/32, -17/32, -17/32,  17/32,  17/32,  17/32},
+			},
+		},
 	},
-	
-	climbable = true,
-	paramtype2 = "facedir",
-	paramtype = "light",
-	use_texture_alpha = CLIP,
-	sunlight_propagates = true,
-	is_ground_content = false,
-	groups = stairway_groups,
-	sounds = default.node_sound_metal_defaults(),
+	["techpack_stairway:ladder4"] = {
+		description = S("TechPack Ladder 4"),
+		tiles = {'techpack_stairway_ladder.png'},
+		node_box = {
+			type = "fixed",
+			fixed = {
+				{-17/32, -17/32,  15/32,  17/32,  17/32,  17/32},
+				--{-17/32, -17/32, -17/32, -15/32,  17/32,  17/32},
+				--{-17/32, -17/32, -17/32,  17/32,  17/32, -15/32},
+				--{ 15/32, -17/32, -17/32,  17/32,  17/32,  17/32},
+			},
+		},
+		selection_box = {
+			type = "fixed",
+			fixed = {-8/16, -8/16, 6/16,  8/16, 8/16, 8/16},
+		},
+	},
+}, {
+	{
+		output = "techpack_stairway:ladder1 3",
+		recipe = {
+			{"", "default:steel_ingot", ""},
+			{"dye:dark_grey", "default:tin_ingot", "default:coal_lump"},
+			{"", "default:steel_ingot", ""},
+		},
+	}, {
+		output = "techpack_stairway:ladder2",
+		recipe = {{"techpack_stairway:ladder1"}},
+	}, {
+		output = "techpack_stairway:ladder3 6",
+		recipe = {
+			{"", "", "default:steel_ingot"},
+			{"dye:dark_grey", "default:tin_ingot", "default:coal_lump"},
+			{"", "", "default:steel_ingot"},
+		},
+	}, {
+		output = "techpack_stairway:ladder4 12",
+		recipe = {
+			{"dye:dark_grey", "default:tin_ingot", "default:coal_lump"},
+			{"", "default:steel_ingot", ""},
+			{"", "default:steel_ingot", ""},
+		},
+	}
 })
 
-register_node("extended", "techpack_stairway:lattice", {
+core.register_node("techpack_stairway:lattice", {
 	description = S("TechPack Lattice"),
 	tiles = {
-		'techpack_stairway_lattice.png',
+		'techpack_stairway_lattice_colorable.png',
 	},
 	drawtype = "nodebox",
 	node_box = {
@@ -632,183 +556,252 @@ register_node("extended", "techpack_stairway:lattice", {
 		fixed = {-8/16, -8/16, -8/16,  8/16, 8/16, 8/16},
 	},
 
-	paramtype2 = "facedir",
 	paramtype = "light",
+	paramtype2 = "color",
+	palette  = "unifieddyes_palette_extended.png",
+	groups = ch_core.assembly_groups(stairway_groups, {ud_param2_colorable = 1}),
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
 	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
+	on_dig = unifieddyes.on_dig,
 })
 
-register_node("split", "techpack_stairway:lattice_slop", {
+
+local function rot(fixed, facedir)
+	if type(fixed[1]) == "table" then
+		local result = {}
+		for i, aabb in ipairs(fixed) do
+			result[i] = ch_core.rotate_aabb_by_facedir(aabb, facedir)
+		end
+		return {type = "fixed", fixed = result}
+	else
+		return {type = "fixed", fixed = ch_core.rotate_aabb_by_facedir(fixed, facedir)}
+	end
+end
+
+local slope_box_0 = { -- 0, 10
+	type = "fixed",
+	fixed = {
+		{-8/16,  4/16,  4/16,  8/16,  8/16, 8/16},
+		{-8/16,  0/16,  0/16,  8/16,  4/16, 8/16},
+		{-8/16, -4/16, -4/16,  8/16,  0/16, 8/16},
+		{-8/16, -8/16, -8/16,  8/16, -4/16, 8/16},
+	},
+}
+local slope_box_1 = rot(slope_box_0.fixed, 1) -- 1, 19
+local slope_box_2 = rot(slope_box_0.fixed, 2) -- 2, 4
+local slope_box_3 = rot(slope_box_0.fixed, 3) -- 3, 13
+local slope_box_5 = rot(slope_box_0.fixed, 5) -- 5, 18
+local slope_box_6 = rot(slope_box_0.fixed, 6) -- 6, 22
+local slope_box_7 = rot(slope_box_0.fixed, 7) -- 7, 14
+local slope_box_8 = rot(slope_box_0.fixed, 8) -- 8, 20
+local slope_box_9 = rot(slope_box_0.fixed, 9) -- 9, 16
+local slope_box_11 = rot(slope_box_0.fixed, 11) -- 11, 12
+local slope_box_15 = rot(slope_box_0.fixed, 15) -- 15, 21
+local slope_box_17 = rot(slope_box_0.fixed, 17) -- 17, 23
+
+--[[
+local slope_box_20 = rot(slope_box_0.fixed, 20)
+local slope_box_21 = rot(slope_box_0.fixed, 21)
+local slope_box_22 = rot(slope_box_0.fixed, 22)
+local slope_box_23 = rot(slope_box_0.fixed, 23)
+]]
+
+local slope_groups = ch_core.assembly_groups(stairway_groups, {
+	ud_param2_colorable = 1,
+	not_in_creative_inventory = 1,
+	not_blocking_trains = 1,
+})
+
+ch_core.register_nodes({
 	description = S("TechPack Lattice Slope"),
-	tiles = {'techpack_stairway_lattice.png'},
+	tiles = {{name = "techpack_stairway_lattice_colorable.png"}},
 	use_texture_alpha = CLIP,
 	drawtype = "mesh",
-	mesh="techpack_stairway_slope.obj",
-	selection_box = {
-		type = "fixed",
-		fixed = {
-			{-8/16,  4/16,  4/16,  8/16,  8/16, 8/16},
-		    {-8/16,  0/16,  0/16,  8/16,  4/16, 8/16},
-		    {-8/16, -4/16, -4/16,  8/16,  0/16, 8/16},
-		    {-8/16, -8/16, -8/16,  8/16, -4/16, 8/16},
-		},
-	},
-	collision_box = {
-		type = "fixed",
-		fixed = {
-			{-8/16,  4/16,  4/16,  8/16,  8/16, 8/16},
-		    {-8/16,  0/16,  0/16,  8/16,  4/16, 8/16},
-		    {-8/16, -4/16, -4/16,  8/16,  0/16, 8/16},
-		    {-8/16, -8/16, -8/16,  8/16, -4/16, 8/16},
-		},
-	},
 	paramtype = "light",
-	-- paramtype2 = "colorfacedir",
+	paramtype2 = "color",
+	palette = "unifieddyes_palette_extended.png",
 
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = stairway_groups,
+	groups = slope_groups,
 	sounds = default.node_sound_metal_defaults(),
-})
-
-minetest.register_craft({
-	output = "techpack_stairway:grating 6",
-	recipe = {
-		{"", "", ""},
-		{"dye:dark_grey", "", "default:coal_lump"},
-		{"default:steel_ingot", "default:tin_ingot", "default:steel_ingot"},
+	drop = {items = {{items = {"techpack_stairway:lattice_slope_0"}, inherit_color = true}}},
+	on_dig = unifieddyes.on_dig,
+}, {
+	["techpack_stairway:lattice_slope_0_10"] = {
+		mesh = "techpack_stairway_slope_0_10.obj",
+		selection_box = slope_box_0,
+		collision_box = slope_box_0,
+		groups = ch_core.assembly_groups(slope_groups, {not_in_creative_inventory = 0})
 	},
-})
-
-minetest.register_craft({
-	output = "techpack_stairway:handrail1 6",
-	recipe = {
-		{"default:steel_ingot", "default:coal_lump", ""},
-		{"default:tin_ingot", "", ""},
-		{"default:steel_ingot", "dye:dark_grey", ""},
+	["techpack_stairway:lattice_slope_1_19"] = {
+		mesh = "techpack_stairway_slope_1_19.obj",
+		selection_box = slope_box_1,
+		collision_box = slope_box_1,
 	},
-})
-
-minetest.register_craft({
-	output = "techpack_stairway:stairway 3",
-	recipe = {
-		{"", "", "default:steel_ingot"},
-		{"dye:dark_grey", "default:tin_ingot", "default:coal_lump"},
-		{"default:steel_ingot", "", ""},
+	["techpack_stairway:lattice_slope_2_4"] = {
+		mesh = "techpack_stairway_slope_2_4.obj",
+		selection_box = slope_box_2,
+		collision_box = slope_box_2,
 	},
-})
-
-minetest.register_craft({
-	output = "techpack_stairway:ladder1 3",
-	recipe = {
-		{"", "default:steel_ingot", ""},
-		{"dye:dark_grey", "default:tin_ingot", "default:coal_lump"},
-		{"", "default:steel_ingot", ""},
+	["techpack_stairway:lattice_slope_3_13"] = {
+		mesh = "techpack_stairway_slope_3_13.obj",
+		selection_box = slope_box_3,
+		collision_box = slope_box_3,
 	},
-})
-
-minetest.register_craft({
-	output = "techpack_stairway:ladder3 6",
-	recipe = {
-		{"", "", "default:steel_ingot"},
-		{"dye:dark_grey", "default:tin_ingot", "default:coal_lump"},
-		{"", "", "default:steel_ingot"},
+	["techpack_stairway:lattice_slope_5_18"] = {
+		mesh = "techpack_stairway_slope_5_18.obj",
+		selection_box = slope_box_5,
+		collision_box = slope_box_5,
 	},
-})
-
-minetest.register_craft({
-	output = "techpack_stairway:ladder4 12",
-	recipe = {
-		{"dye:dark_grey", "default:tin_ingot", "default:coal_lump"},
-		{"", "default:steel_ingot", ""},
-		{"", "default:steel_ingot", ""},
+	["techpack_stairway:lattice_slope_6_22"] = {
+		mesh = "techpack_stairway_slope_6_22.obj",
+		selection_box = slope_box_6,
+		collision_box = slope_box_6,
 	},
-})
-
-minetest.register_craft({
-	output = "techpack_stairway:lattice 4",
-	recipe = {
-		{"default:steel_ingot", "", "default:steel_ingot"},
-		{"dye:dark_grey", "default:tin_ingot", "default:coal_lump"},
-		{"default:steel_ingot", "", "default:steel_ingot"},
+	["techpack_stairway:lattice_slope_7_14"] = {
+		mesh = "techpack_stairway_slope_7_14.obj",
+		selection_box = slope_box_7,
+		collision_box = slope_box_7,
 	},
-})
-
-minetest.register_craft({
-	output = "techpack_stairway:lattice_slop_grey 2",
-	recipe = {{"techpack_stairway:lattice"}},
-})
-
-minetest.register_craft({
-	output = "techpack_stairway:handrail2",
-	recipe = {
-		{"", "", ""},
-		{"techpack_stairway:handrail1", "", "techpack_stairway:handrail1"},
-		{"", "", ""},
+	["techpack_stairway:lattice_slope_8_20"] = {
+		mesh = "techpack_stairway_slope_8_20.obj",
+		selection_box = slope_box_8,
+		collision_box = slope_box_8,
 	},
-})
-
-minetest.register_craft({
-	output = "techpack_stairway:handrail3",
-	recipe = {
-		{"", "techpack_stairway:handrail1", ""},
-		{"techpack_stairway:handrail1", "", ""},
-		{"", "", ""},
+	["techpack_stairway:lattice_slope_9_16"] = {
+		mesh = "techpack_stairway_slope_9_16.obj",
+		selection_box = slope_box_9,
+		collision_box = slope_box_9,
 	},
-})
-
-minetest.register_craft({
-	output = "techpack_stairway:handrail4",
-	recipe = {
-		{"", "techpack_stairway:handrail1", ""},
-		{"techpack_stairway:handrail1", "", "techpack_stairway:handrail1"},
-		{"", "", ""},
+	["techpack_stairway:lattice_slope_11_12"] = {
+		mesh = "techpack_stairway_slope_11_12.obj",
+		selection_box = slope_box_11,
+		collision_box = slope_box_11,
 	},
-})
-
-minetest.register_craft({
-	output = "techpack_stairway:bridge1",
-	recipe = {
-		{"", "", ""},
-		{"techpack_stairway:handrail1", "techpack_stairway:grating", ""},
-		{"", "", ""},
+	["techpack_stairway:lattice_slope_15_21"] = {
+		mesh = "techpack_stairway_slope_15_21.obj",
+		selection_box = slope_box_15,
+		collision_box = slope_box_15,
 	},
-})
-
-minetest.register_craft({
-	output = "techpack_stairway:bridge2",
-	recipe = {
-		{"", "", ""},
-		{"techpack_stairway:handrail1", "techpack_stairway:grating", "techpack_stairway:handrail1"},
-		{"", "", ""},
+	["techpack_stairway:lattice_slope_17_23"] = {
+		mesh = "techpack_stairway_slope_17_23.obj",
+		selection_box = slope_box_17,
+		collision_box = slope_box_17,
 	},
+}, {
+	{
+		output = "techpack_stairway:handrail1 6",
+		recipe = {
+			{"default:steel_ingot", "default:coal_lump", ""},
+			{"default:tin_ingot", "", ""},
+			{"default:steel_ingot", "dye:dark_grey", ""},
+		},
+	}, {
+		output = "techpack_stairway:stairway 3",
+		recipe = {
+			{"", "", "default:steel_ingot"},
+			{"dye:dark_grey", "default:tin_ingot", "default:coal_lump"},
+			{"default:steel_ingot", "", ""},
+		},
+	}, {
+		output = "techpack_stairway:lattice 4",
+		recipe = {
+			{"default:steel_ingot", "", "default:steel_ingot"},
+			{"dye:dark_grey", "default:tin_ingot", "default:coal_lump"},
+			{"default:steel_ingot", "", "default:steel_ingot"},
+		},
+	}, {
+		output = "techpack_stairway:lattice_slope_0 2",
+		recipe = {{"techpack_stairway:lattice"}},
+	}, {
+		output = "techpack_stairway:handrail2",
+		recipe = {
+			{"", "", ""},
+			{"techpack_stairway:handrail1", "", "techpack_stairway:handrail1"},
+			{"", "", ""},
+		},
+	}, {
+		output = "techpack_stairway:handrail3",
+		recipe = {
+			{"", "techpack_stairway:handrail1", ""},
+			{"techpack_stairway:handrail1", "", ""},
+			{"", "", ""},
+		},
+	}, {
+		output = "techpack_stairway:handrail4",
+		recipe = {
+			{"", "techpack_stairway:handrail1", ""},
+			{"techpack_stairway:handrail1", "", "techpack_stairway:handrail1"},
+			{"", "", ""},
+		},
+	}, {
+		output = "techpack_stairway:bridge1",
+		recipe = {
+			{"", "", ""},
+			{"techpack_stairway:handrail1", "techpack_stairway:grating", ""},
+			{"", "", ""},
+		},
+	}, {
+		output = "techpack_stairway:bridge2",
+		recipe = {
+			{"", "", ""},
+			{"techpack_stairway:handrail1", "techpack_stairway:grating", "techpack_stairway:handrail1"},
+			{"", "", ""},
+		},
+	}, {
+		output = "techpack_stairway:bridge3",
+		recipe = {
+			{"", "techpack_stairway:handrail1", ""},
+			{"techpack_stairway:handrail1", "techpack_stairway:grating", ""},
+			{"", "", ""},
+		},
+	}, {
+		output = "techpack_stairway:bridge4",
+		recipe = {
+			{"", "techpack_stairway:handrail1", ""},
+			{"techpack_stairway:handrail1", "techpack_stairway:grating", "techpack_stairway:handrail1"},
+			{"", "", ""},
+		},
+	}, {
+		output = "techpack_stairway:lattice_slope_0_10 2",
+		recipe = {{"techpack_stairway:lattice"}},
+	}, {
+		output = "techpack_stairway:lattice",
+		type = "shapeless",
+		recipe = {"techpack_stairway:lattice_slope_0_10", "techpack_stairway:lattice_slope_0_10"},
+	}
 })
 
-minetest.register_craft({
-	output = "techpack_stairway:bridge3",
-	recipe = {
-		{"", "techpack_stairway:handrail1", ""},
-		{"techpack_stairway:handrail1", "techpack_stairway:grating", ""},
-		{"", "", ""},
-	},
+ch_core.register_nodedir_group({
+	[0] = "techpack_stairway:lattice_slope_0_10",
+	[1] = "techpack_stairway:lattice_slope_1_19",
+	[2] = "techpack_stairway:lattice_slope_2_4",
+	[3] = "techpack_stairway:lattice_slope_3_13",
+	[4] = "techpack_stairway:lattice_slope_2_4",
+	[5] = "techpack_stairway:lattice_slope_5_18",
+	[6] = "techpack_stairway:lattice_slope_6_22",
+	[7] = "techpack_stairway:lattice_slope_7_14",
+	[8] = "techpack_stairway:lattice_slope_8_20",
+	[9] = "techpack_stairway:lattice_slope_9_16",
+	[10] = "techpack_stairway:lattice_slope_0_10",
+	[11] = "techpack_stairway:lattice_slope_11_12",
+	[12] = "techpack_stairway:lattice_slope_11_12",
+	[13] = "techpack_stairway:lattice_slope_3_13",
+	[14] = "techpack_stairway:lattice_slope_7_14",
+	[15] = "techpack_stairway:lattice_slope_15_21",
+	[16] = "techpack_stairway:lattice_slope_9_16",
+	[17] = "techpack_stairway:lattice_slope_17_23",
+	[18] = "techpack_stairway:lattice_slope_5_18",
+	[19] = "techpack_stairway:lattice_slope_1_19",
+	[20] = "techpack_stairway:lattice_slope_8_20",
+	[21] = "techpack_stairway:lattice_slope_15_21",
+	[22] = "techpack_stairway:lattice_slope_6_22",
+	[23] = "techpack_stairway:lattice_slope_17_23",
 })
 
-minetest.register_craft({
-	output = "techpack_stairway:bridge4",
-	recipe = {
-		{"", "techpack_stairway:handrail1", ""},
-		{"techpack_stairway:handrail1", "techpack_stairway:grating", "techpack_stairway:handrail1"},
-		{"", "", ""},
-	},
-})
-
-minetest.register_craft({
-	output = "techpack_stairway:ladder2",
-	recipe = {{"techpack_stairway:ladder1"}},
-})
-
-dofile(minetest.get_modpath("techpack_stairway").."/upgrade_lbm.lua")
+-- dofile(minetest.get_modpath("techpack_stairway").."/upgrade_lbm.lua")
 ch_base.close_mod(minetest.get_current_modname())

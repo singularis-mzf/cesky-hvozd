@@ -865,6 +865,8 @@ reg_node(20250113, "solidcolor:stoneblock_block", "ch_extras:colorable_stone_blo
 reg_node(20250113, "solidcolor:stonebrick_block", "ch_extras:colorable_stone_brick")
 reg_node(20250113, "solidcolor:noise_block", "ch_extras:colorable_texture")
 
+reg_item("techpack_stairway:lattice_slop", "techpack_stairway:lattice_slope_0_10")
+
 -- END OF REGISTRATIONS
 commit_aliases_and_lbms()
 
