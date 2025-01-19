@@ -711,7 +711,7 @@ function al.on_train_enter(pos, train_id, train, index)
         else
             -- koncová zastávka
             can_start_line = stop_def.mode == MODE_FINAL_CONTINUE
-            -- core.log("action", "Train "..train_id.." arrived at the final station "..stop_def.stn.." of linevar "..ls.linevar.." after "..(rwtime - ls.linevar_dep).." seconds.")
+            core.log("action", "Train "..train_id.." arrived at the final station "..stop_def.stn.." of linevar "..ls.linevar.." after "..(rwtime - ls.linevar_dep).." seconds.")
             debug_print("Vlak "..train_id.." skončil jízdu na lince "..ls.linevar..", může pokračovat na jinou linku: "..(can_start_line and "ihned" or "na příští zastávce"))
             train.text_inside = al.get_stop_description(linevar_def.stops[next_index])
             local current_passage = current_passages[train_id]
@@ -751,9 +751,9 @@ function al.on_train_enter(pos, train_id, train, index)
     update_value(train, "routingcode", new_routingcode)
 
     -- začít novou linku?
-    if can_start_line and line_start(train, stn, planned_departure) then
+    if can_start_line and stn ~= nil and stn ~= "" and line_start(train, stn, planned_departure) then
         debug_print("Vlak "..train_id.." zahájil jízdu na nové lince ("..ls.linevar..") ze stanice "..stn..".")
-        -- core.log("action", "Train "..train_id.." started a route with linevar '"..ls.linevar.."' at station '"..stn.."'.")
+        core.log("action", "Train "..train_id.." started a route with linevar '"..ls.linevar.."' at station '"..stn.."'.")
         train.text_inside = get_station_name(stn)
         assert(ls.linevar)
         linevar_def = assert(al.try_get_linevar_def(ls.linevar))

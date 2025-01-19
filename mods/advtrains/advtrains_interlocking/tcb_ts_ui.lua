@@ -808,9 +808,11 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		end
 		
 		if tcbs.ars_disabled and fields.arsenable then
+			core.log("action", pname.." turn ARS on at "..pts)
 			tcbs.ars_disabled = nil
 		end
 		if not tcbs.ars_disabled and fields.arsdisable then
+			core.log("action", pname.." turn ARS off at "..pts)
 			tcbs.ars_disabled = true
 		end
 		

@@ -99,6 +99,11 @@ station = {
                 }...
             }
         }
+    },
+    anns = { -- staniční rozhlasy
+        [encoded_pos] = {
+            ...
+        }
     }
 }
 

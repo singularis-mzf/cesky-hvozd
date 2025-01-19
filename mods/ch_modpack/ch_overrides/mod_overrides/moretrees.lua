@@ -1,5 +1,11 @@
-minetest.override_item("moretrees:acorn", {visual_scale = 0.8})
-minetest.override_item("moretrees:cherry", {
-	groups = {fleshy=3, dig_immediate=3, flammable=2, leafdecay = 1, leafdecay_drop = 1, ch_food = 2},
+core.override_item("moretrees:acorn", {visual_scale = 0.8})
+local def = assert(core.registered_items["moretrees:cherry"])
+core.override_item("moretrees:cherry", {
+	groups = ch_core.assembly_groups(def.groups, {ch_food = 2}),
+	on_use = ch_core.item_eat(),
+})
+def = assert(core.registered_items["moretrees:plum"])
+core.override_item("moretrees:plum", {
+	groups = ch_core.assembly_groups(def.groups, {ch_food = 2}),
 	on_use = ch_core.item_eat(),
 })
