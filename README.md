@@ -1349,6 +1349,12 @@ Prohlášení autora/ky na [fóru](https://forum.minetest.net/viewtopic.php?f=4&
 * Původní licence:CC-BY-SA-3.0
 * [ContentDB](https://content.minetest.net/packages/wsor4035/tool\_tweaks/)
 
+## Underground Challenge (underch)
+
+* Zdroj: [https://gitlab.com/h2mm/underch](https://gitlab.com/h2mm/underch), revize 6e93152e85df684d39392075bcdab765979de6c7
+* Původní licence: CC0 pro kód, CC-BY-SA-3.0 pro média
+* [ContentDB](https://content.luanti.org/packages/Hume2/underch/)
+
 ## Vision Lib (vision\_lib)
 
 * Zdroj: [https://content.minetest.net/packages/mt-mods/vision\_lib/](https://content.minetest.net/packages/mt-mods/vision\_lib/), verze 1.8
