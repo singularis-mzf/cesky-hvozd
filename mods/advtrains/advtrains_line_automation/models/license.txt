@@ -1,0 +1,5 @@
+advtrains_tuber.obj
+	Author: Hume2
+	Source: https://gitlab.com/h2mm/underch underch_dark_tuber.obj (Underground Challenge)
+	Modified (rotated)
+	License: CC0

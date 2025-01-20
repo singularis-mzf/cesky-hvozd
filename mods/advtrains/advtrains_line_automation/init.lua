@@ -24,7 +24,7 @@ dofile(modpath.."line_editor.lua")
 dofile(modpath.."scheduler.lua")
 dofile(modpath.."station_editor.lua")
 dofile(modpath.."stoprail.lua")
--- dofile(modpath.."station_announcement.lua")
+dofile(modpath.."station_announcement.lua")
 
 function advtrains.lines.load(data)
 	if data then

@@ -102,7 +102,44 @@ station = {
     },
     anns = { -- staniční rozhlasy
         [encoded_pos] = {
-            ...
+            -- dosah zpráv v četu (>= 0, nil znamená 50):
+            chat_dosah = int or nil,
+
+            -- formát jednotlivých cedulí, může používat značky {1} až {9} a může mít víc řádků
+            fmt_cedule[1234] = string or nil,
+
+            -- formát pro záporné zpoždění; nil znamená "-{}"
+            fmt_negdelay = string or nil,
+
+            -- pole formátů pro prázdné řádky (vždy obsahuje alespoň prvek [1])
+            fmt_prradek = {string...} or nil,
+
+            -- pole formátů pro řádky s odjezdy (vždy obsahuje alespoň prvek [1])
+            fmt_radek = {string...} or nil,
+
+            -- udává, zda na cedulích bude první znak každého řádku převeden na velké písmeno:
+            fn_firstupper = bool,
+
+            -- obsah pole "koleje" zformátovaný pro použití ve formspecu; prázdný řetězec "" znamená, že st. rozhlas platí pro všechny koleje
+            -- a na .koleje pak nezáleží
+            fs_koleje = string or nil,
+
+            -- pokud st. rozhlas není omezený na určité koleje, nil nebo ""
+            -- je-li omezen na jednu konkrétní kolej, pak jde o název této koleje
+            -- je-li omezen na více kolejí, pak jde o množinu indexovanou označeními kolejí
+            koleje = {[string] = true, ...} or string or nil,
+
+            -- pozice připojených cedulí ve tvaru pro použití ve formspecu, nebo "", pokud daná cedule není připojená
+            pos_cedule[1234]_fs = string or nil,
+
+            -- pozice připojených cedulí ve formě vektoru
+            pos_cedule[1234]_pos = vector or nil,
+
+            -- číslo verze systému staničního rozhlasu (pro detekci zastaralých rozhlasů)
+            version = int,
+
+            -- řetězce pro formátování hlášení v četu; nemusí být uvedeny všechny, nil znamená použít výchozí text
+            tx_* = string or nil,
         }
     }
 }

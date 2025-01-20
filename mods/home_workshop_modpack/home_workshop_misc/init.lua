@@ -94,7 +94,7 @@ if minetest.get_modpath("wine") then
 		minetest.override_item(item, override)
 	end
 else
-	for _, item in ipairs("wine:glass_beer", "wine:glass_wheat_beer") do
+	for _, item in ipairs({"wine:glass_beer", "wine:glass_wheat_beer"}) do
 		minetest.register_node(":"..item, home_workshop_misc.beer_mug_def)
 	end
 end
