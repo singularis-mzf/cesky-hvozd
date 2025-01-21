@@ -1195,6 +1195,9 @@ end
 local function on_dig(pos, node, digger)
     -- TODO?
     -- return core.node_dig(pos, node, digger)
+    if not can_dig(pos, digger) then
+        return false
+    end
     if has_unifieddyes then
         return unifieddyes.on_dig(pos, node, digger)
     else
