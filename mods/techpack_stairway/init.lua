@@ -563,7 +563,6 @@ core.register_node("techpack_stairway:lattice", {
 	use_texture_alpha = CLIP,
 	sunlight_propagates = true,
 	is_ground_content = false,
-	groups = stairway_groups,
 	sounds = default.node_sound_metal_defaults(),
 	on_dig = unifieddyes.on_dig,
 })
