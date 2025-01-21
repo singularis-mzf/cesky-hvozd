@@ -571,6 +571,9 @@ function signs_api.register_sign(mod, name, model)
 			fields.mesh = fields.mesh:gsub("%.obj", "_onpole.obj")
 			update_box(fields, "selection_box", on_pole_offset)
 			update_box(fields, "collision_box", on_pole_offset)
+		elseif fields.drawtype == "airlike" then
+			update_box(fields, "selection_box", on_pole_offset)
+			update_box(fields, "collision_box", on_pole_offset)
 		else
 			error("Sign "..mod..":"..name.." cannot be allowed on poles with a drawtype "..(fields.drawtype or "nil").."!")
 		end

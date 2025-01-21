@@ -131,7 +131,6 @@ local function get_first_last_stations(linevar_def)
             end
         end
     end
-    print("get_first_last_stations(): "..dump2({i_first = i_first, i_last = i_last, i_firstx = i_firstx, i_lastx = i_lastx, stops = stops}))
     if i_first ~= nil and i_last ~= nil then
         return stops[i_first].stn, stops[i_last].stn
     elseif i_firstx ~= nil and i_lastx ~= nil then
@@ -343,13 +342,11 @@ end
     b) nil, nil -- pokud nalezena nebyla
 ]]
 function al.get_terminus(linevar_def, current_index, allow_hidden_stops)
-    print("DEBUG: get_terminus() called: "..dump2({linevar_def, current_index, allow_hidden_stops}))
     local stops = assert(linevar_def.stops)
     local r_i, r_stop
     if current_index < #stops then
         for i = current_index + 1, #stops do
             local mode = stops[i].mode or MODE_NORMAL
-            print("DEBUG: stop mode at index "..i.." is "..(mode or MODE_NORMAL))
             if mode ~= MODE_DISABLED and ((mode ~= MODE_HIDDEN and mode ~= MODE_FINAL_HIDDEN) or allow_hidden_stops) then
                 r_i, r_stop = i, stops[i]
             end

@@ -74,6 +74,23 @@ local function colored_sign_def(defs)
 end
 
 local function inv_sign_def(defs)
+	local node_fields = {
+		drawtype = "airlike",
+		description = assert(defs.description),
+		tiles = blank_tiles,
+		use_texture_alpha = "clip",
+		inventory_image = "signs_road_white.png^[multiply:#999999^(signs_road_letter.png^[multiply:"..defs.text_color..
+			")^default_invisible_node_overlay.png",
+		selection_box =  {
+			type = "fixed",
+			fixed = {-2/16, -2/16, 0.5, 2/16, 2/16, 0.5 - 1/128},
+		},
+		walkable = false,
+	}
+	if defs.light_source ~= nil then
+		node_fields.paramtype = "light"
+		node_fields.light_source = defs.light_source
+	end
 	return {
 		depth = 1/128,
 		width = 4/16,
@@ -89,13 +106,7 @@ local function inv_sign_def(defs)
 			meta_halign = "sign_halign",
 			meta_valign = "sign_valign",
 		},
-		node_fields = {
-			description = assert(defs.description),
-			tiles = blank_tiles,
-			use_texture_alpha = "clip",
-			inventory_image = "signs_road_white.png^[multiply:#999999^(signs_road_letter.png^[multiply:"..defs.text_color..
-				")^default_invisible_node_overlay.png",
-		},
+		node_fields = node_fields,
 		allow_on_pole = true,
 	}
 end
@@ -292,6 +303,7 @@ local models = {
 	]]
 	inv_sign = inv_sign_def({description = "neviditelná cedule", text_color = "#ffffff"}),
 	inv_sign_full = inv_sign_def({description = "neviditelná cedule (plná výška)", text_color = "#ffffff", full_height = true}),
+	inv_sign_light = inv_sign_def({description = "neviditelná cedule (svítící)", text_color = "#ffffff", full_height = true, light_source = 10}),
 
 	-- Direction signs:
 	white_right_sign = dir_sign_def("white", "right", {description = S("White direction sign"), text_color = "#000000"}),

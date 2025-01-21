@@ -88,6 +88,7 @@ ch_core.register_shape_selector_group({
 	nodes = {
 		"signs_road:inv_sign", "signs_road:inv_sign_on_pole",
 		"signs_road:inv_sign_full", "signs_road:inv_sign_full_on_pole",
+		"signs_road:inv_sign_light", "signs_road:inv_sign_light_on_pole",
 	},
 })
 
@@ -105,7 +106,9 @@ core.register_craft({
 core.register_craft({output = "signs_road:inv_sign_on_pole", recipe = {{"signs_road:inv_sign"}}})
 core.register_craft({output = "signs_road:inv_sign_full", recipe = {{"signs_road:inv_sign_on_pole"}}})
 core.register_craft({output = "signs_road:inv_sign_full_on_pole", recipe = {{"signs_road:inv_sign_full"}}})
-core.register_craft({output = "signs_road:inv_sign", recipe = {{"signs_road:inv_sign_full_on_pole"}}})
+core.register_craft({output = "signs_road:inv_sign_light", recipe = {{"signs_road:inv_sign_full_on_pole"}}})
+core.register_craft({output = "signs_road:inv_sign_light_on_pole", recipe = {{"signs_road:inv_sign_light"}}})
+core.register_craft({output = "signs_road:inv_sign", recipe = {{"signs_road:inv_sign_light_on_pole"}}})
 
 core.register_craft({
 	output = "signs_road:invisible_large_street_sign",

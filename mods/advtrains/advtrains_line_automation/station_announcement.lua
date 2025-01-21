@@ -214,7 +214,6 @@ local function dosadit(format, data, defaults)
             tag_name = tag:sub(1, b2 - 1)
             repeat
                 local e2 = tag:find("[:|]", b2 + 1) or (#tag + 1)
-                print("DEBUG: b2 == "..b2.." e2 = "..e2.." #tag = "..#tag)
                 local c = tag:sub(b2, b2)
                 if c == ":" then
                     tagfmt = tag:sub(b2 + 1, e2 - 1)
@@ -254,25 +253,21 @@ local function dosadit(format, data, defaults)
                     table.insert(result, string.rep(" ", math.floor(missing / 2)))
                     table.insert(result, value)
                     table.insert(result, string.rep(" ", missing - math.floor(missing / 2)))
-                    print("DEBUG: value \""..value.."\" align(center) min("..min..") => \""..string.rep(" ", math.floor(missing / 2))..value..string.rep(" ", missing - math.floor(missing / 2)).."\"")
                 end
             elseif max ~= nil and len > max then
                 -- řetězec je delší než maximum => oříznout
                 if align == "left" then
                     local pos = assert(ch_core.utf8_seek(value, 1, max))
                     table.insert(result, value:sub(1, pos - 1))
-                    print("DEBUG: value \""..value.."\" align(left) max("..max..") => \""..value:sub(1, pos - 1).."\"")
                 elseif align == "right" then
                     local pos = assert(ch_core.utf8_seek(value, 1, len - max))
                     table.insert(result, value:sub(pos, -1))
-                    print("DEBUG: value \""..value.."\" align(right) max("..max..") => \""..value:sub(pos, -1).."\"")
                 else
                     local overflow = len - max
                     local half = math.floor(overflow / 2)
                     local pos1 = assert(ch_core.utf8_seek(value, 1, half))
                     local pos2 = (ch_core.utf8_seek(value, pos1, len - overflow) or 0) - 1
                     table.insert(result, value:sub(pos1, pos2))
-                    print("DEBUG: value \""..value.."\" align(center) max("..max..") => \""..value:sub(pos1, pos2).."\"")
                 end
             else
                 -- řetězec odpovídá
@@ -282,18 +277,26 @@ local function dosadit(format, data, defaults)
         b = format:find("{", e + 1, true)
     end
     table.insert(result, format:sub(e + 1, -1))
-    print("DEBUG: result: "..dump2(result))
     return table.concat(result)
 end
 
--- DEBUG:
-local dosadit_inner = dosadit
-dosadit = function(format, data, defaults)
-    local result = dosadit_inner(format, data, defaults)
-    print("DEBUG: dosadit(): "..dump2({format = format, data = data, defaults = defaults, result = result}))
-    return result
+-- Vrátí neuspořádaný seznam čísel řádků, které musejí být zformátovány pro daný formátovací řetězec.
+local function ktere_radky(s, empty_as_string)
+    local set = {}
+    local list = {}
+    for match in s:gmatch("{[1-9][:|}]") do
+        local n = tonumber(match:sub(2,2))
+        if n ~= nil and not set[n] then
+            set[n] = true
+            table.insert(list, n)
+        end
+    end
+    if list[1] == nil and empty_as_string then
+        return ""
+    else
+        return list
+    end
 end
--- ------------------
 
 local function sestavit_hlaseni(settings, settings_override, data, defaults)
     local parts = {}
@@ -385,25 +388,35 @@ local function get_or_add_anns(stn)
     return anns
 end
 
+local cedule_default_settings = {
+    empty = "{-:5}",
+    fs = "",
+    pos = vector.zero(),
+    row = "{LINKA: 3} za {ODJZA: 2-3} s",
+    text = "{ZDE} - odjezdy\n{1}\n{2}",
+    text_rtf = {1, 2},
+}
+
 local function init_ann_data(stn, epos)
     local anns = get_or_add_anns(stn)
     if anns == nil then
         return
     end
     local result = {
+        cedule = {
+            table.copy(cedule_default_settings), table.copy(cedule_default_settings),
+            table.copy(cedule_default_settings), table.copy(cedule_default_settings)},
         chat_dosah = 50,
-        fmt_cedule1 = "", fmt_cedule2 = "", fmt_cedule3 = "", fmt_cedule4 = "",
+        fmt_delay = "{}",
         fmt_negdelay = "-{}",
-        fmt_prradek = {""},
-        fmt_radek = {""},
+        fmt_nodelay = "",
         fn_firstupper = false,
         fs_koleje = "",
         koleje = "",
-        pos_cedule1_fs = "", pos_cedule2_fs = "", pos_cedule3_fs = "", pos_cedule4_fs = "",
-        pos_cedule1_pos = vector.zero(), pos_cedule2_pos = vector.zero(), pos_cedule3_pos = vector.zero(), pos_cedule4_pos = vector.zero(),
         version = 1,
     }
     anns[epos] = result
+    -- print("DEBUG: ann data initialized for '"..stn.."'/"..epos..": "..dump2(result))
     return result
 end
 
@@ -415,10 +428,14 @@ local function get_ann_data(stn, epos, make_copy)
     end
     local ann = assert(anns[epos] or init_ann_data(stn, epos))
     if make_copy then
-        return table.copy(ann)
-    else
-        return ann
+        ann = table.copy(ann)
+        local cedule = {}
+        for i, v in ipairs(ann.cedule) do
+            cedule[i] = table.copy(v)
+        end
+        ann.cedule = cedule
     end
+    return ann
 end
 
 local function set_ann_data(stn, epos, data)
@@ -434,7 +451,6 @@ local function set_ann_data(stn, epos, data)
     else
         anns[epos] = table.copy(data)
     end
-    print("DEBUG: set_ann_data() => "..dump2({stn = stn, epos = epos, ann = anns[epos]}))
     return true
 end
 
@@ -450,7 +466,7 @@ local function attach_sign(stn, epos, i, sign_pos)
     if rozhl_meta:get_string("stn") ~= stn then
         return false, "Staniční rozhlas přísluší k jiné dopravně." -- vnitřní chyba!
     end
-    local data = get_ann_data(stn, epos)
+    local data = get_ann_data(stn, epos, false)
     if data == nil then
         return false, "Data staničního rozhlasu nebyla nalezena."
     end
@@ -468,16 +484,16 @@ local function attach_sign(stn, epos, i, sign_pos)
     end
 
     -- zkontrolovat zadání:
-    if i < 1 or i > 4 then
+    local cedule = data.cedule[i]
+    if cedule == nil then
         return false, "Chybný index."
     end
 
     -- připojit:
     local s = string.format("%d,%d,%d", sign_pos.x, sign_pos.y, sign_pos.z)
-    set_ann_data(stn, epos, {
-        ["pos_cedule"..i.."_fs"] = F(s),
-        ["pos_cedule"..i.."_pos"] = sign_pos,
-    })
+    local fs = F(s)
+    cedule.fs = fs
+    cedule.pos = sign_pos
     return true, "Cedule úspěšně připojena ke staničnímu rozhlasu."
 end
 
@@ -493,26 +509,24 @@ local function detach_sign(stn, epos, i)
     if rozhl_meta:get_string("stn") ~= stn then
         return false, "Staniční rozhlas přísluší k jiné dopravně." -- vnitřní chyba!
     end
-    local data = get_ann_data(stn, epos)
+    local data = get_ann_data(stn, epos, false)
     if data == nil then
         return false, "Data staničního rozhlasu nebyla nalezena."
     end
 
     -- zkontrolovat zadání:
-    if i < 1 or i > 4 then
+    local cedule = data.cedule[i]
+    if cedule == nil then
         return false, "Chybný index."
     end
 
-    local key = "pos_cedule"..i.."_fs"
-    if data[key] == nil or data[key] == "" then
+    if cedule.fs == "" then
         return false, "Cedule není připojena."
     end
 
     -- odpojit:
-    set_ann_data(stn, epos, {
-        [key.."_fs"] = "",
-        [key.."_pos"] = vector.zero(),
-    })
+    cedule.fs = ""
+    cedule.pos = vector.zero()
     return true, "Cedule úspěšně odpojena."
 end
 
@@ -543,14 +557,12 @@ local function init_formspec_callback(custom_state, player, formname, fields)
         local stn = assert(custom_state.list[custom_state.selection_index].stn)
         local stdata = advtrains.lines.stations[stn]
         if stdata ~= nil then
-            print("DEBUG: C")
             local meta = core.get_meta(pos)
             meta:set_string("infotext", "staniční rozhlas ("..(stdata.name or "???")..")")
             meta:set_string("owner", player_name)
             meta:set_string("stn", stn)
             init_ann_data(stn, custom_state.epos)
             core.chat_send_player(player_name, "*** Úspěšně nastaveno.")
-            print("DEBUG: D")
         end
     end
 end
@@ -599,40 +611,17 @@ local function get_setup_formspec(custom_state)
             "]container_end[]",
             -- ----
             "container[0.5,2.75]"..
-            "label[0,0.25;Formátování na cedule:]"..
-            "checkbox[5.5,0.25;fn_firstupper;první písmeno řádky vždy velké;",
+            "checkbox[0,0.25;fn_firstupper;první písmeno řádky odjezdu vždy velké;",
             ifthenelse(ifthenelse(custom_state.fn_firstupper ~= nil, custom_state.fn_firstupper, data.fn_firstupper), "true", "false"),
-            "]textarea[0,1;13.25,1.5;fmt_radek;formát řádků s odjezdem:;",
-        }
-        if data.fmt_radek ~= nil then
-            a(F(table.concat(data.fmt_radek, "\n")))
-        end
-        a("]textarea[0,3;13.25,1.5;fmt_prradek;formát prázdných řádků:;")
-        if data.fmt_prradek ~= nil then
-            a(F(table.concat(data.fmt_prradek, "\n")))
-        end
-        a{"]tooltip[fmt_radek;Uvedete-li více řádků\\, každý se použije jako formát pro odpovídající značku {N}\n"..
-            "ve formátu cedule a poslední se použije i pro všechny následující.]"..
-            "tooltip[fmt_prradek;V tomto poli se nenahrazují značky\\, text musí být uvedený tak\\, jak má být použit.\n"..
-            "Uvedete-li více řádků\\, každý se použije pro odpovídající značku {N} ve formátu cedule\n"..
-            "a poslední se použije i pro všechny následující.]"..
-            "container_end[]"..
-            "container[0.5,7.5]"..
-            "field[0,0.25;3.25,0.75;fmt_nodelay;bez zpoždění;", F(data.fmt_nodelay or ""), "]"..
-            "field[4,0.25;3.25,0.75;fmt_delay;zpoždění ({} = číslo);", F(data.fmt_delay or "{}"), "]"..
-            "field[8,0.25;3.25,0.75;fmt_negdelay;záp.zpoždění ({} = číslo);", F(data.fmt_negdelay or "-{}"), "]"..
+            "]field[0,1;3.25,0.75;fmt_nodelay;bez zpoždění;", F(data.fmt_nodelay or ""), "]"..
+            "field[4,1;3.25,0.75;fmt_delay;zpoždění ({} = číslo);", F(data.fmt_delay or "{}"), "]"..
+            "field[8,1;3.25,0.75;fmt_negdelay;záp.zpoždění ({} = číslo);", F(data.fmt_negdelay or "-{}"), "]"..
             "tooltip[fmt_nodelay;Text pro značku {ZPOZDENI} v případě\\, že vlak jede bez zpoždění.]"..
             "tooltip[fmt_delay;Formát pro značku {ZPOZDENI} v případě\\, že vlak má (kladné) zpoždění.\n"..
             "Značka {} se nahradí počtem sekund zpoždění.]"..
             "tooltip[fmt_negdelay;Formát pro značku {ZPOZDENI} v případě\\, že vlak má záporné zpoždění."..
             "Značka {} se nahradí absolutní hodnotou počtu sekund záporného zpoždění.]"..
-            "textarea[0,1;13.25,2;;;",
-            F("Podporované značky: {LINKA}, {VYCHOZI}, {CIL}, {KOLEJ}, {PRIJZA}, {ODJZA}, "..
-            "{ZPOZDENI}, {PREDCH}, {NASL}, {POLOHA}, {JMVLAKU}, {TYP}, {TYPVLAKU}.\n"..
-            "Formátovací specifikace: {LINKA:4} (pevná délka), {LINKA:4-} (min. délka), {LINKA:-4} (max. délka), {LINKA:2-4} "..
-            "(délka v rozmezí).\nNáhradní text: {LINKA|-}, {LINKA:3|není}.\nZopakování symbolu (symbol nesmí být písmeno, "..
-            "číslice, {, }, : ani |, symbol může být mezera, lze použít i ve formátu prázdných řádků: {.:7}, { :4}.)"),
-            "]container_end[]"..
+            "container_end[]"..
             "container[0.5,10.5]"..
             "box[0,0.15;14,0.05;#000000FF]"}
             --[[
@@ -691,22 +680,32 @@ local function get_setup_formspec(custom_state)
         )
         a("button[0.5,15;14,1;btn_save;Uložit]")
     elseif page == PAGE_SETUP_2 then
+        a(  "textarea[0.5,2;14,2;;;Podporované značky: {LINKA}\\, {VYCHOZI}\\, {CIL}\\, {KOLEJ}\\, {PRIJZA}\\, {ODJZA}\\, {ZPOZDENI}\\,"..
+            " {PREDCH}\\, {NASL}\\, {JMVLAKU}\\, {TYP}\\, {TYPVLAKU}\\, {ZDE}\\, {KOLEJE}.\n"..
+            "{LINKA:4} (pevná délka)\\, {LINKA:4-} (min. délka)\\, {LINKA:-4} (max. délka)\\, {LINKA:2-4} (rozmezí).\n"..
+            "Náhr. text: {LINKA|-}\\, {LINKA:3|-}.\n"..
+            "Zopakování symbolu (ne \\[A-Za-z0-9{}\\:|\\]), lze použít i ve formátu prázdných řádků: {.:7}\\, { :4}.]"..
+            "container[0.5,4]")
         for i = 1, 4 do
+            local cedule = data.cedule[i]
             local s = tostring(i)
-            local fs_pos_cedule = data["pos_cedule"..s.."_fs"] or ""
-            a{  "container[0.5,"..(2 * i - 2 + 6).."]"..
-                "textarea[0,0.5;13.25,1.5;fmt_cedule", s, ";cedule ", s, ":;",
-                CF(data["fmt_cedule"..s]),
-                "]field[2,0;4.5,0.5;pos_cedule", s, ";;",
-                fs_pos_cedule or "",
-                "]button[6.75,0;3,0.5;",
-                ifthenelse(fs_pos_cedule ~= "", "odp_cedule"..s..";odpojit", "pri_cedule"..s..";připojit"),
-                "]button_exit[10,0;3,0.5;zam_cedule", s, ";zaměřit...]"..
-                "container_end[]",
+            a{  "container[0,", string.format("%f", 2.5 * (i - 1)),
+                "]label[0,0.3;cedule ", s, ":]"..
+                "field[0,0.9;9.75,0.75;fmt_cedule", s, "_row;formát řádky / prázdný řádek:;",
+                F(cedule.row),
+                "]field[0,1.75;9.75,0.75;fmt_cedule", s, "_empty;;", F(cedule.empty),
+                "]textarea[10,0.5;4,2;fmt_cedule", s, ";;"..F(cedule.text),
+                "]field[2,0;4.5,0.5;pos_cedule", s, ";;", cedule.fs,
+                "]button_exit[10,0;3,0.5;zam_cedule", s,
+                ";zaměřit...]button[6.75,0;3,0.5;",
+                ifthenelse(cedule.fs ~= "", "odp_cedule"..s..";odpojit", "pri_cedule"..s..";připojit"),
+                "]container_end[]",
             }
         end
-        a{"label[0.5,14.5;", CF(custom_state.message),
-            "]button[0.5,15;14,1;btn_save;Uložit]"}
+        a{  "container_end[]"..
+            "label[0.5,14.5;", CF(custom_state.message), "]"..
+            "button[0.5,15;14,1;btn_save;Uložit]",
+        }
     elseif page == PAGE_IMPORT then
         a{
             "textarea[0.5,2.5;14,10;nastaveni;nastavení ve formátu JSON:;",
@@ -733,7 +732,7 @@ local function get_setup_formspec(custom_state)
 end
 
 local function setup_formspec_callback(custom_state, player, formname, fields)
-    print("DEBUG: setup_formspec_callback(): "..dump2({custom_state = custom_state, fields = fields, player_name = custom_state.player_name}))
+    -- print("DEBUG: setup_formspec_callback(): "..dump2({custom_state = custom_state, fields = fields, player_name = custom_state.player_name}))
     assert(player:get_player_name() == custom_state.player_name)
     local node = core.get_node(custom_state.pos)
     if node.name ~= rozhlas_node_name then
@@ -792,17 +791,6 @@ local function setup_formspec_callback(custom_state, player, formname, fields)
         if fields.fmt_negdelay then
             data.fmt_negdelay = fields.fmt_negdelay
         end
-        local fmt_ml_keys = {
-            "fmt_radek", "fmt_prradek",
-        }
-        for _, key in ipairs(fmt_ml_keys) do
-            local lines = fields[key]
-            if lines then
-                lines = string.split(lines, "\n", true)
-                assert(type(lines[1]) == "string")
-                data[key] = lines
-            end
-        end
 
         -- texty
         if fields.texty then
@@ -842,13 +830,33 @@ local function setup_formspec_callback(custom_state, player, formname, fields)
                 end
             end
             set_ann_data(stn, custom_state.epos, data)
+            custom_state.data = get_ann_data(stn, custom_state.epos, true)
         end
     elseif page == PAGE_SETUP_2 then
-        if fields.btn_save then
-            for i = 1, 4 do
-                data["fmt_cedule"..i] = assert(fields["fmt_cedule"..i])
+        -- update fields:
+        for i = 1, 4 do
+            local cedule = data.cedule[i]
+            local s = fields["fmt_cedule"..i]
+            if s ~= nil then
+                cedule.text = s
+                cedule.text_rtf = ktere_radky(s, true)
             end
-            set_ann_data(stn, custom_state.epos, data)
+            s = fields["fmt_cedule"..i.."_row"]
+            if s ~= nil then
+                cedule.row = s
+            end
+            s = fields["fmt_cedule"..i.."_empty"]
+            if s ~= nil then
+                cedule.empty = s
+            end
+        end
+        if fields.btn_save then
+            local new_cedule = {}
+            for i = 1, 4 do
+                new_cedule[i] = table.copy(data.cedule[i])
+            end
+            get_ann_data(stn, custom_state.epos, false).cedule = new_cedule
+            -- print("DEBUG: new_cedule saved, ann_data = "..dump2(get_ann_data(stn, custom_state.epos, false)))
             return get_setup_formspec(custom_state)
         else
             for i = 1, 4 do
@@ -863,7 +871,7 @@ local function setup_formspec_callback(custom_state, player, formname, fields)
                     local pos_cedule = vector.new(tonumber(x), tonumber(y), tonumber(z))
                     local success, message = attach_sign(stn, custom_state.epos, i, pos_cedule)
                     if success then
-                        local current_data = get_ann_data(stn, custom_state.epos)
+                        local current_data = get_ann_data(stn, custom_state.epos, true)
                         if current_data ~= nil then
                             custom_state.data = current_data
                         end
@@ -876,7 +884,7 @@ local function setup_formspec_callback(custom_state, player, formname, fields)
                 if fields["odp_cedule"..i] then
                     local success, message = detach_sign(stn, custom_state.epos, i)
                     if success then
-                        local current_data = get_ann_data(stn, custom_state.epos)
+                        local current_data = get_ann_data(stn, custom_state.epos, true)
                         if current_data ~= nil then
                             custom_state.data = current_data
                         end
@@ -942,7 +950,7 @@ end
 local debug_counter = 0
 
 local function update_ann(stn, epos, signs, deps, rwtime)
-    print("DEBUG: update_ann(): "..dump2({stn = stn, epos = epos, signs = signs, deps = deps, rwtime = rwtime}))
+    -- print("DEBUG: update_ann(): "..dump2({stn = stn, epos = epos, signs = signs, deps = deps, rwtime = rwtime}))
     local ann = get_ann_data(stn, epos)
     if ann == nil then
         core.log("error", "update_ann() called for "..stn.."/"..epos..", but ann is nil!")
@@ -956,6 +964,10 @@ local function update_ann(stn, epos, signs, deps, rwtime)
             tracks = {[tracks] = true}
         end
     end
+    local any_line = {
+        KOLEJE = "TODO", -- [ ] TODO
+        ZDE = al.get_station_name(stn),
+    }
     -- print("DEBUG: "..dump2({tracks = tracks}))
     local lines = {}
     -- update_ann(assert(stn), assert(ann.rozh_epos), signs, deps)
@@ -963,11 +975,10 @@ local function update_ann(stn, epos, signs, deps, rwtime)
         if (tracks == nil or tracks[dep.track]) and (dep.dep == nil or dep.dep > rwtime) then
             local linevar_def = dep.linevar_def
             local stops = linevar_def.stops
-            local line = {}
+            local line = setmetatable({}, {__index = any_line})
             line.LINKA = linevar_def.line or ""
             line.VYCHOZI = al.get_line_description(linevar_def, {line_number = false, first_stop = true, last_stop = false})
             line.CIL = dep.destination
-            print("DEBUG: CIL = '"..line.CIL.."'")
             if dep.track ~= "" then
                 line.KOLEJ = dep.track
             end
@@ -1008,48 +1019,41 @@ local function update_ann(stn, epos, signs, deps, rwtime)
             line.TYPVLAKU = "osobní vlak"
             debug_counter = debug_counter + 1
             line.POCITADLO = tostring(debug_counter)
-            -- print("DEBUG: line filled: "..dump2({line = line}))
             table.insert(lines, line)
         end
     end
-    local full_fmt, empty_fmt = ann.fmt_radek[1] or "", ann.fmt_prradek[1] or ""
-    local formatted_lines = {}
-    for i = 1, 9 do
-        if i > 1 then
-            if ann.fmt_radek[i] ~= nil then
-                full_fmt = ann.fmt_radek[i]
-            end
-            if ann.fmt_prradek[i] ~= nil then
-                empty_fmt = ann.fmt_prradek[i]
-            end
-        end
-        local s
-        if lines[i] ~= nil then
-            s = dosadit(full_fmt, lines[i])
-        else
-            s = dosadit(empty_fmt, {})
-        end
-        if s ~= "" and ann.fn_firstupper then
-            local l = ch_core.utf8_seek(s, 1, 1)
-            if l == nil then
-                s = ch_core.na_velka_pismena(s)
-            else
-                local c = s:sub(1, l - 1)
-                local uc = ch_core.na_velka_pismena(c)
-                if uc ~= c then
-                    s = uc..s:sub(l, -1)
-                end
-            end
-        end
-        formatted_lines[tostring(i)] = s
-    end
-    --[[print("DEBUG: formatted lines: "..dump2({formatted_lines = formatted_lines, fmt_radek = ann.fmt_radek, fmt_prradek = ann.fmt_prradek,
-        full_fmt = full_fmt, empty_fmt = empty_fmt}))]]
     if signs ~= nil then
+        local empty_table = {}
         for i = 1, 4 do
+            local cedule = ann.cedule[i]
             local sign_pos = signs[i]
             if sign_pos ~= nil and core.compare_block_status(sign_pos, "active") then
-                local s = dosadit(ann["fmt_cedule"..i] or "", formatted_lines)
+                local formatted_lines = setmetatable({}, {__index = any_line})
+                if type(cedule.text_rtf) == "table" then
+                    for _, i_row in ipairs(cedule.text_rtf) do
+                        if lines[i_row] == nil then
+                            -- prázdný řádek
+                            formatted_lines[tostring(i_row)] = dosadit(cedule.empty, empty_table)
+                        else
+                            -- řádek odjezdu
+                            local s = dosadit(cedule.row, lines[i_row])
+                            if s ~= "" and ann.fn_firstupper then
+                                local l = ch_core.utf8_seek(s, 1, 1)
+                                if l == nil then
+                                    s = ch_core.na_velka_pismena(s)
+                                else
+                                    local c = s:sub(1, l - 1)
+                                    local uc = ch_core.na_velka_pismena(c)
+                                    if uc ~= c then
+                                        s = uc..s:sub(l, -1)
+                                    end
+                                end
+                            end
+                            formatted_lines[tostring(i_row)] = s
+                        end
+                    end
+                end
+                local s = dosadit(cedule.text, formatted_lines)
                 if has_signs_api then
                     signs_api.set_display_text(sign_pos, s)
                 end
@@ -1065,7 +1069,6 @@ local function globalstep(dtime)
     if globalstep_time < 0 then
         return
     end
-    print("DEBUG: globalstep...")
     globalstep_time = globalstep_time - 5
 
     local rwtime = rwt.to_secs(rwt.get_time())
@@ -1086,9 +1089,10 @@ local function globalstep(dtime)
                 local rozh_pos = advtrains.decode_pos(rozh_epos)
                 local signs_count = 0
                 for i = 1, 4 do
-                    local s = ann["pos_cedule"..i.."_fs"]
+                    local cedule = assert(ann.cedule[i])
+                    local s = cedule.fs
                     if s ~= nil and s ~= "" then
-                        local sign_pos = assert(ann["pos_cedule"..i.."_pos"])
+                        local sign_pos = assert(cedule.pos)
                         if core.compare_block_status(sign_pos, "active") then
                             signs[i] = sign_pos
                             signs_count = signs_count + 1
@@ -1102,7 +1106,7 @@ local function globalstep(dtime)
                     signs = {}
                 elseif core.compare_block_status(rozh_pos, "active") then
                     -- cedule nejsou aktivní, ale rozhlas ano
-                    print("DEBUG: - "..rozh_epos.." : added ("..stn.."), because is active")
+                    -- print("DEBUG: - "..rozh_epos.." : added ("..stn.."), because is active")
                     table.insert(goa(subscriptions, stn), {rozh_pos = rozh_pos, rozh_epos = rozh_epos, rozh_def = ann})
                 end
             end
@@ -1206,19 +1210,20 @@ local function on_rightclick(pos, node, clicker, itemstack, pointed_thing)
     local meta = core.get_meta(pos)
     local owner = meta:get_string("owner")
     local stn = meta:get_string("stn")
-    if owner == "" or stn == "" then
+    local epos = advtrains.encode_pos(pos)
+    local stdata = advtrains.lines.stations[stn]
+    if owner == "" or stn == "" or stdata == nil or stdata.anns == nil or stdata.anns[epos] == nil then
         if not core.check_player_privs(clicker, "railway_operator") then
             core.chat_send_player(player_name, "*** K instalaci staničního rozhlasu je nutné právo railway_operator!")
             return
         end
-        local player_pos = vector.round(clicker:get_pos())
         local limit = 256 * 256
         local stations = advtrains.lines.load_stations_for_formspec()
         local list = {}
         for i, station_data in ipairs(stations) do
             local d2 = limit
             for _, stop in ipairs(station_data.tracks) do
-                local d2new = dist2(player_pos, stop.pos)
+                local d2new = dist2(pos, stop.pos)
                 if d2new < d2 then
                     d2 = d2new
                 end
@@ -1264,13 +1269,6 @@ local function on_rightclick(pos, node, clicker, itemstack, pointed_thing)
     end
     if player_name ~= owner and not core.check_player_privs(player_name, "protection_bypass") then -- train_admin?
         core.chat_send_player(player_name, "Nemáte oprávnění nastavovat tento staniční rozhlas!")
-        return
-    end
-    local epos = advtrains.encode_pos(pos)
-    local stdata = advtrains.lines.stations[stn]
-    if stdata == nil or stdata.anns == nil or stdata.anns[epos] == nil then
-        core.chat_send_player(player_name, "CHYBA: data dopravny nenalezena!")
-        print("DEBUG: stn = <"..stn..">")
         return
     end
     local stations = advtrains.lines.load_stations_for_formspec()
