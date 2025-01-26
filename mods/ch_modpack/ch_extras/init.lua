@@ -47,6 +47,7 @@ dofile_ud("colorable_doors.lua") -- lakované dveře
 dofile_ud("colorable_fence.lua") -- lakovaný plot -- : colorable_nodes.lua
 dofile_ud("colorable_grate.lua") -- lakované pletivo
 dofile_ud("colorable_glass.lua") -- barevné sklo
+dofile_ud("colorable_slab.lua") -- lakovaná deska 1/64
 dofile_ud("colorable_pole.lua") -- lakovaná tyč
 dofile_ud("colorable_walls.lua") -- lakovaná zeď
 dofile("covers.lua") -- pokrývky
