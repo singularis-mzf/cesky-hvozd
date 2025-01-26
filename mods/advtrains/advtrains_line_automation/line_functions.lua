@@ -107,34 +107,10 @@ end
 -- Předané linevar_def musí obsahovat platný seznam 'stops', ale nemusí obsahovat nic jiného (nemusí to být platná definice).
 -- V případě chyby vrací nil, nil.
 local function get_first_last_stations(linevar_def)
-    local stops = assert(linevar_def.stops)
-    assert(stops[1])
-    assert(stops[2]) -- každá definice linky musí obsahovat alespoň dvě zastávky
-    local i_first, i_last, i_firstx, i_lastx
-    for i, stop in ipairs(stops) do
-        local mode = stop.mode or MODE_NORMAL
-        if mode ~= MODE_DISABLED then
-            if i_first == nil then
-                if mode ~= MODE_HIDDEN and mode ~= MODE_FINAL_HIDDEN then
-                    i_first = i -- první neskrytá zastávka
-                end
-                if i_firstx == nil then
-                    i_firstx = i -- první nevypnutá zastávka (může být skrytá)
-                end
-            end
-            i_lastx = i
-            if mode == MODE_NORMAL or mode == MODE_REQUEST_STOP or mode == MODE_FINAL or mode == MODE_FINAL_CONTINUE then
-                i_last = i
-            end
-            if mode == MODE_FINAL or mode == MODE_FINAL_CONTINUE or mode == MODE_FINAL_HIDDEN then
-                break
-            end
-        end
-    end
-    if i_first ~= nil and i_last ~= nil then
-        return stops[i_first].stn, stops[i_last].stn
-    elseif i_firstx ~= nil and i_lastx ~= nil then
-        return stops[i_firstx].stn, stops[i_lastx].stn
+    local a, b = linevar_def.index_vychozi, linevar_def.index_cil
+    if a ~= nil and b ~= nil then
+        local stops = linevar_def.stops
+        return stops[a].stn, stops[b].stn
     else
         return nil, nil
     end
@@ -154,7 +130,6 @@ local function line_start(train, stn, departure_rwtime)
     end
     local linevar, linevar_def = al.try_get_linevar(train.line, stn, train.routingcode)
     if linevar == nil or linevar_def.disabled then
-        -- print("DEBUG: line_start() failed for "..(train.line or "").."/"..stn.."/"..(train.routingcode or ""))
         return false
     end
     ls.linevar = linevar
@@ -171,7 +146,6 @@ local function line_start(train, stn, departure_rwtime)
         last_stop_uppercase = true,
         train_name = true,
     })
-    -- print("DEBUG: line_start(): "..dump2({train_id = train.id, line_status = ls}))
     return true
 end
 
@@ -183,13 +157,11 @@ end
 ]]
 local function should_stop(pos, stdata, train)
     if stdata == nil or stdata.stn == nil then
-        -- print("DEBUG: should_stop() == false, because stdata is invalid!")
         return nil -- neplatná data
     end
 	local n_trainparts = #assert(train.trainparts)
     -- vyhovuje počet vagonů?
     if not ((stdata.minparts or 0) <= n_trainparts and n_trainparts <= (stdata.maxparts or 128)) then
-        -- print("DEBUG: should_stop("..stdata.stn..") == false, because n_trainparts is not in interval")
         return nil
     end
     local stn = assert(stdata.stn) -- zastávka stále může být anonymní
@@ -201,12 +173,10 @@ local function should_stop(pos, stdata, train)
     -- jde o linkový vlak?
     if linevar_def ~= nil then
         if next_index == nil then
-            -- print("DEBUG: should_stop("..stn..") == false, because linevar=='"..ls.linevar.."' and next_index == nil")
             return nil
         end
         local stop = assert(linevar_def.stops[next_index])
         if stop.pos ~= nil and stop.pos ~= string.format("%d,%d,%d", pos.x, pos.y, pos.z) then
-            -- print("DEBUG: should_stop("..stn..") == false, because the stop is limited to position "..stop.pos)
             return nil
         end
         if stop.mode ~= nil and stop.mode == MODE_REQUEST_STOP then
@@ -218,17 +188,7 @@ local function should_stop(pos, stdata, train)
                 return "on_request"
             end
         end
-        -- print("DEBUG: should_stop("..stn..") == true for "..linevar_def.name)
         return "true"
-        -- local result = next_index ~= nil -- zastávka má index => zastavit
-        --[[
-        if result then
-            print("DEBUG: should_stop() == true, because linevar=='"..ls.linevar.."' and get_line_status() retuned next_index == "..next_index)
-        else
-            print("DEBUG: should_stop() == false, because linevar=='"..ls.linevar.."' and get_line_status() retuned next_index == nil")
-        end
-        ]]
-        -- return result
         -- TODO: zastávky na znamení
     else
         local ars = stdata.ars
@@ -236,10 +196,8 @@ local function should_stop(pos, stdata, train)
         local result = ars and (ars.default or advtrains.interlocking.ars_check_rule_match(ars, train))
         if result then
             return "true"
-            -- print("DEBUG: should_stop("..stn..") == true, because linevar==nil and ARS rules match")
         else
             return nil
-            -- print("DEBUG: should_stop("..stn..") == false, because linevar==nil and ARS rules don't match")
         end
     end
 end
@@ -259,7 +217,6 @@ end
 function al.cancel_linevar(train)
     local ls = train.line_status
     if ls == nil or ls.linevar == nil then return false end
-    -- print("DEBUG: line_end(train_id = "..train.id..", linevar was: "..ls.linevar.."): "..dump2({line_status_old = ls}))
     ls.linevar = nil
     ls.linevar_station = nil
     ls.linevar_index = nil
@@ -296,6 +253,48 @@ function al.get_stop_names(linevar_def, start_index)
         result[1] = "???"
     end
     return result
+end
+
+--[[
+    Vrací:
+    a) index, stop_data -- pokud byla vyhovující předchozí zastávka nalezena
+    b) nil, nil -- pokud nalezena nebyla
+]]
+function al.get_first_stop(linevar_def, allow_hidden_stops)
+    if allow_hidden_stops then
+        return 1, linevar_def.stops[1]
+    else
+        local result = linevar_def.index_vychozi
+        if result ~= nil then
+            return result, linevar_def.stops[result]
+        else
+            return nil, nil
+        end
+    end
+end
+
+--[[
+    Vrací:
+    a) index, stop_data -- pokud byla vyhovující předchozí zastávka nalezena
+    b) nil, nil -- pokud nalezena nebyla
+]]
+function al.get_last_stop(linevar_def, allow_hidden_stops)
+    if allow_hidden_stops then
+        local stops = linevar_def.stops[result]
+        for i = linevar_def.index_cil, #stops do
+            local stop = stops[i]
+            local mode = stop.mode
+            if mode == MODE_FINAL or mode == MODE_FINAL_CONTINUE or mode == MODE_FINAL_HIDDEN then
+                return i, stop
+            end
+        end
+    else
+        local result = linevar_def.index_cil
+        if result ~= nil then
+            return result, linevar_def.stops[result]
+        end
+    end
+    return nil, nil
 end
 
 --[[
@@ -342,6 +341,9 @@ end
     b) nil, nil -- pokud nalezena nebyla
 ]]
 function al.get_terminus(linevar_def, current_index, allow_hidden_stops)
+    if linevar_def.index_cil ~= nil then
+        return linevar_def.index_cil, linevar_def.stops[linevar_def.index_cil]
+    end
     local stops = assert(linevar_def.stops)
     local r_i, r_stop
     if current_index < #stops then
@@ -507,7 +509,6 @@ end
 -- Je-li linevar_station == nil, doplní se z linevar. Je-li linevar == nil, vrátí nil, nil.
 function al.try_get_linevar_def(linevar, linevar_station)
     if linevar == nil then
-        -- print("DEBUG: try_get_linevar_def() => nil, because linevar == nil")
         return nil, nil
     end
     if linevar_station == nil then
@@ -522,11 +523,7 @@ function al.try_get_linevar_def(linevar, linevar_station)
         t = t.linevars
         if t ~= nil then
             return t[linevar], linevar_station
-        -- else
-            -- print("DEBUG: no linevars for linevar_station '"..linevar_station.."'")
         end
-    -- else
-        -- print("DEBUG: no data for linevar_station '"..linevar_station.."'")
     end
     return nil, nil
 end
@@ -541,11 +538,9 @@ function al.try_get_linevar(line, stn, rc)
         local linevar = line.."/"..stn.."/"..(rc or "")
         local result = al.try_get_linevar_def(linevar, stn)
         if result ~= nil then
-            -- print("DEBUG: linevar combination found: "..dump2({linevar = linevar, line = line, stn = stn, rc = rc or "", linevar_def = result}))
             return linevar, result
         end
     end
-    -- print("DEBUG: linevar combination not found for "..(line or "").."/"..(stn or "").."/"..(rc or ""))
     return nil, nil
 end
 
@@ -560,7 +555,6 @@ function al.get_line_status(train)
     assert(train)
     if train.line_status == nil then
         train.line_status = {}
-        -- print("DEBUG: new empty line_status created for train "..train.id)
         return train.line_status, nil
     end
     local ls = train.line_status
@@ -607,7 +601,6 @@ function al.on_train_approach(pos, train_id, train, index, has_entered)
     local pe = advtrains.encode_pos(pos)
     local stdata = advtrains.lines.stops[pe]
     if should_stop(pos, stdata, train) ~= nil then
-        -- print("DEBUG: on_train_approach(): will stop at station '"..stdata.stn.."'")
         advtrains.lzb_add_checkpoint(train, index, 2, nil)
         if train.line_status.linevar == nil then
             -- nelinkový vlak:
@@ -700,7 +693,6 @@ function al.on_train_enter(pos, train_id, train, index)
     end
     local planned_departure = rwtime + wait
     debug_print("Vlak "..train_id.." zastavil na "..stn.." a odjede za "..wait.." sekund ("..planned_departure..").")
-    -- print("DEBUG: planned departure: "..planned_departure.." = "..rwtime.." + "..wait)
     stdata.last_dep = planned_departure -- naplánovaný čas odjezdu
     stdata.last_wait = wait -- naplánovaná doba čekání
     ls.standing_at = pe
@@ -708,20 +700,17 @@ function al.on_train_enter(pos, train_id, train, index)
         -- zrušit stop_request, pokud jsme nezastavili na skryté zastávce:
         ls.stop_request = nil
     end
-    -- print("DEBUG: standing ls = "..dump2(ls))
 
     local can_start_line
     local had_linevar = linevar_def ~= nil
     if linevar_def == nil then
         -- nelinkový vlak
         can_start_line = true
-        -- print("DEBUG: train "..train_id.." is non-line train, can start a new line")
     elseif next_index ~= nil then
         -- linkový vlak zastavil na své řádné zastávce
         assert(stn ~= "") -- dopravna musí mít kód
         local stop_def = assert(linevar_def.stops[next_index])
         debug_print("Vlak "..train_id.." je linkový vlak ("..ls.linevar..") a zastavil na své pravidelné zastávce "..stn.." (index = "..next_index..")")
-        -- print("DEBUG: train "..train_id.." stopped at regular stop '"..stn.."': "..dump2({stop_def = stop_def}))
         record_skipped_stops(train_id, linevar_def, ls.linevar_index, next_index)
         local stop_smode = simple_modes[stop_def.mode or 0]
         if stop_smode == MODE_NORMAL then
@@ -761,7 +750,6 @@ function al.on_train_enter(pos, train_id, train, index)
         debug_print("Vlak "..train_id.." je linkový vlak ("..ls.linevar.."), ale zastavil na sobě neznámé zastávce "..stn..", což by se nemělo stát.")
         can_start_line = false
     end
-    -- print("DEBUG: "..dump2({can_start_line = can_start_line}))
 
     -- ATC příkaz
     local atc_command = "B0 W O"..stdata.doors..(stdata.kick and "K" or "").." D"..wait..
@@ -794,7 +782,6 @@ function al.on_train_enter(pos, train_id, train, index)
         train.text_inside = get_station_name(stn)
         -- core.after(wait, function() train.text_inside = "" end)
     end
-    -- print("DEBUG: the train will wait for "..wait.." seconds")
 end
 
 function al.on_train_leave(pos, train_id, train, index)
@@ -812,7 +799,6 @@ function al.on_train_leave(pos, train_id, train, index)
         debug_print("Vlak "..train_id.." zaznamenán na odjezdu: "..stn.." "..core.pos_to_string(pos).." @ "..rwtime)
     end
 
-    -- print("DEBUG: *on_train_leave("..train_id..") from "..(stdata and stdata.stn or "nil"))
     if ls.standing_at == pe then
         -- vlak stál v této dopravně
         ls.standing_at = nil
@@ -824,7 +810,6 @@ function al.on_train_leave(pos, train_id, train, index)
             ls.stop_request = nil -- zrušit stop_request při odjezdu ze zastávky, pokud není nekoncová skrytá
         end
         if stn ~= "" then
-            -- print("DEBUG: on_train_leave from non-anonymous stop")
             debug_print("Vlak "..train_id.." odjel ze zastávky "..stn)
             if ls.linevar_last_dep ~= nil and ls.linevar_last_dep > rwtime then
                 debug_print("Vlak "..train_id.." předčasně odjel z dopravny "..stn.." (zbývalo "..(ls.linevar_last_dep - rwtime).." sekund)")
@@ -834,7 +819,6 @@ function al.on_train_leave(pos, train_id, train, index)
                 end
             end
         else
-            -- print("DEBUG: on_train_leave from anonymous stop")
             debug_print("Vlak "..train_id.." odjel z anonymní zastávky "..core.pos_to_string(pos)..".")
         end
         train.text_inside = ""
@@ -874,9 +858,9 @@ function al.on_train_leave(pos, train_id, train, index)
         --[[ průjezd?
         local stn = (stdata and stdata.stn) or ""
         if stn ~= "" then
-            debug_print("DEBUG: Vlak "..train_id.." projel (odjezd) zastávkou "..stn..".")
+            debug_print("Vlak "..train_id.." projel (odjezd) zastávkou "..stn..".")
         else
-            debug_print("DEBUG: Vlak "..train_id.." projel (odjezd) anonymní zastávkou "..core.pos_to_string(pos)..".")
+            debug_print("Vlak "..train_id.." projel (odjezd) anonymní zastávkou "..core.pos_to_string(pos)..".")
         end
         ]]
     end
@@ -911,21 +895,6 @@ function al.get_last_passages(linevar_def)
         return passages, stops
     end
 end
-
---[[ DEBUG:
-local debug_print = {}
-function debug_print.print()
-    print(".")
-    core.after(1, debug_print.print)
-end
-debug_print.print()
-]]
-
---[[
-function al.rwt_to_cas()
-    return
-end
-]]
 
 local function get_last_pos(line_status)
     assert(line_status)
@@ -983,11 +952,90 @@ local function get_train_position(line_status, linevar_def, rwtime)
 end
 
 --[[
+local function prepare_prediction_for_dump(result)
+    local x = {}
+    for i, record in ipairs(result) do
+        local y = table.copy(record)
+        y.stdata = record.stdata.name
+        if y.arr_linevar_def ~= nil then
+            y.arr_linevar_def = y.arr_linevar_def.name
+        end
+        if y.dep_linevar_def ~= nil then
+            y.dep_linevar_def = y.dep_linevar_def.name
+        end
+        x[i] = y
+    end
+    return x
+end
+]]
+
+local function predict_train_continue(line, stn, rc, departure, result)
+    if line == nil or line == "" then
+        return
+    end
+    local linevar_def = al.try_get_linevar_def(line.."/"..stn.."/"..rc, stn)
+    if linevar_def == nil then
+        return
+    end
+    if #result == 0 then
+        return
+    end
+    local stops = assert(linevar_def.stops)
+    local last_record = result[#result]
+    last_record.dep = departure
+    last_record.dep_linevar_def = linevar_def
+    last_record.dep_index = 1
+    local index = 2
+    while stops[index] ~= nil do
+        local stop = stops[index]
+        local stdata = advtrains.lines.stations[stop.stn]
+        if stop.mode == MODE_FINAL or stop.mode == MODE_FINAL_CONTINUE or stop.mode == MODE_FINAL_HIDDEN then
+            -- koncová zastávka
+            local arr = departure + stop.dep
+            local record = {
+                stn = assert(stop.stn),
+                track = stop.track or "",
+                stdata = stdata,
+                arr = arr,
+                arr_linevar_def = linevar_def,
+                arr_index = index,
+                delay = 0,
+                hidden = stop.mode == MODE_FINAL_HIDDEN,
+            }
+            table.insert(result, record)
+            return
+        elseif stop.mode ~= MODE_DISABLED then
+            -- mezilehlá zastávka
+            local dep = departure + stop.dep
+            table.insert(result, {
+                stn = assert(stop.stn),
+                track = stop.track or "",
+                stdata = stdata,
+                arr = dep - (stop.wait or 10),
+                arr_linevar_def = linevar_def,
+                arr_index = index,
+                dep = dep,
+                dep_linevar_def = linevar_def,
+                dep_index = index,
+                delay = 0,
+                hidden = stop.mode == MODE_HIDDEN,
+            })
+        end
+        index = index + 1
+    end
+end
+
+--[[
     Zadaný vlak musí být linkový.
     Vrací:
-        {stn = string, track = string, stdata = table or nil, dep = int or nil, arr = int or nil, delay = int}
+        {
+            stn = string, track = string, delay = int,
+            stdata = table or nil,
+            dep = int or nil, dep_linevar_def = table or nil, dep_index = int or nil,
+            arr = int or nil, arr_linevar_def = table or nil, arr_index = int or nil,
+        }
 ]]
-function al.predict_train(line_status, linevar_def, rwtime)
+function al.predict_train(line_status, linevar_def, rwtime, allow_continue)
     assert(line_status)
     assert(linevar_def)
     local stops = linevar_def.stops
@@ -1003,6 +1051,7 @@ function al.predict_train(line_status, linevar_def, rwtime)
     else
         delay = 0
     end
+    local departure = line_status.linevar_dep
     if line_status.standing_at ~= nil then
         -- vlak stojí na zastávce
         local stop = assert(stops[index])
@@ -1012,9 +1061,10 @@ function al.predict_train(line_status, linevar_def, rwtime)
             track = stop.track or "",
             stdata = stdata,
             dep = assert(line_status.linevar_last_dep),
-            -- arr = nil,
+            dep_linevar_def = assert(linevar_def),
+            dep_index = index,
+            -- arr = nil, arr_index = nil, arr_linevar_def = nil,
             delay = delay,
-            index = index,
             hidden = stop.mode == MODE_HIDDEN
         })
     end
@@ -1024,31 +1074,43 @@ function al.predict_train(line_status, linevar_def, rwtime)
         local stdata = advtrains.lines.stations[stop.stn]
         if stop.mode == MODE_FINAL or stop.mode == MODE_FINAL_CONTINUE or stop.mode == MODE_FINAL_HIDDEN then
             -- koncová zastávka
-            table.insert(result, {
+            local arr = departure + stop.dep + delay
+            local record = {
                 stn = assert(stop.stn),
                 track = stop.track or "",
                 stdata = stdata,
-                arr = line_status.linevar_dep + stop.dep + delay,
+                arr = arr,
+                arr_linevar_def = linevar_def,
+                arr_index = index,
                 delay = delay,
-                index = index,
                 hidden = stop.mode == MODE_FINAL_HIDDEN,
-            })
+                final = true,
+            }
+            table.insert(result, record)
+            if allow_continue and (linevar_def.continue_line or "") ~= "" and stop.mode == MODE_FINAL_CONTINUE then
+                predict_train_continue(linevar_def.continue_line, stop.stn, linevar_def.continue_rc, arr + (stop.wait or 10), result)
+            end
             break
         elseif stop.mode ~= MODE_DISABLED then
             -- mezilehlá zastávka
+            local dep = departure + stop.dep + delay
             table.insert(result, {
                 stn = assert(stop.stn),
                 track = stop.track or "",
                 stdata = stdata,
-                arr = line_status.linevar_dep + stop.dep + delay, -- TODO...
-                dep = line_status.linevar_dep + stop.dep + delay,
+                arr = dep - (stop.wait or 10),
+                arr_linevar_def = linevar_def,
+                arr_index = index,
+                dep = dep,
+                dep_linevar_def = assert(linevar_def),
+                dep_index = index,
                 delay = delay,
-                index = index,
                 hidden = stop.mode == MODE_HIDDEN,
             })
         end
         index = index + 1
     end
+    -- print("DEBUG: "..dump2({prediction = prepare_prediction_for_dump(result)}))
     return result
 end
 
@@ -1131,36 +1193,44 @@ def = {
 }
 core.register_chatcommand("vlaky+", def)
 
--- DEBUG:
 def = {
     -- params = "",
     description = "(pro ladění)",
     privs = {server = true},
     func = function(player_name, param)
-        print("----")
-        for linevar, passages in pairs(last_passages) do
-            print("LINEVAR "..linevar..":")
-            local linevar_def = al.try_get_linevar_def(linevar)
-            if linevar_def ~= nil then
-                local stops = linevar_def.stops
-                for i, passage in ipairs(passages) do
-                    print("  Passage #"..i..":")
-                    for j, stop in ipairs(stops) do
-                        local s
-                        if passage[j] ~= nil then
-                            s = tostring(passage[j])
-                        else
-                            s = "-"
-                        end
-                        print("  - "..stop.stn.." = "..s.." ["..j.."]")
-                    end
-                end
-            else
-                print("ERROR! definition not found")
-            end
+        local train = advtrains.trains[param]
+        if train == nil then
+            return false, "Vlak "..param.." nenalezen!"
         end
-        print("----")
+        local line_status, linevar_def = al.get_line_status(train)
+        if linevar_def == nil then
+            return false, "Vlak "..param.." není linkový!"
+        end
+        -- function al.predict_train(line_status, linevar_def, rwtime, allow_continue)
+        local rwtime = rwt.to_secs(rwt.get_time())
+        local predictions = al.predict_train(line_status, linevar_def, rwtime, true)
+        local result = {"----"}
+        local s
+        for i, record in ipairs(predictions) do
+            local arr, dep
+            if record.arr ~= nil then
+                arr = "("..(record.arr - rwtime)..", lv="..record.arr_linevar_def.name..", i="..record.arr_index..")"
+            else
+                arr = "nil"
+            end
+            if record.dep ~= nil then
+                dep  = "("..(record.dep - rwtime)..", lv="..record.dep_linevar_def.name..", i="..record.dep_index..")"
+            else
+                dep = "nil"
+            end
+            result[i + 1] = "- "..record.stn.." ["..record.track.."] arr="..arr.." dep="..dep.." delay="..record.delay
+        end
+        table.insert(result, "----")
+        s = table.concat(result, "\n")
+        print(s)
+        core.chat_send_player(player_name, s)
         return true
     end,
 }
-core.register_chatcommand("odjezdy", def)
+core.register_chatcommand("jřád", def)
+core.register_chatcommand("jrad", def)

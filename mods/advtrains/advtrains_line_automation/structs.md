@@ -78,6 +78,19 @@ station = {
             -- je-li true, nové vlaky nemohou dostat tuto variantu přidělenu
             disabled = bool or nil,
 
+            -- je-li neprázdný řetězec, udává označení linky, na kterou bude vlak pravděpodobně pokračovat
+            -- ze zastávky v režimu MODE_FINAL_CONTINUE
+            continue_line = string or nil,
+
+            -- je-li continue_line neprázdný řetězec, udává směrový kód pro pokračování
+            continue_rc = string or nil,
+
+            -- index zobrazované výchozí zastávky v poli 'stops'; nil značí, že taková zastávka nebyla nalezena
+            index_vychozi = int or nil,
+
+            -- index zobrazované cílové zastávky v poli 'stops'; nil značí, že taková zastávka nebyla nalezena
+            index_cil = int or nil,
+
             -- seznam zastávek na lince, seřazený podle 'dep':
             stops = {
                 {
@@ -86,6 +99,11 @@ station = {
 
                     -- plánovaný čas odjezdu, relativně vůči odjezdu z výchozí zastávky (v sekundách)
                     dep = int,
+
+                    -- předpokládaný čas stání před časem odjezdu (používá se k zjištění času příjezdu)
+                    -- je-li nil, počítá se 10 sekund
+                    -- výjimka: pro koncové zastávky udává předpokládanou dobu stání po čase 'dep'
+                    wait = int or nil,
 
                     -- režim zastávky (podle konstant ve zdrojovém kódu)
                     -- nil odpovídá 0 (normální zastavení)
@@ -140,6 +158,9 @@ station = {
             -- je-li omezen na jednu konkrétní kolej, pak jde o název této koleje
             -- je-li omezen na více kolejí, pak jde o množinu indexovanou označeními kolejí
             koleje = {[string] = true, ...} or string or nil,
+
+            -- režim rozhlasu (RMODE_*)
+            rmode = int,
 
             -- číslo verze systému staničního rozhlasu (pro detekci zastaralých rozhlasů)
             version = int,

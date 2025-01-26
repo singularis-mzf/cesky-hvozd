@@ -179,7 +179,8 @@ local function get_formspec(custom_state)
         table.insert(formspec, "field[7,7;4,0.75;owner;spravuje:;")
     end
     table.insert(formspec, F(custom_state.owner).."]"..
-        "checkbox[11.25,7.25;disable_linevar;vypnout;"..custom_state.disable_linevar.."]")
+        "checkbox[11.25,7.25;disable_linevar;vypnout;"..custom_state.disable_linevar.."]"..
+        "field[13.5,7;3,0.75;continues;pokračování:;"..F(custom_state.continues).."]")
 
     if custom_state.message ~= "" then
         table.insert(formspec, "label[0.5,8.25;"..F(custom_state.message).."]")
@@ -204,10 +205,11 @@ local function get_formspec(custom_state)
 
     table.insert(formspec, "container[0,8.75]"..
         "label[0.5,0.25;odjezd]"..
-        "label[2,0.25;kód dop.]"..
-        "label[4.75,0.25;režim zastávky]"..
-        "label[9.5,0.25;kolej]"..
-        "label[11,0.25;omezení pozice]"..
+        "label[2,0.25;stání]"..
+        "label[3.5,0.25;kód dop.]"..
+        "label[6.25,0.25;režim zastávky]"..
+        "label[11,0.25;kolej]"..
+        "label[12.5,0.25;omezení pozice]"..
         "scrollbaroptions[min=0;max=550;arrows=show]"..
         "scrollbar[19,0.5;0.5,5.5;vertical;evl_scroll;"..custom_state.evl_scroll.."]"..
         "scroll_container[0.5,0.5;18.5,5.5;evl_scroll;vertical]"..
@@ -216,11 +218,12 @@ local function get_formspec(custom_state)
     -- výchozí zastávka:
     table.insert(formspec,
         "label[0.1,0.4;0]"..
-        "field[1.5,0;2.5,0.75;s01_stn;;"..F(custom_state.stops[1].stn).."]"..
-        "dropdown[4.25,0;4.5,0.75;s01_mode;výchozí,skrytá (výchozí);"..custom_state.stops[1].mode..";true]"..
-        "field[9,0;1.25,0.75;s01_track;;"..F(custom_state.stops[1].track).."]"..
-        "field[10.5,0;3,0.75;s01_pos;;"..F(custom_state.stops[1].pos).."]"..
-        "label[13.75,0.4;"..F(custom_state.stops[1].label).."]")
+        "field[1.5,0;1.25,0.75;s01_wait;;"..F(custom_state.stops[1].wait).."]"..
+        "field[3,0;2.5,0.75;s01_stn;;"..F(custom_state.stops[1].stn).."]"..
+        "dropdown[5.75,0;4.5,0.75;s01_mode;výchozí,skrytá (výchozí);"..custom_state.stops[1].mode..";true]"..
+        "field[10.5,0;1.25,0.75;s01_track;;"..F(custom_state.stops[1].track).."]"..
+        "field[12,0;3,0.75;s01_pos;;"..F(custom_state.stops[1].pos).."]"..
+        "label[15.25,0.4;"..F(custom_state.stops[1].label).."]")
 
     -- ostatní zastávky:
     local y_base, y_scale = 0, 1
@@ -236,33 +239,35 @@ local function get_formspec(custom_state)
         local y2 = string.format("%f", y_base + (i - 1) * y_scale + 0.4) -- for a label
         table.insert(formspec,
             "field[0,"..y..";1.25,0.75;s"..n.."_dep;;"..F(stop.dep).."]"..
-            "field[1.5,"..y..";2.5,0.75;s"..n.."_stn;;"..F(stop.stn).."]"..
-            "dropdown[4.25,"..y..";4.5,0.75;s"..n..
+            "field[1.5,"..y..";1.25,0.75;s"..n.."_wait;;"..F(stop.wait).."]"..
+            "field[3,"..y..";2.5,0.75;s"..n.."_stn;;"..F(stop.stn).."]"..
+            "dropdown[5.75,"..y..";4.5,0.75;s"..n..
                 "_mode;normální,na znamení (experimentální),skrytá (mezilehlá),vypnutá,koncová,koncová skrytá,"..
             "koncová (pokračuje);"..stop.mode..";true]"..
-            "field[9,"..y..";1.25,0.75;s"..n.."_track;;"..F(stop.track).."]"..
-            "field[10.5,"..y..";3,0.75;s"..n.."_pos;;"..F(stop.pos).."]"..
-            "label[13.75,"..y2..";"..F(stop.label).."]")
+            "field[10.5,"..y..";1.25,0.75;s"..n.."_track;;"..F(stop.track).."]"..
+            "field[12,"..y..";3,0.75;s"..n.."_pos;;"..F(stop.pos).."]"..
+            "label[15.25,"..y2..";"..F(stop.label).."]")
     end
 
     table.insert(formspec,
         "scroll_container_end[]"..
-        "tooltip[0,0;2,1;Odjezd: očekávaná jízdní doba v sekundách od odjezdu z výchozí zastávky\n"..
+        "tooltip[0,0;1.5,1;Odjezd: očekávaná jízdní doba v sekundách od odjezdu z výchozí zastávky\n"..
         "do odjezdu z dané zastávky. Podle ní se počítá zpoždění. Hodnota musí být jedinečná\n"..
         "pro každou zastávku na lince a podle ní se zastávky seřadí.\n"..
         "Pro úplné smazání dopravny z linky nechte pole prázdné.]"..
-        "tooltip[2,0;2.75,1;Kód dopravny: kód dopravny\\, kde má vlak zastavit. Vlak bude ignorovat\n"..
+        "tooltip[1.5,0;1.5,1;Stání: očekáváná doba stání před odjezdem. Pro koncové zastávky očekávaná doba stání po příjezdu.]"..
+        "tooltip[3.5,0;2.75,1;Kód dopravny: kód dopravny\\, kde má vlak zastavit. Vlak bude ignorovat\n"..
         "ARS pravidla a zastaví na první zastávkové koleji v dopravně pro odpovídající počet vagonů.\n"..
         "Kód dopravny se na lince může opakovat.]"..
-        "tooltip[4.75,0;4.75,1;Režim zastávky: výchozí/normální - vždy zastaví\\;\n"..
+        "tooltip[6.25,0;4.75,1;Režim zastávky: výchozí/normální - vždy zastaví\\;\n"..
         "na znamení: zastaví na znamení (zatím experimentální)\\;\n"..
         "skrytá – vždy zastaví\\, ale nezobrazí se v jízdních řádech\\;\n"..
         "vypnutá – nezastaví (použijte při výlukách nebo při zrušení zastávky)\\;\n"..
         "koncová – vždy zastaví a tím ukončí spoj\\, vlak se stane nelinkovým\\;\n"..
         "koncová (pokračuje) – jako koncová\\, ale vlak se může na odjezdu opět stát linkovým.]"..
-        "tooltip[9.5,0;1.5,1;Kolej: nepovinný\\, orientační údaj do jízdních řádů – na které koleji\n"..
+        "tooltip[10.5,0;1.5,1;Kolej: nepovinný\\, orientační údaj do jízdních řádů – na které koleji\n"..
         "vlaky obvykle zastavují. Nepovinný údaj.]"..
-        "tooltip[10.5,0;3.5,1;Omezení pozice: Zadávejte jen v případě potřeby.\n"..
+        "tooltip[12.5,0;3.5,1;Omezení pozice: Zadávejte jen v případě potřeby.\n"..
         "Je-li zadáno\\, vlak v dané dopravně nezastaví na žádné jiné zastávkové koleji\n"..
         "než na té\\, která leží přesně na zadané pozici. Příklad platné hodnoty:\n123,7,-13]"..
         "container_end[]")
@@ -317,6 +322,7 @@ local function custom_state_set_selection_index(custom_state, new_selection_inde
         if stop ~= nil then
             stops[i] = {
                 dep = tostring(assert(stop.dep)),
+                wait = tostring(stop.wait or 10),
                 stn = assert(stop.stn),
                 mode = mode_to_formspec(i, stop.mode),
                 track = stop.track or "",
@@ -326,6 +332,7 @@ local function custom_state_set_selection_index(custom_state, new_selection_inde
         else
             stops[i] = {
                 dep = ifthenelse(i == 1, "0", ""),
+                wait = "10",
                 stn = "",
                 mode = 1,
                 track = "",
@@ -341,12 +348,17 @@ local function custom_state_set_selection_index(custom_state, new_selection_inde
         custom_state.train_name = current_linevar.train_name or ""
         custom_state.owner = assert(current_linevar.owner)
         custom_state.disable_linevar = ifthenelse(current_linevar.disabled, "true", "false")
+        custom_state.continues = current_linevar.continue_line or ""
+        if custom_state.continues ~= "" then
+            custom_state.continues = custom_state.continues.."/"..(current_linevar.continue_rc or "")
+        end
     else
         custom_state.line = ""
         custom_state.rc = ""
         custom_state.train_name = ""
         custom_state.owner = custom_state.player_name
         custom_state.disable_linevar = "false"
+        custom_state.continues = ""
     end
     custom_state.owner = ch_core.prihlasovaci_na_zobrazovaci(custom_state.owner)
     custom_state.compiled_linevar = nil
@@ -413,6 +425,8 @@ local function custom_state_compile_linevar(custom_state)
         return false, "Správa linky musí být vyplněná!"
     elseif train_name:len() > 256 then
         return false, "Jméno vlaku je příliš dlouhé!"
+    elseif custom_state.continues:len() - custom_state.continues:gsub("/", ""):len() > 1 then
+        return false, "Pole 'pokračování' smí obsahovat nejvýše jedno lomítko!"
     end
     -- Zkontrolovat zastávky:
     local errcount = 0
@@ -468,6 +482,10 @@ local function custom_state_compile_linevar(custom_state)
                 if stop.track ~= "" then
                     new_stop.track = stop.track
                 end
+                local new_wait = tonumber(stop.wait)
+                if new_wait ~= nil and new_wait == math.floor(new_wait) and new_wait >= 0 and new_wait <= 3600 then
+                    new_stop.wait = new_wait
+                end
                 table.insert(stops, new_stop)
                 if stop.stn ~= "" then
                     stop.label = color_green.."= "..assert(stations[stop.stn].name)
@@ -482,17 +500,43 @@ local function custom_state_compile_linevar(custom_state)
         return false, "Varianta linky musí obsahovat alespoň jednu koncovou zastávku!"
     end
     table.sort(stops, function(a, b) return a.dep < b.dep end)
+
+    local index_vychozi, index_cil
+    for i, stop in ipairs(stops) do
+        local mode = stop.mode or MODE_NORMAL
+        if mode ~= MODE_DISABLED and mode ~= MODE_HIDDEN and mode ~= MODE_FINAL_HIDDEN then
+            if index_vychozi == nil then
+                index_vychozi = i
+            end
+            index_cil = i
+        end
+        if mode == MODE_FINAL or mode == MODE_FINAL_CONTINUE or mode == MODE_FINAL_HIDDEN then
+            break
+        end
+    end
+
     custom_state.compiled_linevar = {
         name = line.."/"..stops[1].stn.."/"..rc,
         line = line,
         owner = ch_core.jmeno_na_prihlasovaci(owner),
         stops = stops,
+        continue_line = "",
+        continue_rc = "",
+        index_vychozi = index_vychozi,
+        index_cil = index_cil,
     }
     if train_name ~= "" then
         custom_state.compiled_linevar.train_name = train_name
     end
     if custom_state.disable_linevar == "true" then
         custom_state.compiled_linevar.disabled = true
+    end
+    local continues_split = custom_state.continues:find("/")
+    if continues_split == nil then
+        custom_state.compiled_linevar.continue_line = custom_state.continues
+    else
+        custom_state.compiled_linevar.continue_line = custom_state.continues:sub(1, continues_split - 1)
+        custom_state.compiled_linevar.continue_rc = custom_state.continues:sub(continues_split + 1, -1)
     end
     return true, nil
 end
@@ -524,14 +568,14 @@ local function formspec_callback(custom_state, player, formname, fields)
         end
     end
     -- fields:
-    for _, key in ipairs({"line", "rc", "train_name", "owner"}) do
+    for _, key in ipairs({"line", "rc", "train_name", "owner", "continues"}) do
         if fields[key] then
             custom_state[key] = fields[key]
         end
     end
     for i, stop in ipairs(custom_state.stops) do
         local prefix = string.format("s%02d_", i)
-        for _, key in ipairs({"dep", "stn", "track", "pos"}) do
+        for _, key in ipairs({"dep", "wait", "stn", "track", "pos"}) do
             local value = fields[prefix..key]
             if value then
                 stop[key] = value
@@ -712,6 +756,7 @@ local function show_editor_formspec(player, linevar_to_select)
 		player_name = assert(player:get_player_name()),
         evl_scroll = 0,
         message = "",
+        continues = "",
 	}
     if not custom_state_refresh_linevars(custom_state, linevar_to_select) then
         custom_state_set_selection_index(custom_state, 1)

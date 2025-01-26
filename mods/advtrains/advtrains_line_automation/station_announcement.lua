@@ -10,6 +10,10 @@ local has_signs_api = core.get_modpath("signs_api")
 local has_unifieddyes = core.get_modpath("unifieddyes")
 local rozhlas_node_name = "advtrains_line_automation:stanicni_rozhlas_experimental"
 
+local RMODE_DEP = 1
+local RMODE_ARR = 2
+local RMODE_BOTH = 3
+
 local PAGE_SETUP_1 = 1
 local PAGE_SETUP_2 = 2
 local PAGE_IMPORT = 3
@@ -229,7 +233,6 @@ local function dosadit(format, data, defaults)
             success, min, max, align = lengths_from_string(tagfmt)
         end
         tag = tag_name
-        -- print("DEBUG: tag("..tag..") tagname("..tag_name..")")
         if tag:len() < 4 and ch_core.utf8_length(tag) == 1 and alphanum_chars_set[tag] == nil then
             -- speciální případ: zopakovat znak alespoň min-krát
             if min ~= nil then
@@ -416,7 +419,6 @@ local function init_ann_data(stn, epos)
         version = 1,
     }
     anns[epos] = result
-    -- print("DEBUG: ann data initialized for '"..stn.."'/"..epos..": "..dump2(result))
     return result
 end
 
@@ -608,9 +610,12 @@ local function get_setup_formspec(custom_state)
             "label[7,0.5;omezit jen na koleje:]"..
             "field[10,0.2;4,0.6;koleje;;",
             data.fs_koleje or "",
-            "]container_end[]",
+            "]label[0,1.25;režim:]"..
+            "dropdown[1.75,1;3,0.6;rmode;odjezdy,příjezdy,odjezdy i příjezdy;",
+            tostring(data.rmode),
+            ";true]container_end[]",
             -- ----
-            "container[0.5,2.75]"..
+            "container[0.5,3.25]"..
             "checkbox[0,0.25;fn_firstupper;první písmeno řádky odjezdu vždy velké;",
             ifthenelse(ifthenelse(custom_state.fn_firstupper ~= nil, custom_state.fn_firstupper, data.fn_firstupper), "true", "false"),
             "]field[0,1;3.25,0.75;fmt_nodelay;bez zpoždění;", F(data.fmt_nodelay or ""), "]"..
@@ -732,7 +737,6 @@ local function get_setup_formspec(custom_state)
 end
 
 local function setup_formspec_callback(custom_state, player, formname, fields)
-    -- print("DEBUG: setup_formspec_callback(): "..dump2({custom_state = custom_state, fields = fields, player_name = custom_state.player_name}))
     assert(player:get_player_name() == custom_state.player_name)
     local node = core.get_node(custom_state.pos)
     if node.name ~= rozhlas_node_name then
@@ -752,6 +756,12 @@ local function setup_formspec_callback(custom_state, player, formname, fields)
         then
             -- přepnout dopravnu
             custom_state.station_index = tonumber(fields.dopravna)
+        end
+        if fields.rmode then
+            local new_rmode = tonumber(fields.rmode)
+            if new_rmode ~= nil and new_rmode ~= data.rmode then
+                data.rmode = new_rmode
+            end
         end
 
         -- zaškrtávací pole:
@@ -831,6 +841,14 @@ local function setup_formspec_callback(custom_state, player, formname, fields)
             end
             set_ann_data(stn, custom_state.epos, data)
             custom_state.data = get_ann_data(stn, custom_state.epos, true)
+            -- update infotext:
+            local meta = core.get_meta(custom_state.pos)
+            local station_name = al.get_station_name(meta:get_string("stn"))
+            local koleje = custom_state.data.fs_koleje
+            if koleje ~= "" then
+                koleje = " ["..koleje:gsub("\\", "").."]"
+            end
+            meta:set_string("infotext", "staniční rozhlas\n"..station_name..koleje)
         end
     elseif page == PAGE_SETUP_2 then
         -- update fields:
@@ -856,7 +874,6 @@ local function setup_formspec_callback(custom_state, player, formname, fields)
                 new_cedule[i] = table.copy(data.cedule[i])
             end
             get_ann_data(stn, custom_state.epos, false).cedule = new_cedule
-            -- print("DEBUG: new_cedule saved, ann_data = "..dump2(get_ann_data(stn, custom_state.epos, false)))
             return get_setup_formspec(custom_state)
         else
             for i = 1, 4 do
@@ -949,65 +966,123 @@ end
 
 local debug_counter = 0
 
-local function update_ann(stn, epos, signs, deps, rwtime)
-    -- print("DEBUG: update_ann(): "..dump2({stn = stn, epos = epos, signs = signs, deps = deps, rwtime = rwtime}))
+local function fill(line, prefix, rwtime_now, rwtime_value)
+    if rwtime_value == nil then
+        return
+    end
+    local secs = math.ceil((rwtime_value - rwtime_now) / 5) * 5
+    if secs < 0 then
+        secs = -secs
+        line[prefix.."_Z"] = "-"
+    end
+    local n_s = secs % 60
+    local n_m = (secs - n_s) / 60
+    local s = tostring(n_s)
+    local m = tostring(n_m)
+    line[prefix] = tostring(secs)
+    line[prefix.."_M"] = m
+    line[prefix.."_S"] = s
+    if n_m < 10 then
+        line[prefix.."_MM"] = "0"..m
+    else
+        line[prefix.."_MM"] = m
+    end
+    if n_s < 10 then
+        line[prefix.."_SS"] = "0"..s
+    else
+        line[prefix.."_SS"] = s
+    end
+end
+
+--[[
+    records je tabulka záznamů z al.predict_train(), doplněných o následující pole:
+        start = string or nil, -- název výchozí zastávky, pokud vlak odněkud přijíždí, jinak ""
+        destination = string, -- název cílové zastávky, pokud vlak někam pokračuje, jinak ""
+        prev_stop = string, -- název předchozí zastávky, pokud vlak odněkud přijíždí a pokud jde o jinou zastávku než 'start', jinak ""
+        next_stop = string, -- název násl. zast., pokud vlak pokračuje a pokud jde o jinou zastávku než 'destination', jinak ""
+        last_pos = string, -- název poslední známé polohy vlaku, nebo ""
+        --
+        stn = string, track = string, delay = int,
+        stdata = table or nil,
+        dep = int or nil, dep_linevar_def = table or nil, dep_index = int or nil,
+        arr = int or nil, arr_linevar_def = table or nil, arr_index = int or nil,
+]]
+
+local function update_ann(stn, epos, signs, records, rwtime)
     local ann = get_ann_data(stn, epos)
     if ann == nil then
         core.log("error", "update_ann() called for "..stn.."/"..epos..", but ann is nil!")
         return
     end
-    local tracks = ann.koleje
-    if tracks ~= nil and type(tracks) ~= "table" then
-        if tracks == "" then
-            tracks = nil
-        else
-            tracks = {[tracks] = true}
-        end
-    end
+    local tracks
     local any_line = {
-        KOLEJE = "TODO", -- [ ] TODO
         ZDE = al.get_station_name(stn),
     }
-    -- print("DEBUG: "..dump2({tracks = tracks}))
+    if ann.fs_koleje ~= "" then
+        any_line.KOLEJE = ann.fs_koleje:gsub("\\", "")
+        tracks = ann.koleje
+        if tracks ~= nil and type(tracks) ~= "table" then
+            if tracks == "" then
+                tracks = nil
+            else
+                tracks = {[tracks] = true}
+            end
+        end
+    end
     local lines = {}
-    -- update_ann(assert(stn), assert(ann.rozh_epos), signs, deps)
-    for _, dep in ipairs(deps) do
-        if (tracks == nil or tracks[dep.track]) and (dep.dep == nil or dep.dep > rwtime) then
-            local linevar_def = dep.linevar_def
+    for _, record in ipairs(records) do
+        assert(record.start ~= nil)
+        assert(record.destination ~= nil)
+        assert(record.prev_stop ~= nil)
+        assert(record.next_stop ~= nil)
+        assert(record.last_pos ~= nil)
+        if
+            (tracks == nil or tracks[record.track]) and (
+                (ann.rmode == RMODE_ARR and record.arr ~= nil) or
+                (ann.rmode == RMODE_DEP and record.dep ~= nil) or
+                (ann.rmode == RMODE_BOTH and (record.arr ~= nil or record.dep ~= nil))
+            )
+        then
+            local linevar_def, index
+            if record.dep ~= nil then
+                linevar_def, index = record.dep_linevar_def, record.dep_index
+            else
+                linevar_def, index = record.arr_linevar_def, record.arr_index
+            end
             local stops = linevar_def.stops
             local line = setmetatable({}, {__index = any_line})
             line.LINKA = linevar_def.line or ""
-            line.VYCHOZI = al.get_line_description(linevar_def, {line_number = false, first_stop = true, last_stop = false})
-            line.CIL = dep.destination
-            if dep.track ~= "" then
-                line.KOLEJ = dep.track
+            if record.start ~= "" then
+                line.VYCHOZI = record.start
             end
-            if dep.arr ~= nil then
-                line.PRIJZA = math.ceil((dep.arr - rwtime) / 5) * 5
+            if record.destination ~= "" then
+                line.CIL = record.destination
             end
-            if dep.dep ~= nil then
-                line.ODJZA = math.ceil((dep.dep - rwtime) / 5) * 5
+            if record.track ~= "" then
+                line.KOLEJ = record.track
             end
-            local abs_delay = math.abs(dep.delay)
+            fill(line, "PRIJZA", rwtime, record.arr)
+            fill(line, "ODJZA", rwtime, record.dep)
+            local abs_delay = math.abs(record.delay)
             if abs_delay < 5 then
                 line.ZPOZDENI = ann.fmt_nodelay or ""
             else
                 line.ZPOZDENI = dosadit(
-                    ifthenelse(dep.delay > 0, ann.fmt_delay or "{}", ann.fmt_negdelay or "-{}"),
+                    ifthenelse(record.delay > 0, ann.fmt_delay or "{}", ann.fmt_negdelay or "-{}"),
                     {[""] = tostring(5 * math.ceil(abs_delay / 5))}
                 )
             end
             -- PREDCH
-            if dep.prev_stop ~= nil then
-                line.PREDCH = dep.prev_stop
+            if record.prev_stop ~= "" then
+                line.PREDCH = record.prev_stop
             end
             -- NASL
-            if dep.next_stop ~= nil then
-                line.NASL = dep.next_stop
+            if record.next_stop ~= "" then
+                line.NASL = record.next_stop
             end
             -- POLOHA
-            if dep.last_pos ~= nil then
-                line.POLOHA = dep.last_pos
+            if record.last_pos ~= "" then
+                line.POLOHA = record.last_pos
             end
             -- JMVLAKU
             if linevar_def.train_name ~= nil then
@@ -1063,6 +1138,64 @@ local function update_ann(stn, epos, signs, deps, rwtime)
 end
 
 local globalstep_time = -5
+local first_run = true
+
+local function first_globalstep()
+    for stn, stdata in pairs(advtrains.lines.stations) do
+        local anns = stdata.anns
+        if stdata.anns ~= nil then
+            for rozh_epos, ann in pairs(stdata.anns) do
+                if ann.version < 2 then
+                    if ann.version == 1 then
+                        -- upgrade version 1 to version 2:
+                        ann.rmode = RMODE_DEP
+                        ann.version = 2
+                    end
+                end
+            end
+        end
+    end
+end
+
+local function get_start_by_linevar_def(cache, linevar_def)
+    local result = cache[linevar_def.name]
+    if result == nil then
+        result = al.get_line_description(linevar_def, {first_stop = true, last_stop = false, last_stop_prefix = ""})
+        if result == "???" then
+            result = ""
+        end
+        cache[linevar_def.name] = result
+    end
+    return result
+end
+
+local function get_destination_by_linevar_def(cache, linevar_def)
+    local result = cache[linevar_def.name]
+    if result == nil then
+        result = al.get_line_description(linevar_def, {first_stop = false, last_stop = true, last_stop_prefix = ""})
+        if result == "???" then
+            result = ""
+        end
+        cache[linevar_def.name] = result
+    end
+    return result
+end
+
+local function get_name_by_stn(cache, stn, alt)
+    local result = cache[stn]
+    if result == nil then
+        result = al.get_station_name(stn)
+        if result == "???" then
+            result = ""
+        end
+        cache[stn] = result
+    end
+    if result == "" then
+        return alt
+    else
+        return result
+    end
+end
 
 local function globalstep(dtime)
     globalstep_time = globalstep_time + dtime
@@ -1071,7 +1204,13 @@ local function globalstep(dtime)
     end
     globalstep_time = globalstep_time - 5
 
+    if first_run then
+        first_run = false
+        return first_globalstep()
+    end
+
     local rwtime = rwt.to_secs(rwt.get_time())
+    local rwtime_limit = rwtime + 3600
     -- Shromáždit rozhlasy:
     local subscriptions = {--[[
         [stn] = {{
@@ -1101,65 +1240,127 @@ local function globalstep(dtime)
                 end
                 if signs_count > 0 then
                     -- nějaké cedule jsou aktivní
-                    -- print("DEBUG: - "..rozh_epos.." : added ("..stn.."), because has "..signs_count.." active signs")
                     table.insert(goa(subscriptions, stn), {rozh_pos = rozh_pos, rozh_epos = rozh_epos, rozh_def = ann, signs = signs})
                     signs = {}
                 elseif core.compare_block_status(rozh_pos, "active") then
                     -- cedule nejsou aktivní, ale rozhlas ano
-                    -- print("DEBUG: - "..rozh_epos.." : added ("..stn.."), because is active")
                     table.insert(goa(subscriptions, stn), {rozh_pos = rozh_pos, rozh_epos = rozh_epos, rozh_def = ann})
                 end
             end
-        else
-            -- print("DEBUG: - "..stn.." not added (anns: "..ifthenelse(stdata.anns == nil, "nil", "non-nil")..")")
         end
     end
 
     -- Shromáždit vlaky:
-    local deps_by_stn = {}
+    local by_stn = {}
     for stn, _ in pairs(subscriptions) do
-        deps_by_stn[stn] = {}
+        by_stn[stn] = {}
     end
+    local start_by_linevar = {}
+    local destination_by_linevar = {}
+    local name_by_stn = {}
+
     for _, train in pairs(advtrains.trains) do
         local ls, linevar_def = al.get_line_status(train)
         if linevar_def ~= nil then
-            local prediction = al.predict_train(ls, linevar_def, rwtime)
-            local last_pos = al.get_last_pos_station_name(ls)
-            local destination = "???"
-            for i = #prediction, 1, -1 do
-                local p = prediction[i]
-                if not p.hidden then
-                    destination = al.get_station_name(p.stn)
-                    break
-                end
-            end
-            for _, record in ipairs(prediction) do
-                local deps = deps_by_stn[record.stn]
-                if deps ~= nil and record.dep ~= nil then
-                    local record_index = assert(record.index)
-                    local other_index, other_data = al.get_prev_stop(linevar_def, record_index, false)
-                    if other_index ~= nil then
-                        record.prev_stop = al.get_station_name(other_data.stn)
-                    end
-                    other_index, other_data = al.get_next_stop(linevar_def, record_index, false)
-                    if other_index ~= nil then
-                        record.next_stop = al.get_station_name(other_data.stn)
-                    end
+            local prediction = al.predict_train(ls, linevar_def, rwtime, true)
+            local last_pos = al.get_last_pos_station_name(ls) or ""
+            for i, record in ipairs(prediction) do
+                local records = by_stn[record.stn]
+                if
+                    records ~= nil and
+                    (record.dep ~= nil or record.arr ~= nil) and
+                    (record.dep == nil or record.dep < rwtime_limit) and
+                    (record.arr == nil or record.arr < rwtime_limit)
+                then
+                    -- nutno doplnit: start, destination, prev_stop, next_stop, last_pos
                     record.last_pos = last_pos -- název poslední dopravny, kde byl vlak spatřen
-                    record.linevar = linevar_def.name
-                    record.linevar_def = linevar_def
-                    record.destination = destination
-                    table.insert(deps, record)
+                    if record.final and record.arr ~= nil and record.dep ~= nil and record.arr_linevar_def.name ~= record.dep_linevar_def.name then
+                        -- změna linky => rozdělit na příjezd a odjezd
+                        local record2 = table.copy(record)
+                        record2.dep = nil
+                        record2.dep_linevar_def = nil
+                        record2.dep_index = nil
+                        record2.start = get_start_by_linevar_def(start_by_linevar, record.arr_linevar_def)
+                        local other_index, other_data = al.get_prev_stop(record.arr_linevar_def, record.arr_index, false)
+                        if other_index ~= nil then
+                            record2.prev_stop = get_name_by_stn(name_by_stn, other_data.stn, "")
+                        end
+                        record2.next_stop = ""
+                        record2.destination = get_destination_by_linevar_def(destination_by_linevar, record.arr_linevar_def)
+                        table.insert(records, record2)
+                        record.arr = nil
+                        record.arr_linevar_def = nil
+                        record.arr_index = nil
+                        record.start = get_start_by_linevar_def(start_by_linevar, record.dep_linevar_def)
+                        record.prev_stop = ""
+                        other_index, other_data = al.get_next_stop(record.dep_linevar_def, record.dep_index, false)
+                        if other_index ~= nil then
+                            record.next_stop = get_name_by_stn(name_by_stn, other_data.stn, "")
+                        end
+                        record.destination = get_destination_by_linevar_def(destination_by_linevar, record.dep_linevar_def)
+                        table.insert(records, record)
+                    elseif record.dep ~= nil then
+                        -- odjezd nebo příjezd/odjezd (ale na stejné lince!)
+                        local linevar_def = record.dep_linevar_def
+                        local index = record.dep_index
+                        record.start = get_start_by_linevar_def(start_by_linevar, linevar_def)
+                        record.destination = get_destination_by_linevar_def(destination_by_linevar, linevar_def)
+                        record.prev_stop = ""
+                        record.next_stop = ""
+                        local other_index, other_data
+                        if record.arr ~= nil then
+                            other_index, other_data = al.get_prev_stop(linevar_def, index, false)
+                            if other_index ~= nil then
+                                record.prev_stop = get_name_by_stn(name_by_stn, other_data.stn, "")
+                            end
+                        end
+                        other_index, other_data = al.get_next_stop(linevar_def, index, false)
+                        if other_index ~= nil then
+                            record.next_stop = get_name_by_stn(name_by_stn, other_data.stn, "")
+                        end
+                        record.destination = get_destination_by_linevar_def(destination_by_linevar, linevar_def)
+                        table.insert(records, record)
+                    elseif record.arr ~= nil then
+                        -- jen příjezd
+                        local linevar_def = record.arr_linevar_def
+                        local index = record.arr_index
+                        record.start = get_start_by_linevar_def(start_by_linevar, linevar_def)
+                        local other_index, other_data = al.get_prev_stop(linevar_def, index, false)
+                        if other_index ~= nil then
+                            record.prev_stop = get_name_by_stn(name_by_stn, other_data.stn, "")
+                        else
+                            record.prev_stop = ""
+                        end
+                        record.next_stop = ""
+                        record.destination = get_destination_by_linevar_def(destination_by_linevar, linevar_def)
+                        table.insert(records, record)
+                    end
                 end
             end
         end
     end
 
     -- Aktualizovat rozhlasy:
-    for stn, deps in pairs(deps_by_stn) do
-        table.sort(deps, function(a, b) return assert(a.dep) < assert(b.dep) end)
+    for stn, records in pairs(by_stn) do
+        local deps = records
+        local arrs = table.copy(records)
+        table.sort(deps, function(a, b)
+            return assert(a.dep or a.arr) < assert(b.dep or b.arr)
+        end)
+        table.sort(arrs, function(a, b)
+            return (a.arr or 1.0e+100) < (b.arr or 1.0e+100)
+        end)
+        for i = #arrs, 1, -1 do
+            if arrs[i].arr == nil then
+                arrs[i] = nil -- ponechat jen příjezdy v rámci nejbližší hodiny
+            end
+        end
         for _, ann in ipairs(subscriptions[stn]) do
-            update_ann(assert(stn), assert(ann.rozh_epos), ann.signs, deps, rwtime)
+            if ann.rmode ~= RMODE_ARR then
+                update_ann(assert(stn), assert(ann.rozh_epos), ann.signs, deps, rwtime)
+            else
+                update_ann(assert(stn), assert(ann.rozh_epos), ann.signs, arrs, rwtime)
+            end
         end
     end
 end
@@ -1324,8 +1525,8 @@ end
 local box = {
     type = "fixed",
     fixed = {
-        {-0.25, -0.25, 0, 0.25, 0.25, 0.5},
-        {-0.5, -0.4, -0.25, 0.5, 0.4, 0},
+        {-0.125, 0.125, 0.25, 0.125, 0.5, 0.5},
+        {-0.25, 0.05, 0, 0.25, 0.45, 0.25},
     },
 }
 
