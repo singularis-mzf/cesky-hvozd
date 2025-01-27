@@ -115,7 +115,7 @@ advtrains.register_tracks("default", {
 	shared_texture="advtrains_dtrack_tieless_shared.png",
 	second_texture="default_gravel.png",
 	description=attrans("Track").." "..attrans("(Tieless)"),
-	formats={vst1={true, false, true}, vst2={true, false, true}, vst31={true}, vst32={true}, vst33={true}},
+	formats=advtrains.default_slope_formats.t_30deg_slope,
 }, advtrains.ap.t_30deg_slope)
 
 minetest.register_craft({
@@ -136,7 +136,7 @@ advtrains.register_tracks("default", {
 	shared_texture="advtrains_dtrack_tieless_shared.png",
 	second_texture="default_gravel.png^[multiply:#956338",
 	description=attrans("Track with Railway Gravel").." "..attrans("(Tieless)"),
-	formats={vst1={true, false, true}, vst2={true, false, true}, vst31={true}, vst32={true}, vst33={true}},
+	formats=advtrains.default_slope_formats.t_30deg_slope,
 }, advtrains.ap.t_30deg_slope)
 
 minetest.register_craft({

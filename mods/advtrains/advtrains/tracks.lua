@@ -163,12 +163,47 @@ advtrains.ap.t_30deg_slope={
 		vst31={conns = conns(8,0,0,0.33), rail_y = 0.16, desc = "uphill 1/3", slope=true},
 		vst32={conns = conns(8,0,0.33,0.66), rail_y = 0.5, desc = "uphill 2/3", slope=true},
 		vst33={conns = conns(8,0,0.66,1), rail_y = 0.83, desc = "uphill 3/3", slope=true},
+		vst41={conns = conns(8,0,0,1/4), rail_y = 1/4 - 1/8, desc = "uphill 1/4", slope=true},
+		vst42={conns = conns(8,0,1/4,2/4), rail_y = 2/4 - 1/8, desc = "uphill 2/4", slope=true},
+		vst43={conns = conns(8,0,2/4,3/4), rail_y = 3/4 - 1/8, desc = "uphill 3/4", slope=true},
+		vst44={conns = conns(8,0,3/4,1), rail_y = 1 - 1/8, desc = "uphill 4/4", slope=true},
+		vst51={conns = conns(8,0,0,1/5), rail_y = 1/5 - 1/10, desc = "uphill 1/5", slope=true},
+		vst52={conns = conns(8,0,1/5,2/5), rail_y = 2/5 - 1/10, desc = "uphill 2/5", slope=true},
+		vst53={conns = conns(8,0,2/5,3/5), rail_y = 3/5 - 1/10, desc = "uphill 3/5", slope=true},
+		vst54={conns = conns(8,0,3/5,4/5), rail_y = 4/5 - 1/10, desc = "uphill 4/5", slope=true},
+		vst55={conns = conns(8,0,4/5,1), rail_y = 5/5 - 1/10, desc = "uphill 5/5", slope=true},
+		vst61={conns = conns(8,0,0,1/6), rail_y = 1/6 - 1/12, desc = "uphill 1/6", slope=true},
+		vst62={conns = conns(8,0,1/6,2/6), rail_y = 2/6 - 1/12, desc = "uphill 2/6", slope=true},
+		vst63={conns = conns(8,0,2/6,3/6), rail_y = 3/6 - 1/12, desc = "uphill 3/6", slope=true},
+		vst64={conns = conns(8,0,3/6,4/6), rail_y = 4/6 - 1/12, desc = "uphill 4/6", slope=true},
+		vst65={conns = conns(8,0,4/6,5/6), rail_y = 5/6 - 1/12, desc = "uphill 5/6", slope=true},
+		vst66={conns = conns(8,0,5/6,1), rail_y = 6/6 - 1/12, desc = "uphill 6/6", slope=true},
+		vst71={conns = conns(8,0,0,1/7), rail_y = 1/7 - 1/14, desc = "uphill 1/7", slope=true},
+		vst72={conns = conns(8,0,1/7,2/7), rail_y = 2/7 - 1/14, desc = "uphill 2/7", slope=true},
+		vst73={conns = conns(8,0,2/7,3/7), rail_y = 3/7 - 1/14, desc = "uphill 3/7", slope=true},
+		vst74={conns = conns(8,0,3/7,4/7), rail_y = 4/7 - 1/14, desc = "uphill 4/7", slope=true},
+		vst75={conns = conns(8,0,4/7,5/7), rail_y = 5/7 - 1/14, desc = "uphill 5/7", slope=true},
+		vst76={conns = conns(8,0,5/7,6/7), rail_y = 6/7 - 1/14, desc = "uphill 6/7", slope=true},
+		vst77={conns = conns(8,0,6/7,1), rail_y = 7/7 - 1/14, desc = "uphill 7/7", slope=true},
+		vst81={conns = conns(8,0,0,1/8), rail_y = 1/8 - 1/16, desc = "uphill 1/8", slope=true},
+		vst82={conns = conns(8,0,1/8,2/8), rail_y = 2/8 - 1/16, desc = "uphill 2/8", slope=true},
+		vst83={conns = conns(8,0,2/8,3/8), rail_y = 3/8 - 1/16, desc = "uphill 3/8", slope=true},
+		vst84={conns = conns(8,0,3/8,4/8), rail_y = 4/8 - 1/16, desc = "uphill 4/8", slope=true},
+		vst85={conns = conns(8,0,4/8,5/8), rail_y = 5/8 - 1/16, desc = "uphill 5/8", slope=true},
+		vst86={conns = conns(8,0,5/8,6/8), rail_y = 6/8 - 1/16, desc = "uphill 6/8", slope=true},
+		vst87={conns = conns(8,0,6/8,7/8), rail_y = 7/8 - 1/16, desc = "uphill 7/8", slope=true},
+		vst88={conns = conns(8,0,7/8,1), rail_y = 8/8 - 1/16, desc = "uphill 8/8", slope=true},
 	},
 	regsp=true,
 	slopeplacer={
 		[2]={"vst1", "vst2"},
 		[3]={"vst31", "vst32", "vst33"},
-		max=3,--highest entry
+		[4]={"vst41", "vst42", "vst43", "vst44"},
+		[5]={"vst51", "vst52", "vst53", "vst54", "vst55"},
+		[6]={"vst61", "vst62", "vst63", "vst64", "vst65", "vst66"},
+		[7]={"vst71", "vst72", "vst73", "vst74", "vst75", "vst76", "vst77"},
+		[8]={"vst81", "vst82", "vst83", "vst84", "vst85", "vst86", "vst87", "vst88"},
+		max=8,--highest entry
 	},
 	slopeplacer_45={
 		[2]={"vst1_45", "vst2_45"},
@@ -720,7 +755,7 @@ function sl.create_slopeplacer_on_place(def, preset)
 			pos=vector.add(pos, dirvec)
 		end
 		minetest.chat_send_player(player:get_player_name(), attrans("Can't place: no supporting node at upper end."))
-		return itemstack
+		return istack
 	end
 end
 

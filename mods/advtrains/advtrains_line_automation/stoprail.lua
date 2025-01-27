@@ -82,7 +82,7 @@ local function show_stoprailform(pos, player)
 	local formspec = "formspec_version[4]"..
 		"size[8,12]"..
 		"item_image[0.25,0.25;1,1;advtrains_line_automation:dtrack_stop_placer]"..
-		"label[1.4,0.85;"..minetest.formspec_escape(item_name).."]"..
+		"textarea[1.35,0.6;5.5,0.6;;;"..minetest.formspec_escape(string.format("%s %d,%d,%d", item_name, pos.x, pos.y, pos.z)).."]"..
 		"button_exit[7,0.25;0.75,0.75;close;X]"..
 		"style[ars,line,routingcode;font=mono]"..
 		"label[0.25,1.75;"..attrans("Station Code").." | "..attrans("Station Name").."]"..

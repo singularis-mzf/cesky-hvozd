@@ -147,6 +147,17 @@ minetest.register_craft({
 ---- translate well to a block game.
 -- END crossings
 
+advtrains.default_slope_formats = {t_30deg_slope = {
+	vst1={true, false, true},
+	vst2={true, false, true},
+	vst31={true}, vst32={true}, vst33={true},
+	vst41={true}, vst42={true}, vst43={true}, vst44={true},
+	vst51={true}, vst52={true}, vst53={true}, vst54={true}, vst55={true}, 
+	vst61={true}, vst62={true}, vst63={true}, vst64={true}, vst65={true}, vst66={true}, 
+	vst71={true}, vst72={true}, vst73={true}, vst74={true}, vst75={true}, vst76={true}, vst77={true}, 
+	vst81={true}, vst82={true}, vst83={true}, vst84={true}, vst85={true}, vst86={true}, vst87={true}, vst88={true},
+}}
+
 --slopes
 advtrains.register_tracks("default", {
 	nodename_prefix="advtrains:dtrack",
@@ -156,7 +167,7 @@ advtrains.register_tracks("default", {
 	shared_texture="advtrains_dtrack_shared.png",
 	second_texture="default_gravel.png",
 	description=attrans("Track"),
-	formats={vst1={true, false, true}, vst2={true, false, true}, vst31={true}, vst32={true}, vst33={true}},
+	formats=advtrains.default_slope_formats.t_30deg_slope,
 }, advtrains.ap.t_30deg_slope)
 
 minetest.register_craft({
@@ -177,7 +188,7 @@ advtrains.register_tracks("default", {
 	shared_texture="advtrains_dtrack_shared.png",
 	second_texture="default_gravel.png^[multiply:#956338",
 	description=attrans("Track with Railway Gravel"),
-	formats={vst1={true, false, true}, vst2={true, false, true}, vst31={true}, vst32={true}, vst33={true}},
+	formats=advtrains.default_slope_formats.t_30deg_slope,
 }, advtrains.ap.t_30deg_slope)
 
 minetest.register_craft({
