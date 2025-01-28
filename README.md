@@ -1162,6 +1162,14 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 # Ostatní použité zdroje
 
+## Advtrains More Slopes (advtrains\_moreslopes)
+
+* Zdroj: [https://codeberg.org/Nazalassa/advtrains\_moreslopes.git](https://codeberg.org/Nazalassa/advtrains\_moreslopes.git), revize dff2c7466910c9a560dd12b6e86cf8b55301e3b4
+* Původní licence: GPLv2 (kód), CC-BY-SA-4.0 International (média)
+* [ContentDB](https://content.luanti.org/packages/Nazalassa/advtrains_moreslopes/)
+* Author: Nazalassa
+* Note: Nazalassa wishes not to upload this work to Github. Please read my stance in mods/advtrains_moreslopes_extract/README.md file.
+
 ## Always Greener (Always-Greener)
 
 * Zdroj: [https://github.com/Sneglium/Always-Greener/](https://github.com/Sneglium/Always-Greener/), revize 8d3fee4deda4341784d92cb78d75a4964531d87b
