@@ -2,6 +2,14 @@ ch_base.open_mod(minetest.get_current_modname())
 -- Translation support
 local S = minetest.get_translator("new_campfire")
 
+local ch_help = "Ohniště vhodně umístěte (ne do blízkosti hořlavých předmětů).\n"..
+	"Pravým klikem křesadlem je zapálíte. Pak můžete přikládat tyčky.\n"..
+	"Nakonec nechte ohniště vyhasnout a vychladnout. Prázdné ohniště budete moci vysbírat\n"..
+	"nebo naplnit novými tyčkami. Kdykoliv můžete přidat (pravým klikem) gril. Gril odeberete\n"..
+	"levým klikem, když ohniště zrovna nehoří."
+
+local ch_help_group = "ncfire"
+
 -- VARIABLES
 
 new_campfire = {}
@@ -222,11 +230,13 @@ end
 
 local function burn_out(pos, node)
 	if string.find(node.name, "embers") then
-		minetest.set_node(pos, {name = string.gsub(node.name, "_with_embers", "")})
+		node.name = string.gsub(node.name, "_with_embers", "")
+		minetest.set_node(pos, node)
 		minetest.add_item(pos, "new_campfire:ash")
 	else
 		fire_particles_off(pos)
-		minetest.set_node(pos, {name = string.gsub(node.name, "campfire_active", "fireplace_with_embers")})
+		node.name = string.gsub(node.name, "campfire_active", "fireplace_with_embers")
+		minetest.set_node(pos, node)
 	end
 end
 
@@ -264,23 +274,34 @@ minetest.register_node('new_campfire:fireplace', {
 		"new_campfire_empty_tile.png"
 	},
 	use_texture_alpha = "clip",
+	paramtype2 = "facedir",
 	walkable = false,
 	buildable_to = false,
 	sunlight_propagates = false,
 	paramtype = 'light',
-	groups = {dig_immediate=2, flammable=0},
+	groups = {crumbly=3, oddly_breakable_by_hand=1},
 	selection_box = sbox,
 	sounds = default.node_sound_stone_defaults(),
 	--drop = {max_items = 3, items = {{items = {"stairs:slab_cobble 3"}}}},
+	_ch_help = "Tip: Prázdné ohniště bez grilu je otáčitelné klíčem (můžete ho použít k dekoračním účelům).\n"..
+		"Přidáním tyček, když leží na zemi, z něj učiníte normální ohniště.",
 
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
+		if node.param2 > 4 then
+			minetest.get_meta(pos):set_string("infotext", "")
+			return
+		end
 		local name = itemstack:get_name()
 		local a=add_stick(pos, itemstack, minetest.is_creative_enabled(player:get_player_name()))
 		if a then
-			minetest.swap_node(pos, {name = "new_campfire:campfire"})
+			node.name = "new_campfire:campfire"
+			node.param2 = 0
+			minetest.set_node(pos, node)
 		elseif name == "new_campfire:grille" then
 			itemstack:take_item()
-			minetest.swap_node(pos, {name = "new_campfire:fireplace_with_grille"})
+			node.name = "new_campfire:fireplace_with_grille"
+			node.param2 = 0
+			minetest.swap_node(pos, node)
 		end
 	end,
 
@@ -307,10 +328,13 @@ minetest.register_node('new_campfire:campfire', {
 	walkable = false,
 	buildable_to = false,
 	sunlight_propagates = true,
-	groups = {dig_immediate=3, flammable=0},
+	groups = {crumbly=2, flammable=0},
 	paramtype = 'light',
+	paramtype2 = "degrotate",
 	selection_box = sbox,
 	sounds = default.node_sound_stone_defaults(),
+	_ch_help = ch_help,
+	_ch_help_group = ch_help_group,
 
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
@@ -319,11 +343,16 @@ minetest.register_node('new_campfire:campfire', {
 		meta:set_string('infotext', S("Campfire"));
 	end,
 
+	on_place = function(itemstack, placer, pointed_thing)
+		return core.item_place(itemstack, placer, pointed_thing, math.random(0, 239))
+	end,
+
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local itemname = itemstack:get_name()
 		if itemname == "fire:flint_and_steel" then
 			minetest.sound_play("fire_flint_and_steel",{pos = pos, gain = 0.5, max_hear_distance = 8})
-			minetest.set_node(pos, {name = 'new_campfire:campfire_active'})
+			node.name = 'new_campfire:campfire_active'
+			minetest.set_node(pos, node)
 			local id = minetest.add_particle({
 				pos = {x = pos.x, y = pos.y, z = pos.z},
 				velocity = {x=0, y=0.1, z=0},
@@ -338,7 +367,8 @@ minetest.register_node('new_campfire:campfire', {
 			})
 		elseif itemname == "new_campfire:grille" then
 			itemstack:take_item()
-			minetest.swap_node(pos, {name = "new_campfire:campfire_with_grille"})
+			node.name = "new_campfire:campfire_with_grille"
+			minetest.swap_node(pos, node)
 		end
 	end,
 })
@@ -359,7 +389,8 @@ minetest.register_node('new_campfire:campfire_active', {
 	buildable_to = false,
 	sunlight_propagates = true,
 	groups = {oddly_breakable_by_hand=3, flammable=0, not_in_creative_inventory=1, igniter=1},
-	paramtype = 'none',
+	paramtype = 'light',
+	paramtype2 = "degrotate",
 	light_source = 13,
 	damage_per_second = 3,
 	drop = "new_campfire:campfire",
@@ -371,7 +402,8 @@ minetest.register_node('new_campfire:campfire_active', {
 		if not a then
 			if name == "new_campfire:grille" then
 				itemstack:take_item()
-				minetest.swap_node(pos, {name = "new_campfire:campfire_active_with_grille"})
+				node.name = "new_campfire:campfire_active_with_grille"
+				minetest.swap_node(pos, node)
 			end
 		end
 	end,
@@ -415,8 +447,9 @@ minetest.register_node('new_campfire:fireplace_with_embers', {
 	buildable_to = false,
 	sunlight_propagates = false,
 	paramtype = 'light',
+	paramtype2 = "degrotate",
 	light_source = 5,
-	groups = {dig_immediate=3, flammable=0, not_in_creative_inventory=1},
+	groups = {crumbly=2, not_in_creative_inventory=1},
 	selection_box = sbox,
 	sounds = default.node_sound_stone_defaults(),
 	drop = {max_items = 3, items = {{items = {"stairs:slab_cobble 3"}}}},
@@ -425,15 +458,18 @@ minetest.register_node('new_campfire:fireplace_with_embers', {
 		local name = itemstack:get_name()
 		local a=add_stick(pos, itemstack, minetest.is_creative_enabled(player:get_player_name()))
 		if a then
-			minetest.swap_node(pos, {name = "new_campfire:campfire"})
+			node.name = "new_campfire:campfire"
+			minetest.swap_node(pos, node)
 			minetest.after(new_campfire.flare_up, function()
 				if minetest.get_meta(pos):get_int("it_val") > 0 then
-					minetest.swap_node(pos, {name="new_campfire:campfire_active"})
+					node.name = "new_campfire:campfire_active"
+					minetest.swap_node(pos, node)
 				end
 			end)
 		elseif name == "new_campfire:grille" then
 			itemstack:take_item()
-			minetest.swap_node(pos, {name = "new_campfire:fireplace_with_embers_with_grille"})
+			node.name = "new_campfire:fireplace_with_embers_with_grille"
+			minetest.swap_node(pos, node)
 		end
 	end,
 
@@ -468,8 +504,9 @@ minetest.register_node('new_campfire:fireplace_with_embers_with_grille', {
 	buildable_to = false,
 	sunlight_propagates = false,
 	paramtype = 'light',
+	paramtype2 = "degrotate",
 	light_source = 5,
-	groups = {dig_immediate=3, flammable=0, not_in_creative_inventory=1},
+	groups = {crumbly=2, not_in_creative_inventory=1},
 	selection_box = grille_sbox,
 	node_box = grille_cbox,
 	sounds = default.node_sound_stone_defaults(),
@@ -482,14 +519,31 @@ minetest.register_node('new_campfire:fireplace_with_embers_with_grille', {
 			}
 		}
 	},
+
+	on_punch = function(pos, node, puncher, pointed_thing)
+		if puncher ~= nil then
+			local player_name = puncher:get_player_name()
+			if core.is_protected(pos, player_name) then
+				core.record_protection_violation(pos, player_name)
+				return
+			end
+			puncher:get_inventory():add_item("main", ItemStack("new_campfire:grille"))
+			node.name = "new_campfire:fireplace_with_embers"
+			core.set_node(pos, node)
+			core.sound_play({name = "default_dig_metal", gain = 0.5}, {pos = pos, max_hear_distance = 32}, true)
+		end
+	end,
+
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local name = itemstack:get_name()
 		local a=add_stick(pos, itemstack, minetest.is_creative_enabled(player:get_player_name()))
 		if a then
-			minetest.swap_node(pos, {name = "new_campfire:campfire_with_grille"})
+			node.name = "new_campfire:campfire_with_grille"
+			minetest.swap_node(pos, node)
 			minetest.after(new_campfire.flare_up, function()
 				if minetest.get_meta(pos):get_int("it_val") > 0 then
-					minetest.swap_node(pos, {name="new_campfire:campfire_active_with_grille"})
+					node.name = "new_campfire:campfire_active_with_grille"
+					minetest.swap_node(pos, node)
 				end
 			end)
 		end
@@ -517,7 +571,8 @@ minetest.register_node('new_campfire:fireplace_with_grille', {
 	buildable_to = false,
 	sunlight_propagates = false,
 	paramtype = 'light',
-	groups = {dig_immediate=3, flammable=0, not_in_creative_inventory=1},
+	paramtype2 = "degrotate",
+	groups = {crumbly = 2, not_in_creative_inventory=1},
 	selection_box = grille_sbox,
 	node_box = grille_cbox,
 	sounds = default.node_sound_stone_defaults(),
@@ -536,11 +591,26 @@ minetest.register_node('new_campfire:fireplace_with_grille', {
 		meta:set_int("em_val", 0)
 		meta:set_string('infotext', S("Fireplace"));
 	end,
+	on_punch = function(pos, node, puncher, pointed_thing)
+		if puncher ~= nil then
+			local player_name = puncher:get_player_name()
+			if core.is_protected(pos, player_name) then
+				core.record_protection_violation(pos, player_name)
+				return
+			end
+			puncher:get_inventory():add_item("main", ItemStack("new_campfire:grille"))
+			node.name = "new_campfire:fireplace"
+			node.param2 = 0
+			core.set_node(pos, node)
+			core.sound_play({name = "default_dig_metal", gain = 0.5}, {pos = pos, max_hear_distance = 32}, true)
+		end
+	end,
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		local name = itemstack:get_name()
 		local a=add_stick(pos, itemstack, minetest.is_creative_enabled(player:get_player_name()))
 		if a then
-			minetest.swap_node(pos, {name = "new_campfire:campfire_with_grille"})
+			node.name = "new_campfire:campfire_with_grille"
+			minetest.set_node(pos, node)
 		end
 	end,
 })
@@ -559,8 +629,9 @@ minetest.register_node('new_campfire:campfire_with_grille', {
 	inventory_image = "new_campfire_campfire.png",
 	buildable_to = false,
 	sunlight_propagates = true,
-	groups = {dig_immediate=3, flammable=0, not_in_creative_inventory=1},
+	groups = {crumbly=2, flammable=0, not_in_creative_inventory=1},
 	paramtype = 'light',
+	paramtype2 = 'degrotate',
 	selection_box = grille_sbox,
 	node_box = grille_cbox,
 	sounds = default.node_sound_stone_defaults(),
@@ -572,10 +643,25 @@ minetest.register_node('new_campfire:campfire_with_grille', {
 		meta:set_string('infotext', S("Campfire"));
 	end,
 
+	on_punch = function(pos, node, puncher, pointed_thing)
+		if puncher ~= nil then
+			local player_name = puncher:get_player_name()
+			if core.is_protected(pos, player_name) then
+				core.record_protection_violation(pos, player_name)
+				return
+			end
+			puncher:get_inventory():add_item("main", ItemStack("new_campfire:grille"))
+			node.name = "new_campfire:campfire"
+			core.set_node(pos, node)
+			core.sound_play({name = "default_dig_metal", gain = 0.5}, {pos = pos, max_hear_distance = 32}, true)
+		end
+	end,
+
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
 		if itemstack:get_name() == "fire:flint_and_steel" then
 			minetest.sound_play("fire_flint_and_steel",{pos = pos, gain = 0.5, max_hear_distance = 8})
-			minetest.set_node(pos, {name = 'new_campfire:campfire_active_with_grille'})
+			node.name = 'new_campfire:campfire_active_with_grille'
+			minetest.set_node(pos, node)
 			local id = minetest.add_particle({
 				pos = {x = pos.x, y = pos.y, z = pos.z},
 				velocity = {x=0, y=0.1, z=0},
@@ -615,8 +701,9 @@ minetest.register_node('new_campfire:campfire_active_with_grille', {
 	inventory_image = "new_campfire_campfire.png",
 	buildable_to = false,
 	sunlight_propagates = true,
-	groups = {oddly_breakable_by_hand=3, flammable=0, not_in_creative_inventory=1, igniter=1},
-	paramtype = 'none',
+	groups = {not_in_creative_inventory=1, igniter=1},
+	paramtype = 'light',
+	paramtype2 = "degrotate",
 	light_source = 13,
 	damage_per_second = 3,
 	drop = {
@@ -704,7 +791,8 @@ minetest.register_abm({
 			if string.find(node.name, "embers") then
 				burn_out(pos, node)
 			else
-				minetest.set_node(pos, {name = string.gsub(node.name, "_active", "")})
+				node.name = string.gsub(node.name, "_active", "")
+				minetest.set_node(pos, node)
 			end
 			minetest.sound_play("fire_extinguish_flame",{pos = pos, max_hear_distance = 16, gain = 0.15})
 		else
