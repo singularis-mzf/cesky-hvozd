@@ -55,7 +55,7 @@ org.
 -------------
 
 dvssans:
-    Original font file: /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf
+    Original font file: /usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf
     Font source: Ubuntu package fonts-dejavu-core
     Font license: bitstream-vera
 
