@@ -294,8 +294,8 @@ local function on_place(itemstack, placer, pointed_thing, nnprefix, def)
 	if not ndef or not ndef.buildable_to then
 		return itemstack, true -- not place for a track
 	end
-	if ndef.suitable_substrate then
-		s = ndef.suitable_substrate(upos)
+	if def.suitable_substrate then
+		s = def.suitable_substrate(upos)
 	else
 		s = undef and undef.walkable
 	end
@@ -324,8 +324,8 @@ local function on_place(itemstack, placer, pointed_thing, nnprefix, def)
 	if not ndef or not ndef.buildable_to then
 		return itemstack, true -- not place for a track
 	end
-	if ndef.suitable_substrate then
-		s = ndef.suitable_substrate(upos)
+	if def.suitable_substrate then
+		s = def.suitable_substrate(upos)
 	else
 		s = undef and undef.walkable
 	end
