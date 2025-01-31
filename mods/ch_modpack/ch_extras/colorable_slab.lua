@@ -7,7 +7,7 @@ local common_def = {
     palette = "unifieddyes_palette_extended.png",
     is_ground_content = false,
 	sunlight_propagates = true,
-    groups = {not_in_creative_inventory = 1, cracky = 3},
+    groups = {not_in_creative_inventory = 1, cracky = 3, ud_param2_colorable = 1},
     sounds = default.node_sound_stone_defaults(),
     on_construct = unifieddyes.on_construct,
     on_dig = unifieddyes.on_dig,
