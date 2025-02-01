@@ -148,15 +148,19 @@ function ch_core.get_handle_of_entity(lua_entity)
         return nil
     elseif type(lua_entity) == "table" then
         local handle = lua_entity._ch_entity_handle
+        local is_valid = lua_entity.object:is_valid()
         if type(handle) == "number" and entities[handle] ~= nil then
             -- already has a handle
-            if lua_entity.object:is_valid() then
+            if is_valid then
                 return handle
             else
                 -- object already expired!
                 remove_registered_entity(handle)
                 return nil
             end
+        elseif not is_valid then
+            -- invalid object
+            return nil
         end
         local message
         handle, message = ch_core.register_entity(lua_entity)

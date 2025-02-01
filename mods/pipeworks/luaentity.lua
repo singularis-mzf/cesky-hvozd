@@ -77,6 +77,7 @@ local move_entities_globalstep_part1
 local is_active
 
 if pipeworks.use_real_entities then
+	--[[
 	local active_blocks = {} -- These only contain active blocks near players (i.e., not forceloaded ones)
 
 	move_entities_globalstep_part1 = function(dtime)
@@ -99,9 +100,12 @@ if pipeworks.use_real_entities then
 		active_blocks = new_active_blocks
 		-- todo: callbacks on block load/unload
 	end
+	]]
+	move_entities_globalstep_part1 = function()
+	end
 
 	is_active = function(pos)
-		return active_blocks[minetest.hash_node_position(get_blockpos(pos))] ~= nil
+		return core.compare_block_status(pos, "active")
 	end
 else
 	move_entities_globalstep_part1 = function()
@@ -405,7 +409,7 @@ minetest.register_globalstep(function(dtime)
 		dtime_delayed = dtime_delayed + dtime_accum
 		skip_update = false
 	else
-		move_entities_globalstep_part1(dtime_accum + dtime_delayed)
+		-- move_entities_globalstep_part1(dtime_accum + dtime_delayed)
 		move_entities_globalstep_part2(dtime_accum + dtime_delayed)
 		dtime_delayed = 0
 	end
@@ -415,3 +419,23 @@ minetest.register_globalstep(function(dtime)
 
 	dtime_accum = 0
 end)
+
+core.register_chatcommand("log_pipeworks_entities", {
+	description = "Zaznamená polohy objektů v rourách pro účely ladění.",
+	privs = {server = true},
+	func = function()
+		local entities = luaentity.entities
+		if not entities then
+			return false, "Entity nejsou načteny!"
+		end
+		local result = {}
+		for _, entity in pairs(entities) do
+			if entity._pos ~= nil then
+				local p = vector.round(entity._pos)
+				table.insert(result, "- /teleport "..p.x..","..p.y..","..p.z.." -- itemstring == "..(entity.itemstring or "nil"))
+			end
+		end
+		core.log("action", "/log_pipeworks_entities:\n"..table.concat(result, "\n"))
+		return true, #result.." entit nalezeno."
+	end,
+})
