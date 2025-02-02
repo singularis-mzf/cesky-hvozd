@@ -1,13 +1,16 @@
+if not core.get_modpath("advtrains") then
+    return
+end
 ch_core.register_event_type("player_overrun", {
     description = "srážka s vlakem",
     access = "players",
     color = "#ff3333",
     chat_access = "public",
 })
-
+    
 local repeat_protection = {}
 local has_penalty = core.settings:get_bool("ch_player_overrun_penalty", false)
-
+    
 local function player_overrun_step(player_name)
     local online_charinfo = ch_core.online_charinfo[player_name]
     local player = core.get_player_by_name(player_name)
@@ -21,7 +24,7 @@ local function player_overrun_step(player_name)
         end
     end
 end
-
+    
 local function on_player_overrun(player, train_id, train_direction, train_velocity)
     local player_name = player:get_player_name()
     local now = core.get_us_time()

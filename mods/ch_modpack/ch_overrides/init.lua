@@ -6,7 +6,6 @@ local dofile = ch_core.compile_dofile()
 ch_overrides = {}
 
 local mods = {
-	"advtrains",
 	"books",
 	"cavestuff",
 	"currency",
