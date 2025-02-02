@@ -816,10 +816,15 @@ local function wrench_handler(itemstack, player, pointed_thing, mode, material, 
 							mt_rot_code(new_facedir),
 							new_facedir))
 			end
-
+			local old_node = table.copy(node)
 			node.name = new_node_name
 			minetest.swap_node(pos, node)
 			minetest.check_for_falling(pos)
+			local old_node_def = core.registered_nodes[old_node.name]
+			if old_node_def ~= nil and old_node_def.after_nodedir_rotate ~= nil then
+				old_node_def.after_nodedir_rotate(pos, old_node, node, itemstack, player)
+			end
+
 			if not creative_mode(player) --[[ and not repeated_rotation(player, node, pos) ]] then
 				-- 'ceil' ensures that the minimum wear is *always* 1
 				-- (and makes the tools wear a tiny bit faster)

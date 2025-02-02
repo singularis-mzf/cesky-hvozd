@@ -54,7 +54,7 @@ if has_wrench then
 	wrench_defs = {}
 
 	for _, i in ipairs({1, 2, 4}) do
-		local metas = {formspec = wrench.META_TYPE_IGNORE}
+		local metas = {formspec = wrench.META_TYPE_IGNORE, owner = wrench.META_TYPE_STRING}
 		for j = 1, i do
 			local s
 			if i == 1 then
@@ -73,9 +73,11 @@ if has_wrench then
 			lists = {"upgrades"},
 			metas = metas,
 			after_place = drawers.spawn_visuals,
+			owned = true,
 		}
 	end
 end
+drawers.wrench_defs = wrench_defs
 
 -- construct drawer
 function drawers.drawer_on_construct(pos)
@@ -99,15 +101,25 @@ function drawers.drawer_on_construct(pos)
 		meta:set_int("count"..vid, 0)
 		meta:set_int("max_count"..vid, base_stack_max * stack_max_factor)
 		meta:set_int("base_stack_max"..vid, base_stack_max)
-		meta:set_string("entity_infotext"..vid, drawers.gen_info_text(S("Empty"), 0,
-			stack_max_factor, base_stack_max))
+		--[[ meta:set_string("entity_infotext"..vid, drawers.gen_info_text(S("Empty"), 0,
+			stack_max_factor, base_stack_max)) ]]
 		meta:set_int("stack_max_factor"..vid, stack_max_factor)
 
 		i = i + 1
 	end
 
 	-- spawn all visuals
-	drawers.spawn_visuals(pos)
+	core.after(0.25, function(npos, nname)
+		if core.get_item_group(core.get_node(npos).name, "drawer") ~= 0 then
+			drawers.spawn_visuals(npos)
+			for i = 1, drawerType do
+				local v = drawers.get_visual(npos, i)
+				if v ~= nil then
+					v:updateInfotext()
+				end
+			end
+		end
+	end, pos)
 
 	-- create drawer upgrade inventory
 	meta:get_inventory():set_size("upgrades", 5)
@@ -179,8 +191,14 @@ function drawers.drawer_on_dig(pos, node, player)
 end
 
 function drawers.drawer_allow_metadata_inventory_put(pos, listname, index, stack, player)
-	if not minetest.check_player_privs(player, "ch_registered_player") or core.is_protected(pos,player:get_player_name()) then
-	   core.record_protection_violation(pos,player:get_player_name())
+	local drawer_meta = core.get_meta(pos)
+	local owner = drawer_meta:get_string("owner")
+	local player_name = player:get_player_name()
+	if owner ~= "" and owner ~= player_name and not core.check_player_privs(player_name, "protection_bypass") then
+		return 0
+	end
+	if not minetest.check_player_privs(player_name, "ch_registered_player") or core.is_protected(pos, player_name) then
+	   core.record_protection_violation(pos, player_name)
 	   return 0
 	end
 	if listname ~= "upgrades" then
@@ -306,9 +324,29 @@ function drawers.drawer_get_content(pos, visualid)
 	return {
 		name = drawer_meta:get_string("name" .. visualid),
 		count = drawer_meta:get_int("count" .. visualid),
-		maxCount = drawer_meta:get_int("max_count" .. visualid)
+		maxCount = drawer_meta:get_int("max_count" .. visualid),
+		owner = drawer_meta:get_string("owner"),
 	}
 end
+
+if core.get_modpath("pipeworks") and pipeworks ~= nil then
+	function drawers.drawer_after_place_node(pos, placer, itemstack, pointed_thing)
+		local drawer_meta = core.get_meta(pos)
+		if drawer_meta:get_string("owner") == "" and placer ~= nil then
+			drawer_meta:set_string("owner", placer:get_player_name())
+		end
+		return pipeworks.after_place(pos, placer, itemstack, pointed_thing)
+	end
+else
+	function drawers.drawer_after_place_node(pos, placer, itemstack, pointed_thing)
+		local drawer_meta = core.get_meta(pos)
+		if drawer_meta:get_string("owner") == "" and placer ~= nil then
+			drawer_meta:set_string("owner", placer:get_player_name())
+		end
+	end
+end
+
+
 
 function drawers.register_drawer(name, def)
 	def.description = def.description or S("Wooden")
@@ -326,6 +364,7 @@ function drawers.register_drawer(name, def)
 	def.on_construct = drawers.drawer_on_construct
 	def.on_destruct = drawers.drawer_on_destruct
 	def.on_dig = drawers.drawer_on_dig
+	def.after_place_node = drawers.drawer_after_place_node
 	def.allow_metadata_inventory_put = drawers.drawer_allow_metadata_inventory_put
 	def.allow_metadata_inventory_take = drawers.drawer_allow_metadata_inventory_put
 	def.on_metadata_inventory_put = drawers.add_drawer_upgrade
@@ -346,7 +385,7 @@ function drawers.register_drawer(name, def)
 
 		def.tube.connect_sides = {left = 1, right = 1, back = 1, top = 1,
 			bottom = 1}
-		def.after_place_node = pipeworks.after_place
+		-- def.after_place_node = pipeworks.after_place
 		def.after_dig_node = pipeworks.after_dig
 	end
 

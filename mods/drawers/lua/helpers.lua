@@ -38,16 +38,22 @@ function drawers.get_upgrade_slots_bg(x,y)
 	return out
 end
 
-function drawers.gen_info_text(basename, count, factor, stack_max)
+function drawers.gen_info_text(basename, count, factor, stack_max, owner)
 	local maxCount = stack_max * factor
 	local percent = count / maxCount * 100
 	-- round the number (float -> int)
 	percent = math.floor(percent + 0.5)
+	local owner_viewname
+	if owner == nil or owner == "" then
+		owner_viewname = "není"
+	else
+		owner_viewname = ch_core.prihlasovaci_na_zobrazovaci(owner)
+	end
 
 	if count == 0 then
-		return S("@1 (@2% full)", basename, tostring(percent))
+		return S("@1 (@2% full)@nowner: @3", basename, tostring(percent), owner_viewname)
 	else
-		return S("@1 @2 (@3% full)", tostring(count), basename, tostring(percent))
+		return S("@1 @2 (@3% full)@nowner: @4", tostring(count), basename, tostring(percent), owner_viewname)
 	end
 end
 

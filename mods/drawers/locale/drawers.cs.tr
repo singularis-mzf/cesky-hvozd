@@ -34,3 +34,5 @@ Drawer Upgrade Template=šablona vylepšení zásobníku
 @1 Drawers (2x2)=@1 zásobník (2x2)
 @1 (@2% full)=@1 (z @2 % plný)
 @1 @2 (@3% full)=@1 @2 (z @3 % plný)
+@1 (@2% full)@nowner: @3=@1 (z @2 % plný)@nvlastník/ice: @3
+@1 @2 (@3% full)@nowner: @4=@1 @2 (z @3 % plný)@nvlastník/ice: @4

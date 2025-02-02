@@ -164,9 +164,23 @@ core.register_entity("drawers:visual", {
 	end,
 
 	on_rightclick = function(self, clicker)
-		if core.is_protected(self.drawer_pos, clicker:get_player_name()) then
-			core.record_protection_violation(self.drawer_pos, clicker:get_player_name())
+		local node = core.get_node_or_nil(self.drawer_pos)
+		if node == nil then
 			return
+		end
+		local meta = core.get_meta(self.drawer_pos)
+		local owner = meta:get_string("owner")
+		if owner == "" then
+			if core.is_protected(self.drawer_pos, clicker:get_player_name()) then
+				core.record_protection_violation(self.drawer_pos, clicker:get_player_name())
+				return
+			end
+		else
+			local player_name = clicker:get_player_name()
+			if owner ~= player_name and not core.check_player_privs(player_name, "protection_bypass") then
+				core.chat_send_player(player_name, "*** Tento zásobník patří postavě: "..ch_core.prihlasovaci_na_zobrazovaci(owner))
+				return
+			end
 		end
 
 		-- used to check if we need to play a sound in the end
@@ -222,16 +236,30 @@ core.register_entity("drawers:visual", {
 	end,
 
 	on_punch = function(self, puncher, time_from_last_punch, tool_capabilities, dir)
-		local node = minetest.get_node(self.object:get_pos())
+		local node = core.get_node_or_nil(self.drawer_pos)
+		if node == nil then
+			return
+		end
+		local meta = core.get_meta(self.drawer_pos)
+		local owner = meta:get_string("owner")
+		-- local node = minetest.get_node(self.object:get_pos())
 
 		if core.get_item_group(node.name, "drawer") == 0 then
 			self.object:remove()
 			return
 		end
 		local add_stack = not puncher:get_player_control().sneak
-		if core.is_protected(self.drawer_pos, puncher:get_player_name()) then
-		   core.record_protection_violation(self.drawer_pos, puncher:get_player_name())
-		   return
+		if owner == "" then
+			if core.is_protected(self.drawer_pos, puncher:get_player_name()) then
+				core.record_protection_violation(self.drawer_pos, puncher:get_player_name())
+				return
+			end
+		else
+			local player_name = puncher:get_player_name()
+			if owner ~= player_name and not core.check_player_privs(player_name, "protection_bypass") then
+				core.chat_send_player(player_name, "*** Tento zásobník patří postavě: "..ch_core.prihlasovaci_na_zobrazovaci(owner))
+				return
+			end
 		end
 		local inv = puncher:get_inventory()
 		if inv == nil then
@@ -362,7 +390,7 @@ core.register_entity("drawers:visual", {
 		end
 
 		local infotext = drawers.gen_info_text(itemDescription,
-			self.count, self.stackMaxFactor, self.itemStackMax)
+			self.count, self.stackMaxFactor, self.itemStackMax, self.meta:get_string("owner"))
 		self.meta:set_string("entity_infotext"..self.visualId, infotext)
 
 		self.object:set_properties({

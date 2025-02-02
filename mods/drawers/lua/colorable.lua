@@ -138,3 +138,13 @@ core.register_craft({
         {"default:chest", "group:wood", "default:chest"},
     }
 })
+
+--[[
+-- nyní nepodporováno:
+if core.get_modpath("wrench") then
+    local wrench_defs = assert(drawers.wrench_defs)
+    wrench.register_node("drawers:colorable1_0", wrench_defs[1])
+    wrench.register_node("drawers:colorable2_0", wrench_defs[2])
+    wrench.register_node("drawers:colorable4_0", wrench_defs[4])
+end
+]]
