@@ -28,6 +28,16 @@ SOFTWARE.
 local MP = core.get_modpath(core.get_current_modname())
 local S, NS = dofile(MP.."/intllib.lua")
 
+local function record_take(pos, node, player_name, stack, new_count)
+	core.log("action", player_name.." has taken "..stack:get_count().." of "..stack:get_name().." from a drawer "..
+		node.name.." at "..core.pos_to_string(pos).." [new count="..tostring(new_count).."]")
+end
+
+local function record_put(pos, node, player_name, stack, new_count)
+	core.log("action", player_name.." has put "..stack:get_count().." of "..stack:get_name().." to a drawer "..
+		node.name.." at "..core.pos_to_string(pos).." [new count="..tostring(new_count).."]")
+end
+
 core.register_entity("drawers:visual", {
 	initial_properties = {
 		hp_max = 1,
@@ -173,15 +183,16 @@ core.register_entity("drawers:visual", {
 
 			while i <= inv:get_size("main") do
 				-- set current stack to leftover of insertion
-				local leftover = self.try_insert_stack(
-					self,
-					inv:get_stack("main", i),
-					true
-				)
+				local stack_to_put = inv:get_stack("main", i)
+				local leftover = self.try_insert_stack(self, ItemStack(stack_to_put), true)
 
 				-- check if something was added
 				if leftover:get_count() < inv:get_stack("main", i):get_count() then
 					inventoryChanged = true
+					if leftover:get_count() > 0 then
+						stack_to_put:set_count(stack_to_put:get_count() - leftover:get_count())
+					end
+					record_put(self.drawer_pos, core.get_node(self.drawer_pos), clicker:get_player_name(), stack_to_put, self.count)
 				end
 
 				-- set new stack
@@ -190,15 +201,16 @@ core.register_entity("drawers:visual", {
 			end
 		else
 			-- try to insert wielded item only
-			local leftover = self.try_insert_stack(
-				self,
-				clicker:get_wielded_item(),
-				not clicker:get_player_control().sneak
-			)
+			local stack_to_put = clicker:get_wielded_item()
+			local leftover = self.try_insert_stack(self, ItemStack(stack_to_put), not clicker:get_player_control().sneak)
 
 			-- check if something was added
 			if clicker:get_wielded_item():get_count() > leftover:get_count() then
 				inventoryChanged = true
+				if leftover:get_count() > 0 then
+					stack_to_put:set_count(stack_to_put:get_count() - leftover:get_count())
+				end
+				record_put(self.drawer_pos, core.get_node(self.drawer_pos), clicker:get_player_name(), stack_to_put, self.count)
 			end
 			-- set the leftover as new wielded item for the player
 			clicker:set_wielded_item(leftover)
@@ -242,6 +254,7 @@ core.register_entity("drawers:visual", {
 
 		if stack ~= nil then
 			-- add removed stack to player's inventory
+			record_take(self.drawer_pos, core.get_node(self.drawer_pos), puncher:get_player_name(), stack, self.count)
 			inv:add_item("main", stack)
 
 			-- play the interact sound
