@@ -119,9 +119,14 @@ function screwdriver.handler(itemstack, user, pointed_thing, mode, uses)
     end
 
     if new_node_name ~= node.name then
+        local old_node = table.copy(node)
         node.name = new_node_name
         minetest.swap_node(pos, node)
         minetest.check_for_falling(pos)
+        local old_node_def = core.registered_nodes[old_node.name]
+        if old_node_def ~= nil and old_node_def.after_nodedir_rotate ~= nil then
+            old_node_def.after_nodedir_rotate(pos, old_node, node, itemstack, user)
+        end
     end
     if not minetest.is_creative_enabled(player_name) then
         itemstack:add_wear_by_uses(uses or 200)

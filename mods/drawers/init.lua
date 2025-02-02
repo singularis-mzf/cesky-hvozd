@@ -418,4 +418,7 @@ core.register_craft({
 	}
 })
 ]]
+
+dofile(MP .. "/lua/colorable.lua")
+
 ch_base.close_mod(minetest.get_current_modname())

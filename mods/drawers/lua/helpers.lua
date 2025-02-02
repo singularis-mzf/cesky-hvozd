@@ -86,6 +86,7 @@ function drawers.spawn_visuals(pos)
 	local node = core.get_node(pos)
 	local ndef = core.registered_nodes[node.name]
 	local drawerType = ndef.groups.drawer
+	local param2 = ch_core.get_nodedir(node.name) or node.param2
 
 	-- data for the new visual
 	drawers.last_drawer_pos = pos
@@ -95,7 +96,7 @@ function drawers.spawn_visuals(pos)
 		drawers.last_visual_id = ""
 		drawers.last_texture = drawers.get_inv_image(core.get_meta(pos):get_string("name"))
 
-		local bdir = core.facedir_to_dir(node.param2)
+		local bdir = core.facedir_to_dir(param2)
 		local fdir = vector.new(-bdir.x, 0, -bdir.z)
 		local pos2 = vector.add(pos, vector.multiply(fdir, 0.45))
 
@@ -108,11 +109,11 @@ function drawers.spawn_visuals(pos)
 
 		drawers.last_texture = nil
 	elseif drawerType == 2 then
-		local bdir = core.facedir_to_dir(node.param2)
+		local bdir = core.facedir_to_dir(param2)
 
 		local fdir1
 		local fdir2
-		if node.param2 == 2 or node.param2 == 0 then
+		if param2 == 2 or param2 == 0 then
 			fdir1 = vector.new(-bdir.x, 0.5, -bdir.z)
 			fdir2 = vector.new(-bdir.x, -0.5, -bdir.z)
 		else
@@ -138,23 +139,23 @@ function drawers.spawn_visuals(pos)
 			if bdir.x > 0 then obj:set_yaw(1.5 * math.pi) end
 		end
 	else -- 2x2 drawer
-		local bdir = core.facedir_to_dir(node.param2)
+		local bdir = core.facedir_to_dir(param2)
 
 		local fdir1
 		local fdir2
 		local fdir3
 		local fdir4
-		if node.param2 == 2 then
+		if param2 == 2 then
 			fdir1 = vector.new(-bdir.x + 0.5, 0.5, -bdir.z)
 			fdir2 = vector.new(-bdir.x - 0.5, 0.5, -bdir.z)
 			fdir3 = vector.new(-bdir.x + 0.5, -0.5, -bdir.z)
 			fdir4 = vector.new(-bdir.x - 0.5, -0.5, -bdir.z)
-		elseif node.param2 == 0 then
+		elseif param2 == 0 then
 			fdir1 = vector.new(-bdir.x - 0.5, 0.5, -bdir.z)
 			fdir2 = vector.new(-bdir.x + 0.5, 0.5, -bdir.z)
 			fdir3 = vector.new(-bdir.x - 0.5, -0.5, -bdir.z)
 			fdir4 = vector.new(-bdir.x + 0.5, -0.5, -bdir.z)
-		elseif node.param2 == 1 then
+		elseif param2 == 1 then
 			fdir1 = vector.new(-bdir.x, 0.5, -bdir.z + 0.5)
 			fdir2 = vector.new(-bdir.x, 0.5, -bdir.z - 0.5)
 			fdir3 = vector.new(-bdir.x, -0.5, -bdir.z + 0.5)

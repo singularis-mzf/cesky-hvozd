@@ -101,9 +101,10 @@ core.register_entity("drawers:visual", {
 
 		-- collisionbox
 		node = core.get_node(self.drawer_pos)
+		local param2 = ch_core.get_nodedir(node.name) or node.param2
 		local colbox
 		if self.drawerType ~= 2 then
-			if node.param2 == 1 or node.param2 == 3 then
+			if param2 == 1 or param2 == 3 then
 				colbox = {0, -0.4374, -0.4374,  0, 0.4374, 0.4374}
 			else
 				colbox = {-0.4374, -0.4374, 0,  0.4374, 0.4374, 0} -- for param2 = 0 or 2
@@ -115,7 +116,7 @@ core.register_entity("drawers:visual", {
 				end
 			end
 		else
-			if node.param2 == 1 or node.param2 == 3 then
+			if param2 == 1 or param2 == 3 then
 				colbox = {0, -0.2187, -0.4374,  0, 0.2187, 0.4374}
 			else
 				colbox = {-0.4374, -0.2187, 0,  0.4374, 0.2187, 0} -- for param2 = 0 or 2
