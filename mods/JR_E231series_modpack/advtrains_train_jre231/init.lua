@@ -91,6 +91,7 @@ advtrains.register_wagon("KuHa_E231", {
 	assign_to_seat_group = {"dstand", "pass"},
 	visual_size = {x=1, y=1},
 	wagon_span=2.5,
+	light_level = 8,
 	is_locomotive=true,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	drops={
@@ -194,6 +195,7 @@ advtrains.register_wagon("MoHa_E231", {
 	door_entry={-1, 1},
 	visual_size = {x=1, y=1},
 	wagon_span=2.3,
+	light_level = 8,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	base_texture = "advtrains_MoHa_E231.png",
 	base_livery = "advtrains_MoHa_E231_livery.png",
@@ -274,6 +276,7 @@ advtrains.register_wagon("SaHa_E231", {
 	door_entry={-1, 1},
 	visual_size = {x=1, y=1},
 	wagon_span=2.3,
+	light_level = 8,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	drops={
 		"default:steelblock 5",
@@ -352,6 +355,7 @@ advtrains.register_wagon("MoHa_E230", {
 	door_entry={-1, 1},
 	visual_size = {x=1, y=1},
 	wagon_span=2.3,
+	light_level = 8,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	base_texture = "advtrains_MoHa_E230.png",
 	base_livery = "advtrains_MoHa_E231_livery.png",

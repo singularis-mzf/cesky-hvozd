@@ -11,6 +11,7 @@
 local GETOFF_TP_DELAY = 0.5
 
 local IGNORE_WORLD = advtrains.IGNORE_WORLD
+local has_wielded_light = core.get_modpath("wielded_light")
 
 advtrains.wagons = {}
 advtrains.wagon_prototypes = {}
@@ -300,6 +301,9 @@ function wagon:on_step(dtime)
 		--custom on_step function
 		if self.custom_on_step then
 			self:custom_on_step(dtime, data, train)
+		end
+		if has_wielded_light and self.light_level ~= nil then
+			wielded_light.track_user_entity(self.object, "wagon", string.format("ch_core:light_%02d", self.light_level))
 		end
 
 		--driver control
