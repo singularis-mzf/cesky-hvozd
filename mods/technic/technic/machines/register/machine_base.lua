@@ -31,6 +31,37 @@ local function round(v)
 	return math.floor(v + 0.5)
 end
 
+local function compress_input(list)
+	local result = {}
+	local index = {}
+	for i, stack in ipairs(list) do
+		local count = stack:get_count()
+		if count > 0 then
+			local name = stack:get_name()
+			if core.registered_items[name] ~= nil then
+				local ind = index[name]
+				if ind == nil then
+					ind = #result + 1
+					index[name] = ind
+					local rstack = ItemStack(name)
+					rstack:set_count(count)
+					result[ind] = rstack
+				else
+					local oldstack = result[ind]
+					local free_space = oldstack:get_free_space()
+					if free_space > 0 then
+						oldstack:set_count(oldstack:get_count() + math.min(count, free_space))
+					end
+				end
+			end
+		end
+	end
+	if result[1] == nil then
+		result[1] = ItemStack()
+	end
+	return result
+end
+
 function technic.register_base_machine(data)
 	local typename = data.typename
 	local input_size = data.input_size or technic.recipes[typename].input_size
@@ -118,31 +149,39 @@ function technic.register_base_machine(data)
 				src_size = inv:get_size("src") or 0
 				assert(src_size == input_size)
 			end
-			inv:set_size("src_tmp", src_size)
-			inv:set_list("src_tmp", {})
-			for _, stack in ipairs(inv:get_list("src")) do
-				if not stack:is_empty() then
-					inv:add_item("src_tmp", stack)
-				end
+			local src_list = inv:get_list("src")
+			local use_compress_input = typename ~= "alloy" and typename ~= "separating"
+			if use_compress_input then
+				src_list = compress_input(src_list)
 			end
-			local src_list = inv:get_list("src_tmp")
 
 			local result, src_i
-			for i = 1, src_size do
-				if not src_list[i]:is_empty() then
-					result = technic.get_recipe(typename, {src_list[i]})
-					if result then
-						src_i = i
-						break
+			if use_compress_input then
+				for i, stack in ipairs(src_list) do
+					if not stack:is_empty() then
+						result = technic.get_recipe(typename, {stack})
+						if result then
+							src_i = i
+							break
+						end
 					end
 				end
-			end
-			if not result or src_i == nil then
-				technic.swap_node(pos, machine_node)
-				meta:set_string("infotext", S("@1 Idle", machine_desc_tier))
-				meta:set_int(tier.."_EU_demand", 0)
-				meta:set_int("src_time", 0)
-				return
+				if not result or src_i == nil then
+					technic.swap_node(pos, machine_node)
+					meta:set_string("infotext", S("@1 Idle", machine_desc_tier))
+					meta:set_int(tier.."_EU_demand", 0)
+					meta:set_int("src_time", 0)
+					return
+				end
+			else
+				result = technic.get_recipe(typename, src_list)
+				if not result then
+					technic.swap_node(pos, machine_node)
+					meta:set_string("infotext", S("@1 Idle", machine_desc_tier))
+					meta:set_int(tier.."_EU_demand", 0)
+					meta:set_int("src_time", 0)
+					return
+				end
 			end
 			meta:set_int(tier.."_EU_demand", machine_demand[EU_upgrade+1])
 			technic.swap_node(pos, machine_node.."_active")
@@ -169,6 +208,8 @@ function technic.register_base_machine(data)
 					break
 				end
 				inv:add_item("dst_tmp", o)
+			end
+			if output_stacks[1] ~= nil then
 				if machine_name == "electric_furnace" or machine_name == "alloy_furnace" then
 					minetest.sound_play("default_cool_lava", {pos = pos, max_hear_distance = 16, gain = 0.1}, true)
 				elseif machine_name == "oven_white" or machine_name == "oven_steel" or machine_name == "microwave_oven" then
@@ -183,12 +224,16 @@ function technic.register_base_machine(data)
 				return
 			end
 			meta:set_int("src_time", meta:get_int("src_time") - round(result.time*10))
-			src_list[src_i] = ItemStack()
-			inv:set_list("src", src_list) -- update src
-			for _, stack in ipairs(result.new_input) do
-				if not stack:is_empty() then
-					inv:add_item("src", stack)
+			if src_i ~= nil then
+				src_list[src_i] = ItemStack()
+				inv:set_list("src", src_list) -- update src
+				for _, stack in ipairs(result.new_input) do
+					if not stack:is_empty() then
+						inv:add_item("src", stack)
+					end
 				end
+			else
+				inv:set_list("src", result.new_input)
 			end
 			inv:set_list("dst", inv:get_list("dst_tmp"))
 		end
