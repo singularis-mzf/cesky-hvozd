@@ -1,12 +1,39 @@
 ch_base.open_mod(minetest.get_current_modname())
 local S = attrans
 
+-- Function from Classic Coaches mod by Marnack (AGPLv3)
+local function apply_wagon_livery_textures(player, wagon, textures)
+	if wagon and textures and textures[1] then
+		local data = advtrains.wagons[wagon.id]
+		data.livery = textures[1]
+		wagon:set_textures(data)
+	end
+end
+
+-- Function from Classic Coaches mod by Marnack (AGPLv3)
+local function update_livery(wagon, puncher, mod_name)
+	local itemstack = puncher:get_wielded_item()
+	local item_name = itemstack:get_name()
+	if item_name == advtrains_livery_designer.tool_name then
+		advtrains_livery_designer.activate_tool(puncher, wagon, mod_name)
+		return true
+	end
+	return false
+end
+
+-- Function from Classic Coaches mod by Marnack (AGPLv3)
+local function set_textures(wagon, data)
+	if data.livery then
+		wagon.object:set_properties({textures={data.livery}})
+	end
+end
 
 local wagon = {
 	mesh="advtrains_subway_wagon.b3d",
 	textures = {"advtrains_subway_wagon.png"},
+	set_textures = set_textures,
 	drives_on={default=true},
-	max_speed=15,
+	max_speed=3,
 	seats = {
 		{
 			name=S("Driver stand"),
@@ -75,6 +102,7 @@ local wagon = {
 	is_locomotive=true,
 	drops={"default:steelblock 4"},
 	horn_sound = "advtrains_subway_horn",
+	--[[
 	custom_on_velocity_change = function(self, velocity, old_velocity, dtime)
 		if not velocity or not old_velocity then return end
 		if old_velocity == 0 and velocity > 0 then
@@ -99,6 +127,8 @@ local wagon = {
 			self.sound_loop_tmr=0
 		end
 	end,
+	]]
+	--[[
 	custom_on_step = function(self, dtime, data, train)
 		--set line number
 		local line = nil
@@ -143,24 +173,82 @@ local wagon = {
 			end
 		end	
 	end,
+	]]
 }
 
-advtrains.register_wagon("subway_wagon", wagon, S("Subway Passenger Wagon"), "advtrains_subway_wagon_inv.png")
+if core.get_modpath("advtrains_livery_designer") then
+	advtrains_livery_designer.register_mod("basic_trains", apply_wagon_livery_textures)
+	wagon.custom_may_destroy = function(wgn, puncher, time_from_last_punch, tool_capabilities, direction)
+		return not update_livery(wgn, puncher, "basic_trains")
+	end
+end
 
+advtrains.register_wagon("subway_wagon", wagon, "vůz lanové dráhy", "advtrains_subway_wagon_inv.png")
+
+if core.get_modpath("advtrains_livery_database") then
+	advtrains_livery_database.register_mod("basic_trains")
+	advtrains_livery_database.register_wagon("advtrains:subway_wagon", "basic_trains")
+	advtrains_livery_database.add_livery_template(
+		"advtrains:subway_wagon", -- wagon_type
+		"bez čísla linky", -- template name
+		{"advtrains_subway_wagon.png"}, -- base_texture
+		"basic_trains", -- mod_name
+		1, -- number of overlays
+		"Singularis", -- template designer
+		"CC-BY-SA-3.0", -- texture license
+		"orwell96,Singularis", -- texture creators
+		"" -- notes
+	)
+	advtrains_livery_database.add_livery_template_overlay(
+		"advtrains:subway_wagon", -- wagon_type
+		"bez čísla linky", -- template name
+		1, -- overlay_id (pořadové číslo)
+		"karoserie", -- overlay_name
+		1, -- overlay_slot_index (?)
+		"advtrains_subway_wagon_livery.png", -- overlay_texture
+		140 -- overlay_alpha (0..255 or nil)
+	)
+	for i = 0, 9 do
+		advtrains_livery_database.add_livery_template(
+			"advtrains:subway_wagon", -- wagon_type
+			"linka "..i, -- template name
+			{"advtrains_subway_wagon.png^advtrains_subway_wagon_line"..i..".png"}, -- base_texture
+			"basic_trains", -- mod_name
+			1, -- number of overlays
+			"Singularis", -- template designer
+			"CC-BY-SA-3.0", -- texture license
+			"orwell96,Singularis", -- texture creators
+			"" -- notes
+		)
+		advtrains_livery_database.add_livery_template_overlay(
+			"advtrains:subway_wagon", -- wagon_type
+			"linka "..i, -- template name
+			1, -- overlay_id (pořadové číslo)
+			"karoserie", -- overlay_name
+			1, -- overlay_slot_index (?)
+			"advtrains_subway_wagon_livery.png^(advtrains_subway_wagon_line1.png^[colorize:#ffffff:255)^[makealpha:255,255,255", -- overlay_texture
+			140 -- overlay_alpha (0..255 or nil)
+		)
+	end
+end
+
+--[[
 wagon = table.copy(wagon)
 wagon.textures = {"advtrains_subway_wagon_green.png"}
 advtrains.register_wagon("subway_wagon_green", wagon, S("Green Subway Passenger Wagon"), "advtrains_subway_wagon_green_inv.png")
+]]
+core.register_alias("advtrains:subway_wagon_green", "advtrains:subway_wagon")
 
---[[wagons
-minetest.register_craft({
+core.register_craft({
 	output = 'advtrains:subway_wagon',
 	recipe = {
 		{'default:steelblock', 'default:steelblock', 'default:steelblock'},
-		{'default:steelblock', 'dye:yellow', 'default:steelblock'},
-		{'default:steelblock', 'default:steelblock', 'default:steelblock'},
+		{'default:steelblock', 'dye:grey', 'default:steelblock'},
+		{'ropes:ropesegment', 'ropes:ropesegment', 'ropes:ropesegment'},
 	},
 })
 
+--[[
 minetest.register_craft({
 	output = 'advtrains:subway_wagon_green',
 	recipe = {
@@ -170,12 +258,5 @@ minetest.register_craft({
 	},
 })
 ]]
-
-for _, name in ipairs({"advtrains:subway_wagon", "advtrains:subway_wagon_green"}) do
-	local idef = assert(core.registered_items[name])
-	core.override_item(name, {
-		groups = ch_core.assembly_groups(idef.groups, {not_in_creative_inventory = 1})
-	})
-end
 
 ch_base.close_mod(minetest.get_current_modname())
