@@ -2114,6 +2114,7 @@ function ch_core.utf8_mensi_nez(a, b, store_to_cache)
 	return a < b
 end
 
+--[[
 -- KÓD INICIALIZACE
 -- ===========================================================================
 local dbg_table = ch_core.storage:to_table()
@@ -2124,6 +2125,7 @@ else
 		print("STORAGE: <"..key..">=<"..value..">")
 	end
 end
+]]
 
 doors.login_to_viewname = ch_core.prihlasovaci_na_zobrazovaci
 

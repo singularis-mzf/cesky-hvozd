@@ -22,7 +22,7 @@ function ch_core.clean_players()
          then
              minetest.log("action", "Old player "..data.player_name.." is going to be DELETED because of inactivity!\n"..dump2({data}))
              -- 1) Odstranit offline_charinfo
-             local r = ch_core.delete_offline_charinfo(data.player_name)
+             local r = ch_data.delete_offline_charinfo(data.player_name)
              if not r then
                  minetest.log("error", "Removing offline charinfo of "..data.player_name.." failed!")
              else

@@ -10,6 +10,8 @@ local ap_max_book = 10
 local min = math.min
 local def
 
+ch_data.initial_offline_charinfo.ap_version = ch_core.verze_ap
+
 local levels = {
 	{base = 0, count = 500, next = 500},
 }

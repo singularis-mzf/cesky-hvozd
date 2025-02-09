@@ -4,24 +4,21 @@ local worldpath = core.get_worldpath()
 local datapath = worldpath.."/ch_playerdata"
 local playerlist_path = worldpath.."/ch_data_players"
 local storage = core.get_mod_storage()
-local online_charinfo = {}
-local offline_charinfo = {}
 local old_online_charinfo = {} -- uchovává online_charinfo[] po odpojení postavy
 local players_list, players_set = {}, {} -- seznam/množina všech známých hráčských postav (pro offline_charinfo)
 local lc_to_player_name = {} -- pro jména existujících postav lowercase => loginname
 
 ch_data = {
-	online_charinfo = online_charinfo,
-	offline_charinfo = offline_charinfo,
+	online_charinfo = {},
+	offline_charinfo = {},
 	supported_lang_codes = {cs = true, sk = true},
 	-- Tato funkce může být přepsána. Rozhoduje, zda zadané jméno postavy je přijatelné.
 	is_acceptable_name = function(player_name) return true end,
 	initial_offline_charinfo = {
 		-- int (> 0) -- pro [ch_core/ap], udává aktuální úroveň postavy
 		ap_level = 1, -- musí být > 0
-		-- int (> 0) -- pro [ch_core/ap], udává verzi systému AP (pro upgrade); výchozí hodnotu musí přepsat ch_core
-		-- ap_version = ch_core.verze_ap,
-		ap_version = 0,
+		-- int (> 0) -- pro [ch_core/ap], udává verzi systému AP (pro upgrade)
+		ap_version = 1,
 		-- int (>= 0) -- pro [ch_core/ap], udává celkový počet bodů aktivity postavy
 		ap_xp = 0,
 		-- int {0, 1} -- 0 = nic, 1 = předměty házet do koše
@@ -103,7 +100,7 @@ local function add_player(player_name, new_offline_charinfo)
 	core.safe_file_write(playerlist_path, assert(core.serialize(players_list)))
 	players_set[player_name] = true
 	lc_to_player_name[lcase] = player_name
-	offline_charinfo[player_name] = new_offline_charinfo
+	ch_data.offline_charinfo[player_name] = new_offline_charinfo
 	return true
 end
 
@@ -114,7 +111,7 @@ local function delete_player(player_name)
 	local lcase = string.lower(player_name)
 	for i, pname in ipairs(players_list) do
 		if pname == player_name then
-			table.remove(i)
+			table.remove(players_list, i)
 			break
 		end
 	end
@@ -171,7 +168,7 @@ end
 function ch_data.get_joining_online_charinfo(player)
 	assert(core.is_player(player))
 	local player_name = player:get_player_name()
-	local result = online_charinfo[player_name]
+	local result = ch_data.online_charinfo[player_name]
 	if result ~= nil then
 		return result
 	end
@@ -216,7 +213,7 @@ function ch_data.get_joining_online_charinfo(player)
 		result.news_role = "new_player"
 	end
 
-	online_charinfo[player_name] = result
+	ch_data.online_charinfo[player_name] = result
 	local prev_online_charinfo = old_online_charinfo[player_name]
 	if prev_online_charinfo ~= nil then
 		old_online_charinfo[player_name] = nil
@@ -255,11 +252,11 @@ end
 function ch_data.get_leaving_online_charinfo(player)
 	assert(core.is_player(player))
 	local player_name = player:get_player_name()
-	local result = online_charinfo[player_name]
+	local result = ch_data.online_charinfo[player_name]
 	if result ~= nil then
 		result.leave_timestamp = core.get_us_time()
 		old_online_charinfo[player_name] = result
-		online_charinfo[player_name] = nil
+		ch_data.online_charinfo[player_name] = nil
 		return result
 	else
 		return old_online_charinfo[player_name]
@@ -267,7 +264,7 @@ function ch_data.get_leaving_online_charinfo(player)
 end
 
 function ch_data.delete_offline_charinfo(player_name)
-	if online_charinfo[player_name] ~= nil then
+	if ch_data.online_charinfo[player_name] ~= nil then
 		return false, "Postava je ve hře!"
 	end
 	if not delete_player(player_name) then
@@ -282,7 +279,7 @@ function ch_data.delete_offline_charinfo(player_name)
 end
 
 function ch_data.get_offline_charinfo(player_name)
-	local result = offline_charinfo[player_name]
+	local result = ch_data.offline_charinfo[player_name]
 	if result == nil then
 		error("Offline charinfo not found for player '"..player_name.."'!")
 	end
@@ -290,26 +287,36 @@ function ch_data.get_offline_charinfo(player_name)
 end
 
 function ch_data.get_or_add_offline_charinfo(player_name)
-	local result = offline_charinfo[player_name]
+	local result = ch_data.offline_charinfo[player_name]
 	if result == nil then
 		add_player(player_name, table.copy(ch_data.initial_offline_charinfo))
-		result = assert(offline_charinfo[player_name])
+		result = assert(ch_data.offline_charinfo[player_name])
 		core.log("action", "[ch_data] Offline charinfo initialized for "..player_name)
 		ch_data.save_offline_charinfo(player_name)
 	end
 	return result
 end
 
+local debug_flag = false
+
 function ch_data.save_offline_charinfo(player_name)
 	if players_set[player_name] == nil then
 		return false
 	end
-	local data = offline_charinfo[player_name]
+	local data = ch_data.offline_charinfo[player_name]
 	if data == nil then
 		return false
 	end
 	core.safe_file_write(datapath.."/"..player_name, assert(core.serialize(data)))
 	print("DEBUG: [ch_data] offline_charinfo for '"..player_name.."' saved.")
+	print("DEBUG: - ap_level = "..tostring(data.ap_level))
+	if player_name == "Administrace" then
+		if data.ap_level ~= 1 then
+			debug_flag = true
+		elseif debug_flag then
+			error("!!!")
+		end
+	end
 	return true
 end
 
@@ -353,18 +360,18 @@ local function initialize()
 			if text ~= nil and text ~= "" then
 				local data = core.deserialize(text, true)
 				if type(data) == "table" then
-					offline_charinfo[player_name] = data
+					ch_data.offline_charinfo[player_name] = data
 					lc_to_player_name[string.lower(player_name)] = player_name
 				end
 			end
 		end
-		if offline_charinfo[player_name] ~= nil then
+		if ch_data.offline_charinfo[player_name] ~= nil then
 			print("DEBUG: offline_charinfo for player '"..player_name.."' deserialized.")
 		else
 			core.log("error", "[ch_data] deserialization of offline_charinfo["..player_name.."] failed!")
 		end
 	end
-	for player_name, poc in pairs(offline_charinfo) do
+	for player_name, poc in pairs(ch_data.offline_charinfo) do
 		-- vivify/upgrade/correct offline_charinfo:
 		for key, value in pairs(ch_data.initial_offline_charinfo) do
 			if poc[key] == nil then
@@ -419,15 +426,13 @@ local function on_leaveplayer(player, timedout)
 	local online_info = ch_data.get_leaving_online_charinfo(player)
 
 	if online_info.join_timestamp then
-		if offline_charinfo ~= nil then
-			local past_playtime, current_playtime, total_playtime = save_playtime(online_info, ch_data.offline_charinfo[player_name])
-			print("PLAYER(" .. player_name .."): played seconds: " .. current_playtime .. " / " .. total_playtime)
-		end
+		local past_playtime, current_playtime, total_playtime = save_playtime(online_info, ch_data.offline_charinfo[player_name])
+		print("PLAYER(" .. player_name .."): played seconds: " .. current_playtime .. " / " .. total_playtime)
 	end
 end
 
 local function on_shutdown()
-	for player_name, online_info in pairs(table.copy(online_charinfo)) do
+	for player_name, online_info in pairs(table.copy(ch_data.online_charinfo)) do
 		if online_info.join_timestamp then
 			local past_playtime, current_playtime, total_playtime
 			past_playtime, current_playtime, total_playtime = save_playtime(online_info, ch_data.offline_charinfo[player_name])

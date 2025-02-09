@@ -281,11 +281,14 @@ for full_key, value in pairs(storage_table) do
 		local ch_data_offline_charinfo = ch_data.get_or_add_offline_charinfo(player_name)
 		local data_type = offline_charinfo_data_types[key]
 		if data_type == "int" then
-			ch_data_offline_charinfo[key] = offline_charinfo[key]
+			ch_data_offline_charinfo[key] = math.round(tonumber(value))
+			core.log("warning", "Offline charinfo upgraded from storage: "..player_name.."/"..key.."=(int)"..tostring(ch_data_offline_charinfo[key]))
 		elseif data_type == "float" then
-			ch_data_offline_charinfo[key] = offline_charinfo[key]
+			ch_data_offline_charinfo[key] = tonumber(value)
+			core.log("warning", "Offline charinfo upgraded from storage: "..player_name.."/"..key.."=(float)"..tostring(ch_data_offline_charinfo[key]))
 		else
-			ch_data_offline_charinfo[key] = offline_charinfo[key]
+			ch_data_offline_charinfo[key] = value
+			core.log("warning", "Offline charinfo upgraded from storage: "..player_name.."/"..key.."=(string)\""..tostring(ch_data_offline_charinfo[key]).."\"")
 		end
 		player_field_counter = player_field_counter + 1
 		if player_set[player_name] == nil then
