@@ -356,7 +356,7 @@ function ui.get_formspec(player, page)
 
 	if fsdata.draw_inventory ~= false then
 		-- Player inventory
-		local has_extended_inventory = ch_core.offline_charinfo[player_name].extended_inventory == 1
+		local has_extended_inventory = ch_data.offline_charinfo[player_name].extended_inventory == 1
 
 		if has_extended_inventory then
 			fs[#fs + 1] = string.format("scroll_container[%f,%f;%f,%f;ui_sb_main_inv;vertical]",

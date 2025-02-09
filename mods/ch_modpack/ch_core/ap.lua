@@ -199,7 +199,7 @@ function ch_core.ap_announce_craft(player_or_player_name, hash)
 	else
 		player_name = player_or_player_name and player_or_player_name:is_player() and player_or_player_name:get_player_name()
 	end
-	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
+	local online_charinfo = player_name and ch_data.online_charinfo[player_name]
 	if online_charinfo then
 		local ap = online_charinfo.ap
 		if ap then
@@ -216,7 +216,7 @@ if minetest.get_modpath("hudbars") then
 		local player_role = pinfo.role
 		local has_creative_priv = false
 		if pinfo.privs.creative then
-			local online_charinfo = ch_core.online_charinfo[pinfo.player_name]
+			local online_charinfo = ch_data.online_charinfo[pinfo.player_name]
 			if online_charinfo ~= nil then
 				-- a creative priv icon can only appear after a second after login
 				has_creative_priv = minetest.get_us_time() - online_charinfo.join_timestamp > 1000000
@@ -253,7 +253,7 @@ function ch_core.ap_init(player, online_charinfo, offline_charinfo)
 		offline_charinfo.ap_level = 1
 		offline_charinfo.ap_xp = 0
 		offline_charinfo.ap_version = ch_core.verze_ap
-		ch_core.save_offline_charinfo(player_name, {"ap_level", "ap_version", "ap_xp"})
+		ch_data.save_offline_charinfo(player_name)
 	end
 	local ap = {
 		-- aktuální údaje
@@ -337,13 +337,11 @@ function ch_core.ap_add(player_name, offline_charinfo, points_to_add, debug_coef
 	end
 
 	-- aktualizovat offline_charinfo
-	local keys_to_update = {"ap_xp"}
 	offline_charinfo.ap_xp = new_xp
 	if new_level ~= old_level then
-		keys_to_update[2] = "ap_level"
 		offline_charinfo.ap_level = new_level
 	end
-	ch_core.save_offline_charinfo(player_name, keys_to_update)
+	ch_data.save_offline_charinfo(player_name)
 
 	-- je-li postava online, aktualizovat HUD
 	if player ~= nil then
@@ -366,7 +364,7 @@ function ch_core.ap_add(player_name, offline_charinfo, points_to_add, debug_coef
 	end
 
 	-- je-li postava online, aktualizovat online_charinfo.ap_modify_timestamp
-	local online_charinfo = ch_core.online_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
 	if online_charinfo ~= nil then
 		online_charinfo.ap_modify_timestamp = minetest.get_us_time()
 	end
@@ -424,7 +422,7 @@ function ch_core.ap_update(player, online_charinfo, offline_charinfo)
 
 	if act_any then
 		offline_charinfo.past_ap_playtime = offline_charinfo.past_ap_playtime + ch_core.ap_interval
-		ch_core.save_offline_charinfo(online_charinfo.player_name, "past_ap_playtime")
+		ch_data.save_offline_charinfo(online_charinfo.player_name)
 	end
 
 	if result == 0 then
@@ -443,7 +441,7 @@ local function on_dignode(pos, oldnode, digger)
 		return
 	end
 	local player_name = digger:is_player() and digger:get_player_name()
-	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
+	local online_charinfo = player_name and ch_data.online_charinfo[player_name]
 	if online_charinfo then -- nil if digged by digtron
 		local ap = online_charinfo.ap
 		if ap then
@@ -464,7 +462,7 @@ local function on_placenode(pos, newnode, placer, oldnode, itemstack, pointed_th
 	if player_name == nil or player_name == false or player_name == "" then
 		return
 	end
-	local online_charinfo = ch_core.online_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
 	if online_charinfo then
 		local ap = online_charinfo.ap
 		if ap then
@@ -482,7 +480,7 @@ end
 
 local function on_craft(itemstack, player, old_craft_grid, craft_inv)
 	if craft_inv:get_location().type == "player" then
-		local ap = ch_core.safe_get_3(ch_core.online_charinfo, assert(player:get_player_name()), "ap")
+		local ap = ch_core.safe_get_3(ch_data.online_charinfo, assert(player:get_player_name()), "ap")
 		if ap then
 			ap.craft_gen = ap.craft_gen + 1
 		end
@@ -490,21 +488,21 @@ local function on_craft(itemstack, player, old_craft_grid, craft_inv)
 end
 
 local function on_player_inventory_action(player, action, inventory, inventory_info)
-	local ap = ch_core.safe_get_3(ch_core.online_charinfo, assert(player:get_player_name()), "ap")
+	local ap = ch_core.safe_get_3(ch_data.online_charinfo, assert(player:get_player_name()), "ap")
 	if ap then
 		ap.craft_gen = ap.craft_gen + 1
 	end
 end
 
 local function on_item_eat(hp_change, replace_with_item, itemstack, user, pointed_thing)
-	local ap = ch_core.safe_get_3(ch_core.online_charinfo, assert(user:get_player_name()), "ap")
+	local ap = ch_core.safe_get_3(ch_data.online_charinfo, assert(user:get_player_name()), "ap")
 	if ap then
 		ap.craft_gen = ap.craft_gen + 1
 	end
 end
 
 local function on_item_pickup(itemstack, picker, pointed_thing, time_from_last_punch,  ...)
-	local ap = ch_core.safe_get_3(ch_core.online_charinfo, assert(picker:get_player_name()), "ap")
+	local ap = ch_core.safe_get_3(ch_data.online_charinfo, assert(picker:get_player_name()), "ap")
 	if ap then
 		ap.craft_gen = ap.craft_gen + 1
 	end
@@ -523,7 +521,7 @@ local function body(admin_name, param)
 		return false, "Chybné zadání!"
 	end
 	player_name = ch_core.jmeno_na_prihlasovaci(player_name)
-	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local offline_charinfo = ch_data.offline_charinfo[player_name]
 	if not offline_charinfo then
 		return false, "Vnitřní chyba: nenalezeno offline_charinfo pro '"..player_name.."'!"
 	end
@@ -547,7 +545,7 @@ minetest.register_chatcommand("body", def)
 	ve hře.
 ]]
 function ch_core.showhide_ap_hud(player_name, show)
-	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local offline_charinfo = ch_data.offline_charinfo[player_name]
 	if not offline_charinfo then
 		return false
 	end
@@ -556,7 +554,7 @@ function ch_core.showhide_ap_hud(player_name, show)
 		return nil
 	end
 	offline_charinfo.skryt_body = new_value
-	ch_core.save_offline_charinfo(player_name, "skryt_body")
+	ch_data.save_offline_charinfo(player_name)
 	local player = minetest.get_player_by_name(player_name)
 	if player ~= nil then
 		update_xp_hud(player, player_name, offline_charinfo)
@@ -577,7 +575,7 @@ if minetest.get_modpath("hudbars") then
 	hb.register_hudbar("ch_xp", 0xFFFFFF, "*", hudbar_defaults, 0, 100, true, hudbar_formatstring, hudbar_formatstring_config)
 	minetest.register_on_joinplayer(function(player, last_login)
 		local pinfo = ch_core.normalize_player(player)
-		local offline_charinfo = ch_core.get_offline_charinfo(pinfo.player_name)
+		local offline_charinfo = ch_data.get_offline_charinfo(pinfo.player_name)
 		--[[
 		local level, xp, _max_xp = offline_charinfo.ap_level, offline_charinfo.ap_xp
 		if not (level and xp) then

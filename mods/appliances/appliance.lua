@@ -959,7 +959,7 @@ function appliance:after_timer_step(timer_step)
 	-- CH_CORE AP
 	local last_punch = self.last_punch
 	if last_punch and minetest.get_us_time() - last_punch.timestamp < 5000000 then
-		local online_charinfo = last_punch.player_name and ch_core.online_charinfo[last_punch.player_name]
+		local online_charinfo = last_punch.player_name and ch_data.online_charinfo[last_punch.player_name]
 		local ap = online_charinfo and online_charinfo.ap
 		if ap then
 			ap.craft_gen = ap.craft_gen + 1

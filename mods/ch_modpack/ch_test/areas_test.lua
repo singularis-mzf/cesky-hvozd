@@ -12,7 +12,7 @@ local hud_def = {
 }
 
 local function clear_hud(player_name, expected_generation)
-    local online_charinfo = ch_core.online_charinfo[player_name]
+    local online_charinfo = ch_data.online_charinfo[player_name]
     local player = minetest.get_player_by_name(player_name)
     if online_charinfo ~= nil and player ~= nil and online_charinfo.ch_areas_test_hud.generation == expected_generation then
         local hud_handle = online_charinfo.ch_areas_test_hud.handle
@@ -22,7 +22,7 @@ local function clear_hud(player_name, expected_generation)
 end
 
 local function on_player_change_area(player_name, old_areas, new_areas)
-    local online_charinfo = ch_core.online_charinfo[player_name]
+    local online_charinfo = ch_data.online_charinfo[player_name]
     local player = minetest.get_player_by_name(player_name)
     if online_charinfo == nil or player == nil then return end
     local hud = online_charinfo.ch_areas_test_hud

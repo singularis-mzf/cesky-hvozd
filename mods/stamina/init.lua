@@ -2,6 +2,8 @@ ch_base.open_mod(minetest.get_current_modname())
 
 stamina = {players = {}, mod = "redo"}
 
+local has_ch_data = core.get_modpath("ch_data")
+
 STAMINA_TICK = tonumber(minetest.settings:get("stamina_tick")) or 800
 							-- time in seconds after that 1 stamina point is taken
 STAMINA_TICK_MIN = 4		-- stamina ticks won't reduce stamina below this level
@@ -156,7 +158,7 @@ local function stamina_update_hud(player, stamina_level)
 	else
 		result = false
 	end
-	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local offline_charinfo = has_ch_data and ch_data.offline_charinfo[player_name]
 	if not is_stamina_enabled(player_name) or (hud_status == "normal" and offline_charinfo and offline_charinfo.skryt_hlad == 1) then
 		hb.hide_hudbar(player, "hlad")
 	elseif hud_status ~= "normal" or hud_value > 5 then

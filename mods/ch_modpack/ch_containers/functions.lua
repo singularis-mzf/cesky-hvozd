@@ -270,7 +270,7 @@ core.register_on_mods_loaded(on_mods_loaded)
 function internal.get_containers(owner)
     assert(owner ~= nil and owner ~= "")
     local result = container_data[owner]
-    if result == nil and ch_core.offline_charinfo[owner] ~= nil then
+    if result == nil and ch_data.offline_charinfo[owner] ~= nil then
         local owners = storage:get_string("owners")
         if owners ~= "" then
             owners = owners..owner.."|"
@@ -786,7 +786,7 @@ function internal.set_properties(container_id, properties, player_name)
     local new_owner_data
 
     if will_change_owner then
-        if ch_core.offline_charinfo[properties.owner] == nil then
+        if ch_data.offline_charinfo[properties.owner] == nil then
             return false, "Postava '"..properties.owner.."' neexistuje!"
         end
         new_owner_data = internal.get_containers(properties.owner)

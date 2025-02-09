@@ -218,8 +218,8 @@ local function globalstep(dtime)
 	for _, player in pairs(connected_players) do
 		local player_name = player:get_player_name()
 		local player_pos = player:get_pos()
-		local online_charinfo = ch_core.online_charinfo[player_name]
-		local offline_charinfo = ch_core.get_offline_charinfo(player_name)
+		local online_charinfo = ch_data.online_charinfo[player_name]
+		local offline_charinfo = ch_data.get_or_add_offline_charinfo(player_name)
 		local disrupt_teleport_flag = false
 		local disrupt_pryc_flag = false
 		local player_wielded_item_name = player:get_wielded_item():get_name() or ""
@@ -293,7 +293,7 @@ local function globalstep(dtime)
 			-- pokud se změnil držený předmět, možná bude potřeba zobrazit jeho nápovědu
 			if player_wielded_item_name ~= previous_wield_item_name then
 				disrupt_pryc_flag = true
-				local help_def = ch_core.should_show_help(player, online_charinfo, player_wielded_item_name)
+				local help_def = ch_data.should_show_help(player, online_charinfo, player_wielded_item_name)
 				if help_def then
 					local zluta = minetest.get_color_escape_sequence("#ffff00")
 					local zelena = minetest.get_color_escape_sequence("#00ff00")

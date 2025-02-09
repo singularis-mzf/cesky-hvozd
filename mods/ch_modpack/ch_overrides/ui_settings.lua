@@ -114,7 +114,7 @@ local admin_targets = {}
 
 local function player_info_less_than(a, b)
 	-- 1. Online players first
-	local oc = ch_core.online_charinfo
+	local oc = ch_data.online_charinfo
 	if a.is_online and not b.is_online then
 		return true
 	elseif not a.is_online and b.is_online then
@@ -144,7 +144,7 @@ local function get_admin_dropdown(admin_name)
 	local formspec_options = {}
 	for i = 1, #all_players do
 		all_players[i].index = i
-		all_players[i].is_online = ch_core.online_charinfo[all_players[i].prihlasovaci]
+		all_players[i].is_online = ch_data.online_charinfo[all_players[i].prihlasovaci]
 	end
 	table.sort(all_players, player_info_less_than)
 	for i = 1, #all_players do
@@ -299,7 +299,7 @@ local function get_formspec(player, perplayer_formspec)
 	local player_name = assert(player_info.player_name) -- (who is the formspec for)
 	local player_viewname = ch_core.prihlasovaci_na_zobrazovaci(player_name)
 	local player_role = assert(player_info.role)
-	local online_charinfo = ch_core.online_charinfo[player_name] or {}
+	local online_charinfo = ch_data.online_charinfo[player_name] or {}
 
 	-- target player (who is the formspec about)
 	local tplayer_role, tplayer_privs, tplayer
@@ -314,7 +314,7 @@ local function get_formspec(player, perplayer_formspec)
 		tplayer_privs = tplayer_info.privs
 		tplayer = tplayer_info.player
 	end
-	local toffline_charinfo = ch_core.offline_charinfo[tplayer_name] or {}
+	local toffline_charinfo = ch_data.offline_charinfo[tplayer_name] or {}
 	local fs = perplayer_formspec
 	local left_form = {
 		x = fs.std_inv_x,
@@ -520,7 +520,7 @@ local function get_formspec(player, perplayer_formspec)
 			"To, zda se jim zobrazí vaše zprávy, záleží zase na jejich doslechu.\n"..
 			"Nastavením velkého doslechu budete vidět čet ze všech koutů světa,\n"..
 			"ale pokud zrovna vedete rozhovor s někým poblíž, mohou vás otravovat."
-		local tonline_charinfo = ch_core.online_charinfo[tplayer_name] or {}
+		local tonline_charinfo = ch_data.online_charinfo[tplayer_name] or {}
 		table.insert(formspec,
 			fsgen:field_with_button("adoslech", "aktuální doslech(*)(0-65535):", tostring(tonline_charinfo.doslech or "50"), tooltip))
 	end
@@ -662,7 +662,7 @@ local function on_player_receive_fields(player, formname, fields)
 		return
 	end
 
-	local online_charinfo = ch_core.online_charinfo[player_name] or {}
+	local online_charinfo = ch_data.online_charinfo[player_name] or {}
 	local tplayer_index, tplayer_name = get_tplayer_index_and_name(player_name, player_role)
 	local tplayer_info
 
@@ -689,7 +689,7 @@ local function on_player_receive_fields(player, formname, fields)
 		return true
 	end
 	local tplayer = tplayer_info.player
-	local toffline_charinfo = ch_core.offline_charinfo[tplayer_name] or {}
+	local toffline_charinfo = ch_data.offline_charinfo[tplayer_name] or {}
 	local update_formspec = false
 
 	-- Expected dropdown values:
@@ -705,7 +705,7 @@ local function on_player_receive_fields(player, formname, fields)
 		-- chs_zacatek
 		local new_zacatek = clip(1, 3, math.round(assert(tonumber(fields.chs_zacatek))))
 		toffline_charinfo.zacatek_kam = new_zacatek
-		ch_core.save_offline_charinfo(tplayer_name, "zacatek_kam")
+		ch_data.save_offline_charinfo(tplayer_name)
 		update_formspec = true
 	elseif tplayer ~= nil and fields.chs_dennoc and tostring(fields.chs_dennoc) ~= expected.chs_dennoc then
 		local new_choice = clip(1, 12, math.round(assert(tonumber(fields.chs_dennoc))))
@@ -728,7 +728,7 @@ local function on_player_receive_fields(player, formname, fields)
 		update_formspec = true
 	elseif has_ch_bank and fields.chs_rezim_plateb and tostring(fields.chs_rezim_plateb) ~= expected.chs_rezim_plateb then
 		toffline_charinfo.rezim_plateb = clip(1, 5, math.round(assert(tonumber(fields.chs_rezim_plateb)))) - 1
-		ch_core.save_offline_charinfo(tplayer_name, "rezim_plateb")
+		ch_data.save_offline_charinfo(tplayer_name)
 		update_formspec = true
 
 	-- 2. CHECKBOXES
@@ -737,7 +737,7 @@ local function on_player_receive_fields(player, formname, fields)
 		minetest.set_player_privs(tplayer_name, tplayer_info.privs)
 		update_formspec = true
 	elseif fields.chs_shybat then
-		update_formspec = not ch_core.nastavit_shybani(tplayer_name, fields.chs_shybat == "true") or player_name ~= tplayer_name
+		update_formspec = not ch_data.nastavit_shybani(tplayer_name, fields.chs_shybat == "true") or player_name ~= tplayer_name
 	elseif fields.chs_zobrazitbody then
 		update_formspec = not ch_core.showhide_ap_hud(tplayer_name, fields.chs_zobrazitbody == "true") or player_name ~= tplayer_name
 	elseif fields.chs_krasna_obloha then
@@ -745,8 +745,8 @@ local function on_player_receive_fields(player, formname, fields)
 			if toffline_charinfo.no_ch_sky == 1 then
 				update_formspec = true
 				toffline_charinfo.no_ch_sky = 0
-				ch_core.save_offline_charinfo(tplayer_name, "no_ch_sky")
-				local tonline_charinfo = ch_core.online_charinfo[tplayer_name]
+				ch_data.save_offline_charinfo(tplayer_name)
+				local tonline_charinfo = ch_data.online_charinfo[tplayer_name]
 				if tonline_charinfo ~= nil and tonline_charinfo.sky_info ~= nil then
 					tonline_charinfo.sky_info.ch_sky_enabled = true
 				end
@@ -755,8 +755,8 @@ local function on_player_receive_fields(player, formname, fields)
 			if toffline_charinfo.no_ch_sky ~= 1 then
 				update_formspec = true
 				toffline_charinfo.no_ch_sky = 1
-				ch_core.save_offline_charinfo(tplayer_name, "no_ch_sky")
-				local tonline_charinfo = ch_core.online_charinfo[tplayer_name]
+				ch_data.save_offline_charinfo(tplayer_name)
+				local tonline_charinfo = ch_data.online_charinfo[tplayer_name]
 				if tonline_charinfo ~= nil and tonline_charinfo.sky_info ~= nil then
 					tonline_charinfo.sky_info.ch_sky_enabled = false
 				end
@@ -764,11 +764,11 @@ local function on_player_receive_fields(player, formname, fields)
 		end
 	elseif fields.chs_predmetydokose then
 		toffline_charinfo.discard_drops = ifthenelse(fields.chs_predmetydokose == "true", 1, 0)
-		ch_core.save_offline_charinfo(tplayer_name, "discard_drops")
+		ch_data.save_offline_charinfo(tplayer_name)
 		update_formspec = true
 	elseif fields.chs_skrythlad then
 		toffline_charinfo.skryt_hlad = ifthenelse(fields.chs_skrythlad == "true", 1, 0)
-		ch_core.save_offline_charinfo(tplayer_name, "skryt_hlad")
+		ch_data.save_offline_charinfo(tplayer_name)
 		update_formspec = true
 		if has_stamina and tplayer ~= nil then
 			stamina.change(tplayer)
@@ -785,7 +785,7 @@ local function on_player_receive_fields(player, formname, fields)
 
 	-- 3. FIELDS WITH BUTTONS
 	elseif fields.chs_adoslech_set and tonumber(fields.chs_adoslech) ~= nil then
-		local tonline_charinfo = ch_core.online_charinfo[tplayer_name]
+		local tonline_charinfo = ch_data.online_charinfo[tplayer_name]
 		if tonline_charinfo ~= nil then
 			local new_doslech = clip(0, 65535, math.ceil(tonumber(fields.chs_adoslech)))
 			tonline_charinfo.doslech = new_doslech
@@ -794,7 +794,7 @@ local function on_player_receive_fields(player, formname, fields)
 	elseif fields.chs_vdoslech_set and tonumber(fields.chs_vdoslech) ~= nil then
 		local new_doslech = clip(0, 65535, math.ceil(tonumber(fields.chs_vdoslech)))
 		toffline_charinfo.doslech = new_doslech
-		ch_core.save_offline_charinfo(tplayer_name, "doslech")
+		ch_data.save_offline_charinfo(tplayer_name)
 		update_formspec = true
 	elseif fields.chs_lista_set and tonumber(fields.chs_lista) ~= nil then
 		local new_size = clip(1, 32, math.round(tonumber(fields.chs_lista)))

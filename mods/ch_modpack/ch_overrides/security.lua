@@ -43,7 +43,7 @@ local function try_send_message(owner_intruder, player_name, area_id, message)
 	local now = minetest.get_us_time()
 	local counter_key = owner_intruder..player_name.."/"..area_id
 	local counter = message_counters[counter_key]
-	local is_online = ifthenelse(ch_core.online_charinfo[player_name], true, false)
+	local is_online = ifthenelse(ch_data.online_charinfo[player_name], true, false)
 
 	if counter then
 		local was_online, old_timestamp = counter.was_online, counter.timestamp

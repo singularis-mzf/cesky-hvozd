@@ -23,8 +23,8 @@ function ch_core.show_player_list(player, online_charinfo)
 
 	-- gether the list of players
 	local items = {}
-	for c_player_name, c_online_charinfo in pairs(ch_core.online_charinfo) do
-		local c_offline_charinfo = ch_core.offline_charinfo[c_player_name]
+	for c_player_name, c_online_charinfo in pairs(ch_data.online_charinfo) do
+		local c_offline_charinfo = ch_data.offline_charinfo[c_player_name]
 		local titul = c_offline_charinfo and c_offline_charinfo.titul
 		local dtituly = c_online_charinfo.docasne_tituly or {}
 
@@ -105,7 +105,7 @@ if has_hudbars then
 	local function after_joinplayer(player_name)
 		local player = minetest.get_player_by_name(player_name)
 		if player ~= nil then
-			local offline_charinfo = ch_core.offline_charinfo[player_name]
+			local offline_charinfo = ch_data.offline_charinfo[player_name]
 			if offline_charinfo ~= nil and offline_charinfo.skryt_zbyv ~= 1 then
 				hb.unhide_hudbar(player, "ch_gametime")
 				ch_core.update_gametime_hudbar({player})
@@ -120,10 +120,10 @@ if has_hudbars then
 	minetest.register_on_joinplayer(on_joinplayer)
 
 	function ch_core.show_gametime_hudbar(player_name)
-		local offline_charinfo = ch_core.offline_charinfo[player_name]
+		local offline_charinfo = ch_data.offline_charinfo[player_name]
 		if offline_charinfo ~= nil and offline_charinfo.skryt_zbyv ~= 0 then
 			offline_charinfo.skryt_zbyv = 0
-			ch_core.save_offline_charinfo(player_name, "skryt_zbyv")
+			ch_data.save_offline_charinfo(player_name)
 			local player = minetest.get_player_by_name(player_name)
 			if player ~= nil then
 				hb.unhide_hudbar(player, "ch_gametime")
@@ -135,10 +135,10 @@ if has_hudbars then
 	end
 
 	function ch_core.hide_gametime_hudbar(player_name)
-		local offline_charinfo = ch_core.offline_charinfo[player_name]
+		local offline_charinfo = ch_data.offline_charinfo[player_name]
 		if offline_charinfo ~= nil and offline_charinfo.skryt_zbyv ~= 1 then
 			offline_charinfo.skryt_zbyv = 1
-			ch_core.save_offline_charinfo(player_name, "skryt_zbyv")
+			ch_data.save_offline_charinfo(player_name)
 			local player = minetest.get_player_by_name(player_name)
 			if player ~= nil then
 				hb.hide_hudbar(player, "ch_gametime")
@@ -149,7 +149,7 @@ if has_hudbars then
 	end
 
 	function ch_core.is_gametime_hudbar_shown(player_name)
-		local offline_charinfo = ch_core.offline_charinfo[player_name]
+		local offline_charinfo = ch_data.offline_charinfo[player_name]
 		return offline_charinfo ~= nil and offline_charinfo.skryt_zbyv ~= 1
 	end
 
@@ -165,7 +165,7 @@ if has_hudbars then
 			players = {}
 			for _, player in ipairs(minetest.get_connected_players()) do
 				local player_name = player:get_player_name()
-				local offline_charinfo = ch_core.offline_charinfo[player_name] or {}
+				local offline_charinfo = ch_data.offline_charinfo[player_name] or {}
 				if offline_charinfo.skryt_zbyv ~= 1 then
 					table.insert(players, player)
 				end
@@ -258,7 +258,7 @@ else
 end
 
 function ch_core.try_alloc_hudbar(player)
-	local online_charinfo = ch_core.online_charinfo[player:get_player_name()]
+	local online_charinfo = ch_data.online_charinfo[player:get_player_name()]
 	if online_charinfo then
 		local hudbars = online_charinfo.hudbars
 		if not hudbars then
@@ -277,7 +277,7 @@ function ch_core.try_alloc_hudbar(player)
 end
 
 function ch_core.free_hudbar(player, hudbar_id)
-	local online_charinfo = ch_core.online_charinfo[player:get_player_name()]
+	local online_charinfo = ch_data.online_charinfo[player:get_player_name()]
 	if not online_charinfo then
 		minetest.log("warning", "Cannot get online_charinfo of player "..player:get_player_name().." to free a hudbar "..hudbar_id.."!")
 		return false

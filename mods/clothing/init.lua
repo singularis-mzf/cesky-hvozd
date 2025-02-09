@@ -177,7 +177,7 @@ minetest.register_on_joinplayer(function(player)
 		inventory_plus.register_button(player,"clothing", S("Clothing"))
 	end
 
-	local is_new = ch_core.get_offline_charinfo(name).past_playtime == 0.0
+	local is_new = ch_data.get_offline_charinfo(name).past_playtime == 0.0
 	load_clothing_metadata(player, clothing_inv, is_new)
 	minetest.after(1, function(name)
 		-- Ensure the ObjectRef is valid after 1s

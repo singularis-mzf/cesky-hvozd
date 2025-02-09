@@ -13,7 +13,7 @@ function ch_core.set_player_light(player_name, slot, light_level)
 		minetest.log("warning", "Invalid light_level: "..ll_1)
 		return false
 	end
-	local online_charinfo = ch_core.online_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
 	if not online_charinfo or not valid_numbers[ll] then
 		return false
 	end

@@ -16,7 +16,7 @@ local function get_finish_teleport_func(player_name, d, is_immediate)
 	return function()
 		-- je postava stále ještě ve hře?
 		local player = minetest.get_player_by_name(player_name)
-		local online_charinfo = ch_core.online_charinfo[player_name]
+		local online_charinfo = ch_data.online_charinfo[player_name]
 		if player == nil or online_charinfo == nil then
 			return
 		end
@@ -180,7 +180,7 @@ function ch_core.teleport_player(def)
 	end
 	local player = pinfo.player
 	local player_name = pinfo.player_name
-	local online_charinfo = ch_core.online_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
 	if player == nil or online_charinfo == nil then
 		return false, "postava není ve hře"
 	end
@@ -240,7 +240,7 @@ end
 	Zjistí, zda je postava přemísťována.
 ]]
 function ch_core.is_teleporting(player_name)
-	local online_charinfo = ch_core.online_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
 	if online_charinfo == nil then
 		return false
 	end
@@ -255,7 +255,7 @@ end
 	Zruší probíhající přemístění.
 ]]
 function ch_core.cancel_teleport(player_name, due_to_player_action)
-	local online_charinfo = ch_core.online_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
 	if online_charinfo == nil then
 		return false
 	end
@@ -281,7 +281,7 @@ end
 	Předčasně dokončí probíhající přemístění.
 ]]
 function ch_core.finish_teleport(player_name)
-	local online_charinfo = ch_core.online_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
 	if online_charinfo == nil then
 		return false
 	end
@@ -300,18 +300,18 @@ local function doma(player_name, pos)
 	if not pos then
 		return false, "Chybná pozice!"
 	end
-	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
+	local offline_charinfo = ch_data.get_offline_charinfo(player_name)
 	offline_charinfo.domov = minetest.pos_to_string(pos)
 	if not offline_charinfo.domov then
 		return false, "Pozice nebyla uložena!"
 	end
-	ch_core.save_offline_charinfo(player_name, "domov")
+	ch_data.save_offline_charinfo(player_name)
 	return true
 end
 
 -- /domů
 local function domu(player_name)
-	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local offline_charinfo = ch_data.offline_charinfo[player_name]
 	if not offline_charinfo then
 		return false, "Interní údaje nebyly nalezeny!"
 	elseif not offline_charinfo.domov then
@@ -358,7 +358,7 @@ local function stavim(player_name, pos)
 	end
 	local cas = ch_time.aktualni_cas()
 	local dnes = cas:YYYY_MM_DD()
-	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
+	local offline_charinfo = ch_data.get_offline_charinfo(player_name)
 	if not offline_charinfo then
 		return false, "Interní údaje nebyly nalezeny!"
 	end
@@ -370,14 +370,14 @@ local function stavim(player_name, pos)
 		return false, "Cílovou pozici příkazem /stavím lze nastavit jen jednou denně!"
 	end
 	offline_charinfo.stavba = core.pos_to_string(pos).."@"..dnes
-	ch_core.save_offline_charinfo(player_name, "stavba")
+	ch_data.save_offline_charinfo(player_name)
 	core.log("action", player_name.." set their 'stavba' position to "..offline_charinfo.stavba)
 	return true, "Pozice pro příkaz /nastavbu nastavena. Pamatujte, že tuto pozici můžete změnit jen jednou denně."
 end
 
 -- /nastavbu
 local function nastavbu(player_name)
-	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local offline_charinfo = ch_data.offline_charinfo[player_name]
 	if not offline_charinfo then
 		return false, "Interní údaje nebyly nalezeny!"
 	elseif not offline_charinfo.stavba or offline_charinfo.stavba == "" then
@@ -401,7 +401,7 @@ end
 
 -- /začátek
 local function zacatek(player_name, _param)
-	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local offline_charinfo = ch_data.offline_charinfo[player_name]
 	if not offline_charinfo then
 		return false, "Interní údaje nebyly nalezeny!"
 	end

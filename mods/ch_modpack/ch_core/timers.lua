@@ -84,7 +84,7 @@ local def = {
 	description = "Odpočítá zadaný počet sekund. Při použití bez parametru jen zruší probíhající odpočet.",
 	privs = {},
 	func = function(player_name, param)
-		local online_charinfo = ch_core.online_charinfo[player_name]
+		local online_charinfo = ch_data.online_charinfo[player_name]
 		if param == "" then
 			ch_core.cancel_ch_timer(online_charinfo, "custom_timer")
 			return true

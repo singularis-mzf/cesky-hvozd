@@ -638,8 +638,8 @@ minetest.register_on_player_receive_fields(on_player_receive_fields)
 
 function utils.try_pay_wage(player_name, join_timestamp, ap_xp_at_join)
 	if utils.wage_amount <= 0 then return end
-	local online_charinfo = ch_core.online_charinfo[player_name]
-	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
+	local offline_charinfo = ch_data.offline_charinfo[player_name]
 	local ap_xp_now = (offline_charinfo and offline_charinfo.ap_xp) or 0
 	local now = minetest.get_us_time()
 

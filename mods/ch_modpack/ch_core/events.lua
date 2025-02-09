@@ -246,7 +246,7 @@ function ch_core.add_event(event_type, text, player_name)
     if type_def.chat_access ~= nil then
         local players_to_send = {}
         if type_def.chat_access == "player_only" then
-            if player_name ~= nil and ch_core.online_charinfo[player_name] ~= nil then
+            if player_name ~= nil and ch_data.online_charinfo[player_name] ~= nil then
                 table.insert(players_to_send, player_name)
             end
         elseif type_def.chat_access == "players" then

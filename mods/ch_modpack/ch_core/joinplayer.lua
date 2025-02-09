@@ -226,13 +226,14 @@ end
 local function on_newplayer(player)
 	local player_name = player:get_player_name()
 	minetest.log("action", "[ch_core] New player '"..player_name.."'");
-	ch_core.delete_offline_charinfo(player_name)
-	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
+	ch_data.delete_offline_charinfo(player_name)
+	ch_data.get_joining_online_charinfo(player)
+	local offline_charinfo = ch_data.get_offline_charinfo(player_name)
 	offline_charinfo.pending_registration_type = "new"
 end
 
 local function after_joinplayer(player_name, join_timestamp)
-	local online_charinfo = ch_core.online_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
 	local player = minetest.get_player_by_name(player_name)
 	if player == nil or online_charinfo == nil or online_charinfo.join_timestamp ~= join_timestamp then
 		return
@@ -250,7 +251,6 @@ local function after_joinplayer(player_name, join_timestamp)
 		5.9.0 => formspec_version = ?, protocol_version = ?
 		5.10.0 => formspec_version = 8, protocol_version = 46
 	]]
-	local online_charinfo = ch_core.online_charinfo[player_name]
 	if online_charinfo.protocol_version < 42 and online_charinfo.protocol_version ~= 0 then
 		local client_version
 		if online_charinfo.protocol_version == 40 then
@@ -297,8 +297,8 @@ end
 local event_types = {"public_announcement", "announcement", "custom"}
 
 local function after_joinplayer_5min(player_name, join_timestamp)
-	local online_charinfo = ch_core.online_charinfo[player_name]
-	local offline_charinfo = ch_core.offline_charinfo[player_name] or {}
+	local online_charinfo = ch_data.online_charinfo[player_name]
+	local offline_charinfo = ch_data.offline_charinfo[player_name] or {}
 	if online_charinfo == nil or online_charinfo.join_timestamp ~= join_timestamp or minetest.get_player_by_name(player_name) == nil then
 		return -- player probably already logged out
 	end
@@ -321,11 +321,11 @@ local function after_joinplayer_5min(player_name, join_timestamp)
 		ch_core.systemovy_kanal(player_name, table.concat(output, "\n"))
 	end
 	offline_charinfo.last_ann_shown_date = dnes
-	ch_core.save_offline_charinfo(player_name, "last_ann_shown_date")
+	ch_data.save_offline_charinfo(player_name)
 end
 
 local function on_joinplayer_pomodoro(player, player_name, online_charinfo)
-	local oc = ch_core.online_charinfo
+	local oc = ch_data.online_charinfo
 	local now = minetest.get_us_time()
 	local priv = {ch_registered_player = true}
 	local prev_leave_timestamp = online_charinfo.prev_leave_timestamp
@@ -362,8 +362,8 @@ end
 
 local function on_joinplayer(player, last_login)
 	local player_name = player:get_player_name()
-	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
-	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
+	local online_charinfo = ch_data.get_joining_online_charinfo(player)
+	local offline_charinfo = ch_data.get_offline_charinfo(player_name)
 	local news_role = assert(online_charinfo.news_role)
 	local lang_code = online_charinfo.lang_code
 	local protocol_version = online_charinfo.protocol_version
@@ -423,8 +423,12 @@ local function on_joinplayer(player, last_login)
 	return true
 end
 
-minetest.send_join_message = function(player_name)
-	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
+core.send_join_message = function(player_name)
+	local player = core.get_player_by_name(player_name)
+	if player == nil then
+		return false
+	end
+	local online_charinfo = ch_data.get_joining_online_charinfo(player)
 	-- local lang_code = assert(online_charinfo.lang_code)
 	local news_role = assert(online_charinfo.news_role)
 	-- local protocol_version = assert(online_charinfo.protocol_version)
@@ -451,8 +455,12 @@ local function on_leaveplayer(player)
 	minetest.log("action", "Player "..player_name.." leaved with privs = "..dump_privs(privs))
 end
 
-minetest.send_leave_message = function(player_name, is_timedout)
-	local online_charinfo = ch_core.get_leaving_online_charinfo(player_name)
+core.send_leave_message = function(player_name, is_timedout)
+	local player = core.get_player_by_name(player_name)
+	if player == nil then
+		return false
+	end
+	local online_charinfo = ch_data.get_leaving_online_charinfo(player)
 	local news_role = assert(online_charinfo.news_role)
 
 	if news_role ~= "disconnect" and news_role ~= "invalid_name" and news_role ~= "invalid_locale" then
@@ -461,8 +469,8 @@ minetest.send_leave_message = function(player_name, is_timedout)
 	return true
 end
 
-minetest.register_on_newplayer(on_newplayer)
-minetest.register_on_joinplayer(on_joinplayer)
-minetest.register_on_leaveplayer(on_leaveplayer)
+core.register_on_newplayer(on_newplayer)
+core.register_on_joinplayer(on_joinplayer)
+core.register_on_leaveplayer(on_leaveplayer)
 
 ch_core.close_submod("joinplayer")

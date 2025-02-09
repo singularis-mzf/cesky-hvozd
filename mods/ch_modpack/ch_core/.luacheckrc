@@ -24,14 +24,16 @@ globals = {
 		"start_ch_timer",
 		"systemovy_kanal",
 		"update_formspec",
+	}},
+	ch_data = {fields = {
 		online_charinfo = {
 			read_only = false,
 			other_fields = true,
 		}, offline_charinfo = {
 			read_only = false,
 			other_fields = true,
-		}
-	}},
+		},
+	}}
 	doors = {fields = {
 		"get", "login_to_viewname", "register_fencegate"
 	}},

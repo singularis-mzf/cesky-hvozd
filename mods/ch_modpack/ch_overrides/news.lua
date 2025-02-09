@@ -1,7 +1,7 @@
 local has_bulletin_boards = minetest.get_modpath("bulletin_boards")
 
 function ch_overrides.novinky(player_name, param)
-    local online_charinfo = ch_core.online_charinfo[player_name]
+    local online_charinfo = ch_data.online_charinfo[player_name]
     local oc_role = online_charinfo and online_charinfo.news_role
     if oc_role == nil then
         minetest.log("error", "online_charinfo.news_role not defined for "..(player_name or "nil").."!")

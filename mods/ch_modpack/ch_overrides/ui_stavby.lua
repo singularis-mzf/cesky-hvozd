@@ -95,7 +95,7 @@ local filters = {
 }
 
 local function get_stavby_online_charinfo(player_name)
-	local online_charinfo = ch_core.online_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
 	if online_charinfo == nil then
 		minetest.log("warning", "ui_stavby: Expected online_charinfo for player '"..player_name.."' not found!")
 		return {}

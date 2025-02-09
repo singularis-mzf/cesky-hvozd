@@ -47,11 +47,11 @@ local disrupt_pryc = function(player, online_charinfo)
 end
 
 function ch_core.je_pryc(player_name)
-	return ch_core.ifthenelse((ch_core.online_charinfo[player_name] or empty_table).pryc ~= nil, true, false)
+	return ch_core.ifthenelse((ch_data.online_charinfo[player_name] or empty_table).pryc ~= nil, true, false)
 end
 
 function ch_core.set_pryc(player_name, options)
-	local cod = ch_core.online_charinfo[player_name]
+	local cod = ch_data.online_charinfo[player_name]
 	if not cod then
 		minetest.log("error", "Internal error: missing online_charinfo for character '"..player_name.."'!")
 		return false, "Interní chyba: chybí online_charinfo"

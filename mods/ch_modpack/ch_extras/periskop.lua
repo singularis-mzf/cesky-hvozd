@@ -12,7 +12,7 @@ end
 local function periskop_use(player, button)
 	local player_name = player:get_player_name() or ""
 	if player_name == "" then return end
-	local online_charinfo = ch_core.online_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
 	if online_charinfo == nil then
 		return
 	end

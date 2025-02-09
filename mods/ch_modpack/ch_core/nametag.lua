@@ -107,7 +107,7 @@ minetest.register_chatcommand("nastavit_barvu_jmena", {
 		if not minetest.player_exists(login) then
 			return false, "Postava s přihlašovacím jménem "..login.." neexistuje!"
 		end
-		local offline_charinfo = ch_core.get_offline_charinfo(login)
+		local offline_charinfo = ch_data.get_offline_charinfo(login)
 		local jmeno = offline_charinfo.jmeno or login
 		if color == "" then
 			offline_charinfo.barevne_jmeno = nil
@@ -118,8 +118,8 @@ minetest.register_chatcommand("nastavit_barvu_jmena", {
 				offline_charinfo.barevne_jmeno = minetest.get_color_escape_sequence(string.lower(color))..jmeno..color_reset
 			end
 		end
-		ch_core.save_offline_charinfo(login, "barevne_jmeno")
-		local online_charinfo = ch_core.online_charinfo[player_name]
+		ch_data.save_offline_charinfo(login)
+		local online_charinfo = ch_data.online_charinfo[player_name]
 		local player = online_charinfo and minetest.get_player_by_name(login)
 		if online_charinfo and player then
 			player:set_nametag_attributes(ch_core.compute_player_nametag(online_charinfo, offline_charinfo))
@@ -137,7 +137,7 @@ minetest.register_chatcommand("nastavit_jmeno", {
 		if not minetest.player_exists(login) then
 			return false, "Postava '"..login.."' neexistuje!"
 		end
-		local offline_charinfo = ch_core.get_offline_charinfo(login)
+		local offline_charinfo = ch_data.get_offline_charinfo(login)
 		local puvodni_jmeno = offline_charinfo.jmeno or login
 		local message
 		if puvodni_jmeno ~= param then
@@ -145,14 +145,13 @@ minetest.register_chatcommand("nastavit_jmeno", {
 			local barevne_jmeno = offline_charinfo.barevne_jmeno
 			if barevne_jmeno then
 				offline_charinfo.barevne_jmeno = barevne_jmeno:gsub(puvodni_jmeno, param)
-				ch_core.save_offline_charinfo(login, "barevne_jmeno")
 			end
-			ch_core.save_offline_charinfo(login, "jmeno")
+			ch_data.save_offline_charinfo(login)
 			message = "Jméno nastaveno: "..login.." > "..param
 		else
 			message = "Titulek obnoven: "..login.." > "..param
 		end
-		local online_charinfo = ch_core.online_charinfo[login]
+		local online_charinfo = ch_data.online_charinfo[login]
 		local player = online_charinfo and minetest.get_player_by_name(login)
 		if online_charinfo and player then
 			player:set_nametag_attributes(ch_core.compute_player_nametag(online_charinfo, offline_charinfo))

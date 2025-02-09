@@ -127,7 +127,7 @@ local function teleporter_on_use(itemstack, player, pointed_thing)
 	local old_pos = player:get_pos()
 
 	-- check for trest
-	local online_charinfo = ch_core.online_charinfo[player_name] or {}
+	local online_charinfo = ch_data.online_charinfo[player_name] or {}
 	local trest = online_charinfo.trest or 0
 	if trest > 0 then
 		ch_core.systemovy_kanal(player_name, "Chyba: jste ve výkonu trestu odnětí svobody.")

@@ -1031,7 +1031,7 @@ Příklad:
 		{name = "by_modname"},
 		{name = "by_itemname"},
 		{name = "by_count", desc = true},
-		}, ch_core.online_charinfo[player_name].lang_code)
+		}, ch_data.online_charinfo[player_name].lang_code)
 ]]
 
 ch_core.close_submod("creative_inventory")

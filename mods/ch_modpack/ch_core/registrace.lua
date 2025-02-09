@@ -121,7 +121,7 @@ function ch_core.registrovat(player_name, reg_type, extra_privs)
 	else
 		extra_privs = table.copy(extra_privs)
 	end
-	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local offline_charinfo = ch_data.offline_charinfo[player_name]
 	if not offline_charinfo then
 		return false, "offline_charinfo not found!"
 	end
@@ -180,12 +180,12 @@ function ch_core.registrovat(player_name, reg_type, extra_privs)
 		message = message.." Zkontrolujte si, prosím, svoje nová práva příkazem /práva."
 	end
 	ch_core.systemovy_kanal(player_name, message)
-	player:set_nametag_attributes(ch_core.compute_player_nametag(ch_core.online_charinfo[player_name], offline_charinfo))
+	player:set_nametag_attributes(ch_core.compute_player_nametag(ch_data.online_charinfo[player_name], offline_charinfo))
 	offline_charinfo.past_playtime = 0
 	offline_charinfo.past_ap_playtime = 0
 	offline_charinfo.ap_level = 1
 	offline_charinfo.ap_xp = 0
-	ch_core.save_offline_charinfo(player_name, {"ap_level", "ap_xp", "past_ap_playtime", "past_playtime"})
+	ch_data.save_offline_charinfo(player_name)
 	ch_core.ap_add(player_name, offline_charinfo)
 	if reg_type == "new" then
 		ch_core.add_event("reg_new", nil, player_name)
@@ -208,7 +208,8 @@ local function on_joinplayer(player_name)
 	if not player then
 		minetest.log("warning", "on_joinplayer: failed to fetch player object for registration of "..(player_name or "nil"))
 	end
-	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
+	ch_data.get_joining_online_charinfo(player)
+	local offline_charinfo = ch_data.get_offline_charinfo(player_name)
 	if offline_charinfo.pending_registration_type == "" then
 		return
 	end
@@ -216,7 +217,7 @@ local function on_joinplayer(player_name)
 	if result then
 		offline_charinfo.pending_registration_privs = ""
 		offline_charinfo.pending_registration_type = ""
-		ch_core.save_offline_charinfo(player_name, {"pending_registration_privs", "pending_registration_type"})
+		ch_data.save_offline_charinfo(player_name)
 		return
 	else
 		minetest.log("warning", "Registration of "..player_name.." failed: "..(error_message or "nil"))
@@ -225,8 +226,8 @@ end
 
 minetest.register_on_joinplayer(function(player, last_login)
 	local player_name = player:get_player_name()
-	local online_charinfo = ch_core.get_joining_online_charinfo(player_name) or {}
-	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
+	local online_charinfo = ch_data.get_joining_online_charinfo(player) or {}
+	local offline_charinfo = ch_data.get_offline_charinfo(player_name)
 	if offline_charinfo.pending_registration_type ~= "" and online_charinfo.news_role ~= "disconnect" and online_charinfo.news_role ~= "invalid_name" then
 		minetest.after(0.5, on_joinplayer, player_name)
 	end
@@ -245,11 +246,11 @@ local def = {
 			return false, "Neplatné zadání!"
 		end
 		player_to_register = ch_core.jmeno_na_prihlasovaci(player_to_register)
-		local offline_charinfo = ch_core.offline_charinfo[player_to_register]
+		local offline_charinfo = ch_data.offline_charinfo[player_to_register]
 		if not offline_charinfo then
 			return false, "Postava "..player_to_register.." neexistuje!"
 		end
-		local online_charinfo = ch_core.online_charinfo[player_to_register]
+		local online_charinfo = ch_data.online_charinfo[player_to_register]
 		if online_charinfo then
 			-- register immediately
 			local result, err_text = ch_core.registrovat(player_to_register, reg_type, extra_privs or "")
@@ -261,7 +262,7 @@ local def = {
 		else
 			offline_charinfo.pending_registration_type = reg_type
 			offline_charinfo.pending_registration_privs = extra_privs or ""
-			ch_core.save_offline_charinfo(player_to_register, {"pending_registration_type", "pending_registration_privs"})
+			ch_data.save_offline_charinfo(player_to_register)
 			return true, "Registrace naplánována."
 		end
 	end,

@@ -115,7 +115,7 @@ local function test_nodes_above(pos_above)
 end
 
 local function step(dtime)
-	for player_name, online_charinfo in pairs(ch_core.online_charinfo) do
+	for player_name, online_charinfo in pairs(ch_data.online_charinfo) do
 		local player = minetest.get_player_by_name(player_name)
 		local player_pos = player and player:get_pos()
 		if allowed_players[player_name] and player_pos ~= nil then
@@ -159,7 +159,7 @@ end
 local ifthenelse = ch_core.ifthenelse
 
 local function step(dtime)
-	for player_name, online_charinfo in pairs(ch_core.online_charinfo) do
+	for player_name, online_charinfo in pairs(ch_data.online_charinfo) do
 		local player = minetest.get_player_by_name(player_name)
 		local player_pos = player and player:get_pos()
 		if allowed_players[player_name] and player_pos ~= nil then

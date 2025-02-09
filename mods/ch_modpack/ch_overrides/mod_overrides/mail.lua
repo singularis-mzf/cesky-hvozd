@@ -9,7 +9,7 @@ local function on_receive(m)
     local od = ch_core.prihlasovaci_na_zobrazovaci(m.from)
     local s = m.to..","..m.cc..","..m.bcc
     for _, name in ipairs(string.split(s, ",", false)) do
-        if ch_core.offline_charinfo[name] ~= nil then
+        if ch_data.offline_charinfo[name] ~= nil then
             recipients[name] = true
         end
     end

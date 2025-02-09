@@ -137,7 +137,7 @@ local function formspec_callback(custom_state, player, formname, fields)
 	end
 	if fields.vlastnikicenast and minetest.check_player_privs(player, "server") then
 		local login_name = ch_core.jmeno_na_prihlasovaci(fields.vlastnikice)
-		if ch_core.offline_charinfo[login_name] then
+		if ch_data.offline_charinfo[login_name] then
 			meta:set_string("owner", login_name)
 			do_update_infotext = true
 		else

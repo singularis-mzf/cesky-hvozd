@@ -239,7 +239,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 	if fields.trash_craft then
 		if ch_core.vyhodit_inventar(player_name, player:get_inventory(), "craft", "craft grid") then
-			local online_charinfo = ch_core.online_charinfo[player_name]
+			local online_charinfo = ch_data.online_charinfo[player_name]
 			local ap = online_charinfo and online_charinfo.ap
 			if ap then
 				ap.craft_gen = ap.craft_gen + 1

@@ -354,7 +354,7 @@ local lc_to_player_name = ch_core.lc_to_player_name
 -- LOKÁLNÍ FUNKCE
 -- ===========================================================================
 local function cmp_oci(a, b)
-	return (ch_core.offline_charinfo[a].last_login or -1) < (ch_core.offline_charinfo[b].last_login or -1)
+	return (ch_data.offline_charinfo[a].last_login or -1) < (ch_data.offline_charinfo[b].last_login or -1)
 end
 
 local function get_player_role_by_privs(privs)
@@ -663,7 +663,7 @@ function ch_core.compile_dofile(args, options)
 end
 
 function ch_core.extend_player_inventory(player_name, extend)
-	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local offline_charinfo = ch_data.offline_charinfo[player_name]
 	if offline_charinfo == nil then
 		minetest.log("error", "ch_core.extend_player_inventory() called on player "..player_name.." that has no offline_charinfo!")
 		return false
@@ -683,7 +683,7 @@ function ch_core.extend_player_inventory(player_name, extend)
 		end
 		if offline_charinfo.extended_inventory ~= 1 then
 			offline_charinfo.extended_inventory = 1
-			ch_core.save_offline_charinfo(player_name, "extended_inventory")
+			ch_data.save_offline_charinfo(player_name)
 		end
 
 	elseif not extend and offline_charinfo.extended_inventory == 1 then
@@ -721,7 +721,7 @@ function ch_core.extend_player_inventory(player_name, extend)
 		end
 		if offline_charinfo.extended_inventory == 1 then
 			offline_charinfo.extended_inventory = 0
-			ch_core.save_offline_charinfo(player_name, "extended_inventory")
+			ch_data.save_offline_charinfo(player_name)
 		end
 	else
 		-- no change
@@ -761,7 +761,7 @@ function ch_core.get_all_players(as_map, include_privs)
 		error("ch_core.get_all_players(): include_privs == true is allowed only when the game is running!")
 	end
 	local list, map = {}, {}
-	for prihlasovaci, _ in pairs(ch_core.offline_charinfo) do
+	for prihlasovaci, _ in pairs(ch_data.offline_charinfo) do
 		local exists = (not include_privs) or minetest.player_exists(prihlasovaci)
 		if exists then
 			local record = {
@@ -817,7 +817,7 @@ function ch_core.get_last_logins(registered_only, names_to_skip)
 		error("names_to_skip: invalid type of argument!")
 	end
 
-	for other_player_name, _ in pairs(ch_core.offline_charinfo) do
+	for other_player_name, _ in pairs(ch_data.offline_charinfo) do
 		if not names_to_skip[other_player_name] then
 			if minetest.check_player_privs(other_player_name, "ch_registered_player") then
 				table.insert(reg_players, other_player_name)
@@ -837,7 +837,7 @@ function ch_core.get_last_logins(registered_only, names_to_skip)
 	local result = {}
 	for i = #new_players, 1, -1 do
 		local other_player_name = new_players[i]
-		local offline_charinfo = ch_core.offline_charinfo[other_player_name]
+		local offline_charinfo = ch_data.offline_charinfo[other_player_name]
 		local info = {
 			player_name = other_player_name
 		}
@@ -849,7 +849,7 @@ function ch_core.get_last_logins(registered_only, names_to_skip)
 		end
 		info.played_hours_total = math.round(offline_charinfo.past_playtime / 36) / 100
 		info.played_hours_actively = math.round(offline_charinfo.past_ap_playtime / 36) / 100
-		info.is_in_game = ch_core.online_charinfo[other_player_name] ~= nil
+		info.is_in_game = ch_data.online_charinfo[other_player_name] ~= nil
 		if (offline_charinfo.pending_registration_type or "") ~= "" then
 			info.pending_registration_type = offline_charinfo.pending_registration_type or ""
 		end
@@ -1244,7 +1244,7 @@ function ch_core.normalize_player(player_name_or_player)
 		player_name = ""
 	end
 	player_name = ch_core.jmeno_na_prihlasovaci(player_name)
-	local correct_name = lc_to_player_name[string.lower(player_name)]
+	local correct_name = ch_data.correct_player_name_casing(player_name)
 	if correct_name ~= nil then
 		player_name = correct_name
 	end
@@ -1293,8 +1293,8 @@ end
 ]]
 function ch_core.jmeno_na_existujici_prihlasovaci(jmeno)
 	if jmeno == nil then return nil end
-	local result = lc_to_player_name[string.lower(ch_core.odstranit_diakritiku(jmeno))]
-	if result and ch_core.offline_charinfo[result] then
+	local result = ch_data.correct_player_name_casing(ch_core.odstranit_diakritiku(jmeno))
+	if result and ch_data.offline_charinfo[result] then
 		return result
 	else
 		return nil
@@ -1455,7 +1455,7 @@ function ch_core.prihlasovaci_na_zobrazovaci(prihlasovaci, s_barvami)
 		error("ch_core.prihlasovaci_na_zobrazovaci() called with bad arguments!")
 	end
 	if minetest.player_exists(prihlasovaci) then
-		offline_info = ch_core.get_offline_charinfo(prihlasovaci)
+		offline_info = ch_data.get_offline_charinfo(prihlasovaci)
 		if s_barvami then
 			jmeno = offline_info.barevne_jmeno
 			if jmeno then return jmeno end

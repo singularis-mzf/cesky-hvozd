@@ -711,7 +711,7 @@ end
 
 local function on_joinplayer(player, last_login)
 	local player_name = player:get_player_name()
-	if ch_core.get_joining_online_charinfo(player_name).news_role == "player" then
+	if ch_data.get_joining_online_charinfo(player).news_role == "player" then
 		minetest.after(0.4, bulletin_boards.show_welcome_formspec, player_name, true)
 	end
 end

@@ -12,7 +12,7 @@ local repeat_protection = {}
 local has_penalty = core.settings:get_bool("ch_player_overrun_penalty", false)
     
 local function player_overrun_step(player_name)
-    local online_charinfo = ch_core.online_charinfo[player_name]
+    local online_charinfo = ch_data.online_charinfo[player_name]
     local player = core.get_player_by_name(player_name)
     if player ~= nil and online_charinfo ~= nil and online_charinfo.player_overrun_hud ~= nil then
         if player:get_hp() >= 10 then
@@ -37,7 +37,7 @@ local function on_player_overrun(player, train_id, train_direction, train_veloci
     repeat_protection[player_name] = now + 1000000
     if has_penalty then
         player:set_hp(1)
-        local online_charinfo = ch_core.online_charinfo[player_name] or {}
+        local online_charinfo = ch_data.online_charinfo[player_name] or {}
         online_charinfo.player_overrun_hud = player:hud_add({
             type = "image",
             name = "player_overrun_hud",

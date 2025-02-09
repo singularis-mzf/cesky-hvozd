@@ -315,7 +315,7 @@ end
 
 function orienteering.update_automapper(player)
 	local player_name = player:get_player_name() or ""
-	local online_charinfo = ch_core.online_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
 	if not online_charinfo then
 		minetest.log("warning", "orienteering.update_automapper(): online_charinfo for player "..player_name.." not found!")
 		return

@@ -114,11 +114,11 @@ function utils.mohou_obchodovat(from_player_name, to_player_name)
 		return false, "distance"
 	end
 	local empty_list = {}
-	local from_player_info = ch_core.online_charinfo[from_player_name] or empty_list
+	local from_player_info = ch_data.online_charinfo[from_player_name] or empty_list
 	if (from_player_info.chat_ignore_list or empty_list)[to_player_name] then
 		return false, "ignore_1"
 	end
-	local to_player_info = ch_core.online_charinfo[to_player_name] or empty_list
+	local to_player_info = ch_data.online_charinfo[to_player_name] or empty_list
 	if (to_player_info.chat_ignore_list or empty_list)[from_player_name] then
 		return false, "ignore_2"
 	end
@@ -166,7 +166,7 @@ local function cancel_offer(pn_offer, pn_offer_target)
 	assert(ts_offer.type == "offer")
 	assert(ts_offer_target.type == "offer_target")
 	utils.set_is_offering_title(pn_offer, false)
-	ch_core.cancel_ch_timer(assert(ch_core.online_charinfo[pn_offer_target]), "trade")
+	ch_core.cancel_ch_timer(assert(ch_data.online_charinfo[pn_offer_target]), "trade")
 	player_trade_states[pn_offer] = nil
 	player_trade_states[pn_offer_target] = nil
 	ch_core.systemovy_kanal(pn_offer, ch_core.prihlasovaci_na_zobrazovaci(pn_offer_target).." odmítl/a nabídku obchodování.")
@@ -183,8 +183,8 @@ local function cancel_trade(player_name, trade_state)
 	-- 2. return items
 	local items_ltr = tinv.read_trade_inventory(player)
 	local items_rtl = tinv.read_trade_inventory(player_right)
-	local rezim_left = (ch_core.offline_charinfo[player_name] or {}).rezim_plateb or 0
-	local rezim_right = (ch_core.offline_charinfo[player_name_right] or {}).rezim_plateb or 0
+	local rezim_left = (ch_data.offline_charinfo[player_name] or {}).rezim_plateb or 0
+	local rezim_right = (ch_data.offline_charinfo[player_name_right] or {}).rezim_plateb or 0
 	local money_ltr, money_rtl
 	if rezim_left == 0 or rezim_left == 2 then
 		money_ltr = ch_core.vzit_hotovost(items_ltr)
@@ -256,7 +256,7 @@ function utils.nabidnout_obchod(from_player, to_player)
 		trade_id = trade_id,
 		from_player = from_player_name,
 	}
-	local to_data = assert(ch_core.online_charinfo[to_player_name])
+	local to_data = assert(ch_data.online_charinfo[to_player_name])
 	utils.set_player_trade_state(from_player_name, from_trade_state)
 	utils.set_player_trade_state(to_player_name, to_trade_state)
 	utils.set_is_offering_title(from_player_name, true)
@@ -281,8 +281,8 @@ end
 function utils.zacit_obchod(from_player, to_player)
 	local from_player_name = assert(from_player:get_player_name())
 	local to_player_name = assert(to_player:get_player_name())
-	local from_player_data = ch_core.online_charinfo[from_player_name] or {}
-	local to_player_data = ch_core.online_charinfo[to_player_name] or {}
+	local from_player_data = ch_data.online_charinfo[from_player_name] or {}
+	local to_player_data = ch_data.online_charinfo[to_player_name] or {}
 	local trade_state, tstype = utils.get_player_trade_state(from_player_name)
 	if
 		(tstype == "offer" and trade_state.to_player ~= to_player_name) or
@@ -378,8 +378,8 @@ function utils.uzavrit_obchod(player, player_right)
 
 	local items_ltr = tinv.read_trade_inventory(player)
 	local items_rtl = tinv.read_trade_inventory(player_right)
-	local rezim_left = (ch_core.offline_charinfo[player_name] or {}).rezim_plateb or 0
-	local rezim_right = (ch_core.offline_charinfo[player_name_right] or {}).rezim_plateb or 0
+	local rezim_left = (ch_data.offline_charinfo[player_name] or {}).rezim_plateb or 0
+	local rezim_right = (ch_data.offline_charinfo[player_name_right] or {}).rezim_plateb or 0
 	local money_ltr, money_rtl
 	if rezim_left == 0 or rezim_left == 2 then
 		money_ltr = ch_core.vzit_hotovost(items_ltr)

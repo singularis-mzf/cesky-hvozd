@@ -15,7 +15,7 @@ local function get_container_price(player_name)
     if player_role == "new" then
         return nil, "Turistické postavy nemohou zakládat osobní herní kontejnery."
     end
-    local offline_charinfo = ch_core.offline_charinfo[player_name]
+    local offline_charinfo = ch_data.offline_charinfo[player_name]
     if offline_charinfo == nil then
         return nil, "Nejsou dostupná data postavy."
     end
@@ -308,7 +308,7 @@ list_formspec_callback = function(custom_state, player, formname, fields)
         return
     end
     if fields.create and player_role ~= "new" then
-        local offline_charinfo = assert(ch_core.offline_charinfo[player_name])
+        local offline_charinfo = assert(ch_data.offline_charinfo[player_name])
         local current_containers_count = internal.get_container_count(player_name)
         if current_containers_count < offline_charinfo.ap_level then
             -- ch_core.show_formspec(player_or_player_name, formname, formspec, formspec_callback, custom_state, options)
@@ -491,7 +491,7 @@ create_formspec_callback = function(custom_state, player, formname, fields)
         if is_admin then
             if fields.owner then
                 new_owner = ch_core.jmeno_na_prihlasovaci(fields.owner)
-                if ch_core.offline_charinfo[new_owner] == nil then
+                if ch_data.offline_charinfo[new_owner] == nil then
                     ch_core.systemovy_kanal(player_name, "Postava "..fields.owner.." neexistuje!")
                     return
                 end

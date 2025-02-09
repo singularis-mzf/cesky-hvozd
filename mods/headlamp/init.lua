@@ -19,7 +19,7 @@ local function try_charge_headlamp(stack)
 end
 
 function clear_headlamp_cache(player, index, stack)
-	local online_charinfo = ch_core.online_charinfo[player:get_player_name()]
+	local online_charinfo = ch_data.online_charinfo[player:get_player_name()]
 	if online_charinfo then
 		online_charinfo.headlamp_last_update = 0
 	end

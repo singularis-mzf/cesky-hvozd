@@ -120,7 +120,7 @@ end
 
 --[[
 function ch_core.nastaveni_prichozich_plateb(player_name)
-	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local offline_charinfo = ch_data.offline_charinfo[player_name]
 	if offline_charinfo == nil then
 		return {}
 	end
@@ -129,7 +129,7 @@ function ch_core.nastaveni_prichozich_plateb(player_name)
 end
 
 function ch_core.nastaveni_odchozich_plateb(player_name)
-	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local offline_charinfo = ch_data.offline_charinfo[player_name]
 	if offline_charinfo == nil then
 		return {}
 	end
@@ -396,7 +396,7 @@ end
 
 local function pay_from_or_to(dir, player_name, amount, options)
 	if options == nil then options = {} end
-	local rezim = (ch_core.offline_charinfo[player_name] or {}).rezim_plateb or 0
+	local rezim = (ch_data.offline_charinfo[player_name] or {}).rezim_plateb or 0
 	local methods_to_try
 	if dir == "from" then
 		methods_to_try = build_methods_to_try(options, rezim ~= 4, rezim >= 2)

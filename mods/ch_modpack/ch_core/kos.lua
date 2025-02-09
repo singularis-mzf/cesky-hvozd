@@ -181,7 +181,7 @@ local old_minetest_item_drop = minetest.item_drop
 function minetest.item_drop(itemstack, dropper, pos)
 	if minetest.is_player(dropper) then
 		local player_name = assert(dropper:get_player_name())
-		local offline_charinfo = ch_core.offline_charinfo[player_name]
+		local offline_charinfo = ch_data.offline_charinfo[player_name]
 		if
 			offline_charinfo ~= nil and
 			offline_charinfo.discard_drops ~= nil and

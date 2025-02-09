@@ -55,7 +55,7 @@ minetest.register_chatcommand("lua", {
     description = "Otevře rozhraní pro spouštění příkazů jazyka Lua",
     privs = required_privs,
     func = function(player_name, param)
-        local online_charinfo = ch_core.online_charinfo[player_name]
+        local online_charinfo = ch_data.online_charinfo[player_name]
         if online_charinfo == nil or not minetest.check_player_privs(player_name, required_privs) then
             return false, "Neplatné volání!"
         end

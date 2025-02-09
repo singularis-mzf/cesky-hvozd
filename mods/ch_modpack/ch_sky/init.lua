@@ -7,7 +7,7 @@ ch_sky = {}
 
 local function get_online_skyinfo_and_player_name(player)
 	local player_name = player:get_player_name()
-	local online_charinfo = ch_core.online_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
 	if online_charinfo == nil and minetest.get_player_name(player_name) then
 		minetest.log("warning", "online_charinfo not found for online player "..player_name.."!")
 		return
@@ -48,7 +48,7 @@ end
 
 function ch_sky.is_enabled_for_player(player)
 	local player_name = player:get_player_name()
-	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local offline_charinfo = ch_data.offline_charinfo[player_name]
 	return offline_charinfo == nil or offline_charinfo.no_ch_sky ~= 1
 end
 
@@ -295,7 +295,7 @@ end
 
 local function on_joinplayer(player, _last_login)
 	local player_name = player:get_player_name()
-	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
+	local online_charinfo = ch_data.get_joining_online_charinfo(player)
 	online_charinfo.sky_info = {
 		ch_sky_active = false,
 		ch_sky_enabled = true,
@@ -308,7 +308,7 @@ local function on_joinplayer(player, _last_login)
 		stars = player:get_stars(),
 		player_was_underground = is_underground(player:get_pos().y),
 	}
-	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local offline_charinfo = ch_data.offline_charinfo[player_name]
 	if offline_charinfo == nil or offline_charinfo.no_ch_sky ~= 1 then
 		update_ch_sky(player, player_name, online_charinfo.sky_info, (ch_time.herni_cas() or {}).day_night_ratio or 1.0)
 	else

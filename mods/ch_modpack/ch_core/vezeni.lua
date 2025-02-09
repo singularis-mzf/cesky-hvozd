@@ -26,7 +26,7 @@ end
 
 --[[
 local function nacist_vezeni()
-	local offline_charinfo = ch_core.get_offline_charinfo("Administrace")
+	local offline_charinfo = ch_data.get_offline_charinfo("Administrace")
 	local s = offline_charinfo.data_vezeni
 	if s and s ~= "" then
 		ch_core.vezeni_data = minetest.deserialize(s, true)
@@ -36,33 +36,6 @@ local function nacist_vezeni()
 end
 nacist_vezeni()
 ]]
-
-local function ulozit_vezeni()
-	minetest.log("error", "ulozit_vezeni() not supported, coordinates are in the configuration now!")
-	local offline_charinfo = ch_core.get_offline_charinfo("Administrace")
-	offline_charinfo.data_vezeni = minetest.serialize(ch_core.vezeni_data)
-	ch_core.save_offline_charinfo("Administrace", "data_vezeni")
-	return offline_charinfo
-end
-
-function ch_core.umistit_vezeni(volajici, pos1, pos2, stred)
-	local pos_min, pos_max = ch_core.positions_to_area(pos1, pos2)
-	if not ch_core.pos_in_area(stred, pos_min, pos_max) then
-		if volajici and volajici ~= "" then
-			ch_core.systemovy_kanal(volajici, "Pozice středu leží mimo nastavovanou oblast vězení!")
-		end
-		return false
-	end
-
-	vezeni_data.min = pos_min
-	vezeni_data.max = pos_max
-	vezeni_data.stred = stred
-	ulozit_vezeni()
-	if volajici and volajici ~= "" then
-		ch_core.systemovy_kanal(volajici, "Nastaveno.")
-	end
-	return true
-end
 
 function ch_core.je_ve_vezeni(pos)
 	return ch_core.pos_in_area(pos, vezeni_data.min, vezeni_data.max)
@@ -126,7 +99,7 @@ local def = {
 			return false
 		end
 
-		local offline_charinfo = ch_core.get_offline_charinfo(player_name)
+		local offline_charinfo = ch_data.get_offline_charinfo(player_name)
 		local trest_old = offline_charinfo.trest
 		ch_core.trest("", player_name, -1)
 		local trest_new = offline_charinfo.trest
@@ -185,7 +158,7 @@ local function do_vezeni(player_name, online_charinfo)
 	end
 
 	-- announcement
-	local offline_charinfo = ch_core.offline_charinfo[player_name] or {}
+	local offline_charinfo = ch_data.offline_charinfo[player_name] or {}
 	ch_core.set_temporary_titul(player_name, "ve vězení", true)
 	ch_core.systemovy_kanal(player_name, "Jste ve výkonu trestu odnětí svobody. Těžte vězeňský kámen železným nebo lepším krumpáčem pro odpykání si trestu. Současná výše trestu: "..(offline_charinfo.trest or 0))
 
@@ -247,8 +220,8 @@ end
 
 local function on_joinplayer(player, last_login)
 	local player_name = player:get_player_name()
-	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
-	local offline_charinfo = ch_core.get_offline_charinfo(player_name)
+	local online_charinfo = ch_data.get_joining_online_charinfo(player)
+	local offline_charinfo = ch_data.get_offline_charinfo(player_name)
 	local trest = tonumber(offline_charinfo.trest or 0)
 
 	if trest > 0 then
@@ -271,7 +244,7 @@ function ch_core.trest(volajici, jmeno, vyse_trestu)
 	if not minetest.player_exists(jmeno) then
 		message = "Postava "..jmeno.." neexistuje!"
 	else
-		local offline_charinfo = ch_core.get_offline_charinfo(jmeno)
+		local offline_charinfo = ch_data.get_offline_charinfo(jmeno)
 		local trest = offline_charinfo.trest
 		local nova_vyse = math.round(trest + vyse_trestu)
 		if nova_vyse < trest_min then
@@ -284,10 +257,10 @@ function ch_core.trest(volajici, jmeno, vyse_trestu)
 		else
 			message = "Výše trestu postavy "..ch_core.prihlasovaci_na_zobrazovaci(jmeno).." změněna: "..trest.." => "..nova_vyse
 			offline_charinfo.trest = nova_vyse
-			ch_core.save_offline_charinfo(jmeno, "trest")
+			ch_data.save_offline_charinfo(jmeno)
 			minetest.log("action", message)
 
-			local online_charinfo = ch_core.online_charinfo[jmeno]
+			local online_charinfo = ch_data.online_charinfo[jmeno]
 			if online_charinfo then
 				update_hudbar(online_charinfo, nova_vyse)
 
@@ -312,7 +285,7 @@ end
 	jinak vrátí nil.
 ]]
 function ch_core.je_ve_vykonu_trestu(player_name)
-	local trest = ch_core.safe_get_3(ch_core.offline_charinfo, player_name, "trest")
+	local trest = ch_core.safe_get_3(ch_data.offline_charinfo, player_name, "trest")
 	if trest ~= nil and trest > 0 then
 		return trest
 	else
@@ -355,7 +328,7 @@ def = {
 }
 minetest.register_chatcommand("trest", def)
 
--- /umístit_vězení
+--[[ /umístit_vězení
 def = {
 	params = "(<X1>, <Y1>, <Z1>) (<X2>, <Y2>, <Z2>)",
 	privs = {server = true},
@@ -371,9 +344,9 @@ def = {
 	end,
 }
 minetest.register_chatcommand("umístit_vězení", def)
-minetest.register_chatcommand("umistit_vezeni", def)
+minetest.register_chatcommand("umistit_vezeni", def)]]
 
--- /dveře_vězení
+--[[ /dveře_vězení
 def = {
 	params = "",
 	privs = {server = true},
@@ -398,6 +371,6 @@ def = {
 	end
 }
 minetest.register_chatcommand("dveře_vězení", def)
-minetest.register_chatcommand("dvere_vezeni", def)
+minetest.register_chatcommand("dvere_vezeni", def)]]
 
 ch_core.close_submod("vezeni")

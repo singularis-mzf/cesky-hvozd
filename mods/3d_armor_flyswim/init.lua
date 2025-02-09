@@ -136,8 +136,8 @@ minetest.register_globalstep(function()
 		local tdebug        = false
 		local empty_list    = {}
 		local player_name   = player:get_player_name()
-		local online_charinfo = ch_core.online_charinfo[player_name] or empty_list
-		local offline_charinfo = ch_core.offline_charinfo[player_name] or empty_list
+		local online_charinfo = ch_data.online_charinfo[player_name] or empty_list
+		local offline_charinfo = ch_data.offline_charinfo[player_name] or empty_list
 		local sneak_allowed = offline_charinfo.neshybat == 0
 
 		-- reset player collisionbox, eye height, speed override 

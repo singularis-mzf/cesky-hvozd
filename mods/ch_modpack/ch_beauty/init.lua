@@ -103,7 +103,7 @@ end
 
 local function step_3(player_name, pos)
 	local player = minetest.get_player_by_name(player_name)
-	local online_charinfo = ch_core.online_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
 	if player == nil or online_charinfo == nil or not ch_core.is_ch_timer_running(online_charinfo, "ch_beauty") then return end
 	local player_pos = player:get_pos()
 
@@ -125,7 +125,7 @@ local function step_2(player_name, pos, pos_below, hair_item)
 		return
 	end
 	local player = minetest.get_player_by_name(player_name)
-	local online_charinfo = ch_core.online_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
 	if player == nil or online_charinfo == nil then return end
 	local player_pos = player:get_pos()
 	if

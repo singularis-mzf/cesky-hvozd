@@ -463,8 +463,8 @@ end
 -- Mzda
 local function on_joinplayer(player, last_login)
 	local player_name = player:get_player_name()
-	local online_charinfo = ch_core.get_joining_online_charinfo(player_name)
-	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local online_charinfo = ch_data.get_joining_online_charinfo(player)
+	local offline_charinfo = ch_data.offline_charinfo[player_name]
 	local ap_xp
 	if offline_charinfo ~= nil then
 		ap_xp = offline_charinfo.ap_xp

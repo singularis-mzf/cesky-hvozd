@@ -241,7 +241,7 @@ function shared.cancel_published_book(ick)
 end
 
 local function increase_ap(player_name)
-	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
+	local online_charinfo = player_name and ch_data.online_charinfo[player_name]
 	if online_charinfo ~= nil then
 		local ap = online_charinfo.ap
 		if ap ~= nil then
@@ -253,7 +253,7 @@ local function increase_ap(player_name)
 end
 
 local function ap_increase_tick(player_name, counter, expected_book_gen)
-	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
+	local online_charinfo = player_name and ch_data.online_charinfo[player_name]
 	if counter > 0 and online_charinfo ~= nil then
 		local ap = online_charinfo.ap
 		if ap ~= nil and ap.book_gen == expected_book_gen then
@@ -270,7 +270,7 @@ local function start_ap_increase(player_name, counter)
 	if counter <= 0 then
 		return
 	end
-	local online_charinfo = player_name and ch_core.online_charinfo[player_name]
+	local online_charinfo = player_name and ch_data.online_charinfo[player_name]
 	if online_charinfo == nil then
 		return
 	end

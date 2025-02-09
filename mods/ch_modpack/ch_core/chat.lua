@@ -3,7 +3,7 @@ ch_core.open_submod("chat", {areas = true, privs = true, data = true, lib = true
 local ifthenelse = ch_core.ifthenelse
 
 minetest.register_on_joinplayer(function(player, last_login)
-	local online_charinfo = ch_core.get_joining_online_charinfo(player:get_player_name())
+	local online_charinfo = ch_data.get_joining_online_charinfo(player)
 	if online_charinfo.doslech == nil then
 		online_charinfo.doslech = 65535
 	end
@@ -63,7 +63,7 @@ function ch_core.chat(rezim, odkoho, zprava, pozice)
 
 	local pocitadlo = 0
 	local posl_adresat = ""
-	local odkoho_info = ch_core.online_charinfo[odkoho] or {}
+	local odkoho_info = ch_data.online_charinfo[odkoho] or {}
 	local odkoho_doslech = odkoho_info.doslech or 65535
 	local odkoho_s_diakritikou = ch_core.prihlasovaci_na_zobrazovaci(odkoho)
 	local barva_zpravy, barva_zpravy_zblizka, min_vzdal_ignorujici, min_vzdal_adresat
@@ -96,7 +96,7 @@ function ch_core.chat(rezim, odkoho, zprava, pozice)
 
 	for _, komu_player in pairs(minetest.get_connected_players()) do
 		local komu = komu_player:get_player_name()
-		local komu_info = ch_core.online_charinfo[komu]
+		local komu_info = ch_data.online_charinfo[komu]
 		if komu_info and komu ~= odkoho then
 			local vzdalenost_odkoho_komu = math.ceil(vector.distance(pozice, komu_player:get_pos()))
 			local komu_doslech = komu_info.doslech or 65535
@@ -166,7 +166,7 @@ function ch_core.chat(rezim, odkoho, zprava, pozice)
 			horka_zprava[1] = barva_zpravy_zblizka..horka_zprava[1]
 			horka_zprava.timeout = ch_core.cas + 15
 			odkoho_info.horka_zprava = horka_zprava
-			player:set_nametag_attributes(ch_core.compute_player_nametag(odkoho_info, ch_core.get_offline_charinfo(odkoho)))
+			player:set_nametag_attributes(ch_core.compute_player_nametag(odkoho_info, ch_data.get_offline_charinfo(odkoho)))
 			zobrazeno_nad_postavou = "true"
 		else
 			zobrazeno_nad_postavou = "fail"
@@ -198,7 +198,7 @@ function ch_core.chat(rezim, odkoho, zprava, pozice)
 end
 
 function ch_core.soukroma_zprava(odkoho, komu, zprava)
-	local odkoho_info = ch_core.online_charinfo[odkoho]
+	local odkoho_info = ch_data.online_charinfo[odkoho]
 	if not odkoho_info or odkoho == "" or zprava == "" then
 		minetest.log("warning", "private message not send: "..(odkoho_info and "true" or "false")..","..odkoho..","..#zprava)
 		return true
@@ -214,7 +214,7 @@ function ch_core.soukroma_zprava(odkoho, komu, zprava)
 		ch_core.systemovy_kanal(odkoho, "Postava " .. ch_core.prihlasovaci_na_zobrazovaci(komu) .. " neexistuje!")
 		return true
 	end
-	local komu_info = ch_core.online_charinfo[komu]
+	local komu_info = ch_data.online_charinfo[komu]
 	if komu_info then
 		if komu_info.chat_ignore_list[odkoho] and not minetest.check_player_privs(odkoho, "protection_bypass") then
 			ch_core.systemovy_kanal(odkoho, "Postava " .. ch_core.prihlasovaci_na_zobrazovaci(komu) .. " vás ignoruje!")
@@ -250,7 +250,7 @@ local function on_chat_message(jmeno, zprava)
 	-- minetest.log("info", "on_chat_message("..jmeno..","..zprava..")") -- DEBUGGING ONLY!
 	local info = minetest.get_player_by_name(jmeno)
 	local info_pos = info:get_pos()
-	local online_charinfo = ch_core.online_charinfo[jmeno]
+	local online_charinfo = ch_data.online_charinfo[jmeno]
 	if not info then
 		minetest.log("warning", "No info found about player "..jmeno.."!")
 		return true
@@ -302,7 +302,7 @@ local function on_chat_message(jmeno, zprava)
 		if i > 2 then
 			local kandidati = {}
 			local predpona = zprava:sub(2, i - 1)
-			for prihlasovaci, _ in pairs(ch_core.online_charinfo) do
+			for prihlasovaci, _ in pairs(ch_data.online_charinfo) do
 				local zobrazovaci = ch_core.prihlasovaci_na_zobrazovaci(prihlasovaci):gsub(" ", "_")
 				if (#prihlasovaci >= #predpona and prihlasovaci:sub(1, #predpona) == predpona)
 				   or (#zobrazovaci >= #predpona and zobrazovaci:sub(1, #predpona) == predpona) then
@@ -341,7 +341,7 @@ function ch_core.set_doslech(player_name, param)
 		return false
 	end
 	param = math.max(0, math.min(65535, param + 0))
-	local player_info = ch_core.online_charinfo[player_name] or {}
+	local player_info = ch_data.online_charinfo[player_name] or {}
 	player_info.doslech = param
 	-- print("player_name=("..player_name.."), param=("..param..")")
 	ch_core.systemovy_kanal(player_name, "Doslech nastaven na " .. param)
@@ -349,7 +349,7 @@ function ch_core.set_doslech(player_name, param)
 end
 
 function ch_core.set_ignorovat(player_name, name_to_ignore)
-	local player_info = ch_core.online_charinfo[player_name]
+	local player_info = ch_data.online_charinfo[player_name]
 	if not player_info then
 		minetest.log("error", "[ch_core] cannot found online_charinfo["..player_name.."]")
 		return false
@@ -371,7 +371,7 @@ function ch_core.set_ignorovat(player_name, name_to_ignore)
 	else
 		ignore_list[name_to_ignore] = 1
 		ch_core.systemovy_kanal(player_name, "Nyní postavu " .. ch_core.prihlasovaci_na_zobrazovaci(name_to_ignore) .. " ignorujete. Toto platí, než se odhlásíte ze hry nebo než ignorování zrušíte příkazem /neignorovat.")
-		local target_info = ch_core.online_charinfo[name_to_ignore]
+		local target_info = ch_data.online_charinfo[name_to_ignore]
 		if target_info then -- pokud je hráč/ka online...
 			ch_core.systemovy_kanal(name_to_ignore, "Postava " .. ch_core.prihlasovaci_na_zobrazovaci(player_name) .. " vás nyní ignoruje.")
 		end
@@ -380,7 +380,7 @@ function ch_core.set_ignorovat(player_name, name_to_ignore)
 end
 
 function ch_core.unset_ignorovat(player_name, name_to_unignore)
-	local player_info = ch_core.online_charinfo[player_name]
+	local player_info = ch_data.online_charinfo[player_name]
 	if not player_info then
 		minetest.log("error", "[ch_core] cannot found online_charinfo["..player_name.."]")
 		return false
@@ -395,7 +395,7 @@ function ch_core.unset_ignorovat(player_name, name_to_unignore)
 	if ignore_list[name_to_unignore] then
 		ignore_list[name_to_unignore] = nil
 		ch_core.systemovy_kanal(player_name, "Ignorování postavy " .. ch_core.prihlasovaci_na_zobrazovaci(name_to_unignore) .. " zrušeno.")
-		local target_info = ch_core.online_charinfo[name_to_unignore]
+		local target_info = ch_data.online_charinfo[name_to_unignore]
 		if target_info then -- pokud je hráč/ka online...
 			ch_core.systemovy_kanal(name_to_unignore, "Postava " .. ch_core.prihlasovaci_na_zobrazovaci(player_name) .. " vás přestala ignorovat. Nyní již můžete této postavě psát.")
 		end
@@ -428,20 +428,20 @@ minetest.register_chatcommand("doslech", {
 	description = "Nastaví omezený doslech v chatu. Hodnota musí být celé číslo v rozsahu 0 až 65535. Bez parametru nastaví vypíše stávající hodnoty, s parametrem „uložit“ uloží aktuální doslech jako výchozí.",
 	privs = { shout = true },
 	func = function(player_name, param)
-		local online_charinfo = ch_core.online_charinfo[player_name]
+		local online_charinfo = ch_data.online_charinfo[player_name]
 		if not online_charinfo then
 			return false, "Vnitřní chyba!"
 		end
 		local aktualni_doslech = online_charinfo.doslech
-		local offline_charinfo = ch_core.offline_charinfo[player_name]
+		local offline_charinfo = ch_data.offline_charinfo[player_name]
 		local vychozi_doslech = offline_charinfo and offline_charinfo.doslech
 		if param == "" then
 			ch_core.systemovy_kanal(player_name, "Aktuální doslech: "..aktualni_doslech.." m, výchozí doslech (po přihlášení): "..(vychozi_doslech and (vychozi_doslech.." m") or "neznámý"))
 			return true
 		elseif param == "uložit" or param == "ulozit" then
-			offline_charinfo = ch_core.get_offline_charinfo(player_name)
+			offline_charinfo = ch_data.get_offline_charinfo(player_name)
 			offline_charinfo.doslech = online_charinfo.doslech
-			ch_core.save_offline_charinfo(player_name, {"doslech"})
+			ch_data.save_offline_charinfo(player_name)
 			ch_core.systemovy_kanal(player_name, "Doslech: "..aktualni_doslech.." m nastaven jako výchozí po přihlášení do hry.")
 			return true
 		else
@@ -472,7 +472,7 @@ minetest.register_chatcommand("kdojsem", {
 	func = function(player_name, param)
 		if player_name then
 			local vysl
-			local offline_charinfo = ch_core.offline_charinfo[player_name]
+			local offline_charinfo = ch_data.offline_charinfo[player_name]
 			if offline_charinfo then
 				vysl = offline_charinfo.barevne_jmeno or (color_reset..(offline_charinfo.jmeno or player_name))
 			else
@@ -501,7 +501,7 @@ local function get_info_o(player_name, is_privileged)
 		return "*** Postava "..player_name.." neexistuje!"
 	end
 	local view_name = ch_core.prihlasovaci_na_zobrazovaci(player_name)
-	local offline_charinfo = ch_core.offline_charinfo[player_name]
+	local offline_charinfo = ch_data.offline_charinfo[player_name]
 	if offline_charinfo == nil then
 		return "*** Nejsou uloženy žádné informace o "..view_name.."."
 	end
@@ -509,7 +509,7 @@ local function get_info_o(player_name, is_privileged)
 		"*** Informace o "..view_name..":"..
 		"\n* Druh postavy: "..(typy_postavy[player_role] or "neznámý typ postavy"),
 	}
-	local online_charinfo = ch_core.online_charinfo[player_name] -- may be nil!
+	local online_charinfo = ch_data.online_charinfo[player_name] -- may be nil!
 	local past_playtime = offline_charinfo.past_playtime or 0
 	local past_ap_playtime = offline_charinfo.past_ap_playtime or 0
 	local current_playtime

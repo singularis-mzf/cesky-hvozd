@@ -84,7 +84,7 @@ minetest.register_globalstep(function()
 					return
 				end
 
-				local online_charinfo = ch_core.online_charinfo[player:get_player_name()]
+				local online_charinfo = ch_data.online_charinfo[player:get_player_name()]
 				local lang_code = (online_charinfo and online_charinfo.lang_code) or "cs"
 				local s = minetest.get_translated_string(lang_code, node_definition._ch_node_viewname or node_definition.description)
 				local i = s:find("\n")

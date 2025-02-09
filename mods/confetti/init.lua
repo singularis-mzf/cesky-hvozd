@@ -196,7 +196,7 @@ for color, cdef in pairs(confetti_colors) do
         on_use = function(itemstack, user, pointed_thing)
             if user and type(user) == "userdata" and user:is_player() then
                 local player_name = user:get_player_name()
-                local online_charinfo = ch_core.online_charinfo[player_name]
+                local online_charinfo = ch_data.online_charinfo[player_name]
                 if online_charinfo ~= nil then
                     local current_time = minetest.get_us_time()/1000000
                     local last_time = online_charinfo.last_confetti_use

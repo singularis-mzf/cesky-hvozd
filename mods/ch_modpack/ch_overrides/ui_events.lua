@@ -53,12 +53,12 @@ local function get_all_event_types_for_player(player_name)
 end
 
 local function get_events_online_charinfo(player_name)
-	local online_charinfo = ch_core.online_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
 	if online_charinfo == nil then
 		minetest.log("warning", "ui_events: Expected online_charinfo for player '"..player_name.."' not found!")
 		return {}
 	end
-	local offline_charinfo = ch_core.offline_charinfo[player_name] or {}
+	local offline_charinfo = ch_data.offline_charinfo[player_name] or {}
 	local result = online_charinfo.ch_events
 	if result == nil then
 		result = {
@@ -281,13 +281,13 @@ local function on_player_receive_fields(player, formname, fields)
 				-- update filter:
 				local event_type = k:sub(12, -1)
 				local events_charinfo = get_events_online_charinfo(player_name)
-				local offline_charinfo = assert(ch_core.offline_charinfo[player_name])
+				local offline_charinfo = assert(ch_data.offline_charinfo[player_name])
 				if v == "true" then
 					-- remove from negative set
 					if events_charinfo.negative_set[event_type] then
 						events_charinfo.negative_set[event_type] = nil
 						offline_charinfo.ui_event_filter = assert(serialize_filter(events_charinfo.negative_set))
-						ch_core.save_offline_charinfo(player_name, "ui_event_filter")
+						ch_data.save_offline_charinfo(player_name)
 						update_formspec = true
 					end
 				else
@@ -295,7 +295,7 @@ local function on_player_receive_fields(player, formname, fields)
 					if not events_charinfo.negative_set[event_type] then
 						events_charinfo.negative_set[event_type] = true
 						offline_charinfo.ui_event_filter = assert(serialize_filter(events_charinfo.negative_set))
-						ch_core.save_offline_charinfo(player_name, "ui_event_filter")
+						ch_data.save_offline_charinfo(player_name)
 						update_formspec = true
 					end
 				end

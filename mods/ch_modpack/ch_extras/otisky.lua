@@ -55,7 +55,7 @@ local function otisky_on_use(pos, player)
 		ch_core.systemovy_kanal(player_name, "Jen přijaté postavy mohou používat sadu na rozbor otisků prstů!")
 		return
 	end
-	local online_charinfo = ch_core.online_charinfo[player_name or ""]
+	local online_charinfo = ch_data.online_charinfo[player_name or ""]
 	if online_charinfo ~= nil then
 		ch_core.start_ch_timer(online_charinfo, "ch_extras_otisky", 8, {
 			label = "rozbor otisků prstů",

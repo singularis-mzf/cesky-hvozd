@@ -63,7 +63,7 @@ function ch_core.set_player_areas(player_name, player_areas)
 	assert(player_name)
 	assert(player_areas)
 	assert(type(player_areas) == "table")
-	local online_charinfo = ch_core.online_charinfo[player_name]
+	local online_charinfo = ch_data.online_charinfo[player_name]
 	if online_charinfo == nil then
 		return
 	end
