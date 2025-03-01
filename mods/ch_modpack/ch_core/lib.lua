@@ -1501,7 +1501,7 @@ function ch_core.prihlasovaci_na_zobrazovaci(prihlasovaci, s_barvami)
 		error("ch_core.prihlasovaci_na_zobrazovaci() called with bad arguments!")
 	end
 	if minetest.player_exists(prihlasovaci) then
-		offline_info = ch_data.get_offline_charinfo(prihlasovaci)
+		offline_info = ch_data.offline_charinfo[prihlasovaci] or {}
 		if s_barvami then
 			jmeno = offline_info.barevne_jmeno
 			if jmeno then return jmeno end
