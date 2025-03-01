@@ -466,12 +466,16 @@ local function bn_zpet(player)
 		type = "player",
 		player = player_name,
 		target_pos = target_pos,
-		delay = diff / 60,
+		delay = math.max(1, diff / 60),
 		sound_before = ch_core.default_teleport_sound,
 		sound_after = ch_core.default_teleport_sound,
 	}
 	return true
 end
+
+-- exportovat funkce pro ch_extras:
+ch_core.bn_nastavit = bn_nastavit
+ch_core.bn_zpet = bn_zpet
 
 local def
 

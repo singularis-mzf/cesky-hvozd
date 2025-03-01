@@ -7,6 +7,19 @@ dofile("dirt_with_x.lua") -- upraví textury hlíny
 dofile("mese_crystals.lua") -- použije model (mesh) k zobrazení krystalů mese, umožní jejich umístění do herního světa
 dofile("snow.lua") -- použije model (mesh) k zobrazení sněhu
 
+local override = {
+	_ch_help = "Kbelík s vodou. Pravým klikem umístíte.\nAux1+pravý klik pro vylití vody.",
+	_ch_help_group = "bucket",
+}
+
+core.override_item("bucket:bucket_river_water", override)
+core.override_item("bucket:bucket_water", override)
+
+override = {
+	_ch_help = "Prázdný kbelík. Vodu, lávu nebo jinou kapalinu do něj naberete levým klikem na ni."
+}
+core.override_item("bucket:bucket_empty", override)
+
 --[[ temp
 
 minetest.override_item("default:aspen_wood", {

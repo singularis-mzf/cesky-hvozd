@@ -239,3 +239,54 @@ minetest.register_craft({
 		{"travelnet:travelnet", "technic:blue_energy_crystal", "travelnet:travelnet"},
 	},
 })
+
+local function rn_after(player_name)
+	local player = core.get_player_by_name(player_name)
+	if player ~= nil then
+		local success, message = ch_core.bn_zpet(player)
+		if message ~= nil then
+			ch_core.systemovy_kanal(player_name, message)
+		end
+	end
+end
+
+local function rn_left(itemstack, user, pointed_thing)
+	if user ~= nil and core.is_player(user) then
+		core.after(0.1, rn_after, assert(user:get_player_name()))
+	end
+end
+
+local function rn_right(itemstack, user, pointed_thing)
+	if user ~= nil and core.is_player(user) then
+		local success, message = ch_core.bn_nastavit(user)
+		if message ~= nil then
+			ch_core.systemovy_kanal(user:get_player_name(), message)
+		end
+	end
+end
+
+def = {
+	description = "runa návratu",
+	_ch_help = "levý klik = /zpět (přenese vás na poslední nastavený bod návratu)\npravý klik = /bodnávratu (nastaví místo, kde jste, jako váš bod návratu)",
+	_ch_help_group = "rnvrt",
+	inventory_image = "ch_extras_zpet.png",
+	wield_image = "ch_extras_zpet.png",
+	range = 0.1,
+	on_use = rn_left,
+	on_place = rn_right,
+	on_secondary_use = rn_right,
+}
+minetest.register_tool("ch_extras:runa_navratu", def)
+minetest.register_craft({
+	output = "ch_extras:runa_navratu",
+	recipe = {
+		{"", "default:mese_crystal_fragment", ""},
+		{"default:mese_crystal_fragment", "cavestuff:pebble_1", ""},
+		{"", "default:mese_crystal_fragment", ""},
+	},
+})
+minetest.register_craft({
+	output = "cavestuff:pebble_1",
+	type = "shapeless",
+	recipe = {"ch_extras:runa_navratu", "moreblocks:sweeper"},
+})

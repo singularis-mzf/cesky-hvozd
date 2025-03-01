@@ -431,6 +431,63 @@ register_node("4dir", "techpack_stairway:stairway", {
 	sounds = default.node_sound_metal_defaults(),
 })
 
+local function generate_ladder_selection_box(sides)
+	local s = sides -- front(-Z) back(+Z) left(-X) right(+X)
+	local w = 2/16
+	local result = {}
+	-- horní a spodní traverzy:
+	if s.front then
+		table.insert(result, {-0.5, -0.5, -0.5, 0.5, -0.5 + w, -0.5 + w})
+		table.insert(result, {-0.5, 0.5 - w, -0.5, 0.5, 0.5, -0.5 + w})
+	end
+	if s.back then
+		table.insert(result, {-0.5, -0.5, 0.5 - w, 0.5, -0.5 + w, 0.5})
+		table.insert(result, {-0.5, 0.5 - w, 0.5 - w, 0.5, 0.5, 0.5})
+	end
+	if s.left then
+		table.insert(result, {-0.5, -0.5, -0.5, -0.5 + w, -0.5 + w, 0.5})
+		table.insert(result, {-0.5, 0.5 - w, -0.5, -0.5 + w, 0.5, 0.5})
+	end
+	if s.right then
+		table.insert(result, {0.5 - w, -0.5, -0.5, 0.5, -0.5 + w, 0.5})
+		table.insert(result, {0.5 - w, 0.5 - w, -0.5, 0.5, 0.5, 0.5})
+	end
+	-- svislé tyče:
+	if s.front or s.left then -- -Z -X
+		table.insert(result, {-0.5, -0.5, -0.5, -0.5 + w, 0.5, -0.5 + w})
+	end
+	if s.front or s.right then -- -Z +X
+		table.insert(result, {0.5 - w, -0.5, -0.5, 0.5, 0.5, -0.5 + w})
+	end
+	if s.back or s.left then -- +Z -X
+		table.insert(result, {-0.5, -0.5, 0.5 - w, -0.5 + w, 0.5, 0.5})
+	end
+	if s.back or s.right then -- +Z +X
+		table.insert(result, {0.5 - w, -0.5, 0.5 - w, 0.5, 0.5, 0.5})
+	end
+	assert(#result > 0)
+	return {type = "fixed", fixed = result}
+end
+
+local collision_box_sides = {
+	front = {-16/32, -16/32, -16/32, 16/32, 16/32,-15/32}, -- -Z
+	back = {-16/32, -16/32,  15/32, 16/32, 16/32, 16/32}, -- +Z
+	left = {-16/32, -16/32, -16/32,-15/32, 16/32, 16/32}, -- -X
+	right = { 15/32, -16/32, -16/32, 16/32, 16/32, 16/32}, -- +X
+}
+
+local function generate_ladder_collision_box(sides)
+	local result = {}
+	for side, _ in pairs(sides) do
+		local box = collision_box_sides[side]
+		if box ~= nil then
+			table.insert(result, box)
+		end
+	end
+	assert(#result > 0)
+	return {type = "fixed", fixed = result}
+end
+
 ch_core.register_nodes({
 	drawtype = "nodebox",
 	tiles = {
@@ -444,16 +501,15 @@ ch_core.register_nodes({
 	palette = "unifieddyes_palette_color4dir.png",
 	sunlight_propagates = true,
 	is_ground_content = false,
-	selection_box = {
-		type = "fixed",
-		fixed = {-8/16, -8/16, -8/16,  8/16, 8/16, 8/16},
-	},
+	climbable = true,
 	groups = ch_core.assembly_groups(stairway_groups, {ud_param2_colorable = 1}),
 	sounds = default.node_sound_metal_defaults(),
 	on_dig = unifieddyes.on_dig,
 }, {
 	["techpack_stairway:ladder1"] = {
 		description = S("TechPack Ladder 1"),
+		collision_box = generate_ladder_collision_box({left = true, right = true, front = true, back = true}),
+		selection_box = generate_ladder_selection_box({left = true, right = true, front = true, back = true}),
 		node_box = {
 			type = "fixed",
 			fixed = {
@@ -466,6 +522,8 @@ ch_core.register_nodes({
 	},
 	["techpack_stairway:ladder2"] = {
 		description = S("TechPack Ladder 2"),
+		collision_box = generate_ladder_collision_box({left = true, right = true, back = true}),
+		selection_box = generate_ladder_selection_box({left = true, right = true, back = true}),
 		node_box = {
 			type = "fixed",
 			fixed = {
@@ -478,6 +536,8 @@ ch_core.register_nodes({
 	},
 	["techpack_stairway:ladder3"] = {
 		description = S("TechPack Ladder 3"),
+		collision_box = generate_ladder_collision_box({right = true, back = true}),
+		selection_box = generate_ladder_selection_box({right = true, back = true}),
 		node_box = {
 			type = "fixed",
 			fixed = {
@@ -491,6 +551,8 @@ ch_core.register_nodes({
 	["techpack_stairway:ladder4"] = {
 		description = S("TechPack Ladder 4"),
 		tiles = {'techpack_stairway_ladder.png'},
+		collision_box = generate_ladder_collision_box({back = true}),
+		selection_box = generate_ladder_selection_box({back = true}),
 		node_box = {
 			type = "fixed",
 			fixed = {
@@ -500,10 +562,11 @@ ch_core.register_nodes({
 				--{ 15/32, -17/32, -17/32,  17/32,  17/32,  17/32},
 			},
 		},
+		--[[
 		selection_box = {
 			type = "fixed",
 			fixed = {-8/16, -8/16, 6/16,  8/16, 8/16, 8/16},
-		},
+		}, ]]
 	},
 }, {
 	{
