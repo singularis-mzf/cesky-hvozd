@@ -145,10 +145,12 @@ local function process_param2(current_param2, param2_spec)
     return bit.bxor(bit.band(old_mask, current_param2), bit.band(new_mask, param2_spec))
 end
 
+--[[
 local function get_group_count(group)
     local columns, rows = get_group_size(group)
     return columns * rows
 end
+]]
 
 local function check_owner(pos, player_name)
     if core.check_player_privs(player_name, "protection_bypass") then
@@ -205,9 +207,9 @@ local function formspec_callback(custom_state, player, formname, fields)
                         wielded_item:add_wear_by_uses(200)
                         player:set_wielded_item(wielded_item)
                     end
-                    local change_result, error_message
+                    local change_result
                     if group.on_change ~= nil then
-                        change_result, error_message = group.on_change(pos, old_node,
+                        change_result = group.on_change(pos, old_node,
                             {name = new_node.name, param = old_node.param, param2 = new_node.param2}, player, new_node_spec)
                     end
                     if change_result == nil then

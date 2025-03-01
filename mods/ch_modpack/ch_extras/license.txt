@@ -238,3 +238,9 @@ not_wuzzy_dice_6.png
 	Author: TumeniNodes
 	License: CC BY-SA 4.0
 	Source: https://github.com/TumeniNodes/not_wuzzy_dice (Not Wuzzy Dice mod)
+
+ch_extras_gravel.png
+	Author: Singularis
+	License: GFDLv1.3
+	Used sources (derivative work of):
+		- hdx-64 texture pack (author: VanessaE; license: GFDLv1.3; https://commons.wikimedia.org/wiki/File:Gravel_small_stones.jpg)

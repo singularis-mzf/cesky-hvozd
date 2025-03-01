@@ -677,12 +677,14 @@ local materials_for_manholes = set(
 	"ch_extras:zdlazba"
 )
 
+--[[
 local materials_asphalt = set(
 	-- asfalt:
 	"building_blocks:Tar",
 	"streets:asphalt_blue",
 	"streets:asphalt_red"
 )
+]]
 
 local materials_for_manholes_only = set(
 	-- materiály podporující pouze jeden druh průlezu:
@@ -1046,22 +1048,22 @@ function ch_core.get_stairsplus_custom_shapes(recipeitem)
 end
 
 function ch_core.get_materials_from_shapes_db(key)
-	local set
+	local mset
 	if key == "advtrains" then
-		set = union(platform_materials, platform_materials_exceptions)
+		mset = union(platform_materials, platform_materials_exceptions)
 	elseif key == "si_frames" then
-		set = materials_for_si_frames
+		mset = materials_for_si_frames
 	elseif key == "streets" then
-		set = union(materials_for_manholes, materials_for_manholes_only)
+		mset = union(materials_for_manholes, materials_for_manholes_only)
 	end
-	if set == nil then
+	if mset == nil then
 		error("ch_core.get_materials_from_shapes_db(): unsupported key \""..key.."\"!")
 	end
 	local result = {}
-	for name, _ in pairs(set) do
+	for name, _ in pairs(mset) do
 		table.insert(result, name)
 	end
-	if not set["default:stone"] then
+	if not mset["default:stone"] then
 		table.insert(result, "default:stone")
 	end
 	return result

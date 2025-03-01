@@ -343,13 +343,49 @@ local player_role_to_image = {
 	survival = "ch_core_kladivo.png",
 }
 
+local wm_to_4dir = {
+	-- směr "wallmounted" na "4dir" (ztrátová konverze)
+	[0] = 0, [1] = 0, [2] = 1, [3] = 3, [4] = 0, [5] = 2, [6] = 0, [7] = 0,
+}
+local wmc_to_4dirc = {
+	[0] = 0,
+	[8] = 8,
+	[16] = 12,
+	[24] = 20,
+	[32] = 28,
+	[40] = 84,
+	[48] = 76,
+	[56] = 64,
+	[64] = 128,
+	[72] = 132,
+	[80] = 136,
+	[88] = 140,
+	[96] = 144,
+	[104] = 148,
+	[112] = 152,
+	[120] = 156,
+	[128] = 192,
+	[136] = 196,
+	[144] = 200,
+	[152] = 204,
+	[160] = 208,
+	[168] = 212,
+	[176] = 216,
+	[184] = 220,
+	[192] = 224,
+	[200] = 228,
+	[208] = 232,
+	[216] = 236,
+	[224] = 240,
+	[232] = 244,
+	[240] = 248,
+	[248] = 252,
+}
 
 -- KEŠ
 -- ===========================================================================
 local utf8_sort_cache = {
 }
-
-local lc_to_player_name = ch_core.lc_to_player_name
 
 -- LOKÁLNÍ FUNKCE
 -- ===========================================================================
@@ -510,6 +546,16 @@ function ch_core.clear_crafts(log_prefix, crafts)
 		end
 	end
 	return count
+end
+
+--[[
+Převede param2 z colorwallmounted na color4dir paletu.
+]]
+function ch_core.colorwallmounted_to_color4dir(param2)
+	local dir = wm_to_4dir[param2 % 8]
+	param2 = param2 - param2 % 8
+	local color = wmc_to_4dirc[param2 - param2 % 8]
+	return dir + color
 end
 
 --[[

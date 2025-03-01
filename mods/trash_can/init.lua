@@ -83,18 +83,13 @@ local dumpster_nodebox = {
 
 -- Normal Trash Can
 local trash_can_def = {
-	description = "odpadkový koš",
-	drawtype="nodebox",
-	paramtype = "light",
+	drawtype = "mesh",
 	tiles = {
 		"trash_can_wooden_top.png",
 		"trash_can_wooden_top.png",
 		"trash_can_wooden.png"
 	},
-	node_box = {
-		type = "fixed",
-		fixed = trash_can_nodebox
-	},
+	paramtype = "light",
 	groups = moditems.trashbin_groups,
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
@@ -147,7 +142,49 @@ local trash_can_def = {
 	end,
 }
 
-minetest.register_node("trash_can:trash_can_wooden", trash_can_def)
+local function scale(fixed, c)
+	local result = {}
+	for i, aabb in ipairs(assert(fixed)) do
+		result[i] = {aabb[1] * c, aabb[2] * c, aabb[3] * c, aabb[4] * c, aabb[5] * c, aabb[6] * c}
+	end
+	return assert(result)
+end
+
+local function translate(fixed, x, y, z)
+	local result = {}
+	for i, aabb in ipairs(assert(fixed)) do
+		result[i] = {aabb[1] + x, aabb[2] + y, aabb[3] + z, aabb[4] + x, aabb[5] + y, aabb[6] + z}
+	end
+	return assert(result)
+end
+
+local box_normal = {type = "fixed", fixed = trash_can_nodebox}
+local box_smallc = {type = "fixed", fixed = translate(scale(trash_can_nodebox, 0.666666), 0, -0.166667, 0)}
+local box_small  = {type = "fixed", fixed = translate(scale(trash_can_nodebox, 0.666666), 0, -0.166667, 0.2)}
+
+ch_core.register_nodes(trash_can_def, {
+	["trash_can:trash_can_wooden"] = {
+		description = "odpadkový koš",
+		mesh = "trash_can_normal.obj",
+		selection_box = box_normal,
+		collision_box = box_normal,
+		paramtype2 = "degrotate",
+	},
+	["trash_can:trash_can_smallc"] = {
+		mesh = "trash_can_small_center.obj",
+		description = "odpadkový koš malý (vystředěný)",
+		selection_box = box_smallc,
+		collision_box = box_smallc,
+		paramtype2 = "degrotate",
+	},
+	["trash_can:trash_can_small"] = {
+		mesh = "trash_can_small.obj",
+		description = "odpadkový koš malý",
+		selection_box = box_small,
+		collision_box = box_small,
+		paramtype2 = "4dir",
+	},
+})
 
 if has_homedecor then
 	minetest.override_item("homedecor:trash_can", {
@@ -263,4 +300,13 @@ minetest.register_craft({
 		{moditems.iron_item,moditems.iron_item,moditems.iron_item},
 	}
 })
+
+ch_core.register_shape_selector_group({
+	nodes = {
+		{name = "trash_can:trash_can_wooden", param2 = 0},
+		{name = "trash_can:trash_can_small", param2 = 0},
+		{name = "trash_can:trash_can_smallc", param2 = 0},
+	}
+})
+
 ch_base.close_mod(minetest.get_current_modname())

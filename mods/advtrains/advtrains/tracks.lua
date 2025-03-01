@@ -674,7 +674,8 @@ function sl.register_placer(def, preset)
 		inventory_image = def.texture_prefix.."_slopeplacer.png",
 		wield_image = def.texture_prefix.."_slopeplacer.png",
 		groups={},
-		on_place = sl.create_slopeplacer_on_place(def, preset)
+		on_place = sl.create_slopeplacer_on_place(def, preset),
+		liquids_pointable = def.liquids_pointable,
 	})
 end
 --(itemstack, placer, pointed_thing)

@@ -32,6 +32,30 @@ read_globals = {
 			"black", "blue", "green", "cyan", "red", "magenta", "brown", "yellow","light_gray","dark_gray", "light_blue",
 			"light_green", "light_cyan", "light_red", "light_magenta", "light_yellow", "white"}},
 	}},
+	ch_data = {fields = {
+		"correct_player_name_casing",
+		"delete_offline_charinfo",
+		"get_joining_online_charinfo",
+		"get_leaving_online_charinfo",
+		"get_offline_charinfo",
+		"get_or_add_offline_charinfo",
+		"save_offline_charinfo",
+		"should_show_help",
+		initial_offline_charinfo = {
+			read_only = false,
+			other_fields = true,
+		},
+		is_acceptable_name = {
+			read_only = false,
+		},
+		online_charinfo = {
+			read_only = false,
+			other_fields = true,
+		}, offline_charinfo = {
+			read_only = false,
+			other_fields = true,
+		},
+	}},
 	ch_time = {fields = {
 		"aktualni_cas", "get_time_shift", "na_strukturu", "time",
 	}},

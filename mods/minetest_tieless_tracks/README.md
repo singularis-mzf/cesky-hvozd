@@ -13,3 +13,7 @@ Tieless Tracks provides some basic train tracks without crossties. For use in an
 ## Licenses
 - All code is licensed under the GNU Affero General Public License v3.0. See https://www.gnu.org/licenses/ for more information.
 - All media is licensed under the [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/)
+
+Textures advtrains_ctrack_shared_*.png and advtrains_ctrack_rail.png use part of:
+https://commons.wikimedia.org/wiki/File:Cream_speckled_spotted_clean_seamless_concrete_building_wall_texture.jpg
+(used under licence CC0, modifications under [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/))

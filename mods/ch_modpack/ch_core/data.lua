@@ -160,6 +160,7 @@ local function is_invalid_player_name(player_name)
 	return false
 end
 
+--[[
 local function verify_valid_player_name(player_name)
 	local message = is_invalid_player_name(player_name)
 	if message then
@@ -168,6 +169,7 @@ local function verify_valid_player_name(player_name)
 		return tostring(player_name)
 	end
 end
+]]
 
 function ch_core.get_offline_charinfo(player_name)
 	core.log("warning", "Obsolete function ch_core.get_offline_charinfo() called!")

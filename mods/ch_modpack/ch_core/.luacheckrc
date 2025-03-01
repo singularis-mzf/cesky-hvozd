@@ -26,6 +26,21 @@ globals = {
 		"update_formspec",
 	}},
 	ch_data = {fields = {
+		"correct_player_name_casing",
+		"delete_offline_charinfo",
+		"get_joining_online_charinfo",
+		"get_leaving_online_charinfo",
+		"get_offline_charinfo",
+		"get_or_add_offline_charinfo",
+		"save_offline_charinfo",
+		"should_show_help",
+		initial_offline_charinfo = {
+			read_only = false,
+			other_fields = true,
+		},
+		is_acceptable_name = {
+			read_only = false,
+		},
 		online_charinfo = {
 			read_only = false,
 			other_fields = true,
@@ -33,7 +48,7 @@ globals = {
 			read_only = false,
 			other_fields = true,
 		},
-	}}
+	}},
 	doors = {fields = {
 		"get", "login_to_viewname", "register_fencegate"
 	}},
@@ -42,6 +57,17 @@ globals = {
 
 
 read_globals = {
+	ch_base = {fields = {
+		"open_mod", "close_mod"
+	}},
+	ch_time = {fields = {
+		"aktualni_cas",
+		"get_time_speed_during_day",
+		"get_time_speed_during_night",
+		"herni_cas_nastavit",
+		"set_time_speed_during_day",
+		"set_time_speed_during_night",
+	}},
 	default = {fields = {
 		"can_interact_with_node",
 		"register_fence",
@@ -49,6 +75,7 @@ read_globals = {
 		"register_mesepost",
 		"node_sound_stone_defaults",
 	}},
+	screwdriver = {fields = {"ROTATE_FACE", "ROTATE_AXIS", handler = {read_only = false}}},
 	math = {fields = {"ceil", "floor", "round"}},
 	minetest = {
 		fields = {
@@ -125,7 +152,9 @@ read_globals = {
 
 	"AreaStore", "dump2", "emote", "hb", "ItemStack", "player_api", "wielded_light"
 }
+read_globals.core = read_globals.minetest
 
 files["ap.lua"].ignore = {"_max_xp"}
 files["data.lua"].ignore = {"past_playtime"}
 files["trade.lua"].ignore = {"_trade_state"}
+files["teleportace.lua"].ignore = {"_old_pos"}

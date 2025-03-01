@@ -362,9 +362,9 @@ local function stavim(player_name, pos)
 	if not offline_charinfo then
 		return false, "Interní údaje nebyly nalezeny!"
 	end
-	local old_pos, pos_date
+	local _old_pos, pos_date
 	if offline_charinfo.stavba ~= nil then
-		old_pos, pos_date = offline_charinfo.stavba:match("^([^@]+)@([^@]+)$")
+		_old_pos, pos_date = offline_charinfo.stavba:match("^([^@]+)@([^@]+)$")
 	end
 	if pos_date == dnes then
 		return false, "Cílovou pozici příkazem /stavím lze nastavit jen jednou denně!"
@@ -420,6 +420,53 @@ local function zacatek(player_name, _param)
 		player = player_name,
 		target_pos = zacatek_pos,
 		delay = 30.0,
+		sound_before = ch_core.default_teleport_sound,
+		sound_after = ch_core.default_teleport_sound,
+	}
+	return true
+end
+
+local function bn_nastavit(player)
+	local player_name = player:get_player_name()
+	local online_charinfo = ch_data.online_charinfo[player_name]
+	if online_charinfo == nil then
+		return false, "Interní údaje nebyly nalezeny!"
+	end
+	local player_pos = player:get_pos()
+	online_charinfo.bod_navratu = core.pos_to_string(player_pos).."|"..core.get_us_time()
+	return true, "Bod návratu úspěšně nastaven na: "..core.pos_to_string(vector.round(player_pos))
+end
+
+local function bn_zpet(player)
+	local player_name = player:get_player_name()
+	local online_charinfo = ch_data.online_charinfo[player_name]
+	if online_charinfo == nil then
+		return false, "Interní údaje nebyly nalezeny!"
+	end
+	local s = online_charinfo.bod_navratu or ""
+	local target_pos, set_ts = s:match("^([^|]+)|([^|]+)$")
+	if target_pos ~= nil then
+		target_pos = core.string_to_pos(target_pos)
+	end
+	if set_ts ~= nil then
+		set_ts = tonumber(set_ts)
+	end
+	if target_pos == nil or set_ts == nil then
+		return false, "V poslední době jste si nenastavili bod návratu."
+	end
+	local now = core.get_us_time()
+	local diff = (now - set_ts) * 1.0e-6
+	if diff > 30 * 60 then
+		online_charinfo.bod_navratu = ""
+		return false, "V poslední době jste si nenastavili bod návratu."
+	elseif diff < 6 then
+		diff = 0
+	end
+	ch_core.teleport_player{
+		type = "player",
+		player = player_name,
+		target_pos = target_pos,
+		delay = diff / 60,
 		sound_before = ch_core.default_teleport_sound,
 		sound_after = ch_core.default_teleport_sound,
 	}
@@ -494,5 +541,34 @@ def = {
 }
 core.register_chatcommand("nastavbu", def)
 core.register_chatcommand("na_stavbu", def)
+
+-- /bodnávratu
+def = {
+	description = "Uloží vaši pozici jako bod návratu pro příkaz /zpět.",
+	privs = {home = true},
+	func = function(player_name, param)
+		local player = core.get_player_by_name(player_name)
+		if player ~= nil then
+			return bn_nastavit(player)
+		end
+	end,
+}
+core.register_chatcommand("bn", def)
+core.register_chatcommand("bodnávratu", def)
+core.register_chatcommand("bodnavratu", def)
+
+-- /zpět
+def = {
+	description = "Přenese vás na místo, které jste si v poslední půlhodině uložili příkazem /bodnávratu.",
+	privs = {home = true},
+	func = function(player_name, param)
+		local player = core.get_player_by_name(player_name)
+		if player ~= nil then
+			return bn_zpet(player)
+		end
+	end,
+}
+core.register_chatcommand("zpět", def)
+core.register_chatcommand("zpet", def)
 
 ch_core.close_submod("teleportace")

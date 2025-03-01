@@ -5,6 +5,19 @@ hsx.obj
 	Source: https://github.com/iskolbin/lhsx
 	License: MIT or public domain
 
+LinuxKnihaKouzel.pm
+	Author: Singularis
+	Source: https://github.com/singularis-mzf/linux-spellbook
+	License: CC0
+
 palette_generator.lua
 	Author: Singularis
 	License: MIT
+
+perl
+	Author: Singularis
+	License: CC BY-SA-4.0 or GPLv2+
+
+trashcan_model.pl
+	Author: Singularis
+	License: AGPLv3

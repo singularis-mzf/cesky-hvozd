@@ -8,22 +8,22 @@ letters = {
 }
 
 local item_to_color = {
-	["bakedclay:black"] = 32,
-	["bakedclay:blue"] = 168,
-	["bakedclay:brown"] = 200,
-	["bakedclay:cyan"] = 224,
-	["bakedclay:dark_green"] = 216,
-	["bakedclay:dark_grey"] = 24,
-	["bakedclay:green"] = 152,
-	["bakedclay:grey"] = 16,
-	["bakedclay:magenta"] = 184,
-	["bakedclay:natural"] = 0,
-	["bakedclay:orange"] = 136,
-	["bakedclay:pink"] = 56,
-	["bakedclay:red"] = 128,
-	["bakedclay:violet"] = 240,
+	["bakedclay:black"] = 28,
+	["bakedclay:blue"] = 212,
+	["bakedclay:brown"] = 228,
+	["bakedclay:cyan"] = 240,
+	["bakedclay:dark_green"] = 236,
+	["bakedclay:dark_grey"] = 20,
+	["bakedclay:green"] = 204,
+	["bakedclay:grey"] = 12,
+	["bakedclay:magenta"] = 220,
+	["bakedclay:natural"] = 36,
+	["bakedclay:orange"] = 196,
+	["bakedclay:pink"] = 64,
+	["bakedclay:red"] = 192,
+	["bakedclay:violet"] = 248,
 	["bakedclay:white"] = 0,
-	["bakedclay:yellow"] = 144,
+	["bakedclay:yellow"] = 200,
 }
 
 local lower_letters = {
@@ -169,18 +169,21 @@ local def_base = {
 	inventory_image = "",
 	wield_image = "",
 	tiles = {},
+	use_texture_alpha = "clip",
 	--
-	drawtype = "signlike",
+	drawtype = "nodebox",
 	paramtype = "light",
-	paramtype2 = "colorwallmounted",
-	palette = "unifieddyes_palette_colorwallmounted.png",
+	paramtype2 = "color4dir",
+	palette = "unifieddyes_palette_color4dir.png",
 	sunlight_propagates = true,
 	is_ground_content = false,
 	walkable = false,
-	selection_box = {type = "wallmounted"},
+	node_box = {type = "fixed", fixed = {-0.5, -0.5, 0.5 - 1/32, 0.5, 0.5, 0.5 - 1/32}},
+	selection_box = {type = "fixed", fixed = {-7/16, -7/16, 7/16, 7/16, 7/16, 8/16}},
 	groups = {
 		oddly_breakable_by_hand = 2,
 		ud_param2_colorable = 1,
+		letter = 1,
 		-- not_in_creative_inventory = 1,
 		-- not_in_craft_guide = 1,
 	},
@@ -196,7 +199,14 @@ for _, letters_list in ipairs({lower_letters, upper_letters}) do
 		texture = "letters_pattern.png^letters_" ..row[1].. "_overlay.png^[makealpha:255,126,126"
 		def.inventory_image = texture
 		def.wield_image = texture
-		def.tiles = {texture}
+		def.tiles = {
+			"blank.png",
+			"blank.png",
+			"blank.png",
+			"blank.png",
+			{name = texture.."^[transformFX", backface_culling = true},
+			{name = texture, backface_culling = true},
+		}
 		minetest.register_node("letters:letter_" ..row[1], def)
 	end
 end
@@ -691,4 +701,19 @@ minetest.register_craft({
 		{"default:tree", "default:steel_ingot", "default:tree"},
 	},
 })
+
+-- LBM: conversion to color4dir param2:
+core.register_lbm({
+	label = "Letters to color4dir",
+	name = "letters:to_color4dir",
+	nodenames = {"group:letter"},
+	action = function(pos, node, dtime_s)
+		local old_param2 = node.param2
+		node.param2 = ch_core.colorwallmounted_to_color4dir(node.param2)
+		if node.param2 ~= nil then
+			core.swap_node(pos, node)
+		end
+	end,
+})
+
 ch_base.close_mod(minetest.get_current_modname())

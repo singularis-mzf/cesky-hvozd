@@ -4,9 +4,7 @@ local def
 ---------------------------------------------------------------
 def = table.copy(minetest.registered_nodes["default:gravel"])
 def.description = "železniční štěrk"
-def.tiles = {
-	"default_gravel.png^[multiply:#956338"
-}
+def.tiles = {"ch_extras_gravel.png"}
 def.drop = nil
 minetest.register_node("ch_extras:railway_gravel", def)
 

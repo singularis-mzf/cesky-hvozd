@@ -190,7 +190,6 @@ function ch_core.registrovat(player_name, reg_type, extra_privs)
 	if reg_type == "new" then
 		ch_core.add_event("reg_new", nil, player_name)
 	else
-		local message
 		if reg_type == "survival" then
 			message = "dělnická postava {PLAYER} byla nově přijata na server"
 		elseif reg_type == "creative" then

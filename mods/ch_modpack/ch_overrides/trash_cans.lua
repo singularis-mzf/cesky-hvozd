@@ -3,6 +3,8 @@ local trash_cans = {
 	["homedecor:trash_can"] = 6,
 	["homedecor:trash_can_green_open"] = 6,
 	["trash_can:dumpster"] = 18,
+	["trash_can:trash_can_small"] = 6,
+	["trash_can:trash_can_smallc"] = 6,
 	["trash_can:trash_can_wooden"] = 6,
 }
 

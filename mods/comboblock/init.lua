@@ -39,6 +39,7 @@ local combos = {
 	[21] = {a = "default:slab_silver_sandstone_block", b = "ch_core:slab_plaster_medium_amber_s50", ts = 64},
 	[22] = {a = "moreblocks:slab_gravel", b = "technic:slab_concrete", ts = 128},
 	[23] = {a = "ch_extras:slab_railway_gravel", b = "technic:slab_concrete", ts = 128},
+	[24] = {a = "ch_extras:slab_railway_gravel", b = "moreblocks:slab_gravel", ts = 64},
 }
 
 local function combo_after_change(pos, old_node, new_node, player, nodespec)
