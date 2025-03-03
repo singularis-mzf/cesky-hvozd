@@ -34,7 +34,6 @@ local minimap_modes = {
 	{type = "surface", label = "povrch 512 (1/4)", size = 512},
 	{type = "surface", label = "povrch 256 (2/4)", size = 256},
 	{type = "surface", label = "povrch 128 (3/4)", size = 128},
-	{type = "surface", label = "povrch 64 (4/4)", size = 64},
 	{type = "radar", label = "radar 256 (1/4)", size = 256},
 	{type = "radar", label = "radar 128 (2/4)", size = 128},
 	{type = "radar", label = "radar 64 (3/4)", size = 64},
@@ -185,23 +184,23 @@ if not mod_map then
 	-- Enables minimap (surface)
 	minetest.register_tool("orienteering:map", {
 		description = S("Map"),
-		_ch_help = "Je-li na výběrové liště, umožní vám přístup k minimapě (ve výchozím nastavení klávesou V).",
-		_ch_help_group = "o:mm",
-		_tt_help = S("Allows using the minimap"),
-		_doc_items_longdesc = S("The map allows you to view a minimap of the area around you."),
-		_doc_items_usagehelp = S("If you put a map in your hotbar, you will be able to access the minimap (only surface mode). Press the “minimap” key to view the minimap."),
+		_ch_help = "Minimapu otevřete kdykoliv příslušnou klávesou (ve výchozím nastavení V).\nTento předmět k tomu nepotřebujete, v současnosti nemá herní význam.",
+		_ch_help_group = "o:mm2",
+		-- _tt_help = S("Allows using the minimap"),
+		-- _doc_items_longdesc = S("The map allows you to view a minimap of the area around you."),
+		-- _doc_items_usagehelp = S("If you put a map in your hotbar, you will be able to access the minimap (only surface mode). Press the “minimap” key to view the minimap."),
 		wield_image = "orienteering_map.png",
 		wield_scale = { x=1.5, y=1.5, z=0.15 },
 		inventory_image = "orienteering_map.png",
 		groups = { disable_repair = 1 },
-		on_use = open_minimap,
+		-- on_use = open_minimap,
 	})
 end
 
 -- Enables minimap (radar)
 minetest.register_tool("orienteering:automapper", {
 	description = S("Radar Mapper"),
-	_ch_help = "Je-li na výběrové liště, umožní vám přístup k minimapě v normálním i radarovém režimu.",
+	_ch_help = "Je-li na výběrové liště, umožní vám přístup k minimapě v radarovém režimu.",
 	_ch_help_group = "o:rm",
 	_tt_help = S("Allows using the minimap and radar"),
 	_doc_items_longdesc = S("The radar mapper is a device that combines a map with a radar. It unlocks both the surface mode and radar mode of the minimap."),
@@ -327,9 +326,12 @@ function orienteering.update_automapper(player)
 	local enable_radar = ifthenelse(
 		orienteering.tool_active(player, "orienteering:automapper") or orienteering.tool_active(player, "orienteering:quadcorder"),
 		true, false)
+		--[[
 	local enable_minimap = ifthenelse(
 		enable_radar or minetest.is_creative_enabled(player_name) or
 		orienteering.tool_active(player, ifthenelse(mod_map, "map:mapping_kit", "orienteering:map")), true, false)
+		]]
+	local enable_minimap = true
 
 	if enable_minimap ~= online_charinfo.enable_minimap or enable_radar ~= online_charinfo.enable_radar then
 		online_charinfo.enable_minimap = enable_minimap
