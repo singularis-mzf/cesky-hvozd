@@ -397,15 +397,11 @@ wool_yellow.png
 	Source: https://github.com/Sharpik/Minetest-SharpNet-Photo-Realism-Texturespack
 
 crack_anylength.png
-default_acacia_wood.png
-default_aspen_wood.png
 default_bookshelf.png
 default_glass.png
 default_glass_alt.png
 default_glass_detail.png
-default_pine_wood.png
 default_mese_block.png
-default_wood.png
 gui_hotbar.png
 gui_hotbar_selected.png
 	Copyright (C) 2010-2022:
@@ -473,7 +469,14 @@ default_rainforest_litter.png
 	Source: https://content.luanti.org/packages/Fhelron/realfantasy/
 	License: CC BY-SA 4.0
 
+default_aspen_tree_top.png
+default_aspen_wood.png
 default_junglewood.png
+default_pine_wood.png
+default_pine_tree.png
+default_pine_tree_top.png
+default_tree_top.png
+default_wood.png
 	Author: Fhelron
 	Source: https://content.luanti.org/packages/Fhelron/realfantasy/
 	License: CC BY-SA 4.0
@@ -521,12 +524,3 @@ default_jungletree_top.png
 	Source: Graceful 32x (texture pack)
 	License: CC BY-SA 3.0
 	Modified by Singularis under the same license
-
-----
-(zatím nic)
-	Author: Singularis
-	License: CC BY-SA 3.0
-	Used source:
-		- https://opengameart.org/content/5-wood-textures
-		  Author: Luke.RUSTLTD
-		  License: CC0
