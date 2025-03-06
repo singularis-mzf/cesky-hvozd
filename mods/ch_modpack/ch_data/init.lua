@@ -201,7 +201,7 @@ function ch_data.get_joining_online_charinfo(player)
 	}
 
 	-- news_role:
-	if result.formspec_version < 6 then
+	if result.formspec_version < 6 or (result.formspec_version == 0 and result.protocol_version < 42) then
 		result.news_role = "disconnect"
 	elseif not ch_data.supported_lang_codes[result.lang_code] and not core.check_player_privs(player, "server") then
 			result.news_role = "invalid_locale"
@@ -224,6 +224,7 @@ function ch_data.get_joining_online_charinfo(player)
 	core.log("action", "JOIN PLAYER(" .. player_name ..") at "..now.." with lang_code \""..result.lang_code..
 		"\", formspec_version = "..result.formspec_version..", protocol_version = "..result.protocol_version..", news_role = "..result.news_role)
 
+	core.log("action", "[DEBUG] player_info[\""..player_name.."\"] = "..dump2(player_info))
 	-- deserializovat návody:
 	local meta = player:get_meta()
 	local s = meta:get_string("navody")

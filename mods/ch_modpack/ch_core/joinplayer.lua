@@ -371,7 +371,9 @@ local function on_joinplayer(player, last_login)
 	ch_core.add_event("joinplayer_for_admin", "{PLAYER} se připojil/a do hry (NR="..news_role..", PV="..protocol_version..")", player_name)
 
 	if news_role == "disconnect" then
-		minetest.disconnect_player(player_name, "Váš klient je příliš starý. Pro připojení k tomuto serveru prosím použijte Minetest 5.7.0 nebo novější. Verze 5.6.0 a 5.6.1 budou fungovat s omezeními.")
+		minetest.disconnect_player(player_name, "Váš klient je příliš starý. "..
+			"Pro připojení k tomuto serveru prosím použijte Minetest/Luanti 5.9.0 nebo novější. "..
+			"Verze 5.7.x a 5.8.x budou fungovat, ale některé bloky nemusejí být zobrazeny správně.")
 		return true
 	elseif news_role == "invalid_name" then
 		minetest.disconnect_player(player_name, "Neplatné přihlašovací jméno '"..player_name.."'. Seznamte se, prosím, s pravidly serveru pro jména, nebo použijte jen písmena anglické abecedy.")
@@ -469,8 +471,14 @@ core.send_leave_message = function(player_name, is_timedout)
 	return true
 end
 
+-- AUTH logging:
+local function on_authplayer(name, ip, is_success)
+	core.log("action", "AUTH(<"..tostring(name).."> @ <"..tostring(ip)..">) => "..ifthenelse(is_success, "true", "false"))
+end
+
 core.register_on_newplayer(on_newplayer)
 core.register_on_joinplayer(on_joinplayer)
 core.register_on_leaveplayer(on_leaveplayer)
+core.register_on_authplayer(on_authplayer)
 
 ch_core.close_submod("joinplayer")
