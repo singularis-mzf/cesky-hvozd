@@ -309,8 +309,6 @@ function ch_data.save_offline_charinfo(player_name)
 		return false
 	end
 	core.safe_file_write(datapath.."/"..player_name, assert(core.serialize(data)))
-	print("DEBUG: [ch_data] offline_charinfo for '"..player_name.."' saved.")
-	print("DEBUG: - ap_level = "..tostring(data.ap_level))
 	if player_name == "Administrace" then
 		if data.ap_level ~= 1 then
 			debug_flag = true

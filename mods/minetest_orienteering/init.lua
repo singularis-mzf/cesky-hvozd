@@ -31,13 +31,12 @@ end
 
 local minimap_modes = {
 	{type = "off", label = "minimapa je skryta"},
-	{type = "surface", label = "povrch 512 (1/4)", size = 512},
-	{type = "surface", label = "povrch 256 (2/4)", size = 256},
-	{type = "surface", label = "povrch 128 (3/4)", size = 128},
-	{type = "radar", label = "radar 256 (1/4)", size = 256},
-	{type = "radar", label = "radar 128 (2/4)", size = 128},
-	{type = "radar", label = "radar 64 (3/4)", size = 64},
-	{type = "radar", label = "radar 32 (4/4)", size = 32},
+	{type = "surface", label = "povrch 512 (1/3)", size = 512},
+	{type = "surface", label = "povrch 256 (2/3)", size = 256},
+	{type = "surface", label = "povrch 128 (3/3)", size = 128},
+	{type = "radar", label = "radar 256 (1/3)", size = 256},
+	{type = "radar", label = "radar 128 (2/3)", size = 128},
+	{type = "radar", label = "radar 64 (3/3)", size = 64},
 }
 
 local function open_minimap(itemstack, user, pointed_thing)
