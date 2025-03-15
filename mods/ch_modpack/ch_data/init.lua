@@ -351,7 +351,6 @@ local function initialize()
 		end
 	end
 	for _, player_name in ipairs(players_list) do
-		print("DEBUG: will deserialize offline_charinfo for player '"..player_name.."'...")
 		f = io.open(datapath.."/"..player_name)
 		if f then
 			local text = f:read("*a")
@@ -364,9 +363,7 @@ local function initialize()
 				end
 			end
 		end
-		if ch_data.offline_charinfo[player_name] ~= nil then
-			print("DEBUG: offline_charinfo for player '"..player_name.."' deserialized.")
-		else
+		if ch_data.offline_charinfo[player_name] == nil then
 			core.log("error", "[ch_data] deserialization of offline_charinfo["..player_name.."] failed!")
 		end
 	end

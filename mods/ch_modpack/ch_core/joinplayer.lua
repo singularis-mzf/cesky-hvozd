@@ -113,24 +113,39 @@ end
 local new_player_texts = {
 	{
 		title = "Vítejte na serveru Český hvozd!",
-		formspec_text = F("V nabídce vlevo si zvolte téma, které vás zajímá. Kliknutím na tlačítko „X“ toto okno zavřete a vstoupíte do herního světa."..
-			" Později ho můžete znovu otevřít příkazem „/novinky“ nebo tím, že se odpojíte a znovu připojíte.\n\n"..
-			"Při objevování světa se vám mohou hodit přemísťovací příkazy „/začátek“, „/doma“ a „/domů“ a možnost běhat rychle "..
-			"(pokud to neumíte, doporučuji nejdřív navštívit areál „Úvod do Minetestu“). "..
+		formspec_text = F("Český hvozd je dělnicko-kouzelnický server **pro dospělé** s československou tématikou, plně lokalizovaný do češtiny. "..
+			"V nabídce vlevo si zvol téma, které tě zajímá. Kliknutím na tlačítko „X“ toto okno zavřeš a vstoupíš do herního světa."..
+			" Později ho můžeš znovu otevřít příkazem „/novinky“ nebo tím, že se odpojíš a znovu připojíš.\n\n"..
+			"Při objevování světa se ti mohou hodit přemísťovací příkazy „/začátek“, „/doma“ a „/domů“ a možnost běhat rychle "..
+			"(pokud to neumíš, doporučuji nejdřív navštívit areál „Úvod do Luanti“). "..
 			"Další informace o serveru, včetně mapy herního světa a instrukcí, jak získat práva potřebná "..
-			"pro plnohodnotnou hru, najdete na webu:\n\nhttps://ceskyhvozd.svita.cz\n\n"..
+			"pro plnohodnotnou hru, najdeš na webu a wiki:\n\nhttps://ceskyhvozd.svita.cz\n\n"..
 			"Přeji příjemnou a zajímavou hru!\n-- Administrace\n"),
+	}, {
+		title = "Hraji na telefonu/tabletu...",
+		formspec_text = F("Důrazně doporučuji pro připojení k Českému hvozdu používat klienta na počítači (stolním nebo přenosném). "..
+			"Zařízení s dotykovým ovládáním jako telefony či tablety jsou určena (a vhodná) pro hraní jednoduchých her "..
+			"s jednoduchým ovládáním a nepropracovanou grafikou. Minetest Game na Českém hvozdu k takovým hrám nepatří.\n\n"..
+			"Hráči/ky hrající na chytrých telefonech a tabletech již na Českém hvozdu hlásili potíže při zadávání příkazů "..
+			"v četu a při ovládání dialogových oken."),
+	}, {
+		title = "Ještě mi nebylo 18...",
+		formspec_text = F("Pokud je vám 15 až 17, můžete se po serveru porozhlédnout, a pokud vám připadne, že si již rozumíte "..
+			"s dospělými a zaměření serveru je vám blízké, můžete usilovat o přijetí na server. V některých případech Administrace "..
+			"učiní výjimku a přijme i hráče/ku z této věkové skupiny.\n\nJe-li vám 13 nebo 14, poraďte se se svými rodiči, protože "..
+			"zde můžete narazit na obsah, který pro vás zatím není vhodný. Pokud vám to rodiče dovolí, můžete se na serveru porozhlédnout, "..
+			"ale nic víc.\n\nJe-li vám méně než 13, tato hra pro vás není vhodná. V takovém případě se, prosím, odpojte, a hledejte jinde."),
 	}, {
 		title = "Co je Český hvozd za server?",
 		formspec_text = F("Český hvozd je dělnicko-kouzelnický server s československou tematikou, plně lokalizovaný do češtiny, "..
-			"který nabízí relativně civilizované prostředí pro dospělé české a slovenské hráče/ky "..
+			"který nabízí pohodové a relativně civilizované prostředí pro dospělé české a slovenské hráče/ky "..
 			"a spoustu mírových činností, které zde budete moci dělat.\n\nServer spravuje Singularis "..
 			"prostřednictvím postavy jménem Administrace.\n\n"..
-			"Český hvozd byl otevřen pro veřejnost 3. prosince 2022 po zruba šesti měsících vývoje. "..
+			"Český hvozd byl otevřen pro veřejnost 3. prosince 2022 po zruba šesti měsících vývoje. "..
 			"Nikdy na něm nebylo mnoho hráčů/ek, takže hra zde většinou připomíná spíš "..
 			"hru v režimu jednoho hráče/ky, jen s občasným setkáním s druhým hráčem/kou.\n\n"..
-			"Kromě lokalizace (která vám snad umožní cítit se tu jako doma) je hlavní předností "..
-			"spousta technických vylepšení a úprav implementovaných speciálně pro tento server, s nimiž se během hry setkáte "..
+			"Kromě lokalizace (která ti snad umožní cítit se tu jako doma) je hlavní předností "..
+			"spousta technických vylepšení a úprav implementovaných speciálně pro tento server, s nimiž se během hry setkáš "..
 			"(např. ovládání herního četu)."),
 	}, {
 		title = "Jaká tu platí pravidla?",
@@ -142,39 +157,45 @@ local new_player_texts = {
 			"Pro jednotlivá místa a činnosti platí další pravidla, která se ovšem dozvíš postupně, např. na cedulích ve hře."),
 	}, {
 		title = "Co mám teď dělat?",
-		formspec_text = F("Záleží na tom, jak dobře ovládáte Minetest jako takový.\n\nPokud jste začátečník/ice, "..
-			"nejlépe uděláte, když nejprve navštívíte výukový areál Úvod do Minetestu (hned vedle Začátku), "..
-			"tam se naučíte ovládání hry, což vám ušetří spoustu potíží později. Přinejmenším byste se měli naučit "..
+		formspec_text = F("Záleží na tom, jak dobře ovládáš Luanti jako takové.\n\nPokud jsi začátečník/ice, "..
+			"nejlépe uděláš, když nejprve navštívíš výukový areál Úvod do Luanti (hned vedle Začátku), "..
+			"tam se naučíš ovládání hry a vyzkoušíš si ho, což ti ušetří spoustu potíží později. Přinejmenším by ses měl/a naučit "..
 			"ovládání herního četu\n\n"..
-			"Pokud ovládání hry zvládáte, začněte průzkumem herního světa — můžete tu cestovat (pěšky, pomocí cestovní budky, "..
+			"Pokud ovládání hry zvládáš, začni průzkumem herního světa — můžeš tu cestovat (pěšky, pomocí cestovní budky, "..
 			"vlakem, tramvají či na kole), "..
-			"a pokud potkáte nějakého dalšího hráče/ku, můžete s ní/m komunikovat. V okně inventáře si prohlédněte paletu "..
+			"a pokud potkáš nějakého dalšího hráče/ku, můžeš s ní/m komunikovat. V okně inventáře si prohlédni paletu "..
 			"předmětů a ostatní karty (zejména Nastavení).\n\n"..
-			"K návštěvě určitě doporučuji Výstaviště, kde jsou vystaveny různé bloky a tvary, které lze na tomto serveru používat ke stavění.\n\n"..
-			"Stavět, těžit, obchodovat nebo se usadit budete moci, teprve až si zvolíte dělnický nebo kouzelnický styl hry a až "..
-			"Administrace vaši postavu schválí (podrobnější informace na webu)."),
+			"K návštěvě určitě doporučuji Výstaviště, kde jsou vystaveny různé bloky a tvary, které lze na tomto serveru používat ke stavění. "..
+			"Velmi hezkým místem je také Rasterdam.\n\n"..
+			"Stavět, těžit, obchodovat nebo se usadit budeš moci, teprve až si zvolíš dělnický nebo kouzelnický styl hry a až "..
+			"Administrace tvoji postavu schválí (podrobnější informace na wiki)."),
 	}, {
 		title = "Ovládání četu (chatu)",
-		formspec_text = F("Okno četu otevřete klávesou T (pro napsání jedné zprávy) nebo klávesou F10 (zůstane otevřeno do dalšího stisku F10).\n\n"..
-			"Normální zprávy, které do četu zadáte, uvidí převážně jen postavy v okolí 50 metrů kolem vás. "..
-			"Pokud má vaše zpráva dojít všem hráčským postavám ve hře, musíte před ni napsat znak „!“, jedná se o takzvaný celoserverový kanál. "..
+		formspec_text = F("Okno četu otevřeš klávesou T (pro napsání jedné zprávy) nebo klávesou F10 (zůstane otevřeno do dalšího stisku F10).\n\n"..
+			"Normální zprávy, které do četu zadáš, uvidí převážně jen postavy v okolí 50 metrů kolem vás (a Administrace). "..
+			"Pokud má tvoje zpráva dojít všem hráčským postavám ve hře, musíš před ni napsat znak „!“, jedná se o takzvaný celoserverový kanál. "..
 			"Normální zprávy (základní kanál) slouží primárně pro komunikaci na krátkou vzdálenost.\n\n"..
-			"Soukromou zprávu na jinou postavu ve hře zašlete tak, že před text zprávy vložíte uvozovku a jednoznačnou předponu jména postavy. "..
-			"Např. zprávu Administraci můžete poslat zadáním:\n\n\"Adm ahoj\n\n"..
-			"Pokud vámi zadaná předpona nebude jednoznačná, systém zprávu neodešle a zobrazí vám varování, takže budete moci svoji chybu napravit.\n\n"..
-			"Pokud vámi zadaná zpráva začíná znakem „/“, pochopí ji server jako příkaz a tento příkaz vykoná. "..
-			"Příkazy v četu slouží k vyvolání různých akcí ve hře.\n\nChcete-li napsat zprávu na postavu, která není zrovna ve hře, "..
-			"použijte herní poštu (dostupnou příkazem „/pošta“ nebo tlačítkem v inventáři). "..
+			"Soukromou zprávu na jinou postavu ve hře zašleš tak, že před text zprávy vložíš uvozovku a jednoznačnou předponu jména postavy. "..
+			"Např. zprávu Administraci (pokud je ve hře) můžeš poslat zadáním:\n\n\"Adm ahoj\n\n"..
+			"Pokud tebou zadaná předpona nebude jednoznačná, systém zprávu neodešle a zobrazí ti varování, takže budeš moci svoji chybu napravit.\n\n"..
+			"Pokud tebou zadaná zpráva začíná znakem „/“, pochopí ji server jako příkaz a tento příkaz vykoná (nebo ohlásí chybu, pokud takový příkaz nezná). "..
+			"Příkazy v četu slouží k vyvolání různých akcí ve hře.\n\nChceš-li napsat zprávu na postavu, která není zrovna ve hře, "..
+			"použij herní poštu (dostupnou příkazem „/pošta“ nebo tlačítkem v inventáři). "..
 			"Herní pošta má ovládání podobné jednoduchému e-mailovému klientovi."),
 	}, {
 		title = "Nefungují mi háčky a čárky, co s tím?",
-		formspec_text = F("Máte-li problém s psaním diakritiky, pište bez ní. Všechny příkazy, jména postav a většinou i parametry příkazů "..
+		formspec_text = F("Máš-li problém s psaním diakritiky, piš bez ní. Všechny příkazy, jména postav a většinou i parametry příkazů "..
 			"lze zadat bez diakritiky a systém si s tím poradí (tzn. např. místo /začátek stačí psát /zacatek)."),
 	}, {
 		title = "Jsou dostupné zdrojové kódy módů?",
 		formspec_text = F("Ano, aktuální a úplný zdrojový kód všech módů je dostupný v repozitáři:\n\nhttps://github.com/singularis-mzf/cesky-hvozd\n\n"..
-			"Veškerý zdrojový kód je svobodný, takže ho (v případě zájmu) můžete v mezích svých technických dovedností využít na vlastních serverech.\n\n"..
+			"Veškerý zdrojový kód je svobodný, takže ho (v případě zájmu) můžeš v mezích svých technických dovedností využít na vlastních serverech.\n\n"..
 			"Server používá upravené verze módů podléhajících licenci AGPLv3 a jiným svobodným licencím."),
+	}, {
+		title = "Co slovenština?",
+		formspec_text = F("Slovenština je na Českém hvozdu vítána. Do slovenštiny jsou v současnosti lokalizovány pouze některé základní módy, "..
+			"nemám totiž nikoho, kdo by měl zájem vytvářet slovenskou lokalizaci ostatních módů. Máš-li zájem to dělat, domluv se s Administrací, "..
+			"je to ale spousta práce, protože na Českém hvozdu je nasazeno přes 200 módů."),
 	}
 }
 
