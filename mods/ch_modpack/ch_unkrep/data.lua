@@ -384,7 +384,7 @@ local tool_param2_to_0 = reg_upgrade_tool(function(type, ...)
         return true
     elseif type == "node" then
         local pos, old_node, new_node = ...
-        new_node = 0
+        new_node.param2 = 0
         core.swap_node(pos, new_node)
         return true
     else
@@ -399,7 +399,37 @@ local tool_param2_to_194 = reg_upgrade_tool(function(type, ...)
         return true
     elseif type == "node" then
         local pos, old_node, new_node = ...
-        new_node = 194
+        new_node.param2 = 194
+        core.swap_node(pos, new_node)
+        return true
+    else
+        return false
+    end
+end)
+
+local tool_coal_glass = reg_upgrade_tool(function(type, ...)
+    if type == "item" then
+        local itemstack, old_name, new_name = ...
+        itemstack:set_name("default:glass")
+        return true
+    elseif type == "node" then
+        local pos, old_node, new_node = ...
+        new_node.param2 = 243
+        core.swap_node(pos, new_node)
+        return true
+    else
+        return false
+    end
+end)
+
+local tool_iron_glass = reg_upgrade_tool(function(type, ...)
+    if type == "item" then
+        local itemstack, old_name, new_name = ...
+        itemstack:set_name("default:glass")
+        return true
+    elseif type == "node" then
+        local pos, old_node, new_node = ...
+        new_node.param2 = 240
         core.swap_node(pos, new_node)
         return true
     else
@@ -866,6 +896,16 @@ reg_node(20250113, "solidcolor:stonebrick_block", "ch_extras:colorable_stone_bri
 reg_node(20250113, "solidcolor:noise_block", "ch_extras:colorable_texture")
 
 reg_item("techpack_stairway:lattice_slop", "techpack_stairway:lattice_slope_0_10")
+
+reg_node(20250315, "moreblocks:coal_glass", "ch_overrides:glass_colorable", tool_coal_glass)
+reg_node(20250315, "moreblocks:slab_coal_glass", "moreblocks:slab_glass")
+reg_node(20250315, "moreblocks:slope_coal_glass_half", "moreblocks:slope_glass_half")
+reg_node(20250315, "moreblocks:slope_coal_glass_half_raised", "moreblocks:slope_glass_half_raised")
+
+reg_node(20250315, "moreblocks:iron_glass", "ch_overrides:glass_colorable", tool_iron_glass)
+reg_node(20250315, "moreblocks:slab_iron_glass", "moreblocks:slab_glass")
+reg_node(20250315, "moreblocks:slope_iron_glass_half", "moreblocks:slope_glass_half")
+reg_node(20250315, "moreblocks:slope_iron_glass_half_raised", "moreblocks:slope_glass_half_raised")
 
 -- END OF REGISTRATIONS
 commit_aliases_and_lbms()

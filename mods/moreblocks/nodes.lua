@@ -193,6 +193,7 @@ local nodes = {
 		tiles = tile_tiles("plankstone"),
 		sounds = sound_stone,
 	},
+	--[[
 	["iron_glass"] = {
 		description = S("Iron Glass"),
 		drawtype = "glasslike_framed_optional",
@@ -214,7 +215,7 @@ local nodes = {
 		is_ground_content = false,
 		groups = {cracky = 3, oddly_breakable_by_hand = 3},
 		sounds = sound_glass,
-	},
+	}, ]]
 	["clean_glass"] = {
 		description = S("Clean Glass"),
 		drawtype = "glasslike_framed_optional",

@@ -251,9 +251,7 @@ local materials_glass = set(
 	"moreblocks:clean_glass",
 	"moreblocks:clean_glow_glass",
 	"moreblocks:clean_super_glow_glass",
-	"moreblocks:coal_glass",
 	"moreblocks:glow_glass",
-	"moreblocks:iron_glass",
 	"moreblocks:super_glow_glass"
 )
 

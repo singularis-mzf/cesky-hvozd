@@ -52,4 +52,14 @@ for i = 0, minetest.LIGHT_MAX do
 end
 minetest.register_alias("ch_core:light_max", "ch_core:light_"..minetest.LIGHT_MAX)
 
+-- Glass overrides:
+
+core.override_item("default:glass", {
+	tiles = {
+		"ch_core_white_pixel.png^[opacity:40^[resize:32x32^(ch_core_white_frame32.png^[multiply:#bbbbbb)",
+		"ch_core_white_pixel.png^[opacity:40",
+	},
+	use_texture_alpha = "blend",
+})
+
 ch_core.close_submod("nodes")

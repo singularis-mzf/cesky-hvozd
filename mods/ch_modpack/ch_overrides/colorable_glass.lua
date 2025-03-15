@@ -75,22 +75,34 @@ local function register_colorable_alternative_node(new_node_name, old_node_name,
 	})
 end
 
+local function extract_tile_name(node_name, tile_index)
+	local ndef = assert(core.registered_nodes[node_name])
+	local tile = assert(ndef.tiles[tile_index])
+	if type(tile) == "table" then
+		return assert(tile.name)
+	elseif type(tile) == "string" then
+		return tile
+	else
+		error(node_name..".tiles["..tile_index.."]: invalid tile type: "..type(tile).."!")
+	end
+end
+
 register_colorable_alternative_node("ch_overrides:glass_colorable", "default:glass", "sklo (lakované)", {
 	tiles = {
-		{name = "default_glass.png"},
-		{name = "default_glass_detail.png", color = "white"},
+		{name = extract_tile_name("default:glass", 1)},
+		{name = extract_tile_name("default:glass", 2), color = "white"},
 	},
 })
 register_colorable_alternative_node("ch_overrides:glow_glass_colorable", "moreblocks:glow_glass", "svítící sklo (lakované)", {
 	tiles = {
-		{name = "default_glass.png"},
-		{name = minetest.registered_nodes["moreblocks:glow_glass"].tiles[2], color = "white"},
+		{name = extract_tile_name("moreblocks:glow_glass", 1)},
+		{name = extract_tile_name("moreblocks:glow_glass", 2), color = "white"},
 	},
 })
 register_colorable_alternative_node("ch_overrides:super_glow_glass_colorable", "moreblocks:super_glow_glass", "supersvítící sklo (lakované)", {
 	tiles = {
-		{name = "default_glass.png"},
-		{name = minetest.registered_nodes["moreblocks:super_glow_glass"].tiles[2], color = "white"},
+		{name = extract_tile_name("moreblocks:super_glow_glass", 1)},
+		{name = extract_tile_name("moreblocks:super_glow_glass", 2), color = "white"},
 	},
 })
 
