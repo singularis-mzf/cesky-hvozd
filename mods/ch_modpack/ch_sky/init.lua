@@ -201,8 +201,10 @@ local function update_ch_sky(player, player_name, online_skyinfo, global_day_nig
 			player:set_sun(online_skyinfo.sun)
 			player:set_moon(online_skyinfo.moon)
 			player:set_stars(online_skyinfo.stars)
+			return true -- deactivated
+		else
+			return false -- no update (not enabled, not active)
 		end
-		return
 	elseif not online_skyinfo.ch_sky_active then
 		-- activate ch_sky
 		player:set_sun()
@@ -214,10 +216,11 @@ local function update_ch_sky(player, player_name, online_skyinfo, global_day_nig
 	online_skyinfo.force_update = false
 
 	local player_is_underground = is_underground(player:get_pos().y)
-	local day_night_ratio = math.max(0.0, math.min(1.0,
-		(player:get_day_night_ratio() or global_day_night_ratio)))
+	local day_night_ratio = player:get_day_night_ratio() or global_day_night_ratio
+	assert(0.0 <= day_night_ratio)
+	assert(day_night_ratio <= 1.0)
 	if not force_update and player_is_underground == online_skyinfo.player_was_underground and day_night_ratio == online_skyinfo.last_day_night_ratio then
-		return -- nothing to update
+		return false -- nothing to update
 	end
 	local is_night = day_night_ratio < 0.5
 	local sky_color, texture_modifier
@@ -241,6 +244,7 @@ local function update_ch_sky(player, player_name, online_skyinfo, global_day_nig
 			sky_color = colors.base_color
 		end
 	end
+	local updated = false
 	if force_update or player_is_underground ~= online_skyinfo.player_was_underground then
 		online_skyinfo.player_was_underground = player_is_underground
 		if player_is_underground then
@@ -252,6 +256,7 @@ local function update_ch_sky(player, player_name, online_skyinfo, global_day_nig
 			player:set_moon()
 			player:set_stars()
 		end
+		updated = true
 	end
 	if force_update or online_skyinfo.last_texture_modifier ~= texture_modifier then
 		online_skyinfo.last_texture_modifier = texture_modifier
@@ -270,26 +275,45 @@ local function update_ch_sky(player, player_name, online_skyinfo, global_day_nig
 			},
 			clouds = false,
 		})
+		updated = true
 	end
+	return updated
 end
 
 local dtime_acc = 0
+local dtime_int = 1 -- interval
 local function on_globalstep(dtime)
 	dtime_acc = dtime_acc + dtime
-	if dtime_acc < 1 then
+	if dtime_acc < dtime_int then
 		return
 	end
-	dtime_acc = dtime_acc - 1
+	dtime_acc = dtime_acc - dtime_int
 
-	local herni_cas = ch_time.herni_cas() or {}
-	local global_day_night_ratio = herni_cas.day_night_ratio or 1.0
+	local herni_cas = ch_time.herni_cas()
+	if herni_cas == nil then
+		return
+	end
+	local global_day_night_ratio = assert(herni_cas.day_night_ratio)
+	local online_charinfo = assert(ch_data.online_charinfo)
+	local updated_count = 0
 
-	for _, player in ipairs(minetest.get_connected_players()) do
+	for _, player in ipairs(core.get_connected_players()) do
 		local player_name = player:get_player_name()
-		local online_skyinfo = ch_core.safe_get_4(ch_core, "online_charinfo", player_name, "sky_info")
-		if online_skyinfo ~= nil then
-			update_ch_sky(player, player_name, online_skyinfo, global_day_night_ratio)
+		local cinfo = online_charinfo[player_name]
+		if cinfo ~= nil then
+			local online_skyinfo = cinfo.sky_info
+			if online_skyinfo ~= nil then
+				if update_ch_sky(player, player_name, online_skyinfo, global_day_night_ratio) then
+					updated_count = updated_count + 1
+				end
+			end
 		end
+	end
+
+	if updated_count > 0 then
+		dtime_int = 0.5 -- aktualizovat každou půlsekundu, pokud došlo ke změně
+	else
+		dtime_int = 1
 	end
 end
 
