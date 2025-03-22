@@ -9,7 +9,7 @@ end
 local has_ch_time = core.get_modpath("ch_time")
 local has_signs_api = core.get_modpath("signs_api")
 local has_unifieddyes = core.get_modpath("unifieddyes")
-local rozhlas_node_name = "advtrains_line_automation:stanicni_rozhlas_experimental"
+local rozhlas_node_name = "advtrains_line_automation:stanicni_rozhlas"
 
 local RMODE_DEP = 1
 local RMODE_ARR = 2
@@ -17,9 +17,7 @@ local RMODE_BOTH = 3
 
 local PAGE_SETUP_1 = 1
 local PAGE_SETUP_2 = 2
-local PAGE_IMPORT = 3
-local PAGE_HELP = 4
-local PAGE_OWNERSHIP = 5
+local PAGE_OWNERSHIP = 3
 
 local hl_texty = {
     {
@@ -417,7 +415,8 @@ local function init_ann_data(stn, epos)
         fn_firstupper = false,
         fs_koleje = "",
         koleje = "",
-        version = 1,
+        owner = "",
+        version = 3,
     }
     anns[epos] = result
     return result
@@ -581,12 +580,12 @@ local function get_setup_formspec(custom_state)
         "formspec_version[6]"..
         "size[15,16.5]"..
         -- "style_type[textarea;font=mono]"..
-        "tabheader[0,0;0.75;tab;Nastavení 1,Nastavení 2,Import/export nastavení,Nápověda",
+        "tabheader[0,0;0.75;tab;Nastavení 1,Nastavení 2",
         ifthenelse(custom_state.is_admin, ",Vlastnictví;", ";"),
         custom_state.page..";false;true]"..
         "button_exit[14,0.25;0.75,0.75;close;X]"..
         "item_image[0.5,0.5;1,1;"..rozhlas_node_name.."]"..
-        "label[1.75,1;staniční rozhlas (experimentální)]"..
+        "label[1.75,1;staniční rozhlas]"..
         "label[9,0.75;vlastník/ice:\n",
         ch_core.prihlasovaci_na_zobrazovaci(custom_state.owner),
         "]",
@@ -625,7 +624,7 @@ local function get_setup_formspec(custom_state)
             "tooltip[fmt_nodelay;Text pro značku {ZPOZDENI} v případě\\, že vlak jede bez zpoždění.]"..
             "tooltip[fmt_delay;Formát pro značku {ZPOZDENI} v případě\\, že vlak má (kladné) zpoždění.\n"..
             "Značka {} se nahradí počtem sekund zpoždění.]"..
-            "tooltip[fmt_negdelay;Formát pro značku {ZPOZDENI} v případě\\, že vlak má záporné zpoždění."..
+            "tooltip[fmt_negdelay;Formát pro značku {ZPOZDENI} v případě\\, že vlak má záporné zpoždění.\n"..
             "Značka {} se nahradí absolutní hodnotou počtu sekund záporného zpoždění.]"..
             "container_end[]"..
             "container[0.5,10.5]"..
@@ -686,11 +685,7 @@ local function get_setup_formspec(custom_state)
         )
         a("button[0.5,15;14,1;btn_save;Uložit]")
     elseif page == PAGE_SETUP_2 then
-        a(  "textarea[0.5,2;14,2;;;Podporované značky: {LINKA}\\, {VYCHOZI}\\, {CIL}\\, {KOLEJ}\\, {PRIJZA}\\, {ODJZA}\\, {ZPOZDENI}\\,"..
-            " {PREDCH}\\, {NASL}\\, {JMVLAKU}\\, {TYP}\\, {TYPVLAKU}\\, {ZDE}\\, {KOLEJE}.\n"..
-            "{LINKA:4} (pevná délka)\\, {LINKA:4-} (min. délka)\\, {LINKA:-4} (max. délka)\\, {LINKA:2-4} (rozmezí).\n"..
-            "Náhr. text: {LINKA|-}\\, {LINKA:3|-}.\n"..
-            "Zopakování symbolu (ne \\[A-Za-z0-9{}\\:|\\]), lze použít i ve formátu prázdných řádků: {.:7}\\, { :4}.]"..
+        a(  "textarea[0.5,2;14,2;;;"..F("Pro nápovědu a použitou syntaxi viz wiki Českého hvozdu (článek „Staniční rozhlas“).").."]"..
             "container[0.5,4]")
         for i = 1, 4 do
             local cedule = data.cedule[i]
@@ -712,18 +707,6 @@ local function get_setup_formspec(custom_state)
             "label[0.5,14.5;", CF(custom_state.message), "]"..
             "button[0.5,15;14,1;btn_save;Uložit]",
         }
-    elseif page == PAGE_IMPORT then
-        a{
-            "textarea[0.5,2.5;14,10;nastaveni;nastavení ve formátu JSON:;",
-            -- CF(core.write_json(data, true)),
-            "(Zatím neimplementováno)",
-            "]label[0.5,13;",
-            CF(custom_state.message),
-            "]".. -- "button[0.5,13.5;14,1;importovat;importovat zadané nastavení a uložit]"..
-            "button_exit[0.5,15;14,1;close2;zavřít]",
-        }
-
-    elseif page == PAGE_HELP then
     elseif custom_state.is_admin and page == PAGE_OWNERSHIP then
         a{
             "field[0.5,2.5;5,0.75;owner;vlastník/ice:;",
@@ -927,19 +910,14 @@ local function setup_formspec_callback(custom_state, player, formname, fields)
                 end
             end
         end
-    elseif page == PAGE_IMPORT then
-        if fields.importovat then
-            local s = assert(fields.nastaveni)
-            -- TODO
-        end
-    elseif page == PAGE_HELP then
-        -- nic
     elseif page == PAGE_OWNERSHIP then
         if is_admin and fields.set_owner then
             local new_owner = ch_core.jmeno_na_existujici_prihlasovaci(fields.owner or "")
             if new_owner == nil then
                 custom_state.message = "Postava '"..(fields.owner or "").."' neexistuje!"
             else
+                local ann_data = assert(get_ann_data(stn, custom_state.epos, false))
+                ann_data.owner = new_owner
                 core.load_area(custom_state.pos)
                 local meta = core.get_meta(custom_state.pos)
                 meta:set_string("owner", new_owner)
@@ -952,8 +930,7 @@ local function setup_formspec_callback(custom_state, player, formname, fields)
         -- přepnout stránku
         local new_tab = tonumber(fields.tab)
         if new_tab ~= nil and new_tab ~= page and (
-            new_tab == PAGE_SETUP_1 or new_tab == PAGE_SETUP_2 or new_tab == PAGE_IMPORT or new_tab == PAGE_HELP or
-            (is_admin and new_tab == PAGE_OWNERSHIP)
+            new_tab == PAGE_SETUP_1 or new_tab == PAGE_SETUP_2 or (is_admin and new_tab == PAGE_OWNERSHIP)
         ) then
             custom_state.page = new_tab
             custom_state.message = "" -- smazat zprávu
@@ -964,8 +941,6 @@ local function setup_formspec_callback(custom_state, player, formname, fields)
         return get_setup_formspec(custom_state)
     end
 end
-
-local debug_counter = 0
 
 local function fill(line, prefix, rwtime_now, rwtime_value)
     if rwtime_value == nil then
@@ -996,6 +971,12 @@ local function fill(line, prefix, rwtime_now, rwtime_value)
 end
 
 --[[
+    stn -- kód dopravny, jejíž příjezdy/odjezdy se budou zapisovat na cedule
+    epos -- kódovaná pozice st. rozhlasu (pro načtení dat)
+    signs -- (volitelný) seznam až 4 pozic cedulí, které se budou aktualizovat
+    records -- viz níže
+    rwtime -- aktuální žel. čas (číselná forma)
+    ---
     records je tabulka záznamů z al.predict_train(), doplněných o následující pole:
         start = string or nil, -- název výchozí zastávky, pokud vlak odněkud přijíždí, jinak ""
         destination = string, -- název cílové zastávky, pokud vlak někam pokračuje, jinak ""
@@ -1099,8 +1080,6 @@ local function update_ann(stn, epos, signs, records, rwtime)
             line.TYP = "Os"
             -- TYPVLAKU
             line.TYPVLAKU = "osobní vlak"
-            debug_counter = debug_counter + 1
-            line.POCITADLO = tostring(debug_counter)
             table.insert(lines, line)
         end
     end
@@ -1153,11 +1132,17 @@ local function first_globalstep()
         if stdata.anns ~= nil then
             for rozh_epos, ann in pairs(stdata.anns) do
                 if ann.version < 2 then
-                    if ann.version == 1 then
-                        -- upgrade version 1 to version 2:
-                        ann.rmode = RMODE_DEP
-                        ann.version = 2
-                    end
+                    -- upgrade version 1 to version 2:
+                    ann.rmode = RMODE_DEP
+                    ann.version = 2
+                end
+                if ann.version < 3 then
+                    local pos = advtrains.decode_pos(rozh_epos)
+                    core.load_area(pos)
+                    local meta = core.get_meta(pos)
+                    ann.owner = meta:get_string("owner")
+                    core.log("action", "strozhlas at position "..core.pos_to_string(pos).." upgraded to metadata version 3 (owner "..ann.owner..")")
+                    ann.version = 3
                 end
             end
         end
@@ -1233,6 +1218,7 @@ local function globalstep(dtime)
         if stdata.anns ~= nil then
             for rozh_epos, ann in pairs(stdata.anns) do
                 local rozh_pos = advtrains.decode_pos(rozh_epos)
+                local is_admin = core.check_player_privs(assert(ann.owner), "protection_bypass")
                 local signs_count = 0
                 for i = 1, 4 do
                     local cedule = assert(ann.cedule[i])
@@ -1242,6 +1228,18 @@ local function globalstep(dtime)
                         if core.compare_block_status(sign_pos, "active") then
                             signs[i] = sign_pos
                             signs_count = signs_count + 1
+                            if not is_admin then
+                                local sign_meta = core.get_meta(sign_pos)
+                                local sign_owner = sign_meta:get_string("owner")
+                                if sign_meta:get_int("access_level") ~= 1 and sign_owner ~= "" and ann.owner ~= sign_owner then
+                                    -- unauthorized access to the sign
+                                    core.log("warning", "Station announcement "..core.pos_to_string(rozh_pos).." owned by '"..
+                                        ann.owner.."' cannot write to sign at "..core.pos_to_string(sign_pos).." owned by '"..
+                                        sign_owner.."'! Access denied.")
+                                    signs[i] = nil
+                                    signs_count = signs_count - 1
+                                end
+                            end
                         end
                     end
                 end
@@ -1538,7 +1536,7 @@ local box = {
 }
 
 def = {
-    description = "staniční rozhlas [EXPERIMENTÁLNÍ]",
+    description = "staniční rozhlas",
     tiles = {{name = "default_steel_block.png", backface_culling = true}},
     drawtype = "mesh",
     mesh = "advtrains_tuber.obj",
@@ -1546,7 +1544,7 @@ def = {
     paramtype2 = "4dir",
     selection_box = box,
     collision_box = box,
-    groups = {oddly_breakable_by_hand = 3, ud_param2_colorable = 1, experimental = 1}, -- TODO
+    groups = {oddly_breakable_by_hand = 3, ud_param2_colorable = 1},
     sounds = default.node_sound_metal_defaults(),
     can_dig = can_dig,
     on_dig = on_dig,
@@ -1570,3 +1568,11 @@ def = {
 
 core.register_tool("advtrains_line_automation:sign_selector", def)
 
+core.register_craft({
+    output = rozhlas_node_name,
+    recipe = {
+        {"default:steel_ingot", "default:steel_ingot", "default:steel_ingot"},
+        {"default:steel_ingot", "mesecons_noteblock:noteblock", "default:steel_ingot"},
+        {"default:steel_ingot", "default:steel_ingot", "default:steel_ingot"},
+    },
+})

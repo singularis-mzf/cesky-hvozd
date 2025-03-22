@@ -159,6 +159,9 @@ station = {
             -- je-li omezen na více kolejí, pak jde o množinu indexovanou označeními kolejí
             koleje = {[string] = true, ...} or string or nil,
 
+            -- vlastník/ice staničního rozhlasu
+            owner = string,
+
             -- režim rozhlasu (RMODE_*)
             rmode = int,
 

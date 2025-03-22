@@ -1334,12 +1334,13 @@ end
 
 --[[
 	Vrátí existující přihlašovací jméno postavy odpovídající uvedenému
-	jménu až na velikost písmen a diakritiku, nebo nil, pokud
+	jménu až na velikost písmen a diakritiku (+ konverzi ' ' na '_'), nebo nil, pokud
 	taková postava neexistuje.
 ]]
 function ch_core.jmeno_na_existujici_prihlasovaci(jmeno)
 	if jmeno == nil then return nil end
-	local result = ch_data.correct_player_name_casing(ch_core.odstranit_diakritiku(jmeno))
+	local result = ch_core.odstranit_diakritiku(jmeno):gsub(" ", "_")
+	result = ch_data.correct_player_name_casing(result)
 	if result and ch_data.offline_charinfo[result] then
 		return result
 	else

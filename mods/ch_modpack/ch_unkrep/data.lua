@@ -906,6 +906,7 @@ reg_node(20250315, "moreblocks:iron_glass", "ch_overrides:glass_colorable", tool
 reg_node(20250315, "moreblocks:slab_iron_glass", "moreblocks:slab_glass")
 reg_node(20250315, "moreblocks:slope_iron_glass_half", "moreblocks:slope_glass_half")
 reg_node(20250315, "moreblocks:slope_iron_glass_half_raised", "moreblocks:slope_glass_half_raised")
+reg_alias("advtrains_line_automation:stanicni_rozhlas_experimental", "advtrains_line_automation:stanicni_rozhlas")
 
 -- END OF REGISTRATIONS
 commit_aliases_and_lbms()
