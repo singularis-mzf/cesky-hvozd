@@ -145,3 +145,57 @@ if core.get_modpath("advtrains_signals_ks") then
         })
     end
 end
+
+if
+    core.get_modpath("unifieddyes") and
+    core.registered_nodes["advtrains_line_automation:jrad"] and
+    core.registered_nodes["advtrains_line_automation:jrad_on_pole"]
+then
+    local groups = core.registered_nodes["advtrains_line_automation:jrad"].groups or {}
+    groups.ud_param2_colorable = 1
+    local override = {
+        tiles = {
+            {name = "ch_core_white_pixel.png^[multiply:#cccccc"},
+            {name = "ch_core_white_pixel.png^[multiply:#cccccc"},
+            {name = "ch_core_white_pixel.png^[multiply:#cccccc"},
+            {name = "ch_core_white_pixel.png^[multiply:#cccccc"},
+            {name = "ch_jrad_frame.png", backface_culling = true},
+            {name = "ch_jrad_frame.png", backface_culling = true},
+        },
+        overlay_tiles = {"", "", "", "",
+            {name = "ch_jrad_paper.png", color = "white", backface_culling = true},
+            {name = "ch_jrad_paper.png", color = "white", backface_culling = true},
+        },
+        use_texture_alpha = "clip",
+        paramtype2 = "color4dir",
+        palette = "unifieddyes_palette_color4dir.png",
+        groups = groups,
+        on_dig = unifieddyes.on_dig,
+    }
+    core.override_item("advtrains_line_automation:jrad", override)
+
+    override.tiles[5] = override.tiles[1]
+    override.overlay_tiles[5] = override.overlay_tiles[1]
+    groups = core.registered_nodes["advtrains_line_automation:jrad_on_pole"].groups or {}
+    core.override_item("advtrains_line_automation:jrad_on_pole", override)
+    ch_core.register_shape_selector_group({nodes = {
+        {name = "advtrains_line_automation:jrad", param2 = 0xf400},
+        {name = "advtrains_line_automation:jrad_on_pole", param2 = 0xf400},
+    }})
+    core.register_craft({
+        output = "advtrains_line_automation:jrad_on_pole",
+        recipe = {{"advtrains_line_automation:jrad"}},
+    })
+    core.register_craft({
+        output = "advtrains_line_automation:jrad",
+        recipe = {{"advtrains_line_automation:jrad_on_pole"}},
+    })
+    core.register_craft({
+        output = "advtrains_line_automation:jrad 9",
+        recipe = {
+            {"default:steel_ingot", "default:paper", "dye:black"},
+            {"technic:zinc_ingot", "default:paper", "default:mese_crystal"},
+            {"default:steel_ingot", "default:paper", "dye:black"},
+        },
+    })
+end

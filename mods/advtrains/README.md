@@ -51,6 +51,7 @@ Various features and bugfixes have been contributed by:
 - gpcf
 - Blockhead
 - ywang
+- Singularis
 
 Small code contributions:
 
@@ -84,6 +85,7 @@ Small code contributions:
 * Node texture for LuaATC controller: Jeija (from Mesecons)
 * Mod Description             : hajo
 * 45 degree platforms design  : Och_Noe
+* advtrains_line_automation_jrad.png : Singularis
 
 #### Sounds:
 

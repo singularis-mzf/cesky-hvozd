@@ -3,6 +3,11 @@ Source code license:
 
 Textures:
 
+ch_jrad_frame.png
+ch_jrad_paper.png
+	License: GNU General Public License version 3 or CC-BY-SA 3.0 or CC BY-SA 4.0
+	Author: Singularis
+
 default_river_water_flowing_animated.png
 default_river_water_source_animated.png
 default_water_flowing_animated.png

@@ -1,6 +1,7 @@
 local def
 local F = minetest.formspec_escape
 local ifthenelse = ch_core.ifthenelse
+local rwt = assert(advtrains.lines.rwt)
 
 local function load_stations()
 	local result = {}
@@ -203,11 +204,12 @@ local function get_formspec(custom_state)
 		ifthenelse(pinfo.role == "admin", "field[10.5,7;4,0.75;owner;spravuje:;", "label[10.5,6.75;spravuje:\n")..
 		spravuje.."]")
 	if pinfo.role ~= "new" then
-		table.insert(formspec, "button[0.5,8;4.5,0.75;vytvorit;vytvořit novou]")
+		table.insert(formspec, "button[0.5,8;4.5,0.75;vytvorit;vytvořit novou]"..
+			"button[10,8;4.5,0.75;jrad;jízdní řády...]")
 		if st and (pinfo.role == "admin" or st.owner == pinfo.player_name) then
 			table.insert(formspec, "button[5.25,8;4.5,0.75;ulozit;uložit změny]")
 			if st.tracks[1] == nil then
-				table.insert(formspec, "button[12.5,8;2,0.75;smazat;smazat]")
+				table.insert(formspec, "button[15.25,8;3,0.75;smazat;smazat]")
 			end
 		end
 	end
@@ -366,5 +368,658 @@ def = {
     privs = {ch_registered_player = true},
     func = function(player_name, param) show_formspec(minetest.get_player_by_name(player_name)) end,
 }
-minetest.register_chatcommand("zastavky", def)
-minetest.register_chatcommand("zastávky", def)
+core.register_chatcommand("zastavky", def)
+core.register_chatcommand("zastávky", def)
+
+
+-- Jízdní řád
+
+--[[
+	custom_state = {
+		pos = vector or nil, -- node position (will use metadata to determine the owner)
+		player_name = string, -- player to whom the formspec is to be shown (will use this to determine privs)
+		stn = int, -- station selection from stns
+		stns = {
+			{stn = "", fs = "(vyberte dopravnu)", name_fs = ""},
+			{stn = string, fs = string, name_fs = string}...
+		}, -- the list of stations to select from; the first must be "", which means no station
+		track = int, -- selection of track from "tracks" list
+		tracks = {"", string...}, -- the list of tracks to select from; the first must be "", which means all tracks
+		linevar = int,
+		linevars = {{
+			stn = string, -- station from linevar
+			linevar = string, -- linevar
+			line_fs = string, -- line for formspec
+			target_fs = string, -- terminus name for formspec
+			track_fs = string, -- track info for formspec ("" if not available)
+			status_fs = string, -- line status for formspec (including color column)
+			linevar_index = int, -- index of the selected station (stn) in linevar_def.stops of this linevar
+		}...},
+		stop = int,
+		stops = {{
+			stn = string,
+			name_fs = string,
+			track_fs = string,
+			dep = int,
+			wait = int,
+			linevar_index = int, -- index of this stop in linevar_def.stops
+		}...},
+		message = string, -- message for label[] on the bottom; "" to disable
+	}
+]]
+
+local all_stations_record = {stn = "", fs = F("(vyberte dopravnu)"), name_fs = ""}
+local is_visible_mode = assert(advtrains.lines.is_visible_mode)
+
+-- refresh custom_state.stops according to custom_state.linevar
+local function jr_refresh_stops(custom_state, stn_to_select)
+	if stn_to_select == "" then
+		stn_to_select = nil
+	end
+	local linevar_info = custom_state.linevars[custom_state.linevar]
+	local index_to_select = 0
+	local result = {}
+	if linevar_info ~= nil then
+		local linevar_def = advtrains.lines.try_get_linevar_def(linevar_info.linevar, linevar_info.stn)
+		if linevar_def == nil then
+			-- invalid linevar => no stops
+			core.log("error", "Player "..custom_state.player_name.." selected invalid linevar "..linevars[linevar].linevar.."!")
+		else
+			local stops = linevar_def.stops
+			for linevar_index, stop_data in ipairs(linevar_def.stops) do
+				if is_visible_mode(stop_data.mode) then
+					local r = {
+						stn = assert(stop_data.stn),
+						name_fs = F(advtrains.lines.get_station_name(stop_data.stn)),
+						track_fs = stop_data.track or "",
+						dep = stop_data.dep,
+						wait = stop_data.wait or 10,
+						linevar_index = linevar_index,
+					}
+					if r.track_fs ~= "" then
+						r.track_fs = F("["..r.track_fs.."]")
+					end
+					table.insert(result, r)
+					if stn_to_select ~= nil and index_to_select == 0 and r.stn == stn_to_select then
+						index_to_select = #result -- stop selected
+					end
+				end
+			end
+		end
+	end
+	custom_state.stop = index_to_select
+	custom_state.stops = result
+	custom_state.message = ""
+end
+
+local function get_all_linevars()
+	local result = {}
+	local empty_table = {}
+	local trains_by_linevar = advtrains.lines.get_trains_by_linevar()
+	for stn, stdata in pairs(advtrains.lines.stations) do
+		for linevar, linevar_def in pairs(stdata.linevars or empty_table) do
+			local line, stn = advtrains.lines.linevar_decompose(linevar)
+			local target_fs = F(advtrains.lines.get_line_description(linevar_def, {line_number = false, last_stop = true, last_stop_prefix = "",
+				last_stop_uppercase = false, train_name = false}))
+			local status_fs
+			if trains_by_linevar[linevar] ~= nil then
+				status_fs = "#00ff00,v provozu"
+			else
+				status_fs = "#999999,neznámý"
+			end
+			table.insert(result, {
+				stn = stn,
+				linevar = linevar,
+				line_fs = F(line),
+				target_fs = target_fs,
+				track_fs = "",
+				status_fs = status_fs,
+				linevar_index = 1,
+			})
+		end
+	end
+	table.sort(result, function(a, b) return a.linevar < b.linevar end)
+	return result
+end
+
+--[[
+	stn_filter = string,
+	track_filter = string or nil,
+]]
+local function get_linevars_by_filter(stn_filter, track_filter)
+	local result = {}
+	local empty_table = {}
+	local line_description_options = {line_number = false, last_stop = true, last_stop_prefix = "", last_stop_uppercase = false, train_name = false}
+	local trains_by_linevar = advtrains.lines.get_trains_by_linevar()
+	assert(stn_filter)
+	if track_filter == "" then
+		track_filter = nil
+	end
+	for stn, stdata in pairs(advtrains.lines.stations) do
+		for linevar, linevar_def in pairs(stdata.linevars or empty_table) do
+			local last_stop_index = advtrains.lines.get_last_stop(linevar_def, false)
+			if last_stop_index ~= nil then
+				for linevar_index = 1, last_stop_index - 1 do -- NOTE: the last visible station is intentionally ignored here!
+					local stop_data = linevar_def.stops[linevar_index]
+					local initialized = false
+					local line, stn, line_fs, target_fs, status_fs
+					if
+						stop_data.stn == stn_filter and
+						is_visible_mode(stop_data.mode) and
+						(track_filter == nil or track_filter == stop_data.track)
+					then
+						if not initialized then
+							initialized = true
+							line, stn = advtrains.lines.linevar_decompose(linevar)
+							line_fs = F(line)
+							target_fs = F(advtrains.lines.get_line_description(linevar_def, line_description_options))
+							if trains_by_linevar[linevar] ~= nil then
+								status_fs = "#00ff00,v provozu"
+							else
+								status_fs = "#999999,neznámý"
+							end
+						end
+						local track_fs = stop_data.track
+						if track_fs == nil or track_fs == "" then
+							track_fs = ""
+						else
+							track_fs = F("["..track_fs.."]")
+						end
+						table.insert(result, {
+							stn = stn,
+							linevar = linevar,
+							line_fs = line_fs,
+							target_fs = target_fs,
+							track_fs = track_fs,
+							status_fs = status_fs,
+							linevar_index = assert(linevar_index),
+						})
+					end
+				end
+			end
+		end
+	end
+	table.sort(result, function(a, b)
+		if a.linevar ~= b.linevar then
+			return a.linevar < b.linevar
+		else
+			return a.linevar_index < b.linevar_index
+		end
+	end)
+	return result
+end
+
+local function is_jr_node_name(name)
+	return core.get_item_group(name, "ch_jrad") ~= 0
+end
+
+-- refresh custom_state.linevars according to custom_state.stn and custom_state.track
+local function jr_refresh_linevars(custom_state, linevar_to_select, linevar_index_to_select)
+	if linevar_to_select == "" then
+		linevar_to_select = nil
+	end
+	assert(linevar_index_to_select == nil or type(linevar_index_to_select) == "number")
+	local stn = assert(custom_state.stn)
+	local stn_info = assert(custom_state.stns[stn])
+	local track = assert(custom_state.track)
+	local tracks = assert(custom_state.tracks)
+
+	local new_linevars
+	if stn_info.stn == "" then
+		new_linevars = get_all_linevars()
+	else
+		new_linevars = get_linevars_by_filter(stn_info.stn, assert(tracks[track]))
+	end
+	local index_to_select = 1
+	if linevar_to_select ~= nil then
+		for i, r in ipairs(new_linevars) do
+			if r.linevar == linevar_to_select and (linevar_index_to_select == nil or r.linevar_index == linevar_index_to_select) then
+				index_to_select = i
+				break
+			end
+		end
+	end
+	if new_linevars[index_to_select] == nil then
+		index_to_select = 0
+	end
+	custom_state.linevars = new_linevars
+	custom_state.linevar = index_to_select
+	custom_state.message = ""
+
+	local pos = custom_state.pos
+	if pos ~= nil and is_jr_node_name(core.get_node(pos).name) then
+		local meta = core.get_meta(pos)
+		meta:set_string("stn", custom_state.stns[custom_state.stn].stn)
+		meta:set_string("track", custom_state.tracks[custom_state.track])
+		local infotext = {"jízdní řád\n"}
+		if stn_info.stn == "" then
+			table.insert(infotext, "<všechny linky>")
+		else
+			table.insert(infotext, advtrains.lines.get_station_name(stn_info.stn))
+			if custom_state.tracks[custom_state.track] ~= "" then
+				table.insert(infotext, " ["..custom_state.tracks[custom_state.track].."]")
+			end
+		end
+		if new_linevars[1] ~= nil then
+			local prefix = "\n"
+			local set = {[""] = true}
+			for _, linevar_info in ipairs(new_linevars) do
+				local line = advtrains.lines.linevar_decompose(linevar_info.linevar)
+				if not set[line] then
+					set[line] = true
+					table.insert(infotext, prefix.."["..line.."]")
+					prefix = " "
+				end
+			end
+		end
+		meta:set_string("infotext", table.concat(infotext))
+	end
+end
+
+-- refresh custom_state.tracks according to custom_state.stn
+-- and selects a specified track, if available
+local function jr_refresh_tracks(custom_state, track_to_select)
+	if track_to_select == "" then
+		track_to_select = nil
+	end
+	local result = {""}
+	local index_to_select = 1
+	local current_stn = custom_state.stns[custom_state.stn].stn
+	if current_stn ~= "" and advtrains.lines.stations[current_stn] ~= nil then
+		local track_set = {[""] = true}
+		-- search for tracks:
+		for epos, stdata in pairs(advtrains.lines.stops) do
+			if stdata.stn == current_stn and stdata.track ~= nil and not track_set[stdata.track] then
+				track_set[stdata.track] = true
+				table.insert(result, tostring(stdata.track))
+			end
+		end
+		if #result > 1 then
+			table.sort(result)
+			assert(result[1] == "")
+			if track_to_select ~= nil then
+				for i, track in ipairs(result) do
+					if track_to_select == track then
+						index_to_select = i
+					end
+				end
+			end
+		end
+	end
+	custom_state.tracks = result
+	custom_state.track = index_to_select
+	custom_state.message = ""
+end
+
+--[[
+	-- will refresh custom_state.stns[] and (optionally) select a wanted station if it's on the list,
+	-- otherwise the default 'select station' option will be chosen
+	custom_state = table,
+	stn_to_select = string or nil,
+]]
+local function jr_refresh_stns(custom_state, stn_to_select)
+	if stn_to_select == "" then
+		stn_to_select = nil
+	end
+	local result = {all_stations_record}
+	local index_to_select = 1
+	for i, st in ipairs(load_stations()) do
+		result[1 + i] = {
+			stn = assert(st.stn),
+			fs = F(st.stn.." | "..st.name),
+			name_fs = F(st.name),
+		}
+		if stn_to_select ~= nil and st.stn == stn_to_select then
+			index_to_select = 1 + i
+		end
+	end
+	custom_state.stns = result
+	custom_state.stn = index_to_select
+	custom_state.message = ""
+end
+
+-- will refresh a departure message according to linevar + stop
+local function jr_refresh_departure(custom_state)
+	local linevar_info = custom_state.linevars[custom_state.linevar]
+	local stop_info = custom_state.stops[custom_state.stop]
+	if linevar_info == nil or stop_info == nil then
+		custom_state.message = ""
+		return
+	end
+	local linevar_def = advtrains.lines.try_get_linevar_def(linevar_info.linevar)
+	if linevar_def == nil then
+		custom_state.message = ""
+		return
+	end
+	local rwtime = rwt.to_secs(rwt.get_time())
+	local prediction = advtrains.lines.predict_station_departures(linevar_def, assert(stop_info.linevar_index), rwtime)
+	if #prediction == 0 then
+		custom_state.message = "v nejbližší době nenalezeny žádné odjezdy zvolené linky"
+		return
+	end
+	local deps = {}
+	for i, pred in ipairs(prediction) do
+		deps[i] = tostring(pred.dep - rwtime)
+	end
+	custom_state.message = "nejbližší odjezdy zvolené linky za: "..table.concat(deps, ", ").." s"
+end
+
+local function get_jr_formspec(custom_state)
+	local formspec = {
+		ch_core.formspec_header({
+			formspec_version = 6,
+			size = {20, 12},
+			auto_background = true,
+		})
+	}
+	local access_level = "player" -- player | owner | admin
+	local node_owner
+	if custom_state.pos ~= nil then
+		node_owner = core.get_meta(custom_state.pos):get_string("owner")
+		if node_owner == "" then
+			node_owner = nil
+		end
+	end
+	local stn, stn_owner
+	if custom_state.stn > 1 and custom_state.stns[custom_state.stn] ~= nil then
+		stn_owner = (advtrains.lines.stations[custom_state.stns[custom_state.stn].stn] or {}).owner -- may be nil
+	end
+
+	if ch_core.get_player_role(custom_state.player_name) == "admin" then
+		access_level = "admin"
+	elseif custom_state.player_name == node_owner or custom_state.player_name == stn_owner then
+		access_level = "owner"
+	end
+
+	if access_level ~= "player" then
+		-- admin or owner:
+		table.insert(formspec, "label[0.5,0.6;Jízdní řády]"..
+			"dropdown[5,0.3;10,0.6;dopravna;")
+		for i, r in ipairs(custom_state.stns) do
+			table.insert(formspec, ifthenelse(i == 1, r.fs, ","..r.fs))
+		end
+		table.insert(formspec, ";"..custom_state.stn..";true]"..
+			"dropdown[15.25,0.3;3.5,0.6;kolej;")
+		for i, r in ipairs(custom_state.tracks) do
+			if i == 1 then
+				table.insert(formspec, "(všechny koleje)")
+			else
+				table.insert(formspec, ","..F(r))
+			end
+		end
+		table.insert(formspec, ";"..custom_state.track..";true]")
+	else
+		-- player (including 'new' players)
+		local stn_info = custom_state.stns[custom_state.stn]
+		if stn_info.stn == "" then
+			table.insert(formspec, "label[0.5,0.6;Jízdní řády (všechny linky)]")
+		else
+			local track = custom_state.tracks[custom_state.track]
+			if track ~= "" then
+				track = F(" ["..track.."]")
+			end
+			table.insert(formspec, "label[0.5,0.6;"..F("Jízdní řády: ")..stn_info.name_fs..track.."]")
+		end
+	end
+
+	if access_level ~= "admin" then
+		table.insert(formspec, "label[0.5,1.65;vlastník/ice j. řádu: ")
+		if node_owner ~= nil then
+			table.insert(formspec, ch_core.prihlasovaci_na_zobrazovaci(node_owner))
+		else
+			table.insert(formspec, "???")
+		end
+		if stn_owner ~= nil then
+			table.insert(formspec, " | dopravnu spravuje: ")
+			table.insert(formspec, ch_core.prihlasovaci_na_zobrazovaci(stn_owner))
+		end
+		table.insert(formspec, "]")
+	else
+		if node_owner ~= nil then
+			table.insert(formspec, "label[0.5,1.65;vlastník/ice:]"..
+				"field[2.75,1.25;5,0.75;owner;;")
+			table.insert(formspec, ch_core.prihlasovaci_na_zobrazovaci(node_owner))
+			table.insert(formspec, "]button[8,1.25;3,0.75;setowner;nastavit]")
+		end
+		if stn_owner ~= nil then
+			table.insert(formspec, "label[11.25,1.65;dopravnu spravuje: "..ch_core.prihlasovaci_na_zobrazovaci(stn_owner).."]")
+		end
+	end
+
+	table.insert(formspec, "tablecolumns[text,align=right,tooltip=linka;text,width=12,tooltip=cíl;text,tooltip=kolej;color;text,tooltip=stav]"..
+		"table[0.5,2.25;11,5;linka;")
+	for i, r in ipairs(custom_state.linevars) do
+		if i > 1 then
+			table.insert(formspec, ",")
+		end
+		table.insert(formspec, r.line_fs..","..r.target_fs..","..r.track_fs..","..r.status_fs)
+	end
+	table.insert(formspec, ifthenelse(custom_state.linevar > 0, ";"..custom_state.linevar.."]", ";]"))
+	table.insert(formspec, "tablecolumns[text,align=right;text;text]"..
+		"table[12.5,2.25;7,8.75;zastavka;")
+	if custom_state.stops[1] ~= nil then
+		local selected_stop_index = custom_state.stop
+		if custom_state.stops[selected_stop_index] == nil then
+			selected_stop_index = 1
+		end
+		local base_dep
+		for i, r in ipairs(custom_state.stops) do
+			if i > 1 then
+				table.insert(formspec, ",")
+			end
+			if i >= selected_stop_index then
+				if i == selected_stop_index then
+					base_dep = assert(r.dep)
+					table.insert(formspec, "0,")
+				else
+					table.insert(formspec, (r.dep - base_dep)..",")
+				end
+			else
+				table.insert(formspec, "    ,")
+			end
+			table.insert(formspec, r.name_fs..","..r.track_fs)
+		end
+		table.insert(formspec, ";"..selected_stop_index.."]")
+	else
+		table.insert(formspec, ";]") -- empty list
+	end
+	table.insert(formspec, "button_exit[18.75,0.3;0.75,0.75;close;X]")
+	if custom_state.message ~= "" then
+		table.insert(formspec, "label[5.25,11.35;"..F(custom_state.message).."]")
+	end
+	table.insert(formspec, "button[0.5,11;4.5,0.75;refresh;zjistit nejbližší odjezdy...]")
+	return table.concat(formspec)
+end
+
+local function jr_formspec_callback(custom_state, player, formname, fields)
+	--[[
+	fields:
+	- dopravna (dropdown)
+	- kolej (dropdown)
+	- owner (field)
+	- setowner (button)
+	- linka (table)
+	- zastavka (table)
+	- close (button_exit)
+	- refresh (button)
+	]]
+	if fields.dopravna then
+		local new_stn = tonumber(fields.dopravna)
+		if new_stn ~= nil and new_stn ~= custom_state.stn and custom_state.stns[new_stn] ~= nil then
+			custom_state.stn = new_stn
+			local current_track = custom_state.tracks[custom_state.track] or ""
+			local current_linevar_info = custom_state.linevars[custom_state.linevar]
+			jr_refresh_tracks(custom_state, current_track)
+			if current_linevar_info ~= nil then
+				jr_refresh_linevars(custom_state, current_linevar_info.linevar, current_linevar_info.linevar_index)
+			else
+				jr_refresh_linevars(custom_state)
+			end
+			jr_refresh_stops(custom_state, custom_state.stns[new_stn].stn)
+			jr_refresh_departure(custom_state)
+			return get_jr_formspec(custom_state)
+		end
+	end
+	if fields.kolej then
+		local new_track = tonumber(fields.kolej)
+		if new_track ~= nil and new_track ~= custom_state.track and custom_state.tracks[new_track] ~= nil then
+			custom_state.track = new_track
+			local current_linevar_info = custom_state.linevars[custom_state.linevar]
+			if current_linevar_info ~= nil then
+				jr_refresh_linevars(custom_state, current_linevar_info.linevar, current_linevar_info.linevar_index)
+			else
+				jr_refresh_linevars(custom_state)
+			end
+			jr_refresh_stops(custom_state, custom_state.stns[custom_state.stn].stn)
+			jr_refresh_departure(custom_state)
+			return get_jr_formspec(custom_state)
+		end
+	end
+	if fields.setowner then
+		-- TODO: implementovat změnu vlastníka/ice
+		return get_jr_formspec(custom_state)
+	end
+	if fields.linka then
+		local event = core.explode_table_event(fields.linka)
+		local new_line
+		if event.type == "CHG" or event.type == "DCL" then
+			new_line = tonumber(event.row)
+		end
+		if new_line ~= nil and new_line ~= custom_state.linevar then
+			local new_linevar_info = custom_state.linevars[new_line]
+			if new_linevar_info ~= nil then
+				jr_refresh_linevars(custom_state, new_linevar_info.linevar, new_linevar_info.linevar_index)
+			else
+				jr_refresh_linevars(custom_state)
+			end
+			jr_refresh_stops(custom_state, custom_state.stns[custom_state.stn].stn)
+			jr_refresh_departure(custom_state)
+			return get_jr_formspec(custom_state)
+		end
+	end
+	if fields.zastavka then
+		local event = core.explode_table_event(fields.zastavka)
+		if event.type == "CHG" or event.type == "DCL" then
+			local new_stop = tonumber(event.row)
+			if new_stop ~= nil and new_stop ~= custom_state.stop and custom_state.stops[new_stop] ~= nil then
+				custom_state.stop = new_stop
+				if event.type == "DCL" then
+					jr_refresh_departure(custom_state)
+				end
+				return get_jr_formspec(custom_state)
+			end
+		end
+	end
+	if fields.refresh then
+		jr_refresh_departure(custom_state)
+		return get_jr_formspec(custom_state)
+	end
+end
+
+local function show_jr_formspec(player, pos, stn, track, linevar, stop_stn)
+	assert(core.is_player(player))
+	local custom_state = {
+		player_name = player:get_player_name(),
+		stn = 1,
+		stns = {all_stations_record},
+		track = 1,
+		tracks = {""},
+		linevar = 0,
+		linevars = {},
+		stop = 0,
+		stops = {},
+		message = "",
+	}
+	if pos ~= nil then
+		custom_state.pos = pos
+	end
+	jr_refresh_stns(custom_state, stn)
+	jr_refresh_tracks(custom_state, track)
+	jr_refresh_linevars(custom_state, linevar)
+	if stop_stn == nil then
+		stop_stn = custom_state.stns[custom_state.stn].stn
+	end
+	jr_refresh_stops(custom_state, stop_stn)
+	jr_refresh_departure(custom_state)
+
+	-- show formspec:
+	return ch_core.show_formspec(player, "advtrains_line_automation:jizdni_rad",
+		get_jr_formspec(custom_state), jr_formspec_callback, custom_state, {})
+end
+
+local visual_scale = 15/16
+local node_box = {type = "fixed", fixed = {
+	-16/32, -16/32, 15/32 / visual_scale,
+	16/32, 16/32, 16/32 / visual_scale,
+}}
+local sbox = {type = "fixed", fixed = {
+	-16/32 * visual_scale, -16/32 * visual_scale, 15/32,
+	16/32 * visual_scale, 16/32 * visual_scale, 16/32,
+}}
+
+local def = {
+	description = "jízdní řád",
+	drawtype = "nodebox",
+	node_box = node_box,
+	selection_box = sbox,
+	collision_box = sbox,
+	tiles = {
+		{name = "ch_core_white_pixel.png^[multiply:#aaaaaa"},
+		{name = "ch_core_white_pixel.png^[multiply:#aaaaaa"},
+		{name = "ch_core_white_pixel.png^[multiply:#aaaaaa"},
+		{name = "ch_core_white_pixel.png^[multiply:#aaaaaa"},
+		{name = "advtrains_line_automation_jrad.png"},
+		{name = "advtrains_line_automation_jrad.png"},
+	},
+	paramtype = "light",
+	paramtype2 = "4dir",
+	sunlight_propagates = true,
+	groups = {cracky = 3, ch_jrad = 1},
+	sounds = default.node_sound_metal_defaults(),
+	visual_scale = visual_scale,
+	after_place_node = function(pos, placer, itemstack, pointed_thing)
+		local player_name = placer and placer:get_player_name()
+		if player_name ~= nil then
+			local meta = core.get_meta(pos)
+			meta:set_string("infotext", "jízdní řád")
+			meta:set_string("owner", player_name)
+		end
+	end,
+	can_dig = function(pos, player)
+		if player == nil then
+			return false
+		end
+		local player_name = player:get_player_name()
+		if ch_core.get_player_role(player_name) == "admin" then
+			return true
+		end
+		if core.is_protected(pos, player_name) then
+			core.record_protection_violation(pos, player_name)
+			return false
+		end
+		local meta = core.get_meta(pos)
+		local owner = meta:get_string("owner")
+		return owner == "" or owner == player_name
+	end,
+	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		if clicker ~= nil and core.is_player(clicker) then
+			local meta = core.get_meta(pos)
+			show_jr_formspec(clicker, pos, meta:get_string("stn"), meta:get_string("track"))
+		end
+	end,
+}
+
+core.register_node("advtrains_line_automation:jrad", table.copy(def))
+def.description = "jízdní řád (na tyč)"
+def.node_box = {type = "fixed", fixed = {
+	-16/32, -16/32, 27/32 / visual_scale,
+	16/32, 16/32, 28/32 / visual_scale,
+}}
+def.selection_box = {type = "fixed", fixed = {
+	-16/32 * visual_scale, -16/32 * visual_scale, 27/32,
+	16/32 * visual_scale, 16/32 * visual_scale, 28/32,
+}}
+def.collision_box = def.selection_box
+def.tiles = table.copy(def.tiles)
+def.tiles[5] = def.tiles[1]
+core.register_node("advtrains_line_automation:jrad_on_pole", def)

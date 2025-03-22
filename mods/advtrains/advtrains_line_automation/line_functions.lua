@@ -502,6 +502,18 @@ function al.get_delay_description(line_status, linevar_def, rwtime)
     end
 end
 
+-- Test na módy MODE_FINAL*
+function al.is_final_mode(stop_mode)
+    return stop_mode ~= nil and simple_modes[stop_mode] == MODE_FINAL
+end
+local is_final_mode = al.is_final_mode
+
+-- Test na skrytou zastávku. Vrací true, pokud zadaný mód neodpovídá skryté zastávce.
+function al.is_visible_mode(stop_mode)
+	return stop_mode == nil or (stop_mode ~= MODE_HIDDEN and stop_mode ~= MODE_FINAL_HIDDEN)
+end
+local is_visible_mode = al.is_visible_mode
+
 -- Pokud zadaná varianta linky existuje, vrátí:
 --      linevar_def, linevar_station
 -- Jinak vrací:
@@ -1027,9 +1039,16 @@ end
 
 --[[
     Zadaný vlak musí být linkový.
-    Vrací:
+    Parametry:
+        line_status = table,
+        linevar_def = table,
+        rwtime = int,
+        allow_continue = bool,
+    Vrací *pole* následujících záznamů:
         {
-            stn = string, track = string, delay = int,
+            stn = string,
+            track = string,
+            delay = int,
             stdata = table or nil,
             dep = int or nil, dep_linevar_def = table or nil, dep_index = int or nil,
             arr = int or nil, arr_linevar_def = table or nil, arr_index = int or nil,
@@ -1111,6 +1130,124 @@ function al.predict_train(line_status, linevar_def, rwtime, allow_continue)
         index = index + 1
     end
     -- print("DEBUG: "..dump2({prediction = prepare_prediction_for_dump(result)}))
+    return result
+end
+
+--[[
+    Parametry:
+        linevar_def = table, -- definice linevar, z něhož se má analýza provádět
+        linevar_index = int,
+        rwtime = int or nil, -- (aktuální žel. čas; nepovinné)
+        trains = {train_table...} or nil, -- je-li zadáno, bude zkoumat pouze vlaky v tomto seznamu
+    Vrací *pole* záznamů (stejných jako al.predict_train) vztahujících se k odjezdu
+    z požadované zastávky, seřazené od nejbližšího odjezdu po nejvzdálenější.
+]]
+function al.predict_station_departures(linevar_def, linevar_index, rwtime, trains)
+    assert(linevar_def)
+    assert(linevar_index)
+    local linevar = linevar_def.name
+    local stop = assert(linevar_def.stops[linevar_index])
+    if trains == nil then
+        trains = al.get_trains_by_linevar()[linevar] or {}
+    end
+    if rwtime == nil then
+        rwtime = rwt.to_secs(rwt.get_time())
+    end
+    local result = {}
+    for _, train in ipairs(trains) do
+        local ls, lvdef = al.get_line_status(train)
+        if ls.linevar == linevar and ls.linevar_index <= linevar_index then
+            local prediction = al.predict_train(ls, linevar_def, rwtime, true)
+            for _, pr in ipairs(prediction) do
+                if
+                    pr.dep ~= nil and pr.dep_linevar_def ~= nil and pr.dep_index ~= nil and
+                    pr.dep_linevar_def.name == linevar and
+                    pr.dep_index == linevar_index and
+                    pr.dep > rwtime
+                then
+                    table.insert(result, pr)
+                    break
+                end
+            end
+        end
+    end
+    table.sort(result, function(a, b) return a.dep < b.dep end)
+    return result
+end
+
+--[[
+    => {{
+        linevar = string,
+        indices = {int,...},
+        linevar_def = linevar_def,
+    }...}
+]]
+function al.get_linevars_by_station(stn, track, options)
+    if options == nil then
+        options = {}
+    end
+    local include_hidden_stops = options.include_hidden_stops
+    local ignore_first_stop = options.ignore_first_stop
+    local ignore_last_stop = options.ignore_last_stop
+    local result = {}
+    assert(stn)
+    for lvstn, stdata in pairs(advtrains.lines.stations) do
+        if stdata.linevars ~= nil then
+            for linevar, linevar_def in pairs(stdata.linevars) do
+                local first_stop_index = al.get_first_stop(linevar_def, include_hidden_stops)
+                local last_stop_index = al.get_last_stop(linevar_def, include_hidden_stops)
+                if not (ignore_first_stop or ignore_last_stop) or (first_stop_index ~= nil and last_stop_index ~= nil) then
+                    for i, stop in ipairs(linevar_def.stops) do
+                        if
+                            stop.stn == stn and
+                            (track == nil or tostring(stop.track) == track) and
+                            (include_hidden_stops or is_visible_mode(stop.mode)) and
+                            ((not ignore_first_stop) or i ~= 1) and
+                            ((not ignore_last_stop) or (not is_final_mode(stop.mode)))
+                        then
+                            if ld == nil then
+                                ld = {linevar = linevar, linevar_def = linevar_def, indices = {i}}
+                                table.insert(result, ld)
+                            else
+                                table.insert(ld.indices, i)
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    if #result > 1 then
+        table.sort(result, function(a, b) return a.linevar < b.linevar end)
+    end
+    return result
+end
+
+--[[
+    => {
+        [linevar] = {train...}, -- generuje jen neprázdné seznamy
+    }
+]]
+function al.get_trains_by_linevar()
+    local result = {}
+    for train_id, train in pairs(advtrains.trains) do
+        local ls, linevar_def = al.get_line_status(train)
+        if linevar_def ~= nil then
+            local linevar = linevar_def.name
+            local list = result[linevar]
+            if list ~= nil then
+                table.insert(list, train)
+            else
+                list = {train}
+                result[linevar] = list
+            end
+        end
+    end
+    for linevar, list in pairs(result) do
+        if list[2] ~= nil then
+            table.sort(list, function(a, b) return a.id < b.id end)
+        end
+    end
     return result
 end
 
