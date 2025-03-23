@@ -55,7 +55,9 @@ local default_items = {
 	{stack = get_replacer(), survival = true, creative = true},
 	{stack = ItemStack("ch_extras:periskop"), new = true, survival = true, creative = true},
 	{stack = ItemStack("ch_extras:sickle_steel"), survival = true},
-	{stack = ItemStack("ch_extras:teleporter_unsellable"), new = true, survival = true},
+	-- {stack = ItemStack("ch_extras:teleporter_unsellable"), new = true, survival = true},
+	{stack = ItemStack("ch_extras:runa_navratu"), new = true, creative = true},
+	{stack = ItemStack("advtrains_line_automation:jrad"), new = true},
 	{stack = ItemStack("unified_inventory:bag_large"), survival = true, creative = true},
 	{stack = ItemStack("bridger:scaffolding 100"), survival = true, creative = true},
 	{stack = ItemStack("towercrane:base"), survival = true, creative = true},
@@ -71,8 +73,8 @@ local default_items = {
 	{stack = ItemStack("ch_core:chisel"), survival = true, creative = true},
 
 	{stack = get_flashlight(), min_index = 17, new = true, survival = true, creative = true},
-	{stack = ItemStack("orienteering:map"), min_index = 18, new = true, survival = true, creative = true},
-	{stack = ItemStack("orienteering:triangulator"), min_index = 19, survival = true, creative = true},
+	-- {stack = ItemStack("orienteering:map"), min_index = 18, new = true, survival = true, creative = true},
+	{stack = ItemStack("orienteering:triangulator"), min_index = 18, survival = true, creative = true},
 }
 
 for i, item in ipairs(default_items) do

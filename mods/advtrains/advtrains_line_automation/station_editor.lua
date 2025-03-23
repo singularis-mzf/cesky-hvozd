@@ -731,59 +731,58 @@ local function get_jr_formspec(custom_state)
 		access_level = "owner"
 	end
 
-	if access_level ~= "player" then
-		-- admin or owner:
-		table.insert(formspec, "label[0.5,0.6;Jízdní řády]"..
-			"dropdown[5,0.3;10,0.6;dopravna;")
-		for i, r in ipairs(custom_state.stns) do
-			table.insert(formspec, ifthenelse(i == 1, r.fs, ","..r.fs))
-		end
-		table.insert(formspec, ";"..custom_state.stn..";true]"..
-			"dropdown[15.25,0.3;3.5,0.6;kolej;")
-		for i, r in ipairs(custom_state.tracks) do
-			if i == 1 then
-				table.insert(formspec, "(všechny koleje)")
+	if node_owner ~= nil then
+		if access_level ~= "player" then
+			-- admin or owner:
+			table.insert(formspec, "label[0.5,0.6;Jízdní řády]"..
+				"dropdown[5,0.3;10,0.6;dopravna;")
+			for i, r in ipairs(custom_state.stns) do
+				table.insert(formspec, ifthenelse(i == 1, r.fs, ","..r.fs))
+			end
+			table.insert(formspec, ";"..custom_state.stn..";true]"..
+				"dropdown[15.25,0.3;3.5,0.6;kolej;")
+			for i, r in ipairs(custom_state.tracks) do
+				if i == 1 then
+					table.insert(formspec, "(všechny koleje)")
+				else
+					table.insert(formspec, ","..F(r))
+				end
+			end
+			table.insert(formspec, ";"..custom_state.track..";true]")
+		else
+			-- player (including 'new' players)
+			local stn_info = custom_state.stns[custom_state.stn]
+			if stn_info.stn == "" then
+				table.insert(formspec, "label[0.5,0.6;Jízdní řády (všechny linky)]")
 			else
-				table.insert(formspec, ","..F(r))
+				local track = custom_state.tracks[custom_state.track]
+				if track ~= "" then
+					track = F(" ["..track.."]")
+				end
+				table.insert(formspec, "label[0.5,0.6;"..F("Jízdní řády: ")..stn_info.name_fs..track.."]")
 			end
 		end
-		table.insert(formspec, ";"..custom_state.track..";true]")
-	else
-		-- player (including 'new' players)
-		local stn_info = custom_state.stns[custom_state.stn]
-		if stn_info.stn == "" then
-			table.insert(formspec, "label[0.5,0.6;Jízdní řády (všechny linky)]")
-		else
-			local track = custom_state.tracks[custom_state.track]
-			if track ~= "" then
-				track = F(" ["..track.."]")
-			end
-			table.insert(formspec, "label[0.5,0.6;"..F("Jízdní řády: ")..stn_info.name_fs..track.."]")
-		end
-	end
-
-	if access_level ~= "admin" then
-		table.insert(formspec, "label[0.5,1.65;vlastník/ice j. řádu: ")
-		if node_owner ~= nil then
+		if access_level ~= "admin" then
+			-- player/owner
+			table.insert(formspec, "label[0.5,1.65;vlastník/ice j. řádu: ")
 			table.insert(formspec, ch_core.prihlasovaci_na_zobrazovaci(node_owner))
+			if stn_owner ~= nil then
+				table.insert(formspec, " | dopravnu spravuje: ")
+				table.insert(formspec, ch_core.prihlasovaci_na_zobrazovaci(stn_owner))
+			end
+			table.insert(formspec, "]")
 		else
-			table.insert(formspec, "???")
-		end
-		if stn_owner ~= nil then
-			table.insert(formspec, " | dopravnu spravuje: ")
-			table.insert(formspec, ch_core.prihlasovaci_na_zobrazovaci(stn_owner))
-		end
-		table.insert(formspec, "]")
-	else
-		if node_owner ~= nil then
+			-- admin only
 			table.insert(formspec, "label[0.5,1.65;vlastník/ice:]"..
 				"field[2.75,1.25;5,0.75;owner;;")
 			table.insert(formspec, ch_core.prihlasovaci_na_zobrazovaci(node_owner))
 			table.insert(formspec, "]button[8,1.25;3,0.75;setowner;nastavit]")
+			if stn_owner ~= nil then
+				table.insert(formspec, "label[11.25,1.65;dopravnu spravuje: "..ch_core.prihlasovaci_na_zobrazovaci(stn_owner).."]")
+			end
 		end
-		if stn_owner ~= nil then
-			table.insert(formspec, "label[11.25,1.65;dopravnu spravuje: "..ch_core.prihlasovaci_na_zobrazovaci(stn_owner).."]")
-		end
+	else
+		table.insert(formspec, "label[0.5,0.6;Příruční jízdní řády (všechny linky)]")
 	end
 
 	table.insert(formspec, "tablecolumns[text,align=right,tooltip=linka;text,width=12,tooltip=cíl;text,tooltip=kolej;color;text,tooltip=stav]"..
@@ -832,17 +831,6 @@ local function get_jr_formspec(custom_state)
 end
 
 local function jr_formspec_callback(custom_state, player, formname, fields)
-	--[[
-	fields:
-	- dopravna (dropdown)
-	- kolej (dropdown)
-	- owner (field)
-	- setowner (button)
-	- linka (table)
-	- zastavka (table)
-	- close (button_exit)
-	- refresh (button)
-	]]
 	if fields.dopravna then
 		local new_stn = tonumber(fields.dopravna)
 		if new_stn ~= nil and new_stn ~= custom_state.stn and custom_state.stns[new_stn] ~= nil then
@@ -875,8 +863,14 @@ local function jr_formspec_callback(custom_state, player, formname, fields)
 			return get_jr_formspec(custom_state)
 		end
 	end
-	if fields.setowner then
-		-- TODO: implementovat změnu vlastníka/ice
+	if fields.setowner and custom_state.pos ~= nil and is_jr_node_name(core.get_node(custom_state.pos).name) then
+		local meta = core.get_meta(custom_state.pos)
+		local jm = ch_core.jmeno_na_existujici_prihlasovaci(fields.owner)
+		if jm ~= nil then
+			meta:set_string("owner", jm)
+		else
+			core.chat_send_player(custom_state.player_name, "*** Postava '"..fields.owner.."' neexistuje!")
+		end
 		return get_jr_formspec(custom_state)
 	end
 	if fields.linka then
@@ -916,7 +910,7 @@ local function jr_formspec_callback(custom_state, player, formname, fields)
 	end
 end
 
-local function show_jr_formspec(player, pos, stn, track, linevar, stop_stn)
+function advtrains.lines.show_jr_formspec(player, pos, stn, track, linevar, stop_stn)
 	assert(core.is_player(player))
 	local custom_state = {
 		player_name = player:get_player_name(),
@@ -946,80 +940,3 @@ local function show_jr_formspec(player, pos, stn, track, linevar, stop_stn)
 	return ch_core.show_formspec(player, "advtrains_line_automation:jizdni_rad",
 		get_jr_formspec(custom_state), jr_formspec_callback, custom_state, {})
 end
-
-local visual_scale = 15/16
-local node_box = {type = "fixed", fixed = {
-	-16/32, -16/32, 15/32 / visual_scale,
-	16/32, 16/32, 16/32 / visual_scale,
-}}
-local sbox = {type = "fixed", fixed = {
-	-16/32 * visual_scale, -16/32 * visual_scale, 15/32,
-	16/32 * visual_scale, 16/32 * visual_scale, 16/32,
-}}
-
-local def = {
-	description = "jízdní řád",
-	drawtype = "nodebox",
-	node_box = node_box,
-	selection_box = sbox,
-	collision_box = sbox,
-	tiles = {
-		{name = "ch_core_white_pixel.png^[multiply:#aaaaaa"},
-		{name = "ch_core_white_pixel.png^[multiply:#aaaaaa"},
-		{name = "ch_core_white_pixel.png^[multiply:#aaaaaa"},
-		{name = "ch_core_white_pixel.png^[multiply:#aaaaaa"},
-		{name = "advtrains_line_automation_jrad.png"},
-		{name = "advtrains_line_automation_jrad.png"},
-	},
-	paramtype = "light",
-	paramtype2 = "4dir",
-	sunlight_propagates = true,
-	groups = {cracky = 3, ch_jrad = 1},
-	sounds = default.node_sound_metal_defaults(),
-	visual_scale = visual_scale,
-	after_place_node = function(pos, placer, itemstack, pointed_thing)
-		local player_name = placer and placer:get_player_name()
-		if player_name ~= nil then
-			local meta = core.get_meta(pos)
-			meta:set_string("infotext", "jízdní řád")
-			meta:set_string("owner", player_name)
-		end
-	end,
-	can_dig = function(pos, player)
-		if player == nil then
-			return false
-		end
-		local player_name = player:get_player_name()
-		if ch_core.get_player_role(player_name) == "admin" then
-			return true
-		end
-		if core.is_protected(pos, player_name) then
-			core.record_protection_violation(pos, player_name)
-			return false
-		end
-		local meta = core.get_meta(pos)
-		local owner = meta:get_string("owner")
-		return owner == "" or owner == player_name
-	end,
-	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-		if clicker ~= nil and core.is_player(clicker) then
-			local meta = core.get_meta(pos)
-			show_jr_formspec(clicker, pos, meta:get_string("stn"), meta:get_string("track"))
-		end
-	end,
-}
-
-core.register_node("advtrains_line_automation:jrad", table.copy(def))
-def.description = "jízdní řád (na tyč)"
-def.node_box = {type = "fixed", fixed = {
-	-16/32, -16/32, 27/32 / visual_scale,
-	16/32, 16/32, 28/32 / visual_scale,
-}}
-def.selection_box = {type = "fixed", fixed = {
-	-16/32 * visual_scale, -16/32 * visual_scale, 27/32,
-	16/32 * visual_scale, 16/32 * visual_scale, 28/32,
-}}
-def.collision_box = def.selection_box
-def.tiles = table.copy(def.tiles)
-def.tiles[5] = def.tiles[1]
-core.register_node("advtrains_line_automation:jrad_on_pole", def)
