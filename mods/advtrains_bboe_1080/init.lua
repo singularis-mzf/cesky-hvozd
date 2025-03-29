@@ -65,6 +65,7 @@ advtrains.register_wagon("engine_BBOE_1080", {
 	door_entry={-1},
 	visual_size = {x=1, y=1},
 	wagon_span=3.0,
+	light_level = 10,
 	is_locomotive=true,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	drops={

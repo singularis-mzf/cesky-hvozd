@@ -63,6 +63,7 @@ advtrains.register_wagon("moretrains_nightline_couchette", {
 	assign_to_seat_group = {"pass"},
 	visual_size = {x=1, y=1},
 	wagon_span=3,
+	light_level = 7,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	drops={"default:steelblock 3", "dye:blue", "default:glass", bed, door, "advtrains:wheel 2"},
 }, S("Night Line Couchette Wagon"), "moretrains_nightline_couchette_inv.png")
@@ -128,6 +129,7 @@ advtrains.register_wagon("moretrains_nightline_seat_car", {
 	assign_to_seat_group = {"pass"},
 	visual_size = {x=1, y=1},
 	wagon_span=3,
+	light_level = 10,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	drops={"default:steelblock 3", "dye:blue", "default:glass", "wool:blue", door, "advtrains:wheel 2"},
 }, S("Night Line Seat Wagon"), "moretrains_nightline_seat_car_inv.png")

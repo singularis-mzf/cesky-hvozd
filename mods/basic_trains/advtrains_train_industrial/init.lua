@@ -35,6 +35,7 @@ advtrains.register_wagon("engine_industrial", {
 	coupler_types_back = {chain=true},
 	visual_size = {x=1, y=1},
 	wagon_span=2.6,
+	light_level = 10,
 	is_locomotive=true,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	drops={"default:steelblock 5", "advtrains:driver_cab", "advtrains:wheel"},

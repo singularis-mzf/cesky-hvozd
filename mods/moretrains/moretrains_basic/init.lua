@@ -73,6 +73,7 @@ advtrains.register_wagon("moretrains_railroad_car", {
 	assign_to_seat_group = {"pass"},
 	visual_size = {x=1, y=1},
 	wagon_span=2.94,
+	light_level = 10,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	drops={"default:steelblock 4", "advtrains:wheel 2", "default:tin_ingot", "default:glass"},
 }, S("Railroad Car"), "moretrains_railroad_car_inv.png")
@@ -141,6 +142,7 @@ advtrains.register_wagon("moretrains_silberling", {
 	assign_to_seat_group = {"pass"},
 	visual_size = {x=1, y=1},
 	wagon_span=3,
+	light_level = 10,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	drops={"default:steelblock 2", "advtrains:wheel 2", "default:glass", block, ingot.." 2"},
 }, S("MT Silberling Wagon"), "moretrains_silberling_inv.png")
@@ -209,6 +211,7 @@ advtrains.register_wagon("moretrains_silberling_dining", {
 	assign_to_seat_group = {"pass"},
 	visual_size = {x=1, y=1},
 	wagon_span=3,
+	light_level = 10,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	drops={"default:steelblock 2", "advtrains:wheel 2", "default:furnace", block, ingot.." 2"},
 }, S("MT Silberling Dining Wagon"), "moretrains_silberling_dining_inv.png")
@@ -238,6 +241,7 @@ advtrains.register_wagon("moretrains_diesel_german", {
 	assign_to_seat_group = {"dstand"},
 	visual_size = {x=1, y=1},
 	wagon_span=2.8,
+	light_level = 10,
 	is_locomotive=true,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	drops={"default:steelblock 2", "advtrains:wheel 3", "advtrains:driver_cab", "default:glass", "dye:red"},
@@ -318,6 +322,7 @@ advtrains.register_wagon("moretrains_silberling_train", {
 	},
 	visual_size = {x=1, y=1},
 	wagon_span=3,
+	light_level = 10,
 	is_locomotive=false,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	drops={"default:steelblock 2", "advtrains:wheel 3", "default:glass", block.." 2", ingot},

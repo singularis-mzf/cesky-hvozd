@@ -91,7 +91,7 @@ advtrains.register_wagon("KuHa_E231", {
 	assign_to_seat_group = {"dstand", "pass"},
 	visual_size = {x=1, y=1},
 	wagon_span=2.5,
-	light_level = 8,
+	light_level = 10,
 	is_locomotive=true,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	drops={

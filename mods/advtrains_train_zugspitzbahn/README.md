@@ -13,6 +13,7 @@ Catalogue](https://advtrains.de/wiki/doku.php?id=usage:trains:advtrains_train_zu
 
 * Original code and assets copyright (C) 2017 MBB
 * Some code copyright (C) 2018 orwell96
+* Some code copytight (C) 2025 Singularis
 
 This software and its assets are licensed under the Creative Commons
 ShareAlike-Attribution License 3.0 (CC BY-SA 3.0); see LICENSE.txt for details.
@@ -20,4 +21,4 @@ ShareAlike-Attribution License 3.0 (CC BY-SA 3.0); see LICENSE.txt for details.
 ## Credits
 
 * Original Author: MBB
-* Contributions by: orwell96
+* Contributions by: orwell96, Singularis

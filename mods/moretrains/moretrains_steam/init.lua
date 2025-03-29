@@ -34,6 +34,7 @@ advtrains.register_wagon("moretrains_steam_train", {
 	assign_to_seat_group = {"dstand"},
 	visual_size = {x=1, y=1},
 	wagon_span=2.587,
+	light_level = 10,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	custom_on_velocity_change=function(self, velocity)
 		if self.old_anim_velocity~=advtrains.abs_ceil(velocity) then

@@ -1,5 +1,6 @@
 ch_base.open_mod(minetest.get_current_modname())
 local S = attrans
+local has_offset_patch = core.get_modpath("advtrains_attachment_offset_patch")
 
 advtrains.register_wagon("engine_zugspitzbahn", {
 	mesh="advtrains_engine_bzb.b3d",
@@ -29,6 +30,7 @@ advtrains.register_wagon("engine_zugspitzbahn", {
 	},
     assign_to_seat_group = {"dstand"},
 	wagon_span=2.7,
+	light_level = 10,
     visual_size = {x=1, y=1},
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	is_locomotive=true,
@@ -81,6 +83,7 @@ advtrains.register_wagon("wagon_zugspitzbahn", {
 	assign_to_seat_group = {"pass"},
 	visual_size = {x=1, y=1},
 	wagon_span=3,
+	light_level = 10,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	drops={
 		"default:steelblock 4",
@@ -130,6 +133,7 @@ advtrains.register_wagon("wagon_zugspitzbahn_green", {
 	assign_to_seat_group = {"pass"},
 	visual_size = {x=1, y=1},
 	wagon_span=3,
+	light_level = 10,
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	drops={
 		"default:steelblock 4",
@@ -138,6 +142,98 @@ advtrains.register_wagon("wagon_zugspitzbahn_green", {
 		"advtrains:wheel 2",
 	},
 }, S("Passenger Zugspitzbahn wagon green"), "advtrains_wagon_bzb_green_inv.png") 
+
+local def = {
+	mesh="advtrains_wagon_bzb.b3d",
+	textures = {"advtrains_bzb_test.png"},
+	drives_on={default=true},
+	max_speed=20,
+	seats = {
+		{
+			name=S("Front Driver Stand"),
+			attach_offset={x=0, y=0, z=26},
+			view_offset={x=0, y=-2, z=0},
+			driving_ctrl_access=true,
+			group="dstand",
+		},
+		{
+			name=S("Rear Driver Stand"),
+			attach_offset={x=0, y=0, z=-26},
+			view_offset={x=0, y=-2, z=0},
+			advtrains_attachment_offset_patch_attach_rotation = {x = 0, y = 180, z = 0},
+			driving_ctrl_access=true,
+			group="rdstand",
+		},
+		{
+			name="1",
+			attach_offset={x=4, y=0, z=8},
+			view_offset={x=-1, y=-4, z=0},
+			group="pass1",
+		},
+		{
+			name="2",
+			attach_offset={x=-4, y=0, z=8},
+			view_offset={x=-1, y=-4, z=0},
+			group="pass2",
+		},
+		{
+			name="3",
+			attach_offset={x=4, y=0, z=-8},
+			view_offset={x=-1, y=-4, z=0},
+			advtrains_attachment_offset_patch_attach_rotation = {x = 0, y = 180, z = 0},
+			group="pass3",
+		},
+		{
+			name="4",
+			attach_offset={x=-4, y=0, z=-8},
+			view_offset={x=-1, y=-4, z=0},
+			advtrains_attachment_offset_patch_attach_rotation = {x = 0, y = 180, z = 0},
+			group="pass4",
+		},
+	},
+	seat_groups = {
+		dstand = {
+			name = S("Front Driver Stand"),
+			access_to = {"rdstand", "pass1", "pass2", "pass3", "pass4"},
+			driving_ctrl_access = true,
+		},
+		rdstand = {
+			name = S("Rear Driver Stand"),
+			access_to = {"dstand", "pass1", "pass2", "pass3", "pass4"},
+			driving_ctrl_access = true,
+		},
+		pass1 = {
+			name = S("Passenger area").." 1",
+			access_to = {"dstand", "rdstand", "pass2", "pass3", "pass4"},
+		},
+		pass2 = {
+			name = S("Passenger area").." 2",
+			access_to = {"dstand", "rdstand", "pass1", "pass3", "pass4"},
+		},
+		pass3 = {
+			name = S("Passenger area").." 3",
+			access_to = {"dstand", "rdstand", "pass1", "pass2", "pass4"},
+		},
+		pass4 = {
+			name = S("Passenger area").." 4",
+			access_to = {"dstand", "rdstand", "pass1", "pass2", "pass3"},
+		},
+	},
+	assign_to_seat_group = {"dstand", "rdstand", "pass1", "pass2", "pass3", "pass4"},
+	visual_size = {x=1, y=1},
+	wagon_span=3,
+	light_level = 10,
+	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
+	is_locomotive = true,
+	drops={"advtrains:wagon_zugspitzbahn_test"},
+}
+
+if has_offset_patch and advtrains_attachment_offset_patch and advtrains_attachment_offset_patch.setup_advtrains_wagon then
+	advtrains_attachment_offset_patch.setup_advtrains_wagon(def)
+end
+
+advtrains.register_wagon("wagon_zugspitzbahn_test", def, "nová motorová jednotka (experimentální)", "advtrains_wagon_bzb_green_inv.png") 
+
 
 minetest.register_craft({
 	output = "advtrains:engine_zugspitzbahn",

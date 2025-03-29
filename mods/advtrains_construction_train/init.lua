@@ -113,6 +113,7 @@ advtrains.register_wagon("construction_train", {
 	door_entry={-1, 1},
 	visual_size = {x=1, y=1},
 	wagon_span=2,
+	light_level = 10,
 	--collisionbox = {-1.0,-0.5,-1.8, 1.0,2.5,1.8},
 	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
 	is_locomotive=true,

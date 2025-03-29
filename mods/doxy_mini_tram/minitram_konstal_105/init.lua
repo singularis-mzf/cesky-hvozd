@@ -140,6 +140,7 @@ local konstal_105_definition = {
     visual_size = V(1, 1, 1);
 
     wagon_span = 4.7; -- Wagon length ~~ 8.9m => Coupling distance ~~ 9.4 m.
+    light_level = 10,
     wheel_positions = { 2.9, -2.9 };
     is_locomotive = true;
     collisionbox = { -1.5, -0.5, -1.5, 1.5, 2.5, 1.5 };
