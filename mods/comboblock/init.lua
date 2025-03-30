@@ -88,7 +88,7 @@ local m_path = minetest.get_modpath(m_name)
 
 
 local groups_to_inherit = {
-	"choppy", "crumbly", "snappy", "oddly_breakable_by_hand", "flammable"
+	"choppy", "cracky", "crumbly", "snappy", "oddly_breakable_by_hand", "flammable", "dig_immediate"
 }
 
 ----------------------------

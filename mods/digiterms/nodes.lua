@@ -136,7 +136,7 @@ digiterms.register_monitor('digiterms:lcd_monitor_3', {
 })
 
 digiterms.register_monitor('digiterms:cathodic_beige_monitor', {
-	description = "béžový monitor se žlutou písmem",
+	description = "béžový monitor se žlutým písmem",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	sunlight_propagates = false,
@@ -168,7 +168,7 @@ minetest.register_alias('digiterms:cathodic_amber_monitor', 'digiterms:cathodic_
 minetest.register_alias('digiterms:cathodic_amber_monitor_off', 'digiterms:cathodic_beige_monitor_off')
 
 digiterms.register_monitor('digiterms:cathodic_white_monitor', {
-	description = "bílý monitor se zelenou písmem",
+	description = "bílý monitor se zeleným písmem",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	sunlight_propagates = false,
@@ -200,7 +200,7 @@ minetest.register_alias('digiterms:cathodic_green_monitor', 'digiterms:cathodic_
 minetest.register_alias('digiterms:cathodic_green_monitor_off', 'digiterms:cathodic_white_monitor_off')
 
 digiterms.register_monitor('digiterms:cathodic_black_monitor', {
-	description = "černý monitor s bílou písmem",
+	description = "černý monitor s bílým písmem",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	sunlight_propagates = false,
