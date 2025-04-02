@@ -1197,6 +1197,7 @@ function al.get_linevars_by_station(stn, track, options)
                 local first_stop_index = al.get_first_stop(linevar_def, include_hidden_stops)
                 local last_stop_index = al.get_last_stop(linevar_def, include_hidden_stops)
                 if not (ignore_first_stop or ignore_last_stop) or (first_stop_index ~= nil and last_stop_index ~= nil) then
+                    local ld
                     for i, stop in ipairs(linevar_def.stops) do
                         if
                             stop.stn == stn and

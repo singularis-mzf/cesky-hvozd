@@ -90,6 +90,10 @@ local function filter_all()
 	return true
 end
 
+local function filter_mine(a, player_info)
+	return a.owner == player_info.name
+end
+
 local function sort_by_distance(a, b, player_info)
 	return (station_distance(player_info.pos, a) or 1.0e+20) < (station_distance(player_info.pos, b) or 1.0e+20)
 end
@@ -123,6 +127,21 @@ local filters = {
 		-- filter = filter_all,
 		sorter = sort_by_name,
 	},
+	{
+		description = "moje (podle kódu A-Z)",
+		filter = filter_mine,
+		sorter = sort_by_stn,
+	},
+	{
+		description = "moje (podle názvu A-Z)",
+		filter = filter_mine,
+		sorter = sort_by_name,
+	},
+	{
+		description = "moje (od nejbližší)",
+		filter = filter_mine,
+		sorter = sort_by_distance,
+	},
 }
 
 
@@ -139,13 +158,14 @@ local function get_formspec(custom_state)
 
 	local stations = custom_state.stations
 	if stations == nil then
-		-- local filter_func = filters[custom_state.active_filter].filter or filter_all
-		local sorter_func = filters[custom_state.active_filter].sorter
+		local filter = filters[custom_state.active_filter]
+		local filter_func = filter.filter or filter_all
+		local sorter_func = filter.sorter
 		stations = {}
 		for _, st in ipairs(load_stations()) do
-			-- if filter_func(st, player_info) then
+			if filter_func(st, player_info) then
 				table.insert(stations, st)
-			-- end
+			end
 		end
 		table.sort(stations, function(a, b) return sorter_func(a, b, player_info) end)
 		custom_state.stations = stations
@@ -211,6 +231,23 @@ local function get_formspec(custom_state)
 			if st.tracks[1] == nil then
 				table.insert(formspec, "button[15.25,8;3,0.75;smazat;smazat]")
 			end
+			if custom_state.linevars[1] ~= nil then
+				table.insert(formspec, "label[0.5,9.4;přiřadit kolej]"..
+					"field[2.75,9.1;1,0.6;kolej;;]"..
+					"label[3.9,9.4;lince]"..
+					"dropdown[5,9.1;5,0.6;klinevar;")
+				for i, lvar in ipairs(custom_state.linevars) do
+					if i ~= 1 then
+						table.insert(formspec, ",")
+					end
+					table.insert(formspec, F(lvar.linevar.." | "..lvar.dep.." "..stn.." ["..lvar.track.."]"))
+				end
+				table.insert(formspec, ";"..custom_state.current_linevar..";true]"..
+					"button[10.25,9;4.25,0.75;priradit_kolej;přiřadit]"..
+					"tooltip[klinevar;")
+				table.insert(formspec, F("Vysvětlení formátu:\n<linka>/<kód vých.dop.>/<sm.kód> | <odjezd> <kód dop.> [<stávající kolej>]"))
+				table.insert(formspec, "]")
+			end
 		end
 	end
 	if st and st.tracks[1] ~= nil then
@@ -225,7 +262,6 @@ end
 
 local function formspec_callback(custom_state, player, formname, fields)
 	local update_formspec = false
-
 	if fields.vytvorit then
 		local new_stn, new_name, new_owner = fields.stn, fields.name or "", fields.owner
 		local pinfo = ch_core.normalize_player(player)
@@ -322,6 +358,43 @@ local function formspec_callback(custom_state, player, formname, fields)
 		ch_core.systemovy_kanal(custom_state.player_name, "Zastávka úspěšně smazána.")
 		custom_state.stations = nil
 		update_formspec = true
+	elseif fields.jrad then
+		local st = custom_state.stations[(custom_state.selection_index or 0) - 1]
+		if st == nil then
+			ch_core.systemovy_kanal(custom_state.player_name, "CHYBA: není vybrána žádná zastávka!")
+			return
+		end
+		advtrains.lines.show_jr_formspec(player, nil, assert(st.stn))
+		return
+	elseif fields.priradit_kolej then
+		local st = custom_state.stations[(custom_state.selection_index or 0) - 1]
+		if st == nil then
+			ch_core.systemovy_kanal(custom_state.player_name, "CHYBA: není vybrána žádná zastávka!")
+			return
+		end
+		local linevar_to_change = custom_state.linevars[custom_state.current_linevar]
+		if linevar_to_change == nil then
+			ch_core.systemovy_kanal(custom_state.player_name, "CHYBA: vnitřní chyba 1!")
+			return
+		end
+		local linevar_def = advtrains.lines.try_get_linevar_def(linevar_to_change.linevar, linevar_to_change.stn)
+		if linevar_def == nil then
+			ch_core.systemovy_kanal(custom_state.player_name, "CHYBA: vnitřní chyba 2!")
+			return
+		end
+		local stop = linevar_def.stops[linevar_to_change.linevar_index]
+		if stop == nil then
+			ch_core.systemovy_kanal(custom_state.player_name, "CHYBA: vnitřní chyba 3!")
+			return
+		end
+		if stop.stn ~= st.stn then
+			ch_core.systemovy_kanal(custom_state.player_name, "CHYBA: vnitřní chyba 4!")
+			return
+		end
+		stop.track = tostring(fields.kolej)
+		linevar_to_change.track = stop.track
+		ch_core.systemovy_kanal(custom_state.player_name, "Přiřazená kolej úspěšně nastavena.")
+		update_formspec = true
 	elseif fields.quit then
 		return
 	end
@@ -330,7 +403,33 @@ local function formspec_callback(custom_state, player, formname, fields)
 		local event = minetest.explode_table_event(fields.dopravna)
 		if event.type == "CHG" then
 			custom_state.selection_index = ifthenelse(event.row > 1, event.row, nil)
+			local st = custom_state.stations[(custom_state.selection_index or 0) - 1]
+			local new_linevars = {}
+			custom_state.linevars = new_linevars
+			custom_state.current_linevar = 1
+			if st ~= nil then
+				for _, r in ipairs(advtrains.lines.get_linevars_by_station(st.stn)) do
+					local line, stn = advtrains.lines.linevar_decompose(r.linevar)
+					for _, i in ipairs(r.indices) do
+						local stop = r.linevar_def.stops[i]
+						table.insert(new_linevars, {
+							stn = stn,
+							linevar = r.linevar,
+							linevar_index = i,
+							dep = assert(stop.dep),
+							track = stop.track or "",
+						})
+					end
+				end
+			end
 			update_formspec = true
+		end
+	end
+
+	if fields.klinevar then
+		local n = tonumber(fields.klinevar)
+		if n ~= nil and custom_state.linevars[n] ~= nil then
+			custom_state.current_linevar = n
 		end
 	end
 
@@ -355,6 +454,10 @@ local function show_formspec(player)
 		player_pos = vector.round(player:get_pos()),
 		active_filter = 1,
 		-- selection_index = nil,
+		linevars = {--[[
+			{stn = string, linevar = string, linevar_index = int, track = string}...
+		]]},
+		current_linevar = 1,
 	}
 	-- ch_core.show_formspec(player_or_player_name, formname, formspec, formspec_callback, custom_state, options)
 	ch_core.show_formspec(player, "advtrains_line_automation:editor_dopraven", get_formspec(custom_state), formspec_callback, custom_state, {})
