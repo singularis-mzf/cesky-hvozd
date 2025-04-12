@@ -66,9 +66,6 @@ station = {
             -- linevar (LINE/STCODE/RC)
             name = string,
 
-            -- LINE (první část názvu)
-            line = string,
-
             -- přihlašovací jméno postavy, která linku spravuje
             owner = string,
 

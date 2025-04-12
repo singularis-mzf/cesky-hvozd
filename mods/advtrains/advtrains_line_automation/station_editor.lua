@@ -496,6 +496,7 @@ core.register_chatcommand("zastávky", def)
 			target_fs = string, -- terminus name for formspec
 			track_fs = string, -- track info for formspec ("" if not available)
 			status_fs = string, -- line status for formspec (including color column)
+			train_name_fs = string, -- train name for formspec ("" if not available)
 			linevar_index = int, -- index of the selected station (stn) in linevar_def.stops of this linevar
 		}...},
 		stop = int,
@@ -550,6 +551,9 @@ local function jr_refresh_stops(custom_state, stn_to_select)
 			end
 		end
 	end
+	if index_to_select == 0 and result[1] ~= nil then
+		index_to_select = 1
+	end
 	custom_state.stop = index_to_select
 	custom_state.stops = result
 	custom_state.message = ""
@@ -577,6 +581,7 @@ local function get_all_linevars()
 				target_fs = target_fs,
 				track_fs = "",
 				status_fs = status_fs,
+				train_name_fs = F(linevar_def.train_name or ""),
 				linevar_index = 1,
 			})
 		end
@@ -635,6 +640,7 @@ local function get_linevars_by_filter(stn_filter, track_filter)
 							target_fs = target_fs,
 							track_fs = track_fs,
 							status_fs = status_fs,
+							train_name_fs = F(linevar_def.train_name or ""),
 							linevar_index = assert(linevar_index),
 						})
 					end
@@ -828,10 +834,12 @@ local function get_jr_formspec(custom_state)
 		stn_owner = (advtrains.lines.stations[custom_state.stns[custom_state.stn].stn] or {}).owner -- may be nil
 	end
 
-	if ch_core.get_player_role(custom_state.player_name) == "admin" then
-		access_level = "admin"
-	elseif custom_state.player_name == node_owner or custom_state.player_name == stn_owner then
-		access_level = "owner"
+	if not custom_state.force_unprivileged then
+		if ch_core.get_player_role(custom_state.player_name) == "admin" then
+			access_level = "admin"
+		elseif custom_state.player_name == node_owner or custom_state.player_name == stn_owner then
+			access_level = "owner"
+		end
 	end
 
 	if node_owner ~= nil then
@@ -888,13 +896,13 @@ local function get_jr_formspec(custom_state)
 		table.insert(formspec, "label[0.5,0.6;Příruční jízdní řády (všechny linky)]")
 	end
 
-	table.insert(formspec, "tablecolumns[text,align=right,tooltip=linka;text,width=12,tooltip=cíl;text,tooltip=kolej;color;text,tooltip=stav]"..
+	table.insert(formspec, "tablecolumns[text,align=right,tooltip=linka;text,width=12,tooltip=cíl;text,tooltip=kolej;color,span=1;text,tooltip=stav;color,span=1;text,tooltip=jméno vlaku]"..
 		"table[0.5,2.25;11,5;linka;")
 	for i, r in ipairs(custom_state.linevars) do
 		if i > 1 then
 			table.insert(formspec, ",")
 		end
-		table.insert(formspec, r.line_fs..","..r.target_fs..","..r.track_fs..","..r.status_fs)
+		table.insert(formspec, r.line_fs..","..r.target_fs..","..r.track_fs..","..r.status_fs..",#cccccc,"..r.train_name_fs)
 	end
 	table.insert(formspec, ifthenelse(custom_state.linevar > 0, ";"..custom_state.linevar.."]", ";]"))
 	table.insert(formspec, "tablecolumns[text,align=right;text;text]"..
@@ -1013,7 +1021,7 @@ local function jr_formspec_callback(custom_state, player, formname, fields)
 	end
 end
 
-function advtrains.lines.show_jr_formspec(player, pos, stn, track, linevar, stop_stn)
+function advtrains.lines.show_jr_formspec(player, pos, stn, track, linevar, stop_stn, force_unprivileged)
 	assert(core.is_player(player))
 	local custom_state = {
 		player_name = player:get_player_name(),
@@ -1026,6 +1034,7 @@ function advtrains.lines.show_jr_formspec(player, pos, stn, track, linevar, stop
 		stop = 0,
 		stops = {},
 		message = "",
+		force_unprivileged = force_unprivileged,
 	}
 	if pos ~= nil then
 		custom_state.pos = pos

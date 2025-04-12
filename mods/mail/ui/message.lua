@@ -50,7 +50,7 @@ function mail.show_message(name, id)
 	local cc = minetest.formspec_escape(mail.player_list_to_viewnames(message.cc)) or ""
 	if string.len(cc) > 50 then cc = string.sub(cc, 1, 47) .. "..." end
 	local date = type(message.time) == "number"
-		and minetest.formspec_escape(os.date(mail.get_setting(name, "date_format"), message.time)) or ""
+		and minetest.formspec_escape(ch_time.date(mail.get_setting(name, "date_format"), message.time)) or ""
 	local subject = minetest.formspec_escape(message.subject) or ""
 	local body = minetest.formspec_escape(message.body) or ""
 	formspec = string.format(formspec, from, to, cc, date, subject, body)

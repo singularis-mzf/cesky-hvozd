@@ -517,7 +517,6 @@ local function custom_state_compile_linevar(custom_state)
 
     custom_state.compiled_linevar = {
         name = line.."/"..stops[1].stn.."/"..rc,
-        line = line,
         owner = ch_core.jmeno_na_prihlasovaci(owner),
         stops = stops,
         continue_line = "",

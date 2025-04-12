@@ -1039,7 +1039,8 @@ local function update_ann(stn, epos, signs, records, rwtime)
             end
             local stops = linevar_def.stops
             local line = setmetatable({}, {__index = any_line})
-            line.LINKA = linevar_def.line or ""
+            line.LINKA = advtrains.lines.linevar_decompose(linevar_def.name)
+            assert(line.LINKA)
             if record.start ~= "" then
                 line.VYCHOZI = record.start
             end

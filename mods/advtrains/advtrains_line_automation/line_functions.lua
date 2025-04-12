@@ -748,9 +748,11 @@ function al.on_train_enter(pos, train_id, train, index)
             al.cancel_linevar(train)
             -- vyplnit linevar_past:
             if train.line ~= nil and train.line ~= "" then
+                local past_linevar = assert(linevar_def.name)
+                local past_line = al.linevar_decompose(past_linevar)
                 ls.linevar_past = {
-                    line = assert(linevar_def.line),
-                    linevar = assert(linevar_def.name),
+                    line = assert(past_line),
+                    linevar = past_linevar,
                     station = stn,
                     arrival = rwtime,
                 }
@@ -1276,7 +1278,8 @@ local function vlaky(param, past_trains_too)
                 if direction_index ~= nil then
                     direction = get_station_name(direction_stop.stn)
                 end
-                local s = "("..train_id..") ["..linevar_def.line.."] směr „"..direction.."“, poloha: "..
+                local line = al.linevar_decompose(linevar_def.name)
+                local s = "("..train_id..") ["..line.."] směr „"..direction.."“, poloha: "..
                     get_train_position(ls, linevar_def, rwtime)
                 if results[train_id] ~= nil then
                     s = s.." ["..results[train_id].." cestující/ch]"

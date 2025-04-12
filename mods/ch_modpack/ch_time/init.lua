@@ -34,18 +34,18 @@ local dst_points_10 = {
 }
 
 local nazvy_mesicu = {
-	{"leden", "ledna"},
-	{"únor", "února"},
-	{"březen", "března"},
-	{"duben", "dubna"},
-	{"květen", "května"},
-	{"červen", "června"},
-	{"červenec", "července"},
-	{"srpen", "srpna"},
-	{"září", "září"},
-	{"říjen", "října"},
-	{"listopad", "listopadu"},
-	{"prosinec", "prosince"},
+	{"leden", "ledna", "led", "LED"},
+	{"únor", "února", "úno", "ÚNO"},
+	{"březen", "března", "bře", "BŘE"},
+	{"duben", "dubna", "dub", "DUB"},
+	{"květen", "května", "kvě", "KVĚ"},
+	{"červen", "června", "čer", "ČER"},
+	{"červenec", "července", "čvc", "ČVC"},
+	{"srpen", "srpna", "srp", "SRP"},
+	{"září", "září", "zář", "ZÁŘ"},
+	{"říjen", "října", "říj", "ŘÍJ"},
+	{"listopad", "listopadu", "lis", "LIS"},
+	{"prosinec", "prosince", "pro", "PRO"},
 }
 
 local dny_v_tydnu = {
@@ -177,6 +177,35 @@ end
 
 -- API
 -- ============================================
+
+-- Zformátuje čas stejným způsobem jako os.time(), ale podle českého locale.
+function ch_time.date(format, time)
+	if format == nil then return nil end
+	local st = ch_time.na_strukturu(time)
+	local dvt_nazev = st:den_v_tydnu_nazev()
+	local values = {
+		["%a"] = dvt_nazev:sub(1, 2),
+		["%A"] = dvt_nazev,
+		["%b"] = nazvy_mesicu[st.mesic][3],
+		["%B"] = nazvy_mesicu[st.mesic][1],
+		["%c"] = st:YYYY_MM_DD_HH_MM_SS(),
+		["%d"] = string.format("%02d", st.den),
+		["%H"] = string.format("%02d", st.hodina),
+		["%I"] = string.format("%02d", st.hodina % 12),
+		["%M"] = string.format("%02d", st.minuta),
+		["%m"] = string.format("%02d", st.mesic),
+		["%p"] = ifthenelse(st.hodina < 12, "dop", "odp"),
+		["%S"] = string.format("%02d", st.sekunda),
+		["%w"] = tostring(st:den_v_tydnu_cislo()),
+		["%x"] = st:YYYY_MM_DD(),
+		["%X"] = st:HH_MM_SS(),
+		["%Y"] = tostring(st.rok),
+		["%y"] = string.format("%02d", st.rok % 100),
+		["%%"] = "%",
+	}
+	format = string.gsub(format, "%%[aAbBcdHImMpSwxXyY%%]", values)
+	return format
+end
 
 -- Vrací počet sekund od začátku epochy, posunutý o nastavený time_shift.
 function ch_time.time()

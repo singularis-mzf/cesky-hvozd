@@ -43,7 +43,7 @@ mail.settings = {
     },
     date_format = {
         type = "string", default = "%Y-%m-%d %X", group = "other", index = 3, label = S("Date format"),
-        dataset = {"%Y-%m-%d %X", "%d/%m/%y %X", "%A %d %B %Y %X"}, format = os.date
+        dataset = {"%Y-%m-%d %X", "%d/%m/%y %X", "%A %d %B %Y %X"}, format = ch_time.date
     },
 }
 

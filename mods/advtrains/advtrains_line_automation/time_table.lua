@@ -62,7 +62,12 @@ local def = {
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		if clicker ~= nil and core.is_player(clicker) then
 			local meta = core.get_meta(pos)
-			advtrains.lines.show_jr_formspec(clicker, pos, meta:get_string("stn"), meta:get_string("track"))
+			-- show_jr_formspec(player, pos, stn, track, linevar, stop_stn, force_unprivileged)
+			local force_unprivileged = false
+			if clicker:get_player_control().aux1 then
+				force_unprivileged = true
+			end
+			advtrains.lines.show_jr_formspec(clicker, pos, meta:get_string("stn"), meta:get_string("track"), nil, nil, force_unprivileged)
 		end
 	end,
 }
