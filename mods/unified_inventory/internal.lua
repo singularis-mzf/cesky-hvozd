@@ -549,7 +549,7 @@ function ui.apply_filter(player, filter, search_dir)
 	ui.set_inventory_formspec(player, ui.current_page[player_name])
 end
 
--- Inform players about potential visual issues
+--[[ Inform players about potential visual issues
 minetest.register_on_joinplayer(function(player)
 	local player_name = player:get_player_name()
 	local info = minetest.get_player_information(player_name)
@@ -558,3 +558,4 @@ minetest.register_on_joinplayer(function(player)
 			.. " and does not support the GUI requirements. You might experience visual issues."))
 	end
 end)
+]]

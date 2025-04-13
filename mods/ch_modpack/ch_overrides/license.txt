@@ -69,9 +69,8 @@ darkage_mud_footstep.4.ogg
 building_blocks_tar.png
 building_blocks_tar_bright.png
 	Author: Singularis
-	License: GFDLv1.3
-	Source: hdx-64 texture pack (Author: VanessaE, License: GFDLv1.3)
-	Source: https://commons.wikimedia.org/wiki/File:Asphalt_concrete.JPG (Author: kallerna, License: GFDLv1.2+ or CC BY-SA 3.0)
+	License: CC BY-SA 3.0
+	Source: own work
 
 letters_al_overlay.png
 letters_au_overlay.png

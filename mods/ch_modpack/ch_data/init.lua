@@ -180,8 +180,6 @@ function ch_data.get_joining_online_charinfo(player)
 			name = "Český hvozd",
 			type = 1,
 		}},
-		-- nejvyšší verze formspec podporovaná klientem; 0, pokud údaj není k dispozici
-		formspec_version = player_info.formspec_version or 0,
 		-- časová známka vytvoření online_charinfo (vstupu postavy do hry)
 		join_timestamp = now,
 		-- jazykový kód (obvykle "cs")
@@ -201,7 +199,15 @@ function ch_data.get_joining_online_charinfo(player)
 	}
 
 	-- news_role:
-	if result.formspec_version < 6 or (result.formspec_version == 0 and result.protocol_version < 42) then
+	--[[
+		5.5.x => formspec_version = 5, protocol_version = 40
+		5.6.x => formspec_version = 6, protocol_version = 41
+		5.7.x => formspec_version = 6, protocol_version = 42
+		5.8.0 => formspec_version = 7, protocol_version = 43
+		5.9.0 => formspec_version = ?, protocol_version = ?
+		5.10.0 => formspec_version = 8, protocol_version = 46
+	]]
+	if result.protocol_version < 42 then
 		result.news_role = "disconnect"
 	elseif not ch_data.supported_lang_codes[result.lang_code] and not core.check_player_privs(player, "server") then
 			result.news_role = "invalid_locale"
@@ -222,7 +228,8 @@ function ch_data.get_joining_online_charinfo(player)
 		end
 	end
 	core.log("action", "JOIN PLAYER(" .. player_name ..") at "..now.." with lang_code \""..result.lang_code..
-		"\", formspec_version = "..result.formspec_version..", protocol_version = "..result.protocol_version..", news_role = "..result.news_role)
+		"\", formspec_version = "..tostring(player_info.formspec_version)..", protocol_version = "..
+		result.protocol_version..", news_role = "..result.news_role..", ip_address = "..tostring(player_info.address))
 
 	core.log("action", "[DEBUG] player_info[\""..player_name.."\"] = "..dump2(player_info))
 	-- deserializovat návody:

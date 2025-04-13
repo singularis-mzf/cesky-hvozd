@@ -213,7 +213,7 @@ end
 
 local function get_new_player_formspec(custom_state)
 	local formspec = {
-		ch_core.formspec_header({formspec_version = 5, size = {18, 10}, auto_background = true}),
+		ch_core.formspec_header({formspec_version = 4, size = {18, 10}, auto_background = true}),
 		"button_exit[16.8,0.25;0.8,0.8;zavrit;X]"..
 		"tooltip[zavrit;zavřít]"..
 		"style_type[table;font=italic]"..

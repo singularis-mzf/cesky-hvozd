@@ -1382,11 +1382,14 @@ function advtrains.register_wagon(sysname_p, prototype, desc, inv_img, nincreati
 	end
 	if prototype.has_inventory then wagon_groups['at_freight'] = 1 end
 
+	local max_speed = tonumber(prototype.max_speed) or 20
+
 	minetest.register_craftitem(":"..sysname, {
 		description = desc,
 		inventory_image = inv_img,
 		wield_image = inv_img,
 		stack_max = 1,
+		_ch_help = "max. rychlost vozu: "..max_speed,
 		
 		groups = wagon_groups,
 
