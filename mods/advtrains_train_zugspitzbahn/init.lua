@@ -97,7 +97,7 @@ advtrains.register_wagon("wagon_zugspitzbahn_green", {
 	mesh="advtrains_wagon_bzb.b3d",
 	textures = {"advtrains_bzb_green.png"},
 	drives_on={default=true},
-	max_speed=10,
+	max_speed=20,
 	seats = {
 		{
 			name="1",

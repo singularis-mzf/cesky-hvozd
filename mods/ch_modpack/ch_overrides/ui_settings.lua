@@ -810,7 +810,7 @@ local function on_player_receive_fields(player, formname, fields)
 		update_formspec = true
 
 	elseif fields.chs_navodyznovu_set and tplayer ~= nil then
-		ch_core.clear_help(tplayer)
+		ch_data.clear_help(tplayer)
 	elseif fields.chs_skrytcas_set and tplayer ~= nil then
 		ch_core.clear_datetime_hud(tplayer)
 	elseif fields.chs_mods_set and tplayer ~= nil then
