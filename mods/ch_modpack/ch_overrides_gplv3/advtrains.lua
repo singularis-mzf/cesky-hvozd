@@ -1,3 +1,19 @@
+-- Mod ch_overrides_gplv3
+-- Copyright (C) 2025 Singularis
+--
+-- This program is free software: you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation, either version 3 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 if not core.get_modpath("advtrains") then
     return
 end
@@ -198,4 +214,54 @@ then
             {"default:steel_ingot", "default:paper", "dye:black"},
         },
     })
+end
+
+-- Výběrové boxy pro svahy kolejí:
+
+local prefixes = {
+    "advtrains:dtrack_vst",
+    "advtrains:dtrack_rg_vst",
+    "advtrains:dtrack_concrete_vst",
+    "advtrains:dtrack_rg_concrete_vst",
+    "advtrains:dtrack_tieless_vst",
+    "advtrains:dtrack_tieless_rg_vst",
+}
+
+for i = 2, 8 do
+    local name
+    local step = 1 / (4 * i) -- čtvrtina výškového rozdílu na jeden blok
+    for j = 1, i do
+        local b = (j - 7 / 8) * (4 * step) - 0.5 -- nejnižší stupeň bez korekce
+        local override = {
+            walkable = true,
+            selection_box = {
+                type = "fixed",
+                fixed = {
+                    {-0.75, -0.5, -2/4, 0.75, b, -1/4},
+                    {-0.75, -0.5, -1/4, 0.75, b + step, 0/4},
+                    {-0.75, -0.5, 0/4, 0.75, b + 2 * step, 1/4},
+                    {-0.75, -0.5, 1/4, 0.75, b + 3 * step, 2/4},
+                },
+            },
+            collision_box = {
+                type = "fixed",
+                fixed = {
+                    {-1.5, -0.5, -2/4, 1.5, b, -1/4},
+                    {-1.5, -0.5, -1/4, 1.5, b + step, 0/4},
+                    {-1.5, -0.5, 0/4, 1.5, b + 2 * step, 1/4},
+                    {-1.5, -0.5, 1/4, 1.5, b + 3 * step, 2/4},
+                },
+            },
+        }
+        for _, prefix in ipairs(prefixes) do
+            if i == 2 then
+                name = prefix..j
+            else
+                name = prefix..i..j
+            end
+            if core.registered_nodes[name] ~= nil then
+                core.override_item(name, override)
+            end
+        end
+    end
 end
