@@ -72,17 +72,21 @@ local function formspec_tab_buttons(player, formspec, style)
 		local pos_y = math.floor((i - 1) / style.main_button_cols) * style.btn_spc
 
 		if def.type == "image" then
+			local image = def.image
+			if type(image) == "function" then
+				image = image(player, style)
+			end
 			if (def.condition == nil or def.condition(player) == true) then
 				formspec[n] = string.format("image_button[%g,%g;%g,%g;%s;%s;]",
 					pos_x, pos_y, style.btn_size, style.btn_size,
-					F(def.image),
+					F(image),
 					F(def.name))
 				formspec[n+1] = "tooltip["..F(def.name)..";"..(def.tooltip or "").."]"
 				n = n+2
 			else
 				formspec[n] = string.format("image[%g,%g;%g,%g;%s^[colorize:#808080:alpha]",
 					pos_x, pos_y, style.btn_size, style.btn_size,
-					def.image)
+					F(image))
 				n = n+1
 			end
 		end

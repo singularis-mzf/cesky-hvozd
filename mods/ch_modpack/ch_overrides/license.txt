@@ -68,6 +68,7 @@ darkage_mud_footstep.4.ogg
 
 building_blocks_tar.png
 building_blocks_tar_bright.png
+ch_overrides_face_mask.png
 	Author: Singularis
 	License: CC BY-SA 3.0
 	Source: own work

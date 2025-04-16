@@ -181,7 +181,16 @@ end
 
 ui.register_button("ch_clothing", {
 	type = "image",
-	image = "skins_button.png",
+	image = function(player, style)
+		assert(core.is_player(player))
+		local properties = player_api.get_animation(player)
+		local textures = properties.textures
+		if type(textures) == "table" and textures[1] ~= nil and textures[1] ~= "blank.png" then
+			return "ch_core_white_pixel.png^[multiply:#487491^[resize:19x19^([combine:19x19:-15,-15="..
+				textures[1].."\\^[resize\\:128x64^[mask:ch_overrides_face_mask.png)"
+		end
+		return "skins_button.png"
+	end,
 	tooltip = "Vzhled postavy",
 	condition = function(player)
 		return true
