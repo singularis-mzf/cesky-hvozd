@@ -192,6 +192,16 @@ function minetest.item_drop(itemstack, dropper, pos)
 			return ItemStack()
 		end
 	end
+	local dropper_name = "???"
+	local dropper_pos = "(???)"
+	if dropper ~= nil and dropper.get_player_name ~= nil and dropper.get_pos ~= nil then
+		dropper_name = dropper:get_player_name()
+		dropper_pos = core.pos_to_string(vector.round(dropper:get_pos()))
+	end
+	local item_name = itemstack:get_name()
+	if core.registered_items[item_name] ~= nil then
+		core.log("action", "Item drop: "..dropper_name.." dropped "..itemstack:get_count().." of '"..item_name.."' at "..dropper_pos)
+	end
 	return old_minetest_item_drop(itemstack, dropper, pos)
 end
 
