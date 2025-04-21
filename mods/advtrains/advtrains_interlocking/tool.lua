@@ -5,17 +5,17 @@ local ilrs = advtrains.interlocking.route
 
 local function node_right_click(pos, pname, player)
 	if advtrains.is_passive(pos) then
-		local form = "size[7,5]label[0.5,0.5;Route lock inspector]"
+		local form = "size[7,5]label[0.5,0.5;Průzkumník zámků]"
 		local pts = advtrains.encode_pos(pos)
 		
 		local rtl = ilrs.has_route_lock(pts)
 		
 		if rtl then
-			form = form.."label[0.5,1;Route locks currently put:\n"..rtl.."]"
-			form = form.."button_exit[0.5,3.5;  5,1;clear;Clear]"
+			form = form.."label[0.5,1;Právě uzamčeno:\n"..rtl.."]"
+			form = form.."button_exit[0.5,3.5;  5,1;clear;Odemknout vše]"
 		else
-			form = form.."label[0.5,1;No route locks set]"
-			form = form.."button_exit[0.5,3.5;  5,1;emplace;Emplace manual lock]"
+			form = form.."label[0.5,1;Nic není uzamčeno]"
+			form = form.."button_exit[0.5,3.5;  5,1;emplace;Uzamknout ručně]"
 		end
 		
 		minetest.show_formspec(pname, "at_il_rtool_"..pts, form)
@@ -25,7 +25,7 @@ local function node_right_click(pos, pname, player)
 	-- If not a turnout, check the track section and show a form
 	local node_ok, conns, rail_y=advtrains.get_rail_info_at(pos)
 	if not node_ok then
-		minetest.chat_send_player(pname, "Node is not a track!")
+		minetest.chat_send_player(pname, "Tento blok není kolej!")
 		return
 	end
 	if advtrains.interlocking.db.get_tcb(pos) then
@@ -37,14 +37,14 @@ local function node_right_click(pos, pname, player)
 	if ts_id then
 		advtrains.interlocking.show_ts_form(ts_id, pname)
 	else
-		minetest.chat_send_player(pname, "No track section at this location!")
+		minetest.chat_send_player(pname, "Zde není zabezpečený traťový úsek!")
 	end
 end
 
 local function node_left_click(pos, pname, player)
 	local node_ok, conns, rail_y=advtrains.get_rail_info_at(pos)
 	if not node_ok then
-		minetest.chat_send_player(pname, "Node is not a track!")
+		minetest.chat_send_player(pname, "Tento blok není kolej!")
 		return
 	end
 
@@ -62,13 +62,14 @@ local function node_left_click(pos, pname, player)
 		advtrains.interlocking.db.update_rs_cache(ts_id)
 		advtrains.interlocking.highlight_track_section(pos)
 	else
-		minetest.chat_send_player(pname, "No track section at this location!")
+		minetest.chat_send_player(pname, "Zde není zabezpečený traťový úsek!")
 	end
 end
 
 
 minetest.register_craftitem("advtrains_interlocking:tool",{
-	description = "Interlocking tool\nPunch: Highlight track section\nPlace: check route locks/show track section info",
+	description = "ovladač traťového zabezpečení",
+	_ch_help = "levý klik: zvýraznit traťový úsek\npravý klik: prozkoumat/zkontrolovat zámky nebo zobrazit informace o traťovém úseku",
 	groups = {cracky=1}, -- key=name, value=rating; rating=1..3.
 	inventory_image = "at_il_tool.png",
 	wield_image = "at_il_tool.png",

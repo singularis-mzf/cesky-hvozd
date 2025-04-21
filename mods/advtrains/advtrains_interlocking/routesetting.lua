@@ -86,8 +86,8 @@ function ilrs.set_route(signal, route, try)
 		local c_locks = {}
 		if route.use_rscache and c_ts.rs_cache and c_rseg.next then
 			-- rscache needs to be enabled, present and next must be defined
-			start_pkey = advtrains.encode_pos(c_sigd.p)
-			end_pkey = advtrains.encode_pos(c_rseg.next.p)
+			local start_pkey = advtrains.encode_pos(c_sigd.p)
+			local end_pkey = advtrains.encode_pos(c_rseg.next.p)
 			if c_ts.rs_cache[start_pkey] and c_ts.rs_cache[start_pkey][end_pkey] then
 				for lp,lst in pairs(c_ts.rs_cache[start_pkey][end_pkey]) do
 					--atdebug("Add lock from RSCache:",lp,"->",lst)

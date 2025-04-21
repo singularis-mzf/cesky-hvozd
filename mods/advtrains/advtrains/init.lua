@@ -207,8 +207,6 @@ advtrains.meseconrules =
 
 advtrains.fpath=minetest.get_worldpath().."/advtrains"
 
-advtrains.poconvert = dofile(advtrains.modpath.."/poconvert.lua")
-advtrains.poconvert.from_flat("advtrains")
 attrans = minetest.get_translator("advtrains")
 
 advtrains.speed = dofile(advtrains.modpath.."/speed.lua")

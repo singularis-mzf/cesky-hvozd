@@ -268,7 +268,7 @@ register_cover("gravel", {
 
 register_cover("railway_gravel", {
 	description = "železniční štěrk",
-	texture = "default_gravel.png^[multiply:#956338",
+	texture = "ch_extras_gravel.png",
 	texture_size = 64,
 	groups = {crumbly = 2, falling_node = 1, attached_node = 1, not_blocking_trains = 1, ch_cover = 1},
 	sounds = default.node_sound_gravel_defaults(),

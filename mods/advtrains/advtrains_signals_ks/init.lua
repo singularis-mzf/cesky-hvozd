@@ -89,38 +89,38 @@ end
 local mainaspects_main = {
 	{
 		name = "proceed",
-		description = "Proceed",
+		description = "Volno",
 		zs3 = "off"
 	},
 	{
 		name = "shunt",
-		description = "Shunt",
+		description = "Posun",
 		zs3 = "off",
 		shunt = true,
 	},
 	{
 		name = "proceed_16",
-		description = "Proceed (speed 16)",
+		description = "Volno (rychlost 16)",
 		zs3 = "16",
 	},
 	{
 		name = "proceed_12",
-		description = "Proceed (speed 12)",
+		description = "Volno (rychlost 12)",
 		zs3 = "12",
 	},
 	{
 		name = "proceed_8",
-		description = "Proceed (speed 8)",
+		description = "Volno (rychlost 8)",
 		zs3 = "8",
 	},
 	{
 		name = "proceed_6",
-		description = "Proceed (speed 6)",
+		description = "Volno (rychlost 6)",
 		zs3 = "6",
 	},
 	{
 		name = "proceed_4",
-		description = "Proceed (speed 4)",
+		description = "Volno (rychlost 4)",
 		zs3 = "4",
 	},
 }
@@ -154,7 +154,7 @@ end
 local mainaspects_dst = {
 	{
 		name = "expectclear",
-		description = "Expect Clear",
+		description = "Očekávej volno",
 	},
 }
 
@@ -176,7 +176,7 @@ end
 local mainaspects_ra = {
 	{
 		name = "shunt",
-		description = "Shunt",
+		description = "Posun",
 		shunt = true,
 	},
 }
@@ -264,6 +264,7 @@ for _, rtab in ipairs({
 			on_rightclick = advtrains.interlocking.signal.on_rightclick,
 			can_dig = advtrains.interlocking.signal.can_dig,
 			after_dig_node = advtrains.interlocking.signal.after_dig,
+			after_place_node = advtrains.after_place_signal,
 		})
 		-- rotatable by trackworker
 	end
@@ -302,7 +303,7 @@ for _, rtab in ipairs({
 			}
 		end
 		minetest.register_node("advtrains_signals_ks:vs_"..typ.."_"..rot, {
-			description = "Ks Distant Signal",
+			description = "předzvěst KS",
 			drawtype = "mesh",
 			mesh = "advtrains_signals_ks_distant_smr"..rot..".obj",
 			tiles = {"advtrains_signals_ks_mast.png", "advtrains_signals_ks_head.png", "advtrains_signals_ks_head.png", tile},
@@ -337,6 +338,7 @@ for _, rtab in ipairs({
 			on_rightclick = advtrains.interlocking.signal.on_rightclick,
 			can_dig = advtrains.interlocking.signal.can_dig,
 			after_dig_node = advtrains.interlocking.signal.after_dig,
+			after_place_node = advtrains.after_place_signal,
 		})
 		-- rotatable by trackworker
 	end
@@ -354,7 +356,7 @@ for _, rtab in ipairs({
 			afunc = function() return prts.asp end
 		end
 		minetest.register_node("advtrains_signals_ks:ra_"..typ.."_"..rot, {
-			description = "Ks Shunting Signal",
+			description = "posunové návěstidlo KS",
 			drawtype = "mesh",
 			mesh = "advtrains_signals_ks_sht_smr"..rot..".obj",
 			tiles = {"advtrains_signals_ks_mast.png", "advtrains_signals_ks_head.png", "advtrains_signals_ks_head.png", "advtrains_signals_ks_ltm_"..typ..".png"},
@@ -392,6 +394,7 @@ for _, rtab in ipairs({
 			on_rightclick = advtrains.interlocking.signal.on_rightclick,
 			can_dig = advtrains.interlocking.signal.can_dig,
 			after_dig_node = advtrains.interlocking.signal.after_dig,
+			after_place_node = advtrains.after_place_signal,
 		})
 		-- rotatable by trackworker
 	end
@@ -432,27 +435,77 @@ for _, rtab in ipairs({
 			on_rightclick = advtrains.interlocking.signal.on_rightclick,
 			can_dig = advtrains.interlocking.signal.can_dig,
 			after_dig_node = advtrains.interlocking.signal.after_dig,
+			after_place_node = advtrains.after_place_signal,
 		})
 		-- rotatable by trackworker
 		--TODO add rotation using trackworker
 	end
 
 	for typ, prts in pairs {
-		["hfs"] = {asp = {main = false, shunt = false}, n = "pam", mesh = "_hfs", owntile = true},
-		["pam"] = {asp = {main = -1, shunt = false, proceed_as_main = true}, n = "ne4"},
-		["ne4"] = {asp = {}, n = "ne3x1", mesh="_ne4", owntile = true},
-		["ne3x1"] = {asp = {}, n = "ne3x2", mesh="_ne3", owntile = true},
-		["ne3x2"] = {asp = {}, n = "ne3x3", mesh="_ne3", owntile = true},
-		["ne3x3"] = {asp = {}, n = "ne3x4", mesh="_ne3", owntile = true},
-		["ne3x4"] = {asp = {}, n = "ne3x5", mesh="_ne3", owntile = true},
-		["ne3x5"] = {asp = {}, n = "hfs", mesh="_ne3", owntile = true},
+		["hfs"] = {
+			asp = {main = false, shunt = false},
+			n = "pam",
+			--[[mesh = "_hfs",]]
+			name = "železniční návěst: posun zakázán",
+			tile2 = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_hfs.png^[makealpha:255,255,255)",
+		},
+		["pam"] = {
+			asp = {main = -1, shunt = false, proceed_as_main = true},
+			n = "ne4",
+			name = "železniční návěst: posun pokračuje jako normální vlak",
+			tile2 = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_pam.png^[makealpha:255,255,255)"
+		},
+		["ne4"] = {
+			asp = {},
+			n = "ne3x1",
+			mesh="_ne4",
+			name = "železniční návěst: ne4",
+			tile2 = "advtrains_signals_ks_sign_ne4.png",
+			inventory_image = "[combine:20x20:6,0=\\[combine\\:8x20\\:0,0=advtrains_signals_ks_sign_ne4.png",
+		},
+		["ne3x1"] = {
+			asp = {},
+			n = "ne3x2",
+			mesh="_ne3",
+			name = "železniční návěst: ne3x1",
+			tile2 = "advtrains_signals_ks_sign_ne3x1.png",
+			inventory_image = "[combine:16x16:6,0=advtrains_signals_ks_sign_ne3x1.png\\^[resize\\:4x16",
+		},
+		["ne3x2"] = {
+			asp = {},
+			n = "ne3x3",
+			mesh="_ne3",
+			name = "železniční návěst: ne3x2",
+			tile2 = "advtrains_signals_ks_sign_ne3x2.png",
+			inventory_image = "[combine:16x16:6,0=advtrains_signals_ks_sign_ne3x2.png\\^[resize\\:4x16",
+		},
+		["ne3x3"] = {
+			asp = {},
+			n = "ne3x4",
+			mesh="_ne3",
+			name = "železniční návěst: ne3x3",
+			tile2 = "advtrains_signals_ks_sign_ne3x3.png",
+			inventory_image = "[combine:16x16:6,0=advtrains_signals_ks_sign_ne3x3.png\\^[resize\\:4x16",
+		},
+		["ne3x4"] = {
+			asp = {},
+			n = "ne3x5",
+			mesh="_ne3",
+			name = "železniční návěst: ne3x4",
+			tile2 = "advtrains_signals_ks_sign_ne3x4.png",
+			inventory_image = "[combine:16x16:6,0=advtrains_signals_ks_sign_ne3x4.png\\^[resize\\:4x16",
+		},
+		["ne3x5"] = {
+			asp = {},
+			n = "hfs",
+			mesh="_ne3",
+			name = "železniční návěst: ne3x5",
+			tile2 = "advtrains_signals_ks_sign_ne3x5.png",
+			inventory_image = "[combine:16x16:6,0=advtrains_signals_ks_sign_ne3x5.png\\^[resize\\:4x16",
+		},
 	} do
 		local mesh = prts.mesh or ""
-		local tile2 = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_"..typ..".png^[makealpha:255,255,255)"
-		if prts.owntile then
-			tile2 = "advtrains_signals_ks_sign_"..typ..".png"
-		end
-		register_sign("sign", typ, prts.n, "Signal Sign", "sign"..mesh, tile2, "hfs", "advtrains_signals_ks_sign_lf7.png", prts.asp)
+		register_sign("sign", typ, prts.n, prts.name, "sign"..mesh, prts.tile2, typ, prts.inventory_image or prts.tile2, prts.asp)
 	end
 	
 	for typ, prts in pairs {
@@ -470,7 +523,8 @@ for _, rtab in ipairs({
 		if typ == "e" then
 			tile2 = "advtrains_signals_ks_sign_zs10.png"
 		end
-		register_sign("sign", typ, prts.n, attrans("Permanent local speed restriction sign").." ("..(typ == "e" and attrans("end") or typ) ..")", "sign"..mesh, tile2, "8", "advtrains_signals_ks_sign_8.png^[invert:rgb", prts.asp)
+		register_sign("sign", typ, prts.n, attrans("Permanent local speed restriction sign").." ("..(typ == "e" and attrans("end") or typ) ..")",
+			"sign"..mesh, tile2, "8", "advtrains_signals_ks_sign_8.png^[invert:rgb", prts.asp)
 	end
 
 	for typ, prts in pairs {
@@ -483,7 +537,8 @@ for _, rtab in ipairs({
 	} do
 		local tile2 = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_"..typ..".png^[makealpha:255,255,255)"..(typ == "e" and "" or "^[multiply:orange")
 		local inv = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_8.png^[makealpha:255,255,255)^[multiply:orange"
-		register_sign("sign_lf", typ, prts.n, "Temporary local speed restriction sign", "sign", tile2, "8", inv, {main = prts.main, shunt = true, type = "temp"})
+		register_sign("sign_lf", typ, prts.n, attrans("Temporary local speed restriction sign").." ("..(typ == "e" and attrans("end") or typ) ..")",
+			"sign", tile2, "8", inv, {main = prts.main, shunt = true, type = "temp"})
 	end
 
 	for typ, prts in pairs {
@@ -496,7 +551,7 @@ for _, rtab in ipairs({
 	} do
 		local tile2 = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_"..typ..".png^[makealpha:255,255,255)"
 		local inv = "advtrains_signals_ks_sign_lf7.png^(advtrains_signals_ks_sign_8.png^[makealpha:255,255,255)"
-		register_sign("sign_lf7", typ, prts.n, attrans("Line speed restriction sign").." ("..(typ == "20" and attrans("end") or typ) ..")",
+		register_sign("sign_lf7", typ, prts.n, attrans("Line speed restriction sign").." ("..(typ == "e" and attrans("end") or typ) ..")",
 			"sign", tile2, "8", inv, {main = prts.main, shunt = true, type = "line"})
 	end
 	
@@ -528,7 +583,8 @@ for _, rtab in ipairs({
 				save_in_at_nodedb = 1,
 				not_in_creative_inventory = (rtab.ici and prts.ici) and 0 or 1,
 			},
-			after_dig_node = function(pos) advtrains.ndb.update(pos) end
+			after_dig_node = function(pos) advtrains.ndb.update(pos) end,
+			after_place_node = advtrains.after_place_signal,
 		}
 
 		-- Zs 3
@@ -584,6 +640,7 @@ for _, rtab in ipairs({
 			trackworker_rot_incr_param2 = (rot=="60")
 		},
 		drop = "advtrains_signals_ks:mast_mast_0",
+		after_place_node = advtrains.after_place_signal,
 	})
 	--TODO add rotation using trackworker
 end
@@ -605,6 +662,14 @@ minetest.register_craft({
 		{'default:steel_ingot'},
 		{'dye:cyan'},
 		{'default:steel_ingot'},
+	},
+})
+
+minetest.register_craft({
+	output = 'advtrains_signals_ks:vs_slow_0 10',
+	recipe = {
+		{'default:steel_ignot', 'default:steel_ingot'},
+		{'dye:green', 'dye:yellow'},
 	},
 })
 
@@ -666,8 +731,38 @@ minetest.register_craft{
 }
 
 minetest.register_craft{
-	output = "advtrains_signals_ks:sign_lf_8_0 1",
+	output = "advtrains_signals_ks:sign_ne4_0 1",
 	recipe = {{"advtrains_signals_ks:sign_pam_0"}}
+}
+
+minetest.register_craft{
+	output = "advtrains_signals_ks:sign_ne3x1_0 1",
+	recipe = {{"advtrains_signals_ks:sign_ne4_0"}}
+}
+
+minetest.register_craft{
+	output = "advtrains_signals_ks:sign_ne3x2_0 1",
+	recipe = {{"advtrains_signals_ks:sign_ne3x1_0"}}
+}
+
+minetest.register_craft{
+	output = "advtrains_signals_ks:sign_ne3x3_0 1",
+	recipe = {{"advtrains_signals_ks:sign_ne3x2_0"}}
+}
+
+minetest.register_craft{
+	output = "advtrains_signals_ks:sign_ne3x4_0 1",
+	recipe = {{"advtrains_signals_ks:sign_ne3x3_0"}}
+}
+
+minetest.register_craft{
+	output = "advtrains_signals_ks:sign_ne3x5_0 1",
+	recipe = {{"advtrains_signals_ks:sign_ne3x4_0"}}
+}
+
+minetest.register_craft{
+	output = "advtrains_signals_ks:sign_lf_8_0 1",
+	recipe = {{"advtrains_signals_ks:sign_ne3x5_0"}}
 }
 
 minetest.register_craft{

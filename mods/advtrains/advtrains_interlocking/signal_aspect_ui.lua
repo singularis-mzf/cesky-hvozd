@@ -38,14 +38,14 @@ function advtrains.interlocking.make_ip_formspec_component(pos, x, y, w)
 		local ipos = minetest.string_to_pos(pts)
 		ipmarker(ipos, connid)
 		return table.concat {
-			F.S_label(x, y, "Influence point is set at @1.", string.format("%s/%s", pts, connid)),
-			F.S_button_exit(x, y+0.5, w/2-0.125, "ip_set", "Modify"),
-			F.S_button_exit(x+w/2+0.125, y+0.5, w/2-0.125, "ip_clear", "Clear"),
+			F.S_label(x, y, "Bod účinku nastaven na @1.", string.format("%s/%s", pts, connid)),
+			F.S_button_exit(x, y+0.5, w/2-0.125, "ip_set", "Změnit"),
+			F.S_button_exit(x+w/2+0.125, y+0.5, w/2-0.125, "ip_clear", "Odebrat bod účinku"),
 		}
 	else
 		return table.concat {
-			F.S_label(x, y, "Influence point is not set."),
-			F.S_button_exit(x, y+0.5, w, "ip_set", "Set influence point"),
+			F.S_label(x, y, "Bod účinku není nastaven."),
+			F.S_button_exit(x, y+0.5, w, "ip_set", "Nastavit bod účinku"),
 		}
 	end
 end
@@ -83,10 +83,10 @@ function advtrains.interlocking.show_ip_sa_form(pos, pname)
 	-- Create Signal aspect formspec elements
 	local ndef = advtrains.ndb.get_ndef(pos)
 	if ndef and ndef.advtrains then
-		form[#form+1] = F.label(0.5, 2, "Signal Aspect:")
+		form[#form+1] = F.label(0.5, 2, "signál:")
 		-- main aspect list
 		if ndef.advtrains.main_aspects then
-			local entries = { "<none>" }
+			local entries = { "<žádný>" }
 			local sel = 1
 			for i, mae in ipairs(ndef.advtrains.main_aspects) do
 				entries[i+1] = mae.description
@@ -98,9 +98,9 @@ function advtrains.interlocking.show_ip_sa_form(pos, pname)
 		end
 		-- distant signal assign (is shown either when main_aspect is not none, or when pure distant signal)
 		if rpos then
-			form[#form+1] = F.button_exit(0.5, 3.5, 4, "sa_undistant", "Dst: " .. minetest.pos_to_string(rpos))
+			form[#form+1] = F.button_exit(0.5, 3.5, 4, "sa_undistant", "odpojit od: " .. minetest.pos_to_string(rpos))
 		elseif (ma and not ma.halt) or not ndef.advtrains.main_aspects then
-			form[#form+1] = F.button_exit(0.5, 3.5, 4, "sa_distant", "<assign distant>")
+			form[#form+1] = F.button_exit(0.5, 3.5, 4, "sa_distant", "<přiřadit předzvěst>")
 		end
 	end
 	
@@ -165,12 +165,12 @@ end)
 -- inits the signal IP assignment process
 function advtrains.interlocking.init_ip_assign(pos, pname)
 	if not minetest.check_player_privs(pname, "interlocking") then
-		minetest.chat_send_player(pname, "Insufficient privileges to use this!")
+		minetest.chat_send_player(pname, attrans("Insufficient privileges to use this!"))
 		return
 	end
 	--remove old IP
 	--advtrains.interlocking.db.clear_ip_by_signalpos(pos)
-	minetest.chat_send_player(pname, "Configuring Signal: Please look in train's driving direction and punch rail to set influence point.")
+	minetest.chat_send_player(pname, attrans("Configuring Signal: Please look in train's driving direction and punch rail to set influence point."))
 	
 	players_assign_ip[pname] = pos
 end
@@ -178,10 +178,10 @@ end
 -- inits the distant signal assignment process
 function advtrains.interlocking.init_distant_assign(pos, pname)
 	if not minetest.check_player_privs(pname, "interlocking") then
-		minetest.chat_send_player(pname, "Insufficient privileges to use this!")
+		minetest.chat_send_player(pname, attrans("Insufficient privileges to use this!"))
 		return
 	end
-	minetest.chat_send_player(pname, "Set distant signal: Punch the main signal to assign!")
+	minetest.chat_send_player(pname, attrans("Set distant signal: Punch the main signal to assign!"))
 	
 	players_assign_distant[pname] = pos
 end
@@ -203,7 +203,7 @@ local function try_auto_assign_to_tcb(signalpos, pos, connid, pname)
 				advtrains.interlocking.db.assign_signal_to_tcbs(signalpos, sigd)
 				-- use auto-naming
 				advtrains.interlocking.add_autoname_to_tcbs(tcb[aconnid], pname)
-				minetest.chat_send_player(pname, "Assigned signal to the TCB at "..core.pos_to_string(apos))
+				minetest.chat_send_player(pname, attrans("Assigned signal to the TCB at @1", core.pos_to_string(apos)))
 				advtrains.interlocking.show_tcb_marker(apos)
 				advtrains.interlocking.show_signalling_form(sigd, pname)
 			end
@@ -215,7 +215,7 @@ local function try_auto_assign_to_tcb(signalpos, pos, connid, pname)
 			local mainsig = advtrains.interlocking.db.get_ip_signal(pts, aconnid)
 			if mainsig and advtrains.interlocking.signal.get_signal_cap_level(mainsig) >= 3 then
 				advtrains.interlocking.signal.set_aspect(signalpos, "_default", mainsig)
-				minetest.chat_send_player(pname, "Assigned distant signal to the main signal at "..core.pos_to_string(mainsig))
+				minetest.chat_send_player(pname, attrans("Assigned distant signal to the main signal at @1", core.pos_to_string(mainsig)))
 				return
 			end
 		end
@@ -245,19 +245,19 @@ minetest.register_on_punchnode(function(pos, node, player, pointed_thing)
 				if not advtrains.interlocking.db.get_ip_signal_asp(pts, plconnid) then
 					advtrains.interlocking.db.set_ip_signal(pts, plconnid, signalpos)
 					ipmarker(pos, plconnid)
-					minetest.chat_send_player(pname, "Configuring Signal: Successfully set influence point")
+					minetest.chat_send_player(pname, attrans("Configuring Signal: Successfully set influence point"))
 					-- Try to find a TCB ahead and auto assign this signal there
 					if advtrains.interlocking.signal.get_signal_cap_level(signalpos) >= 2 then
 						try_auto_assign_to_tcb(signalpos, pos, plconnid, pname)
 					end
 				else
-					minetest.chat_send_player(pname, "Configuring Signal: Influence point of another signal is already present!")
+					minetest.chat_send_player(pname, attrans("Configuring Signal: Influence point of another signal is already present!"))
 				end
 			else
-				minetest.chat_send_player(pname, "Configuring Signal: This is not a normal two-connection rail! Aborted.")
+				minetest.chat_send_player(pname, attrans("Configuring Signal: This is not a normal two-connection rail! Aborted."))
 			end
 		else
-			minetest.chat_send_player(pname, "Configuring Signal: Node is too far away. Aborted.")
+			minetest.chat_send_player(pname, attrans("Configuring Signal: Node is too far away. Aborted."))
 		end
 		players_assign_ip[pname] = nil
 	end

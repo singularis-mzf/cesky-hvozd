@@ -247,12 +247,12 @@ function advtrains.interlocking.self_tcb_make_after_place_callback(fail_silently
 		local pname = player:get_player_name()
 		if not minetest.check_player_privs(pname, "interlocking") then
 			if not fail_silently_on_noprivs then
-				minetest.chat_send_player(pname, "Insufficient privileges to use this!")
+				minetest.chat_send_player(pname, attrans("Insufficient privileges to use this!"))
 			end
 			return
 		end
 		if ildb.get_tcb(pos) then
-			minetest.chat_send_player(pname, "TCB already existed at this position, now linked to this node")
+			minetest.chat_send_player(pname, attrans("TCB already existed at this position, now linked to this node"))
 		else
 			ildb.create_tcb_at(pos, pname)
 		end
@@ -261,7 +261,7 @@ function advtrains.interlocking.self_tcb_make_after_place_callback(fail_silently
 			local tcbs = ildb.get_tcbs(sigd)
 			-- make sure signal doesn't already exist
 			if tcbs.signal then
-				minetest.chat_send_player(pname, "Signal on B side already assigned!")
+				minetest.chat_send_player(pname, attrans("Signal on B side already assigned!"))
 				return
 			end
 			ildb.assign_signal_to_tcbs(pos, sigd)
@@ -281,7 +281,7 @@ function advtrains.interlocking.self_tcb_make_can_dig_callback(is_signal)
 		local pname = player and player:get_player_name() or ""
 		-- need to duplicate logic of the regular "can_dig_or_modify_track()" function in core/tracks.lua
 		if advtrains.get_train_at_pos(pos) then
-			minetest.chat_send_player(pname, "Can't remove track, a train is here!")
+			minetest.chat_send_player(pname, attrans("Can't remove track, a train is here!"))
 			return false
 		end
 		-- end of standard checks
@@ -376,8 +376,12 @@ local sidecolorB = minetest.get_color_escape_sequence("#068b00")
 
 local function mktcbformspec(pos, side, tcbs, offset, pname)
 	local form = ""
-	local btnpref = side==1 and "A" or "B"
-	local ts
+	local btncolor, btnpref, ts
+	if side == 1 then
+		btncolor, btnpref = sidecolorA, "A"
+	else
+		btncolor, btnpref = sidecolorB, "B"
+	end
 	-- ensure that mapping and xlink are up to date
 	ildb.tcbs_ensure_ts_ref_exists({p=pos, s=side, tcbs=tcbs})
 	ildb.validate_tcb_xlink({p=pos, s=side, tcbs=tcbs})
@@ -386,12 +390,12 @@ local function mktcbformspec(pos, side, tcbs, offset, pname)
 		ts = ildb.get_ts(tcbs.ts_id)
 	end
 	if ts then
-		form = form.."label[0.5,"..offset..";Side "..btnpref..": "..minetest.formspec_escape(ts.name or tcbs.ts_id).."]"
-		form = form.."button[0.5,"..(offset+0.5)..";5,1;"..btnpref.."_gotots;Show track section]"
+		form = form.."label[0.5,"..offset..";"..btncolor..attrans("Side "..btnpref)..": "..minetest.formspec_escape(ts.name or tcbs.ts_id).."]"
+		form = form.."button[0.5,"..(offset+0.5)..";5,1;"..btnpref.."_gotots;"..attrans("Show track section").."]"
 	else
 		tcbs.ts_id = nil
-		form = form.."label[0.5,"..offset..";Side "..btnpref..": ".."End of interlocking]"
-		form = form.."button[0.5,"..(offset+0.5)..";5,1;"..btnpref.."_makeil;Create Interlocked Track Section]"
+		form = form.."label[0.5,"..offset..";"..btncolor..attrans("Side "..btnpref)..": "..attrans("End of interlocking").."]"
+		form = form.."button[0.5,"..(offset+0.5)..";5,1;"..btnpref.."_makeil;"..attrans("Create Interlocked Track Section").."]"
 	end
 	-- xlink
 	if tcbs.xlink then
@@ -399,10 +403,10 @@ local function mktcbformspec(pos, side, tcbs, offset, pname)
 		form = form.."button[4.5,"..(offset+1.5)..";1,1;"..btnpref.."_xlinkdel;X]"
 	else
 		if players_assign_xlink[pname] then
-			form = form.."button[0.5,"..(offset+1.5)..";4,1;"..btnpref.."_xlinklink;Link "..ildb.sigd_to_string(players_assign_xlink[pname]).."]"
+			form = form.."button[0.5,"..(offset+1.5)..";4,1;"..btnpref.."_xlinklink;"..attrans("Link @1", ildb.sigd_to_string(players_assign_xlink[pname])).."]"
 			form = form.."button[4.5,"..(offset+1.5)..";1,1;"..btnpref.."_xlinkabrt;X]"
 		else
-			form = form.."label[0.5,"..(offset+1.5)..";No Link]"
+			form = form.."label[0.5,"..(offset+1.5)..";"..attrans("No Link").."]"
 			form = form.."button[4.5,"..(offset+1.5)..";1,1;"..btnpref.."_xlinkadd;+]"
 		end
 	end
@@ -490,7 +494,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				else
 					if f_xlinkadd[connid] then
 						players_assign_xlink[pname] = {p=pos, s=connid}
-						minetest.chat_send_player(pname, "TCB Link: Select linked TCB now!")
+						minetest.chat_send_player(pname, attrans("TCB Link: Select linked TCB now!"))
 						minetest.close_formspec(pname, formname)
 						return -- to not reopen form
 					end
@@ -536,7 +540,7 @@ function advtrains.interlocking.show_ts_form(ts_id, pname)
 		advtrains.interlocking.show_tcb_marker(sigd.p)
 	end
 	
-	form = form.."label[0.5,2.5;Boundary TCBs:]"
+	form = form.."label[0.5,2.5;"..attrans("Boundary TCBs")..":]"
 	form = form.."textlist[0.5,3;4,3;tcblist;"..table.concat(strtab, ",").."]"
 	
 	-- additional route locks (e.g. for level crossings)
@@ -548,15 +552,15 @@ function advtrains.interlocking.show_ts_form(ts_id, pname)
 				minetest.pos_to_string(advtrains.decode_pos(pts)).." = "..state)
 		end
 	end
-	form = form.."label[5.5,2.5;Fixed route locks (e.g. level crossings):]"
+	form = form.."label[5.5,2.5;"..attrans("Fixed route locks (e.g. level crossings)")..":]"
 	form = form.."textlist[5.5,3;4,3;fixedlocks;"..table.concat(strtab, ",").."]"
 	
 	if ildb.may_modify_ts(ts) then
-		form = form.."button[5.5,6;2,1;flk_add;Add locks]"
-		form = form.."button[7.5,6;2,1;flk_clear;Clear locks]"
+		form = form.."button[5.5,6;2,1;flk_add;"..attrans("Add locks").."]"
+		form = form.."button[7.5,6;2,1;flk_clear;"..attrans("Clear locks").."]"
 		
-		form = form.."button[5.5,8;4,1;remove;Remove Section]"
-		form = form.."tooltip[remove;This will remove the track section and set all its end points to End Of Interlocking]"
+		form = form.."button[5.5,8;4,1;remove;"..attrans("Remove Section").."]"
+		form = form.."tooltip[remove;"..attrans("This will remove the track section and set all its end points to End Of Interlocking").."]"
 	else
 		hint=3
 	end
@@ -574,10 +578,10 @@ function advtrains.interlocking.show_ts_form(ts_id, pname)
 		form = form.."label[0.5,7.1;"..attrans("No trains on this section.").."]"
 	end
 	
-	form = form.."button[5.5,7;4,1;reset;Reset section state]"
+	form = form.."button[5.5,7;4,1;reset;"..attrans("Reset section state").."]"
 
 	if hint == 3 then
-		form = form.."label[0.5,0.75;You cannot modify track sections when a route is set or a train is on the section.]"
+		form = form.."label[0.5,0.75;"..attrans("You cannot modify track sections when a route is set or a train is on the section.").."]"
 		--form = form.."label[0.5,1;Trying to unlink a TCB directly connected to this track will not work.]"
 	end
 	
@@ -618,7 +622,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				ts.fixed_locks = {}
 			end
 			players_assign_fixedlocks[pname] = ts_id
-			minetest.chat_send_player(pname, "Punch components to add fixed locks. (punch anything else = end)")
+			minetest.chat_send_player(pname, attrans("Punch components to add fixed locks. (punch anything else = end)"))
 			minetest.close_formspec(pname, formname)
 			return
 		elseif fields.flk_clear then
@@ -709,7 +713,7 @@ function advtrains.interlocking.show_tcb_marker(pos)
 		if ts then
 			itex[connid] = ts.name or tcbs.ts_id or "???"
 		else
-			itex[connid] = "--EOI--"
+			itex[connid] = "--kon.zab.ob.--"
 		end
 	end
 	
@@ -769,11 +773,11 @@ function advtrains.interlocking.check_route_valid(route, sigd)
 	while c_sigd and i<=#route do
 		c_tcbs = ildb.get_tcbs(c_sigd)
 		if not c_tcbs then
-			return false, "No TCBS at "..sigd_to_string(c_sigd)
+			return false, attrans("No TCBS at @1", sigd_to_string(c_sigd))
 		end
 		c_ts_id = c_tcbs.ts_id
 		if not c_ts_id then
-			return false, "No track section adjacent to "..sigd_to_string(c_sigd)
+			return false, attrans("No track section adjacent to @1", sigd_to_string(c_sigd))
 		end
 		c_ts = ildb.get_ts(c_ts_id)
 		
@@ -783,7 +787,7 @@ function advtrains.interlocking.check_route_valid(route, sigd)
 			for pts, state in pairs(c_rseg.locks) do
 				local pos = advtrains.decode_pos(pts)
 				if not advtrains.is_passive(pos) then
-					return false, "No passive component for lock at "..pts
+					return false, attrans("No passive component for lock at @1", pts)
 				end
 			end
 		end
@@ -792,7 +796,7 @@ function advtrains.interlocking.check_route_valid(route, sigd)
 		if nvar then
 			local re_tcbs = ildb.get_tcbs({p = nvar.p, s = (nvar.s==1) and 2 or 1})
 			if not re_tcbs or not re_tcbs.ts_id or re_tcbs.ts_id~=c_ts_id then
-				return false, "TCB at "..minetest.pos_to_string(nvar.p).." has different section than previous TCB."
+				return false, attrans("TCB at @1 has different section than previous TCB.", minetest.pos_to_string(nvar.p))
 			end
 		end
 		-- advance
@@ -801,11 +805,11 @@ function advtrains.interlocking.check_route_valid(route, sigd)
 	end
 	-- check end TCB
 	if not c_sigd then
-		return false, "Final TCBS unset (legacy-style buffer route)"
+		return false, attrans("Final TCBS unset (legacy-style buffer route)")
 	end
 	c_tcbs = ildb.get_tcbs(c_sigd)
 	if not c_tcbs then
-		return false, "Final TCBS missing at "..sigd_to_string(c_sigd)
+		return false, attrans("Final TCBS missing at @1", sigd_to_string(c_sigd))
 	end
 	return true, nil, c_sigd
 end
@@ -827,7 +831,8 @@ function advtrains.interlocking.show_signalling_form(sigd, pname, sel_rte, calle
 	
 	if not tcbs.signal then return end
 	if not tcbs.routes then tcbs.routes = {} end
-	
+	if not tcbs.signal_name then tcbs.signal_name = minetest.pos_to_string(sigd.p) end
+
 	local form = "size[7,10]label[0.5,0.5;"..attrans("Signal at @1", minetest.pos_to_string(sigd.p)).."]"
 	form = form.."field[0.8,1.5;5.2,1;name;"..attrans("Signal name")..";"..minetest.formspec_escape(tcbs.signal_name).."]"
 	form = form.."button[5.5,1.2;1,1;setname;"..attrans("Set").."]"
@@ -878,35 +883,35 @@ function advtrains.interlocking.show_signalling_form(sigd, pname, sel_rte, calle
 					end
 					strtab[#strtab+1] = clr .. minetest.formspec_escape(rname)
 				end
-				form = form.."label[0.5,2.5;Routes:]"
+				form = form.."label[0.5,2.5;"..attrans("Routes:").."]"
 				form = form.."textlist[0.5,3;5,3;rtelist;"..table.concat(strtab, ",")
 				if sel_rte then
 					form = form .. ";" .. sel_rte .."]"
-					form = form.."button[0.5,6;  5,1;setroute;Set Route]"
-					form = form.."button[0.5,7;2,1;dsproute;Show]"
+					form = form.."button[0.5,6;  5,1;setroute;"..attrans("Set Route").."]"
+					form = form.."button[0.5,7;2,1;dsproute;"..attrans("Show").."]"
 					if hasprivs then
-						form = form.."button[5.5,3.3;1,0.3;setarsdefault;D]tooltip[setarsdefault;Set ARS default route]"
-						form = form.."button[3.5,7;2,1;editroute;Edit]"
+						form = form.."button[5.5,3.3;1,0.3;setarsdefault;Vých]tooltip[setarsdefault;"..attrans("Set ARS default route").."]"
+						form = form.."button[3.5,7;2,1;editroute;"..attrans("Edit").."]"
 						if sel_rte > 1 then
 							form = form .. "button[5.5,4;1,0.3;moveup;↑]"
 						end
 						if sel_rte < #strtab then
 							form = form .. "button[5.5,4.7;1,0.3;movedown;↓]"
 						end
-						form = form.."button[5.5,5.4;1,0.3;delroute;X]tooltip[delroute;Delete this route]"
+						form = form.."button[5.5,5.4;1,0.3;delroute;X]tooltip[delroute;"..attrans("Delete this route").."]"
 					end
 				else
 					form = form .. "]"
 					if tcbs.ars_disabled then
-						form = form.."label[0.5,6  ;NOTE: ARS is disabled.]"
-						form = form.."label[0.5,6.5;Routes are not automatically set.]"
+						form = form.."label[0.5,6  ;"..attrans("NOTE: ARS is disabled.").."]"
+						form = form.."label[0.5,6.5;"..attrans("Routes are not automatically set.").."]"
 					end
 				end
 				if hasprivs then
-					form = form.."button[0.5,8;2.5,1;smartroute;Smart Route]"
-					form = form.."button[  3,8;2.5,1;newroute;New (Manual)]"
-					form = form..string.format("checkbox[0.5,8.75;ars;Automatic routesetting;%s]", not tcbs.ars_disabled)
-					form = form..string.format("checkbox[0.5,9.25;dstarstrig;Distant signal triggers ARS;%s]", not tcbs.no_dst_ars_trig)
+					form = form.."button[0.5,8;2.5,1;smartroute;"..attrans("Smart Route").."]"
+					form = form.."button[  3,8;2.5,1;newroute;"..attrans("New (Manual)").."]"
+					form = form..string.format("checkbox[0.5,8.75;ars;"..attrans("Automatic routesetting")..";%s]", not tcbs.ars_disabled)
+					form = form..string.format("checkbox[0.5,9.25;dstarstrig;"..attrans("Distant signal triggers ARS")..";%s]", not tcbs.no_dst_ars_trig)
 				end
 			else
 				-- no route is active, and no route is so far defined
@@ -914,19 +919,19 @@ function advtrains.interlocking.show_signalling_form(sigd, pname, sel_rte, calle
 				local caps = advtrains.interlocking.signal.get_signal_cap_level(tcbs.signal)
 				if caps >= 4 then
 					-- offer user the "block signal mode"
-					form = form.."label[0.5,2.5;No routes are yet defined.]"
+					form = form.."label[0.5,2.5;"..attrans("No routes are yet defined.").."]"
 					if hasprivs then
-						form = form.."button[0.5,4;2.5,1;smartroute;Smart Route]"
-						form = form.."button[  3,4;2.5,1;newroute;New (Manual)]"
+						form = form.."button[0.5,4;2.5,1;smartroute;"..attrans("Smart Route").."]"
+						form = form.."button[  3,4;2.5,1;newroute;"..attrans("New (Manual)").."]"
 					end
 				elseif caps >= 3 then
 					-- it's a buffer!
-					form = form.."label[0.5,2.5;This is an always-halt signal (e.g. a buffer)\n"
-								.."No routes can be set from here.]"
+					form = form.."label[0.5,2.5;Tento signál vždy ukazuje červenou.\n"
+								.."Vlakové cesty odsud nemohou být nastaveny.]"
 				else
 					-- signal caps say it cannot be route start/end
-					form = form.."label[0.5,2.5;This is a pure distant signal\n"
-								.."No route is currently set through.]"
+					form = form.."label[0.5,2.5;Toto je vzdálená předzvěst.\n"
+								.."Aktuálně tudy není nastavena vlaková cesta.]"
 				end
 			end
 			
@@ -1059,7 +1064,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				end
 				if fields.delroute and hasprivs then
 					if tcbs.routes[sel_rte] and tcbs.routes[sel_rte].ars then
-						minetest.chat_send_player(pname, "Cannot delete route which has ARS rules, please review and then delete through edit dialog!")
+						minetest.chat_send_player(pname, attrans("Cannot delete route which has ARS rules, please review and then delete through edit dialog!"))
 					else
 						table.remove(tcbs.routes,sel_rte)
 					end
@@ -1069,6 +1074,13 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		
 		if fields.ars then
 			tcbs.ars_disabled = not minetest.is_yes(fields.ars)
+			local action
+			if tcbs.ars_disabled then
+				action = "disabled"
+			else
+				action = "enabled"
+			end
+			core.log("action", pname.." "..action.." ARS at "..pts)
 		end
 		
 		if fields.dstarstrig then

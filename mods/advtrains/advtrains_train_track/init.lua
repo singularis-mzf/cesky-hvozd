@@ -607,7 +607,7 @@ advtrains.register_tracks("default", {
 	models_prefix="advtrains_dtrack",
 	models_suffix=".obj",
 	shared_texture="advtrains_dtrack_shared.png",
-	second_texture="default_gravel.png^[multiply:#956338",
+	second_texture="ch_extras_gravel.png",
 	description=attrans("Track with Railway Gravel"),
 	formats=advtrains.default_slope_formats.t_30deg_slope,
 }, advtrains.ap.t_30deg_slope)
@@ -720,12 +720,12 @@ local function show_fc_formspec(pos,player)
 	
 	local form = 'formspec_version[4]'..
 		'size[10,5]'..
-		'label[0.5,0.4;Advtrains Loading/Unloading Track]'..
-		'label[0.5,1.1;Set the code to match against the wagon\'s freight code]'..
-		'label[0.5,1.6;A blank field matches all wagons (default)]'..
-		'label[0.5,2.1;Use code # to disable the track section]'..
-		'field[0.5,3;5.5,1;fc;FC;'..minetest.formspec_escape(fc)..']'..
-		'button[6.5,3;3,1;save;Submit]'
+		'label[0.5,0.4;kolej nakládání/vykládání]'..
+		'label[0.5,1.1;Nastavte nákladní kód. Vagony se zadaným kódem budou naloženy/vyloženy.]'..
+		'label[0.5,1.6;Prázdné pole znamená všechny vagony.]'..
+		'label[0.5,2.1;Pro vypnutí zadejte kód #.]'..
+		'field[0.5,3;5.5,1;fc;kód:;'..minetest.formspec_escape(fc)..']'..
+		'button[6.5,3;3,1;save;Uložit]'
 	minetest.show_formspec(pname, "at_load_unload_"..advtrains.encode_pos(pos), form)
 end
 
@@ -735,13 +735,13 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local pos = advtrains.decode_pos(pe)
 	if pos then
 		if minetest.is_protected(pos, pname) then
-			minetest.chat_send_player(pname, "Position is protected!")
+			minetest.chat_send_player(pname, "Pozice je zastřežená!")
 			return
 		end
 		
 		if fields.save then
 			minetest.get_meta(pos):set_string("fc",tostring(fields.fc))
-			minetest.chat_send_player(pname,"Freight code set: "..tostring(fields.fc))
+			minetest.chat_send_player(pname,"Nákladní kód nastaven: "..tostring(fields.fc))
 			show_fc_formspec(pos,player)
 		end
 	end

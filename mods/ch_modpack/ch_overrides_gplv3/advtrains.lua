@@ -74,30 +74,40 @@ end
 
 advtrains.register_on_player_overrun(on_player_overrun)
 
-local function after_change(pos, old_node, new_node, player, nodespec)
-    if core.get_item_group(new_node.name, "save_in_at_nodedb") ~= 0 then
-        core.swap_node(pos, old_node)
-        local player_name = player and player:get_player_name()
-        if
-            player_name and advtrains.check_track_protection(pos, player_name) and not advtrains.get_train_at_pos(pos) and
-            (not advtrains.is_track_and_drives_on(old_node.name, advtrains.all_tracktypes) or advtrains.can_dig_or_modify_track(pos))
-        then
+local function on_change(pos, old_node, new_node, player, nodespec)
+    local old_is_track = core.get_item_group(old_node.name, "save_in_at_nodedb") ~= 0
+    local new_is_track = core.get_item_group(new_node.name, "save_in_at_nodedb") ~= 0
+    if not (old_is_track and new_is_track) then
+        core.log("error", "advtrains on_change() called for change ("..old_node.name.."/"..tostring(old_node.param2)..") => ("..
+            new_node.name.."/"..tostring(new_node.param2).."); is_track = ("..tostring(old_is_track)..", "..tostring(new_is_track)..")!")
+        return false
+    end
+    local player_name = player and player:get_player_name()
+    if
+        player_name and
+        advtrains.check_track_protection(pos, player_name)
+    then
+        local can_modify, reason = advtrains.can_dig_or_modify_track(pos)
+        if can_modify then
             advtrains.ndb.swap_node(pos, new_node)
             core.log("action", player_name.." used shape selector to change "..old_node.name.."/"..
                 old_node.param2.." to "..new_node.name.."/"..new_node.param2.." at "..core.pos_to_string(pos))
+            return true
         else
-            -- failed
+            core.chat_send_player(player_name, "Změna selhala: "..tostring(reason))
             core.log("action", player_name.." failed to use shape selector to change "..old_node.name.."/"..
                 old_node.param2.." to "..new_node.name.."/"..new_node.param2.." at "..core.pos_to_string(pos))
+            return false
         end
-    elseif core.get_item_group(old_node.name, "save_in_at_nodedb") ~= 0 then
-        core.log("warning", "shape selector group allowed swap from "..old_node.name.."/"..
-            old_node.param2.." to "..new_node.name.."/"..new_node.param2..", new node is not stored to AT node db!")
     else
-        local player_name = player and player:get_player_name()
-        core.log("action", player_name.." used shape selector to change "..old_node.name.."/"..
-            old_node.param2.." to "..new_node.name.."/"..new_node.param2.." at "..core.pos_to_string(pos)..
-            ", but nodes are not for AT node db, which is unexpected!")
+        if player_name == nil then
+            player_name = "???"
+        else
+            core.chat_send_player(player_name, "Nemůžete změnit tento blok.")
+        end
+        core.log("action", player_name.." failed to use shape selector to change "..old_node.name.."/"..
+            old_node.param2.." to "..new_node.name.."/"..new_node.param2.." at "..core.pos_to_string(pos))
+        return
     end
 end
 
@@ -112,7 +122,7 @@ if core.get_modpath("advtrains_interlocking") then
                 "advtrains:signal_wall_b_"..v,
                 {name = "advtrains:signal_wall_p_"..v, label = ">tyč"},
             },
-            after_change = after_change,
+            on_change = on_change,
         })
     end
 end
@@ -128,22 +138,36 @@ if core.get_modpath("advtrains_signals_ks") then
                 {name = "advtrains_signals_ks:sign_12_"..rot, label = "12"},
                 {name = "advtrains_signals_ks:sign_16_"..rot, label = "16"},
                 {name = "advtrains_signals_ks:sign_e_"..rot, label = "max"},
+
                 {name = "advtrains_signals_ks:sign_lf7_4_"..rot, label = "4"},
                 {name = "advtrains_signals_ks:sign_lf7_6_"..rot, label = "6"},
                 {name = "advtrains_signals_ks:sign_lf7_8_"..rot, label = "8"},
                 {name = "advtrains_signals_ks:sign_lf7_12_"..rot, label = "12"},
                 {name = "advtrains_signals_ks:sign_lf7_16_"..rot, label = "16"},
                 {name = "advtrains_signals_ks:sign_lf7_e_"..rot, label = "max"},
+
                 {name = "advtrains_signals_ks:sign_lf_4_"..rot, label = "4"},
                 {name = "advtrains_signals_ks:sign_lf_6_"..rot, label = "6"},
                 {name = "advtrains_signals_ks:sign_lf_8_"..rot, label = "8"},
                 {name = "advtrains_signals_ks:sign_lf_12_"..rot, label = "12"},
                 {name = "advtrains_signals_ks:sign_lf_16_"..rot, label = "16"},
                 {name = "advtrains_signals_ks:sign_lf_e_"..rot, label = "max"},
+
                 "advtrains_signals_ks:sign_hfs_"..rot,
                 "advtrains_signals_ks:sign_pam_"..rot,
+                {},
+                {},
+                {},
+                {},
+
+                "advtrains_signals_ks:sign_ne4_"..rot,
+                "advtrains_signals_ks:sign_ne3x1_"..rot,
+                "advtrains_signals_ks:sign_ne3x2_"..rot,
+                "advtrains_signals_ks:sign_ne3x3_"..rot,
+                "advtrains_signals_ks:sign_ne3x4_"..rot,
+                "advtrains_signals_ks:sign_ne3x5_"..rot,
             },
-            after_change = after_change,
+            on_change = on_change,
         })
         ch_core.register_shape_selector_group({
             columns = 8,
@@ -157,7 +181,7 @@ if core.get_modpath("advtrains_signals_ks") then
                 {name = "advtrains_signals_ks:mast_mast_"..rot, param2 = 0x03c0},
                 {name = "advtrains_signals_ks:mast_mast_"..rot, param2 = 0x03e0},
             },
-            -- after_change = after_change, -- not for node-db!
+            -- on_change = on_change, -- not for node-db!
         })
     end
 end

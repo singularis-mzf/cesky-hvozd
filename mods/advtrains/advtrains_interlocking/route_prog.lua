@@ -176,7 +176,7 @@ function advtrains.interlocking.visualize_route(origin, route, context, tmp_lcks
 		end
 		-- display locks
 		for pts, state in pairs(v.locks) do
-			local pos = minetest.string_to_pos(pts)
+			local pos = assert(advtrains.decode_pos(pts))
 			routesprite(context, pos, "fix"..k..pts, "at_il_route_lock.png", "Zajištěna ve stavu '"..state.."' po cestě "..route.name.." dokud není úsek #"..k.." uvolněn.")
 		end
 	end
@@ -215,7 +215,7 @@ local player_rte_prog = {}
 
 function advtrains.interlocking.init_route_prog(pname, sigd, default_route)
 	if not minetest.check_player_privs(pname, "interlocking") then
-		minetest.chat_send_player(pname, "Insufficient privileges to use this!")
+		minetest.chat_send_player(pname, attrans("Insufficient privileges to use this!"))
 		return
 	end
 	local rp = {
@@ -239,7 +239,7 @@ function advtrains.interlocking.init_route_prog(pname, sigd, default_route)
 	end
 	player_rte_prog[pname] = rp
 	advtrains.interlocking.visualize_route(sigd, rp.route, "prog_"..pname, rp.tmp_lcks, pname)
-	minetest.chat_send_player(pname, "Route programming mode active. Punch TCBs to add route segments, punch turnouts to lock them.")
+	minetest.chat_send_player(pname, "Režim programování cesty je aktivní. Klikejte levým tlačítkem na TCB pro přidání úseků a na výhybky pro jejich uzamčení.")
 end
 
 local function get_last_route_item(origin, route)
@@ -252,7 +252,7 @@ end
 local function do_advance_route(pname, rp, sigd, tsref)
 	table.insert(rp.route, {next = sigd, locks = rp.tmp_lcks})
 	rp.tmp_lcks = {}
-	chat(pname, "Úsek '"..(tsref and (tsref.name or "") or "--EOI--").."' přidán na cestu.")
+	chat(pname, "Úsek '"..(tsref and (tsref.name or "") or "--konec zab.--").."' přidán na cestu.")
 end
 
 local function finishrpform(pname)
@@ -419,7 +419,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local tcbpts = string.match(formname, "^at_il_rprog_([^_]+)$")
 	local tcbpos
 	if tcbpts then
-		tcbpos = minetest.string_to_pos(tcbpts)
+		tcbpos = assert(minetest.string_to_pos(tcbpts))
 	end
 	if tcbpos then
 		-- RPROG form
@@ -531,7 +531,7 @@ minetest.register_on_punchnode(function(pos, node, player, pointed_thing)
 				chat(pname, "Tato TCB není nastavena, nejprve k ní musíte přiřadit kolej")
 				return
 			end
-			local tcbpos = minetest.string_to_pos(tcbpts)
+			local tcbpos = assert(minetest.string_to_pos(tcbpts))
 			
 			-- show formspec
 			

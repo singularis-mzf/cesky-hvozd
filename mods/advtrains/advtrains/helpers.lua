@@ -520,7 +520,7 @@ function advtrains.after_place_signal(pos, placer, itemstack, pointed_thing)
 	local rn = minetest.registered_nodes
 	local prefix = name:sub(1, -2)
 	if not (rn[prefix.."30"] and rn[prefix.."45"] and rn[prefix.."60"]) then return end
-	local variant = math.floor(placer:get_look_horizontal() * -8 / math.pi + 16.5)
+	local variant = math.floor(placer:get_look_horizontal() * -8 / math.pi + 16.25) % 16
 	local n = variants[variant + 1]
 	if n == nil then return end
 	local node = advtrains.ndb.get_node(pos)

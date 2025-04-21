@@ -26,7 +26,7 @@ function atil.show_route_edit_form(pname, sigd, routeid, sel_rpartidx)
 	local route = tcbs.routes[routeid]
 	if not route then return end
 	
-	local form = "size[9,10]label[0.5,0.2;Přehled cesty]"
+	local form = "size[9,11]label[0.5,0.2;Přehled cesty]"
 	form = form.."field[0.8,1.2;6.5,1;name;Název cesty;"..minetest.formspec_escape(route.name).."]"
 	form = form.."button[7.0,0.9;1.5,1;setname;Nastavit]"
 	
@@ -37,7 +37,7 @@ function atil.show_route_edit_form(pname, sigd, routeid, sel_rpartidx)
 		tab[#tab+1] = minetest.formspec_escape(string.gsub(t, ",", " "))
 		tabref[#tab] = { [rty] = true, param = rpara, seg = rseg, idx = #tab }
 	end
-	itab(1, "("..(tcbs.signal_name or "+")..") Route #"..routeid, "signal", sigd)
+	itab(1, "("..(tcbs.signal_name or "+")..") Cesta #"..routeid, "signal", sigd)
 	
 	-- this code is partially copy-pasted from routesetting.lua
 	-- we start at the tc designated by signal
@@ -62,15 +62,15 @@ function atil.show_route_edit_form(pname, sigd, routeid, sel_rpartidx)
 		local signame = "-"
 		if c_tcbs and c_tcbs.signal then signame = c_tcbs.signal_name or "o" end
 		itab(i, ""..i.." "..sigd_to_string(c_sigd).." ("..signame..")", "signal", c_sigd)
-		itab(i, "= "..(c_ts and c_ts.name or c_ts_id).." ="..(c_rseg.call_on and " [CO]" or ""), "section", c_ts_id)
+		itab(i, "= "..(c_ts and c_ts.name or c_ts_id).." ="..(c_rseg.call_on and " [pov.]" or ""), "section", c_ts_id)
 		
 		if c_rseg.locks then
 			for pts, state in pairs(c_rseg.locks) do
 				
 				local pos = advtrains.decode_pos(pts)
-				itab(i, "Zámek "..pts.." -> "..state, "lock", pos)
+				itab(i, "Zámek "..core.pos_to_string(pos).." -> "..state, "lock", pos)
 				if not advtrains.is_passive(pos) then
-					itab("-!- Na "..pts.." není žádná pasivní komponenta. Prosím, přenastavte cestu!")
+					itab("-!- Na "..core.pos_to_string(pos).." není žádná pasivní komponenta. Prosím, přenastavte cestu!")
 					break
 				end
 			end
@@ -80,7 +80,7 @@ function atil.show_route_edit_form(pname, sigd, routeid, sel_rpartidx)
 		if nvar then
 			local re_tcbs = ildb.get_tcbs({p = nvar.p, s = (nvar.s==1) and 2 or 1})
 			if not re_tcbs or not re_tcbs.ts_id or re_tcbs.ts_id~=c_ts_id then
-				itab(i, "-!- At "..sigd_to_string(c_sigd)..".Section Start and End do not match!", "err", nil)
+				itab(i, "-!- Na "..sigd_to_string(c_sigd)..".neodpovídají začátek a konec úseku!", "err", nil)
 				break
 			end
 		end
@@ -92,13 +92,13 @@ function atil.show_route_edit_form(pname, sigd, routeid, sel_rpartidx)
 		local e_tcbs = ildb.get_tcbs(c_sigd)
 		local signame = "-"
 		if e_tcbs and e_tcbs.signal then signame = e_tcbs.signal_name or "o" end
-		itab(i, "E "..sigd_to_string(c_sigd).." ("..signame..")", "end", c_sigd)
+		itab(i, "K "..sigd_to_string(c_sigd).." ("..signame..")", "end", c_sigd)
 	else
-		itab(i, "E (none)", "end", nil)
+		itab(i, "K (žádný)", "end", nil)
 	end
 	
 	if not sel_rpartidx then sel_rpartidx = 1 end
-	form = form.."textlist[0.5,2;3.5,3.9;routelog;"..table.concat(tab, ",")..";"..(sel_rpartidx or 1)..";false]"
+	form = form.."textlist[0.5,2;4.5,3.9;routelog;"..table.concat(tab, ",")..";"..(sel_rpartidx or 1)..";false]"
 	
 	-- to the right of rtelog, controls are displayed for the thing in focus
 	-- What is in focus is determined by the parameter sel_rpartidx
@@ -113,10 +113,10 @@ function atil.show_route_edit_form(pname, sigd, routeid, sel_rpartidx)
 		-- main aspect list
 		local signalpos = s_tcbs and s_tcbs.signal
 		if signalpos and rseg then
-			form = form..F.label(4.5, 2, "Signal Aspect:")
+			form = form..F.label(5.5, 2, "Signál:")
 			local ndef = signalpos and advtrains.ndb.get_ndef(signalpos)
 			if ndef and ndef.advtrains and ndef.advtrains.main_aspects then
-				local entries = { "<Default Aspect>" }
+				local entries = { "<výchozí>" }
 				local sel = 1
 				for i, mae in ipairs(ndef.advtrains.main_aspects) do
 					entries[i+1] = mae.description
@@ -124,7 +124,7 @@ function atil.show_route_edit_form(pname, sigd, routeid, sel_rpartidx)
 						sel = i+1
 					end
 				end
-				form = form..F.dropdown(4.5, 3.0, 4, "sa_main_aspect", entries, sel, true)
+				form = form..F.dropdown(5.5, 3.0, 4, "sa_main_aspect", entries, sel, true)
 			end
 			-- checkbox for assign distant signal
 			local assign_dst = rseg.assign_dst
@@ -133,21 +133,21 @@ function atil.show_route_edit_form(pname, sigd, routeid, sel_rpartidx)
 				-- defaults to false for the very first signal and true for all others (= minimal user configuration overhead)
 				-- Note: on save, the value will be fixed at either false or true
 			end
-			form = form..string.format("checkbox[4.5,4.0;sa_distant;Announce distant signal;%s]", assign_dst)
+			form = form..string.format("checkbox[5.5,4.0;sa_distant;Ohlásit předzvěst;%s]", assign_dst)
 		else
-			form = form..F.label(4.5, 2, "No Signal at this TCB")
+			form = form..F.label(5.5, 2, "Tato TCB nemá žádné návěstidlo")
 		end
 	elseif sel_rpart and sel_rpart.section then
 		local rseg = route[sel_rpart.seg]
 		if rseg then
-			form = form..F.label(4.5, 2, "Section Options:")
+			form = form..F.label(5.5, 2, "Volby:")
 			-- checkbox for call-on
-			form = form..string.format("checkbox[4.5,4.0;se_callon;Call-on (section may be occupied);%s]", rseg.call_on)
+			form = form..string.format("checkbox[5.5,4.0;se_callon;Povolit (úsek může být obsazen);%s]", rseg.call_on)
 		end
 	elseif sel_rpart and sel_rpart.err then
-		form = form.."textarea[4.5,2.5;4,4;errorta;Error:;"..tab[sel_rpartidx].."]"
+		form = form.."textarea[5.5,2.5;4,4;errorta;Chyba:;"..tab[sel_rpartidx].."]"
 	else
-		form = form..F.label(4.5, 2, "<< Select a route part to edit options")
+		form = form..F.label(5.5, 2, "<< Vyberte část cesty pro nastavení voleb")
 	end
 	
 	form = form.."button[0.5,6;1,1;prev;<<<]"
@@ -158,15 +158,15 @@ function atil.show_route_edit_form(pname, sigd, routeid, sel_rpartidx)
 	--if route.smartroute_generated or route.default_autoworking then
 	--	form = form.."button[3.5,6;2,1;noautogen;Clr Autogen]"
 	--end
-	form = form.."button[5.5,6;3,1;delete;Delete Route]"
-	form = form.."button[0.5,7;3,1;back;Back to signal]"
-	form = form.."button[3.5,7;2,1;clone;Clone Route]"
-	form = form.."button[5.5,7;3,1;newfrom;New From Route]"
+	form = form.."button[5.5,6;3,1;delete;Smazat cestu]"
+	form = form.."button[0.5,7;3,1;back;Zpět na návěstidlo]"
+	form = form.."button[3.5,7;2,1;clone;Klonovat cestu]"
+	form = form.."button[5.5,7;3,1;newfrom;Nová z cesty]"
 	
 	--atdebug(route.ars)
 	form = form.."style[ars;font=mono]"
-	form = form.."textarea[0.8,8.3;5,3;ars;ARS Rule List;"..atil.ars_to_text(route.ars).."]"
-	form = form.."button[5.5,8.23;3,1;savears;Save ARS List]"
+	form = form.."textarea[0.8,8.3;5,3;ars;ARS pravidla;"..atil.ars_to_text(route.ars).."]"
+	form = form.."button[5.5,8.23;3,1;savears;Uložit ARS pravidla]"
 	
 	local formname = "at_il_routeedit_"..minetest.pos_to_string(sigd.p).."_"..sigd.s.."_"..routeid
 	minetest.show_formspec(pname, formname, form)

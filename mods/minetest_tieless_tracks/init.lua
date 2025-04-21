@@ -134,7 +134,7 @@ advtrains.register_tracks("default", {
 	models_prefix="advtrains_dtrack",
 	models_suffix=".obj",
 	shared_texture="advtrains_dtrack_tieless_shared.png",
-	second_texture="default_gravel.png^[multiply:#956338",
+	second_texture="ch_extras_gravel.png",
 	description=attrans("Track with Railway Gravel").." "..attrans("(Tieless)"),
 	formats=advtrains.default_slope_formats.t_30deg_slope,
 }, advtrains.ap.t_30deg_slope)
@@ -314,7 +314,7 @@ advtrains.register_tracks("default", {
 	models_prefix="advtrains_dtrack",
 	models_suffix=".obj",
 	shared_texture="advtrains_ctrack_shared.png",
-	second_texture="default_gravel.png^[multiply:#956338",
+	second_texture="ch_extras_gravel.png",
 	description=attrans("Track with Railway Gravel").." (betonové pražce)",
 	formats=advtrains.default_slope_formats.t_30deg_slope,
 }, advtrains.ap.t_30deg_slope)
@@ -520,7 +520,7 @@ end
 
 if core.registered_nodes["advtrains:dtrack_rdetector_off_st"] ~= nil then
 	advtrains.register_tracks("default", {
-		nodename_prefix="advtrains:dtrack_rdetector_off_concrete",
+		nodename_prefix="advtrains:dtrack_rdetector_concrete_off",
 		texture_prefix="advtrains_ctrack_detector",
 		models_prefix="advtrains_dtrack",
 		models_suffix=".b3d",
@@ -535,12 +535,21 @@ if core.registered_nodes["advtrains:dtrack_rdetector_off_st"] ~= nil then
 				return {
 					mesecons = old_def.mesecons,
 					after_dig_node = old_def.after_dig_node,
-					drop = "advtrains:dtrack_rdetector_off_concrete_placer",
+					drop = "advtrains:dtrack_rdetector_concrete_off_placer",
 					advtrains = old_def.advtrains,
 				}
 			end	
 		end
 	}, advtrains.ap.t_30deg_straightonly)
+
+	core.register_craft({
+		output = "advtrains:dtrack_rdetector_concrete_off_placer",
+		recipe = {
+			{"advtrains:dtrack_detector_concrete_off_placer", "default:mese_crystal"},
+			{"", ""},
+		},
+	})
+	core.register_alias("advtrains:dtrack_rdetector_off_concrete_placer", "advtrains:dtrack_rdetector_concrete_off_placer")
 end
 
 if core.registered_nodes["advtrains:dtrack_rdetector_on_st"] ~= nil then
@@ -560,7 +569,7 @@ if core.registered_nodes["advtrains:dtrack_rdetector_on_st"] ~= nil then
 				return {
 					mesecons = old_def.mesecons,
 					after_dig_node = old_def.after_dig_node,
-					drop = "advtrains:dtrack_rdetector_off_concrete_placer",
+					drop = "advtrains:dtrack_rdetector_concrete_off_placer",
 					advtrains = old_def.advtrains,
 				}
 			end
@@ -568,7 +577,7 @@ if core.registered_nodes["advtrains:dtrack_rdetector_on_st"] ~= nil then
 	}, advtrains.ap.t_30deg_straightonly_noplacer)
 	minetest.register_craft({
 	type="shapeless",
-	output = 'advtrains:dtrack_rdetector_off_concrete_placer',
+	output = 'advtrains:dtrack_rdetector_concrete_off_placer',
 	recipe = {
 		"advtrains:dtrack_detector_off_concrete_placer",
 		"default:mese_crystal",
