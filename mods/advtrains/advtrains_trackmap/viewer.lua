@@ -25,10 +25,11 @@ end
 
 
 minetest.register_craftitem("advtrains_trackmap:tool",{
-	description = "Trackmap Tool\nPunch: Show map",
+	description = "nástroj na mapování kolejí",
+	_ch_help = "levý klik na kolej pro zobrazení „mapy“",
 	groups = {cracky=1}, -- key=name, value=rating; rating=1..3.
-	inventory_image = "at_il_tool.png",
-	wield_image = "at_il_tool.png",
+	inventory_image = "ch_core_white_pixel.png^[multiply:#dddddd^[resize:32x32^(at_il_tool.png^[resize:32x32)",
+	wield_image = "ch_core_white_pixel.png^[multiply:#dddddd^[resize:32x32^(at_il_tool.png^[resize:32x32)",
 	stack_max = 1,
 	on_use = function(itemstack, player, pointed_thing)
 		local pname = player:get_player_name()
@@ -40,4 +41,16 @@ minetest.register_craftitem("advtrains_trackmap:tool",{
 			node_left_click(pos, pname)
 		end
 	end
+})
+
+core.register_craft({
+	output = "advtrains_trackmap:tool",
+	recipe = {
+		{"advtrains_interlocking:tool", "default:paper"},
+		{"default:paper", "default:paper"},
+	},
+})
+core.register_craft({
+	output = "advtrains_interlocking:tool",
+	recipe = {{"advtrains_trackmap:tool"}},
 })

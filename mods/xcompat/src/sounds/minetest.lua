@@ -4,7 +4,7 @@ function sound_api.node_sound_default(soundtable)
     return default.node_sound_defaults(soundtable)
 end
 
-sound_api.node_sound_defaults = node_sound_default
+sound_api.node_sound_defaults = sound_api.node_sound_default
 
 function sound_api.node_sound_stone_defaults(soundtable)
     return default.node_sound_stone_defaults(soundtable)

@@ -63,7 +63,7 @@ wrench.register_node("pipeworks:filter", filter_data)
 wrench.register_node("pipeworks:mese_filter", filter_data)
 
 filter_data.metas["channel"] = wrench.META_TYPE_STRING
-wrench.register_node("pipeworks:digiline_filter", filter_data)
+-- wrench.register_node("pipeworks:digiline_filter", filter_data)
 
 -- Tubes (6d style): 'mese_sand_tube','teleport_tube', 'digiline_detector_tube'
 

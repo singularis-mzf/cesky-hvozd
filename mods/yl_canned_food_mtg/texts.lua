@@ -52,3 +52,5 @@ texts["error_cannot_read_file"] = "Error reading file: @1"
 
 texts["error_name_not_found"] = "Name not found: @1"
 texts["error_priv_not_found"] = "Priv not found: @1"
+texts["settings_dont_match"] = "Settings don't match"
+texts["get_filepath"] = "Get filepath of @1: @2"
