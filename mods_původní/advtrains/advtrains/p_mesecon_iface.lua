@@ -14,13 +14,11 @@ minetest.override_item("mesecons_switch:mesecon_switch_off", {
 		minetest.sound_play("mesecons_switch", {pos=pos})
 	end,
 	advtrains = {
-		getstate = "off",
-		setstate = function(pos, node, newstate)
-			if newstate=="on" then
-				advtrains.ndb.swap_node(pos, {name="mesecons_switch:mesecon_switch_on", param2=node.param2})
-				if advtrains.is_node_loaded(pos) then
-					mesecon.receptor_on(pos)
-				end
+		node_state = "off",
+		node_state_map = { on = "mesecons_switch:mesecon_switch_on", off = "mesecons_switch:mesecon_switch_off" },
+		node_on_switch_state = function(pos, new_node, old_state, new_state)
+			if advtrains.is_node_loaded(pos) then
+				mesecon.receptor_on(pos)
 			end
 		end,
 		on_updated_from_nodedb = function(pos, node)
@@ -41,16 +39,14 @@ minetest.override_item("mesecons_switch:mesecon_switch_on", {
 		minetest.sound_play("mesecons_switch", {pos=pos})
 	end,
 	advtrains = {
-		getstate = "on",
-		setstate = function(pos, node, newstate)
-			if newstate=="off" then
-				advtrains.ndb.swap_node(pos, {name="mesecons_switch:mesecon_switch_off", param2=node.param2})
-				if advtrains.is_node_loaded(pos) then
-					mesecon.receptor_off(pos)
-				end
+		node_state = "on",
+		node_state_map = { on = "mesecons_switch:mesecon_switch_on", off = "mesecons_switch:mesecon_switch_off" },
+		node_on_switch_state = function(pos, new_node, old_state, new_state)
+			if advtrains.is_node_loaded(pos) then
+				mesecon.receptor_off(pos)
 			end
 		end,
-		fallback_state = "off",
+		node_fallback_state = "off",
 		on_updated_from_nodedb = function(pos, node)
 			mesecon.receptor_on(pos)
 		end,

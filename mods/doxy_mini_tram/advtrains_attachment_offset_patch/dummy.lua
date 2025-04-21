@@ -54,18 +54,18 @@ local function disappear(self)
 end
 
 local dummy_def = {
-    -- The collision box encloses the player and that way allows
-    -- to right-click the wagon even if outside the wagon’s
-    -- not rotating collision box.
-    collisionbox = { -0.7, -0.2, -0.7, 0.7, 2.2, 0.7 };
-
-    -- Make semi-invisible.
-    visual = "mesh";
-    mesh = "advtrains_attachment_offset_patch_dummy.b3d";
-
-    physical = false;
-    static_save = false;
-    visual_size = V(1, 1, 1);
+    initial_properties = {
+        visual = "mesh",
+        visual_size = V(1, 1, 1),
+        physical = false,
+        static_save = false,
+        -- Make semi-invisible.
+        mesh = "advtrains_attachment_offset_patch_dummy.b3d",
+        -- The collision box encloses the player and that way allows
+        -- to right-click the wagon even if outside the wagon’s
+        -- not rotating collision box.
+        collisionbox = { -0.7, -0.2, -0.7, 0.7, 2.2, 0.7 },
+    },
     on_activate = make_immortal;
     on_detach = disappear;
     on_punch = dummy_on_punch;

@@ -18,8 +18,6 @@ advtrains.register_wagon(name, prototype, description, inventory_image)
 # Wagon prototype properties
 {
 	... all regular luaentity properties (mesh, textures, collisionbox a.s.o)...
-	drives_on = {default=true},
-	^- used to define the tracktypes (see below) that wagon can drive on. The tracktype identifiers are given as keys, similar to privileges)
 	max_speed = 10,
 	^- optional, default 10: defines the maximum speed this wagon can drive. The maximum speed of a train is determined by the wagon with the lowest max_speed value.
 	seats = {

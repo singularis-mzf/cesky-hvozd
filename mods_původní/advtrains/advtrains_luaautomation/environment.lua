@@ -153,6 +153,12 @@ local static_env = {
 		local pos=atlatc.pcnaming.resolve_pos(parpos, "interrupt_pos")
 		atlatc.interrupt.add(0, pos, {type="ext_int", ext_int=true, message=imesg})
 	end,
+	train_parts = function(train_id)
+		if not train_id then return false end
+		local train = advtrains.trains[train_id]
+		if not train then return false end
+		return table.copy(train.trainparts or {})
+	end,
 	-- sends an atc command to train regardless of where it is in the world
 	atc_send_to_train = function(train_id, command)
 		assertt(command, "string")
@@ -164,6 +170,9 @@ local static_env = {
 			return false
 		end
 	end,
+	get_slowdown = function()
+		return advtrains.global_slowdown
+	end
 }
 
 -- If interlocking is present, enable route setting functions
@@ -217,11 +226,15 @@ if advtrains.interlocking then
 	end
 	static_env.get_aspect = function(signal)
 		local pos = atlatc.pcnaming.resolve_pos(signal)
-		return advtrains.interlocking.signal_get_aspect(pos)
+		return advtrains.interlocking.signal.get_aspect_info(pos)
 	end
-	static_env.set_aspect = function(signal, asp)
+	static_env.set_aspect = function(signal, main_asp, rem_signal)
+		if type(main_asp) == "table" then
+			error("set_aspect: Parameters of this method have changed to (signal, main_asp, rem_signal) with introduction of distant signalling: parameter 2 is now the main aspect name (a string)")
+		end
 		local pos = atlatc.pcnaming.resolve_pos(signal)
-		return advtrains.interlocking.signal_set_aspect(pos)
+		local rem_pos = rem_signal and atlatc.pcnaming.resolve_pos(rem_signal)
+		return advtrains.interlocking.signal_set_aspect(pos, main_asp, rem_pos)
 	end
 	
 	--section_occupancy()
@@ -229,11 +242,8 @@ if advtrains.interlocking then
 		if not ts_id then return nil end
 		ts_id = tostring(ts_id)
 		local response = advtrains.interlocking.db.get_ts(ts_id)
-		if response == nil then
-			return false
-		else
-			return response.trains
-		end
+		if not response then return false end
+		return (response.trains and table.copy(response.trains)) or {}
 	end
 end
 
@@ -260,6 +270,11 @@ if advtrains.lines then
 		time_from_last_rpt = atlrwt.time_from_last_rpt,
 		time_to_next_rpt = atlrwt.time_to_next_rpt,
 	}
+end
+
+
+atlatc.register_function = function (name, f)
+	static_env[name] = f
 end
 
 for _, name in pairs(safe_globals) do

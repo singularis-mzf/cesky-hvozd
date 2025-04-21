@@ -21,12 +21,12 @@ minetest.register_tool("advtrains:copytool", {
 			local node=minetest.get_node_or_nil(pointed_thing.under)
 			if not node then atprint("[advtrains]Ignore at placer position") return itemstack end
 			local nodename=node.name
-			if(not advtrains.is_track_and_drives_on(nodename, {default=true})) then
+			if(not advtrains.is_track(nodename)) then
 				atprint("no track here, not placing.")
 				return itemstack
 			end
 			if not minetest.check_player_privs(placer, {train_operator = true }) then
-				minetest.chat_send_player(pname, "You don't have the train_operator privilege.")
+				minetest.chat_send_player(pname, S("You do not have the @1 privilege.", "train_operator"))
 				return itemstack
 			end
 			if not minetest.check_player_privs(placer, {train_admin = true }) and minetest.is_protected(pointed_thing.under, placer:get_player_name()) then
@@ -38,7 +38,7 @@ minetest.register_tool("advtrains:copytool", {
 
 			local prevpos = advtrains.get_adjacent_rail(pointed_thing.under, tconns, plconnid, {default=true})
 			if not prevpos then
-				minetest.chat_send_player(pname, "The track you are trying to place the wagon on is not long enough!")
+				minetest.chat_send_player(pname, attrans("The track you are trying to place the wagon on is not long enough."))
 				return
 			end
 
@@ -49,12 +49,12 @@ minetest.register_tool("advtrains:copytool", {
 			end
 			local clipboard = meta:get_string("clipboard")
 			if (clipboard == "") then
-				minetest.chat_send_player(pname, "The clipboard is empty.");
+				minetest.chat_send_player(pname, attrans("The clipboard is empty."));
 				return
 			end
 			clipboard = minetest.deserialize(clipboard)
 			if (clipboard.wagons == nil) then
-				minetest.chat_send_player(pname, "The clipboard is empty.");
+				minetest.chat_send_player(pname, attrans("The clipboard is empty."));
 				return
 			end
 
@@ -71,7 +71,7 @@ minetest.register_tool("advtrains:copytool", {
 			local train = advtrains.trains[id]
 			train.off_track = train.end_index<train.path_trk_b
 			if (train.off_track) then
-				minetest.chat_send_player(pname, "Back of train would end up off track, cancelling.")
+				minetest.chat_send_player(pname, attrans("Back of train would end up off track, cancelling."))
 				advtrains.remove_train(id)
 				return
 			end
@@ -89,19 +89,19 @@ minetest.register_tool("advtrains:copytool", {
 
 		local le = pointed_thing.ref:get_luaentity()
 		if (le == nil) then
-			minetest.chat_send_player(user:get_player_name(), "No such lua entity!")
+			minetest.chat_send_player(user:get_player_name(), attrans("No such lua entity."))
 			return
 		end
 
 		local wagon = advtrains.wagons[le.id]
 		if (not (le.id and advtrains.wagons[le.id])) then
-			minetest.chat_send_player(user:get_player_name(), string.format("No such wagon: %s", le.id))
+			minetest.chat_send_player(user:get_player_name(), attrans("No such wagon: @1.", le.id))
 			return
 		end
 
 		local train = advtrains.trains[wagon.train_id]
 		if (not train) then
-			minetest.chat_send_player(user:get_player_name(), string.format("No such train: %s", wagon.train_id))
+			minetest.chat_send_player(user:get_player_name(), attrans("No such train: @1.", wagon.train_id))
 			return
 		end
 
@@ -177,7 +177,7 @@ minetest.register_tool("advtrains:copytool", {
 			return
 		end
 		meta:set_string("clipboard", minetest.serialize(clipboard))
-		minetest.chat_send_player(user:get_player_name(), attrans("Train copied!"))
+		minetest.chat_send_player(user:get_player_name(), attrans("Train copied."))
 		return itemstack
 	end
 })

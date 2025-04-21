@@ -292,18 +292,19 @@ function advtrains.conn_matches_to(conn, other_conns)
 end
 
 -- Going from the rail at pos (does not need to be rounded) along connection with id conn_idx, if there is a matching rail, return it and the matching connid
--- returns: <adjacent pos>, <conn index of adjacent>, <my conn index>, <railheight of adjacent>
+-- returns: <adjacent pos>, <conn index of adjacent>, <my conn index>, <railheight of adjacent>, (adjacent conns table), (adjacent connmap table)
 -- parameter this_conns_p is connection table of this rail and is optional, is determined by get_rail_info_at if not provided.
-function advtrains.get_adjacent_rail(this_posnr, this_conns_p, conn_idx, drives_on)
+function advtrains.get_adjacent_rail(this_posnr, this_conns_p, conn_idx)
 	local this_pos = advtrains.round_vector_floor_y(this_posnr)
 	local this_conns = this_conns_p
+	local _
 	if not this_conns then
 		_, this_conns = advtrains.get_rail_info_at(this_pos)
 	end
 	if not conn_idx then
 		for coni, _ in ipairs(this_conns) do
-			local adj_pos, adj_conn_idx, _, nry, nco = advtrains.get_adjacent_rail(this_pos, this_conns, coni)
-			if adj_pos then return adj_pos,adj_conn_idx,coni,nry, nco end
+			local adj_pos, adj_conn_idx, _, nry, nco, ncm = advtrains.get_adjacent_rail(this_pos, this_conns, coni)
+			if adj_pos then return adj_pos,adj_conn_idx,coni,nry, nco, ncm end
 		end
 		return nil
 	end
@@ -317,34 +318,46 @@ function advtrains.get_adjacent_rail(this_posnr, this_conns_p, conn_idx, drives_
 		adj_pos.y = adj_pos.y + 1
 	end
 	
-	local nextnode_ok, nextconns, nextrail_y=advtrains.get_rail_info_at(adj_pos, drives_on)
+	local nextnode_ok, nextconns, nextrail_y, nextconnmap=advtrains.get_rail_info_at(adj_pos)
 	if not nextnode_ok then
 		adj_pos.y = adj_pos.y - 1
 		conn_y = conn_y + 1
-		nextnode_ok, nextconns, nextrail_y=advtrains.get_rail_info_at(adj_pos, drives_on)
+		nextnode_ok, nextconns, nextrail_y, nextconnmap=advtrains.get_rail_info_at(adj_pos)
 		if not nextnode_ok then
 			return nil
 		end
 	end
 	local adj_connid = advtrains.conn_matches_to({c=conn.c, y=conn_y}, nextconns)
 	if adj_connid then
-		return adj_pos, adj_connid, conn_idx, nextrail_y, nextconns
+		return adj_pos, adj_connid, conn_idx, nextrail_y, nextconns, nextconnmap
 	end
 	return nil
 end
 
 -- when a train enters a rail on connid 'conn', which connid will it go out?
--- nconns: number of connections in connection table:
--- 2 = straight rail; 3 = turnout, 4 = crossing, 5 = three-way turnout (5th entry is a stub)
+-- Since 2.5: This mapping is contained in the conn_map table in the node definition!
 -- returns: connid_out
-local connlku={[2]={2,1}, [3]={2,1,1}, [4]={2,1,4,3}, [5]={2,1,1,1}}
-function advtrains.get_matching_conn(conn, nconns)
-	return connlku[nconns][conn]
+function advtrains.get_matching_conn(conn, conn_map)
+	if tonumber(conn_map) then
+		error("Legacy call to get_matching_conn! Instead of nconns, conn_map needs to be provided!")
+	end
+	if not conn_map then
+		--OK for two-conn rails, just return the other
+		if conn==1 then return 2 end
+		if conn==2 then return 1 end
+		error("get_matching_conn: For connid >=3, conn_map must not be nil!")
+	end
+	local cout = conn_map[conn]
+	if not cout then
+		error("get_matching_conn: Connid "..conn.." not found in conn_map which is "..atdump(conn_map))
+	end
+	return cout
 end
 
-function advtrains.random_id()
+function advtrains.random_id(lenp)
 	local idst=""
-	for i=0,5 do
+	local len = lenp or 6
+	for i=1,len do
 		idst=idst..(math.random(0,9))
 	end
 	return idst
@@ -470,3 +483,149 @@ else
 		end
 	end
 end
+
+
+-- TrackIterator interface --
+
+-- Metatable:
+local trackiter_mt = {
+	-- Internal State:
+	-- branches: A list of {pos, connid, limit} for where to restart
+	-- pos: The *next* position that the track iterator will return
+	-- bconnid: The connid of the connection of the rail at pos that points backward
+	-- tconns: The connections of the rail at pos
+	-- limit: the current limit
+	-- visited: a key-boolean table of already visited rails
+	
+	-- get whether there are still unprocessed branches
+	has_next_branch = function(self)
+		return #self.branches > 0
+	end,
+	-- go to the next unprocessed branch
+	-- returns track_pos, track_connid of the switch/crossing node where the track branches off
+	next_branch = function(self)
+		local br = table.remove(self.branches, 1)
+		-- Advance internal state
+		local adj_pos, adj_connid, _, _, adj_conns, adj_connmap = advtrains.get_adjacent_rail(br.pos, nil, br.connid)
+		self.pos = adj_pos
+		self.bconnid = adj_connid
+		self.tconns = adj_conns
+		self.tconnmap = adj_connmap
+		self.limit = br.limit - 1
+		self.visited[advtrains.encode_pos(br.pos)] = true
+		self.last_track_already_visited = false
+		return br.pos, br.connid
+	end,
+	-- get the next track along the current branch,
+	-- potentially adding branching tracks to the unprocessed branches list
+	-- returns track_pos, track_connid, track_backwards_connid
+	-- On error, returns nil, reason; reason is one of "track_end", "limit_hit", "already_visited"
+	next_track = function(self)
+		if self.last_track_already_visited then
+			-- see comment below
+			return nil, "already_visited"
+		end
+		local pos = self.pos
+		if not pos then
+			-- last run found track end. Return false
+			return false, "track_end"
+		end
+		-- if limit hit, return nil to signal this
+		if self.limit <= 0 then
+			return nil, "limit_hit"
+		end
+		-- select next conn (main conn to follow is the associated connection)
+		local old_bconnid = self.bconnid
+		local mconnid = advtrains.get_matching_conn(self.bconnid, self.tconnmap)
+		if self.visited[advtrains.encode_pos(pos)] then
+			-- node was already seen
+			-- Due to special requirements for the track section updater, return this first already visited track once
+			-- but do not process any further rails on this branch
+			-- The next call will then throw already_visited error
+			self.last_track_already_visited = true
+			return pos, mconnid, old_bconnid
+		end
+		-- If there are more connections, add these to branches
+		for nconnid,_ in ipairs(self.tconns) do
+			if nconnid~=mconnid and nconnid~=self.bconnid then
+				table.insert(self.branches, {pos = self.pos, connid = nconnid, limit=self.limit})
+			end
+		end
+		-- Advance internal state
+		local adj_pos, adj_connid, _, _, adj_conns, adj_connmap = advtrains.get_adjacent_rail(pos, self.tconns, mconnid)
+		self.pos = adj_pos
+		self.bconnid = adj_connid
+		self.tconns = adj_conns
+		self.tconnmap = adj_connmap
+		self.limit = self.limit - 1
+		self.visited[advtrains.encode_pos(pos)] = true
+		self.last_track_already_visited = false
+		return pos, mconnid, old_bconnid
+	end,
+
+	add_branch = function(self, pos, connid)
+		table.insert(self.branches, {pos = pos, connid = connid, limit=self.limit})
+	end,
+
+	is_visited = function(self, pos)
+		return self.visited[advtrains.encode_pos(pos)]
+	end,
+}
+
+-- Returns a new TrackIterator object
+
+-- Parameters:
+-- initial_pos: the initial track position of the track iterator
+-- initial_connid: the connection index in which to traverse. If nil, adds a "branch" for every connection of the track (traverse in all directions)
+-- limit: maximum distance from the start point after which the traverser stops
+-- follow_all: NOT IMPLEMENTED (supposed: if true, follows all branches at multi-connection tracks, even the ones pointing backwards or the crossing track on crossings. If false, follows only switches in driving direction.)
+
+-- Functions of the returned TrackIterator can be called via the Lua : notation, such as ti:next_track()
+-- If only the main track needs to be followed, use only the ti:next_track() function and do not call ti:next_branch().
+function advtrains.get_track_iterator(initial_pos, initial_connid, limit, follow_all)
+	local ti = {
+		visited = {}
+	}
+	if initial_connid then
+		ti.branches = { {pos = initial_pos, connid = initial_connid, limit=limit} }
+	else
+		-- get track info here
+		local node_ok, conns, rail_y=advtrains.get_rail_info_at(initial_pos)
+		assert(node_ok, "get_track_iterator called with non-track node!")
+		ti.branches = {}
+		for coni, _ in pairs(conns) do
+			table.insert(ti.branches, {pos = initial_pos, connid = coni, limit=limit})
+		end
+	end
+	ti.limit = limit -- safeguard if someone adds a branch before calling anything
+	setmetatable(ti, {__index=trackiter_mt})
+	return ti
+end
+
+--[[
+Example TrackIterator usage structure:
+
+local ti, pos, connid, ok
+ti = advtrains.get_track_iterator(initial_pos, initial_connid, 500, true)
+while ti:has_next_branch() do
+	pos, connid = ti:next_branch() -- in first iteration, this will be the node at initial_pos. In subsequent iterations this will be the switch node from which we are branching off
+	repeat
+		<do something with the track>
+		if <track satisfies an abort condition> then break end --for example, when traversing should stop at TCBs this can check if there is a tcb here
+		pos, connid = ti:next_track()
+	until not pos -- this stops the loop when either the track end is reached or the limit is hit
+	-- while loop continues with the next branch ( diverging branch of one of the switches/crossings) until no more are left
+end
+
+Example for walking only a single track (without branching):
+
+local ti, pos, connid, ok
+ti = advtrains.get_track_iterator(initial_pos, initial_connid, 500, true)
+
+pos, connid = ti:next_branch() -- this always needs to be done at least one time, and gets the track at initial_pos
+repeat
+	<do something with the track>
+	if <track satisfies an abort condition> then break end --for example, when traversing should stop at TCBs this can check if there is a tcb here
+	ok, pos, connid = ti:next_track()
+until not ok -- this stops the loop when either the track end is reached or the limit is hit
+]]

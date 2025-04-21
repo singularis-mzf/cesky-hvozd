@@ -2,15 +2,15 @@
 -- Lua automation features for advtrains
 -- Uses global table 'atlatc' (AdvTrains_LuaATC)
 
---TODO: re-add localization (if merging localization, discard this hunk please)
-atltrans = function(s,a,...)a={a,...}return s:gsub("@(%d+)",function(n)return a[tonumber(n)]end)end
+atltrans = attrans
+local S = atltrans
 
 --Privilege
 --Only trusted players should be enabled to build stuff which can break the server.
 
 atlatc = { envs = {}}
 
-minetest.register_privilege("atlatc", { description = "Player can place and modify LUA ATC components. Grant with care! Allows to execute bad LUA code.", give_to_singleplayer = false, default= false })
+minetest.register_privilege("atlatc", { description = S("Can place and configure LuaATC components, including execute potentially harmful Lua code"), give_to_singleplayer = false, default= false })
 
 --Size of code input forms in X,Y notation. Must be at least 10x10
 atlatc.CODE_FORM_SIZE = "15,12"

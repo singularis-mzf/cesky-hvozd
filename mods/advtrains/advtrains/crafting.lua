@@ -22,6 +22,14 @@ minetest.register_craft({
 })
 --Wallmounted Signal
 minetest.register_craft({
+	output = 'advtrains:signal_wall_l_off 2',
+	recipe = {
+		{'default:steel_ingot', 'default:steel_ingot', 'dye:red'},
+		{'', 'default:steel_ingot', ''},
+		{'default:steel_ingot', 'default:steel_ingot', 'dye:dark_green'},
+	},
+})
+minetest.register_craft({
 	output = 'advtrains:signal_wall_r_off 2',
 	recipe = {
 		{'dye:red', 'default:steel_ingot', 'default:steel_ingot'},
@@ -29,6 +37,15 @@ minetest.register_craft({
 		{'dye:dark_green', 'default:steel_ingot', 'default:steel_ingot'},
 	},
 })
+minetest.register_craft({
+	output = 'advtrains:signal_wall_t_off 2',
+	recipe = {
+		{'default:steel_ingot', '', 'default:steel_ingot'},
+		{'default:steel_ingot', 'default:steel_ingot', 'default:steel_ingot'},
+		{'dye:dark_green', '', 'dye:red'},
+	},
+})
+
 
 --Wallmounted Signals can be converted into every orientation by shapeless crafting
 minetest.register_craft({

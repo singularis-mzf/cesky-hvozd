@@ -7,6 +7,10 @@ advtrains_show_ids (Show ID's in infotext) bool false
 #    You probably want to leave this setting set to false.
 advtrains_enable_debugging (Enable debugging) bool false
 
+#    Register certain debug items, for example the tunnelborer
+#    Do not use on productive servers!
+advtrains_register_debugitems (Register Debug Items) bool false
+
 #    Enable the logging of certain events related to advtrains
 #    Logs are saved in the world directory as advtrains.log
 #    This setting is useful for multiplayer servers
@@ -61,3 +65,6 @@ advtrains_save_interval (Save Interval) int 60 20 3600
 #    If enabled, trains only collide with nodes with "normal" drawtype.
 advtrains_forgiving_collision (Forgiving Collision mode) bool false
 
+#    Enable universal couplers for wagons
+#    If enabled, wagons will bypass the checks that compare the coupler types when coupling.
+advtrains_universal_couplers (Universal Couplers) bool false

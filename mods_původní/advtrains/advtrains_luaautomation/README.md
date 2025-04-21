@@ -93,6 +93,9 @@ Removes any pending interrupts of this node.
 Make this active component send a digiline message on the specified channel.
 Not available in init code.
 
+ - `trainparts(train_id)`
+	returns a table with the ids of the cars the train is composed of, or false if `train_id` is invalid. `train_id` can be replaced with `atc_id` when used in LuaATC Rails.
+
  - `atc_send_to_train(<train_id>, <atc_command>)`
 	Sends the specified ATC command to the train specified by its train id. This happens regardless of where the train is in the world, and can be used to remote-control trains. Returns true on success. If the train ID does not exist, returns false and does nothing. See [atc_command.txt](../atc_command.txt) for the ATC command syntax.
 
@@ -142,22 +145,16 @@ asp = {
 	-- the character of call_on and dead_end is purely informative
 	call_on = <boolean>, -- Call-on route, expect train in track ahead (not implemented yet)
 	dead_end = <boolean>, -- Route ends on a dead end (e.g. bumper) (not implemented yet)
-
-	w_speed = <integer>,
-	-- "Warning speed restriction". Supposed for short-term speed
-	-- restrictions which always override any other restrictions
-	-- imposed by "speed" fields, until lifted by a value of -1
-	-- (Example: german Langsamfahrstellen-Signale)
 }
 ```
-As of January 2020, the 'dst', 'call_on' and 'dead_end' fields are not used.
+As of September 2024, the 'dst', 'call_on' and 'dead_end' fields are not used.
 
 #### Lines
 
 The advtrains_line_automation component adds a few contraptions that should make creating timeable systems easier.
 Part of its functionality is also available in LuaATC:
 
-- `rwt.*` - all Railway Time functions are included as documented in [the wiki](https://advtrains.de/wiki/doku.php?id=dev:lines:rwt)
+- `rwt.*` - all Railway Time functions are included as documented in [the wiki](https://advtrains.de/wiki/doku.php?id=dev:api:railway_time_api)
 
  - `schedule(rw_time, msg)`, `schedule_in(rw_dtime, msg)`
 Schedules an event of type {type="schedule", schedule=true, msg=msg} at (resp. after) the specified railway time (which can be in any format). You can only schedule one event this way. (uses the new lines-internal scheduler)
@@ -255,7 +252,10 @@ In addition to the above environment functions, the following functions are avai
 	The interlocking system uses this property for Automatic Routesetting.
 
 #### Shunting Functions and Variables
-There are several functions available especially for shunting operations. Some of these functions make use of Freight Codes (FC) set in the Wagon Properties of each wagon and/or locomotive:
+There are several functions available especially for shunting operations.
+Some of these functions make use of Freight Codes (FC) set in the Wagon Properties of each wagon and/or locomotive.
+FCs are composed of codes separated by exclamation marks (`!`), for instance `"foo!bar!baz"`.
+Each wagon has a current FC, indicating its next destination.
 
  - `split_at_index(index, atc_command)`
 	Splits the train at the specified index, into a train with index-1 wagons and a second train starting with the index-th wagon. The `atc_command` specified is sent to the second train after decoupling. `"S0"` or `"B0"` is common to ensure any locomotives in the remaining train don't continue to move.
@@ -265,6 +265,25 @@ There are several functions available especially for shunting operations. Some o
 	Example: train has wagons `"foo","foo","foo","bar","bar","bar"`  
 	Command: `split_at_index(4,"S0")`  
 	Result: first train (continues at previous speed): `"foo","foo","foo"`, second train (slows at S0): `"bar","bar","bar"`
+
+ - `get_fc()`
+	Returns a table with the entire FC list for each wagon in the train.  
+	Command: `get_fc()`  
+	Result: `{"", "foo!bar", "testing", "fc_1!fc_2!fc_3!?", "hello_world"}`
+
+ - `get_fc_index()`
+	Returns a table with the current FC index for each wagon in the train. Use in conjunction with the result from `get_fc()` to find a the current FC for a wagon.
+	Command: `get_fc_index()`  
+	Result: `{1, 1, 1, 2, 1}`
+	
+ - `set_fc(fc_list, reset_index)`
+	Overwrites the FC list according to a table `fc_list`. A false or nil entry will leave the wagon unaffected, however all others will be overwritten.
+	Useful for mass-programming freight trains that use FC-shunting instead of walking to each wagon individually. If the new FC entry for a wagon is shorter than the old entry, the index will clip to the last FC in the new entry.  
+	If `reset_index` is true, all Current FC values will reset to the first entry in the list, instead of remaining at the current index.  
+
+	Example: train has FC lists: `"", "foo!bar", "testing", "fc_1!fc_2!fc_3!?", "hello_world"`  
+	Command: `set_fc({"", "foo!turtle", nil, "4tehlulz", false})`  
+	Result: `""` `"foo!turtle"` `"testing"` `"4tehlulz"` `"hello_world"`
 
  - `split_at_fc(atc_command, len)`
 	Splits the train in such a way that all cars with non-empty current FC of the first part of the train have the same FC. The
@@ -289,14 +308,10 @@ There are several functions available especially for shunting operations. Some o
 	first part of the train as above.
 
  - `step_fc()`
-	Steps the FCs of all train cars forward. FCs are composed of codes
-	separated by exclamation marks (`!`), for instance
-	`"foo!bar!baz"`. Each wagon has a current FC, indicating its next
-	destination. Stepping the freight code forward, selects the next
-	code after the !. If the end of the string is reached, then the
+	Steps the FCs of all train cars forward, selecting the next
+	code after the `!`. If the end of the string is reached, then the
 	first code is selected, except if the string ends with a question
 	mark (`?`), then the order is reversed.
-
 
  - `train_length()`
 	returns the number of cars the train is composed of.

@@ -1,4 +1,4 @@
-
+local S = atltrans
 
 local ac = {nodes={}}
 
@@ -14,7 +14,7 @@ end
 function ac.after_place_node(pos, player)
 	local meta=minetest.get_meta(pos)
 	meta:set_string("formspec", ac.getform(pos, meta))
-	meta:set_string("infotext", "LuaATC component, unconfigured.")
+	meta:set_string("infotext", S("Unconfigured LuaATC component"))
 	local ph=minetest.pos_to_string(pos)
 	--just get first available key!
 	for en,_ in pairs(atlatc.envs) do
@@ -43,11 +43,11 @@ function ac.getform(pos, meta_p)
 	end
 	local form = "size["..atlatc.CODE_FORM_SIZE.."]"
 		.."style[code;font=mono]"
-		.."label[0,-0.1;Environment]"
+		.."label[0,-0.1;"..S("LuaATC Environment").."]"
 		.."dropdown[0,0.3;3;env;"..table.concat(envs_asvalues, ",")..";"..sel.."]"
-		.."button[5,0.2;2,1;save;Save]"
-		.."button[7,0.2;3,1;cle;Clear Local Env.]"
-		.."textarea[0.3,1.5;"..atlatc.CODE_FORM_SIZE..";code;Code;"..minetest.formspec_escape(code).."]"
+		.."button[5,0.2;2,1;save;"..S("Save").."]"
+		.."button[7,0.2;3,1;cle;"..S("Clear Local Environment").."]"
+		.."textarea[0.3,1.5;"..atlatc.CODE_FORM_SIZE..";code;"..S("Code")..";"..minetest.formspec_escape(code).."]"
 		.."label["..atlatc.CODE_FORM_ERRLABELPOS..";"..err.."]"
 	return form
 end
@@ -55,13 +55,17 @@ end
 function ac.after_dig_node(pos, node, player)
 	advtrains.invalidate_all_paths(pos)
 	advtrains.ndb.clear(pos)
+	atlatc.interrupt.clear_ints_at_pos(pos)
+	if advtrains.lines and advtrains.lines.sched then
+		advtrains.lines.sched.discard_all(advtrains.encode_pos(pos))
+	end
 	local ph=minetest.pos_to_string(pos)
 	ac.nodes[ph]=nil
 end
 
 function ac.on_receive_fields(pos, formname, fields, player)
 	if not minetest.check_player_privs(player:get_player_name(), {atlatc=true}) then
-		minetest.chat_send_player(player:get_player_name(), "Missing privilege: atlatc - Operation cancelled!")
+		minetest.chat_send_player(player:get_player_name(), S("You are not allowed to configure this LuaATC component without the @1 privilege.", "atlatc"))
 		return
 	end
 	
@@ -91,9 +95,9 @@ function ac.on_receive_fields(pos, formname, fields, player)
 	
 	meta:set_string("formspec", ac.getform(pos, meta))
 	if nodetbl.env then
-		meta:set_string("infotext", "LuaATC component, assigned to environment '"..nodetbl.env.."'")
+		meta:set_string("infotext", S("LuaATC component assigned to environment '@1'", nodetbl.env))
 	else
-		meta:set_string("infotext", "LuaATC component, invalid enviroment set!")
+		meta:set_string("infotext", S("LuaATC component assigned to an invalid environment"))
 	end
 end
 
@@ -168,7 +172,7 @@ function ac.run_in_env(pos, evtdata, customfct_p, ignore_no_code)
 		atlatc.active.nodes[ph].err=dataout
 		env:log("error", "LuaATC component at",ph,": LUA Error:",dataout)
 		if meta then
-			meta:set_string("infotext", "LuaATC component, ERROR:"..dataout)
+			meta:set_string("infotext", S("LuaATC component with error: @1", dataout))
 		end
 		--TODO temporary
 		--if customfct.atc_id then

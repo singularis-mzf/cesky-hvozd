@@ -6,6 +6,7 @@
 -- From Mesecons mod https://mesecons.net/
 -- (c) Jeija and Contributors
 
+local S = atltrans
 local BASENAME = "advtrains_luaautomation:mesecon_controller"
 
 local rules = {
@@ -207,7 +208,7 @@ for d = 0, 1 do
 	}
 
 	minetest.register_node(node_name, {
-		description = "LuaATC Mesecon Controller",
+		description = S("LuaATC Mesecon Controller"),
 		drawtype = "nodebox",
 		tiles = {
 			top,

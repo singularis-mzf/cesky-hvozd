@@ -4,24 +4,24 @@
 
 -- Privileges to control TRAIN DRIVING/COUPLING
 minetest.register_privilege("train_operator", {
-	description = "Without this privilege, a player can't do anything about trains, neither place or remove them nor drive or couple them (but he can build tracks if he has track_builder)",
+	description = attrans("Can place, remove and operate trains"),
 	give_to_singleplayer= true,
 });
 
 minetest.register_privilege("train_admin", {
-	description = "Player may drive, place or remove any trains from/to anywhere, regardless of owner, whitelist or protection",
+	description = attrans("Can place, remove and operate any train, regardless of owner, whitelist, or protection"),
 	give_to_singleplayer= true,
 });
 
 -- Privileges to control TRACK BUILDING
 minetest.register_privilege("track_builder", {
-	description = "Player can place and/or dig rails not protected from him. If he also has protection_bypass, he can place/dig any rails",
+	description = attrans("Can place and dig tracks in unprotected areas"),
 	give_to_singleplayer= true,
 });
 
 -- Privileges to control OPERATING TURNOUTS/SIGNALS
 minetest.register_privilege("railway_operator", {
-	description = "Player can operate turnouts and signals not protected from him. If he also has protection_bypass, he can operate any turnouts/signals",
+	description = attrans("Can operate turnouts and signals in unprotected areas"),
 	give_to_singleplayer= true,
 });
 

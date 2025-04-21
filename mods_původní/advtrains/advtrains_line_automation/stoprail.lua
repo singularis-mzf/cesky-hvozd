@@ -28,7 +28,7 @@ local function show_stoprailform(pos, player)
 	local pe = advtrains.encode_pos(pos)
 	local pname = player:get_player_name()
 	if minetest.is_protected(pos, pname) then
-		minetest.chat_send_player(pname, "Position is protected!")
+		minetest.chat_send_player(pname, attrans("You are not allowed to configure this track."))
 		return
 	end
 	
@@ -59,8 +59,9 @@ local function show_stoprailform(pos, player)
 	form = form.."field[6.05,2.0;1.75,1;wait;"..attrans("Stop Time")..";"..stdata.wait.."]"
 	form = form.."label[0.5,2.6;"..attrans("Door Side").."]"
 	form = form.."dropdown[0.51,3.0;2;doors;Left,Right,Closed;"..door_dropdown[stdata.doors].."]"
-	form = form.."checkbox[3.00,2.7;reverse;"..attrans("Reverse train")..";"..(stdata.reverse and "true" or "false").."]"
-	form = form.."checkbox[3.00,3.1;kick;"..attrans("Kick out passengers")..";"..(stdata.kick and "true" or "false").."]"
+	form = form.."checkbox[3.00,2.4;reverse;"..attrans("Reverse train")..";"..(stdata.reverse and "true" or "false").."]"
+	form = form.."checkbox[3.00,2.8;kick;"..attrans("Kick out passengers")..";"..(stdata.kick and "true" or "false").."]"
+	form = form.."checkbox[3.00,3.2;waitsig;"..attrans("Wait for signal to clear")..";"..(stdata.waitsig and "true" or "false").."]"
 	form = form.."textarea[0.8,4.2;7,2;ars;Trains stopping here (ARS rules);"..advtrains.interlocking.ars_to_text(stdata.ars).."]"
 	form = form.."button[0.5,6;7,1;save;"..attrans("Save").."]"
 	
@@ -73,7 +74,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local pos = advtrains.decode_pos(pe)
 	if pos then
 		if minetest.is_protected(pos, pname) then
-			minetest.chat_send_player(pname, "Position is protected!")
+			minetest.chat_send_player(pname, attrans("You are not allowed to configure this track."))
 			return
 		end
 		
@@ -87,6 +88,9 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		if fields.reverse then
 			tmp_checkboxes[pe].reverse = (fields.reverse == "true")
 		end
+		if fields.waitsig then
+			tmp_checkboxes[pe].waitsig = (fields.waitsig == "true")
+		end
 		if fields.save then
 			if fields.stn and stdata.stn ~= fields.stn and fields.stn ~= "" then
 				local stn = advtrains.lines.stations[fields.stn]
@@ -94,7 +98,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 					if (stn.owner == pname or minetest.check_player_privs(pname, "train_admin")) then
 						stdata.stn = fields.stn
 					else
-						minetest.chat_send_player(pname, "Station code '"..fields.stn.."' does already exist and is owned by "..stn.owner)
+						minetest.chat_send_player(pname, attrans("Station code \"@1\" already exists and is owned by @2.", fields.stn, stn.owner))
 						show_stoprailform(pos,player)
 						return
 					end
@@ -104,11 +108,11 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				end
 			end
 			local stn = advtrains.lines.stations[stdata.stn]
-			if stn and fields.stnname and fields.stnname ~= stn.name then
+			if stn and fields.stnname and fields.stnname~="" and fields.stnname ~= stn.name then
 				if (stn.owner == pname or minetest.check_player_privs(pname, "train_admin")) then
 					stn.name = fields.stnname
 				else
-					minetest.chat_send_player(pname, "Not allowed to edit station name, owned by "..stn.owner)
+					minetest.chat_send_player(pname, attrans("This station is owned by @1. You are not allowed to edit its name.", stn.owner))
 				end
 			end
 			
@@ -153,7 +157,7 @@ local adefunc = function(def, preset, suffix, rotation)
 			after_place_node=function(pos)
 				local pe = advtrains.encode_pos(pos)
 				advtrains.lines.stops[pe] = {
-					stn="", track="", doors="R", wait=10
+					stn="", track="", doors="R", wait=10, waitsig = true
 				}
 				updatemeta(pos)
 			end,
@@ -199,7 +203,10 @@ local adefunc = function(def, preset, suffix, rotation)
 							local stnname = stn and stn.name or "Unknown Station"
 							
 							-- Send ATC command and set text
-							advtrains.atc.train_set_command(train, "B0 W O"..stdata.doors..(stdata.kick and "K" or "").." D"..stdata.wait.." OC "..(stdata.reverse and "R" or "").."D"..(stdata.ddelay or 1) .. " A1 S" ..(stdata.speed or "M"), true)
+							advtrains.atc.train_set_command(train, "B0 W O"..stdata.doors..(stdata.kick and "K" or "")
+																	.." D"..stdata.wait.." "..(stdata.reverse and "R" or "")
+																	.." A1 "..(stdata.waitsig and "G" or "")
+																	.." OC D"..(stdata.ddelay or 1) .. " S" ..(stdata.speed or "M"), true)
 							train.text_inside = stnname
 							if tonumber(stdata.wait) then
 								minetest.after(tonumber(stdata.wait), function() train.text_inside = "" end)
@@ -218,7 +225,7 @@ if minetest.get_modpath("advtrains_train_track") ~= nil then
 		models_prefix="advtrains_dtrack",
 		models_suffix=".b3d",
 		shared_texture="advtrains_dtrack_shared_stop.png",
-		description="Station/Stop Rail",
+		description=attrans("Station/Stop Track"),
 		formats={},
 		get_additional_definiton = adefunc,
 	}, advtrains.trackpresets.t_30deg_straightonly)

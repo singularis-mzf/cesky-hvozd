@@ -52,7 +52,7 @@ function il.ars_to_text(arstab)
 end
 
 function il.text_to_ars(t)
-	if t=="" then
+	if not string.match(t, "%S+") then
 		return nil
 	elseif t=="*" then
 		return {default=true}
@@ -129,29 +129,49 @@ function il.ars_check_rule_match(ars, train)
 		return nil
 end
 
-function advtrains.interlocking.ars_check(sigd, train)
-	local tcbs = il.db.get_tcbs(sigd)
-	if not tcbs or not tcbs.routes then return end
-	
-	if tcbs.ars_disabled or tcbs.ars_ignore_next then
-		-- No-ARS mode of signal.
-		-- ignore...
-		-- Note: ars_ignore_next is set by signalling formspec when route is cancelled
-		tcbs.ars_ignore_next = nil
-		return
+function advtrains.interlocking.ars_check(signalpos, train, trig_from_dst)
+	-- check for distant signal
+	-- this whole check must be delayed until after the route setting has taken place, 
+	-- because before that the distant signal is yet unknown
+	if not trig_from_dst then
+		minetest.after(0.5, function()
+			-- does signal have dst?
+			local _, remote = il.signal.get_aspect(signalpos)
+			if remote then
+				advtrains.interlocking.ars_check(remote, train, true)
+			end
+		end)
 	end
-	
-	if tcbs.routeset then
-		-- ARS is not in effect when a route is already set
-		-- just "punch" routesetting, just in case callback got lost.
-		minetest.after(0, il.route.update_route, sigd, tcbs, nil, nil)
-		return
-	end
-	
-	local rteid = find_rtematch(tcbs.routes, train)
-	if rteid then
-		--delay routesetting, it should not occur inside train step
-		-- using after here is OK because that gets called on every path recalculation
-		minetest.after(0, il.route.update_route, sigd, tcbs, rteid, nil)
+
+	local sigd = il.db.get_sigd_for_signal(signalpos)
+	local tcbs = sigd and il.db.get_tcbs(sigd)
+	-- trigger ARS on this signal
+	if tcbs and tcbs.routes then
+		
+		if tcbs.ars_disabled or tcbs.ars_ignore_next then
+			-- No-ARS mode of signal.
+			-- ignore...
+			-- Note: ars_ignore_next is set by signalling formspec when route is cancelled
+			tcbs.ars_ignore_next = nil
+			return
+		end
+		if trig_from_dst and tcbs.no_dst_ars_trig then
+			-- signal not to be triggered from distant
+			return
+		end
+		
+		if tcbs.routeset then
+			-- ARS is not in effect when a route is already set
+			-- just "punch" routesetting, just in case callback got lost.
+			minetest.after(0, il.route.update_route, sigd, tcbs, nil, nil)
+			return
+		end
+		
+		local rteid = find_rtematch(tcbs.routes, train)
+		if rteid then
+			--delay routesetting, it should not occur inside train step
+			-- using after here is OK because that gets called on every path recalculation
+			minetest.after(0, il.route.update_route, sigd, tcbs, rteid, nil)
+		end
 	end
 end

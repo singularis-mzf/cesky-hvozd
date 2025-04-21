@@ -64,10 +64,7 @@ advtrains.tnc_register_on_approach(function(pos, id, train, index, has_entered, 
 	-- resetting the path does not matter to the set route and ARS doesn't need to be called again.
 	if spos and ars_enabled then
 		--atdebug(id,"IL Spos (ARS)",spos,asp)
-		local sigd = il.db.get_sigd_for_signal(spos)
-		if sigd then
-			il.ars_check(sigd, train)
-		end
+		il.ars_check(spos, train)
 	end
 	--atdebug("trav: ",pos, cn, asp, spos, "travsht=", lzb.travsht)
 	local lspd

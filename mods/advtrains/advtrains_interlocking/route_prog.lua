@@ -19,6 +19,11 @@ C. punch a turnout (or some other passive component) to fix its state (toggle)
 The route visualization will also be used to visualize routes after they have been programmed.
 ]]--
 
+-- TODO duplicate
+local lntrans = { "A", "B" }
+local function sigd_to_string(sigd)
+	return minetest.pos_to_string(sigd.p).." / "..lntrans[sigd.s]
+end
 
 -- table with objectRefs
 local markerent = {}
@@ -108,15 +113,7 @@ end
 
 --[[
 Route definition:
-route = {
-	name = <string>
-	[n] = {
-		next = <sigd>, -- of the next (note: next) TCB on the route
-		locks = {<pts> = "state"} -- route locks of this route segment
-	}
-	terminal = <sigd>,
-	aspect = <signal aspect>,--note, might change in future
-}
+=== See database.lua L238
 The first item in the TCB path (namely i=0) is always the start signal of this route,
 so this is left out.
 All subsequent entries, starting from 1, contain:
@@ -206,7 +203,7 @@ function advtrains.interlocking.visualize_route(origin, route, context, tmp_lcks
 		end
 	-- display locks set by player		
 		for pts, state in pairs(tmp_lcks) do
-			local pos = minetest.string_to_pos(pts)
+			local pos = advtrains.decode_pos(pts)
 			routesprite(context, pos, "fixp"..pts, "at_il_route_lock_edit.png", "Zajištěna ve stavu '"..state.."' cestou "..route.name.." (levý klik pro uvolnění)",
 				function() clear_lock(tmp_lcks, pname, pts) end)
 		end
@@ -216,20 +213,33 @@ end
 
 local player_rte_prog = {}
 
-function advtrains.interlocking.init_route_prog(pname, sigd)
+function advtrains.interlocking.init_route_prog(pname, sigd, default_route)
 	if not minetest.check_player_privs(pname, "interlocking") then
-		minetest.chat_send_player(pname, attrans("Insufficient privileges to use this!"))
+		minetest.chat_send_player(pname, "Insufficient privileges to use this!")
 		return
 	end
-	player_rte_prog[pname] = {
+	local rp = {
 		origin = sigd,
-		route = {
-			name = "PROG["..pname.."]",
-		},
-		tmp_lcks = {},
 	}
-	advtrains.interlocking.visualize_route(sigd, player_rte_prog[pname].route, "prog_"..pname, player_rte_prog[pname].tmp_lcks, pname)
-	minetest.chat_send_player(pname, "Režim programování cesty je aktivní. Klikejte levým tlačítkem na TCB pro přidání úseků a na výhybky pro jejich uzamčení.")
+	if default_route then
+		rp.route = table.copy(default_route)
+
+		-- "Step back one section", but keeping turnouts
+		local last_route = rp.route[#rp.route]
+		if last_route then
+			rp.tmp_lcks = last_route.locks
+			rp.route[#rp.route] = nil
+		end
+		rp.route.name = "PROG["..pname.."]"
+	else
+		rp.route = {
+			name = "PROG["..pname.."]"
+		}
+		rp.tmp_lcks = {}
+	end
+	player_rte_prog[pname] = rp
+	advtrains.interlocking.visualize_route(sigd, rp.route, "prog_"..pname, rp.tmp_lcks, pname)
+	minetest.chat_send_player(pname, "Route programming mode active. Punch TCBs to add route segments, punch turnouts to lock them.")
 end
 
 local function get_last_route_item(origin, route)
@@ -239,10 +249,10 @@ local function get_last_route_item(origin, route)
 	return route[#route].next
 end
 
-local function do_advance_route(pname, rp, sigd, tsname)
+local function do_advance_route(pname, rp, sigd, tsref)
 	table.insert(rp.route, {next = sigd, locks = rp.tmp_lcks})
 	rp.tmp_lcks = {}
-	chat(pname, "Úsek '"..tsname.."' přidán na cestu.")
+	chat(pname, "Úsek '"..(tsref and (tsref.name or "") or "--EOI--").."' přidán na cestu.")
 end
 
 local function finishrpform(pname)
@@ -425,20 +435,20 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			if fields.advance then
 				-- advance route
 				if not is_endpoint then
-					do_advance_route(pname, rp, this_sigd, this_ts.name)
+					do_advance_route(pname, rp, this_sigd, this_ts)
 				end
 			end
 			if fields.endhere then
 				if not is_endpoint then
-					do_advance_route(pname, rp, this_sigd, this_ts.name)
+					do_advance_route(pname, rp, this_sigd, this_ts)
 				end
 				finishrpform(pname)
 			end
 			if can_over and fields.endover then
 				if not is_endpoint then
-					do_advance_route(pname, rp, this_sigd, this_ts.name)
+					do_advance_route(pname, rp, this_sigd, this_ts)
 				end
-				do_advance_route(pname, rp, over_sigd, over_ts and over_ts.name or "--EOI--")
+				do_advance_route(pname, rp, over_sigd, over_ts)
 				finishrpform(pname)
 			end
 		end
@@ -488,6 +498,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			local terminal = get_last_route_item(rp.origin, rp.route)
 			rp.route.terminal = terminal
 			rp.route.name = fields.name
+			-- new routes now always use the rscache
+			rp.route.use_rscache = true
 			
 			table.insert(tcbs.routes, rp.route)
 			
@@ -524,13 +536,16 @@ minetest.register_on_punchnode(function(pos, node, player, pointed_thing)
 			-- show formspec
 			
 			show_routing_form(pname, tcbpos)
-			
 			advtrains.interlocking.visualize_route(rp.origin, rp.route, "prog_"..pname, rp.tmp_lcks, pname)
-			
+			return
+		elseif advtrains.interlocking.db.get_tcb(pos) then
+			-- the punched node itself is a TCB
+			show_routing_form(pname, pos)
+			advtrains.interlocking.visualize_route(rp.origin, rp.route, "prog_"..pname, rp.tmp_lcks, pname)
 			return
 		end
 		if advtrains.is_passive(pos) then
-			local pts = advtrains.roundfloorpts(pos)
+			local pts = advtrains.encode_pos(pos)
 			if rp.tmp_lcks[pts] then
 				clear_lock(rp.tmp_lcks, pname, pts)
 			else

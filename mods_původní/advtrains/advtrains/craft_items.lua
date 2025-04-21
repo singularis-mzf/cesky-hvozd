@@ -6,7 +6,7 @@ core.register_craftitem("advtrains:boiler", {
 
  
 core.register_craftitem("advtrains:driver_cab", {
-	description = attrans("driver's cab"),
+	description = attrans("Driver's cab"),
 	inventory_image = "advtrains_driver_cab.png",
 })
 

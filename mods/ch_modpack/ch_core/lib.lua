@@ -304,7 +304,7 @@ local entity_properties_list = {
 	"breath_max",
 	"zoom_fov",
 	"eye_height",
-	"physical = false",
+	"physical",
 	"collide_with_objects",
 	"collisionbox",
 	"selectionbox",

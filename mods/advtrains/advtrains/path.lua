@@ -33,17 +33,16 @@
 -- If you need to proceed along the path by a specific actual distance, it does NOT work to simply add it to the index. You should use the path_get_index_by_offset() function.
 
 -- creates the path data structure, reconstructing the train from a position and a connid
--- Important! train.drives_on must exist while calling this method
 -- returns: true - successful
 --           nil - node not yet available/unloaded, please wait
 --         false - node definitely gone, remove train
 function advtrains.path_create(train, pos, connid, rel_index)
 	local posr = advtrains.round_vector_floor_y(pos)
-	local node_ok, conns, rhe = advtrains.get_rail_info_at(pos, train.drives_on)
+	local node_ok, conns, rhe, connmap = advtrains.get_rail_info_at(pos)
 	if not node_ok then
 		return node_ok
 	end
-	local mconnid = advtrains.get_matching_conn(connid, #conns)
+	local mconnid = advtrains.get_matching_conn(connid, connmap)
 	train.index = rel_index
 	train.path = { [0] = { x=posr.x, y=posr.y+rhe, z=posr.z } }
 	train.path_cn = { [0] = connid }
@@ -113,14 +112,21 @@ end
 -- before returning from the calling function.
 function advtrains.path_invalidate(train, ignore_lock)
 	if advtrains.lock_path_inval and not ignore_lock then
-		atwarn("Train ",train.train_id,": Illegal path invalidation has occured during train step:")
+		atwarn("Train ",train.id,": Illegal path invalidation has occured during train step:")
 		atwarn(debug.traceback())
 	end
-
 	if train.path then
+		--atdebug("path_invalidate for",train.id)
+		local _cnt = 0
 		for i,p in pairs(train.path) do
-			advtrains.occ.clear_item(train.id, advtrains.round_vector_floor_y(p))
+			_cnt = _cnt + 1
+			if _cnt > 10000 then
+				atdebug(train)
+				error("Loop trap in advtrains.path_invalidate was triggered!")
+			end
+			advtrains.occ.clear_all_items(train.id, advtrains.round_vector_floor_y(p))
 		end
+		--atdebug("occ cleared")
 	end
 	train.path = nil
 	train.path_dist = nil
@@ -162,7 +168,7 @@ function advtrains.path_invalidate_ahead(train, start_idx, ignore_when_passed)
 	-- leave current node in path, it won't change. What might change is the path onward from here (e.g. switch)
 	local i = idx + 1
 	while train.path[i] do
-		advtrains.occ.clear_item(train.id, advtrains.round_vector_floor_y(train.path[i]))
+		advtrains.occ.clear_specific_item(train.id, advtrains.round_vector_floor_y(train.path[i]), i)
 		i = i+1
 	end
 	train.path_ext_f=idx
@@ -207,23 +213,19 @@ function advtrains.path_get(train, index)
 	while index > pef do
 		local pos = train.path[pef]
 		local connid = train.path_cn[pef]
-		local node_ok, this_conns, adj_pos, adj_connid, conn_idx, nextrail_y, next_conns
+		local node_ok, this_conns, adj_pos, adj_connid, conn_idx, nextrail_y, next_conns, next_connmap
 		if pef == train.path_trk_f then
 			node_ok, this_conns = advtrains.get_rail_info_at(pos)
 			if not node_ok then error("For train "..train.id..": Path item "..pef.." on-track but not a valid node!") end
-			adj_pos, adj_connid, conn_idx, nextrail_y, next_conns = advtrains.get_adjacent_rail(pos, this_conns, connid, train.drives_on)
+			adj_pos, adj_connid, conn_idx, nextrail_y, next_conns, next_connmap = advtrains.get_adjacent_rail(pos, this_conns, connid)
 		end
 		pef = pef + 1
 		if adj_pos then
 			advtrains.occ.set_item(train.id, adj_pos, pef)
-		
-			-- If we have split points, notify accordingly
-			local mconnid = advtrains.get_matching_conn(adj_connid, #next_conns)
-			if #next_conns==3 and adj_connid==1 and train.points_split and train.points_split[advtrains.encode_pos(adj_pos)] then
-				--atdebug(id,"has split points restored at",adj_pos)
-				mconnid = 3
-			end
-		
+			
+			local mconnid = advtrains.get_matching_conn(adj_connid, next_connmap)
+			-- NO split points handling here. It is only required for backwards path calculation
+			
 			adj_pos.y = adj_pos.y + nextrail_y
 			train.path_cp[pef] = adj_connid
 			train.path_cn[pef] = mconnid
@@ -246,23 +248,26 @@ function advtrains.path_get(train, index)
 	while index < peb do
 		local pos = train.path[peb]
 		local connid = train.path_cp[peb]
-		local node_ok, this_conns, adj_pos, adj_connid, conn_idx, nextrail_y, next_conns
+		local node_ok, this_conns, adj_pos, adj_connid, conn_idx, nextrail_y, next_conns, next_connmap
 		if peb == train.path_trk_b then
 			node_ok, this_conns = advtrains.get_rail_info_at(pos)
 			if not node_ok then error("For train "..train.id..": Path item "..peb.." on-track but not a valid node!") end
-			adj_pos, adj_connid, conn_idx, nextrail_y, next_conns = advtrains.get_adjacent_rail(pos, this_conns, connid, train.drives_on)
+			adj_pos, adj_connid, conn_idx, nextrail_y, next_conns, next_connmap = advtrains.get_adjacent_rail(pos, this_conns, connid)
 		end
 		peb = peb - 1
 		if adj_pos then
 			advtrains.occ.set_item(train.id, adj_pos, peb)
 			
-			-- If we have split points, notify accordingly
-			local mconnid = advtrains.get_matching_conn(adj_connid, #next_conns)
-			if #next_conns==3 and adj_connid==1 and train.points_split and train.points_split[advtrains.encode_pos(adj_pos)] then
-				-- atdebug(id,"has split points restored at",adj_pos)
-				mconnid = 3
+			local mconnid = advtrains.get_matching_conn(adj_connid, next_connmap)
+			-- If, for this position, we have remembered the origin conn, apply it here
+			if next_connmap then -- only needs to be done when this track is a turnout (>2 conns)
+				local origin_conn = train.path_ori_cp[advtrains.encode_pos(adj_pos)]
+				if origin_conn then
+					--atdebug("Train",train.id,"at",adj_pos,"restoring turnout origin CP",origin_conn,"for path item",index)
+					mconnid = origin_conn
+				end
 			end
-			
+						
 			adj_pos.y = adj_pos.y + nextrail_y
 			train.path_cn[peb] = adj_connid
 			train.path_cp[peb] = mconnid
@@ -375,12 +380,25 @@ function advtrains.path_get_index_by_offset(train, index, offset)
 	return c_idx + frac
 end
 
+
+-- The path_dist[] table contains absolute distance values for every whole index.
+-- Use this function to retrieve the correct absolute distance for a fractional index value (interpolate between floor and ceil index)
+-- returns: absolute distance from path item 0
+function advtrains.path_get_path_dist_fractional(train, index)
+	local start_index_f = atfloor(index)
+	local frac = index - start_index_f
+	-- ensure path exists
+	advtrains.path_get_adjacent(train, index)
+	local dist1, dist2 = train.path_dist[start_index_f], train.path_dist[start_index_f+1]
+	return dist1 + (dist2-dist1)*frac
+end
+
 local PATH_CLEAR_KEEP = 4
 
 function advtrains.path_clear_unused(train)
 	local i
 	for i = train.path_ext_b, train.path_req_b - PATH_CLEAR_KEEP do
-		advtrains.occ.clear_item(train.id, advtrains.round_vector_floor_y(train.path[i]))
+		advtrains.occ.clear_specific_item(train.id, advtrains.round_vector_floor_y(train.path[i]), i)
 		train.path[i] = nil
 		train.path_dist[i-1] = nil
 		train.path_cp[i] = nil
@@ -421,18 +439,19 @@ end
 -- Projects the path of "train" onto the path of "onto_train_id", and returns the index on onto_train's path
 -- that corresponds to "index" on "train"'s path, as well as whether both trains face each other
 -- index may be fractional
+-- heuristic: see advtrains.occ.reverse_lookup_sel()
 -- returns: res_index, trains_facing
 -- returns nil when path can not be projected, either because trains are on different tracks or
 -- node at "index" happens to be on a turnout and it's the wrong direction
 -- Note - duplicate with similar functionality is in train_step_b() - that code combines train detection with projecting
-function advtrains.path_project(train, index, onto_train_id)
+function advtrains.path_project(train, index, onto_train_id, heuristic)
 	local base_idx = atfloor(index)
 	local frac_part = index - base_idx
 	local base_pos = advtrains.path_get(train, base_idx)
 	local base_cn =  train.path_cn[base_idx]
 	local otrn = advtrains.trains[onto_train_id]
 	-- query occupation
-	local occ = advtrains.occ.get_trains_over(base_pos)
+	local occ = advtrains.occ.reverse_lookup_sel(base_pos, heuristic)
 	-- is wanted train id contained?
 	local ob_idx = occ[onto_train_id]
 	if not ob_idx then

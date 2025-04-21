@@ -1,22 +1,38 @@
 image: debian/stable
 packages: 
 - git
+- lua5.1
+- luarocks
 - curl
 - minetest-server
 - unzip
 - wget
 - lua-busted
+- luajit
 sources :
 - https://git.sr.ht/~gpcf/advtrains
 
+artifacts:
+- advtrains.luacov.report.out
+- advtrains_interlocking.luacov.report.out
+
 tasks:
 
-- download_mt_server: |
-    mkdir bin
-    wget https://lifomaps.de/advtrains-test/builtin.tar.gz
-    tar xf builtin.tar.gz
-    curl https://lifomaps.de/advtrains-test/minetestserver -o ~/bin/minetestserver
-    chmod +x ~/bin/minetestserver
+- install_mineunit : |
+    for i in {busted,luacov}; do
+        luarocks install --local --lua-version 5.1 $i >/dev/null
+    done
+    luarocks install --local --lua-version 5.1 --server=https://luarocks.org/dev mineunit
+- run_unit_tests : |
+    cd advtrains/serialize_lib
+    ~/.luarocks/bin/busted
+    for i in {advtrains,advtrains_interlocking}; do
+        cd ../$i
+        ~/.luarocks/bin/mineunit -c
+        ~/.luarocks/bin/mineunit -r
+        sed -n '/^File/,$p' luacov.report.out
+        mv luacov.report.out ~/$i.luacov.report.out
+    done
 - install_mt_game : |
     curl -L https://github.com/minetest/minetest_game/archive/master.zip -o master.zip
     mkdir -p .minetest/games/
@@ -28,13 +44,6 @@ tasks:
     curl https://lifomaps.de/advtrains-test/testworld.tar.gz -o ~/testworld.tar.gz
     cd .minetest/worlds/
     tar xf ../../testworld.tar.gz
-- run_unit_tests : |
-    cd advtrains/advtrains
-    busted
-    cd ../advtrains_interlocking
-    busted
-    cd ../serialize_lib
-    busted
 - activate_test_env: |
     cd advtrains
     git merge --no-commit origin/luaatcdebug
@@ -45,4 +54,9 @@ tasks:
     git clone https://git.bananach.space/basic_trains.git/
 - run_test_world: | 
     echo "bind_address = 127.0.0.1" > minetest.conf
-    ~/bin/minetestserver --port 31111 --gameid minetest_game --config ~/minetest.conf --world ~/.minetest/worlds/advtrains_testworld
+    minetestserver --port 31111 --gameid minetest_game --config ~/minetest.conf --world ~/.minetest/worlds/advtrains_testworld --logfile ~/minetest.log
+- test_po_files : |
+    cd advtrains/advtrains
+    for f in po/*.po; do
+      luajit -e 'require("poconvert").from_string("advtrains", io.input():read("*a"))' < $f
+    done

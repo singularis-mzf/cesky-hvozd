@@ -1,449 +1,128 @@
---advtrains by orwell96, see readme.txt
+-- tracks.lua
+-- rewritten with advtrains 2.5 according to new track registration system
 
---dev-time settings:
---EDIT HERE
---If the old non-model rails on straight tracks should be replaced by the new...
---false: no
---true: yes
-advtrains.register_replacement_lbms=false
 
---[[TracksDefinition
-nodename_prefix
-texture_prefix
-description
-common={}
-straight={}
-straight45={}
-curve={}
-curve45={}
-lswitchst={}
-lswitchst45={}
-rswitchst={}
-rswitchst45={}
-lswitchcr={}
-lswitchcr45={}
-rswitchcr={}
-rswitchcr45={}
-vert1={
-	--you'll probably want to override mesh here
-}
-vert2={
-	--you'll probably want to override mesh here
-}
+--[[
+
+Tracks in advtrains are defined by the node definition. They must have at least 2 connections, but can have any number.
+Switchable nodes (turnouts, single/double-slip switches) are implemented by having a separate node (node name) for each of the possible states.
+
+	minetest.register_node(nodename, {
+	... usual node definition ...
+	groups = {
+		advtrains_track = 1,
+		advtrains_track_<tracktype>=1
+		^- these groups tell that the node is a track
+		not_blocking_trains=1,
+		^- this group tells that the node should not block trains although it's walkable.
+	},
+	
+	at_rail_y = 0,
+	^- Height of this rail node (the y position of a wagon that stands centered on this rail)
+	at_conns = {
+		  [1] = { c=0..15, y=0..1 },
+		  [2] = { c=0..15, y=0..1 },
+		( [3] = { c=0..15, y=0..1 }, )
+		( [4] = { c=0..15, y=0..1 }, )
+		( ... )
+	}
+	^- Connections of this rail. There are two general cases:
+	   a) SIMPLE TRACK - the track has exactly 2 connections, and does not feature a turnout, crossing or other contraption
+	      For simple tracks, except for the at_conns table no further setup needs to be specified. A train entering on conn 1 will go out at conn 2 and vice versa.
+		  A track with only one connection defined is not permitted.
+	   b) COMPOUND TRACK - the track has more than 2 connections
+	      This will be used for turnouts and crossings. Tracks with more than 2 conns MUST define 'at_conn_map'.
+		  Switchable nodes, whose state can be changed (e.g. turnouts) MUST define a 'state_map' within the advtrains table as well.
+		  This differs from the behavior up until 2.4.2, where the conn mapping was fixed.
+	^- Connection definition:
+	   - c is the direction of the connection (0-16). For the mapping to world directions see helpers.lua.
+	   - Connections will be auto-rotated with param2 of the node (horizontal, param2 values 0-3 only)
+	   - y is the height of the connection (rail will only connect when this matches)
+	^- The index of a connection inside the conns table (1, 2, 3, ...) is referred throughout advtrains code as 'connid'
+	^- IMPORTANT: For switchable nodes (any kind of turnout), it is crucial that for all of the node's variants the at_conns table stays the same. See below.
+	   
+	at_conn_map = {
+		[1] = 2,
+		[2] = 1,
+		[3] = 1,
+	}
+	^- Connection map of this rail. It specifies when a train enters the track on connid X, on which connid it will leave
+	   This field MUST be specified when the number of connections in at_conns is greater than 2
+	   This field may, and obviously will, vary between nodes for switchable nodes.
+	
+	can_dig = advtrains.track_can_dig_callback
+	after_dig_node = advtrains.track_update_callback
+	after_place_node = advtrains.track_update_callback
+	^- the code in these 3 default minetest API functions is required for advtrains to work, however you can add your own code
+	
+	on_rightclick = advtrains.state_node_on_rightclick_callback
+	^- Must be added if the node is a turnout and if it should be switched by right-click. It will cause the turnout to be switched to next_state.
+	
+	advtrains = {
+		on_train_enter=function(pos, train_id, train, index) end
+		^- called when a train enters the rail
+		on_train_leave=function(pos, train_id, train, index) end
+		^- called when a train leaves the rail
+		
+		-- The following function is only in effect when interlocking is enabled:
+		on_train_approach = function(pos, train_id, train, index, has_entered, lzbdata)
+		^- called when a train is approaching this position, called exactly once for every path recalculation (which can happen at any time)
+		^- This is called so that if the train would start braking now, it would come to halt about(wide approx) 5 nodes before the rail.
+		^- has_entered: when true, the train is already standing on this node with its front tip, and the enter callback has already been called.
+		   Possibly, some actions need not to be taken in this case. Only set if it's the very first node the train is standing on.
+		^- lzbdata should be ignored and nothing should be assigned to it
+		
+		-- The following information is required if the node is a turnout (e.g. can be switched into different positions)
+		node_state = "st"
+		^- The name of the state this node represents
+		^- Conventions for this field are as follows:
+		   - Two-way straight/turn switches: 'st'=straight branch, 'cr'=diverting/turn branch
+		   - 3-way turnouts, Y-turnouts: 'l'=left branch, 's'=straight branch, 'r'=right branch
+		   
+		node_next_state = "cr"
+		^- The name of the state that the turnout should be switched to when it is right-clicked
+		
+		node_fallback_state = "st"
+		^- The name of the state that the turnout should "fall back" to when it is released
+		   Only used by the interlocking system, when a route on the node is released it is switched back to this state.
+		
+		node_state_map = {
+			["st"] = "<node name of the st variant>",
+			["cr"] = "<node name of the cr variant>",
+			... etc ...
+		}
+		^- Map of state name to the appropriate node name that should be set by advtrains when a switch is requested
+		   Note that for all of those nodes, the at_conns table must be identical (however the conn_map will vary)
+		   
+		node_on_switch_state = function(pos, node, oldstate, newstate)
+		^- Called when the node state is switched by advtrains, after the node replacement has commenced.
+		
+		Turnout switching can happen programmatically via advtrains.setstate(pos, state), via user right_click or via the interlocking system.
+		In no other situation is it permissible to exchange track nodes in-place, unless both at_conns and at_conn_map stay identical.
+		
+		Note that the fields node_state, node_next_state and node_state_map completely replace the getstate/setstate functions.
+		There must be a one-to-one mapping between states and node names and no function can be defined for state switching.
+		This principle enables the seamless working of the interlocking autorouter and reduces failure points.
+		The node_state_* system can also be used as drop-in replacement for the passive-API-enabled nodes (andrews-cross, mesecon_switch etc.)
+		The advtrains API functions advtrains.getstate() and advtrains.setstate() remain the programmatic access points, but will now utilize the new state system.
+		
+		
+		trackworker_next_rot = <nodename of next rotation step>,
+		^- if set, right-click with trackworker will set this node
+		trackworker_rot_incr_param2 = true
+		^- if set, trackworker will increase node param2 on rightclick
+		
+		trackworker_next_var = <nodename of next variant>
+		^- if set, left-click with trackworker will set this node
+	}
+	})
+
 ]]--
-advtrains.all_tracktypes={}
 
---definition preparation
-local function conns(c1, c2, r1, r2) return {{c=c1, y=r1}, {c=c2, y=r2}} end
-local function conns3(c1, c2, c3, r1, r2, r3) return {{c=c1, y=r1}, {c=c2, y=r2}, {c=c3, y=r3}} end
+-- This file provides some utilities to register tracks, but tries to not get into the way too much
 
-advtrains.ap={}
-advtrains.ap.t_30deg_flat={
-	regstep=1,
-	variant={
-		st={
-			conns = conns(0,8),
-			desc = "straight",
-			tpdouble = true,
-			tpsingle = true,
-			trackworker = "cr",
-		},
-		cr={
-			conns = conns(0,7),
-			desc = "curve",
-			tpdouble = true,
-			trackworker = "swlst",
-		},
-		swlst={
-			conns = conns3(0,8,7),
-			desc = "left switch (straight)",
-			trackworker = "swrst",
-			switchalt = "cr",
-			switchmc = "on",
-			switchst = "st",
-			switchprefix = "swl",
-		},
-		swlcr={
-			conns = conns3(0,7,8),
-			desc = "left switch (curve)",
-			trackworker = "swrcr",
-			switchalt = "st",
-			switchmc = "off",
-			switchst = "cr",
-			switchprefix = "swl",
-		},
-		swrst={
-			conns = conns3(0,8,9),
-			desc = "right switch (straight)",
-			trackworker = "st",
-			switchalt = "cr",
-			switchmc = "on",
-			switchst = "st",
-			switchprefix = "swr",
-		},
-		swrcr={
-			conns = conns3(0,9,8),
-			desc = "right switch (curve)",
-			trackworker = "st",
-			switchalt = "st",
-			switchmc = "off",
-			switchst = "cr",
-			switchprefix = "swr",
-		},
-	},
-	regtp=true,
-	tpdefault="st",
-	trackworker={
-		["swrcr"]="st",
-		["swrst"]="st",
-		["cr"]="swlst",
-		["swlcr"]="swrcr",
-		["swlst"]="swrst",
-	},
-	rotation={"", "_30", "_45", "_60"},
-}
-advtrains.ap.t_yturnout={
-	regstep=1,
-	variant={
-		l={
-			conns = conns3(0,7,9),
-			desc = "Y-turnout (left)",
-			switchalt = "r",
-			switchmc = "off",
-			switchst = "l",
-			switchprefix = "",
-		},
-		r={
-			conns = conns3(0,9,7),
-			desc = "Y-turnout (right)",
-			switchalt = "l",
-			switchmc = "on",
-			switchst = "r",
-			switchprefix = "",
-		}
-	},
-	regtp=true,
-	tpdefault="l",
-	rotation={"", "_30", "_45", "_60"},
-}
-advtrains.ap.t_s3way={
-	regstep=1,
-	variant={
-		l={
-			conns = { {c=0}, {c=7}, {c=8}, {c=9}, {c=0} },
-			desc = "3-way turnout (left)",
-			switchalt = "s",
-			switchst="l",
-			switchprefix = "",
-		},
-		s={
-			conns = { {c=0}, {c=8}, {c=7}, {c=9}, {c=0} },
-			desc = "3-way turnout (straight)",
-			switchalt ="r",
-			switchst = "s",
-			switchprefix = "",
-		},
-		r={
-			conns = { {c=0}, {c=9}, {c=8}, {c=7}, {c=0} },
-			desc = "3-way turnout (right)",
-			switchalt = "l",
-			switchst="r",
-			switchprefix = "",
-		}
-	},
-	regtp=true,
-	tpdefault="l",
-	rotation={"", "_30", "_45", "_60"},
-}
-advtrains.ap.t_30deg_slope={
-	regstep=1,
-	variant={
-		vst1={conns = conns(8,0,0,0.5), rail_y = 0.25, desc = "steep uphill 1/2", slope=true},
-		vst2={conns = conns(8,0,0.5,1), rail_y = 0.75, desc = "steep uphill 2/2", slope=true},
-		vst31={conns = conns(8,0,0,0.33), rail_y = 0.16, desc = "uphill 1/3", slope=true},
-		vst32={conns = conns(8,0,0.33,0.66), rail_y = 0.5, desc = "uphill 2/3", slope=true},
-		vst33={conns = conns(8,0,0.66,1), rail_y = 0.83, desc = "uphill 3/3", slope=true},
-	},
-	regsp=true,
-	slopeplacer={
-		[2]={"vst1", "vst2"},
-		[3]={"vst31", "vst32", "vst33"},
-		max=3,--highest entry
-	},
-	slopeplacer_45={
-		[2]={"vst1_45", "vst2_45"},
-		max=2,
-	},
-	rotation={"", "_30", "_45", "_60"},
-	trackworker={},
-	increativeinv={},
-}
-advtrains.ap.t_30deg_straightonly={
-	regstep=1,
-	variant={
-		st={
-			conns = conns(0,8),
-			desc = "straight",
-			tpdouble = true,
-			tpsingle = true,
-			trackworker = "st",
-		},
-	},
-	regtp=true,
-	tpdefault="st",
-	rotation={"", "_30", "_45", "_60"},
-}
-advtrains.ap.t_30deg_straightonly_noplacer={
-	regstep=1,
-	variant={
-		st={
-			conns = conns(0,8),
-			desc = "straight",
-			tpdouble = true,
-			tpsingle = true,
-			trackworker = "st",
-		},
-	},
-	tpdefault="st",
-	rotation={"", "_30", "_45", "_60"},
-}
-advtrains.ap.t_45deg={
-	regstep=2,
-	variant={
-		st={
-			conns = conns(0,8),
-			desc = "straight",
-			tpdouble = true,
-			tpsingle = true,
-			trackworker = "cr",
-		},
-		cr={
-			conns = conns(0,6),
-			desc = "curve",
-			tpdouble = true,
-			trackworker = "swlst",
-		},
-		swlst={
-			conns = conns3(0,8,6),
-			desc = "left switch (straight)",
-			trackworker = "swrst",
-			switchalt = "cr",
-			switchmc = "on",
-			switchst = "st",
-		},
-		swlcr={
-			conns = conns3(0,6,8),
-			desc = "left switch (curve)",
-			trackworker = "swrcr",
-			switchalt = "st",
-			switchmc = "off",
-			switchst = "cr",
-		},
-		swrst={
-			conns = conns3(0,8,10),
-			desc = "right switch (straight)",
-			trackworker = "st",
-			switchalt = "cr",
-			switchmc = "on",
-			switchst = "st",
-		},
-		swrcr={
-			conns = conns3(0,10,8),
-			desc = "right switch (curve)",
-			trackworker = "st",
-			switchalt = "st",
-			switchmc = "off",
-			switchst = "cr",
-		},
-	},
-	regtp=true,
-	tpdefault="st",
-	trackworker={
-		["swrcr"]="st",
-		["swrst"]="st",
-		["cr"]="swlst",
-		["swlcr"]="swrcr",
-		["swlst"]="swrst",
-	},
-	rotation={"", "_30", "_45", "_60"},
-}
-advtrains.ap.t_perpcrossing={
-	regstep = 1,
-	variant={
-		st={
-			conns = { {c=0}, {c=8}, {c=4}, {c=12} },
-			desc = "perpendicular crossing",
-			tpdouble = true,
-			tpsingle = true,
-			trackworker = "st",
-		},
-	},
-	regtp=true,
-	tpdefault="st",
-	rotation={"", "_30", "_45", "_60"},
-}
-advtrains.ap.t_90plusx_crossing={
-	regstep = 1,
-	variant={
-		["30l"]={
-			conns = { {c=0}, {c=8}, {c=1}, {c=9} },
-			desc = "30/90 degree crossing (left)",
-			tpdouble = true,
-			tpsingle = true,
-			trackworker = "45l"
-		},
-		["45l"]={
-			conns = { {c=0}, {c=8}, {c=2}, {c=10} },
-			desc = "45/90 degree crossing (left)",
-			tpdouble = true,
-			tpsingle = true,
-			trackworker = "60l",
-		},
-		["60l"]={
-			conns = { {c=0}, {c=8}, {c=3}, {c=11}},
-			desc = "60/90 degree crossing (left)",
-			tpdouble = true,
-			tpsingle = true,
-			trackworker = "60r",
-		},
-		["60r"]={
-			conns = { {c=0}, {c=8}, {c=5}, {c=13} },
-			desc = "60/90 degree crossing (right)",
-			tpdouble = true,
-			tpsingle = true,
-			trackworker = "45r"
-		},
-		["45r"]={
-			conns = { {c=0}, {c=8}, {c=6}, {c=14} },
-			desc = "45/90 degree crossing (right)",
-			tpdouble = true,
-			tpsingle = true,
-			trackworker = "30r",
-		},
-		["30r"]={
-			conns = { {c=0}, {c=8}, {c=7}, {c=15}},
-			desc = "30/90 degree crossing (right)",
-			tpdouble = true,
-			tpsingle = true,
-			trackworker = "30l",
-		},
-	},
-	regtp=true,
-	tpdefault="30l",
-	rotation={""},
-	trackworker = {
-		["30l"] = "45l",
-		["45l"] = "60l",
-		["60l"] = "60r",
-		["60r"] = "45r",
-		["45r"] = "30r",
-		["30r"] = "30l",
-	}
-}
 
-advtrains.ap.t_diagonalcrossing = {
-	regstep=1,
-	variant={
-		["30l45r"]={
-			conns = {{c=1}, {c=9}, {c=6}, {c=14}},
-			desc = "30left-45right diagonal crossing",
-			tpdouble=true,
-			tpsingle=true,
-			trackworker="60l30l",
-		},
-		["60l30l"]={
-			conns = {{c=3}, {c=11}, {c=1}, {c=9}},
-			desc = "30left-60right diagonal crossing",
-			tpdouble=true,
-			tpsingle=true,
-			trackworker="60l45r"
-		},
-		["60l45r"]={
-			conns = {{c=3}, {c=11}, {c=6}, {c=14}},
-			desc = "60left-45right diagonal crossing",
-			tpdouble=true,
-			tpsingle=true,
-			trackworker="60l60r"
-		},
-		["60l60r"]={
-			conns = {{c=3}, {c=11}, {c=5}, {c=13}},
-			desc = "60left-60right diagonal crossing",
-			tpdouble=true,
-			tpsingle=true,
-			trackworker="60r45l",
-		},
-		--If 60l60r had a mirror image, it would be here, but it's symmetric.
-		-- 60l60r is also equivalent to 30l30r but rotated 90 degrees.
-		["60r45l"]={
-			conns = {{c=5}, {c=13}, {c=2}, {c=10}},
-			desc = "60right-45left diagonal crossing",
-			tpdouble=true,
-			tpsingle=true,
-			trackworker="60r30r",
-		},
-		["60r30r"]={
-			conns = {{c=5}, {c=13}, {c=7}, {c=15}},
-			desc = "60right-30right diagonal crossing",
-			tpdouble=true,
-			tpsingle=true,
-			trackworker="30r45l",
-		},
-		["30r45l"]={
-			conns = {{c=7}, {c=15}, {c=2}, {c=10}},
-			desc = "30right-45left diagonal crossing",
-			tpdouble=true,
-			tpsingle=true,
-			trackworker="30l45r",
-		},
-
-	},
-	regtp=true,
-	tpdefault="30l45r",
-	rotation={""},
-	trackworker = {
-		["30l45r"] = "60l30l",
-		["60l30l"] = "60l45r",
-		["60l45r"] = "60l60r",
-		["60l60r"] = "60r45l",
-		["60r45l"] = "60r30r",
-		["60r30r"] = "30r45l",
-		["30r45l"] = "30l45r",
-	}
-}
-
-advtrains.trackpresets = advtrains.ap
-
---definition format: ([] optional)
---[[{
-	nodename_prefix
-	texture_prefix
-	[shared_texture]
-	models_prefix
-	models_suffix (with dot)
-	[shared_model]
-	formats={
-		st,cr,swlst,swlcr,swrst,swrcr,vst1,vst2
-		(each a table with indices 0-3, for if to register a rail with this 'rotation' table entry. nil is assumed as 'all', set {} to not register at all)
-	}
-	common={} change something on common rail appearance
-}
-[18.12.17] Note on new connection system:
-In order to support real rail crossing nodes and finally make the trackplacer respect switches, I changed the connection system.
-There can be a variable number of connections available. These are specified as tuples {c=<connection>, y=<rely>}
-The table "at_conns" consists of {<conn1>, <conn2>...}
-the "at_rail_y" property holds the value that was previously called "railheight"
-Depending on the number of connections:
-2 conns: regular rail
-3 conns: switch:
-	- when train passes in at conn1, will move out of conn2
-	- when train passes in at conn2 or conn3, will move out of conn1
-4 conns: cross (or cross switch, depending on arrangement of conns):
-	- conn1 <> conn2
-	- conn3 <> conn4
-]]
-
--- Notify the user if digging the rail is not allowed
-local function can_dig_callback(pos, player)
+function advtrains.track_can_dig_callback(pos, player)
 	local ok, reason = advtrains.can_dig_or_modify_track(pos)
 	if not ok and player then
 		minetest.chat_send_player(player:get_player_name(), attrans("This track can not be removed!") .. " " .. reason)
@@ -451,147 +130,113 @@ local function can_dig_callback(pos, player)
 	return ok
 end
 
-function advtrains.register_tracks(tracktype, def, preset)
-	advtrains.trackplacer.register_tracktype(def.nodename_prefix, preset.tpdefault)
-	if preset.regtp then
-		advtrains.trackplacer.register_track_placer(def.nodename_prefix, def.texture_prefix, def.description, def)			
-	end
-	if preset.regsp then
-		advtrains.slope.register_placer(def, preset)			
-	end
-	for suffix, var in pairs(preset.variant) do
-		for rotid, rotation in ipairs(preset.rotation) do
-			if not def.formats[suffix] or def.formats[suffix][rotid] then
-				local img_suffix = suffix..rotation
-				local ndef = advtrains.merge_tables({
-					description=def.description.."("..(var.desc or "any")..rotation..")",
-					drawtype = "mesh",
-					paramtype="light",
-					paramtype2="facedir",
-					walkable = false,
-					selection_box = {
-						type = "fixed",
-						fixed = {-1/2, -1/2, -1/2, 1/2, -1/2+1/16, 1/2},
-					},
-					
-					mesh = def.shared_model or (def.models_prefix.."_"..img_suffix..def.models_suffix),
-					tiles = {def.shared_texture or (def.texture_prefix.."_"..img_suffix..".png"), def.second_texture},
-					
-					groups = {
-						attached_node = advtrains.IGNORE_WORLD and 0 or 1,
-						advtrains_track=1,
-						["advtrains_track_"..tracktype]=1,
-						save_in_at_nodedb=1,
-						dig_immediate=2,
-						not_in_creative_inventory=1,
-						not_blocking_trains=1,
-					},
-						
-					can_dig = can_dig_callback,
-					after_dig_node=function(pos)
-						advtrains.ndb.update(pos)
-					end,
-					after_place_node=function(pos)
-						advtrains.ndb.update(pos)
-					end,
-					at_nnpref = def.nodename_prefix,
-					at_suffix = suffix,
-					at_rotation = rotation,
-					at_rail_y = var.rail_y
-				}, def.common or {})
-				
-				if preset.regtp then
-					ndef.drop = def.nodename_prefix.."_placer"
-				end
-				if preset.regsp and var.slope then
-					ndef.drop = def.nodename_prefix.."_slopeplacer"
-				end
-				
-				--connections
-				ndef.at_conns = advtrains.rotate_conn_by(var.conns, (rotid-1)*preset.regstep)
-				
-				local ndef_avt_table
-				
-				if var.switchalt and var.switchst then
-					local switchfunc=function(pos, node, newstate)
-						newstate = newstate or var.switchalt -- support for 3 (or more) state switches
-						-- this code is only called from the internal setstate function, which
-						-- ensures that it is safe to switch the turnout
-						if newstate~=var.switchst then
-							advtrains.ndb.swap_node(pos, {name=def.nodename_prefix.."_"..(var.switchprefix or "")..newstate..rotation, param2=node.param2})
-							advtrains.invalidate_all_paths(pos)
-						end
-					end
-					ndef.on_rightclick = function(pos, node, player)
-						if advtrains.check_turnout_signal_protection(pos, player:get_player_name()) then
-							advtrains.setstate(pos, nil, node)
-							advtrains.log("Switch", player:get_player_name(), pos)
-						end
-					end
-					if var.switchmc then
-						ndef.mesecons = {effector = {
-							["action_"..var.switchmc] = function(pos, node) 
-								advtrains.setstate(pos, nil, node)
-							end,
-							rules=advtrains.meseconrules
-						}}
-					end
-					ndef_avt_table = {
-						getstate = var.switchst,
-						setstate = switchfunc,
-					}
-				end
-				
-				local adef={}
-				if def.get_additional_definiton then
-					adef=def.get_additional_definiton(def, preset, suffix, rotation)
-				end
-				ndef = advtrains.merge_tables(ndef, adef)
-				
-				-- insert getstate/setstate functions after merging the additional definitions
-				if ndef_avt_table then
-					ndef.advtrains = advtrains.merge_tables(ndef.advtrains or {}, ndef_avt_table)
-				end
-
-				minetest.register_node(":"..def.nodename_prefix.."_"..suffix..rotation, ndef)
-				--trackplacer
-				if preset.regtp then
-					local tpconns = {conn1=ndef.at_conns[1].c, conn2=ndef.at_conns[2].c}
-					if var.tpdouble then
-						advtrains.trackplacer.add_double_conn(def.nodename_prefix, suffix, rotation, tpconns)
-					end
-					if var.tpsingle then
-						advtrains.trackplacer.add_single_conn(def.nodename_prefix, suffix, rotation, tpconns)
-					end
-				end
-				advtrains.trackplacer.add_worked(def.nodename_prefix, suffix, rotation, var.trackworker)
-			end
-		end
-	end
-	advtrains.all_tracktypes[tracktype]=true
+function advtrains.track_update_callback(pos)
+	advtrains.ndb.update(pos)
 end
 
-function advtrains.is_track_and_drives_on(nodename, drives_on_p)
-	local drives_on = drives_on_p
-	if not drives_on then drives_on = advtrains.all_tracktypes end
-	local hasentry = false
-	for _,_ in pairs(drives_on) do
-		hasentry=true
+function advtrains.state_node_on_rightclick_callback(pos, node, player)
+	if advtrains.check_turnout_signal_protection(pos, player:get_player_name()) then
+		local ndef = minetest.registered_nodes[node.name]
+		if ndef and ndef.advtrains and ndef.advtrains.node_next_state then
+			advtrains.setstate(pos, ndef.advtrains.node_next_state, node)
+			advtrains.log("Switch", player:get_player_name(), pos)
+		end
 	end
-	if not hasentry then drives_on = advtrains.all_tracktypes end
-	
+end
+
+-- advtrains.register_node_4rot(name, nodedef)
+-- Registers four rotations for the node defined by nodedef (0°, 30°, 45° and 60°; the 4 90°-steps are already handled by the param2, resulting in 16 directions total).
+-- You must provide the definition for the base node, and certain fields are altered automatically for the 3 additional rotations:
+--  name: appends the suffix "_30", "_45" or "_60"
+--  description: appends the rotation (human-readable) in parenthesis
+--  tiles_prefix: if defined, "tiles" field will be set as prefix..rotationExtension..".png"
+--  mesh_prefix, mesh_suffix: if defined, "mesh" field will be set as prefix..rotationExtension..suffix
+--  at_conns: are rotated according to the node rotation
+--  node_state_map, trackworker_next_var: appends the suffix appropriately.
+--  groups: applies save_in_at_nodedb and not_blocking_trains groups if not already present
+-- The nodes are registered in the trackworker to be rotated with right-click.
+-- definition_mangling_function is an optional parameter. For each of the 4 rotations, it gets passed the modified node definition and may perform final modifications to it.
+--  signature: function definition_mangling_function(name, nodedef, rotationIndex, rotationSuffix)
+--  Example usage: define the setstate function of turnouts (if that is not done via the "automatic" way of state_node_map)
+local rotations = {
+	{i = 0, s = "",    h = " (0)",  n = "_30"},
+	{i = 1, s = "_30", h = " (30)", n = "_45"},
+	{i = 2, s = "_45", h = " (45)", n = "_60"},
+	{i = 3, s = "_60", h = " (60)", n = ""},
+}
+function advtrains.register_node_4rot(ori_name, ori_ndef, definition_mangling_function)
+	for _, rot in ipairs(rotations) do
+		local ndef = table.copy(ori_ndef)
+		if ori_ndef.advtrains then
+			-- make sure advtrains table is deep-copied because we may need to replace node_state_map
+			ndef.advtrains = table.copy(ori_ndef.advtrains)
+		else
+			ndef.advtrains = {} -- we need the table later for trackworker
+		end
+		-- Perform the name mangling
+		local suffix = rot.s
+		local name = ori_name..suffix
+		ndef.description = ori_ndef.description .. rot.h
+		if ori_ndef.tiles_prefix then
+			ndef.tiles = { ori_ndef.tiles_prefix .. suffix .. ".png" }
+		end
+		if ori_ndef.mesh_prefix then
+			ndef.mesh = ori_ndef.mesh_prefix .. suffix .. ori_ndef.mesh_suffix
+		end
+		-- rotate connections
+		if ori_ndef.at_conns then
+			ndef.at_conns = advtrains.rotate_conn_by(ori_ndef.at_conns, rot.i)
+		end
+		-- update node state map if present
+		if ori_ndef.advtrains then
+			if ori_ndef.advtrains.node_state_map then
+				local new_nsm = {}
+				for state, nname in pairs(ori_ndef.advtrains.node_state_map) do
+					new_nsm[state] = nname .. suffix
+				end
+				ndef.advtrains.node_state_map = new_nsm
+			end
+			if ori_ndef.advtrains.trackworker_next_var then
+				ndef.advtrains.trackworker_next_var = ori_ndef.advtrains.trackworker_next_var .. suffix
+			end
+			-- apply trackworker rot field
+			ndef.advtrains.trackworker_next_rot = ori_name .. rot.n
+			ndef.advtrains.trackworker_rot_incr_param2 = (rot.n=="")
+		end
+		-- apply groups
+		ndef.groups.save_in_at_nodedb = 1
+		ndef.groups.not_blocking_trains = 1
+		
+		-- give the definition mangling function an option to do some adjustments
+		if definition_mangling_function then
+			definition_mangling_function(name, ndef, rot.i, suffix)
+		end
+		
+		-- register node
+		minetest.register_node(":"..name, ndef)
+		
+		-- if this has the track_place_group set, register as a candidate for the track_place_group
+		if ndef.advtrains.track_place_group then
+			advtrains.trackplacer.register_candidate(ndef.advtrains.track_place_group, name, ndef, ndef.advtrains.track_place_single, true)
+		end
+	end
+end
+
+-- track-related helper functions
+
+function advtrains.is_track(nodename)
 	if not minetest.registered_nodes[nodename] then
 		return false
 	end
 	local nodedef=minetest.registered_nodes[nodename]
-	for k,v in pairs(drives_on) do
-		if nodedef.groups["advtrains_track_"..k] then
-			return true
-		end
+	if nodedef and nodedef.groups.advtrains_track then
+		return true
 	end
 	return false
 end
 
+-- returns the connection tables of the track with given node details
+-- returns: conns table, railheight, conn_map table
 function advtrains.get_track_connections(name, param2)
 	local nodedef=minetest.registered_nodes[name]
 	if not nodedef then atprint(" get_track_connections couldn't find nodedef for nodename "..(name or "nil")) return nil end
@@ -599,18 +244,16 @@ function advtrains.get_track_connections(name, param2)
 	if not param2 then noderot=0 end
 	if noderot > 3 then atprint(" get_track_connections: rail has invaild param2 of "..noderot) noderot=0 end
 	
-	local tracktype
-	for k,_ in pairs(nodedef.groups) do
-		local tt=string.match(k, "^advtrains_track_(.+)$")
-		if tt then
-			tracktype=tt
-		end
+	if not nodedef.at_conns then
+		return nil
 	end
-	return advtrains.rotate_conn_by(nodedef.at_conns, noderot*AT_CMAX/4), (nodedef.at_rail_y or 0), tracktype
+	--atdebug("Track connections of ",name,param2,":",nodedef.at_conns)
+	return advtrains.rotate_conn_by(nodedef.at_conns, noderot*AT_CMAX/4), (nodedef.at_rail_y or 0), nodedef.at_conn_map
 end
 
 -- Function called when a track is about to be dug or modified by the trackworker
 -- Returns either true (ok) or false,"translated string describing reason why it isn't allowed"
+-- Impl Note: possibly duplicate code in "self contained TCB" - see interlocking/tcb_ts_ui.lua!
 function advtrains.can_dig_or_modify_track(pos)
 	if advtrains.get_train_at_pos(pos) then
 		return false, attrans("Position is occupied by a train.")
@@ -628,124 +271,3 @@ function advtrains.can_dig_or_modify_track(pos)
 	end
 	return true
 end
-
--- slope placer. Defined in register_tracks.
---crafted with rail and gravel
-local sl={}
-function sl.register_placer(def, preset)
-	minetest.register_craftitem(":"..def.nodename_prefix.."_slopeplacer",{
-		description = attrans("@1 Slope", def.description),
-		inventory_image = def.texture_prefix.."_slopeplacer.png",
-		wield_image = def.texture_prefix.."_slopeplacer.png",
-		groups={},
-		on_place = sl.create_slopeplacer_on_place(def, preset)
-	})
-end
---(itemstack, placer, pointed_thing)
-function sl.create_slopeplacer_on_place(def, preset)
-	return function(istack, player, pt)
-		if not pt.type=="node" then 
-			minetest.chat_send_player(player:get_player_name(), attrans("Can't place: not pointing at node"))
-			return istack 
-		end
-		local pos=pt.above
-		if not pos then 
-			minetest.chat_send_player(player:get_player_name(), attrans("Can't place: not pointing at node"))
-			return istack
-		end
-		local node=minetest.get_node(pos)
-		if not minetest.registered_nodes[node.name] or not minetest.registered_nodes[node.name].buildable_to then
-			minetest.chat_send_player(player:get_player_name(), attrans("Can't place: space occupied!"))
-			return istack
-		end
-		if not advtrains.check_track_protection(pos, player:get_player_name()) then 
-			minetest.record_protection_violation(pos, player:get_player_name())
-			return istack
-		end
-		--determine player orientation (only horizontal component)
-		--get_look_horizontal may not be available
-		local yaw=player.get_look_horizontal and player:get_look_horizontal() or (player:get_look_yaw() - math.pi/2)
-		
-		--rounding unit vectors is a nice way for selecting 1 of 8 directions since sin(30°) is 0.5.
-		local dirvec={x=math.floor(math.sin(-yaw)+0.5), y=0, z=math.floor(math.cos(-yaw)+0.5)}
-		--translate to direction to look up inside the preset table
-		local param2, rot45=({
-			[-1]={
-				[-1]=2,
-				[0]=3,
-				[1]=3,
-				},
-			[0]={
-				[-1]=2,
-				[1]=0,
-				},
-			[1]={
-				[-1]=1,
-				[0]=1,
-				[1]=0,
-				},
-		})[dirvec.x][dirvec.z], dirvec.x~=0 and dirvec.z~=0
-		local lookup=preset.slopeplacer
-		if rot45 then lookup=preset.slopeplacer_45 end
-		
-		--go unitvector forward and look how far the next node is
-		local step=1
-		while step<=lookup.max do
-			local node=minetest.get_node(vector.add(pos, dirvec))
-			--next node solid?
-			if not minetest.registered_nodes[node.name] or not minetest.registered_nodes[node.name].buildable_to or advtrains.is_protected(pos, player:get_player_name()) then 
-				--do slopes of this distance exist?
-				if lookup[step] then
-					if minetest.settings:get_bool("creative_mode") or istack:get_count()>=step then
-						--start placing
-						local placenodes=lookup[step]
-						while step>0 do
-							minetest.set_node(pos, {name=def.nodename_prefix.."_"..placenodes[step], param2=param2})
-							if not minetest.settings:get_bool("creative_mode") then
-								istack:take_item()
-							end
-							step=step-1
-							pos=vector.subtract(pos, dirvec)
-						end
-					else
-						minetest.chat_send_player(player:get_player_name(), attrans("Can't place: Not enough slope items left (@1 required)", step))
-					end
-				else
-					minetest.chat_send_player(player:get_player_name(), attrans("Can't place: There's no slope of length @1",step))
-				end
-				return istack
-			end
-			step=step+1
-			pos=vector.add(pos, dirvec)
-		end
-		minetest.chat_send_player(player:get_player_name(), attrans("Can't place: no supporting node at upper end."))
-		return itemstack
-	end
-end
-
-advtrains.slope=sl
-
---END code, BEGIN definition
---definition format: ([] optional)
---[[{
-	nodename_prefix
-	texture_prefix
-	[shared_texture]
-	models_prefix
-	models_suffix (with dot)
-	[shared_model]
-	formats={
-		st,cr,swlst,swlcr,swrst,swrcr,vst1,vst2
-		(each a table with indices 0-3, for if to register a rail with this 'rotation' table entry. nil is assumed as 'all', set {} to not register at all)
-	}
-	common={} change something on common rail appearance
-}]]
-
-
-
-
-
-
-
-
-

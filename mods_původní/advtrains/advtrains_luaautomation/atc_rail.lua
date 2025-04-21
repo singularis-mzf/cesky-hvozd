@@ -91,6 +91,47 @@ function r.fire_event(pos, evtdata, appr_internal)
 			if not train_id then return false end
 			advtrains.train_step_fc(train)
 		end,
+		get_fc = function()
+			if not train_id then return end
+			local fc_list = {}
+			for index,wagon_id in ipairs(train.trainparts) do
+				fc_list[index] = table.concat(advtrains.wagons[wagon_id].fc or {},"!")
+			end
+			return fc_list
+		end,
+		get_fc_index = function()
+			if not train_id then return end
+			local fc_index_list = {}
+			for widx, wagon_id in ipars(train.trainparts) do
+				fc_index_list[widx] = advtrains.wagons[wagon_id].fcind or 1
+			end
+			return fc_index_list
+		end,
+		set_fc = function(fc_list,reset_index)
+			assertt(fc_list, "table")
+			if not train_id then return false end
+			-- safety type-check for entered values
+			for _,v in ipairs(fc_list) do
+				if v and type(v) ~= "string" then
+					error("FC entries must be a string")
+					return
+				end
+			end
+			for index,wagon_id in ipairs(train.trainparts) do
+				if fc_list[index] then -- has FC to enter to this wagon
+					local data = advtrains.wagons[wagon_id]
+					if data then -- wagon actually exists
+						--effectively copyied from wagons.lua, allowing for the :split function and reset_index
+						data.fc = fc_list[index]:split("!")
+						if reset_index or not data.fcind then
+							data.fcind = 1
+						elseif data.fcind > #data.fc then
+							data.fcind = #data.fc
+						end
+					end
+				end
+			end
+		end,
 		set_shunt = function()
 			-- enable shunting mode
 			if not train_id then return false end
@@ -187,7 +228,7 @@ advtrains.register_tracks("default", {
 	models_prefix="advtrains_dtrack",
 	models_suffix=".b3d",
 	shared_texture="advtrains_dtrack_shared_atc.png",
-	description=atltrans("LuaATC Rail"),
+	description=atltrans("LuaATC Track"),
 	formats={},
 	get_additional_definiton = function(def, preset, suffix, rotation)
 		return {

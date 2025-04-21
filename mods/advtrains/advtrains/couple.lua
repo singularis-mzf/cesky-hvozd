@@ -28,6 +28,20 @@ end
 advtrains.register_coupler_type("chain", attrans("Buffer and Chain Coupler"))
 advtrains.register_coupler_type("scharfenberg", attrans("Scharfenberg Coupler"))
 
+for _, name in pairs {"couple", "decouple"} do
+	local t = {}
+	local function reg(f)
+		table.insert(t, f)
+	end
+	local function cb(...)
+		for _, f in ipairs(t) do
+			f(...)
+		end
+	end
+	advtrains["te_registered_on_" .. name] = t
+	advtrains["te_register_on_" .. name] = reg
+	advtrains["te_run_callbacks_on_" .. name] = cb
+end
 
 local function create_couple_entity(pos, train1, t1_is_front, train2, t2_is_front)
 	local id1 = train1.id
@@ -79,8 +93,9 @@ function advtrains.train_check_couples(train)
 	end
 	if not train.cpl_front then
 		-- recheck front couple
-		local front_trains, pos = advtrains.occ.get_occupations(train, atround(train.index) + CPL_CHK_DST)
+		local pos = advtrains.path_get(train, atround(train.index) + CPL_CHK_DST)
 		if advtrains.is_node_loaded(pos) then -- if the position is loaded...
+			local front_trains = advtrains.occ.reverse_lookup_sel(pos, "in_train")
 			for tid, idx in pairs(front_trains) do
 				local other_train = advtrains.trains[tid]
 				if not advtrains.train_ensure_init(tid, other_train) then
@@ -109,8 +124,9 @@ function advtrains.train_check_couples(train)
 	end
 	if not train.cpl_back then
 		-- recheck back couple
-		local back_trains, pos = advtrains.occ.get_occupations(train, atround(train.end_index) - CPL_CHK_DST)
+		local pos = advtrains.path_get(train, atround(train.end_index) - CPL_CHK_DST)
 		if advtrains.is_node_loaded(pos) then -- if the position is loaded...
+			local back_trains = advtrains.occ.reverse_lookup_sel(pos, "in_train")
 			for tid, idx in pairs(back_trains) do
 				local other_train = advtrains.trains[tid]
 				if not advtrains.train_ensure_init(tid, other_train) then
@@ -182,8 +198,8 @@ end
 function advtrains.safe_couple_trains(train1, t1_is_front, train2, t2_is_front, pname)
 
 	if pname and not minetest.check_player_privs(pname, "train_operator") then
-		   minetest.chat_send_player(pname, "Missing train_operator privilege")
-		   return false
+		minetest.chat_send_player(pname, S("You are not allowed to couple trains without the train_operator privilege."))
+		return false
 	end
 
 	local wck_t1, wck_t2
@@ -225,6 +241,15 @@ function advtrains.couple_trains(init_train, invert_init_train, stat_train, stat
 	local stp = stat_train.trainparts
 	local stat_wagoncnt = #stp
 	local stat_trainlen = stat_train.trainlen -- save the train length of stat train, to be added to index
+	
+	-- sanity check, prevent coupling if train would be longer than 20 after coupling
+	local tot_len = init_wagoncnt + stat_wagoncnt
+	if tot_len > advtrains.TRAIN_MAX_WAGONS then
+		atwarn("Cannot couple",stat_train.id,"and",init_train.id,"- train would have length",tot_len,"which is above the limit of",advtrains.TRAIN_MAX_WAGONS)
+		return
+	end
+
+	advtrains.te_run_callbacks_on_couple(init_train, stat_train)
 
 	if stat_train_opposite then
 		-- insert wagons in inverse order and set their wagon_flipped state
@@ -310,7 +335,7 @@ function advtrains.check_matching_coupler_types(t1, t1_front, t2, t2_front)
 	--atdebug("CMCT: t1",t1_cplt,"t2",t2_cplt,"")
 
 	-- if at least one of the trains has no couplers table, it always couples (fallback behavior and mode for universal shunters)
-	if not t1_cplt or not t2_cplt then
+	if minetest.settings:get_bool("advtrains_universal_couplers", false) or not t1_cplt or not t2_cplt then
 		return true
 	end
 
@@ -326,11 +351,11 @@ function advtrains.check_matching_coupler_types(t1, t1_front, t2, t2_front)
 	for typ,_ in pairs(t1_cplt) do
 		table.insert(t1_cplhr, advtrains.coupler_types[typ] or typ)
 	end
-	if #t1_cplhr==0 then t1_cplhr[1]=attrans("<none>") end
+	if #t1_cplhr==0 then t1_cplhr[1]=attrans("<No coupler>") end
 	for typ,_ in pairs(t2_cplt) do
 		table.insert(t2_cplhr, advtrains.coupler_types[typ] or typ)
 	end
-	if #t2_cplhr==0 then t2_cplhr[1]=attrans("<none>") end
+	if #t2_cplhr==0 then t2_cplhr[1]=attrans("<No coupler>") end
 	return false, attrans("Can not couple: The couplers of the trains do not match (@1 and @2).", table.concat(t1_cplhr, ","), table.concat(t2_cplhr, ","))
 end
 
@@ -430,7 +455,7 @@ minetest.register_entity("advtrains:discouple", {
 				self.object:remove()
 				return
 			end
-			--getyaw seems to be a reliable method to check if an object is loaded...if it returns nil, it is not.
+			--get_yaw seems to be a reliable method to check if an object is loaded...if it returns nil, it is not.
 			if not self.wagon.object:get_yaw() then
 				self.object:remove()
 				return

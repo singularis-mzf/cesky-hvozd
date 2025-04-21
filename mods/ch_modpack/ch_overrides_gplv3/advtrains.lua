@@ -133,7 +133,7 @@ if core.get_modpath("advtrains_signals_ks") then
                 {name = "advtrains_signals_ks:sign_lf7_8_"..rot, label = "8"},
                 {name = "advtrains_signals_ks:sign_lf7_12_"..rot, label = "12"},
                 {name = "advtrains_signals_ks:sign_lf7_16_"..rot, label = "16"},
-                {name = "advtrains_signals_ks:sign_lf7_20_"..rot, label = "max"},
+                {name = "advtrains_signals_ks:sign_lf7_e_"..rot, label = "max"},
                 {name = "advtrains_signals_ks:sign_lf_4_"..rot, label = "4"},
                 {name = "advtrains_signals_ks:sign_lf_6_"..rot, label = "6"},
                 {name = "advtrains_signals_ks:sign_lf_8_"..rot, label = "8"},

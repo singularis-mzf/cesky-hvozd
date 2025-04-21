@@ -1,6 +1,182 @@
 -- Default tracks for advtrains
 -- (c) orwell96 and contributors
 
+local default_boxen = {
+    ["st"] = {
+        [""] = {
+            selection_box = {
+                type = "fixed",
+                fixed = {-1/2-1/16, -1/2, -1/2, 1/2+1/16, -1/2+2/16, 1/2},
+            }
+        },
+        ["_30"] = {
+            selection_box = {
+                type = "fixed",
+                fixed = {
+                    {-0.5000, -0.5000, -1.000, 0.5000, -0.3750, 1.000},
+                    {-0.8750, -0.5000, -1.000, -0.5000, -0.3750, 0.2500},
+                    {0.5000, -0.5000, -0.2500, 0.8750, -0.3750, 1.000},
+                    {-0.1250, -0.5000, -1.375, 0.1875, -0.3750, -1.000}
+                }
+            }
+        },
+        ["_45"] = {
+            selection_box = {
+                type = "fixed",
+                fixed = {
+                    {-0.5000, -0.5000, -0.8750, 0.5000, -0.3750, 0.8750},
+                    {0.5000, -0.5000, -0.5000, 0.8750, -0.3750, 0.5000},
+                    {-0.8750, -0.5000, -0.5000, -0.5000, -0.3750, 0.5000}
+                }
+            }
+        },
+        ["_60"] = {
+            selection_box = {
+                type = "fixed",
+                fixed = {
+                    {-1.000, -0.5000, -0.5000, 1.000, -0.3750, 0.5000},
+                    {-1.000, -0.5000, -0.8750, 0.2500, -0.3750, -0.5000},
+                    {-0.2500, -0.5000, 0.5000, 1.000, -0.3750, 0.8750},
+                    {-1.375, -0.5000, -0.1250, -1.000, -0.3750, 0.1875}
+                }
+            }
+        },
+    },
+
+    ["cr"] = {
+        [""] = {
+            selection_box = {
+                type = "fixed",
+                fixed = {
+                    {-0.5000, -0.5000, -0.5000, 0.6875, -0.3750, 0.5000},
+                    {-0.3750, -0.5000, -1.000, 1.000, -0.3750, 0.000}
+                }
+            }
+        },
+        ["_30"] = {
+            selection_box = {
+                type = "fixed",
+                fixed = {
+                    {-0.5000, -0.5000, -0.5000, 0.7500, -0.3750, 0.8750},
+                    {-0.3750, -0.5000, 0.8750, 0.2500, -0.3750, 1.188},
+                    {0.7500, -0.5000, 0.2500, 1.063, -0.3750, 0.8750}
+                }
+            }
+        },
+        ["_45"] = {
+            selection_box = {
+                type = "fixed",
+                fixed = {
+                    {-0.5000, -0.5000, -1.125, 0.5000, -0.3750, 0.6875},
+                    {-0.8750, -0.5000, -0.9375, -0.5000, -0.3750, 0.06250},
+                    {0.5000, -0.5000, -0.5000, 0.8750, -0.3750, 0.5000}
+                }
+            }
+        },
+        ["_60"] = {
+            selection_box = {
+                type = "fixed",
+                fixed = {
+                    {-0.8125, -0.5000, -0.5000, 1.188, -0.3750, 0.5000},
+                    {-0.1875, -0.5000, 0.5000, 0.8750, -0.3125, 0.8750},
+                    {-0.2500, -0.5000, -0.9375, 0.3125, -0.3125, -0.5000}
+                }
+            }
+        },
+    },
+
+    ["swlst"] = {
+        [""] = {
+            selection_box = {
+                type = "fixed",
+                fixed = {
+                    {-0.5000, -0.5000, -0.5000, 0.6250, -0.3750, 0.5000},
+                    {-0.3125, -0.5000, -1.000, 0.9375, -0.3125, -0.06250}
+                }
+            }
+        },
+        ["_30"] = {
+            selection_box = {
+                type = "fixed",
+                fixed = {
+                    {-0.5000, -0.5000, -1.000, 0.5000, -0.3750, 1.000},
+                    {-0.8750, -0.5000, -1.000, -0.5000, -0.3750, 0.2500},
+                    {0.5000, -0.5000, -0.2500, 0.8750, -0.3750, 1.000},
+                    {-0.1250, -0.5000, -1.375, 0.1875, -0.3750, -1.000}
+                }
+            }
+        },
+        ["_45"] = {
+            selection_box = {
+                type = "fixed",
+                fixed = {
+                    {-0.5000, -0.5000, -1.1875, 0.5000, -0.3750, 0.8750},
+                    {0.5000, -0.5000, -0.5000, 0.8750, -0.3750, 0.5000},
+                    {-0.8750, -0.5000, -0.8125, -0.5000, -0.3750, 0.5000}
+                }
+            }
+        },
+        ["_60"] = {
+            selection_box = {
+                type = "fixed",
+                fixed = {
+                    {-1.000, -0.5000, -0.5000, 1.000, -0.3750, 0.5000},
+                    {-1.000, -0.5000, -0.8750, 0.2500, -0.3750, -0.5000},
+                    {-0.2500, -0.5000, 0.5000, 1.000, -0.3750, 0.8750},
+                    {-1.375, -0.5000, -0.1250, -1.000, -0.3750, 0.1875}
+                }
+            }
+        },
+    },
+
+    ["swrst"] = {
+        [""] = {
+            selection_box = {
+                type = "fixed",
+                fixed = {
+                    {-0.5000, -0.5000, -0.5000, 0.6250, -0.3750, 0.5000},
+                    {-0.8125, -0.5000, -1.000, 0.4375, -0.3125, -0.06250}
+                }
+            }
+        },
+        ["_30"] = {
+            selection_box = {
+                type = "fixed",
+                fixed = {
+                    {-0.5000, -0.5000, -1.000, 0.5000, -0.3750, 1.000},
+                    {-0.8750, -0.5000, -1.000, -0.5000, -0.3750, 0.2500},
+                    {0.5000, -0.5000, -0.2500, 0.8750, -0.3750, 1.000},
+                    {-0.1250, -0.5000, -1.375, 0.1875, -0.3750, -1.000}
+                }
+            }
+        },
+        ["_45"] = {
+            selection_box = {
+                type = "fixed",
+                fixed = {
+                    {-1.1875, -0.5000, -0.5000, 0.8750, -0.3750, 0.5000},
+                    {-0.5000, -0.5000, 0.5000, 0.5000, -0.3750, 0.8750},
+                    {-0.8125, -0.5000, -0.8750, 0.5000, -0.3750, -0.5000}
+                }
+            }
+        },
+        ["_60"] = {
+            selection_box = {
+                type = "fixed",
+                fixed = {
+                    {-1.000, -0.5000, -0.5000, 1.000, -0.3750, 0.5000},
+                    {-1.000, -0.5000, -0.8750, 0.2500, -0.3750, -0.5000},
+                    {-0.2500, -0.5000, 0.5000, 1.000, -0.3750, 0.8750},
+                    {-1.375, -0.5000, -0.1250, -1.000, -0.3750, 0.1875}
+                }
+            }
+        },
+    },
+}
+
+default_boxen["swlcr"] = default_boxen["swlst"]
+default_boxen["swrcr"] = default_boxen["swrst"]
+
 --flat
 advtrains.register_tracks("default", {
 	nodename_prefix="advtrains:dtrack",
@@ -10,6 +186,14 @@ advtrains.register_tracks("default", {
 	shared_texture="advtrains_dtrack_shared.png",
 	description=attrans("Track"),
 	formats={},
+
+    get_additional_definiton = function(def, preset, suffix, rotation)
+        if default_boxen[suffix] ~= nil and default_boxen[suffix][rotation] ~= nil then
+            return default_boxen[suffix][rotation]
+        else
+            return {}
+        end
+    end,
 }, advtrains.ap.t_30deg_flat)
 
 minetest.register_craft({
@@ -21,6 +205,59 @@ minetest.register_craft({
 	},
 })
 
+local y3_boxen = {
+    [""] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-0.8750, -0.5000, -1.125, 0.8750, -0.3750, 0.4375}
+            }
+        }
+    },
+
+    ["_30"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-0.5000, -0.5000, -0.875, 0.5000, -0.3750, 1.000},
+                {-0.8750, -0.5000, -0.4375, -0.5000, -0.3750, 0.5625},
+                {0.5000, -0.5000, -0.2500, 0.8125, -0.3750, 1.000},
+            }
+        }
+    },
+
+    --UX FIXME: - 3way - have to place straight route before l and r or the 
+    --nodebox overlaps too much and can't place the straight track node.
+    ["_45"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-0.5000, -0.5000, -1.1250, 0.5000, -0.3750, 0.8750},
+                {0.5000, -0.5000, -0.5000, 0.8750, -0.3750, 0.5000},
+                {-1.1250, -0.5000, -0.9375, -0.5000, -0.3750, 0.5000}
+            }
+        }
+    },
+
+    ["_60"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                --{-0.5000, -0.5000, -0.875, 0.5000, -0.3750, 1.000},
+                {-0.875, -0.5000, -0.5, 1.0, -0.3750, 0.5},
+                --{-0.8750, -0.5000, -0.4375, -0.5000, -0.3750, 0.5625},
+                {-0.4375, -0.5000, -0.8750, 0.5625, -0.3750, -0.5000},
+                --{0.5000, -0.5000, -0.2500, 0.8125, -0.3750, 1.000},
+                {-0.2500, -0.5000, -0.2500, 1.0000, -0.3750, 0.8125},
+            }
+        }
+    },
+}
+
+
+local function y3_turnouts_addef(def, preset, suffix, rotation)
+    return y3_boxen[rotation] or {}
+end
 -- y-turnout
 advtrains.register_tracks("default", {
 	nodename_prefix="advtrains:dtrack_sy",
@@ -30,6 +267,7 @@ advtrains.register_tracks("default", {
 	shared_texture="advtrains_dtrack_shared.png",
 	description=attrans("Y-turnout"),
 	formats = {},
+    get_additional_definiton = y3_turnouts_addef,
 }, advtrains.ap.t_yturnout)
 minetest.register_craft({
 	output = 'advtrains:dtrack_sy_placer 2',
@@ -48,6 +286,7 @@ advtrains.register_tracks("default", {
 	shared_texture="advtrains_dtrack_shared.png",
 	description=attrans("3-way turnout"),
 	formats = {},
+    get_additional_definiton = y3_turnouts_addef,
 }, advtrains.ap.t_s3way)
 minetest.register_craft({
 	output = 'advtrains:dtrack_s3_placer 1',
@@ -59,6 +298,35 @@ minetest.register_craft({
 })
 
 -- Diamond Crossings
+
+local perp_boxen = {
+    [""] = {}, --default size
+    ["_30"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-1.000, -0.5000, -1.000, 1.000, -0.3750, 1.000}
+            }
+        }
+    },
+    ["_45"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-0.8125, -0.5000, -0.8125, 0.8125, -0.3750, 0.8125}
+            }
+        }
+    },
+    ["_60"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-1.000, -0.5000, -1.000, 1.000, -0.3750, 1.000}
+            }
+        }
+    },
+}
+
 -- perpendicular
 advtrains.register_tracks("default", {
 	nodename_prefix="advtrains:dtrack_xing",
@@ -67,7 +335,10 @@ advtrains.register_tracks("default", {
 	models_suffix=".obj",
 	shared_texture="advtrains_dtrack_shared.png",
 	description=attrans("Perpendicular Diamond Crossing Track"),
-	formats = {}
+	formats = {},
+    get_additional_definiton = function(def, preset, suffix, rotation)
+        return perp_boxen[rotation] or {}
+    end
 }, advtrains.ap.t_perpcrossing)
 
 minetest.register_craft({
@@ -79,6 +350,73 @@ minetest.register_craft({
 	}
 })
 
+local ninety_plus_boxen = {
+    ["30l"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-0.5000, -0.5000, -1.000, 0.5000, -0.3750, 1.000},
+                {-0.8750, -0.5000, -1.000, -0.5000, -0.3750, 0.2500},
+                {0.5000, -0.5000, -0.2500, 0.8750, -0.3750, 1.000},
+                {-0.1250, -0.5000, -1.375, 0.1875, -0.3750, -1.000}
+            }
+        }
+    },
+    ["30r"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {0.5000, -0.5000, -1.000, -0.5000, -0.3750, 1.000},
+                {0.8750, -0.5000, -1.000, 0.5000, -0.3750, 0.2500},
+                {-0.5000, -0.5000, -0.2500, -0.8750, -0.3750, 1.000},
+                {0.1250, -0.5000, -1.375, -0.1875, -0.3750, -1.000}
+            }
+        }
+    },
+    ["45l"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-0.5000, -0.5000, -0.8750, 0.5000, -0.3750, 0.8750},
+                {0.5000, -0.5000, -0.5000, 0.8750, -0.3750, 0.5000},
+                {-0.8750, -0.5000, -0.5000, -0.5000, -0.3750, 0.5000}
+            }
+        }
+    },
+    ["45r"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-0.5000, -0.5000, -0.8750, 0.5000, -0.3750, 0.8750},
+                {0.5000, -0.5000, -0.5000, 0.8750, -0.3750, 0.5000},
+                {-0.8750, -0.5000, -0.5000, -0.5000, -0.3750, 0.5000}
+            }
+        }
+    },
+    ["60l"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-1.000, -0.5000, -0.5000, 1.000, -0.3750, 0.5000},
+                {-1.000, -0.5000, -0.8750, 0.2500, -0.3750, -0.5000},
+                {-0.2500, -0.5000, 0.5000, 1.000, -0.3750, 0.8750},
+                {-1.375, -0.5000, -0.1250, -1.000, -0.3750, 0.1875}
+            }
+        }
+    },
+    ["60r"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {1.000, -0.5000, -0.5000, -1.000, -0.3750, 0.5000},
+                {1.000, -0.5000, -0.8750, -0.2500, -0.3750, -0.5000},
+                {0.2500, -0.5000, 0.5000, -1.000, -0.3750, 0.8750},
+                {1.375, -0.5000, -0.1250, 1.000, -0.3750, 0.1875}
+            }
+        }
+    },
+}
+
 -- 90plusx
 -- When you face east and param2=0, then this set of rails has a rail at 90
 -- degrees to the viewer, plus another rail crossing at 30, 45 or 60 degrees.
@@ -89,7 +427,10 @@ advtrains.register_tracks("default", {
 	models_suffix=".obj",
 	shared_texture="advtrains_dtrack_shared.png",
 	description=attrans("90+Angle Diamond Crossing Track"),
-	formats = {}
+	formats = {},
+    get_additional_definiton = function(def, preset, suffix, rotation)
+        return ninety_plus_boxen[suffix] or {}
+    end,
 }, advtrains.ap.t_90plusx_crossing)
 minetest.register_craft({
 	output = 'advtrains:dtrack_xing90plusx_placer 2',
@@ -99,6 +440,7 @@ minetest.register_craft({
 		{'', '', 'advtrains:dtrack_placer'}
 	}
 })
+
 -- Deprecate any rails using the old name scheme
 minetest.register_lbm({
 	label = "Upgrade legacy 4590 rails",
@@ -119,6 +461,83 @@ minetest.register_lbm({
 -- This will replace any items left in the inventory
 minetest.register_alias("advtrains:dtrack_xing4590_placer", "advtrains:dtrack_xing90plusx_placer")
 
+local diagonal_boxen = {
+    ["30r45l"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {0.5000, -0.5000, -1.000, -0.5000, -0.3750, 1.000},
+                {0.8750, -0.5000, -1.000, 0.5000, -0.3750, 0.2500},
+                {-0.5000, -0.5000, -0.2500, -0.8750, -0.3750, 1.000},
+                {0.1250, -0.5000, -1.375, -0.1875, -0.3750, -1.000}
+            }
+        }
+    },
+    ["60l30l"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-1.000, -0.5000, -0.5000, 1.000, -0.3750, 0.5000},
+                {-1.000, -0.5000, -0.8750, 0.2500, -0.3750, -0.5000},
+                {-0.2500, -0.5000, 0.5000, 1.000, -0.3750, 0.8750},
+                {-1.375, -0.5000, -0.1250, -1.000, -0.3750, 0.1875}
+            }
+        }
+    },
+    ["60l60r"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-1.000, -0.5000, -1.000, 1.000, -0.3750, 1.000}
+            }
+        }
+    },
+    ["60r30r"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {1.000, -0.5000, -0.5000, -1.000, -0.3750, 0.5000},
+                {1.000, -0.5000, -0.8750, -0.2500, -0.3750, -0.5000},
+                {0.2500, -0.5000, 0.5000, -1.000, -0.3750, 0.8750},
+                {1.375, -0.5000, -0.1250, 1.000, -0.3750, 0.1875}
+            }
+        }
+    },
+    ["30l45r"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-0.5000, -0.5000, -1.000, 0.5000, -0.3750, 1.000},
+                {-0.8750, -0.5000, -1.000, -0.5000, -0.3750, 0.2500},
+                {0.5000, -0.5000, -0.2500, 0.8750, -0.3750, 1.000},
+                {-0.1250, -0.5000, -1.375, 0.1875, -0.3750, -1.000}
+            }
+        }
+    },
+    ["60l45r"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {-1.000, -0.5000, -0.5000, 1.000, -0.3750, 0.5000},
+                {-1.000, -0.5000, -0.8750, 0.2500, -0.3750, -0.5000},
+                {-0.2500, -0.5000, 0.5000, 1.000, -0.3750, 0.8750},
+                {-1.375, -0.5000, -0.1250, -1.000, -0.3750, 0.1875}
+            }
+        }
+    },
+    ["60r45l"] = {
+        selection_box = {
+            type = "fixed",
+            fixed = {
+                {1.000, -0.5000, -0.5000, -1.000, -0.3750, 0.5000},
+                {1.000, -0.5000, -0.8750, -0.2500, -0.3750, -0.5000},
+                {0.2500, -0.5000, 0.5000, -1.000, -0.3750, 0.8750},
+                {1.375, -0.5000, -0.1250, 1.000, -0.3750, 0.1875}
+            }
+        }
+    },
+}
+
 -- Diagonal
 -- This set of rail crossings is named based on the angle of each intersecting
 -- direction when facing east and param2=0. Rails with l/r swapped are mirror
@@ -131,6 +550,9 @@ advtrains.register_tracks("default", {
 	shared_texture="advtrains_dtrack_shared.png",
 	description=attrans("Diagonal Diamond Crossing Track"),
 	formats = {},
+    get_additional_definiton = function(def, preset, suffix, rotation)
+        return diagonal_boxen[suffix] or {}
+    end,
 }, advtrains.ap.t_diagonalcrossing)
 minetest.register_craft({
 	output = 'advtrains:dtrack_xingdiag_placer 2',
@@ -178,6 +600,35 @@ advtrains.register_tracks("default", {
 	--bumpers still use the old texture until the models are redone.
 	description=attrans("Bumper"),
 	formats={},
+	get_additional_definiton = function(def, preset, suffix, rotation)
+		-- 2024-11-25: Bumpers get the additional feature of being both a signal and a self-contained TCB, when interlocking is used.
+		if advtrains.interlocking then
+			return {
+				-- use the special callbacks for self_tcb (see tcb_ts_ui.lua)
+				can_dig = advtrains.interlocking.self_tcb_make_can_dig_callback(true),
+				after_dig_node = advtrains.interlocking.self_tcb_make_after_dig_callback(true),
+				after_place_node = advtrains.interlocking.self_tcb_make_after_place_callback(true, true),
+				on_rightclick = advtrains.interlocking.self_tcb_make_on_rightclick_callback(false, true),
+				advtrains = {
+					main_aspects = {
+						-- No main aspects, it always shows Stop.
+						-- But we need to define the table so that signal caplevel is 3
+					},
+					apply_aspect = function(pos, node, main_aspect, rem_aspect, rem_aspinfo)
+						-- is a no-op for bumpers, it always shows Stop
+					end,
+					get_aspect_info = function(pos, main_aspect)
+						-- it always shows Stop
+						return advtrains.interlocking.signal.ASPI_HALT
+					end,
+					distant_support = false, -- not a distant
+					route_role = "end", -- the end is nigh!
+				}
+			}
+		else
+			return {} -- no additional defs when interlocking is not used
+		end
+	end,
 }, advtrains.ap.t_30deg_straightonly)
 minetest.register_craft({
 	output = 'advtrains:dtrack_bumper_placer 2',
@@ -256,8 +707,45 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 end)
 
+local function load_wagon(wagon_id, node_inv, node_fc, unload)
+	local inv_modified = false
+	local w_inv=minetest.get_inventory({type="detached", name="advtrains_wgn_"..wagon_id})
+	if w_inv and w_inv:get_list("box") then
+	
+		local wagon_data = advtrains.wagons[wagon_id]
+		local wagon_fc
+		if wagon_data.fc then
+			if not wagon_data.fcind then wagon_data.fcind = 1 end
+			wagon_fc = tostring(wagon_data.fc[wagon_data.fcind]) or ""
+		end
+		
+		if node_fc == "" or wagon_fc == node_fc then
+			if not unload then
+				for _, item in ipairs(node_inv:get_list("main")) do
+					if w_inv:get_list("box") and w_inv:room_for_item("box", item)  then
+						w_inv:add_item("box", item)
+						node_inv:remove_item("main", item)
+						if item.name ~= "" then inv_modified = true end
+					end
+				end
+			else
+				for _, item in ipairs(w_inv:get_list("box")) do
+					if node_inv:get_list("main") and node_inv:room_for_item("main", item)  then
+						w_inv:remove_item("box", item)
+						node_inv:add_item("main", item)
+						if item.name ~= "" then inv_modified = true end
+					end
+				end
+			end
+		end
+	end
+	return inv_modified
+end
 
-local function train_load(pos, train_id, unload)
+local function load_entire_train(pos, train_id, unload) -- flood load when not in an active area
+	if advtrains.is_node_loaded(pos) then -- leave the loading to the nodetimer if area is loaded
+		return 
+	end
 	local train=advtrains.trains[train_id]
 	local below = get_far_node({x=pos.x, y=pos.y-1, z=pos.z})
 	if not string.match(below.name, "chest") then
@@ -270,43 +758,60 @@ local function train_load(pos, train_id, unload)
 		--track section is disabled
 		return
 	end
-	
-	local inv = minetest.get_inventory({type="node", pos={x=pos.x, y=pos.y-1, z=pos.z}})
-	if inv and train.velocity < 2 then
-		for k, v in ipairs(train.trainparts) do
-			local i=minetest.get_inventory({type="detached", name="advtrains_wgn_"..v})
-			if i and i:get_list("box") then
-			
-				local wagon_data = advtrains.wagons[v]
-				local wagon_fc
-				if wagon_data.fc then
-					if not wagon_data.fcind then wagon_data.fcind = 1 end
-					wagon_fc = tostring(wagon_data.fc[wagon_data.fcind]) or ""
-				end
-				
-				if node_fc == "" or wagon_fc == node_fc then
-					if not unload then
-						for _, item in ipairs(inv:get_list("main")) do
-							if i:get_list("box") and i:room_for_item("box", item)  then
-								i:add_item("box", item)
-								inv:remove_item("main", item)
-							end
-						end
-					else
-						for _, item in ipairs(i:get_list("box")) do
-							if inv:get_list("main") and inv:room_for_item("main", item)  then
-								i:remove_item("box", item)
-								inv:add_item("main", item)
-							end
+	local node_inv = minetest.get_inventory({type="node", pos={x=pos.x, y=pos.y-1, z=pos.z}})
+	if node_inv and train.velocity <= 2 then
+		for _, wagon_id in ipairs(train.trainparts) do
+			load_wagon(wagon_id, node_inv, node_fc, unload)
+		end
+	end
+end
+
+local function load_wagon_on_timer(pos, unload) -- loading ramp when in an active area
+	if not advtrains.is_node_loaded(pos) then -- leave the loading for the flood load function. we're out of area
+		return true -- reset the nodetimer until the node is loaded again
+	end
+	local tid, tidx = advtrains.get_train_at_pos(pos)
+	if not tid or tid == "" then
+		return true
+	end -- no train to load.
+
+	local train = advtrains.trains[tid]
+	local below = get_far_node({x=pos.x, y=pos.y-1, z=pos.z})
+	if not string.match(below.name, "chest") then
+		atprint("this is not a chest! at "..minetest.pos_to_string(pos))
+		return true
+	end
+	local node_fc = minetest.get_meta(pos):get_string("fc") or ""
+	if node_fc == "#" then
+		--track section is disabled
+		return true
+	end
+	local node_inv = minetest.get_inventory({type="node", pos={x=pos.x, y=pos.y-1, z=pos.z}})
+	if node_inv and train.velocity <= 2 then
+		local _, wagon_id, wagon_data = advtrains.get_wagon_at_index(tid, tidx)
+		if wagon_id then
+			local inv_modified = load_wagon(wagon_id, node_inv, node_fc, unload)
+			if inv_modified then
+				if advtrains.wagon_prototypes[advtrains.get_wagon_prototype(wagon_data)].set_textures then
+					local wagon_object = advtrains.wagon_objects[wagon_id]
+					if wagon_object and wagon_data then
+						local ent = wagon_object:get_luaentity()
+						if ent and ent.set_textures then
+							ent:set_textures(wagon_data)
 						end
 					end
 				end
 			end
 		end
 	end
+	return true
 end
 
-
+local nodetimer_interval = minetest.settings:get("advtrains_loading_track_timer") or 1
+local function start_nodetimer(pos)
+	local timer = minetest.get_node_timer(pos)
+	timer:start(nodetimer_interval)
+end
 
 advtrains.register_tracks("default", {
 	nodename_prefix="advtrains:dtrack_unload",
@@ -325,9 +830,16 @@ advtrains.register_tracks("default", {
 			on_rightclick = function(pos, node, player)
 				show_fc_formspec(pos, player)
 			end,
+			after_place_node = function(pos)
+				advtrains.ndb.update(pos)
+				start_nodetimer(pos)
+			end,
+			on_timer = function(pos)
+				return load_wagon_on_timer(pos, true)
+			end,
 			advtrains = {
 				on_train_enter = function(pos, train_id)
-					train_load(pos, train_id, true)
+					load_entire_train(pos, train_id, true)
 				end,
 			},
 		}
@@ -350,9 +862,16 @@ advtrains.register_tracks("default", {
 			on_rightclick = function(pos, node, player)
 				show_fc_formspec(pos, player)
 			end,
+			after_place_node = function(pos)
+				advtrains.ndb.update(pos)
+				start_nodetimer(pos)
+			end,
+			on_timer = function(pos)
+				return load_wagon_on_timer(pos, false)
+			end,
 			advtrains = {
 				on_train_enter = function(pos, train_id)
-					train_load(pos, train_id, false)
+					load_entire_train(pos, train_id, false)
 				end,
 			},
 		}
@@ -366,7 +885,6 @@ if minetest.get_modpath("basic_materials") then
 elseif minetest.get_modpath("technic") then
 	loader_core = "technic:control_logic_unit"
 end
---print("Loader Core: "..loader_core)
 
 minetest.register_craft({
 	type="shapeless",

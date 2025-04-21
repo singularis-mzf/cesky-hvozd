@@ -29,8 +29,9 @@ The LZB subsystem keeps track of "checkpoints" the train will pass in the future
 To perform 2, it populates the train.path_speed table which is handled along with the path subsystem.
 This table is used in trainlogic.lua/train_step_b() and applied to the velocity calculations.
 
-Note: in contrast to node enter callbacks, which are called when the train passes the .5 index mark, LZB callbacks are executed on passing the .0 index mark!
-If an LZB checkpoint has speed 0, the train will still enter the node (the enter callback will be called), but will stop at the 0.9 index mark (for details, see SLOW_APPROACH in trainlogic.lua)
+Note: As of 2024-11-25, node enter callbacks as well as LZB callbacks are executed on passing the .0 index mark!
+If an LZB checkpoint has speed 0, it will stop at the 0.9 index mark (for details, see SLOW_APPROACH in trainlogic.lua) and will not enter the node.
+(previous behavior: node enter callback was called at .5 index mark)
 
 The start point for the LZB traverser (and thus the first node that will receive an approach callback) is floor(train.index) + 1. This means, once the LZB checkpoint callback has fired,
 this path node will not receive any further approach callbacks for the same approach situation
@@ -48,7 +49,7 @@ local params = {
 	ZONE_HOLD  =  5, -- added on top of ZONE_ROLL
 	ZONE_VSLOW =  3, -- When speed is <2, still allow accelerating
 
-	DST_FACTOR =  1.5,
+	DST_FACTOR =  3,--1.5,
 
 	SHUNT_SPEED_MAX = advtrains.SHUNT_SPEED_MAX,
 }
@@ -264,7 +265,8 @@ end
 advtrains.te_register_on_new_path(function(id, train)
 	advtrains.lzb_invalidate(train)
 	-- Taken care of in pre-move hook (see train_step_b)
-	--look_ahead(id, train)
+	-- 2025-01-28 - do anyway, there seems to be an issue
+	look_ahead(id, train)
 end)
 
 advtrains.te_register_on_invalidate_ahead(function(id, train, start_idx)

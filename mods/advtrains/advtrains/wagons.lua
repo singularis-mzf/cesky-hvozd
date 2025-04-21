@@ -14,7 +14,13 @@ local IGNORE_WORLD = advtrains.IGNORE_WORLD
 local has_wielded_light = core.get_modpath("wielded_light")
 
 advtrains.wagons = {}
-advtrains.wagon_prototypes = {}
+advtrains.wagon_alias = {}
+advtrains.wagon_prototypes = setmetatable({}, {
+	__index = function(t, k)
+		local _, proto = advtrains.resolve_wagon_alias(k)
+		return proto
+	end
+})
 advtrains.wagon_objects = {}
 
 local unload_wgn_range = advtrains.wagon_load_range + 32
@@ -60,6 +66,7 @@ local wagon = {
 	wagon_width=3, -- Wagon width in meters
 	has_inventory=false,
 }
+
 
 function wagon:train()
 	local data = advtrains.wagons[self.id]
@@ -203,7 +210,7 @@ function wagon:on_punch(puncher, time_from_last_punch, tool_capabilities, direct
 			end
 			for listname, _ in pairs(inv:get_lists()) do
 				if not inv:is_empty(listname) then
-					minetest.chat_send_player(puncher:get_player_name(), attrans("The wagon's inventory is not empty!"));
+					minetest.chat_send_player(puncher:get_player_name(), attrans("The wagon's inventory is not empty."));
 					return
 				end
 			end
@@ -283,7 +290,7 @@ function wagon:on_step(dtime)
 		local data = advtrains.wagons[self.id]
 		
 		if not pos then
-			--atdebug("["..self.id.."][fatal] missing position (object:getpos() returned nil)")
+			--atdebug("["..self.id.."][fatal] missing position (object:get_pos() returned nil)")
 			return
 		end
 		
@@ -366,7 +373,16 @@ function wagon:on_step(dtime)
 
 		--show off-track information in outside text instead of notifying the whole server about this
 		if train.off_track then
-			outside = outside .."\n" .. attrans("!!! Train off track !!!")
+			outside = outside .."\n!!! Vlak mimo koleje !!!"
+		end
+		
+		-- liquid container: display liquid contents in infotext
+		if self.techage_liquid_capacity then
+			if data.techage_liquid and data.techage_liquid.name then
+				outside = outside .."\nKapalina: "..data.techage_liquid.name..", "..data.techage_liquid.amount.." jednotek"
+			else
+				outside = outside .."\nKapalina: empty"
+			end
 		end
 		
 		if self.infotext_cache~=outside  then
@@ -696,7 +712,7 @@ function wagon:on_rightclick(clicker)
 				end
 				
 				local doors_open = self:train().door_open~=0 or clicker:get_player_control().sneak
-				local allow, rsn=false, "Wagon has no seats!"
+				local allow, rsn=false, attrans("This wagon has no seats.")
 				for _,sgr in ipairs(self.assign_to_seat_group) do
 					allow, rsn = self:check_seat_group_access(pname, sgr)
 					if allow then
@@ -707,16 +723,16 @@ function wagon:on_rightclick(clicker)
 										self:get_on(clicker, seatid)
 										return
 									else
-										rsn=attrans("Wagon is full.")
+										rsn=attrans("This wagon is full.")
 									end
 								else
-									rsn=attrans("Doors are closed! (try holding sneak key!)")
+									rsn=attrans("Doors are closed! (Try holding sneak key!)")
 								end
 							end
 						end
 					end
 				end
-				minetest.chat_send_player(pname, attrans("Can't get on: @1", rsn))
+				minetest.chat_send_player(pname, rsn or attrans("You can't get on this wagon."))
 			else
 				self:show_get_on_form(pname)
 			end
@@ -866,8 +882,9 @@ function wagon:show_wagon_properties(pname)
 	]]
 	local data = advtrains.wagons[self.id]
 	local form="size[5,5]"
-	form = form .. "field[0.5,1;4.5,1;whitelist;" .. attrans("Allow these players to access your wagon:") .. ";"..minetest.formspec_escape(data.whitelist or "").."]"
-	form = form .. "field[0.5,2;4.5,1;roadnumber;" .. attrans("Wagon road number:") .. ";"..minetest.formspec_escape(data.roadnumber or "").."]"
+	form=form.."label[0.2,0;"..attrans("This Wagon ID")..": "..self.id.."]"
+	form = form .. "field[0.5,1;4.5,1;whitelist;Allow these players to access your wagon:;"..minetest.formspec_escape(data.whitelist or "").."]"
+	form = form .. "field[0.5,2;4.5,1;roadnumber;Wagon road number:;"..minetest.formspec_escape(data.roadnumber or "").."]"
 	local fc = ""
 	if data.fc then
 		fc = table.concat(data.fc, "!")
@@ -979,6 +996,7 @@ function wagon:show_bordcom(pname)
 	local linhei
 	
 	local form = "size[11,9]label[0.5,0;AdvTrains Boardcom v0.1]"
+	form=form.."textarea[7.5,0.05;10,1;;"..attrans("Train ID")..": "..(minetest.formspec_escape(train.id or ""))..";]"
 	form=form.."textarea[0.5,1.5;7,1;text_outside;"..attrans("Text displayed outside on train")..";"..(minetest.formspec_escape(train.text_outside or "")).."]"
 	form=form.."textarea[0.5,3;7,1;text_inside;"..attrans("Text displayed inside train")..";"..(minetest.formspec_escape(train.text_inside or "")).."]"
 	form=form.."field[7.5,1.75;3,1;line;"..attrans("Line")..";"..(minetest.formspec_escape(train.line or "")).."]"
@@ -1096,12 +1114,11 @@ function wagon:handle_bordcom_fields(pname, formname, fields)
 	for i, tpid in ipairs(train.trainparts) do
 		if fields["dcpl_"..i] then
 			advtrains.safe_decouple_wagon(tpid, pname)
-		elseif fields["wgprp"..i] then
-			for _,wagon in pairs(minetest.luaentities) do
-				if wagon.is_wagon and wagon.initialized and wagon.id==tpid and data.owner==pname then
-					wagon:show_wagon_properties(pname)
-					return
-				end
+		elseif fields["wgprp"..i] and data.owner==pname then
+			local wagon = advtrains.get_wagon_entity(tpid)
+			if wagon then
+				wagon:show_wagon_properties(pname)
+				return
 			end
 		end
 	end
@@ -1147,44 +1164,48 @@ end
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 		local uid=string.match(formname, "^advtrains_geton_(.+)$")
 		if uid then
-			for _,wagon in pairs(minetest.luaentities) do
-				if wagon.is_wagon and wagon.initialized and wagon.id==uid then
-					local data = advtrains.wagons[wagon.id]
-					if fields.inv then
-						if wagon.has_inventory and wagon.get_inventory_formspec then
-							minetest.show_formspec(player:get_player_name(), "advtrains_inv_"..uid, wagon:get_inventory_formspec(player:get_player_name(), make_inv_name(uid)))
-						end
-					elseif fields.seat then
-						local val=minetest.explode_textlist_event(fields.seat)
-						if val and val.type~="INV" and not data.seatp[player:get_player_name()] then
-						--get on
-							wagon:get_on(player, val.index)
-							--will work with the new close_formspec functionality. close exactly this formspec.
-							minetest.show_formspec(player:get_player_name(), formname, "")
-						end
+			local wagon = advtrains.get_wagon_entity(uid)
+			if wagon then
+				local data = advtrains.wagons[wagon.id]
+				if fields.inv then
+					if wagon.has_inventory and wagon.get_inventory_formspec then
+						minetest.show_formspec(player:get_player_name(), "advtrains_inv_"..uid, wagon:get_inventory_formspec(player:get_player_name(), make_inv_name(uid)))
+					end
+				elseif fields.seat then
+					local val=minetest.explode_textlist_event(fields.seat)
+					if val and val.type~="INV" and not data.seatp[player:get_player_name()] then
+					--get on
+						wagon:get_on(player, val.index)
+						--will work with the new close_formspec functionality. close exactly this formspec.
+						minetest.show_formspec(player:get_player_name(), formname, "")
 					end
 				end
 			end
+			return true
 		end
+
 		uid=string.match(formname, "^advtrains_seating_(.+)$")
 		if uid then
-			for _,wagon in pairs(minetest.luaentities) do
-				if wagon.is_wagon and wagon.initialized and wagon.id==uid then
-					local pname=player:get_player_name()
-					local no=wagon:get_seatno(pname)
-					if no then
-						if wagon.seat_groups then
-							wagon:seating_from_key_helper(pname, fields, no)
-						end
+			local wagon = advtrains.get_wagon_entity(uid)
+			if wagon then
+				local pname=player:get_player_name()
+				local no=wagon:get_seatno(pname)
+				if no then
+					if wagon.seat_groups then
+						wagon:seating_from_key_helper(pname, fields, no)
 					end
 				end
 			end
+			return true
 		end
+
 		uid=string.match(formname, "^advtrains_prop_(.+)$")
 		if uid then
 			local pname=player:get_player_name()
 			local data = advtrains.wagons[uid]
-			if pname~=data.owner and not minetest.check_player_privs(pname, {train_admin = true}) then
+			if not data then
+				return true
+			elseif pname~=data.owner and not minetest.check_player_privs(pname, {train_admin = true}) then
 				return true
 			end
 			if fields.save or not fields.quit then
@@ -1206,29 +1227,32 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 					wagon.show_wagon_properties({id=uid}, pname)
 				end
 			end
+			return true
 		end
 		uid=string.match(formname, "^advtrains_bordcom_(.+)$")
 		if uid then
-			for _,wagon in pairs(minetest.luaentities) do
-				if wagon.is_wagon and wagon.initialized and wagon.id==uid then
-					wagon:handle_bordcom_fields(player:get_player_name(), formname, fields)
-				end
+			local wagon = advtrains.get_wagon_entity(uid)
+			if wagon then
+				wagon:handle_bordcom_fields(player:get_player_name(), formname, fields)
 			end
+			return true
 		end
+
 		uid=string.match(formname, "^advtrains_inv_(.+)$")
 		if uid then
 			local pname=player:get_player_name()
 			local data = advtrains.wagons[uid]
 			if fields.prop and data.owner==pname then
-				for _,wagon in pairs(minetest.luaentities) do
-					if wagon.is_wagon and wagon.initialized and wagon.id==uid and data.owner==pname then
-						wagon:show_wagon_properties(pname)
-						--wagon:handle_bordcom_fields(player:get_player_name(), formname, fields)
-					end
+				local wagon = advtrains.get_wagon_entity(uid)
+				if wagon then
+					wagon:show_wagon_properties(pname)
+					--wagon:handle_bordcom_fields(player:get_player_name(), formname, fields)
 				end
 			end
+			return true
 		end
 end)
+
 function wagon:seating_from_key_helper(pname, fields, no)
 	local data = advtrains.wagons[self.id]
 	local sgr=self.seats[no].group
@@ -1255,7 +1279,7 @@ function wagon:seating_from_key_helper(pname, fields, no)
 		minetest.after(0.1, function(pn) self:show_bordcom(pn) end, pname)
 	end
 	if fields.dcwarn then
-		minetest.chat_send_player(pname, attrans("Doors are closed! Use Sneak+rightclick to ignore the closed doors and get off!"))
+		minetest.chat_send_player(pname, attrans("Doors are closed. Use Sneak+rightclick to ignore the closed doors and get off."))
 	end
 	if fields.off then
 		self:get_off(no)
@@ -1264,7 +1288,7 @@ end
 function wagon:check_seat_group_access(pname, sgr)
 	local data = advtrains.wagons[self.id]
 	if self.seat_groups[sgr].driving_ctrl_access and not (advtrains.check_driving_couple_protection(pname, data.owner, data.whitelist)) then
-		return false, "Not allowed to access a driver stand!"
+		return false, attrans("You are not allowed to access the driver stand.")
 	end
 	if self.seat_groups[sgr].driving_ctrl_access then
 		advtrains.log("Drive", pname, self.object:get_pos(), self:train().text_outside)
@@ -1325,11 +1349,33 @@ function advtrains.get_wagon_prototype(data)
 		data.type = data.entity_name
 		data.entity_name = nil
 	end
-	if not wt or not advtrains.wagon_prototypes[wt] then
-		atwarn("Unable to load wagon type",wt,", using placeholder")
-		wt="advtrains:wagon_placeholder"
+	local rt, proto = advtrains.resolve_wagon_alias(wt)
+	if not rt then
+		--atwarn("Unable to load wagon type",wt,", using placeholder")
+		rt = "advtrains:wagon_placeholder"
+		proto = advtrains.wagon_prototypes[rt]
 	end
-	return wt, advtrains.wagon_prototypes[wt]
+	return rt, proto
+end
+
+function advtrains.register_wagon_alias(src, dst)
+	advtrains.wagon_alias[src] = dst
+end
+
+local function recursive_resolve_alias(name, seen)
+	local prototype = rawget(advtrains.wagon_prototypes, name)
+	if prototype then
+		return name, prototype
+	end
+	local resolved = advtrains.wagon_alias[name]
+	if resolved and not seen[resolved] then
+		seen[name] = true
+		return recursive_resolve_alias(resolved, seen)
+	end
+end
+
+function advtrains.resolve_wagon_alias(name)
+	return recursive_resolve_alias(name, {})
 end
 
 function advtrains.standard_inventory_formspec(self, pname, invname)
@@ -1394,15 +1440,25 @@ function advtrains.register_wagon(sysname_p, prototype, desc, inv_img, nincreati
 		groups = wagon_groups,
 
 		on_place = function(itemstack, placer, pointed_thing)
-				if not pointed_thing.type == "node" then
+				if pointed_thing.type ~= "node" then
 					return
 				end
+
+				local pos = pointed_thing.under
+				local node = minetest.get_node(pos)
+				local pointed_def = minetest.registered_nodes[node.name]
+				if pointed_def and pointed_def.on_rightclick then
+					local controls = placer:get_player_control()
+					if not controls.sneak then
+						return pointed_def.on_rightclick(pos, node, placer, itemstack, pointed_thing)
+					end
+				end
+
 				local pname = placer:get_player_name()
 
-				local node=minetest.get_node_or_nil(pointed_thing.under)
-				if not node then atprint("[advtrains]Ignore at placer position") return itemstack end
+				if node.name == "ignore" then atprint("[advtrains]Ignore at placer position") return itemstack end
 				local nodename=node.name
-				if(not advtrains.is_track_and_drives_on(nodename, prototype.drives_on)) then
+				if(not advtrains.is_track(nodename)) then
 					atprint("no track here, not placing.")
 					return itemstack
 				end
@@ -1410,7 +1466,7 @@ function advtrains.register_wagon(sysname_p, prototype, desc, inv_img, nincreati
 					minetest.chat_send_player(pname, attrans("You don't have the train_operator privilege."))
 					return itemstack
 				end
-				if not minetest.check_player_privs(placer, {train_admin = true }) and minetest.is_protected(pointed_thing.under, placer:get_player_name()) then
+				if not minetest.check_player_privs(placer, {train_admin = true }) and minetest.is_protected(pos, placer:get_player_name()) then
 					return itemstack
 				end
 				local tconns=advtrains.get_track_connections(node.name, node.param2)
@@ -1425,7 +1481,7 @@ function advtrains.register_wagon(sysname_p, prototype, desc, inv_img, nincreati
 				
 				local wid = advtrains.create_wagon(sysname, pname)
 				
-				local id=advtrains.create_new_train_at(pointed_thing.under, plconnid, 0, {wid})
+				local id=advtrains.create_new_train_at(pos, plconnid, 0, {wid})
 				
 				if not advtrains.is_creative(pname) then
 					itemstack:take_item()
@@ -1442,7 +1498,6 @@ advtrains.register_wagon("advtrains:wagon_placeholder", {
 	collisionbox = {-0.3,-0.3,-0.3, 0.3,0.3,0.3},
 	visual_size = {x=0.7, y=0.7},
 	initial_sprite_basepos = {x=0, y=0},
-	drives_on = advtrains.all_tracktypes,
 	max_speed = 5,
 	seats = {
 	},
@@ -1451,5 +1506,90 @@ advtrains.register_wagon("advtrains:wagon_placeholder", {
 	assign_to_seat_group = {},
 	wagon_span=1,
 	drops={},
-}, attrans("Wagon placeholder"), "advtrains_wagon_placeholder.png", true)
+}, "Wagon placeholder", "advtrains_wagon_placeholder.png", true)
 
+
+
+-- Helper function to retrieve the wagon at a certain position in a train, given its train ID and the desired index within that train's path
+--
+-- Returns: wagon_num, wagon_id, wagon_data, offset_from_center
+-- wagon_num: The n'th wagon in the train (index into "trainparts" table)
+-- wagon_id: The wagon ID. Obtain wagon data from advtrains.wagons[wagon_id], and subsequently the wagon prototype via advtrains.get_wagon_prototype(data)
+-- offset_from_center: The offset (an absolute distance value) from the center point of the wagon. Positive is towards the end of the train, negative towards the start. (note that this is inverse to the counting direction of the index!)
+--
+--[[ To get the wagon standing at a certain world position, you first need to retrieve the index via the occupation table, as follows:
+	local trains = advtrains.occ.get_trains_at(pos)
+	for train_id, index in pairs(trains) do
+		local wagon_num, wagon_id, wagon_data, offset_from_center = advtrains.get_wagon_at_index(train_id, index)
+		if wagon_num then
+			...
+		end
+	end
+]]--
+function advtrains.get_wagon_at_index(train_id, w_index)
+	local train = advtrains.trains[train_id]
+	if not train then error("Passed train id "..train_id.." doesnt exist") end
+	-- ensure init - always required
+	advtrains.train_ensure_init(train_id, train)
+	-- Use path dist to determine the offset from the start of the train
+	local dstart = advtrains.path_get_path_dist_fractional(train, train.index)
+	local dtarget = advtrains.path_get_path_dist_fractional(train, w_index)
+	local dist_from_start = dstart - dtarget -- NOTE: dist_from_start is supposed to be positive, but dtarget will be smaller than dstart
+	-- if dist_from_start is <0, we are outside of train
+	if dist_from_start < 0 then
+		return nil
+	end
+	-- scan over wagons to see if dist_from_start falls into its window
+	local start_pos = 0
+	local center_pos
+	local end_pos
+	local i = 1
+	while train.trainparts[i] do
+		local w_id = train.trainparts[i]
+		-- get wagon prototype to retrieve wagon span
+		local wdata = advtrains.wagons[w_id]
+		if wdata then
+			local wtype, wproto = advtrains.get_wagon_prototype(wdata)
+			local wagon_span = wproto.wagon_span
+			-- determine center and end pos
+			center_pos = start_pos + wagon_span
+			end_pos = center_pos + wagon_span
+			if start_pos <= dist_from_start and dist_from_start < end_pos then
+				-- Found the correct wagon in the train!
+				local offset_from_center = dist_from_start - center_pos
+				return i, w_id, wdata, offset_from_center
+			end
+			-- go on
+			start_pos = end_pos
+		else
+			error("Wagon "..w_id.." from train "..train_id.." doesnt exist!")
+		end
+		i = i + 1
+	end
+	-- nothing found, dist must be further back
+	return nil
+end
+
+function advtrains.get_wagon_entity(wagon_id)
+	if not advtrains.wagons[wagon_id] then return end
+	local object = advtrains.wagon_objects[wagon_id]
+	if object then
+		return object:get_luaentity()
+	end
+end
+
+function advtrains.next_wagon_entity_in_train(train, i)
+	local wagon_id = train.trainparts[i + 1]
+	if wagon_id then
+		local wagon = advtrains.get_wagon_entity(wagon_id)
+		if wagon then
+			return i + 1, wagon
+		end
+	end
+end
+
+function advtrains.wagon_entity_pairs_in_train(train_id)
+	local train = advtrains.trains[train_id]
+	if not train then return function() end end
+	return advtrains.next_wagon_entity_in_train, train, 0
+end

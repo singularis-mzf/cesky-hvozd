@@ -4,24 +4,24 @@
 
 -- Privileges to control TRAIN DRIVING/COUPLING
 minetest.register_privilege("train_operator", {
-	description = "Without this privilege, a player can't do anything about trains, neither place or remove them nor drive or couple them (but he can build tracks if he has track_builder)",
+	description = attrans("Can place, remove and operate trains"),
 	give_to_singleplayer= true,
 });
 
 minetest.register_privilege("train_admin", {
-	description = "Player may drive, place or remove any trains from/to anywhere, regardless of owner, whitelist or protection",
+	description = attrans("Can place, remove and operate any train, regardless of owner, whitelist, or protection"),
 	give_to_singleplayer= true,
 });
 
 -- Privileges to control TRACK BUILDING
 minetest.register_privilege("track_builder", {
-	description = "Player can place and/or dig rails not protected from him. If he also has protection_bypass, he can place/dig any rails",
+	description = attrans("Can place and dig tracks in unprotected areas"),
 	give_to_singleplayer= true,
 });
 
 -- Privileges to control OPERATING TURNOUTS/SIGNALS
 minetest.register_privilege("railway_operator", {
-	description = "Player can operate turnouts and signals not protected from him. If he also has protection_bypass, he can operate any turnouts/signals",
+	description = attrans("Can operate turnouts and signals in unprotected areas"),
 	give_to_singleplayer= true,
 });
 
@@ -145,12 +145,12 @@ function advtrains.check_track_protection(pos, pname, near, prot_p)
 	--atdebug("CTP: ",pos,pname,near,prot_p,"priv=",priv,"prot=",prot,"dprot=",dprot)
 	
 	if not priv and (not boo or prot or not dprot) then
-		minetest.chat_send_player(pname, "You are not allowed to build "..nears.."tracks without track_builder privilege")
+		minetest.chat_send_player(pname, near and attrans("You are not allowed to build near tracks without the track_builder privilege.") or attrans("You are not allowed to build tracks without the track_builder privilege."))
 		minetest.log("action", pname.." tried to modify terrain "..nears.."track at "..minetest.pos_to_string(apos).." but is not permitted to (no privilege)")
 		return false
 	end
 	if prot then
-		minetest.chat_send_player(pname, "You are not allowed to build "..nears.."tracks at protected position!")
+		minetest.chat_send_player(pname, near and attrans("You are not allowed to build near tracks at this protected position.") or attrans("You are not allowed to build tracks at this protected position."))
 		minetest.record_protection_violation(pos, pname)
 		minetest.log("action", pname.." tried to modify "..nears.."track at "..minetest.pos_to_string(apos).." but position is protected!")
 		return false
@@ -181,7 +181,7 @@ function advtrains.check_turnout_signal_protection(pos, pname)
 			nocheck=false
 			return true
 		else
-			minetest.chat_send_player(pname, "You are not allowed to operate turnouts and signals (missing railway_operator privilege)")
+			minetest.chat_send_player(pname, attrans("You are not allowed to operate turnouts and signals without the railway_operator privilege."))
 			minetest.log("action", pname.." tried to operate turnout/signal at "..minetest.pos_to_string(pos).." but does not have railway_operator")
 			nocheck=false
 			return false

@@ -142,10 +142,8 @@ minetest.register_on_joinplayer(function(player)
 		local pname = player:get_player_name()
 		local id=advtrains.player_to_train_mapping[pname]
 		if id then
-			for _,wagon in pairs(minetest.luaentities) do
-				if wagon.is_wagon and wagon.initialized and wagon.train_id==id then
-					wagon:reattach_all()
-				end
+			for _, wagon in advtrains.wagon_entity_pairs_in_train(id) do
+				wagon:reattach_all()
 			end
 		end
 end)
@@ -157,12 +155,10 @@ minetest.register_on_dieplayer(function(player)
 		if id then
 			local train=advtrains.trains[id]
 			if not train then advtrains.player_to_train_mapping[pname]=nil return end
-			for _,wagon in pairs(minetest.luaentities) do
-				if wagon.is_wagon and wagon.initialized and wagon.train_id==id then
-					--when player dies, detach him from the train
-					--call get_off_plr on every wagon since we don't know which one he's on.
-					wagon:get_off_plr(pname)
-				end
+			for _, wagon in advtrains.wagon_entity_pairs_in_train(id) do
+				--when player dies, detach him from the train
+				--call get_off_plr on every wagon since we don't know which one he's on.
+				wagon:get_off_plr(pname)
 			end
 			-- just in case no wagon felt responsible for this player: clear train mapping
 			advtrains.player_to_train_mapping[pname] = nil
@@ -267,6 +263,10 @@ function advtrains.train_ensure_init(id, train)
 		atwarn(debug.traceback())
 		return nil
 	end
+
+	if not train.staticdata then
+		train.staticdata = {}
+	end
 	
 	train.dirty = true
 	if train.no_step then
@@ -277,10 +277,12 @@ function advtrains.train_ensure_init(id, train)
 	assertdef(train, "velocity", 0)
 	--assertdef(train, "tarvelocity", 0)
 	assertdef(train, "acceleration", 0)
-	assertdef(train, "id", id)
+	if train.id ~= id then
+		train.id = id
+	end
+	assertdef(train, "path_ori_cp", {})
 	
-	
-	if not train.drives_on or not train.max_speed then
+	if not train.max_speed then
 		--atprint("in ensure_init: missing properties, updating!")
 		advtrains.update_trainpart_properties(id)
 	end
@@ -425,7 +427,8 @@ function advtrains.train_step_b(id, train, dtime)
 		if train.atc_command then
 			if (not train.atc_delay or train.atc_delay<=0)
 					and not train.atc_wait_finish
-					and not train.atc_wait_autocouple then
+					and not train.atc_wait_autocouple
+					and not train.atc_wait_signal then
 				advtrains.atc.execute_atc_command(id, train)
 			elseif train.atc_delay and train.atc_delay > 0 then
 				train.atc_delay=train.atc_delay-dtime
@@ -452,6 +455,15 @@ function advtrains.train_step_b(id, train, dtime)
 		if train.atc_wait_finish then
 			if not train.atc_brake_target and (not train.tarvelocity or train.velocity==train.tarvelocity) then
 				train.atc_wait_finish=nil
+			end
+		end
+		-- clear atc_wait_signal immediately when the next LZB checkpoint is not a "stop"
+		-- (but make sure lzb is initialized, otherwise wait for it)
+		if train.atc_wait_signal and train.lzb then
+			local first_ckp = train.lzb.checkpoints and train.lzb.checkpoints[1]
+			-- no checkpoint exists, or it has a speed of either nil or >0
+			if not first_ckp or first_ckp.speed ~= 0 then
+				train.atc_wait_signal = nil
 			end
 		end
 		
@@ -616,7 +628,7 @@ function advtrains.train_step_b(id, train, dtime)
 		local base_cn =  train.path_cn[base_idx]
 		--atdebug(id,"Begin Checking for on-track collisions new_idx=",new_index_curr_tv,"base_idx=",base_idx,"base_pos=",base_pos,"base_cn=",base_cn)
 		-- query occupation
-		local occ = advtrains.occ.get_trains_over(base_pos)
+		local occ = advtrains.occ.reverse_lookup_sel(base_pos, "close_proximity")
 		-- iterate other trains
 		for otid, ob_idx in pairs(occ) do
 			if otid ~= id then
@@ -628,7 +640,7 @@ function advtrains.train_step_b(id, train, dtime)
 				local ocn = otrn.path_cn[ob_idx]
 				local ocp = otrn.path_cp[ob_idx]
 
-				local target_is_inside, ref_index, facing
+				local target_is_inside, ref_index, facing, same_dir
 
 				if base_cn == ocn then
 					-- same direction
@@ -646,7 +658,7 @@ function advtrains.train_step_b(id, train, dtime)
 
 				-- Phase 2 - project ref_index back onto our path and check again (necessary because there might be a turnout on the way and we are driving into the flank
 				if target_is_inside then
-					local our_index = advtrains.path_project(otrn, ref_index, id)
+					local our_index = advtrains.path_project(otrn, ref_index, id, "before_end")
 					--atdebug("Backprojected our_index",our_index)
 					if our_index and our_index <= new_index_curr_tv
 							and our_index >= train.index then --FIX: If train was already past the collision point in the previous step, there is no collision! Fixes bug with split_at_index
@@ -800,9 +812,12 @@ function advtrains.train_step_c(id, train, dtime)
 			if is_loaded_area then
 				local objs = minetest.get_objects_inside_radius(rcollpos, 2)
 				for _,obj in ipairs(objs) do
-					if not obj:is_player() and obj:get_armor_groups().fleshy and obj:get_armor_groups().fleshy > 0 
-							and obj:get_luaentity() and obj:get_luaentity().name~="signs_lib:text" then
-						obj:punch(obj, 1, { full_punch_interval = 1.0, damage_groups = {fleshy = 1000}, }, nil)
+					if not obj:is_player() then
+						local armor = obj:get_armor_groups()
+						local luaentity = obj:get_luaentity()
+						if armor.fleshy and armor.fleshy > 0 and luaentity and luaentity.name ~= "signs_lib:text" then
+							obj:punch(obj, 1, { full_punch_interval = 1.0, damage_groups = {fleshy = 1000}, }, nil)
+						end
 					end
 				end
 			end
@@ -839,7 +854,7 @@ local callbacks_leave_node, run_callbacks_leave_node = mknodecallback("leave")
 -- Node callback for approaching
 -- Might be called multiple times, whenever path is recalculated. Also called for the first node the train is standing on, then has_entered is true.
 -- signature is function(pos, id, train, index, has_entered, lzbdata)
--- has_entered: true if the "enter" callback has already been executed for this train in this location
+-- has_entered: Provided for legacy reasons. Always false. (used to signify that the enter callback has already been called, at a time where enter was still called at .5 index)
 -- lzbdata: arbitrary data (shared between all callbacks), deleted when LZB is restarted.
 -- These callbacks are called in order of distance as train progresses along tracks, so lzbdata can be used to
 -- keep track of a train's state once it passes this point
@@ -858,13 +873,10 @@ local function tnc_call_enter_callback(pos, train_id, train, index)
 	run_callbacks_enter_node(pos, train_id, train, index)
 	
 	-- check for split points
-	if mregnode and mregnode.at_conns and #mregnode.at_conns == 3 and train.path_cp[index] == 3 then
-		-- train came from connection 3 of a switch, so it split points.
-		if not train.points_split then
-			train.points_split = {}
-		end
-		train.points_split[advtrains.encode_pos(pos)] = true
-		--atdebug(train_id,"split points at",pos)
+	if mregnode and mregnode.at_conn_map then
+		-- If this node has >2 conns (and a connmap), remember the connection where we came from to handle split points
+		--atdebug("Train",train_id,"at",pos,"saving turnout origin CP",train.path_cp[index],"for path item",index)
+		train.path_ori_cp[advtrains.encode_pos(pos)] = train.path_cp[index]
 	end
 end
 local function tnc_call_leave_callback(pos, train_id, train, index)
@@ -879,23 +891,16 @@ local function tnc_call_leave_callback(pos, train_id, train, index)
 	run_callbacks_leave_node(pos, train_id, train, index)
 	
 	-- split points do not matter anymore. clear them
-	if train.points_split then
-		if train.points_split[advtrains.encode_pos(pos)] then
-			train.points_split[advtrains.encode_pos(pos)] = nil
-			--atdebug(train_id,"has passed split points at",pos)
-		end
-		-- any entries left?
-		for _,_ in pairs(train.points_split) do
-			return
-		end
-		train.points_split = nil
+	if mregnode and mregnode.at_conn_map then
+		-- If this node has >2 conns (and a connmap), remember the connection where we came from to handle split points
+		--atdebug("Train",train_id,"at",pos,"removing turnout origin CP for path item",index," because train has left it")
+		train.path_ori_cp[advtrains.encode_pos(pos)] = nil
 	end
-	-- WARNING possibly unreachable place!
 end
 
 function advtrains.tnc_call_approach_callback(pos, train_id, train, index, lzbdata)
 	--atdebug("tnc approach",pos,train_id, lzbdata)
-	local has_entered = atround(train.index) == index
+	local has_entered = false -- 2024-11-25: has_entered is now always false, because enter point = LZB hit point!
 	
 	local node = advtrains.ndb.get_node(pos) --this spares the check if node is nil, it has a name in any case
 	local mregnode=minetest.registered_nodes[node.name]
@@ -908,18 +913,21 @@ function advtrains.tnc_call_approach_callback(pos, train_id, train, index, lzbda
 end
 
 -- === te callback definition for tnc node callbacks ===
+-- Change 2024-11-25: Enter node happens when index surpasses whole number (i.e. at center of rail)
+-- Instead of atround (prev behavior) nouw use floor and ceil (note this also fixes issues where index was exactly on .0)
+local atceil = math.ceil
 
 advtrains.te_register_on_new_path(function(id, train)
 	train.tnc = {
-		old_index = atround(train.index),
-		old_end_index = atround(train.end_index),
+		old_index = atfloor(train.index),
+		old_end_index = atceil(train.end_index),
 	}
 	--atdebug(id,"tnc init",train.index,train.end_index)
 end)
 
 advtrains.te_register_on_update(function(id, train)
-	local new_index = atround(train.index)
-	local new_end_index = atround(train.end_index)
+	local new_index = atfloor(train.index)
+	local new_end_index = atceil(train.end_index)
 	local old_index = train.tnc.old_index
 	local old_end_index = train.tnc.old_end_index
 	while old_index < new_index do
@@ -937,8 +945,8 @@ advtrains.te_register_on_update(function(id, train)
 end)
 
 advtrains.te_register_on_create(function(id, train)
-	local index = atround(train.index)
-	local end_index = atround(train.end_index)
+	local index = atfloor(train.index)
+	local end_index = atceil(train.end_index)
 	while end_index <= index do
 		local pos = advtrains.round_vector_floor_y(advtrains.path_get(train,end_index))
 		tnc_call_enter_callback(pos, id, train, end_index)
@@ -948,8 +956,8 @@ advtrains.te_register_on_create(function(id, train)
 end)
 
 advtrains.te_register_on_remove(function(id, train)
-	local index = atround(train.index)
-	local end_index = atround(train.end_index)
+	local index = atfloor(train.index)
+	local end_index = atceil(train.end_index)
 	while end_index <= index do
 		local pos = advtrains.round_vector_floor_y(advtrains.path_get(train,end_index))
 		tnc_call_leave_callback(pos, id, train, end_index)
@@ -1031,10 +1039,9 @@ end
 
 -- Note: safe_decouple_wagon() has been moved to wagons.lua
 
--- this function sets wagon's pos_in_train(parts) properties and train's max_speed and drives_on (and more)
+-- this function sets wagon's pos_in_train(parts) properties and train's max_speed (and more)
 function advtrains.update_trainpart_properties(train_id, invert_flipstate)
 	local train=advtrains.trains[train_id]
-	train.drives_on=advtrains.merge_tables(advtrains.all_tracktypes)
 	--FIX: deep-copy the table!!!
 	train.max_speed=20
 	train.extent_h = 0;
@@ -1050,7 +1057,16 @@ function advtrains.update_trainpart_properties(train_id, invert_flipstate)
 		if data then
 			local wagon = advtrains.wagon_prototypes[data.type or data.entity_name]
 			if not wagon then
-				atwarn("Wagon '",data.type,"' couldn't be found. Please check that all required modules are loaded!")
+				local ent = advtrains.wagon_objects[w_id]
+				local pdesc
+				if ent and ent:get_pos() then
+					pdesc = "at " .. minetest.pos_to_string(ent:get_pos())
+				elseif train.last_pos then
+					pdesc = "near " .. minetest.pos_to_string(train.last_pos)
+				else
+					pdesc = "at an unknown location"
+				end
+				atwarn(string.format("Wagon %q %s could not be found. Please check that all required modules are loaded!", data.type, pdesc))
 				wagon = advtrains.wagon_prototypes["advtrains:wagon_placeholder"]
 
 			end
@@ -1067,13 +1083,6 @@ function advtrains.update_trainpart_properties(train_id, invert_flipstate)
 			end
 			rel_pos=rel_pos+wagon.wagon_span
 			
-			if wagon.drives_on then
-				for k,_ in pairs(train.drives_on) do
-					if not wagon.drives_on[k] then
-						train.drives_on[k]=nil
-					end
-				end
-			end
 			train.max_speed=math.min(train.max_speed, wagon.max_speed)
 			train.extent_h = math.max(train.extent_h, wagon.extent_h or 1);
 		end
@@ -1105,8 +1114,17 @@ function advtrains.spawn_wagons(train_id)
 				if advtrains.position_in_range(pos, ablkrng) then
 					--atdebug("wagon",w_id,"spawning")
 					local wt = advtrains.get_wagon_prototype(data)
-					local wagon = minetest.add_entity(pos, wt):get_luaentity()
-					wagon:set_id(w_id)
+					local wobj = minetest.add_entity(pos, wt)
+					if not wobj then
+						atwarn("Failed to spawn wagon", w_id, "of type", wt)
+					else
+						local wagon = wobj:get_luaentity()
+						if not wagon then
+							atwarn("Wagon", w_id, "of type", wt, "spawned with nil luaentity")
+						else
+							wagon:set_id(w_id)
+						end
+					end
 				end
 			end
 		else
@@ -1173,6 +1191,8 @@ function advtrains.split_train_at_index(train, index)
 	newtrain.points_split = advtrains.merge_tables(train.points_split)
 	newtrain.autocouple = train.autocouple
 
+	advtrains.te_run_callbacks_on_decouple(train, newtrain, index)
+
 	return newtrain_id -- return new train ID, so new train can be manipulated
 
 end
@@ -1185,7 +1205,23 @@ function advtrains.invert_train(train_id)
 		return
 	end
 	
+	-- Before flipping the train, we must check if there are any points on the path
+	-- which will become split on rotating, and store their cn (which will become the cp)
+	local ori_cp_after_flip = {}
+	for index = atround(train.end_index),atround(train.index) do
+		local pos = advtrains.path_get(train, index)
+		local ok, conns, railheight, connmap = advtrains.get_rail_info_at(pos)
+		if ok and connmap then
+			--atdebug("Reversing Train",train.id," ori_cp Checks: at",pos,"saving turnout origin CP",train.path_cn[index],"for path item",index)
+			ori_cp_after_flip[advtrains.encode_pos(pos)] = train.path_cn[index]
+		end
+	end
+	
+	-- Actual rotation happens here! This sets the path restore position to the end of the train, inverting the connid.
 	advtrains.path_setrestore(train, true)
+	
+	-- clear the origin cp list because it is now invalid, and replace it by what we built prior.
+	train.path_ori_cp = ori_cp_after_flip
 	
 	-- rotate some other stuff
 	if train.door_open then
@@ -1206,7 +1242,6 @@ function advtrains.invert_train(train_id)
 	advtrains.update_trainpart_properties(train_id, true)
 	
 	-- recalculate path
-	advtrains.train_ensure_init(train_id, train)
 	
 	-- If interlocking present, check whether this train is in a section and then set as shunt move after reversion
 	if advtrains.interlocking and train.il_sections and #train.il_sections > 0 then
@@ -1232,7 +1267,7 @@ function advtrains.invalidate_all_paths(pos)
 	local tab
 	if pos then
 		-- if position given, check occupation system
-		tab = advtrains.occ.get_trains_over(pos)
+		tab = advtrains.occ.reverse_lookup_quick(pos)
 	else
 		tab = advtrains.trains
 	end
@@ -1245,7 +1280,7 @@ end
 -- Calls invalidate_path_ahead on all trains occupying (having paths over) this node
 -- Can be called during train step.
 function advtrains.invalidate_all_paths_ahead(pos)
-	local tab = advtrains.occ.get_trains_over(pos)
+	local tab = advtrains.occ.reverse_lookup_sel(pos, "first_ahead")
 	
 	for id,index in pairs(tab) do
 		local train = advtrains.trains[id]

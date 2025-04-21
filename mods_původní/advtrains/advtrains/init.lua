@@ -24,6 +24,9 @@ minetest.log("action", "[advtrains] Loading...")
 
 -- There is no need to support 0.4.x anymore given that the compatitability with it is already broken by 1bb1d825f46af3562554c12fba35a31b9f7973ff
 attrans = minetest.get_translator ("advtrains")
+function attrans_formspec(...)
+	return minetest.formspec_escape(attrans(...))
+end
 
 --advtrains
 advtrains = {trains={}, player_to_train_mapping={}}
@@ -47,6 +50,9 @@ advtrains.IGNORE_WORLD = false
 
 local NO_SAVE = false
 -- Do not save any data to advtrains save files
+
+advtrains.TRAIN_MAX_WAGONS = 20
+-- Limit on the maximum number of wagons that may be in a train
 
 -- ==========================================================================
 
@@ -178,7 +184,7 @@ function assertt(var, typ)
 	end
 end
 
-dofile(advtrains.modpath.."/helpers.lua");
+dofile(advtrains.modpath.."/helpers.lua")
 --dofile(advtrains.modpath.."/debugitems.lua");
 
 advtrains.meseconrules = 
@@ -198,20 +204,27 @@ advtrains.meseconrules =
 
 advtrains.fpath=minetest.get_worldpath().."/advtrains"
 
+advtrains.poconvert = dofile(advtrains.modpath.."/poconvert.lua")
+advtrains.poconvert.from_flat("advtrains")
+attrans = minetest.get_translator("advtrains")
+
 advtrains.speed = dofile(advtrains.modpath.."/speed.lua")
+advtrains.formspec = dofile(advtrains.modpath.."/formspec.lua")
+advtrains.texture = dofile(advtrains.modpath.."/texture.lua")
 
 dofile(advtrains.modpath.."/path.lua")
 dofile(advtrains.modpath.."/trainlogic.lua")
 dofile(advtrains.modpath.."/trainhud.lua")
 dofile(advtrains.modpath.."/trackplacer.lua")
 dofile(advtrains.modpath.."/copytool.lua")
+dofile(advtrains.modpath.."/wagonprop_tool.lua")
 dofile(advtrains.modpath.."/tracks.lua")
+dofile(advtrains.modpath.."/track_reg_helper.lua")
 dofile(advtrains.modpath.."/occupation.lua")
 dofile(advtrains.modpath.."/atc.lua")
 dofile(advtrains.modpath.."/wagons.lua")
 dofile(advtrains.modpath.."/protection.lua")
 
-dofile(advtrains.modpath.."/trackdb_legacy.lua")
 dofile(advtrains.modpath.."/nodedb.lua")
 dofile(advtrains.modpath.."/couple.lua")
 
@@ -229,6 +242,9 @@ end
 
 dofile(advtrains.modpath.."/lzb.lua")
 
+if minetest.settings:get_bool("advtrains_register_debugitems") then
+	dofile(advtrains.modpath.."/debugitems.lua")
+end
 
 --load/save
 
@@ -411,6 +427,16 @@ function advtrains.load_version_4()
 		if il_save then
 			advtrains.interlocking.db.load(il_save)
 		end
+		
+		-- TODO 2.5.0 backwards compatibility fallback: Store the pre-v2.5.0 save file so that it can be reverted to if needed
+		local fallback_file = advtrains.fpath.."_interlocking.ls.pre250"
+		local file = io.open(fallback_file, "rb")
+		if file then
+			io.close(file)
+		else
+			atwarn("Backing up pre-2.5.0 version of Interlocking save file to",fallback_file," for potential downgrade to older versions")
+			os.rename(advtrains.fpath.."_interlocking.ls", fallback_file)
+		end
 	end
 	
 	--== load lines ==
@@ -470,7 +496,8 @@ advtrains.avt_save = function(remove_players_from_wagons)
 				"atc_brake_target", "atc_wait_finish", "atc_command", "atc_delay", "door_open",
 				"text_outside", "text_inside", "line", "routingcode",
 				"il_sections", "speed_restriction", "speed_restrictions_t", "is_shunt",
-				"points_split", "autocouple", "atc_wait_autocouple", "ars_disable",
+				"path_ori_cp", "autocouple", "atc_wait_autocouple", "ars_disable",
+				"staticdata",
 			})
 			--then save it
 			tmp_trains[id]=v
@@ -734,6 +761,21 @@ minetest.register_chatcommand("at_whereis",
 			end
 		end,
 })
+minetest.register_chatcommand("at_tp",
+	{
+		params = "<train id>",
+		description = "Teleports you to the position of the train with the given id",
+		privs = {train_operator = true, teleport = true},
+		func = function(name,param)
+			local train = advtrains.trains[param]
+			if not train or not train.last_pos then
+				return false, "Train "..param.." does not exist or is invalid"
+			else
+				minetest.get_player_by_name(name):set_pos(train.last_pos)
+				return true, "Teleporting to train "..param
+			end
+		end,
+})
 minetest.register_chatcommand("at_disable_step",
 	{
         params = "<yes/no>", 
@@ -752,6 +794,16 @@ minetest.register_chatcommand("at_disable_step",
 			else
 				return false, "Advtrains is already running normally!"
 			end
+        end,
+})
+
+minetest.register_chatcommand("at_status",
+	{
+        params = "", 
+        description = "Print advtrains status info", 
+        privs = {train_operator = true},
+        func = function(name, param)
+			return true, advtrains.print_concat_table({"Advtrains Status: no_action",no_action,"slowdown",advtrains.global_slowdown,"(log",math.log(advtrains.global_slowdown),")"})
         end,
 })
 

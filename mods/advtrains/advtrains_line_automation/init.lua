@@ -1,5 +1,6 @@
 ch_base.open_mod(minetest.get_current_modname())
 -- Advtrains line automation system
+
 advtrains.lines = {
 	-- [station code] = {name=..., owner=...}
 	stations = {},

@@ -54,7 +54,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 ## Advanced Trains (advtrains)
 
-* Zdroj: [https://git.bananach.space/advtrains.git](https://git.bananach.space/advtrains.git), revize 744aee2cdd319bc19e83cc9efb52a07ae6adbb06
+* Zdroj: [https://git.bananach.space/advtrains.git](https://git.bananach.space/advtrains.git), revize c974e70fde21cb5484e1b19c1f60b82c3ac7f3eb (verze 2.5.0)
 * Původní licence: AGPL 3 pro kód, CC-BY-SA-3.0 pro média
 * Licence úprav: AGPL 3
 * [ContentDB](https://content.minetest.net/packages/orwell/advtrains/)

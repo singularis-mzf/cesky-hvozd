@@ -40,83 +40,99 @@ local function itkexist(tbl, ikey, com)
 	return false
 end
 
-local function itremove(tbl, com)
+local function itremove(tbl, com, once)
 	local i=1
 	while i <= #tbl do
 		if tbl[i] == com then
 			table.remove(tbl, i)
+			if once then return end
 		else
 			i = i + 1
 		end
 	end
 end
-local function itkremove(tbl, ikey, com)
+local function itkremove(tbl, ikey, com, once)
 	local i=1
 	while i <= #tbl do
 		if tbl[i][ikey] == com then
 			table.remove(tbl, i)
+			if once then return end
 		else
 			i = i + 1
 		end
 	end
 end
 
-local function setsection(tid, train, ts_id, ts, sigd)
+local function setsection(tid, train, ts_id, ts, sigd, only_if_not_exist)
 	-- train
 	if not train.il_sections then train.il_sections = {} end
-	if not itkexist(train.il_sections, "ts_id", ts_id) then
+	if only_if_not_exist then
+		-- called for the back connid on enter, only to ensure that section is blocked if train was so far not registered
+		if not itkexist(train.il_sections, "ts_id", ts_id) then
+			table.insert(train.il_sections, {ts_id = ts_id, origin = sigd})
+		end
+	else
+		-- insert always, this leads to duplicate entries if the train enters the same section a second time
 		table.insert(train.il_sections, {ts_id = ts_id, origin = sigd})
 	end
 	
 	-- ts
 	if not ts.trains then ts.trains = {} end
-	if not itexist(ts.trains, tid) then
+	if only_if_not_exist then
+		-- called for the back connid on enter, only to ensure that section is blocked if train was so far not registered
+		if not itexist(ts.trains, tid) then
+			table.insert(ts.trains, tid)
+		end
+	else
 		table.insert(ts.trains, tid)
 	end
 	
 	-- routes
-	local tcbs = advtrains.interlocking.db.get_tcbs(sigd)
+	local tcbs
+	if sigd then
+		tcbs = advtrains.interlocking.db.get_tcbs(sigd)
+	end
 	
 	-- route setting - clear route state
 	if ts.route then
 		--atdebug(tid,"enters",ts_id,"examining Routestate",ts.route)
-		if not sigd_equal(ts.route.entry, sigd) then
+		if sigd and not sigd_equal(ts.route.entry, sigd) then
 			-- Train entered not from the route. Locate origin and cancel route!
 			atwarn("Train",tid,"hit route",ts.route.rsn,"!")
 			advtrains.interlocking.route.cancel_route_from(ts.route.origin)
 			atwarn("Route was cancelled.")
 		else
-			-- train entered route regularily. Reset route and signal
-			tcbs.route_committed = nil
-			tcbs.route_comitted = nil -- TODO compatibility cleanup
-			tcbs.aspect = nil
-			tcbs.route_origin = nil
-			advtrains.interlocking.update_signal_aspect(tcbs)
-			if tcbs.signal and sigd_equal(ts.route.entry, ts.route.origin) then
-				if tcbs.route_auto and tcbs.routeset then
-					--atdebug("Resetting route (",ts.route.origin,")")
-					advtrains.interlocking.route.update_route(ts.route.origin, tcbs)
-				else
-					tcbs.routeset = nil
-				end
-			end
+			-- train entered route regularily.
 		end
 		ts.route = nil
 	end
-	if tcbs.signal then
+	if tcbs and tcbs.signal then
+		-- Reset route and signal
+		-- Note that the hit-route case is already handled by cancel_route_from
+		-- this code only handles signal at entering tcb and also triggers for non-route ts
+		tcbs.route_committed = nil
+		tcbs.route_aspect = nil
+		tcbs.route_remote = nil
+		tcbs.route_origin = nil
+		tcbs.route_rsn = nil
+		if not tcbs.route_auto then
+			tcbs.routeset = nil
+		end
+		advtrains.interlocking.signal.update_route_aspect(tcbs)
 		advtrains.interlocking.route.update_route(sigd, tcbs)
 	end
 end
 
-local function freesection(tid, train, ts_id, ts)
+local function freesection(tid, train, ts_id, ts, clear_all)
 	-- train
 	if not train.il_sections then train.il_sections = {} end
-	itkremove(train.il_sections, "ts_id", ts_id)
+	itkremove(train.il_sections, "ts_id", ts_id, not clear_all)
 	
 	-- ts
 	if not ts.trains then ts.trains = {} end
-	itremove(ts.trains, tid)
+	itremove(ts.trains, tid, not clear_all)
 	
+	-- route locks
 	if ts.route_post then
 		advtrains.interlocking.route.free_route_locks(ts_id, ts.route_post.locks)
 		if ts.route_post.next then
@@ -138,12 +154,18 @@ end
 -- This sets the section for both directions, to be failsafe
 advtrains.tnc_register_on_enter(function(pos, id, train, index)
 	local tcb = ildb.get_tcb(pos)
-	if tcb then
-		for connid=1,2 do
-			local ts = tcb[connid].ts_id and ildb.get_ts(tcb[connid].ts_id)
-			if ts then
-				setsection(id, train, tcb[connid].ts_id, ts, {p=pos, s=connid})
-			end
+	if tcb and train.path_cp[index] and train.path_cn[index] then
+		-- forward conn
+		local connid = train.path_cn[index]
+		local ts = tcb[connid] and tcb[connid].ts_id and ildb.get_ts(tcb[connid].ts_id)
+		if ts then
+			setsection(id, train, tcb[connid].ts_id, ts, {p=pos, s=connid})
+		end
+		-- backward conn (safety only)
+		connid = train.path_cp[index]
+		ts = tcb[connid] and tcb[connid].ts_id and ildb.get_ts(tcb[connid].ts_id)
+		if ts then
+			setsection(id, train, tcb[connid].ts_id, ts, {p=pos, s=connid}, true)
 		end
 	end
 end)
@@ -153,8 +175,9 @@ end)
 advtrains.tnc_register_on_leave(function(pos, id, train, index)
 	local tcb = ildb.get_tcb(pos)
 	if tcb and train.path_cp[index] then
+		-- backward conn
 		local connid = train.path_cp[index]
-		local ts = tcb[connid].ts_id and ildb.get_ts(tcb[connid].ts_id)
+		local ts = tcb[connid] and tcb[connid].ts_id and ildb.get_ts(tcb[connid].ts_id)
 		if ts then
 			freesection(id, train, tcb[connid].ts_id, ts)
 		end
@@ -167,13 +190,13 @@ advtrains.te_register_on_create(function(id, train)
 	-- let's see what track sections we find here
 	local index = atround(train.index)
 	local pos = advtrains.path_get(train, index)
-	local ts_id, origin = ildb.get_ts_at_pos(pos)
+	local ts_id = ildb.check_and_repair_ts_at_pos(pos, 1) -- passing connid 1 - that always exists
 	if ts_id then
 		local ts = ildb.get_ts(ts_id)
 		if ts then
-			setsection(id, train, ts_id, ts, origin)
+			setsection(id, train, ts_id, ts, nil, true)
 		else
-			atwarn("ILDB corruption: TCB",origin," has invalid TS reference")
+			atwarn("While placing train, TS didnt exist ",ts_id)
 		end
 		-- Make train a shunt move
 		train.is_shunt = true

@@ -3,475 +3,333 @@
 
 --all new trackplacer code
 local tp={
-	tracks={}
+	groups={}
 }
 
-function tp.register_tracktype(nnprefix, n_suffix)
-	if tp.tracks[nnprefix] then return end--due to the separate registration of slopes and flats for the same nnpref, definition would be overridden here. just don't.
-	tp.tracks[nnprefix]={
-		default=n_suffix,
-		single_conn={},
-		single_conn_1={},
-		single_conn_2={},
-		double_conn={},
-		double_conn_1={},
-		double_conn_2={},
-		--keys:conn1_conn2 (example:1_4)
-		--values:{name=x, param2=x}
-		twcycle={},
-		twrotate={},--indexed by suffix, list, tells order of rotations
-		modify={},
-	}
+--[[ New in version 2.5:
+
+The track placer no longer uses hacky nodename pattern matching.
+The base criterion for rotating or matching tracks is the common "ndef.advtrains.track_place_group" property.
+Only rails where this field is set are considered for replacement. Other rails can still be considered for connection.
+Replacement ("bending") of rails can only happen within their respective track place group. Only two-conn rails are allowed in the trackplacer.
+
+The track registration functions register the candidates for any given track_place_group in two separate collections:
+- double: tracks that can be used to connect both ends of the rail
+- single: tracks that will be used to connect conn1 when only a single end is to be connected
+
+When track placing is requested, the calling code just supplies the track_place_group to be placed.
+
+]]--
+
+local function rotate(conn, rot)
+	return (conn + rot) % 16
 end
-function tp.add_double_conn(nnprefix, suffix, rotation, conns)
-	local nodename=nnprefix.."_"..suffix..rotation
+
+-- Register a track node as candidate
+-- tpg: the track place group to register the candidates for
+--        NOTE: This value is automatically added to the node definition (ndef) in field ndef.advtrains.track_place_group!
+-- name, ndef: the node name and node definition table to register
+-- as_single: whether the rail should be considered as candidate for one-endpoint connection
+--            Typically only set for the straight rail variants
+-- as_double: whether the rail should be considered as candidate for two-endpoint connection
+--            Typically set for straights and curves
+-- ignore_2conn_for_legacy_xing: skips the 2-connection assertion - ONLY for compatibility with the legacy crossing nodes, DO NOT USE!
+function tp.register_candidate(tpg, name, ndef, as_single, as_double, ignore_2conn_for_legacy_xing)
+	--atdebug("TP Register candidate:",tpg, name, as_single, as_double)
+	--get or create TP group
+	if not tp.groups[tpg] then
+		tp.groups[tpg] = {double = {}, single1 = {}, single2 = {}, default = {name = name, param2 = 0} }
+		-- note: this causes the first candidate to ever be registered to be the default (which is typically what you want)
+		-- But it can be overwritten using tp.set_default_place_candidate
+	end
+	local g = tp.groups[tpg]
+	
+	-- get conns
+	if not ignore_2conn_for_legacy_xing then
+		assert(#ndef.at_conns == 2)
+	end
+	local c1, c2 = ndef.at_conns[1].c, ndef.at_conns[2].c
+	local is_symmetrical = (rotate(c1, 8) == c2)
+	
+	-- store all possible rotations (param2 values)
 	for i=0,3 do
-		tp.tracks[nnprefix].double_conn[((conns.conn1+4*i)%16).."_"..((conns.conn2+4*i)%16)]={name=nodename, param2=i}
-		tp.tracks[nnprefix].double_conn[((conns.conn2+4*i)%16).."_"..((conns.conn1+4*i)%16)]={name=nodename, param2=i}
-		tp.tracks[nnprefix].double_conn_1[((conns.conn1+4*i)%16).."_"..((conns.conn2+4*i)%16)]={name=nodename, param2=i}
-		tp.tracks[nnprefix].double_conn_2[((conns.conn2+4*i)%16).."_"..((conns.conn1+4*i)%16)]={name=nodename, param2=i}
-	end
-	tp.tracks[nnprefix].modify[nodename]=true
-end
-function tp.add_single_conn(nnprefix, suffix, rotation, conns)
-	local nodename=nnprefix.."_"..suffix..rotation
-	for i=0,3 do
-		tp.tracks[nnprefix].single_conn[((conns.conn1+4*i)%16)]={name=nodename, param2=i}
-		tp.tracks[nnprefix].single_conn[((conns.conn2+4*i)%16)]={name=nodename, param2=i}
-		tp.tracks[nnprefix].single_conn_1[((conns.conn1+4*i)%16)]={name=nodename, param2=i}
-		tp.tracks[nnprefix].single_conn_2[((conns.conn2+4*i)%16)]={name=nodename, param2=i}
-	end
-	tp.tracks[nnprefix].modify[nodename]=true
-end
-
-
-function tp.add_worked(nnprefix, suffix, rotation, cycle_follows)
-	tp.tracks[nnprefix].twcycle[suffix]=cycle_follows
-	if not tp.tracks[nnprefix].twrotate[suffix] then tp.tracks[nnprefix].twrotate[suffix]={} end
-	table.insert(tp.tracks[nnprefix].twrotate[suffix], rotation)
-end
-
-
---[[
-	rewrite algorithm.
-	selection criteria: these will never be changed or even selected:
-	- tracks being already connected on both sides
-	- tracks that are already connected on one side but are not bendable to the desired position
-	the following situations can occur:
-	1. there are two more than two rails around
-		1.1 there is one or more subset(s) that can be directly connected
-			-> choose the first possibility
-		2.2 not
-			-> choose the first one and orient straight
-	2. there's exactly 1 rail around
-		-> choose and orient straight
-	3. there's no rail around
-		-> set straight
-]]
-
-local function istrackandbc(pos_p, conn)
-	local tpos = pos_p
-	local cnode=minetest.get_node(advtrains.dirCoordSet(tpos, conn.c))
-	if advtrains.is_track_and_drives_on(cnode.name, advtrains.all_tracktypes) then
-		local cconns=advtrains.get_track_connections(cnode.name, cnode.param2)
-		return advtrains.conn_matches_to(conn, cconns)
-	end
-	--try the same 1 node below
-	tpos = {x=tpos.x, y=tpos.y-1, z=tpos.z}
-	cnode=minetest.get_node(advtrains.dirCoordSet(tpos, conn.c))
-	if advtrains.is_track_and_drives_on(cnode.name, advtrains.all_tracktypes) then
-		local cconns=advtrains.get_track_connections(cnode.name, cnode.param2)
-		return advtrains.conn_matches_to(conn, cconns)
-	end
-	return false
-end
-
-function tp.find_already_connected(pos)
-	local dnode=minetest.get_node(pos)
-	local dconns=advtrains.get_track_connections(dnode.name, dnode.param2)
-	local found_conn
-	for connid, conn in ipairs(dconns) do
-		if istrackandbc(pos, conn) then
-			if found_conn then --we found one in previous iteration
-				return true, true --signal that it's connected
-			else
-				found_conn = conn.c
+		if as_double then
+			g.double[rotate(c1,i*4).."_"..rotate(c2,i*4)] = {name=name, param2=i}
+			if not is_symmetrical then
+				g.double[rotate(c2,i*4).."_"..rotate(c1,i*4)] = {name=name, param2=i}
+				-- if the track is unsymmetric (e.g. a curve), we may require the "wrong" orientation to fill a gap.
 			end
 		end
-	end
-	return found_conn
-end
-function tp.rail_and_can_be_bent(originpos, conn)
-	local pos=advtrains.dirCoordSet(originpos, conn)
-	local newdir=(conn+8)%16
-	local node=minetest.get_node(pos)
-	if not advtrains.is_track_and_drives_on(node.name, advtrains.all_tracktypes) then
-		return false
-	end
-	local ndef=minetest.registered_nodes[node.name]
-	local nnpref = ndef and ndef.at_nnpref
-	if not nnpref then return false end
-	local tr=tp.tracks[nnpref]
-	if not tr then return false end
-	if not tr.modify[node.name] then 
-		--we actually can use this rail, but only if it already points to the desired direction.
-		if advtrains.is_track_and_drives_on(node.name, advtrains.all_tracktypes) then
-			local cconns=advtrains.get_track_connections(node.name, node.param2)
-			return advtrains.conn_matches_to(conn, cconns)
-		end
-	end
-	-- If the rail is not allowed to be modified, also only use if already in desired direction
-	if not advtrains.can_dig_or_modify_track(pos) then
-		local cconns=advtrains.get_track_connections(node.name, node.param2)
-		return advtrains.conn_matches_to(conn, cconns)
-	end
-	--rail at other end?
-	local adj1, adj2=tp.find_already_connected(pos)
-	if adj1 and adj2 then
-		return false--dont destroy existing track
-	elseif adj1 and not adj2 then
-		if tr.double_conn[adj1.."_"..newdir] then
-			return true--if exists, connect new rail and old end
-		end
-		return false
-	else
-		if tr.single_conn[newdir] then--just rotate old rail to right orientation
-			return true
-		end
-		return false
-	end
-end
-function tp.bend_rail(originpos, conn)
-	local pos=advtrains.dirCoordSet(originpos, conn)
-	local newdir=advtrains.oppd(conn)
-	local node=minetest.get_node(pos)
-	local ndef=minetest.registered_nodes[node.name]
-	local nnpref = ndef and ndef.at_nnpref
-	if not nnpref then return false end
-	local tr=tp.tracks[nnpref]
-	if not tr then return false end
-	--is rail already connected? no need to bend.
-	local conns=advtrains.get_track_connections(node.name, node.param2)
-	if advtrains.conn_matches_to(conn, conns) then
-		return
-	end
-	--rail at other end?
-	local adj1, adj2=tp.find_already_connected(pos)
-	if adj1 and adj2 then
-		return false--dont destroy existing track
-	elseif adj1 and not adj2 then
-		if tr.double_conn[adj1.."_"..newdir] then
-			advtrains.ndb.swap_node(pos, tr.double_conn[adj1.."_"..newdir])
-			return true--if exists, connect new rail and old end
-		end
-		return false
-	else
-		if tr.single_conn[newdir] then--just rotate old rail to right orientation
-			advtrains.ndb.swap_node(pos, tr.single_conn[newdir])
-			return true
-		end
-		return false
-	end
-end
-function tp.placetrack(pos, nnpref, placer, itemstack, pointed_thing, yaw)
-	--1. find all rails that are likely to be connected
-	local tr=tp.tracks[nnpref]
-	local p_rails={}
-	local p_railpos={}
-	for i=0,15 do
-		if tp.rail_and_can_be_bent(pos, i, nnpref) then
-			p_rails[#p_rails+1]=i
-			p_railpos[i] = pos
-		else
-			local upos = {x=pos.x, y=pos.y-1, z=pos.z}
-			if tp.rail_and_can_be_bent(upos, i, nnpref) then
-				p_rails[#p_rails+1]=i
-				p_railpos[i] = upos
-			end
+		if as_single then
+			g.single1[rotate(c1,i*4)] = {name=name, param2=i}
+			g.single2[rotate(c2,i*4)] = {name=name, param2=i}
 		end
 	end
 	
-	-- try double_conn
-	if #p_rails > 1 then
-		--iterate subsets
-		for k1, conn1 in ipairs(p_rails) do
-			for k2, conn2 in ipairs(p_rails) do
-				if k1~=k2 then
-					local dconn1 = tr.double_conn_1
-					local dconn2 = tr.double_conn_2
-					if not (advtrains.yawToDirection(yaw, conn1, conn2) == conn1) then
-						dconn1 = tr.double_conn_2
-						dconn2 = tr.double_conn_1
-					end
-					-- Checks are made this way round so that dconn1 has priority (this will make arrows of atc rails
-					-- point in the right direction)
-					local using
-					if (dconn2[conn1.."_"..conn2]) then
-						using = dconn2[conn1.."_"..conn2]
-					end
-					if (dconn1[conn1.."_"..conn2]) then
-						using = dconn1[conn1.."_"..conn2]
-					end
-					if using then
-						-- has found a fitting rail in either direction
-						-- if not, continue loop
-						tp.bend_rail(p_railpos[conn1], conn1, nnpref)
-						tp.bend_rail(p_railpos[conn2], conn2, nnpref)
-						advtrains.ndb.swap_node(pos, using)
-						local nname=using.name
-						if minetest.registered_nodes[nname] and minetest.registered_nodes[nname].after_place_node then
-							minetest.registered_nodes[nname].after_place_node(pos, placer, itemstack, pointed_thing)
-						end
-						return
+	-- Set track place group on the node
+	if not ndef.advtrains then
+		ndef.advtrains = {}
+	end
+	ndef.advtrains.track_place_group = tpg
+end
+
+-- Sets the node that is placed by the track placer when there is no track nearby. param2 defaults to 0
+function tp.set_default_place_candidate(tpg, name, param2)
+	if not tp.groups[tpg] then
+		tp.groups[tpg] = {double = {}, single1 = {}, single2 = {}, default = {name = name, param2 = param2 or 0} }
+	else
+		tp.groups[tpg].default = {name = name, param2 = param2 or 0}
+	end
+end
+
+local function check_or_bend_rail(origin, dir, pname, commit)
+	local pos = advtrains.pos_add_dir(origin, dir)
+	local back_dir = advtrains.oppd(dir);
+	
+	local node_ok, conns = advtrains.get_rail_info_at(pos)
+	if not node_ok then
+		-- try the node one level below
+		pos.y = pos.y - 1
+		node_ok, conns = advtrains.get_rail_info_at(pos)
+	end
+	if not node_ok then
+		return false
+	end
+	-- if one conn of the node here already points towards us, nothing to do
+	for connid, conn in ipairs(conns) do
+		if back_dir == conn.c then
+			return true
+		end
+	end
+	-- can we bend the node here?
+	local node = advtrains.ndb.get_node(pos)
+	local ndef = minetest.registered_nodes[node.name]
+	if not ndef or not ndef.advtrains or not ndef.advtrains.track_place_group then
+		return false
+	end
+	-- now the track must be two-conn, else it wouldn't be allowed to have track_place_group set.
+	--assert(#conns == 2) -- cannot check here, because of legacy crossing hack
+	-- Is player and game allowed to do this?
+	if not advtrains.can_dig_or_modify_track(pos) then
+		return false
+	end
+	if not advtrains.check_track_protection(pos, pname) then
+		return false
+	end
+	-- we confirmed that track can be modified. Does there exist a suitable connection candidate?
+	-- check if there are any unbound ends
+	local bound_connids = {}
+	for connid, conn in ipairs(conns) do
+		local adj_pos, adj_connid = advtrains.get_adjacent_rail(pos, conns, connid)
+		if adj_pos then
+			bound_connids[#bound_connids+1] = connid
+		end
+	end
+	-- depending on the nummber of ends, decide
+	if #bound_connids == 2 then
+		-- rail is within a fixed track, do not break up
+		return false
+	end
+	-- obtain the group table
+	local g = tp.groups[ndef.advtrains.track_place_group]
+	if #bound_connids == 1 then
+		-- we can attempt double
+		local bound_dir = conns[bound_connids[1]].c
+		if g.double[back_dir.."_"..bound_dir] then
+			if commit then
+				advtrains.ndb.swap_node(pos, g.double[back_dir.."_"..bound_dir])
+			end
+			return true
+		end
+	else
+		-- rail is entirely unbound, we can attempt single1
+		if g.single1[back_dir] then
+			if commit then
+				advtrains.ndb.swap_node(pos, g.single1[back_dir])
+			end
+			return true
+		end
+	end
+end
+
+local function track_place_node(pos, node, ndef_p, pname)
+	--atdebug("track_place_node: ",pos, node)
+	advtrains.ndb.swap_node(pos, node)
+	local ndef = ndef_p or minetest.registered_nodes[node.name]
+	if ndef and ndef.after_place_node then
+		-- resolve player again
+		local player = pname and core.get_player_by_name(pname) or nil
+		ndef.after_place_node(pos, player) -- note: itemstack and pointed_thing are NOT available here anymore (crap!)
+	end
+end
+
+
+-- Main API function to place a track. Replaces the older "placetrack"
+-- This function will attempt to place a track of the specified track placing group at the specified position, connecting it
+-- with neighboring rails. Neighboring rails can themselves be replaced ("bent") within their own track place group,
+-- if the player is permitted to do this.
+-- Order of preference is:
+--    Connect two track ends if possible
+--    Connect one track end if any rail is near
+--    Place the default track if no tracks are near
+-- The function returns true on success.
+function tp.place_track(pos, tpg, pname, yaw)
+	-- 1. collect neighboring tracks and whether they can be connected
+	--atdebug("tp.place_track(",pos, tpg, pname, yaw,")")
+	local cand = {}
+	for i=0,15 do
+		if check_or_bend_rail(pos, i, pname) then
+			cand[#cand+1] = i
+		end
+	end
+	--atdebug("Candidates: ",cand)
+	-- obtain the group table
+	local g = tp.groups[tpg]
+	if not g then
+		error("tp.place_track: for tpg="..tpg.." couldn't find the group table")
+	end
+	--atdebug("Group table:",g)
+	-- 2. try all possible two-endpoint connections
+	for k1, conn1 in ipairs(cand) do
+		for k2, conn2 in ipairs(cand) do
+			if k1~=k2 then
+				-- order of conn1/conn2: prefer conn1 being in the direction of the player facing.
+				-- the combination the other way round will be run through in a later loop iteration
+				if advtrains.yawToDirection(yaw, conn1, conn2) == conn1 then
+					-- does there exist a suitable double-connection rail?
+					--atdebug("Try double conn: ",conn1, conn2)
+					local node = g.double[conn1.."_"..conn2]
+					if node then
+						check_or_bend_rail(pos, conn1, pname, true)
+						check_or_bend_rail(pos, conn2, pname, true)
+						track_place_node(pos, node, nil, pname) -- calls after_place_node implicitly
+						return true
 					end
 				end
 			end
 		end
 	end
-	-- try single_conn
-	if #p_rails > 0 then
-		for ix, p_rail in ipairs(p_rails) do
-			local sconn1 = tr.single_conn_1
-			local sconn2 = tr.single_conn_2
-			if not (advtrains.yawToDirection(yaw, p_rail, (p_rail+8)%16) == p_rail) then
-				sconn1 = tr.single_conn_2
-				sconn2 = tr.single_conn_1
-			end
-			if sconn1[p_rail] then
-				local using = sconn1[p_rail]
-				tp.bend_rail(p_railpos[p_rail], p_rail, nnpref)
-				advtrains.ndb.swap_node(pos, using)
-				local nname=using.name
-				if minetest.registered_nodes[nname] and minetest.registered_nodes[nname].after_place_node then
-					minetest.registered_nodes[nname].after_place_node(pos, placer, itemstack, pointed_thing)
-				end
-				return
-			end
-			if sconn2[p_rail] then
-				local using = sconn2[p_rail]
-				tp.bend_rail(p_railpos[p_rail], p_rail, nnpref)
-				advtrains.ndb.swap_node(pos, using)
-				local nname=using.name
-				if minetest.registered_nodes[nname] and minetest.registered_nodes[nname].after_place_node then
-					minetest.registered_nodes[nname].after_place_node(pos, placer, itemstack, pointed_thing)
-				end
-				return
-			end
+	-- 3. try all possible one_endpoint connections
+	for k1, conn1 in ipairs(cand) do
+		-- select single1 or single2? depending on yaw
+		local single
+		if advtrains.yawToDirection(yaw, conn1, advtrains.oppd(conn1)) == conn1 then
+			single = g.single1
+		else
+			single = g.single2
+		end
+		--atdebug("Try single conn: ",conn1)
+		local node = single[conn1]
+		if node then
+			check_or_bend_rail(pos, conn1, pname, true)
+			track_place_node(pos, node, nil, pname) -- calls after_place_node implicitly
+			return true
 		end
 	end
-	--use default
-	minetest.set_node(pos, {name=nnpref.."_"..tr.default})
-	if minetest.registered_nodes[nnpref.."_"..tr.default] and minetest.registered_nodes[nnpref.."_"..tr.default].after_place_node then
-		minetest.registered_nodes[nnpref.."_"..tr.default].after_place_node(pos, placer, itemstack, pointed_thing)
-	end
+	-- 4. if nothing worked, set the default
+	local node = g.default
+	track_place_node(pos, node, nil, pname) -- calls after_place_node implicitly
+	return true
 end
 
-local function on_place(itemstack, placer, pointed_thing, nnprefix, def)
-	local s, pos, name
 
-	name = placer:get_player_name()
-	if not name then
-		return itemstack, false
-	end
-
-	if pointed_thing.type ~= "node" then
-		return itemstack, true
-	end
-
-	if pointed_thing.above.y == pointed_thing.under.y then
-		pos = pointed_thing.under
-	else
-		pos = pointed_thing.above
-	end
-
-	local upos = vector.offset(pos, 0, -1, 0)
-	local ndef = minetest.registered_nodes[minetest.get_node(pos).name]
-	local undef = minetest.registered_nodes[minetest.get_node(upos).name] -- definition of the node under
-
-	if not advtrains.check_track_protection(pos, name) then
-		return itemstack, false
-	end
-	if not ndef or not ndef.buildable_to then
-		return itemstack, true -- not place for a track
-	end
-	if def.suitable_substrate then
-		s = def.suitable_substrate(upos)
-	else
-		s = undef and undef.walkable
-	end
-	if s then
-		--	minetest.chat_send_all(nnprefix)
-		local yaw = placer:get_look_horizontal()
-		tp.placetrack(pos, nnprefix, placer, itemstack, pointed_thing, yaw)
-		if not minetest.is_creative_enabled(name) then
-			itemstack:take_item()
-		end
-		return itemstack, true
-	end
-
-	-- try the position below
-	pos.y = pos.y - 1
-	upos.y = upos.y - 1
-	ndef = undef
-	undef = minetest.registered_nodes[minetest.get_node(upos).name]
-	pointed_thing = table.copy(pointed_thing)
-	pointed_thing.below = upos
-	pointed_thing.above = pos
-
-	if not advtrains.check_track_protection(pos, name) then
-		return itemstack, false
-	end
-	if not ndef or not ndef.buildable_to then
-		return itemstack, true -- not place for a track
-	end
-	if def.suitable_substrate then
-		s = def.suitable_substrate(upos)
-	else
-		s = undef and undef.walkable
-	end
-	if s then
-		--	minetest.chat_send_all(nnprefix)
-		local yaw = placer:get_look_horizontal()
-		tp.placetrack(pos, nnprefix, placer, itemstack, pointed_thing, yaw)
-		if not minetest.is_creative_enabled(name) then
-			itemstack:take_item()
-		end
-	end
-	return itemstack, true
-end
-
-function tp.register_track_placer(nnprefix, imgprefix, dispname, def)
-	minetest.register_craftitem(":"..nnprefix.."_placer",{
-		description = dispname,
-		inventory_image = imgprefix.."_placer.png",
-		wield_image = imgprefix.."_placer.png",
-		groups={advtrains_trackplacer=1, digtron_on_place=1},
-		liquids_pointable = def.liquids_pointable,
-		on_place = function(itemstack, placer, pointed_thing)
-			return on_place(itemstack, placer, pointed_thing, nnprefix, def)
-		end,
-	})
-end
-
+-- TRACK WORKER --
 
 
 minetest.register_craftitem("advtrains:trackworker",{
-	description = attrans("Track Worker Tool\n\nLeft-click: change rail type (straight/curve/switch)\nRight-click: rotate rail/bumper/signal/etc."),
+	description = attrans("Track Worker Tool\n\nLeft-click: change rail type (straight/curve/switch)\nRight-click: rotate object"),
 	groups = {cracky=1}, -- key=name, value=rating; rating=1..3.
 	inventory_image = "advtrains_trackworker.png",
 	wield_image = "advtrains_trackworker.png",
 	stack_max = 1,
 	on_place = function(itemstack, placer, pointed_thing)
-			local name = placer:get_player_name()
-			if not name then
+		local name = placer:get_player_name()
+		if not name then
+			return
+		end
+		local has_aux1_down = placer:get_player_control().aux1
+		if pointed_thing.type=="node" then
+			local pos=pointed_thing.under
+			if not advtrains.check_track_protection(pos, name) then
 				return
 			end
-			local has_aux1_down = placer:get_player_control().aux1
-			if pointed_thing.type=="node" then
-				local pos=pointed_thing.under
-				if not advtrains.check_track_protection(pos, name) then
-					return
-				end
-				local node=minetest.get_node(pos)
+			local node=minetest.get_node(pos)
 
-				--if not advtrains.is_track_and_drives_on(minetest.get_node(pos).name, advtrains.all_tracktypes) then return end
-				
-				local nnprefix, suffix, rotation=string.match(node.name, "^(.+)_([^_]+)(_[^_]+)$")
-				--atdebug(node.name.."\npattern recognizes:"..nnprefix.." / "..suffix.." / "..rotation)
-				--atdebug("nntab: ",tp.tracks[nnprefix])
-				if not tp.tracks[nnprefix] or not tp.tracks[nnprefix].twrotate[suffix] then
-					nnprefix, suffix=string.match(node.name, "^(.+)_([^_]+)$")
-					rotation = ""
-					if not tp.tracks[nnprefix] or not tp.tracks[nnprefix].twrotate[suffix] then
-						minetest.chat_send_player(placer:get_player_name(), attrans("This node can't be rotated using the trackworker!"))
-						return
+			-- New since 2.5: only the fields in the node definition are considered, no more hacky pattern matching on the nodename
+			
+			local ndef = minetest.registered_nodes[node.name]
+			
+			if not ndef.advtrains or not ndef.advtrains.trackworker_next_rot then
+				minetest.chat_send_player(placer:get_player_name(), attrans("This node can't be rotated using the trackworker!"))
+				return
+			end
+			
+			-- check if the node is modify-protected
+			if advtrains.is_track(node.name) then
+				-- is a track, we can query
+				local can_modify, reason = advtrains.can_dig_or_modify_track(pos)
+				if not can_modify then
+					local str = attrans("This track can not be rotated!")
+					if reason then
+						str = str .. " " .. reason
 					end
-				end
-				
-				-- check if the node is modify-protected
-				if advtrains.is_track_and_drives_on(minetest.get_node(pos).name, advtrains.all_tracktypes) then
-					-- is a track, we can query
-					local can_modify, reason = advtrains.can_dig_or_modify_track(pos)
-					if not can_modify then
-						local str = attrans("This track can not be rotated!")
-						if reason then
-							str = str .. " " .. reason
-						end
-						minetest.chat_send_player(placer:get_player_name(), str)
-						return
-					end
-				end
-				
-				if has_aux1_down then
-					--feature: flip the node by 180°
-					--i've always wanted this!
-					advtrains.ndb.swap_node(pos, {name=node.name, param2=(node.param2+2)%4})
+					minetest.chat_send_player(placer:get_player_name(), str)
 					return
-				end
-				
-				local modext=tp.tracks[nnprefix].twrotate[suffix]
-
-				if rotation==modext[#modext] then --increase param2
-					advtrains.ndb.swap_node(pos, {name=nnprefix.."_"..suffix..modext[1], param2=(node.param2+1)%4})
-					return
-				else
-					local modpos
-					for k,v in pairs(modext) do
-						if v==rotation then modpos=k end
-					end
-					if not modpos then
-						minetest.chat_send_player(placer:get_player_name(), attrans("This node can't be rotated using the trackworker!"))
-						return
-					end
-					advtrains.ndb.swap_node(pos, {name=nnprefix.."_"..suffix..modext[modpos+1], param2=node.param2})
 				end
 			end
+			
+			if has_aux1_down then
+				--feature: flip the node by 180°
+				--i've always wanted this!
+				advtrains.ndb.swap_node(pos, {name=node.name, param2=(node.param2+2)%4})
+				return
+			end
+			
+			local new_node = {name = ndef.advtrains.trackworker_next_rot, param2 = node.param2}
+			if ndef.advtrains.trackworker_rot_incr_param2 then
+				new_node.param2 = ((node.param2 + 1) % 4)
+			end
+			advtrains.ndb.swap_node(pos, new_node)
+		end
 	end,
-	on_use=function(itemstack, user, pointed_thing)
-				local name = user:get_player_name()
-			if not name then
-			   return
+	on_use=function(itemstack, player, pointed_thing)
+		local name = player:get_player_name()
+		if not name then
+		   return
+		end
+		if pointed_thing.type=="node" then
+			local pos=pointed_thing.under
+			local node=minetest.get_node(pos)
+			if not advtrains.check_track_protection(pos, name) then
+				return
 			end
-			if pointed_thing.type=="node" then
-				local pos=pointed_thing.under
-				local node=minetest.get_node(pos)
-				if not advtrains.check_track_protection(pos, name) then
-					return
-				end
-				
-				--if not advtrains.is_track_and_drives_on(minetest.get_node(pos).name, advtrains.all_tracktypes) then return end
-				if advtrains.get_train_at_pos(pos) then return end
-				local nnprefix, suffix, rotation=string.match(node.name, "^(.+)_([^_]+)(_[^_]+)$")
-				--atdebug(node.name.."\npattern recognizes:"..nodeprefix.." / "..railtype.." / "..rotation)
-				if not tp.tracks[nnprefix] or not tp.tracks[nnprefix].twcycle[suffix] then
-				  nnprefix, suffix=string.match(node.name, "^(.+)_([^_]+)$")
-				  rotation = ""
-				  if not tp.tracks[nnprefix] or not tp.tracks[nnprefix].twcycle[suffix] then
-					minetest.chat_send_player(user:get_player_name(), attrans("This node can't be changed using the trackworker!"))
-					return
-				  end
-				end
-				
-				-- check if the node is modify-protected
-				if advtrains.is_track_and_drives_on(minetest.get_node(pos).name, advtrains.all_tracktypes) then
-					-- is a track, we can query
-					local can_modify, reason = advtrains.can_dig_or_modify_track(pos)
-					if not can_modify then
-						local str = attrans("This track can not be changed!")
-						if reason then
-							str = str .. " " .. reason
-						end
-						minetest.chat_send_player(user:get_player_name(), str)
-						return
+			
+			-- New since 2.5: only the fields in the node definition are considered, no more hacky pattern matching on the nodename
+			
+			local ndef = minetest.registered_nodes[node.name]
+			
+			if not ndef.advtrains or not ndef.advtrains.trackworker_next_var then
+				minetest.chat_send_player(name, attrans("This node can't be changed using the trackworker!"))
+				return
+			end
+			
+			-- check if the node is modify-protected
+			if advtrains.is_track(node.name) then
+				-- is a track, we can query
+				local can_modify, reason = advtrains.can_dig_or_modify_track(pos)
+				if not can_modify then
+					local str = attrans("This track can not be rotated!")
+					if reason then
+						str = str .. " " .. reason
 					end
+					minetest.chat_send_player(name, str)
+					return
 				end
-				
-				local nextsuffix=tp.tracks[nnprefix].twcycle[suffix]
-				advtrains.ndb.swap_node(pos, {name=nnprefix.."_"..nextsuffix..rotation, param2=node.param2})
-				
-			else
-				atprint(name, dump(tp.tracks))
 			end
+			
+			local new_node = {name = ndef.advtrains.trackworker_next_var, param2 = node.param2}
+			advtrains.ndb.swap_node(pos, new_node)
+		end
 	end,
 })
 

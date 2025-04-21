@@ -3,15 +3,15 @@
 
 local mrules_wallsignal = advtrains.meseconrules
 
-local function can_dig_func(pos)
+local function can_dig_func(pos, player)
 	if advtrains.interlocking then
-		return advtrains.interlocking.signal_can_dig(pos)
+		return advtrains.interlocking.signal.can_dig(pos, player)
 	end
 	return true
 end
-local function after_dig_func(pos)
+local function after_dig_func(pos, oldnode, oldmetadata, digger)
 	if advtrains.interlocking then
-		return advtrains.interlocking.signal_after_dig(pos)
+		return advtrains.interlocking.signal.after_dig(pos, oldnode, oldmetadata, digger)
 	end
 	return true
 end
@@ -26,22 +26,24 @@ return {
 }
 end
 
-local suppasp = {
-		main = {0, -1},
-		dst = {false},
-		shunt = nil,
-		proceed_as_main = true,
-		info = {
-			call_on = false,
-			dead_end = false,
-			w_speed = nil,
-		}
+local main_aspects = {
+	{ name = "free", description = "Free" }
 }
+
+local function simple_apply_aspect(offname, onname)
+	return function(pos, node, main_aspect, rem_aspect, rem_aspinfo)
+		if main_aspect.halt then
+			advtrains.ndb.swap_node(pos, {name = offname, param2 = node.param2})
+		else
+			advtrains.ndb.swap_node(pos, {name = onname, param2 = node.param2})
+		end
+	end
+end
 
 for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", als="green"}}) do
 
-	advtrains.trackplacer.register_tracktype("advtrains:retrosignal", "")
-	advtrains.trackplacer.register_tracktype("advtrains:signal", "")
+	-- advtrains.trackplacer.register_tracktype("advtrains:retrosignal", "")
+	-- advtrains.trackplacer.register_tracktype("advtrains:signal", "")
 
 	for rotid, rotation in ipairs({"", "_30", "_45", "_60"}) do
 		local crea=1
@@ -75,7 +77,10 @@ for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", 
 				["action_"..f.as] = function (pos, node)
 					advtrains.ndb.swap_node(pos, {name = "advtrains:retrosignal_"..f.as..rotation, param2 = node.param2}, true)
 					if advtrains.interlocking then
-						advtrains.interlocking.signal_on_aspect_changed(pos)
+						-- forcefully clears any set aspect, so that aspect system doesnt override it again
+						advtrains.interlocking.signal.unregister_aspect(pos)
+						-- notify trains
+						advtrains.interlocking.signal.notify_trains(pos)
 					end
 				end
 			}},
@@ -89,29 +94,24 @@ for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", 
 				elseif advtrains.check_turnout_signal_protection(pos, player:get_player_name()) then
 					advtrains.ndb.swap_node(pos, {name = "advtrains:retrosignal_"..f.as..rotation, param2 = node.param2}, true)
 					if advtrains.interlocking then
-						advtrains.interlocking.signal_on_aspect_changed(pos)
+						-- forcefully clears any set aspect, so that aspect system doesnt override it again
+						advtrains.interlocking.signal.unregister_aspect(pos)
+						-- notify trains
+						advtrains.interlocking.signal.notify_trains(pos)
 					end
 				end
 			end,
-			-- new signal API
+			-- very new signal API
 			advtrains = {
-				set_aspect = function(pos, node, asp)
-					if asp.main ~= 0 then
-						advtrains.ndb.swap_node(pos, {name = "advtrains:retrosignal_on"..rotation, param2 = node.param2}, true)
-					else
-						advtrains.ndb.swap_node(pos, {name = "advtrains:retrosignal_off"..rotation, param2 = node.param2}, true)
-					end
-				end,
-				get_aspect = function(pos, node)
-					return aspect(r=="on")
-				end,
-				supported_aspects = suppasp,
+				main_aspects = main_aspects,
+				apply_aspect = simple_apply_aspect("advtrains:retrosignal_off"..rotation, "advtrains:retrosignal_on"..rotation),
+				get_aspect_info = function() return aspect(r=="on") end,
 			},
 			can_dig = can_dig_func,
 			after_dig_node = after_dig_func,
-			check_for_pole = true,
+			--TODO add rotation using trackworker
 		})
-		advtrains.trackplacer.add_worked("advtrains:retrosignal", r, rotation, nil)
+		-- advtrains.trackplacer.add_worked("advtrains:retrosignal", r, rotation, nil)
 		
 		minetest.register_node("advtrains:signal_"..r..rotation, {
 			drawtype = "mesh",
@@ -140,9 +140,6 @@ for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", 
 				rules=advtrains.meseconrules,
 				["action_"..f.as] = function (pos, node)
 					advtrains.setstate(pos, f.als, node)
-					if advtrains.interlocking then
-						advtrains.interlocking.signal_on_aspect_changed(pos)
-					end
 				end
 			}},
 			on_rightclick=function(pos, node, player)
@@ -154,36 +151,29 @@ for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", 
 					advtrains.interlocking.show_ip_form(pos, pname)
 				elseif advtrains.check_turnout_signal_protection(pos, player:get_player_name()) then
 					advtrains.setstate(pos, f.als, node)
-					if advtrains.interlocking then
-						advtrains.interlocking.signal_on_aspect_changed(pos)
-					end
 				end
 			end,
-			-- new signal API
+			-- very new signal API
 			advtrains = {
-				set_aspect = function(pos, node, asp)
-					if asp.main ~= 0 then
-						advtrains.ndb.swap_node(pos, {name = "advtrains:signal_on"..rotation, param2 = node.param2}, true)
-					else
-						advtrains.ndb.swap_node(pos, {name = "advtrains:signal_off"..rotation, param2 = node.param2}, true)
-					end
-				end,
-				get_aspect = function(pos, node)
-					return aspect(r=="on")
-				end,
-				supported_aspects = suppasp,
-				getstate = f.ls,
-				setstate = function(pos, node, newstate)
-					if newstate == f.als then
-						advtrains.ndb.swap_node(pos, {name = "advtrains:signal_"..f.as..rotation, param2 = node.param2}, true)
+				main_aspects = main_aspects,
+				apply_aspect = simple_apply_aspect("advtrains:signal_off"..rotation, "advtrains:signal_on"..rotation),
+				get_aspect_info = function() return aspect(r=="on") end,
+				node_state = f.ls,
+				node_state_map = { red = "advtrains:signal_off"..rotation, green = "advtrains:signal_on"..rotation},
+				node_on_switch_state = function(pos, new_node, old_state, new_state)
+					if advtrains.interlocking then
+						-- forcefully clears any set aspect, so that aspect system doesnt override it again
+						advtrains.interlocking.signal.unregister_aspect(pos)
+						-- notify trains
+						advtrains.interlocking.signal.notify_trains(pos)
 					end
 				end,
 			},
 			can_dig = can_dig_func,
 			after_dig_node = after_dig_func,
-			check_for_pole = true,
+			--TODO add rotation using trackworker
 		})
-		advtrains.trackplacer.add_worked("advtrains:signal", r, rotation, nil)
+		-- advtrains.trackplacer.add_worked("advtrains:signal", r, rotation, nil)
 	end
 	
 	local crea=1
@@ -197,7 +187,7 @@ for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", 
 		b={-1/4, -1/2, 1/2 - 1/8, 1/4, 1/2, 1/2},
 		p={-1/4, -1/2, 5/8, 1/4, 1/2, 7/8},
 	}) do
-		local def ={
+		local def = {
 			drawtype = "mesh",
 			paramtype="light",
 			paramtype2="4dir",
@@ -223,9 +213,6 @@ for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", 
 				rules = mrules_wallsignal,
 				["action_"..f.as] = function (pos, node)
 					advtrains.setstate(pos, f.als, node)
-					if advtrains.interlocking then
-						advtrains.interlocking.signal_on_aspect_changed(pos)
-					end
 				end
 			}},
 			on_rightclick=function(pos, node, player)
@@ -237,28 +224,21 @@ for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", 
 					advtrains.interlocking.show_ip_form(pos, pname)
 				elseif advtrains.check_turnout_signal_protection(pos, player:get_player_name()) then
 					advtrains.setstate(pos, f.als, node)
-					if advtrains.interlocking then
-						advtrains.interlocking.signal_on_aspect_changed(pos)
-					end
 				end
 			end,
-			-- new signal API
+			-- very new signal API
 			advtrains = {
-				set_aspect = function(pos, node, asp)
-					if asp.main ~= 0 then
-						advtrains.ndb.swap_node(pos, {name = "advtrains:signal_wall_"..loc.."_on", param2 = node.param2}, true)
-					else
-						advtrains.ndb.swap_node(pos, {name = "advtrains:signal_wall_"..loc.."_off", param2 = node.param2}, true)
-					end
-				end,
-				get_aspect = function(pos, node)
-					return aspect(r=="on")
-				end,
-				supported_aspects = suppasp,
-				getstate = f.ls,
-				setstate = function(pos, node, newstate)
-					if newstate == f.als then
-						advtrains.ndb.swap_node(pos, {name = "advtrains:signal_wall_"..loc.."_"..f.as, param2 = node.param2}, true)
+				main_aspects = main_aspects,
+				apply_aspect = simple_apply_aspect("advtrains:signal_wall_"..loc.."_off", "advtrains:signal_wall_"..loc.."_on"),
+				get_aspect_info = function() return aspect(r=="on") end,
+				node_state = f.ls,
+				node_state_map = { red = "advtrains:signal_wall_"..loc.."_off", green = "advtrains:signal_wall_"..loc.."_on" },
+				node_on_switch_state = function(pos, new_node, old_state, new_state)
+					if advtrains.interlocking then
+						-- forcefully clears any set aspect, so that aspect system doesnt override it again
+						advtrains.interlocking.signal.unregister_aspect(pos)
+						-- notify trains
+						advtrains.interlocking.signal.notify_trains(pos)
 					end
 				end,
 			},
@@ -298,22 +278,15 @@ minetest.register_node("advtrains:across_off", {
 	mesecons = {effector = {
 		rules = advtrains.meseconrules,
 		action_on = function (pos, node)
-			minetest.get_meta(pos):set_int("crossing_state", 0)
 			advtrains.ndb.swap_node(pos, {name = "advtrains:across_on", param2 = node.param2}, true)
 		end
 	}},
 	advtrains = {
-		getstate = "off",
-		setstate = function(pos, node, newstate)
-			if newstate == "on" then
-				minetest.get_meta(pos):set_int("crossing_state", 0)
-				advtrains.ndb.swap_node(pos, {name = "advtrains:across_on", param2 = node.param2}, true)
-			end
-		end,
+		node_state = "off",
+		node_state_map = { on = "advtrains:across_on", off = "advtrains:across_off" },
 	},
 	on_rightclick=function(pos, node, player)
 		if advtrains.check_turnout_signal_protection(pos, player:get_player_name()) then
-			minetest.get_meta(pos):set_int("crossing_state", 0)
 			advtrains.ndb.swap_node(pos, {name = "advtrains:across_on", param2 = node.param2}, true)
 		end
 	end,
@@ -330,7 +303,7 @@ minetest.register_node("advtrains:across_on", {
 	mesh = "advtrains_across.obj",
 	tiles = {{name="advtrains_across_anim.png", animation={type="vertical_frames", aspect_w=64, aspect_h=64, length=1.0}}},
 	drop="advtrains:across_off",
-	description=attrans("Andrew's Cross (on) (you hacker you)"),
+	description=attrans("Andrew's Cross"),
 	groups = {
 		cracky=3,
 		not_blocking_trains=1,
@@ -346,13 +319,9 @@ minetest.register_node("advtrains:across_on", {
 		end
 	}},
 	advtrains = {
-		getstate = "on",
-		setstate = function(pos, node, newstate)
-			if newstate == "off" then
-				advtrains.ndb.swap_node(pos, {name = "advtrains:across_off", param2 = node.param2}, true)
-			end
-		end,
-		fallback_state = "off",
+		node_state = "on",
+		node_state_map = { on = "advtrains:across_on", off = "advtrains:across_off" },
+		node_fallback_state = "off",
 	},
 	on_rightclick=function(pos, node, player)
 		if advtrains.check_turnout_signal_protection(pos, player:get_player_name()) then
@@ -374,7 +343,7 @@ minetest.register_abm(
 	{
         label = "Sound for Level Crossing",
         nodenames = {"advtrains:across_on"},
-        interval = 1,
+        interval = 3,
         chance = 1,
         action = function(pos, node, active_object_count, active_object_count_wider)
 			local meta = minetest.get_meta(pos)

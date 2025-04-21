@@ -94,6 +94,7 @@ function atc.train_reset_command(train, keep_tarvel)
 	train.atc_brake_target=nil
 	train.atc_wait_finish=nil
 	train.atc_wait_autocouple=nil
+	train.atc_wait_signal=nil
 	train.atc_arrow=nil
 	if not keep_tarvel then
 		train.tarvelocity=nil
@@ -106,7 +107,7 @@ local apn_func=function(pos)
 	-- FIX for long-persisting ndb bug: there's no node in parameter 2 of this function!
 	local meta=minetest.get_meta(pos)
 	if meta then
-		meta:set_string("infotext", attrans("ATC controller, unconfigured."))
+		meta:set_string("infotext", attrans("Unconfigured ATC controller"))
 		meta:set_string("formspec", atc.get_atc_controller_formspec(pos, meta))
 	end
 end
@@ -233,7 +234,7 @@ local matchptn={
 			advtrains.train_ensure_init(id, train)
 			-- no one minds if this failed... this shouldn't even be called without train being initialized...
 		else
-			atwarn(sid(id), attrans("ATC Reverse command warning: didn't reverse train, train moving!"))
+			atwarn(sid(id), attrans("ATC Reverse command warning: didn't reverse train, train moving."))
 		end
 		return 1
 	end,
@@ -245,11 +246,11 @@ local matchptn={
 	end,
 	["K"] = function(id, train)
 		if train.door_open == 0 then
-			atwarn(sid(id), attrans("ATC Kick command warning: Doors closed"))
+			atwarn(sid(id), attrans("ATC Kick command warning: doors are closed."))
 			return 1
 		end
 		if train.velocity > 0 then
-			atwarn(sid(id), attrans("ATC Kick command warning: Train moving"))
+			atwarn(sid(id), attrans("ATC Kick command warning: train moving."))
 			return 1
 		end
 		local tp = train.trainparts
@@ -277,6 +278,10 @@ local matchptn={
 	["Cpl"]=function(id, train)
 		train.atc_wait_autocouple=true
 		return 3
+	end,
+	["G"]=function(id, train)
+		train.atc_wait_signal=true
+		return 1
 	end,
 }
 
@@ -375,7 +380,8 @@ function atc.execute_atc_command(id, train)
 			train.atc_command=string.sub(command, patlen+1)
 			if train.atc_delay<=0
 				and not train.atc_wait_finish
-				and not train.atc_wait_autocouple then
+				and not train.atc_wait_autocouple
+				and not train.atc_wait_signal then
 				--continue (recursive, cmds shouldn't get too long, and it's a end-recursion.)
 				atc.execute_atc_command(id, train)
 			end
