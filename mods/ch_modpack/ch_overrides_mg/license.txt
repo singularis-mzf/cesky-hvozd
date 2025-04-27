@@ -202,6 +202,7 @@ default_sandstone_brick.png
 default_silver_sandstone_block.png
 default_silver_sandstone_brick.png
 default_snow.png
+doors_door_glass.png
 	Copyright (C) 2010-2018:
 		celeron55, Perttu Ahola <celeron55@gmail.com>
 		Cisoun

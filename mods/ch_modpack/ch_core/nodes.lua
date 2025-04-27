@@ -54,12 +54,40 @@ minetest.register_alias("ch_core:light_max", "ch_core:light_"..minetest.LIGHT_MA
 
 -- Glass overrides:
 
+local tex_edge = "ch_core_white_pixel.png^[multiply:#bbbbbb"
+local tex_glass = "ch_core_white_pixel.png^[opacity:40"
+local tex_framedglass = tex_glass.."^[resize:32x32^(ch_core_white_frame32.png^[multiply:#bbbbbb)"
+local tile_edge = {name = tex_edge, backface_culling = true}
+local tile_framedglass = {name = tex_framedglass, backface_culling = true}
+
+
+-- DEBUG test:
+tile_framedglass.name = tex_glass
+
+
+
 core.override_item("default:glass", {
-	tiles = {
-		"ch_core_white_pixel.png^[opacity:40^[resize:32x32^(ch_core_white_frame32.png^[multiply:#bbbbbb)",
-		"ch_core_white_pixel.png^[opacity:40",
-	},
+	tiles = {tex_framedglass, tex_glass},
 	use_texture_alpha = "blend",
 })
+
+
+local override = {use_texture_alpha = "blend"}
+for _, c in ipairs({"a", "b", "c", "d", "cd_a", "cd_b", "cd_c", "cd_d"}) do
+	local n = "doors:door_glass_"..c
+	if core.registered_nodes[n] ~= nil then
+		core.override_item(n, override)
+	end
+end
+
+for _, n in ipairs({"xpanes:pane_flat", "xpanes:pane"}) do
+	local t = assert(core.registered_nodes[n].tiles)
+	for i, tile in ipairs(t) do
+		if type(tile) == "string" and tile == "default_glass.png" then
+			t[i] = "ch_core_white_pixel.png^[opacity:20^[resize:32x32^(ch_core_white_frame32.png^[multiply:#bbbbbb)"
+		end
+	end
+	core.override_item(n, {tiles = t, use_texture_alpha = "blend"})
+end
 
 ch_core.close_submod("nodes")
