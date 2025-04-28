@@ -2175,6 +2175,7 @@ end
 ]]
 
 doors.login_to_viewname = ch_core.prihlasovaci_na_zobrazovaci
+doors.viewname_to_login = ch_core.jmeno_na_prihlasovaci
 
 -- PŘÍKAZY
 -- ===========================================================================

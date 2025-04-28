@@ -17,6 +17,10 @@ function doors.login_to_viewname(login)
 	return login
 end
 
+function doors.viewname_to_login(viewname)
+	return viewname
+end
+
 if minetest.get_modpath("screwdriver") then
 	doors.screwdriver_rightclick_override_list = screwdriver.rightclick_override_list
 end
@@ -102,13 +106,13 @@ dofile(modpath.."/cpanel.lua")
 
 -- this hidden node is placed on top of the bottom, and prevents
 -- nodes from being placed in the top half of the door.
-minetest.register_node("doors:hidden", {
+local base_def = {
 	description = S("Hidden Door Segment"),
 	inventory_image = "doors_hidden_segment.png^default_invisible_node_overlay.png",
 	wield_image = "doors_hidden_segment.png^default_invisible_node_overlay.png",
 	drawtype = "airlike",
 	paramtype = "light",
-	paramtype2 = "facedir",
+	paramtype2 = "4dir",
 	sunlight_propagates = true,
 	-- has to be walkable for falling nodes to stop falling.
 	walkable = true,
@@ -117,14 +121,109 @@ minetest.register_node("doors:hidden", {
 	buildable_to = false,
 	floodable = false,
 	drop = "",
-	groups = {not_in_creative_inventory = 1},
+	groups = {not_in_creative_inventory = 1, doors_hidden = 1}, -- 1 = normal, 2 = green, 3 = red
 	on_blast = function() end,
 	-- 1px block inside door hinge near node top
 	collision_box = {
 		type = "fixed",
 		fixed = {-15/32, 13/32, -15/32, -13/32, 1/2, -13/32},
 	},
-})
+}
+core.register_node("doors:hidden", table.copy(base_def))
+
+base_def.drawtype = "nodebox"
+
+local green_tiles = {{name = "blank.png^[noalpha^[colorize:#00ff00:255"}}
+local red_tiles = {{name = "blank.png^[noalpha^[colorize:#ff0000:255"}}
+local green_groups = {not_in_creative_inventory = 1, doors_hidden = 2}
+local red_groups = {not_in_creative_inventory = 1, doors_hidden = 3, doors_hidden_red = 3}
+
+local function register_hidden(name, tiles, groups, fixed)
+	local def = table.copy(base_def)
+	def.tiles = tiles
+	def.groups = groups
+	def.node_box = {type = "fixed", fixed = fixed}
+	core.register_node(name, def)
+end
+
+local function register_hidden_pair(name_template, fixed)
+	local name = name_template:gsub("*", "green")
+	register_hidden(name, green_tiles, green_groups, fixed)
+	name = name_template:gsub("*", "red")
+	register_hidden(name, red_tiles, red_groups, fixed)
+end
+
+local x1, x2, x3, x4, x5, x6 = 4/16, -12/16, -9/16, 6/16, -10/16, -5/16
+
+register_hidden_pair("doors:hidden_*_a", {x1, x2, x3, x4, x5, x6})
+-- a2 = b
+register_hidden_pair("doors:hidden_*_b",  {-x4, x2, x3, -x1, x5, x6})
+-- b2 = a
+register_hidden_pair("doors:hidden_*_ca",  { x1, x2, x3 + 1/2, x4, x5, x6 + 1/2})
+register_hidden_pair("doors:hidden_*_ca2", {-x4 - 1/2, x2, x3, -x1 - 1/2, x5, x6})
+register_hidden_pair("doors:hidden_*_cb",  {-x4, x2, x3 + 1/2, -x1, x5, x6 + 1/2})
+register_hidden_pair("doors:hidden_*_cb2", { x1 + 1/2, x2, x3, x4 + 1/2, x5, x6})
+
+local is_hidden_types = {"normal", "green", "red"}
+
+function doors.is_hidden(name)
+	return is_hidden_types[core.get_item_group(name, "doors_hidden")]
+end
+
+function doors.get_door_side(door_pos, door_node, pos) -- => "inside" or "outside" or nil
+	assert(door_pos)
+	assert(door_node)
+	assert(pos)
+	local ndef = core.registered_nodes[door_node.name]
+	if ndef == nil or type(ndef.mesh) ~= "string" then
+		return nil
+	end
+	local wc_config = doors.wc_config[ndef.mesh]
+	local inside_mode = wc_config and wc_config.inside_mode
+	if inside_mode == nil then
+		return nil
+	end
+	local dir = door_node.param2 % 4
+	local diff_x, diff_z = pos.x - door_pos.x, pos.z - door_pos.z
+	local is_inside
+	if inside_mode == "a" or inside_mode == "b" then
+		if dir == 0 then
+			is_inside = diff_z > -0.5
+		elseif dir == 1 then
+			is_inside = diff_x > -0.5
+		elseif dir == 2 then
+			is_inside = diff_z <= 0.5
+		else
+			is_inside = diff_x <= 0.5
+		end
+	else
+		if dir == 0 then
+			is_inside = diff_z > 0
+		elseif dir == 1 then
+			is_inside = diff_x > 0
+		elseif dir == 2 then
+			is_inside = diff_z <= 0
+		else
+			is_inside = diff_x <= 0
+		end
+	end
+	if inside_mode == "a" or inside_mode == "ca" then
+		if is_inside then
+			return "inside"
+		else
+			return "outside"
+		end
+	elseif inside_mode == "b" or inside_mode == "cb" then
+		if not is_inside then
+			return "inside"
+		else
+			return "outside"
+		end
+	else
+		core.log("error", "Internal error: invalid inside_mode of "..door_node.name.."!")
+		return nil
+	end
+end
 
 minetest.register_tool("doors:key", {
 	description = S("Key for a door"),
@@ -166,9 +265,22 @@ end
 
 function doors.check_player_privs(pos, meta, clicker)
 	local clicker_name = clicker:get_player_name()
-	local owner = meta:get_string("owner")..meta:get_string("placer")
+	local owner = meta:get_string("owner")
 	local hes = meta:get_int("hes")
-	if hes ~= 0 and clicker_name ~= "" and owner ~= "" and (clicker_name ~= owner and not minetest.check_player_privs(clicker, "protection_bypass")) then
+	local is_admin = core.check_player_privs(clicker, "protection_bypass")
+	if is_admin then
+		return true
+	end
+	if owner == "" then
+		owner = meta:get_string("placer")
+	end
+	-- Hotel door?
+	if
+		hes ~= 0 and
+		clicker_name ~= "" and
+		owner ~= "" and
+		clicker_name ~= owner
+	then
 		-- key to the hotel-door required
 		local key = clicker:get_wielded_item()
 		if key:get_name() ~= "doors:key" then
@@ -181,7 +293,20 @@ function doors.check_player_privs(pos, meta, clicker)
 			minetest.chat_send_player(clicker_name, "*** Tento klíč nepatří k těmto dveřím!")
 			return false
 		end
-	elseif not default.can_interact_with_node(clicker, pos) then
+	end
+	-- occupied WC door?
+	if core.is_player(clicker) and meta:get_int("zachodove") ~= 0 then
+		local pos_above = vector.offset(pos, 0, 1, 0)
+		local node_above = core.get_node(pos_above)
+		if
+			doors.is_hidden(node_above.name) == "red" and
+			doors.get_door_side(pos, core.get_node(pos), assert(clicker:get_pos())) == "outside"
+		then
+			core.chat_send_player(clicker_name, "Obsazeno!")
+			return false
+		end
+	end
+	if not default.can_interact_with_node(clicker, pos) then
 		return false
 	end
 	return true
@@ -279,6 +404,7 @@ function doors.on_timer(pos, elapsed)
 	obj:close()
 end
 
+dofile(modpath.."/wc.lua")
 dofile(modpath.."/doors_normal.lua")
 dofile(modpath.."/doors_trapdoor.lua")
 dofile(modpath.."/doors_fencegate.lua")

@@ -33,8 +33,33 @@ local transform = {
 	},
 }
 
+local function get_wc_hidden_name(door_node_name, is_occupied)
+	local ndef = core.registered_nodes[door_node_name]
+	if ndef == nil or not doors.registered_doors[door_node_name] then
+		return "air"
+	end
+	local mesh = ndef.mesh
+	if mesh ~= nil then
+		local wc_class = doors.wc_config[mesh]
+		if wc_class ~= nil then
+			local result
+			if is_occupied then
+				result = wc_class.hidden_red
+			else
+				result = wc_class.hidden_green
+			end
+			if result ~= nil then
+				return result
+			end
+		end
+	end
+	return "doors:hidden"
+end
+doors.get_wc_hidden_name = get_wc_hidden_name
+
 local can_dig_door = doors.can_dig_door
 local screwdriver_rightclick_override_list = doors.screwdriver_rightclick_override_list
+local wc_players = {} -- [encoded_pos] = player_name
 
 function doors.door_toggle(pos, node, clicker)
 	local meta = minetest.get_meta(pos)
@@ -42,6 +67,7 @@ function doors.door_toggle(pos, node, clicker)
 	local timer = minetest.get_node_timer(pos)
 	local def = minetest.registered_nodes[node.name]
 	local name = def.door.name
+	local is_wc = meta:get_int("zachodove") > 0
 
 	local state = meta:get_string("state")
 	if state == "" then
@@ -76,8 +102,10 @@ function doors.door_toggle(pos, node, clicker)
 		return false
 	end
 
+	local will_open
 	if state % 2 == 0 then
 		-- close the door
+		will_open = false
 		minetest.sound_play(def.door.sounds[1],
 			{pos = pos, gain = def.door.gains[1], max_hear_distance = 10}, true)
 		if meta:get_int("zavirasamo") > 0 then
@@ -85,6 +113,7 @@ function doors.door_toggle(pos, node, clicker)
 		end
 	else
 		-- open the door
+		will_open = true
 		minetest.sound_play(def.door.sounds[2],
 			{pos = pos, gain = def.door.gains[2], max_hear_distance = 10}, true)
 		if meta:get_int("zavirasamo") > 0 then
@@ -92,11 +121,40 @@ function doors.door_toggle(pos, node, clicker)
 		end
 	end
 
-	minetest.swap_node(pos, {
+	local new_node = {
 		name = name .. transform[state + 1][dir+1].v,
 		param2 = transform[state + 1][dir+1].param2 + param2_remains
-	})
+	}
+	minetest.swap_node(pos, new_node)
 	meta:set_int("state", state)
+
+	-- WC + hidden
+	local pos_above = vector.offset(pos, 0, 1, 0)
+	local node_above = core.get_node(pos_above)
+	if doors.is_hidden(node_above.name) then
+		local new_hidden_node = {
+			name = "doors:hidden",
+			param2 = new_node.param2,
+		}
+		if is_wc then
+			local encoded_pos = core.hash_node_position(pos)
+			local player_name = core.is_player(clicker) and clicker:get_player_name()
+			local will_lock = player_name and not will_open and doors.get_door_side(pos, new_node, assert(clicker:get_pos())) == "inside"
+			new_hidden_node.name = get_wc_hidden_name(new_node.name, will_lock)
+			if will_lock then
+				wc_players[encoded_pos] = player_name
+			else
+				wc_players[encoded_pos] = nil
+			end
+		end
+		core.set_node(pos_above, new_hidden_node)
+	end
+	--[[
+	print("door node at "..core.pos_to_string(pos).." set to "..new_node.name.."/"..new_node.param2..".\n"..
+		"Node above: "..dump2(core.get_node(vector.offset(pos, 0, 1, 0))).."\nNew mesh = "..
+		tostring((core.registered_nodes[new_node.name or ""] or {}).mesh)..
+		"\nNew player side = "..tostring(clicker and doors.get_door_side(pos, new_node, clicker:get_pos()) or nil))
+		]]
 
 	return true
 end
@@ -147,7 +205,7 @@ function doors.register(name, def)
 		minetest.log("warning", "mesh level 1: " .. def.mesh .. "!")
 	end
 
-	-- replace old doors of this type automatically
+	--[[ replace old doors of this type automatically
 	minetest.register_lbm({
 		name = ":doors:replace_" .. name:gsub(":", "_"),
 		nodenames = {name.."_b_1", name.."_b_2"},
@@ -181,6 +239,7 @@ function doors.register(name, def)
 				{name = "doors:hidden", param2 = p3})
 		end
 	})
+	]]
 
 	local craftitem_def = {
 		description = base_description,
@@ -558,3 +617,23 @@ doors.register("door_obsidian_glass", {
 		},
 })
 
+-- ABM for WC players
+core.register_abm({
+	label = "Unlock WC door when player leaves",
+	nodenames = {"group:doors_hidden_red"},
+	interval = 1,
+	chance = 1,
+	catch_up = true,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		local pos_below = vector.offset(pos, 0, -1, 0)
+		local node_below = core.get_node(pos_below)
+		local epos_below = core.hash_node_position(pos_below)
+		local player_name = wc_players[epos_below]
+		local player = player_name and core.get_player_by_name(player_name)
+		if player ~= nil and doors.get_door_side(pos_below, node_below, assert(player:get_pos())) ~= "outside" then
+			return
+		end
+		node.name = get_wc_hidden_name(node_below.name, false)
+		core.set_node(pos, node)
+end,
+})
