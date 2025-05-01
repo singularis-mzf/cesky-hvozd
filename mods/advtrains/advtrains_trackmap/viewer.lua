@@ -6,7 +6,7 @@ local tm = advtrains.trackmap
 local function node_left_click(pos, pname)
 	local node_ok, conns, rail_y=advtrains.get_rail_info_at(pos)
 	if not node_ok then
-		minetest.chat_send_player(pname, "Node is not a track!")
+		minetest.chat_send_player(pname, "Toto není kolej!")
 		return
 	end
 	
