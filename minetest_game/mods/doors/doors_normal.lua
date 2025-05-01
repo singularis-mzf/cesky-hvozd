@@ -305,11 +305,9 @@ function doors.register(name, def)
 			local state = 0
 			if minetest.get_item_group(minetest.get_node(aside).name, "door") == 1 then
 				state = state + 2
-				-- print("Will place node '"..itemstack_name.."_b'")
 				minetest.set_node(pos, {name = itemstack_name .. "_b", param2 = dir})
 				minetest.set_node(above, {name = "doors:hidden", param2 = (dir + 3) % 4})
 			else
-				-- print("Will place node '"..itemstack_name.."_a'")
 				minetest.set_node(pos, {name = itemstack_name .. "_a", param2 = dir})
 				minetest.set_node(above, {name = "doors:hidden", param2 = dir})
 			end
@@ -637,3 +635,32 @@ core.register_abm({
 		core.set_node(pos, node)
 end,
 })
+
+function doors.swap_door(pos, new_node)
+	local old_node = core.get_node(pos)
+	local door_obj = doors.get(pos)
+	if not doors.registered_doors[old_node.name] or not door_obj then
+		return false -- not a door
+	end
+	core.swap_node(pos, new_node)
+	door_obj = doors.get(pos)
+	if not doors.registered_doors[new_node.name] or not door_obj then
+		core.swap_node(pos, old_node)
+		return false -- new node is not a door
+	end
+	local is_open = door_obj:state()
+	local pos_above = vector.offset(pos, 0, 1, 0)
+	local node_above = core.get_node(pos_above)
+	core.swap_node(pos, new_node)
+	local hidden_type = doors.is_hidden(node_above.name)
+	if hidden_type ~= nil then
+		if hidden_type == "normal" then
+			node_above.name = "doors:hidden"
+		else
+			node_above.name = get_wc_hidden_name(new_node.name, hidden_type == "red")
+		end
+		node_above.param2 = new_node.param2 or core.get_node(pos).param2
+	end
+	core.set_node(pos_above, node_above)
+	return true
+end

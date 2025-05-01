@@ -52,7 +52,7 @@ function doors.get(pos)
 			end,
 			state = function(self)
 				local state = minetest.get_meta(self.pos):get_int("state")
-				return state %2 == 1
+				return state % 2 == 1
 			end
 		}
 	elseif doors.registered_trapdoors[node_name] then
@@ -133,8 +133,11 @@ core.register_node("doors:hidden", table.copy(base_def))
 
 base_def.drawtype = "nodebox"
 
-local green_tiles = {{name = "blank.png^[noalpha^[colorize:#00ff00:255"}}
-local red_tiles = {{name = "blank.png^[noalpha^[colorize:#ff0000:255"}}
+local green_tile = {name = "blank.png^[noalpha^[colorize:#00ff00:255"}
+local red_tile =   {name = "blank.png^[noalpha^[colorize:#ff0000:255"}
+local grey_tile =  {name = "blank.png^[noalpha^[colorize:#cccccc:255"}
+local green_tiles = {grey_tile, grey_tile, grey_tile, grey_tile, green_tile, green_tile}
+local red_tiles = {grey_tile, grey_tile, grey_tile, grey_tile, red_tile, red_tile}
 local green_groups = {not_in_creative_inventory = 1, doors_hidden = 2}
 local red_groups = {not_in_creative_inventory = 1, doors_hidden = 3, doors_hidden_red = 3}
 

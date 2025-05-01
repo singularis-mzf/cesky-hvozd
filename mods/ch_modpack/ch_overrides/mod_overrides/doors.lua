@@ -21,24 +21,12 @@ end
 local function on_change(pos, old_node, new_node, player, nodespec)
     local pos_above = vector.offset(pos, 0, 1, 0)
     local node_above = core.get_node(pos_above)
-    if node_above.name == "doors:hidden" then
-        local new_param2
-        if new_node.name:match("[ac]$") then
-            -- left door
-            new_param2 = new_node.param2
-        else
-            -- right door
-            new_param2 = (new_node.param2 + 3) % 4
-        end
-        if node_above.param2 ~= new_param2 then
-            node_above.param2 = new_param2
-            core.swap_node(pos_above, node_above)
-        end
-        -- state
+    if doors.is_hidden(node_above.name) then
         if old_node.name:sub(-1,-1) ~= new_node.name:sub(-1,-1) then
             local meta = core.get_meta(pos)
             meta:set_int("state", (meta:get_int("state") + 2) % 4)
         end
+        doors.swap_door(pos, new_node)
     end
 end
 

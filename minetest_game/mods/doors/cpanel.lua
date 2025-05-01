@@ -76,13 +76,17 @@ function doors.show_control_panel(player, door_pos)
 		"tooltip[private;Soukromé dveře může otevřít jen jejich vlastník/ice (a Administrace).]",
 		"checkbox[2.5,1.125;zavirasamo;zavírá samo;", ifthenelse(zavirasamo, "true", "false"), "]"..
 		"tooltip[zavirasamo;Je-li zaškrtnuto\\, dveře se automaticky zavřou\\, když není žádná hráčská postav poblíž.]")
+	local wc_supported
 	if zachodove then
+		wc_supported = true
+	else
 		local hidden_name = doors.get_wc_hidden_name(node.name, false)
-		if hidden_name ~= "doors:hidden" and hidden_name ~= "air" then
-			f(	"checkbox[5,1.125;zachodove;záchodové;", ifthenelse(zachodove, "true", "false"), "]"..
-				"tooltip[zachodove;Záchodové dveře mají automatický zámek s barevnou indikací. Ta se nastaví na červenou\\,\n"..
-				"jsou-li dveře zavřeny zevnitř. Je-li červená\\, jdou dveře otevřít jen zevnitř.]")
-		end
+		wc_supported = hidden_name ~= "doors:hidden" and hidden_name ~= "air"
+	end
+	if wc_supported then
+		f(	"checkbox[5,1.125;zachodove;záchodové;", ifthenelse(zachodove, "true", "false"), "]"..
+			"tooltip[zachodove;Záchodové dveře mají automatický zámek s barevnou indikací. Ta se nastaví na červenou\\,\n"..
+			"jsou-li dveře zavřeny zevnitř. Je-li červená\\, jdou dveře otevřít jen zevnitř.]")
 	end
 	f(	"checkbox[7.5,1.125;zakotsam;zakázat „otevírá samo“;", ifthenelse(zakotsam, "true", "false"), "]"..
 		"tooltip[zakotsam;Je-li zaškrtnuto\\, dveře se neotevřou samy postavám\\, které mají tuto funkci aktivovanou.]"..
