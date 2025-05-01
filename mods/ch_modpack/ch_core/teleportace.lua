@@ -62,7 +62,7 @@ local function get_finish_teleport_func(player_name, d, is_immediate)
 		end
 
 		-- zavříŧ formspec
-		if d.close_formspec ~= false then
+		if d.close_formspec == true then
 			minetest.close_formspec(player_name, "")
 		end
 
@@ -158,7 +158,7 @@ end
 		callback_before = function or nil, // funkce k zavolání těsně před přemístěním
 		callback_after = function or nil, // funkce k zavolání těsně po přemístění
 			// nebude zavolána, pokud bude přemístění přerušeno
-		close_formspec = bool or nil, // je-li true nebo nil, v momentě přemístění uzavře klientovi formspec
+		close_formspec = bool or nil, // je-li true, v momentě přemístění uzavře klientovi formspec (nedoporučuje se)
 		set_velocity = bool or nil, // je-li true nebo nil, po přemístění nastaví postavě nulovou rychlost
 	}
 ]]

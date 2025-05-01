@@ -189,7 +189,7 @@ get_control_formspec = function(custom_state)
     end
     ]]
 
-    table.insert(formspec, "button[0.5,10.25;19,1;return;vrátit se na hlavní nádraží]")
+    table.insert(formspec, "button_exit[0.5,10.25;19,1;return;vrátit se na hlavní nádraží]")
 
     if custom_state.message ~= "" then
         table.insert(formspec, "label[0.5,9;"..F(custom_state.message).."]")
