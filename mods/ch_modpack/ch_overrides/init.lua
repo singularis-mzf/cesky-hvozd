@@ -68,8 +68,10 @@ end})
 
 --[[ temp
 
-minetest.override_item("default:wood", {
-	tiles = {"default_wood.png^[resize:256x256^(ch_core_planks_128.png^[makealpha:255,255,255^[opacity:100^[resize:256x256)"},
-}) ]]
+minetest.override_item("advtrains_line_automation:stanicni_rozhlas", {
+	tiles = {"ch_core_white_pixel.png"},
+	paramtype2 = "4dir",
+})
+-- ]]
 
 ch_base.close_mod(minetest.get_current_modname())
