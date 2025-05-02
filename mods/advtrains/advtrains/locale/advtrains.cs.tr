@@ -77,6 +77,7 @@ Configuring TCB: Successfully assigned signal.=Nastavování TCB: Úspěšně p�
 Configuring TCB: Successfully configured TCB=Nastavování TCB: Úspěšně nastavená TCB
 Configuring TCB: TCB already exists at this position! It has now been re-assigned.=Nastavování TCB: Na dané pozici již existuje TCB!
 Configuring TCB: This is not a normal two-connection rail! Aborted.=Nastavování TCB: Toto není normální dvojsměrná kolej! Nastavení zrušeno.
+Configuring TCB: Already existed at this position, it is now linked to this TCB marker=Nastavování TCB: Existovalo na této pozici, nyní je připojeno k tomuto TCB
 Construction train=podbíječka
 Continue at maximum speed=Volno
 Continue at speed of @1=Volno, omezení rychlosti: @1

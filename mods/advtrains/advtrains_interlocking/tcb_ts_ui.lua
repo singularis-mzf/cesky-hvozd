@@ -162,7 +162,7 @@ minetest.register_on_punchnode(function(pos, node, player, pointed_thing)
 			if node_ok and #conns == 2 then
 				-- if there is already a tcb here, reassign it
 				if ildb.get_tcb(pos) then
-					minetest.chat_send_player(pname, "Configuring TCB: Already existed at this position, it is now linked to this TCB marker")
+					minetest.chat_send_player(pname, attrans("Configuring TCB: Already existed at this position, it is now linked to this TCB marker"))
 				else
 					ildb.create_tcb_at(pos, pname)
 				end
@@ -194,7 +194,7 @@ minetest.register_on_punchnode(function(pos, node, player, pointed_thing)
 						ildb.assign_signal_to_tcbs(pos, sigd)
 						-- use auto-naming
 						advtrains.interlocking.add_autoname_to_tcbs(tcbs, pname)
-						minetest.chat_send_player(pname, "Configuring TCB: Successfully assigned signal.")
+						minetest.chat_send_player(pname, "Konfigurace TCB: Návěstidlo úspěšně přiřazeno.")
 						advtrains.interlocking.show_ip_form(pos, pname, true)
 					else
 						minetest.chat_send_player(pname, attrans("Configuring TCB: Internal error, TCBS doesn't exist. Aborted."))
@@ -222,11 +222,11 @@ minetest.register_on_punchnode(function(pos, node, player, pointed_thing)
 				minetest.chat_send_player(pname, minetest.pos_to_string(pos).." locks in state "..state)
 				ts.fixed_locks[pts] = state
 			else
-				minetest.chat_send_player(pname, "Error: TS modified, abort!")
+				minetest.chat_send_player(pname, "Chyba: traťová sekce se změnila, ruším operaci!")
 				players_assign_fixedlocks[pname] = nil
 			end
 		else
-			minetest.chat_send_player(pname, "Setting fixed locks finished!")
+			minetest.chat_send_player(pname, "Ruční přidání zámků dokončeno!")
 			players_assign_fixedlocks[pname] = nil
 			ildb.update_rs_cache(ts_id)
 			advtrains.interlocking.show_ts_form(ts_id, pname)
@@ -530,7 +530,7 @@ function advtrains.interlocking.show_ts_form(ts_id, pname)
 	if not ts_id then return end
 	
 	local form = "size[10,10]label[0.5,0.5;"..attrans("Track Section Detail - @1", ts_id).."]"
-	form = form.."field[0.8,2;5.2,1;name;"..attrans("Section name")..";"..minetest.formspec_escape(ts.name).."]"
+	form = form.."field[0.8,2;5.2,1;name;"..attrans("Section name")..";"..minetest.formspec_escape(ts.name or "").."]"
 	form = form.."button[5.5,1.7;1,1;setname;"..attrans("Set").."]"
 	local hint
 	
@@ -640,7 +640,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			return
 		end
 		
-		advtrains.interlocking.show_ts_form(ts_id, pname, sel_tcb)
+		advtrains.interlocking.show_ts_form(ts_id, pname)
 		return
 	end
 	

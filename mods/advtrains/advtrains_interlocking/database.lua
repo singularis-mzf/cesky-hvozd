@@ -941,6 +941,7 @@ function ildb.remove_ts(ts_id)
 	if not ts then
 		error("remove_ts: "..ts_id.." doesn't exist")
 	end
+	local i = 1
 	while ts.tc_breaks[i] do
 		-- get TCBS
 		local sigd = ts.tc_breaks[i]
