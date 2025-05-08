@@ -247,7 +247,6 @@ function ch_core.soukroma_zprava(odkoho, komu, zprava)
 end
 
 local function on_chat_message(jmeno, zprava)
-	-- minetest.log("info", "on_chat_message("..jmeno..","..zprava..")") -- DEBUGGING ONLY!
 	local info = minetest.get_player_by_name(jmeno)
 	local info_pos = info:get_pos()
 	local online_charinfo = ch_data.online_charinfo[jmeno]
@@ -470,20 +469,27 @@ minetest.register_chatcommand("kdojsem", {
 	description = "Vypíše zobrazované jméno postavy (včetně případných barev).",
 	privs = {},
 	func = function(player_name, param)
-		if player_name then
-			local vysl
-			local offline_charinfo = ch_data.offline_charinfo[player_name]
-			if offline_charinfo then
-				vysl = offline_charinfo.barevne_jmeno or (color_reset..(offline_charinfo.jmeno or player_name))
-			else
-				vysl = color_reset..player_name
+		local vysl = {
+			color_reset,
+			ch_core.prihlasovaci_na_zobrazovaci(player_name, true),
+			"\n",
+			color_systemovy,
+			"- přihlašovací jméno: ",
+			player_name,
+		}
+		local characters, main_name = ch_data.get_player_characters(player_name)
+		if #characters > 1 then
+			table.insert(vysl, "\n- hlavní postava: ")
+			table.insert(vysl, ch_core.prihlasovaci_na_zobrazovaci(main_name, true))
+			table.insert(vysl, color_systemovy)
+			for i, name in ipairs(characters) do
+				characters[i] = ch_core.prihlasovaci_na_zobrazovaci(name, true)
 			end
-			vysl = vysl..color_systemovy.."\n(přihlašovací jméno: "..player_name..")"
-			ch_core.systemovy_kanal(player_name, vysl)
-			return true
-		else
-			return false
+			table.insert(vysl, "\n- všechny postavy ["..#characters.."]: ")
+			table.insert(vysl, table.concat(characters, color_systemovy..", "))
 		end
+		ch_core.systemovy_kanal(player_name, table.concat(vysl))
+		return true
 	end,
 })
 
@@ -532,12 +538,19 @@ local function get_info_o(player_name, is_privileged)
 	local level_def = ch_core.ap_get_level(offline_charinfo.ap_level)
 	table.insert(result, "\n* Úroveň "..offline_charinfo.ap_level..". "..offline_charinfo.ap_xp.." bodů z "..level_def.count..", "..(level_def.base + offline_charinfo.ap_xp).." celkem")
 	table.insert(result, "\n* Doslech: aktuální "..(online_charinfo and online_charinfo.doslech and online_charinfo.doslech.." m" or "neznámý")..", výchozí "..(offline_charinfo.doslech and offline_charinfo.doslech.." m" or "neznámý"))
+	local all_characters, main_name = ch_data.get_player_characters(player_name)
+	if #all_characters >= 2 then
+		for i, name in ipairs(all_characters) do
+			all_characters[i] = ch_core.prihlasovaci_na_zobrazovaci(name)
+		end
+		table.insert(result, "\n* Všechny postavy hráče/ky: "..table.concat(all_characters, ", ").." (hlavní: "..ch_core.prihlasovaci_na_zobrazovaci(main_name)..")")
+	end
 	return table.concat(result)
 end
 
 minetest.register_chatcommand("info_o", {
 	params = "<Jméno postavy>",
-	description = "Vypíše systémové informace o postavě",
+	description = "Vypíše systémové informace o postavě",
 	privs = { server = true },
 	func = function(admin_name, param)
 		minetest.chat_send_player(admin_name, get_info_o(param, true))

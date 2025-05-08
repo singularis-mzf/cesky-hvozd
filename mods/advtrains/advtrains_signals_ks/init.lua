@@ -306,7 +306,7 @@ for _, rtab in ipairs({
 			description = "předzvěst KS",
 			drawtype = "mesh",
 			mesh = "advtrains_signals_ks_distant_smr"..rot..".obj",
-			tiles = {"advtrains_signals_ks_mast.png", "advtrains_signals_ks_head.png", "advtrains_signals_ks_head.png", tile},
+			tiles = {advtrains_signals_ks_mast_tile, "advtrains_signals_ks_head.png", "advtrains_signals_ks_head.png", tile},
 			
 			paramtype="light",
 			sunlight_propagates=true,
@@ -359,7 +359,7 @@ for _, rtab in ipairs({
 			description = "posunové návěstidlo KS",
 			drawtype = "mesh",
 			mesh = "advtrains_signals_ks_sht_smr"..rot..".obj",
-			tiles = {"advtrains_signals_ks_mast.png", "advtrains_signals_ks_head.png", "advtrains_signals_ks_head.png", "advtrains_signals_ks_ltm_"..typ..".png"},
+			tiles = {advtrains_signals_ks_mast_tile, "advtrains_signals_ks_head.png", "advtrains_signals_ks_head.png", "advtrains_signals_ks_ltm_"..typ..".png"},
 			
 			paramtype="light",
 			sunlight_propagates=true,

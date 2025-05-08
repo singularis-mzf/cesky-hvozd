@@ -274,7 +274,7 @@ local function globalstep(dtime)
 			end
 
 			-- VĚZENÍ, zakázaná výška:
-			if --[[ ch_core.submods_loaded["vezeni"] and ]] offline_charinfo.trest > 0 then
+			if --[[ ch_core.submods_loaded["vezeni"] and ]] offline_charinfo.player.trest > 0 then
 				ch_core.vykon_trestu(player, player_pos, us_time, online_charinfo)
 			elseif use_forbidden_height and player_pos.y >= 1024 and player_pos.y <= 1256 then
 				-- zakázaná výška

@@ -100,9 +100,9 @@ local def = {
 		end
 
 		local offline_charinfo = ch_data.get_offline_charinfo(player_name)
-		local trest_old = offline_charinfo.trest
+		local trest_old = offline_charinfo.player.trest
 		ch_core.trest("", player_name, -1)
-		local trest_new = offline_charinfo.trest
+		local trest_new = offline_charinfo.player.trest
 		if trest_new ~= trest_old then
 			ch_core.systemovy_kanal(player_name, "Váš trest: "..trest_old.." >> "..trest_new)
 		end
@@ -160,7 +160,7 @@ local function do_vezeni(player_name, online_charinfo)
 	-- announcement
 	local offline_charinfo = ch_data.offline_charinfo[player_name] or {}
 	ch_core.set_temporary_titul(player_name, "ve vězení", true)
-	ch_core.systemovy_kanal(player_name, "Jste ve výkonu trestu odnětí svobody. Těžte vězeňský kámen železným nebo lepším krumpáčem pro odpykání si trestu. Současná výše trestu: "..(offline_charinfo.trest or 0))
+	ch_core.systemovy_kanal(player_name, "Jste ve výkonu trestu odnětí svobody. Těžte vězeňský kámen železným nebo lepším krumpáčem pro odpykání si trestu. Současná výše trestu: "..(offline_charinfo.player.trest or 0))
 
 	-- teleport
 	if not ch_core.je_ve_vezeni(player:get_pos()) then
@@ -176,7 +176,7 @@ local function do_vezeni(player_name, online_charinfo)
 		end
 	end
 	if hudbar_id then
-		online_charinfo.last_hudbar_trest_max = offline_charinfo.trest or 0
+		online_charinfo.last_hudbar_trest_max = offline_charinfo.player.trest or 0
 		hb.change_hudbar(player, hudbar_id, online_charinfo.last_hudbar_trest_max, online_charinfo.last_hudbar_trest_max, prison_bar_icon, prison_bar_bgicon, prison_bar_bar, "trest", 0xFFFFFF)
 		update_hudbar(online_charinfo, offline_charinfo.trest or 0)
 		hb.unhide_hudbar(player, hudbar_id)
@@ -222,7 +222,7 @@ local function on_joinplayer(player, last_login)
 	local player_name = player:get_player_name()
 	local online_charinfo = ch_data.get_joining_online_charinfo(player)
 	local offline_charinfo = ch_data.get_offline_charinfo(player_name)
-	local trest = tonumber(offline_charinfo.trest or 0)
+	local trest = tonumber(offline_charinfo.player.trest or 0)
 
 	if trest > 0 then
 		do_vezeni(player_name, online_charinfo)
@@ -245,7 +245,7 @@ function ch_core.trest(volajici, jmeno, vyse_trestu)
 		message = "Postava "..jmeno.." neexistuje!"
 	else
 		local offline_charinfo = ch_data.get_offline_charinfo(jmeno)
-		local trest = offline_charinfo.trest
+		local trest = offline_charinfo.player.trest
 		local nova_vyse = math.round(trest + vyse_trestu)
 		if nova_vyse < trest_min then
 			nova_vyse = trest_min
@@ -256,8 +256,8 @@ function ch_core.trest(volajici, jmeno, vyse_trestu)
 			message = "Aktuální výše trestu postavy "..ch_core.prihlasovaci_na_zobrazovaci(jmeno)..": "..trest
 		else
 			message = "Výše trestu postavy "..ch_core.prihlasovaci_na_zobrazovaci(jmeno).." změněna: "..trest.." => "..nova_vyse
-			offline_charinfo.trest = nova_vyse
-			ch_data.save_offline_charinfo(jmeno)
+			offline_charinfo.player.trest = nova_vyse
+			ch_data.save_offline_charinfo(jmeno, true)
 			minetest.log("action", message)
 
 			local online_charinfo = ch_data.online_charinfo[jmeno]
@@ -285,7 +285,7 @@ end
 	jinak vrátí nil.
 ]]
 function ch_core.je_ve_vykonu_trestu(player_name)
-	local trest = ch_core.safe_get_3(ch_data.offline_charinfo, player_name, "trest")
+	local trest = ch_core.safe_get_4(ch_data.offline_charinfo, player_name, "player", "trest")
 	if trest ~= nil and trest > 0 then
 		return trest
 	else

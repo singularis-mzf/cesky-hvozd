@@ -127,8 +127,7 @@ local function teleporter_on_use(itemstack, player, pointed_thing)
 	local old_pos = player:get_pos()
 
 	-- check for trest
-	local online_charinfo = ch_data.online_charinfo[player_name] or {}
-	local trest = online_charinfo.trest or 0
+	local trest = ch_core.je_ve_vykonu_trestu(player_name)
 	if trest > 0 then
 		ch_core.systemovy_kanal(player_name, "Chyba: jste ve výkonu trestu odnětí svobody.")
 		minetest.log("action", "Teleporter failed for "..player_name.." at "..minetest.pos_to_string(old_pos).." due to trest "..trest)

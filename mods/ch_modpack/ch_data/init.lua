@@ -7,6 +7,7 @@ local storage = core.get_mod_storage()
 local old_online_charinfo = {} -- uchovává online_charinfo[] po odpojení postavy
 local players_list, players_set = {}, {} -- seznam/množina všech známých hráčských postav (pro offline_charinfo)
 local lc_to_player_name = {} -- pro jména existujících postav lowercase => loginname
+local current_format_version = 2
 
 ch_data = {
 	online_charinfo = {},
@@ -57,15 +58,17 @@ ch_data = {
 		skryt_zbyv = 0,
 		-- string -- pro [ch_core/teleport], pozice uložená příkazem /stavím
 		stavba = "",
-		-- int -- výše uloženého trestu (může být záporná)
-		trest = 0,
 		-- string -- nastavení filtru událostí
 		ui_event_filter = "",
 		-- int (>= 1) -- číslo verze uložených dat (umožňuje upgrade)
-		version = 1,
+		version = current_format_version,
 		-- int {1, 2, 3} -- volba cíle pro /začátek: 1 => Začátek, 2 => Masarykovo náměstí, 3 => Hlavní nádraží
 		zacatek_kam = 1,
 	},
+	initial_offline_playerinfo = {
+		-- int -- výše uloženého trestu (může být záporná)
+		trest = 0,
+	}
 }
 
 -- POZNÁMKA: protože příznaky z následujícího pole se mapují na znaky v řetězci 'flags', nesmí se mazat ani zakomentovat!
@@ -90,24 +93,50 @@ for i, flag in ipairs(flag_ids) do
 end
 ch_data.initial_offline_charinfo.flags = string.rep(" ", #flag_ids)
 
-local function add_player(player_name, new_offline_charinfo)
+local function add_player(player_name, new_offline_charinfo, player_info)
 	if players_set[player_name] then
 		return false
 	end
 	assert(new_offline_charinfo)
 	local lcase = string.lower(player_name)
+	-- add player to players_list (persistently):
 	table.insert(players_list, player_name)
 	core.safe_file_write(playerlist_path, assert(core.serialize(players_list)))
+	-- add player to players_set and lc_to_player_name:
 	players_set[player_name] = true
 	lc_to_player_name[lcase] = player_name
+	-- add new offline_charinfo:
 	ch_data.offline_charinfo[player_name] = new_offline_charinfo
+	-- add new offline_charinfo[].player:
+	new_offline_charinfo.player = player_info or table.copy(ch_data.initial_offline_playerinfo)
+	if new_offline_charinfo.player.name == nil then
+		new_offline_charinfo.player.name = player_name
+	end
 	return true
 end
 
 local function delete_player(player_name)
+	-- check if the player exists:
 	if not players_set[player_name] then
 		return false
 	end
+	-- detach offline_playerinfo:
+	local offline_player_info = assert(ch_core.offline_charinfo[player_name].player)
+	local aliases = {}
+	for alias, offline_charinfo in pairs(ch_data.offline_charinfo) do
+		if alias ~= player_name and offline_charinfo.player.name == player_name then
+			offline_player_info = offline_charinfo.player
+			table.insert(aliases, alias)
+		end
+	end
+	if #aliases > 0 then
+		offline_player_info.name = aliases[1]
+		core.log("debug", "delete_player(): dotplayer of "..table.concat(aliases, ",").." corrected to "..player_info.name)
+		for _, alias in ipairs(aliases) do
+			ch_core.save_offline_playerinfo(alias)
+		end
+	end
+	-- remove player from players_list:
 	local lcase = string.lower(player_name)
 	for i, pname in ipairs(players_list) do
 		if pname == player_name then
@@ -115,9 +144,14 @@ local function delete_player(player_name)
 			break
 		end
 	end
+	-- save the player_list:
 	core.safe_file_write(playerlist_path, assert(core.serialize(players_list)))
+	-- remove player from players_set:
 	players_set[player_name] = nil
+	-- remove player from lc_to_player_name:
 	lc_to_player_name[lcase] = nil
+	-- remove player from offline_charinfo:
+	ch_data.offline_charinfo[player_name] = nil
 	return true
 end
 
@@ -231,7 +265,6 @@ function ch_data.get_joining_online_charinfo(player)
 		"\", formspec_version = "..tostring(player_info.formspec_version)..", protocol_version = "..
 		result.protocol_version..", news_role = "..result.news_role..", ip_address = "..tostring(player_info.address))
 
-	core.log("action", "[DEBUG] player_info[\""..player_name.."\"] = "..dump2(player_info))
 	-- deserializovat návody:
 	local meta = player:get_meta()
 	local s = meta:get_string("navody")
@@ -307,7 +340,7 @@ end
 
 local debug_flag = false
 
-function ch_data.save_offline_charinfo(player_name)
+function ch_data.save_offline_charinfo(player_name, include_playerinfo)
 	if players_set[player_name] == nil then
 		return false
 	end
@@ -316,14 +349,27 @@ function ch_data.save_offline_charinfo(player_name)
 		return false
 	end
 	core.safe_file_write(datapath.."/"..player_name, assert(core.serialize(data)))
-	if player_name == "Administrace" then
-		if data.ap_level ~= 1 then
-			debug_flag = true
-		elseif debug_flag then
-			error("!!!")
-		end
+	if include_playerinfo and data.player.name ~= player_name then
+		local dotplayer_name = data.player.name
+		assert(ch_data.offline_charinfo[dotplayer_name])
+		assert(ch_data.offline_charinfo[dotplayer_name].player.name == dotplayer_name)
+		return ch_data.save_offline_charinfo(dotplayer_name)
 	end
 	return true
+end
+
+function ch_data.save_offline_playerinfo(player_name)
+	if players_set[player_name] == nil then
+		return false
+	end
+	local data = ch_data.offline_charinfo[player_name]
+	if data == nil then
+		return false
+	end
+	local dotplayer_name = assert(data.player.name)
+	assert(ch_data.offline_charinfo[dotplayer_name])
+	assert(ch_data.offline_charinfo[dotplayer_name].player.name == dotplayer_name)
+	return ch_data.save_offline_charinfo(dotplayer_name)
 end
 
 local function on_joinplayer(player, last_login)
@@ -336,6 +382,17 @@ end
 
 core.register_on_joinplayer(on_joinplayer)
 core.register_on_leaveplayer(on_leaveplayer)
+
+local function upgrade_offline_charinfo(player_name, data)
+	local old_version = data.version
+	if data.version <= 1 then
+		data.player.trest = data.trest or 0
+		data.trest = nil
+	end
+	data.version = current_format_version
+	core.log("info", "Offline_charinfo["..player_name.."] upgraded from version "..old_version.." to the current version "..data.version..".")
+	return true
+end
 
 -- Load and initialize:
 
@@ -382,9 +439,31 @@ local function initialize()
 				core.log("warning", "Missing offline_charinfo key "..player_name.."/"..key.." vivified.")
 			end
 		end
+		-- correct invalid past_playtime:
 		if poc.past_playtime < 0 then
 			core.log("warning", "Invalid past_playtime for "..player_name.." ("..poc.past_playtime..") corrected to zero!")
 			poc.past_playtime = 0 -- correction of invalid data
+		end
+		-- vivify .player table (including .player.name)
+		if poc.player == nil or poc.player.name == nil then
+			poc.player = {name = player_name}
+		end
+	end
+	-- link .player tables according to .player.name:
+	for player_name, poc in pairs(ch_data.offline_charinfo) do
+		local dotplayer_name = assert(poc.player.name)
+		if dotplayer_name ~= player_name then
+			if players_set[dotplayer_name] and ch_data.offline_charinfo[dotplayer_name] then
+				poc.player = assert(ch_data.offline_charinfo[dotplayer_name].player)
+			else
+				error("offline_charinfo["..player_name.."] looks for player data of '"..dotplayer_name.."', but it doesn't exist!")
+			end
+		end
+	end
+	-- upgrade old data:
+	for player_name, poc in pairs(ch_data.offline_charinfo) do
+		if poc.version < current_format_version then
+			upgrade_offline_charinfo(player_name, poc)
 		end
 	end
 end
@@ -578,5 +657,106 @@ def = {
 
 core.register_chatcommand("shýbat", def)
 core.register_chatcommand("shybat", def)
+
+local function merge_playerinfos(player_name_a, player_name_b)
+	if player_name_a == player_name_b then
+		return false, "'"..player_name_a.."' a '"..player_name_b.."' reprezentují tutéž postavu!"
+	end
+	local oci_a = ch_data.offline_charinfo[player_name_a]
+	local oci_b = ch_data.offline_charinfo[player_name_b]
+	if oci_a == nil then
+		return false, "Postava '"..player_name_a.."' neexistuje!"
+	end
+	if oci_b == nil then
+		return false, "Postava '"..player_name_b.."' neexistuje!"
+	end
+	local dotplayer_a = assert(oci_a.player.name)
+	local dotplayer_b = assert(oci_b.player.name)
+	if dotplayer_a == dotplayer_b then
+		return false, "Postavy '"..player_name_a.."' a '"..player_name_b.."' již patří stejné/mu hráči/ce '"..dotplayer_a.."'."
+	end
+	local aliases = {dotplayer_b}
+	for alias, offline_charinfo in pairs(ch_data.offline_charinfo) do
+		if alias ~= dotplayer_b and offline_charinfo.player.name == dotplayer_b then
+			table.insert(aliases, alias)
+		end
+	end
+	for _, alias in ipairs(aliases) do
+		ch_data.offline_charinfo[alias].player = oci_a.player
+		ch_data.save_offline_playerinfo(alias)
+		core.log("action", "[MERGE] Player info of .player "..dotplayer_a.." assigned to player "..alias..".")
+	end
+	return true, "Postavy "..table.concat(aliases, ",").." přiřazeny hráči/ce "..dotplayer_a.."."
+end
+
+local function set_main_player(player_name)
+	local oci_a = ch_data.offline_charinfo[player_name]
+	if oci_a == nil then
+		return false, "Postava '"..player_name.."' neexistuje!"
+	end
+	local old_main = assert(oci_a.player.name)
+	if old_main == player_name then
+		return false, "Postava '"..player_name_a.."' již je hlavní."
+	end
+	local aliases = {}
+	for alias, offline_charinfo in pairs(ch_data.offline_charinfo) do
+		if alias ~= old_main and offline_charinfo.player.name == old_main then
+			table.insert(aliases, alias)
+		end
+	end
+	oci_a.player.name = player_name
+	for _, alias in ipairs(aliases) do
+		ch_data.save_offline_playerinfo(alias)
+	end
+	return true, "Postava "..player_name.." nastavena jako hlavní (původní hlavní postava: "..old_main..")."
+end
+
+function ch_data.get_player_characters(player_name)
+	local offline_charinfo = ch_data.offline_charinfo[player_name]
+	if offline_charinfo == nil then
+		return nil
+	end
+	local main_name = offline_charinfo.player.name
+	local result = {}
+	for name, oci in pairs(ch_data.offline_charinfo) do
+		if oci.player.name == main_name then
+			table.insert(result, name)
+		end
+	end
+	if #result > 1 then
+		table.sort(result, function(a, b) return (a == main_name and b ~= main_name) or a < b end) -- TODO: better sorting
+	end
+	return result, main_name
+end
+
+def = {
+	description = "Sloučí hráčská data odpovídající postavě B s hráčskými daty odpovídajícími postavě A",
+	params = "<Jmeno_postavy_hlavni_A> <Jmeno_postavy_vedlejsi_B>",
+	privs = {server = true},
+	func = function(admin_name, param)
+		local a, b = string.match(param, "^([^ ]+) +([^ ]+)$")
+		if a == nil or b == nil then
+			return false, "Chybné zadání!"
+		end
+		local result, message = merge_playerinfos(a, b)
+		return result, message
+	end,
+}
+
+core.register_chatcommand("připojit_postavu", def)
+core.register_chatcommand("pripojit_postavu", def)
+
+def = {
+	description = "Změní hlavní postavu hráče/ky",
+	params = "<Nova_hlavni_postava>",
+	privs = {server = true},
+	func = function(admin_name, param)
+		local result, message = set_main_player(param)
+		return result, message
+	end,
+}
+
+core.register_chatcommand("hlavní_postava", def)
+core.register_chatcommand("hlavni_postava", def)
 
 ch_base.close_mod(core.get_current_modname())

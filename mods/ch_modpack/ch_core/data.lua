@@ -279,7 +279,7 @@ for full_key, value in pairs(storage_table) do
 		local data_type = global_data_data_types[key]
 		ch_core.global_data[key] = restore_value_by_type(data_type, value, "global property "..key)
 		global_counter = global_counter + 1
-	elseif player_name and not is_invalid_player_name(player_name) and (player_set[player_name] or ch_data.offline_charinfo[player_name] == nil) then
+	--[[elseif player_name and not is_invalid_player_name(player_name) and (player_set[player_name] or ch_data.offline_charinfo[player_name] == nil) then
 		local ch_data_offline_charinfo = ch_data.get_or_add_offline_charinfo(player_name)
 		local data_type = offline_charinfo_data_types[key]
 		if data_type == "int" then
@@ -296,7 +296,7 @@ for full_key, value in pairs(storage_table) do
 		if player_set[player_name] == nil then
 			player_set[player_name] = true
 			player_counter = player_counter + 1
-		end
+		end]]
 	else
 		storage:set_string(full_key, "")
 		core.log("warning", "Invalid key '"..full_key.."' (value "..value..") removed from mod storage!")
