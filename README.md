@@ -584,6 +584,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * [ContentDB](https://content.minetest.net/packages/TenPlus1/farming/)
 * Implantovány jahody z módu Ethereal NG (licence: MIT) a další plodiny z módu Cucina Vegana (licence textur: LGPLv3).
 
+## Fireworks Reimagined (fireworks\_reimagined)
+
+* Zdroj: [https://github.com/DragonWrangler1/fireworks\_reimagined](https://github.com/DragonWrangler1/fireworks\_reimagined), revize 9ff34239215f4459b63329805534c0fe48c5b406
+* Původní licence: MIT
+* Licence úprav: MIT
+* [ContentDB](https://content.luanti.org/packages/DragonWrangler/fireworks\_reimagined/)
+
 ## Fumo Plushies (fumoplushies)
 
 * Zdroj: [https://git.minetest.land/aSliceOfCake/Plushfumos](https://git.minetest.land/aSliceOfCake/Plushfumos), revize daf783e473637868e48fa416f9e2b76902d2da38
