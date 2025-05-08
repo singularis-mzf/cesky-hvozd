@@ -12,6 +12,7 @@ register_firework_node(nil, "christmas_tree", nil, nil, nil, true)
 register_firework_node(nil, "present", nil, nil, nil, true)
 register_firework_node(nil, "hour_glass", nil, nil, nil, true)
 
+--[[
 fireworks_reimagined.register_firework_entity("fireworks_reimagined:moving_spiral_entity", {
 	spiral = true,
 	spiral_force = 10,
@@ -53,5 +54,6 @@ fireworks_reimagined.register_firework_entity("fireworks_reimagined:spiral_firew
 		fireworks_reimagined.spawn_firework_explosion(pos, color1, color2, "255", nil, nil)
 	end,
 })
+]]
 
 fireworks_reimagined.register_firework_node(nil, "spiral", nil, nil, nil, nil, true)

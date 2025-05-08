@@ -5,18 +5,18 @@ local rules = mesecon.rules.pplate
 local modpath = minetest.get_modpath("fireworks_reimagined")
 fireworks_reimagined = {}
 local firework_shapes = {
-	{shape = "sphere", description = "Sphere"},
-	{shape = "star", description = "Star"},
-	{shape = "ring", description = "Ring"},
-	{shape = "burst", description = "Burst"},
-	{shape = "cube", description = "Cube"},
-	{shape = "spiral", description = "Spiral"},
-	{shape = "chaotic", description = "Chaotic"},
-	{shape = "flame", description = "Flame"},
-	{shape = "snowflake", description = "Snowflake"},
-	{shape = "present", description = "Present"},
-	{shape = "christmas_tree", description = "Christmas Tree"},
-	{shape = "hour_glass", description = "Hour Glass"},
+	{shape = "sphere", description = "koule"},
+	{shape = "star", description = "hvězda"},
+	{shape = "ring", description = "prstenec"},
+	{shape = "burst", description = "shluk"},
+	{shape = "cube", description = "krychle"},
+	{shape = "spiral", description = "spirála"},
+	{shape = "chaotic", description = "chaos"},
+	{shape = "flame", description = "plamen"},
+	{shape = "snowflake", description = "sněhová vločka"},
+	{shape = "present", description = "dárek"},
+	{shape = "christmas_tree", description = "vánoční stromeček"},
+	{shape = "hour_glass", description = "přesýpací hodiny"},
 }
 
 local function random_color()
@@ -426,12 +426,54 @@ end
 
 local last_rightclick_time = {}
 local last_mesecons_time = {}
+local descriptions = {
+	blue = "modrý",
+	-- blue_spiral = "modrá spirála",
+	blue_white = "modrobílý",
+	-- blue_white_spiral = "modrobílá spirála",
+	burst = "shluk",
+	cube = "krychle",
+	chaotic = "chaos",
+	cyan = "tyrkysový",
+	flame = "plamen",
+	green = "zelený",
+	hour_glass = "přesýpací hodiny",
+	christmas_tree = "vánoční strom",
+	multi = "multi",
+	orange = "oranžový",
+	present = "dárek",
+	red = "červený",
+	-- red_spiral = "červená spirála",
+	red_white = "červenobílý",
+	-- red_white_spiral = "červenobílá spirála",
+	ring = "prstenec",
+	snowflake = "sněhová vločka",
+	sphere = "koule",
+	spiral = "spirála",
+	star = "hvězda",
+	violet = "purpurový",
+	white = "bílý",
+	-- white_spiral = "bílá spirála",
+	yellow = "žlutý",
+	-- yellow_spiral = "žlutá spirála",
+	yellow_white = "žlutobílý",
+	-- yellow_white_spiral = "žlutobílá spirála",
+	["2025"] = "2025",
+}
+
+local shape_selector_nodes = {}
 
 function fireworks_reimagined.register_firework_node(tiles, shape, entity, cooldown, mese_cooldown, ip)
+	local description = descriptions[shape]
+	if description == nil then
+		error("Missing description for shape '"..shape.."'!")
+		description = shape
+	end
 	minetest.register_alias("fireworks_reimagined:firework_" .. shape .. "_0", "fireworks_reimagined:firework_" .. shape)
 	minetest.register_alias("fireworks_reimagined:firework_" .. shape .. "_10", "fireworks_reimagined:firework_" .. shape)
+	table.insert(shape_selector_nodes, "fireworks_reimagined:firework_" .. shape)
 	minetest.register_node(":fireworks_reimagined:firework_" .. shape, {
-		description = "Firework (" .. shape .. ")",
+		description = "odpalovač ohňostroje (" .. description .. ")",
 		tiles = { tiles or "fireworks_" .. shape .. ".png" },
 		groups = { cracky = 1, oddly_breakable_by_hand = 1 },
 		paramtype = "light",
@@ -450,7 +492,7 @@ function fireworks_reimagined.register_firework_node(tiles, shape, entity, coold
 			local placer_name = placer:get_player_name()
 			meta:set_string("owner", placer_name)
 		end,
-		on_punch = function(pos, node, clicker)
+		on_rightclick = function(pos, node, clicker)
 			local wielded_item = clicker:get_wielded_item():get_name()
 			if wielded_item == "" then
 				local meta = minetest.get_meta(pos)
@@ -468,32 +510,32 @@ function fireworks_reimagined.register_firework_node(tiles, shape, entity, coold
 				local spos = pos.x .. "," .. pos.y .. "," .. pos.z
 				if is_owner and not privs.fireworks_admin then
 					local formspec = "size[11,9.5]" ..
-					"label[2.5,0.0;Firework Settings]" ..
-					"checkbox[0.5,1.5;allow_others;Allow others to launch;" .. meta:get_string("allow_others") .. "]" ..
+					"label[2.5,0.0;Nastavení odpalovače]" ..
+					"checkbox[0.5,1.5;allow_others;Dovolit odpalování ostatním;" .. meta:get_string("allow_others") .. "]" ..
 					"list[nodemeta:" .. spos .. ";fuse;8,2;1,1;]" ..
-					"field[0.5,3.0;7.5,0.5;cone;First Fireworks Color;" .. meta:get_string("c1") .. "]" ..
-					"field[0.5,4.5;7.5,0.5;ctwo;Second Fireworks Color;" .. meta:get_string("c2") .. "]" ..
+					"field[0.5,3.0;7.5,0.5;cone;Hlavní barva;" .. meta:get_string("c1") .. "]" ..
+					"field[0.5,4.5;7.5,0.5;ctwo;Vedlejší barva;" .. meta:get_string("c2") .. "]" ..
 					"list[current_player;main;0,4.85;8,4;]" ..
-					"button_exit[8,3.5;3,1;save;Save]" ..
+					"button_exit[8,3.5;3,1;save;Uložit]" ..
 					"listring[nodemeta:" .. spos .. ";fuse]" ..
 					"listring[current_player;main]" ..
 					default.get_hotbar_bg(0, 4.85)
 					minetest.show_formspec(player_name, "fireworks_reimagined:settings_" .. minetest.pos_to_string(pos), formspec)
 				elseif privs.fireworks_admin then
 					local formspec = "size[10,12]" ..
-					"label[2.5,0.0;Firework Settings]" ..
-					"checkbox[0.5,1.5;allow_others;Allow others to launch;" .. meta:get_string("allow_others") .. "]" ..
-					"field[0.5,1.5;7.5,0.5;delay;Launch Delay (seconds);" .. meta:get_int("delay") .. "]" ..
-					"field[0.5,3.0;7.5,0.5;cone;First Fireworks Color;" .. meta:get_string("c1") .. "]" ..
-					"field[0.5,4.5;7.5,0.5;ctwo;Second Fireworks Color;" .. meta:get_string("c2") .. "]" ..
-					"button_exit[2.5,5.5;3,1;save;Save]"
+					"label[2.5,0.0;Nastavení odpalovače]" ..
+					"checkbox[0.5,1.5;allow_others;Dovolit odpalování ostatním;" .. meta:get_string("allow_others") .. "]" ..
+					"field[0.5,1.5;7.5,0.5;delay;Zpoždění (v sekundách);" .. meta:get_int("delay") .. "]" ..
+					"field[0.5,3.0;7.5,0.5;cone;Hlavní barva;" .. meta:get_string("c1") .. "]" ..
+					"field[0.5,4.5;7.5,0.5;ctwo;Vedlejší barva;" .. meta:get_string("c2") .. "]" ..
+					"button_exit[2.5,5.5;3,1;save;Uložit]"
 					minetest.show_formspec(player_name, "fireworks_reimagined:settings_" .. minetest.pos_to_string(pos), formspec)
 				end
 			else
 				return false
 			end
 		end,
-		on_rightclick = function(pos, node, clicker)
+		on_punch = function(pos, node, clicker)
 			local meta = minetest.get_meta(pos)
 			local owner = meta:get_string("owner")
 			local player_name = clicker:get_player_name()
@@ -544,7 +586,7 @@ function fireworks_reimagined.register_firework_node(tiles, shape, entity, coold
 					end
 				end)
 			elseif not is_allowed then
-				minetest.chat_send_player(player_name, "You don't have permission to launch this firework.")
+				minetest.chat_send_player(player_name, "Nemáte právo odpalovat z tohoto odpalovače.")
 			elseif privs.fireworks_master or privs.fireworks_admin then
 				minetest.after(delay, function()
 					local firework_entity = minetest.add_entity(pos, entity or "fireworks_reimagined:firework_entity")
@@ -564,7 +606,7 @@ function fireworks_reimagined.register_firework_node(tiles, shape, entity, coold
 					end
 				end)
 			else
-				minetest.chat_send_player(player_name, "Please wait before launching another firework!")
+				minetest.chat_send_player(player_name, "Počkejte prosím před odpálením dalšího ohňostroje!")
 			end
 		end,
 		mesecons = { effector = {
@@ -647,6 +689,9 @@ end)
 
 local registered_fireworks = {}
 function fireworks_reimagined.register_firework_entity(name, def)
+	if def.spiral then
+		error("Spirals not supported on Cesky Hvozd.")
+	end
 	local entity_def = {
 		initial_properties = {
 			fireworks    = true,
@@ -656,10 +701,10 @@ function fireworks_reimagined.register_firework_entity(name, def)
 			physical     = true,
 			collide_with_objects = false,
 			velocity = 0,
+			static_save = false,
 		},
 		yaw = 0,
 		acceleration = 5,
-		static_save = false,
 		firework_shape = def.firework_shape or "sphere",
 		time_remaining = def.time_remaining or 3,
 		spiral = def.spiral or false,
@@ -781,11 +826,11 @@ minetest.register_entity("fireworks_reimagined:firework_entity", {
 		textures = {"fireworks_rocket_white.png"},
 		velocity = 0.5,
 		glow = 5,
+		static_save = false,
 	},
 	firework_shape = "sphere",
 	time_remaining = 2,
 	ip = false,
-	static_save = false,
 	on_step = function(self, dtime)
 		local pos = self.object:get_pos()
 		if not pos then return end
@@ -813,7 +858,7 @@ local cooldown_time = 4
 local user_usage = {}
 
 minetest.register_craftitem("fireworks_reimagined:firework_item", {
-	description = "Firework (Random)",
+	description = "ohňostroj (náhodný)",
 	inventory_image = "fireworks_item.png",
 	on_use = function(itemstack, user, pointed_thing)
 		local player_name = user:get_player_name()
@@ -847,19 +892,19 @@ minetest.register_craftitem("fireworks_reimagined:firework_item", {
 			usage_data.uses = usage_data.uses + 1
 			return itemstack
 		else
-			minetest.chat_send_player(player_name, "You can only use this item 3 times every 4 seconds.")
+			minetest.chat_send_player(player_name, "Tento předmět můžete použít nejvýše třikrát každé 4 sekundy.")
 			return itemstack
 		end
 	end,
 })
 
 minetest.register_privilege("fireworks_master", {
-	description = ("Allows the player with this priv to not be affected by the user cooldown on fireworks."),
+	description = ("Umožňuje hráči/ce obejít omezení intenzity odpalování ohňostrojů."),
 	give_to_singleplayer = false,
 })
 
 minetest.register_privilege("fireworks_admin", {
-	description = ("Administrator priv for fireworks."),
+	description = ("Administrátorské právo k ohňostrojům."),
 	give_to_singleplayer = false,
 })
 
@@ -869,7 +914,7 @@ minetest.register_on_leaveplayer(function(player)
 end)
 
 minetest.register_craftitem("fireworks_reimagined:fuse", {
-	description = ("Fuse"),
+	description = "rozbuška",
 	inventory_image = "farming_string.png^[multiply:#343434",
 	groups = {flammable = 1},
 })
@@ -887,4 +932,19 @@ dofile(modpath.."/crafting.lua")
 dofile(modpath.."/colored.lua")
 dofile(modpath.."/images.lua")
 dofile(modpath.."/default.lua")
-dofile(modpath.."/test.lua")
+-- dofile(modpath.."/test.lua")
+
+minetest.register_craft({
+	output = "fireworks_reimagined:firework_multi 5",
+	recipe = {
+		{"dye:red", "dye:orange", "dye:yellow"},
+		{"tnt:tnt", "dye:white", "tnt:tnt"},
+		{"default:torch", "default:torch", "default:torch"}
+	},
+})
+
+table.sort(shape_selector_nodes)
+ch_core.register_shape_selector_group({
+	width = 6,
+	nodes = shape_selector_nodes,
+})

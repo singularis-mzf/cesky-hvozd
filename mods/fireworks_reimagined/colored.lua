@@ -1,4 +1,4 @@
--- RED
+--[[ RED
 fireworks_reimagined.register_firework_entity("fireworks_reimagined:red_firework_entity", {
 	firework_explosion = function(pos, color1, color2)
 		fireworks_reimagined.spawn_firework_explosion(pos, "#FF0000", "#FF0000", "255", nil, nil)
@@ -61,13 +61,13 @@ fireworks_reimagined.register_firework_entity("fireworks_reimagined:blue_white_f
 })
 
 fireworks_reimagined.register_firework_node(nil, "blue_white", "fireworks_reimagined:blue_white_firework_entity", nil, nil)
-
+]]
 
 
 --==============--
 --=== SPIRAL ===--
 --==============--
-
+--[[
 -- RED
 fireworks_reimagined.register_firework_entity("fireworks_reimagined:red_spiral_firework_entity", {
 	spiral = true,
@@ -109,7 +109,6 @@ minetest.register_alias("fireworks_redo:spawner_red_spiral", "fireworks_reimagin
 minetest.register_alias("fireworks_redo:spawner_yellow_spiral", "fireworks_reimagined:firework_yellow_spiral")
 minetest.register_alias("fireworks_redo:spawner_blue_spiral", "fireworks_reimagined:firework_blue_spiral")
 minetest.register_alias("fireworks_redo:spawner_white_spiral", "fireworks_reimagined:firework_white_spiral")
-
 
 -- RED WHITE
 fireworks_reimagined.register_firework_entity("fireworks_reimagined:red_white_spiral_firework_entity", {
@@ -169,6 +168,7 @@ minetest.register_alias("fireworks:red", "fireworks_reimagined:firework_red")
 minetest.register_alias("fireworks:orange", "fireworks_reimagined:firework_orange")
 minetest.register_alias("fireworks:green", "fireworks_reimagined:firework_green")
 minetest.register_alias("fireworks:violet", "fireworks_reimagined:firework_violet")
+]]
 
 -- MULTI
 
@@ -180,7 +180,7 @@ fireworks_reimagined.register_firework_entity("fireworks_reimagined:multi_firewo
 
 fireworks_reimagined.register_firework_node(nil, "multi", "fireworks_reimagined:multi_firework_entity", nil, nil)
 
---===================================--
+--[[===================================--
 --=== COMPAT FOR YOUR LAND SERVER ===--
 --===================================--
 
@@ -196,3 +196,4 @@ minetest.register_alias("fireworks_redo:spawner_orange", "fireworks_reimagined:f
 minetest.register_alias("fireworks_redo:spawner_green", "fireworks_reimagined:firework_green")
 minetest.register_alias("fireworks_redo:spawner_purple", "fireworks_reimagined:firework_violet")
 minetest.register_alias("fireworks_redo:spawner_cyan", "fireworks_reimagined:firework_cyan")
+]]

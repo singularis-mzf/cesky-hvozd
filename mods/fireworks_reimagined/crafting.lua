@@ -1,4 +1,4 @@
--- Only 0 delay can be crafted.
+--[[ Only 0 delay can be crafted.
 minetest.register_craft({
 	output = "fireworks_reimagined:firework_ring",
 	recipe = {
@@ -31,3 +31,4 @@ minetest.register_craft({
 		{"fireworks_reimagined:firework_green", "fireworks_reimagined:firework_blue", "fireworks_reimagined:firework_violet"}
 	},
 })
+]]

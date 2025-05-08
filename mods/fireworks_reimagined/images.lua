@@ -17,6 +17,7 @@ fireworks_reimagined.register_firework_entity("fireworks_reimagined:2025_firewor
 
 fireworks_reimagined.register_firework_node(nil, "2025", "fireworks_reimagined:2025_firework_entity", 10, 10)
 
+--[[
 --===============--
 --=== CREEPER ===--
 --===============--
@@ -48,3 +49,4 @@ if minetest.get_modpath("mcl_core") or minetest.get_modpath("vlf_core") then
 
 	fireworks_reimagined.register_firework_node(nil, "creeper", "fireworks_reimagined:creeper_firework_entity", 10, 10)
 end
+]]
