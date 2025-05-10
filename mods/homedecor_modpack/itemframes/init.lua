@@ -251,6 +251,10 @@ local function allow_metadata_inventory_take(pos, listname, index, stack, player
 	return 0
 end
 
+local function on_punch(pos, node)
+	update_item(pos, node, core.get_meta(pos))
+end
+
 local function on_rotate(pos, node, user, mode, new_param2)
 	local player_name = user and user:get_player_name()
 	if not player_name then
@@ -292,7 +296,7 @@ local def = {
 	can_dig = can_dig,
 	on_construct = on_construct,
 	on_destruct = on_destruct,
-	on_punch = update_item,
+	on_punch = on_punch,
 	on_rightclick = on_rightclick,
 	on_rotate = on_rotate,
 }
@@ -369,7 +373,7 @@ def = {
 	can_dig = can_dig,
 	on_construct = on_construct,
 	on_destruct = on_destruct,
-	on_punch = update_item,
+	on_punch = on_punch,
 	on_rightclick = on_rightclick,
 	on_rotate = sd_disallow,
 }
