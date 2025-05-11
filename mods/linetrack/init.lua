@@ -13,10 +13,11 @@ for _, name in ipairs({
     "waterline",
     "waterline_boat",
 
-    "roadline",
+    -- "roadline",
     "roadline_bus",
 
     "interlocking",
+    "craft",
 }) do
     dofile(MP .. DIR_DELIM .. "src" .. DIR_DELIM .. name .. ".lua")
 end

@@ -1,0 +1,39 @@
+# textdomain: linetrack
+
+Invisible Platform=neviditelné nástupiště
+
+##[ src/interlocking.lua ]##
+Line Circuit Break=hranice traťového oddílu (TCB) (dráha)
+Road Circuit Break=hranice traťového oddílu (TCB) (dráha)
+Full speed=plná rychlost
+Reduced Speed=omezená rychlost
+Shunt=posun
+Generic Main Signal=obecný hlavní signál
+Road Main Signal=silniční hlavní signál
+
+##[ src/roadline.lua ]##
+Road Line Track=
+LuaAutomation Road Line Track=
+Station/Stop Road Line Track=
+Point Speed Restriction Road Line Track=
+Road Line Track Slope on @1 (lower)=
+Road Line Track Slope on @1 (upper)=
+Road Line Track Slab on @1=
+LuaAutomation Road Line Track Slab on @1=
+Station/Stop Road Line Track Slab on @1=
+Point Speed Restriction Road Line Track Slab on @1=
+
+##[ src/roadline_bus.lua ]##
+!!! Bus off road !!!=autobus mimo dráhu!
+Bus=minibus
+
+##[ src/waterline.lua ]##
+Water Line Track=dráha
+ATC controller Water Line Track=řídicí obvod ATC (dráha)
+LuaAutomation Water Line Track=
+Station/Stop Water Line Track=zastávka (dráha)
+Point Speed Restriction Water Line Track=omezení rychlosti (dráha)
+
+##[ src/waterline_boat.lua ]##
+!!! Boat off line !!!=vozidlo/loď mimo dráhu!
+Boat=loď

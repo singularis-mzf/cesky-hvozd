@@ -140,10 +140,10 @@ local players_smartroute_actions = {}
 function sr.propose_next(pname, sigd, find_more_than, searching_shunt)
 	local tcbs = ildb.get_tcbs(sigd)
 	if not tcbs or not tcbs.routes then
-		minetest.chat_send_player(pname, "Smartroute: TCBS or routes don't exist here!")
+		minetest.chat_send_player(pname, "Hledání cesty: Zde neexistují hranice úseků ani cesty!")
 		return
 	elseif not tcbs.ts_id then
-		minetest.chat_send_player(pname, "Smartroute: No track section directly ahead!")
+		minetest.chat_send_player(pname, "Hledání cesty: Kupředu není žádný úsek!")
 		return
 	end
 	-- Step 1: search for routes using the current settings
@@ -155,14 +155,14 @@ function sr.propose_next(pname, sigd, find_more_than, searching_shunt)
 		found_routes = found_routes
 	}
 	-- step 3: build form
-	local form = "size[5,5]label[0,0;Route search: "..#found_routes.." found]"
+	local form = "size[5,5]label[0,0;Hledání cesty: "..#found_routes.." cest nalezeno]"
 	local tab = {}
 	for idx, froute in ipairs(found_routes) do
-		tab[idx] = minetest.formspec_escape(froute.name.." (Len="..#froute.tcbseq..")")
+		tab[idx] = minetest.formspec_escape(froute.name.." (Délka="..#froute.tcbseq..")")
 	end
 	form=form.."textlist[0.5,1;4,3;rtelist;"..table.concat(tab, ",").."]"
-	form=form.."button[0.5,4;2,1;continue;Search further]"
-	form=form.."button[2.5,4;2,1;apply;Apply]"
+	form=form.."button[0.5,4;2,1;continue;Hledat dál]"
+	form=form.."button[2.5,4;2,1;apply;Použít]"
 	
 	minetest.show_formspec(pname, "at_il_smartroute_propose", form)
 end

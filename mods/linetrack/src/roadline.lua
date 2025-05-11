@@ -1,3 +1,4 @@
+error("This file has been removed from the project")
 -- linetrack/src/roadline.lua
 -- Road lines for buses on various surfaces
 -- Copyright (C) ?  (c) orwell96 and contributors

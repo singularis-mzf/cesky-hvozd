@@ -17,7 +17,7 @@ linetrack.register_wagon("bus", {
         "linetrack_bus_light_yellow.png",
         "linetrack_bus_windows.png"
     },
-    drives_on = { roadline = true },
+    drives_on = { default = true },
     max_speed = 15,
     seats = {
         {
@@ -97,7 +97,11 @@ linetrack.register_wagon("bus", {
     collisionbox = { -2.0, -3.0, -2.0, 2.0, 4.0, 2.0 },
     is_locomotive = true,
     wagon_width = 3,
-    drops = { "default:steelblock 4" },
+    drops = {
+        "default:steel_ingot 5",
+        "minitram_crafting_recipes:minitram_door",
+        "technic:rubber 2"
+    },
     horn_sound = "linetrack_boat_horn",
     offtrack = S("!!! Bus off road !!!"),
 }, S("Bus"), "linetrack_tcb.png")

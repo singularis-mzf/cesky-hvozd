@@ -6,6 +6,8 @@
 
 local S = core.get_translator("linetrack")
 
+core.settings:set_bool("linetracks_use_luaautomation", false) -- do not use luaautomation
+
 for _, mod in ipairs({
     "luaautomation",
     "line_automation",
@@ -18,7 +20,7 @@ for _, mod in ipairs({
             linetrack["use_" .. mod] = true
         else
             core.log("warning",
-                "[linetracks] " .. mod .. " support requestsed but advtrains_" .. mod " is not enabled.")
+                "[linetracks] " .. mod .. " support requestsed but advtrains_" .. mod .. " is not enabled.")
         end
     end
 end
@@ -52,3 +54,8 @@ core.register_node("linetrack:invisible_platform", {
     paramtype = "light",
     sunlight_propagates = true,
 })
+
+function linetrack.play_object_sound(name, gain, object)
+    -- core.sound_play({name = name, gain = gain}, {object = object})
+    return core.sound_play({name = name, gain = gain}, {pos = object:get_pos(), max_hear_distance = 128})
+end

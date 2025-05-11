@@ -6,6 +6,9 @@
 
 local S = core.get_translator("linetrack")
 
+local play_object_sound = linetrack.play_object_sound
+-- (name, gain, object)
+
 local exhaust_particle_spawner_base = {
     amount = 10,
     time = 0,
@@ -39,7 +42,7 @@ linetrack.register_wagon("boat", {
         "linetrack_lifering.png",           --y
         "linetrack_boat_windows.png",
     },
-    drives_on = { waterline = true },
+    drives_on = { default = true },
     max_speed = 10,
     seats = {
         {
@@ -138,10 +141,15 @@ linetrack.register_wagon("boat", {
     door_entry = { -3 },
     visual_size = { x = 1, y = 1 },
     wagon_span = 2,
-    collisionbox = { -2.0, -3.0, -2.0, 2.0, 4.0, 2.0 },
+    -- collisionbox = { -2.0, -3.0, -2.0, 2.0, 4.0, 2.0 },
     is_locomotive = true,
     wagon_width = 5,
-    drops = { "default:steelblock 4" },
+    drops = {
+        "moreblocks:slab_obsidian_glass_2 2",
+        "doors:door_steel",
+        "summer:barca_blue_item",
+        "default:steelblock 5"
+    },
     horn_sound = "linetrack_boat_horn",
     offtrack = S("!!! Boat off line !!!"),
     custom_on_destroy = function(self)
@@ -165,7 +173,7 @@ linetrack.register_wagon("boat", {
                     attached = self.object
                 })),
             }
-            core.sound_play("linetrack_boat_start", { object = self.object })
+            play_object_sound("linetrack_boat_start", 1.0, self.object)
             return
         end
         if velocity == 0 then
@@ -179,7 +187,7 @@ linetrack.register_wagon("boat", {
                 end
             end
             if old_velocity > 0 then
-                core.sound_play("linetrack_boat_stop", { object = self.object })
+                play_object_sound("linetrack_boat_stop", 1.0, self.object)
             end
             return
         end
@@ -188,11 +196,11 @@ linetrack.register_wagon("boat", {
             if delta >= self.rev_tmr then
                 self.rev_tmr = nil
                 if self.rev_high then
-                    core.sound_play({ name = "linetrack_boat_idle_high", gain = 1 }, { object = self.object })
+                    play_object_sound("linetrack_boat_idle_high", 1.0, self.object)
                     self.rev_start = core.get_us_time()
                     self.rev_tmr = 2.8 * 1000000
                 else
-                    core.sound_play({ name = "linetrack_boat_idle_low", gain = 1 }, { object = self.object })
+                    play_object_sound("linetrack_boat_idle_low", 1.0, self.object)
                     self.rev_start = core.get_us_time()
                     self.rev_tmr = 2.1 * 1000000
                 end
@@ -200,24 +208,24 @@ linetrack.register_wagon("boat", {
         elseif velocity > 0 then
             if velocity ~= old_velocity then
                 if old_velocity < 5 and velocity > 5 then
-                    core.sound_play({ name = "linetrack_boat_revup", gain = 1 }, { object = self.object })
+                    play_object_sound("linetrack_boat_revup", 1.0, self.object)
                     self.rev_start = core.get_us_time()
                     self.rev_tmr = 2813000
                     self.rev_high = true
                 elseif old_velocity > 5 and velocity < 5 then
-                    core.sound_play({ name = "linetrack_boat_revdown", gain = 1 }, { object = self.object })
+                    play_object_sound("linetrack_boat_revdown", 1.0, self.object)
                     self.rev_start = core.get_us_time()
                     self.rev_tmr = 373000
                     self.rev_high = false
                 end
             elseif self.rev_start and self.rev_tmr and (core.get_us_time() - self.rev_start) >= self.rev_tmr then
                 if velocity > 5 then
-                    core.sound_play({ name = "linetrack_boat_idle_high", gain = 1 }, { object = self.object })
+                    play_object_sound("linetrack_boat_idle_high", 1.0, self.object)
                     self.rev_start = core.get_us_time()
                     self.rev_tmr = 2.8 * 1000000
                     self.rev_high = true
                 else
-                    core.sound_play({ name = "linetrack_boat_idle_low", gain = 1 }, { object = self.object })
+                    play_object_sound("linetrack_boat_idle_low", 1.0, self.object)
                     self.rev_start = core.get_us_time()
                     self.rev_tmr = 2.1 * 1000000
                     self.rev_high = false

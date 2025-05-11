@@ -8,6 +8,24 @@ if not linetrack.use_interlocking then return end
 
 local S = core.get_translator("linetrack")
 
+local function correct_pointed_thing(pointed_thing)
+    if pointed_thing.type == "node" then
+        local under = pointed_thing.under
+        local above = pointed_thing.above
+        local debug_under = vector.copy(under)
+        local debug_above = vector.copy(above)
+        if above.y == under.y + 1 and above.x == under.x and above.z == under.z then
+            under.y = above.y
+            above.x = under.x - 1
+        end
+    end
+    return pointed_thing
+end
+
+local function water_on_place(itemstack, placer, pointed_thing)
+    return core.item_place(itemstack, placer, correct_pointed_thing(pointed_thing))
+end
+
 -- TCBs
 do
     local at_tcb = core.registered_nodes["advtrains_interlocking:tcb_node"]
@@ -32,6 +50,7 @@ do
             --save_in_at_nodedb=2,
             at_il_track_circuit_break = 1,
         },
+        on_place = water_on_place,
         after_place_node = at_tcb.after_place_node,
         on_rightclick = at_tcb.on_rightclick,
         can_dig = at_tcb.can_dig,
@@ -49,6 +68,7 @@ do
         inventory_image = "linetrack_lane_tcb.png",
         description = S("Road Circuit Break"),
         sunlight_propagates = true,
+        liquids_pointable = true,
         node_box = {
             type = "fixed",
             fixed = { -0.5, -0.5, -0.5, 0.5, -0.49, 0.5 }
@@ -59,6 +79,7 @@ do
             --save_in_at_nodedb=2,
             at_il_track_circuit_break = 1,
         },
+        on_place = water_on_place,
         after_place_node = at_tcb.after_place_node,
         on_rightclick = at_tcb.on_rightclick,
         can_dig = at_tcb.can_dig,
@@ -126,6 +147,7 @@ for typ, prts in pairs(all_sigs) do
         on_rightclick = advtrains.interlocking.signal.on_rightclick,
         can_dig = advtrains.interlocking.signal.can_dig,
         after_dig_node = advtrains.interlocking.signal.after_dig,
+        on_place = water_on_place,
         -- new signal API
         advtrains = {
             main_aspects = mainaspects,
@@ -149,6 +171,7 @@ for typ, prts in pairs(all_sigs) do
         paramtype = "light",
         paramtype2 = "facedir",
         sunlight_propagates = true,
+        liquids_pointable = true,
         walkable = false,
 
         groups = {
@@ -163,6 +186,7 @@ for typ, prts in pairs(all_sigs) do
         on_rightclick = advtrains.interlocking.signal.on_rightclick,
         can_dig = advtrains.interlocking.signal.can_dig,
         after_dig_node = advtrains.interlocking.signal.after_dig,
+        on_place = water_on_place,
         -- new signal API
         advtrains = {
             main_aspects = mainaspects,

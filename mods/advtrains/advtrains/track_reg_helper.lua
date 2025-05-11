@@ -531,7 +531,7 @@ function advtrains.register_tracks(tracktype, def, preset)
 			inventory_image = def.texture_prefix.."_placer.png",
 			wield_image = def.texture_prefix.."_placer.png",
 			groups={advtrains_trackplacer=1, digtron_on_place=1},
-			liquids_pointable = false,
+			liquids_pointable = true,
 			on_place = function(itemstack, placer, pointed_thing)
 				local name = placer:get_player_name()
 				if not name then
@@ -543,8 +543,19 @@ function advtrains.register_tracks(tracktype, def, preset)
 					if not advtrains.check_track_protection(pos, name) then
 						return itemstack, false
 					end
-					if minetest.registered_nodes[minetest.get_node(pos).name] and minetest.registered_nodes[minetest.get_node(pos).name].buildable_to then
-						local s = minetest.registered_nodes[minetest.get_node(upos).name] and minetest.registered_nodes[minetest.get_node(upos).name].walkable
+					local node = core.get_node(pos)
+					local nname = node.name
+					local ndef = core.registered_nodes[nname]
+					if ndef ~= nil and ndef.buildable_to then
+						local s
+						if def.suitable_substrate ~= nil then
+							s = def.suitable_substrate(upos)
+						else
+							local unode = core.get_node(upos)
+							local uname = unode.name
+							local udef = core.registered_nodes[uname]
+							s = udef ~= nil and udef.walkable
+						end
 						if s then
 	--						minetest.chat_send_all(nnprefix)
 							local yaw = placer:get_look_horizontal()
@@ -694,6 +705,21 @@ function sl.register_placer(def, preset)
 		on_place = sl.create_slopeplacer_on_place(def, preset)
 	})
 end
+
+local function check_slope_exists(nodename_prefix, lookup, step)
+	if not lookup[step] then
+		return false
+	end
+	local placenodes = lookup[step]
+	while step > 0 do
+		if core.registered_nodes[nodename_prefix.."_"..placenodes[step]] == nil then
+			return false
+		end
+		step=step-1
+	end
+	return true
+end
+
 --(itemstack, placer, pointed_thing)
 function sl.create_slopeplacer_on_place(def, preset)
 	return function(istack, player, pt)
@@ -748,7 +774,7 @@ function sl.create_slopeplacer_on_place(def, preset)
 			--next node solid?
 			if not minetest.registered_nodes[node.name] or not minetest.registered_nodes[node.name].buildable_to or advtrains.is_protected(pos, player:get_player_name()) then 
 				--do slopes of this distance exist?
-				if lookup[step] then
+				if check_slope_exists(def.nodename_prefix, lookup, step) then
 					if minetest.settings:get_bool("creative_mode") or istack:get_count()>=step then
 						--start placing
 						local placenodes=lookup[step]
@@ -772,7 +798,7 @@ function sl.create_slopeplacer_on_place(def, preset)
 			pos=vector.add(pos, dirvec)
 		end
 		minetest.chat_send_player(player:get_player_name(), attrans("Can't place: no supporting node at upper end."))
-		return itemstack
+		return istack
 	end
 end
 
