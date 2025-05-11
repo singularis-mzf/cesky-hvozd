@@ -221,6 +221,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Původní licence: LGPLv2.1 pro kód, CC BY-SA 3.0 pro média
 * Licence úprav: LGPLv2.1 pro kód, CC BY-SA 3.0 pro média
 
+## Linetrack
+
+* Zdroj: [https://github.com/C-C-Minetest-Server/linetrack](https://github.com/C-C-Minetest-Server/linetrack), revize 2ee1f34fc46b0ed4b49d5510d4eb51e38e6dc498
+* Původní licence: kód LGPLv2.1, zvuky CC BY 3.0 (jeden public domain), modely a textury pravděpodobně LGPLv2.1
+* Licence úprav: kód LGPLv2.1, zvuky CC BY 3.0, ostatní LGPLv2.1
+* [ContentDB](https://content.luanti.org/packages/Emojiminetest/linetrack/)
+
 ## Tieless Tracks (minetest\_tieless\_tracks)
 
 * Zdroj: [https://github.com/SamMatzko/minetest\_tieless\_tracks](https://github.com/SamMatzko/minetest\_tieless\_tracks), revize 0424a3408af080a6f74246fd684227470f9a41c3
@@ -1194,6 +1201,12 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Zdroj: [https://github.com/Grizzly-Adam/BBQ](https://github.com/Grizzly-Adam/BBQ), revize 1a72f7c2baacc6798033a7973545ab74cc52341e
 * Původní licence: LGPLv2.1+ (kód), CC-BY-SA-3.0 (textury), CC-BY-3.0 (zvuky)
 * [ContentDB](https://content.minetest.net/packages/Grizzly%20Adam/bbq/)
+
+## Bonified (Bonified)
+
+* Zdroj: [https://github.com/Shqug/Bonified](https://github.com/Shqug/Bonified), revize 40601c5e95cfcabb48963a6ff81bb0bf150cfad3
+* Původní licence: Apache 2.0 (kód), CC-BY-SA-4.0 (média)
+* [ContentDB](https://content.luanti.org/packages/Hagatha/bonified/)
 
 ## Books Redux (books\_rx)
 

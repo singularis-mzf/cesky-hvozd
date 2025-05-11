@@ -7,6 +7,7 @@ ch_overrides = {}
 
 local mods = {
 	"books",
+	"bones",
 	"cavestuff",
 	"currency",
 	"darkage",

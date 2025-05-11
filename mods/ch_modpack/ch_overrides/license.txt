@@ -2,7 +2,7 @@ License of source code
 ----------------------
 
 GNU Lesser General Public License, version 2.1
-Copyright (C) 2022-2024 Singularis <singularis@volny.cz>
+Copyright (C) 2022-2025 Singularis <singularis@volny.cz>
 
 This program is free software; you can redistribute it and/or modify it under the terms
 of the GNU Lesser General Public License as published by the Free Software Foundation;
@@ -691,3 +691,9 @@ basic_materials_concrete_block.png
 	License: CC BY-SA 4.0
 	Used source:
 	- https://commons.wikimedia.org/wiki/File:Concrete_floor_03_rough_16k_(Matterfield_and_Rob_Tuytel_via_Poly_Haven).png (Matterfield and Rob Tuytel via Poly Haven, license: CC0)
+
+bonified_bone_pile.obj
+bonified_bone_pile.png
+bonified_bone_pile_base.png
+	Author: Shqug (from GitHub)
+	License: CC BY-SA 4.0
