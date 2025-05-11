@@ -121,7 +121,7 @@ local function delete_player(player_name)
 		return false
 	end
 	-- detach offline_playerinfo:
-	local offline_player_info = assert(ch_core.offline_charinfo[player_name].player)
+	local offline_player_info = assert(ch_data.offline_charinfo[player_name].player)
 	local aliases = {}
 	for alias, offline_charinfo in pairs(ch_data.offline_charinfo) do
 		if alias ~= player_name and offline_charinfo.player.name == player_name then
@@ -681,9 +681,10 @@ local function merge_playerinfos(player_name_a, player_name_b)
 			table.insert(aliases, alias)
 		end
 	end
+	ch_data.save_offline_charinfo(dotplayer_b)
 	for _, alias in ipairs(aliases) do
 		ch_data.offline_charinfo[alias].player = oci_a.player
-		ch_data.save_offline_playerinfo(alias)
+		ch_data.save_offline_charinfo(alias)
 		core.log("action", "[MERGE] Player info of .player "..dotplayer_a.." assigned to player "..alias..".")
 	end
 	return true, "Postavy "..table.concat(aliases, ",").." přiřazeny hráči/ce "..dotplayer_a.."."
@@ -696,7 +697,7 @@ local function set_main_player(player_name)
 	end
 	local old_main = assert(oci_a.player.name)
 	if old_main == player_name then
-		return false, "Postava '"..player_name_a.."' již je hlavní."
+		return false, "Postava '"..player_name.."' již je hlavní."
 	end
 	local aliases = {}
 	for alias, offline_charinfo in pairs(ch_data.offline_charinfo) do
@@ -705,8 +706,9 @@ local function set_main_player(player_name)
 		end
 	end
 	oci_a.player.name = player_name
+	ch_data.save_offline_charinfo(old_main)
 	for _, alias in ipairs(aliases) do
-		ch_data.save_offline_playerinfo(alias)
+		ch_data.save_offline_charinfo(alias)
 	end
 	return true, "Postava "..player_name.." nastavena jako hlavní (původní hlavní postava: "..old_main..")."
 end

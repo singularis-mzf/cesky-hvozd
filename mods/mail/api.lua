@@ -10,6 +10,18 @@ function mail.register_on_receive(func)
 	mail.registered_on_receives[#mail.registered_on_receives + 1] = func
 end
 
+local function insert_message(list, msg)
+	assert(type(list) == "table")
+	local id = assert(msg.id)
+	for _, lmsg in ipairs(list) do
+		if lmsg.id == id then
+			return false -- duplicity
+		end
+	end
+	table.insert(list, msg)
+	return true
+end
+
 function mail.send(m)
 	if type(m.from) ~= "string" then return false, "'from' is not a string" end
 	if type(m.to or "") ~= "string" then return false, "'to' is not a string" end
@@ -87,7 +99,7 @@ function mail.send(m)
 	-- add in every receivers inbox
 	for recipient in pairs(recipients) do
 		entry = mail.get_storage_entry(recipient)
-		table.insert(entry.inbox, msg)
+		insert_message(entry.inbox, msg)
 		mail.set_storage_entry(recipient, entry)
 	end
 

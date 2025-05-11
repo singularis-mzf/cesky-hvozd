@@ -113,4 +113,5 @@ function mail.show_inbox(name, sortfieldindex, sortdirection, filter)
     end
 
     minetest.show_formspec(name, "mail:inbox", table.concat(formspec, ""))
+	mail.hud_update(name, entry.inbox) 
 end

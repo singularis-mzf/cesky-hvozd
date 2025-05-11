@@ -14,10 +14,22 @@ local function populate_entry(e)
 	return e
 end
 
+local function charname_to_playername(charname)
+	assert(type(charname) == "string")
+	local offline_charinfo = ch_data.offline_charinfo[charname]
+	if offline_charinfo ~= nil then
+		return assert(offline_charinfo.player.name)
+	else
+		core.log("warning", "[mail] charname_to_playername resolution failed for: '"..charname.."'!")
+		return charname
+	end
+end
+
 local cache = {}
 
 -- retrieve the storage entry for the player
 function mail.get_storage_entry(playername)
+	playername = charname_to_playername(playername)
 	local key = STORAGE_PREFIX .. playername
 	if cache[key] then
 		-- use cached entry
@@ -45,6 +57,7 @@ local save_queued_entries = {}
 
 -- save the storage entry for the player
 function mail.set_storage_entry(playername, entry)
+	playername = charname_to_playername(playername)
 	local key = STORAGE_PREFIX .. playername
 	-- cache
 	cache[key] = entry
