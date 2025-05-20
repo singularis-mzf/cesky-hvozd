@@ -219,8 +219,8 @@ then
     groups = core.registered_nodes["advtrains_line_automation:jrad_on_pole"].groups or {}
     core.override_item("advtrains_line_automation:jrad_on_pole", override)
     ch_core.register_shape_selector_group({nodes = {
-        {name = "advtrains_line_automation:jrad", param2 = 0xf400},
-        {name = "advtrains_line_automation:jrad_on_pole", param2 = 0xf400},
+        {name = "advtrains_line_automation:jrad", param2 = 0xff00},
+        {name = "advtrains_line_automation:jrad_on_pole", param2 = 0xff00},
     }})
     core.register_craft({
         output = "advtrains_line_automation:jrad_on_pole",

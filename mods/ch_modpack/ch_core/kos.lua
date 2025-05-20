@@ -197,6 +197,8 @@ function minetest.item_drop(itemstack, dropper, pos)
 	if dropper ~= nil and dropper.get_player_name ~= nil and dropper.get_pos ~= nil then
 		dropper_name = dropper:get_player_name()
 		dropper_pos = core.pos_to_string(vector.round(dropper:get_pos()))
+	elseif pos ~= nil then
+		dropper_pos = core.pos_to_string(vector.round(pos))
 	end
 	local item_name = itemstack:get_name()
 	if core.registered_items[item_name] ~= nil then

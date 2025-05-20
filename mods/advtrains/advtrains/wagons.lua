@@ -8,7 +8,7 @@
 -- Only data that are only important to the entity itself are stored in the luaentity
 
 -- TP delay when getting off wagon
-local GETOFF_TP_DELAY = 0.5
+local GETOFF_TP_DELAY = 0.25
 
 local IGNORE_WORLD = advtrains.IGNORE_WORLD
 local has_wielded_light = core.get_modpath("wielded_light")

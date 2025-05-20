@@ -26,6 +26,27 @@ for _, mod in ipairs({
 end
 
 linetrack.register_wagon = advtrains.register_wagon
+
+local function correct_pointed_thing(pointed_thing)
+    if pointed_thing.type == "node" then
+        local under = pointed_thing.under
+        local above = pointed_thing.above
+        local debug_under = vector.copy(under)
+        local debug_above = vector.copy(above)
+        if above.y == under.y + 1 and above.x == under.x and above.z == under.z then
+            under.y = above.y
+            above.x = under.x - 1
+            --[[ print("correct_pointed_thing() upgrade: under = "..core.pos_to_string(debug_under).." => "..core.pos_to_string(under)..
+                ", above ="..core.pos_to_string(debug_above).." => "..core.pos_to_string(above)) ]]
+        end
+    end
+    return pointed_thing
+end
+
+function linetrack.water_on_place(itemstack, placer, pointed_thing)
+    return core.item_place(itemstack, placer, correct_pointed_thing(pointed_thing))
+end
+
 if core.global_exists("advtrains_attachment_offset_patch") then
     linetrack.register_wagon = function(name, wagon, ...)
         advtrains_attachment_offset_patch.setup_advtrains_wagon(wagon)
@@ -43,16 +64,18 @@ core.register_node("linetrack:invisible_platform", {
     inventory_image = "linetrack_invisible_platform.png",
     wield_image = "linetrack_invisible_platform.png",
     walkable = false,
-    node_box = {
+    selection_box = {
         type = "fixed",
         fixed = {
             { -0.5, -0.1, -0.1, 0.5, 0,    0.5 },
             { -0.5, -0.5, 0,    0.5, -0.1, 0.5 }
         },
     },
-    paramtype2 = "facedir",
     paramtype = "light",
+    paramtype2 = "4dir",
     sunlight_propagates = true,
+    liquids_pointable = true,
+    on_place = assert(linetrack.water_on_place),
 })
 
 function linetrack.play_object_sound(name, gain, object)

@@ -8,23 +8,7 @@ if not linetrack.use_interlocking then return end
 
 local S = core.get_translator("linetrack")
 
-local function correct_pointed_thing(pointed_thing)
-    if pointed_thing.type == "node" then
-        local under = pointed_thing.under
-        local above = pointed_thing.above
-        local debug_under = vector.copy(under)
-        local debug_above = vector.copy(above)
-        if above.y == under.y + 1 and above.x == under.x and above.z == under.z then
-            under.y = above.y
-            above.x = under.x - 1
-        end
-    end
-    return pointed_thing
-end
-
-local function water_on_place(itemstack, placer, pointed_thing)
-    return core.item_place(itemstack, placer, correct_pointed_thing(pointed_thing))
-end
+local water_on_place = linetrack.water_on_place
 
 -- TCBs
 do

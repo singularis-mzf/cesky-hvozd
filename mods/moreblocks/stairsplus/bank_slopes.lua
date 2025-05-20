@@ -102,7 +102,7 @@ function stairsplus:register_bank_slopes_internal(recipeitem, modname, subname)
 				end
 			end
 			new_def.paramtype = "none"
-			new_def.paramtype2 = "4dir"
+			new_def.paramtype2 = "facedir"
 			new_def._transparency = 0 -- for mod shadows
 
 			local groups = new_def.groups or {}
