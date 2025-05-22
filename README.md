@@ -1422,3 +1422,7 @@ Z následujících zdrojů jsou v repozitáři pouze kontrolní součty soubor
 * Zdroj: [https://github.com/Sharpik/Minetest-SharpNet-Photo-Realism-Texturespack](https://github.com/Sharpik/Minetest-SharpNet-Photo-Realism-Texturespack), revize a9b3d8805d84b44d1d7cb497ef092cf834bfe61e
 * Původní licence: část souborů Unlicense, zbytek GPLv3 nebo CC BY-SA nejasné verze.
 * [ContentDB](https://content.minetest.net/packages/Sharpik/sharpnet\_textures/)
+
+# Ostatní soubory
+
+/utils/colors.txt -- mapování barev pro MinetestMapper -- licence: CC0 (automaticky generováno)

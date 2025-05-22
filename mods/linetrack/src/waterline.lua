@@ -6,6 +6,8 @@
 
 local S = core.get_translator("linetrack")
 
+local _ch_map_color = 0x777b7f
+
 -- Require patch to work
 -- Patch: Allow using def.suitable_substrate to override default substrate detection
 -- https://lists.sr.ht/~gpcf/advtrains-devel/patches/58713
@@ -35,6 +37,7 @@ advtrains.register_tracks("default", {
                 not_blocking_trains = 1,
             },
             use_texture_alpha = "blend",
+            _ch_map_color = _ch_map_color,
         }
     end
 }, advtrains.ap.t_30deg_flat)
@@ -73,6 +76,7 @@ advtrains.register_tracks("default", {
                 not_blocking_trains = 1,
             },
             use_texture_alpha = "blend",
+            _ch_map_color = _ch_map_color,
         }
     end
 }, advtrains.ap.t_30deg_slope)
@@ -122,6 +126,7 @@ if linetrack.use_luaautomation then
                     not_blocking_trains = 1,
                 },
                 use_texture_alpha = "blend",
+                _ch_map_color = _ch_map_color,
             }
         end
     }, advtrains.trackpresets.t_30deg_straightonly)
@@ -157,6 +162,7 @@ if linetrack.use_line_automation then
                     not_blocking_trains = 1,
                 },
                 use_texture_alpha = "blend",
+                _ch_map_color = _ch_map_color,
             }
         end
     }, advtrains.trackpresets.t_30deg_straightonly)
@@ -191,6 +197,7 @@ if linetrack.use_interlocking then
                     not_blocking_trains = 1,
                 },
                 use_texture_alpha = "blend",
+                _ch_map_color = _ch_map_color,
             }
         end
     }, advtrains.trackpresets.t_30deg_straightonly)

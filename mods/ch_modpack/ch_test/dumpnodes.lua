@@ -38,7 +38,17 @@ local function dumpnodes(admin_name, param)
         f:write("# "..mod.."\n")
         for _, name in ipairs(nodes) do
             local ndef = set[name]
-            if ndef.drawtype ~= "airlike" then
+            if ndef._ch_map_color ~= nil and tonumber(ndef._ch_map_color) ~= nil then
+                -- fixed color (0xRRGGBB)
+                local n = tonumber(ndef._ch_map_color)
+                if n ~= -1 then -- -1 => ignore
+                    if n ~= math.floor(n) or n < 0 or n > 0xFFFFFF then
+                        error("Invalid _ch_map_color for "..mod..":"..name.."!")
+                    end
+                    f:write(mod..":"..name.." ".."&"..bit.rshift(n, 16).."&"..bit.band(bit.rshift(n, 8), 0xff).."&"..bit.band(n, 0xff).."\n")
+                    count = count + 1
+                end
+            elseif ndef.drawtype ~= "airlike" then
                 local tile = ndef.tiles
                 if type(tile) ~= "string" then
                     if type(tile[1]) == "string" then
