@@ -708,6 +708,12 @@ drinks.add_drink("vajliker", "vaječný likér", "#fed585", {
 	[glass_bottle..":alcohol"] = 1,
 })
 
+drinks.add_drink("zincica", "žinčica", "#faf0da", {
+	drink_desc2 = "žinčici",
+	drink_desc4 = "žinčicu",
+	[bucket] = false,
+})
+
 -- Generate recipes for drinks and bottles
 
 local vessels_0_2 = {glass}
@@ -842,6 +848,20 @@ minetest.register_craft({
          {'group:wood', 'group:wood', 'group:wood'},
          {slab_str, '', slab_str},
          }
+})
+
+core.register_craft({
+	type = "cooking",
+	output = "drinks:jcu_zincica",
+	recipe = "mobs:glass_milk",
+	cooktime = 4.0,
+})
+
+core.register_craft({
+	type = "cooking",
+	output = "drinks:jbo_zincica",
+	recipe = "drinks:jbo_milk",
+	cooktime = 4.0,
 })
 
 dofile(minetest.get_modpath('drinks')..'/drink_machines.lua')
