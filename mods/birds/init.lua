@@ -397,10 +397,26 @@ end
 local timeout = 0
 local itable = {}
 
+local function get_players_for_birds()
+	local result = {}
+	local t = ch_time.herni_cas()
+	if t ~= nil and t.day_night_ratio >= 0.5 then
+		local all_players = core.get_connected_players()
+		for _, player in ipairs(all_players) do
+			local custom_ratio = player:get_day_night_ratio()
+			if custom_ratio == nil or custom_ratio >= 0.5 then
+				table.insert(result, player)
+			end
+		end
+	end
+	return result
+end
+
 minetest.register_globalstep(function(dtime)
 	timeout = timeout - dtime
 	if timeout <= 0 and totalBirdCount < minBirds then
-		local list = minetest.get_connected_players()
+		-- local list = minetest.get_connected_players()
+		local list = get_players_for_birds()
 		if #list == 0 then timeout = 3 return end
 		local p = list[math.ceil(math.random()*#list)]
 		local pos = p:get_pos()
