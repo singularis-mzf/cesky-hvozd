@@ -18,7 +18,7 @@ minetest.register_craft({
 minetest.register_craftitem("farming:glass_water", {
 	description = S("Glass of Water"),
 	inventory_image = "farming_water_glass.png",
-	groups = {food_water_glass = 1, flammable = 3, vessel = 1}
+	groups = {food_water_glass = 1, flammable = 3, vessel = 1},
 })
 
 minetest.register_craft({

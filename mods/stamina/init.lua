@@ -552,8 +552,8 @@ function stamina.eat(hp_change, replace_with_item, itemstack, user, pointed_thin
 	or item_name == "mobs:glass_milk"
 	or item_name == "farming:soy_milk" then
 
-		stamina.players[name].poisoned = 0
-		stamina.players[name].drunk = 0
+		stamina.players[name].poisoned = nil
+		stamina.players[name].drunk = nil
 	end
 
 	itemstack:take_item()

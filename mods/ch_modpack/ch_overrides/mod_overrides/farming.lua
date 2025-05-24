@@ -82,6 +82,7 @@ local bowls = {
 	["farming:spanish_potatoes"] = "farming:bowl",
 	["farming:potato_omelet"] = "farming:bowl",
 	["farming:paella"] = "farming:bowl",
+	["farming:soy_milk"] = "vessels:drinking_glass",
 }
 
 for name, def in pairs(minetest.registered_items) do
@@ -100,3 +101,9 @@ for name, value in pairs(extra_food) do
 		minetest.override_item(name, {groups = groups, on_use = ch_core.item_eat()})
 	end
 end
+
+
+core.override_item("farming:glass_water", {
+	groups = ch_core.override_groups(assert(core.registered_items["farming:glass_water"].groups), {drink = 2}),
+	on_use = ch_core.item_eat("vessels:drinking_glass"),
+})

@@ -250,3 +250,9 @@ ch_extras_zpet.png
 	License: CC0
 	Used source:
 	- "mobs_protector.png" from https://notabug.org/TenPlus1/mobs_redo (author: TenPlus1; license: CC0)
+
+ch_extras_halusky.png
+	Author: Matus Kacmar <https://www.flickr.com/photos/55143877@N00>
+	Modified by: Singularis
+	License: CC BY 2.0 Generic (https://creativecommons.org/licenses/by/2.0/deed.en)
+	Source: https://commons.wikimedia.org/wiki/File:Bryndzov%C3%A9_halu%C5%A1ky.jpg

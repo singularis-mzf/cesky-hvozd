@@ -116,6 +116,27 @@ minetest.register_craft({
 	},
 })
 
+
+-- halusky
+---------------------------------------------------------------
+core.register_craftitem("ch_extras:halusky", {
+	description = "halušky",
+	inventory_image = "ch_extras_halusky.png",
+	wield_image = "ch_extras_halusky.png",
+	groups = {food = 6, ch_food = 6},
+	on_use = ch_core.item_eat(),
+})
+
+core.register_craft({
+	output = "ch_extras:halusky 2",
+	recipe = {
+		{"farming:flour", "farming:flour", "farming:flour"},
+		{"cheese:ricotta", "farming:glass_water", "cheese:ricotta"},
+		{"", "", ""},
+	},
+	replacements = {{"farming:glass_water", "vessels:drinking_glass"}},
+})
+
 -- ice -> water_source
 ---------------------------------------------------------------
 minetest.register_craft({
