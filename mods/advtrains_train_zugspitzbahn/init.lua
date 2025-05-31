@@ -145,7 +145,7 @@ advtrains.register_wagon("wagon_zugspitzbahn_green", {
 
 local def = {
 	mesh="advtrains_wagon_bzb.b3d",
-	textures = {"advtrains_bzb_test.png"},
+	textures = {"advtrains_bzb_new.png"},
 	drives_on={default=true},
 	max_speed=20,
 	seats = {
@@ -225,14 +225,14 @@ local def = {
 	light_level = 10,
 	collisionbox = {-1.0, -0.5, -1.0, 1.0, 2.5, 1.0},
 	is_locomotive = true,
-	drops={"advtrains:wagon_zugspitzbahn_test"},
+	drops={"advtrains:wagon_zugspitzbahn_new"},
 }
 
 if has_offset_patch and advtrains_attachment_offset_patch and advtrains_attachment_offset_patch.setup_advtrains_wagon then
 	advtrains_attachment_offset_patch.setup_advtrains_wagon(def)
 end
 
-advtrains.register_wagon("wagon_zugspitzbahn_test", def, "nová motorová jednotka (experimentální)", "advtrains_wagon_bzb_green_inv.png") 
+advtrains.register_wagon("wagon_zugspitzbahn_new", def, "nová motorová jednotka", "advtrains_wagon_bzb_new_inv.png") 
 
 
 minetest.register_craft({
