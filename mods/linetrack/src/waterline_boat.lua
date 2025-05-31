@@ -141,6 +141,7 @@ linetrack.register_wagon("boat", {
     door_entry = { -3 },
     visual_size = { x = 1, y = 1 },
     wagon_span = 2,
+    light_level = 10,
     -- collisionbox = { -2.0, -3.0, -2.0, 2.0, 4.0, 2.0 },
     is_locomotive = true,
     wagon_width = 5,

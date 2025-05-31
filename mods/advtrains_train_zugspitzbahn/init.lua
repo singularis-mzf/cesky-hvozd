@@ -223,7 +223,7 @@ local def = {
 	visual_size = {x=1, y=1},
 	wagon_span=3,
 	light_level = 10,
-	collisionbox = {-1.0,-0.5,-1.0, 1.0,2.5,1.0},
+	collisionbox = {-1.0, -0.5, -1.0, 1.0, 2.5, 1.0},
 	is_locomotive = true,
 	drops={"advtrains:wagon_zugspitzbahn_test"},
 }

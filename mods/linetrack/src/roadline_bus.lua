@@ -94,6 +94,7 @@ linetrack.register_wagon("bus", {
     use_texture_alpha = true,
     backface_culling = false,
     wagon_span = 3,
+    light_level = 10,
     collisionbox = { -2.0, -3.0, -2.0, 2.0, 4.0, 2.0 },
     is_locomotive = true,
     wagon_width = 3,
