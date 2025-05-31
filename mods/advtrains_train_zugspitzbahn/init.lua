@@ -225,7 +225,14 @@ local def = {
 	light_level = 10,
 	collisionbox = {-1.0, -0.5, -1.0, 1.0, 2.5, 1.0},
 	is_locomotive = true,
-	drops={"advtrains:wagon_zugspitzbahn_new"},
+	drops = {
+		"default:steelblock 2",
+		"dye:brown",
+		"moreblocks:glow_glass",
+		"dlxtrains_diesel_locomotives:diesel_engine",
+		"advtrains:wheel 2",
+		"technic:common_tree_grindings",
+	},
 }
 
 if has_offset_patch and advtrains_attachment_offset_patch and advtrains_attachment_offset_patch.setup_advtrains_wagon then
@@ -273,4 +280,14 @@ minetest.register_craft({
 	type = "shapeless",
 	recipe = {"advtrains:wagon_zugspitzbahn", "dye:green"},
 })
+
+core.register_craft({
+	output = "advtrains:wagon_zugspitzbahn_new",
+	recipe = {
+		{"default:steelblock", "dye:brown", "default:steelblock"},
+		{"moreblocks:glow_glass", "dlxtrains_diesel_locomotives:diesel_engine", "group:wood"},
+		{"advtrains:wheel", "", "advtrains:wheel"},
+	},
+})
+
 ch_base.close_mod(minetest.get_current_modname())
