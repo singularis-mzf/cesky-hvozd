@@ -121,6 +121,8 @@ local function get_orientation_values(node)
 			return wallmounted_values[node.param2 % 8]
 		elseif paramtype2 == "facedir" or paramtype2 == "colorfacedir"  then
 			return facedir_values[node.param2 % 32]
+		elseif paramtype2 == "4dir" or paramtype2 == "color4dir" then
+			return facedir_values[node.param2 % 4]
 		else
 			-- No orientation or unknown orientation type
 			return facedir_values[0]

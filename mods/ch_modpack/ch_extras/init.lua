@@ -58,6 +58,7 @@ dofile("doors.lua") -- různé dveře
 dofile("flags.lua") -- česká a slovenská vlajka (node_box)
 dofile("geokes.lua") -- geokeš a související značky
 dofile("gravel.lua") -- světlý a železniční štěrk
+dofile_ud("line_sign.lua") -- linková cedule
 dofile("lupa.lua") -- zrcadlo
 dofile("magic_wand.lua") -- kouzelnická hůlka
 dofile("marble.lua") -- venkovní mramor

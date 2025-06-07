@@ -226,6 +226,7 @@ ch_extras_colorable_fence.png
 	- "Polygonia_64px texture pack" by Lukas Reichlin (license CC BY-SA 4.0) (default_fence_pine_wood.png used)
 
 ch_extras_dice_palette.png
+ch_extras_line_sign_palette.png
 	Author: Singularis
 	License: CC0
 
