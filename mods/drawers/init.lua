@@ -90,7 +90,7 @@ if core.get_modpath("default") and default then
 			"drawers_wood.png"),
 		groups = {choppy = 3, oddly_breakable_by_hand = 2},
 		sounds = drawers.WOOD_SOUNDS,
-		drawer_stack_max_factor = 100, -- 4 * 8 normal chest size
+		drawer_stack_max_factor = 4 * 8, -- 4 * 8 normal chest size
 		material = "default:wood"
 	})
 	drawers.register_drawer("drawers:acacia_wood", {
@@ -103,7 +103,7 @@ if core.get_modpath("default") and default then
 			"drawers_acacia_wood.png"),
 		groups = {choppy = 3, oddly_breakable_by_hand = 2},
 		sounds = drawers.WOOD_SOUNDS,
-		drawer_stack_max_factor = 100, -- 4 * 8 normal mcl chest size
+		drawer_stack_max_factor = 4 * 8, -- 4 * 8 normal mcl chest size
 		material = "default:acacia_wood"
 	})
 	--[[
@@ -117,7 +117,7 @@ if core.get_modpath("default") and default then
 			"drawers_aspen_wood.png"),
 		groups = {choppy = 3, oddly_breakable_by_hand = 2},
 		sounds = drawers.WOOD_SOUNDS,
-		drawer_stack_max_factor = 100, -- 4 * 8 normal chest size
+		drawer_stack_max_factor = 4 * 8, -- 4 * 8 normal chest size
 		material = "default:aspen_wood"
 	}) ]]
 	drawers.register_drawer("drawers:junglewood", {
@@ -130,7 +130,7 @@ if core.get_modpath("default") and default then
 			"drawers_junglewood.png"),
 		groups = {choppy = 3, oddly_breakable_by_hand = 2},
 		sounds = drawers.WOOD_SOUNDS,
-		drawer_stack_max_factor = 100, -- 4 * 8 normal mcl chest size
+		drawer_stack_max_factor = 4 * 8, -- 4 * 8 normal mcl chest size
 		material = "default:junglewood"
 	})
 	drawers.register_drawer("drawers:pine_wood", {
@@ -143,7 +143,7 @@ if core.get_modpath("default") and default then
 			"drawers_pine_wood.png"),
 		groups = {choppy = 3, oddly_breakable_by_hand = 2},
 		sounds = drawers.WOOD_SOUNDS,
-		drawer_stack_max_factor = 100, -- 4 * 8 normal chest size
+		drawer_stack_max_factor = 4 * 8, -- 4 * 8 normal chest size
 		material = "default:pine_wood"
 	})
 	if core.get_modpath("moretrees") then
@@ -154,7 +154,7 @@ if core.get_modpath("default") and default then
 			tiles4 = drawers.node_tiles_front_other("drawers_oak_wood_front_4.png", "drawers_oak_wood.png"),
 			groups = {choppy = 3, oddly_breakable_by_hand = 2},
 			sounds = drawers.WOOD_SOUNDS,
-			drawer_stack_max_factor = 100,
+			drawer_stack_max_factor = 4 * 8,
 			material = "moretrees:oak_planks",
 		}) ]]
 		drawers.register_drawer("drawers:birchwood", {
@@ -164,7 +164,7 @@ if core.get_modpath("default") and default then
 			tiles4 = drawers.node_tiles_front_other("drawers_birch_wood_front_4.png", "drawers_birch_wood.png"),
 			groups = {choppy = 3, oddly_breakable_by_hand = 2},
 			sounds = drawers.WOOD_SOUNDS,
-			drawer_stack_max_factor = 100,
+			drawer_stack_max_factor = 4 * 8,
 			material = "moretrees:birch_planks",
 		})
 		drawers.register_drawer("drawers:sprucewood", {
@@ -174,7 +174,7 @@ if core.get_modpath("default") and default then
 			tiles4 = drawers.node_tiles_front_other("drawers_spruce_wood_front_4.png", "drawers_spruce_wood.png"),
 			groups = {choppy = 3, oddly_breakable_by_hand = 2},
 			sounds = drawers.WOOD_SOUNDS,
-			drawer_stack_max_factor = 100, -- 4 * 9 normal mcl chest size
+			drawer_stack_max_factor = 4 * 8, -- 4 * 9 normal mcl chest size
 			material = "moretrees:spruce_planks",
 		})
 	end

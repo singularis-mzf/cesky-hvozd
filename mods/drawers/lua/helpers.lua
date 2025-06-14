@@ -32,9 +32,10 @@ local S, NS = dofile(MP.."/intllib.lua")
 -- GUI
 function drawers.get_upgrade_slots_bg(x,y)
 	local out = ""
-	for i = 0, 4, 1 do
-		out = out .."image["..x+i..","..y..";1,1;drawers_upgrade_slot_bg.png]"
-	end
+	--for i = 0, 4, 1 do
+	local i = 0
+	out = out .."image["..x+i..","..y..";1,1;drawers_upgrade_slot_bg.png]"
+	-- end
 	return out
 end
 
@@ -51,9 +52,9 @@ function drawers.gen_info_text(basename, count, factor, stack_max, owner)
 	end
 
 	if count == 0 then
-		return S("@1 (@2% full)@nowner: @3", basename, tostring(percent), owner_viewname)
+		return S("@1 (@2% full, capacity @3)@nowner: @4", basename, tostring(percent), maxCount, owner_viewname)
 	else
-		return S("@1 @2 (@3% full)@nowner: @4", tostring(count), basename, tostring(percent), owner_viewname)
+		return S("@1 @2 (@3% full, capacity @4)@nowner: @5", tostring(count), basename, tostring(percent), maxCount, owner_viewname)
 	end
 end
 
@@ -252,7 +253,7 @@ function drawers.update_drawer_upgrades(pos)
 	for _,itemStack in pairs(inventory) do
 		local iname = itemStack:get_name()
 		local idef = core.registered_items[iname]
-		local addPercent = idef.groups.drawer_upgrade or 0
+		local addPercent = 100 * itemStack:get_count()
 
 		storagePercent = storagePercent + addPercent
 	end

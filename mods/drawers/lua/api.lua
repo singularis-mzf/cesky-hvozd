@@ -41,7 +41,7 @@ drawers.node_box_simple = {
 }
 
 drawers.drawer_formspec = "size[9,7]" ..
-	"list[context;upgrades;2,0.5;5,1;]" ..
+	"list[context;upgrades;2,0.5;1,1;]" ..
 	"list[current_player;main;0,3;9,4;]" ..
 	drawers.gui_bg ..
 	drawers.gui_bg_img ..
@@ -85,8 +85,8 @@ function drawers.drawer_on_construct(pos)
 	local ndef = core.registered_nodes[node.name]
 	local drawerType = ndef.groups.drawer
 
-	local base_stack_max = core.nodedef_default.stack_max or 99
-	local stack_max_factor = ndef.drawer_stack_max_factor or 24 -- 3x8
+	local base_stack_max = 100
+	local stack_max_factor = ndef.drawer_stack_max_factor or 36 -- 4x8
 	stack_max_factor = math.floor(stack_max_factor / drawerType) -- drawerType => number of drawers in node
 
 	-- meta
@@ -122,10 +122,10 @@ function drawers.drawer_on_construct(pos)
 	end, pos)
 
 	-- create drawer upgrade inventory
-	meta:get_inventory():set_size("upgrades", 5)
+	meta:get_inventory():set_size("upgrades", 1)
 
 	-- set the formspec
-	-- meta:set_string("formspec", drawers.drawer_formspec)
+	meta:set_string("formspec", drawers.drawer_formspec)
 end
 
 -- destruct drawer
@@ -181,7 +181,7 @@ function drawers.drawer_on_dig(pos, node, player)
 		for _,itemStack in pairs(upgrades) do
 			if itemStack:get_count() > 0 then
 				local rndpos = drawers.randomize_pos(pos)
-				core.add_item(rndpos, itemStack:get_name())
+				core.add_item(rndpos, itemStack)
 			end
 		end
 	end
@@ -204,13 +204,14 @@ function drawers.drawer_allow_metadata_inventory_put(pos, listname, index, stack
 	if listname ~= "upgrades" then
 		return 0
 	end
-	if stack:get_count() > 1 then
+	if core.get_item_group(stack:get_name(), "drawer") < 1 then
 		return 0
 	end
-	if core.get_item_group(stack:get_name(), "drawer_upgrade") < 1 then
-		return 0
+	if stack:get_count() > 100 then
+		return 100
+	else
+		return stack:get_count()
 	end
-	return 1
 end
 
 function drawers.add_drawer_upgrade(pos, listname, index, stack, player)
@@ -507,3 +508,19 @@ function drawers.register_drawer_upgrade(name, def)
 	]]
 end
 
+core.register_lbm({
+	label = "Upgrade drawers to allow extensions",
+	name = "drawers:upgrade_drawers_ch_1",
+	nodenames = {"group:drawer"},
+	action = function(pos, node, dtime_s)
+		local meta = core.get_meta(pos)
+		if meta:get_string("formspec") == "" then
+			core.log("action", "LBM will upgrade a drawer "..node.name.." at "..core.pos_to_string(pos).." with the original metadata:\n"..dump2(meta:to_table().fields))
+			local inv = meta:get_inventory()
+			inv:set_size("upgrades", 1)
+			inv:set_stack("upgrades", 1, "drawers:colorable1_0 3")
+			meta:set_string("formspec", drawers.drawer_formspec)
+			drawers.update_drawer_upgrades(pos)
+		end
+	end,
+})

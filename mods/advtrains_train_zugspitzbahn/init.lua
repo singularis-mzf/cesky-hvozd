@@ -239,7 +239,7 @@ if has_offset_patch and advtrains_attachment_offset_patch and advtrains_attachme
 	advtrains_attachment_offset_patch.setup_advtrains_wagon(def)
 end
 
-advtrains.register_wagon("wagon_zugspitzbahn_new", def, "nová motorová jednotka", "advtrains_wagon_bzb_new_inv.png") 
+advtrains.register_wagon("wagon_zugspitzbahn_new", def, "nový motorový vůz", "advtrains_wagon_bzb_new_inv.png") 
 
 
 minetest.register_craft({
