@@ -125,7 +125,7 @@ function drawers.drawer_on_construct(pos)
 	meta:get_inventory():set_size("upgrades", 1)
 
 	-- set the formspec
-	meta:set_string("formspec", drawers.drawer_formspec)
+	-- meta:set_string("formspec", drawers.drawer_formspec)
 end
 
 -- destruct drawer
@@ -390,6 +390,12 @@ function drawers.register_drawer(name, def)
 		def.after_dig_node = pipeworks.after_dig
 	end
 
+	def.on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		if core.is_player(clicker) then
+			drawers.show_formspec(clicker, pos, node, core.get_meta(pos))
+		end
+	end
+
 	local has_mesecons_mvps = minetest.get_modpath("mesecons_mvps")
 
 	if drawers.enable_1x1 then
@@ -509,18 +515,27 @@ function drawers.register_drawer_upgrade(name, def)
 end
 
 core.register_lbm({
-	label = "Upgrade drawers to allow extensions",
-	name = "drawers:upgrade_drawers_ch_1",
+	label = "Upgrade drawers 2",
+	name = "drawers:upgrade_drawers_ch_2",
 	nodenames = {"group:drawer"},
 	action = function(pos, node, dtime_s)
 		local meta = core.get_meta(pos)
-		if meta:get_string("formspec") == "" then
-			core.log("action", "LBM will upgrade a drawer "..node.name.." at "..core.pos_to_string(pos).." with the original metadata:\n"..dump2(meta:to_table().fields))
-			local inv = meta:get_inventory()
-			inv:set_size("upgrades", 1)
+		local inv = meta:get_inventory()
+		local original_meta
+		if inv:get_size("upgrades") == 5 then
+			original_meta = meta:to_table()
+			inv:set_size("upgrades", 5)
 			inv:set_stack("upgrades", 1, "drawers:colorable1_0 3")
-			meta:set_string("formspec", drawers.drawer_formspec)
+		end
+		if meta:get_string("formspec") ~= "" then
+			if original_meta == nil then
+				original_meta = meta:to_table()
+			end
+			meta:set_string("formspec", "")
+		end
+		if original_meta ~= nil then
 			drawers.update_drawer_upgrades(pos)
+			core.log("action", "LBM upgraded a drawer "..node.name.." at "..core.pos_to_string(pos).." with the original metadata:\n"..dump2(original_meta.fields))
 		end
 	end,
 })

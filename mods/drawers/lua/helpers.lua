@@ -27,6 +27,7 @@ SOFTWARE.
 
 -- Load support for intllib.
 local MP = core.get_modpath(core.get_current_modname())
+local F = core.formspec_escape
 local S, NS = dofile(MP.."/intllib.lua")
 
 -- GUI
@@ -39,23 +40,31 @@ function drawers.get_upgrade_slots_bg(x,y)
 	return out
 end
 
-function drawers.gen_info_text(basename, count, factor, stack_max, owner)
+function drawers.gen_info_text(basename, count, factor, stack_max, owner, is_public)
 	local maxCount = stack_max * factor
 	local percent = count / maxCount * 100
 	-- round the number (float -> int)
 	percent = math.floor(percent + 0.5)
 	local owner_viewname
 	if owner == nil or owner == "" then
-		owner_viewname = "není"
+		owner_viewname = S("none")
 	else
 		owner_viewname = ch_core.prihlasovaci_na_zobrazovaci(owner)
 	end
 
+	local result
 	if count == 0 then
-		return S("@1 (@2% full, capacity @3)@nowner: @4", basename, tostring(percent), maxCount, owner_viewname)
+		result = basename
 	else
-		return S("@1 @2 (@3% full, capacity @4)@nowner: @5", tostring(count), basename, tostring(percent), maxCount, owner_viewname)
+		result = tostring(count).." "..basename
 	end
+	result = result.."\n"..S("(@1% full, capacity @2)", tostring(percent), maxCount)
+	if is_public then
+		result = S("public drawer (managed by @1)", owner_viewname).."\n"..result
+	else
+		result = result.."\n"..S("owner: @1", owner_viewname)
+	end
+	return result
 end
 
 function drawers.get_inv_image(name)
@@ -284,4 +293,83 @@ end
 
 function drawers.node_tiles_front_other(front, other)
 	return {other, other, other, other, other, front}
+end
+
+local ifthenelse = ch_core.ifthenelse
+
+local function get_formspec(custom_state)
+	local pos = assert(custom_state.pos)
+	local meta = core.get_meta(pos)
+	local owner, owner_viewname_fs = meta:get_string("owner")
+	if owner ~= "" then
+		owner_viewname_fs = F(ch_core.prihlasovaci_na_zobrazovaci(owner))
+	else
+		owner_viewname_fs = "není"
+	end
+	local player_role = ch_core.get_player_role(custom_state.player_name)
+	if player_role ~= "admin" and custom_state.player_name == owner then
+		player_role = "owner"
+	elseif player_role == "survival" or player_role == "creative" then
+		player_role = "player"
+	end
+	-- pos, node, meta
+	local formspec = {
+		ch_core.formspec_header({
+			formspec_version = 4,
+			size = {10.75, 8.25},
+			-- bgcolor = {"#080808BB", "true"},
+			listcolors = {"#00000069", "#5A5A5A", "#141318", "#30434C", "#FFF"},
+			-- background = {"5,5", "1,1", "gui_formbg.png", "true"},
+			auto_background = true,
+		}),
+		"list[nodemeta:"..pos.x.."\\,"..pos.y.."\\,"..pos.z..";upgrades;2,0.5;1,1;]"..
+		"list[current_player;main;0.5,3;8,4;]"..
+		"checkbox[2,2.25;public;veřejný zásobník;",
+		ifthenelse(meta:get_int("public") ~= 0, "true", "false"),
+		"]"..
+		"button_exit[9.75,0.25;0.75,0.75;close;X]",
+	}
+	if player_role == "admin" or player_role == "owner" then
+		table.insert(formspec, "field[5.25,2;2.75,0.5;owner;vlastník/ice:;"..owner_viewname_fs.."]"..
+			"button[8.25,1.75;2,0.75;setowner;nastavit]")
+	else
+		table.insert(formspec, "label[5.25,2.25;vlastník/ice: "..owner_viewname_fs.."]")
+	end
+	return table.concat(formspec)
+end
+
+local function formspec_callback(custom_state, player, formname, fields)
+	if not fields.public and not fields.setowner then
+		return
+	end
+	local player_info = ch_core.normalize_player(player)
+	local meta = core.get_meta(custom_state.pos)
+	local owner = meta:get_string("owner")
+	if player_info.role ~= "admin" and player_info.player_name ~= owner then
+		return -- access denied
+	end
+	if fields.public then
+		meta:set_int("public", ifthenelse(fields.public == "true", 1, 0))
+	end
+	if fields.setowner then
+		local new_owner = ch_core.jmeno_na_existujici_prihlasovaci(fields.owner)
+		if new_owner ~= nil then
+			meta:set_string("owner", new_owner)
+		end
+	end
+	drawers.update_drawer_upgrades(custom_state.pos)
+end
+
+function drawers.show_formspec(player, pos, node, meta)
+	local player_info = ch_core.normalize_player(player)
+	if player_role == "new" then
+		ch_core.systemovy_kanal(player_info.player_name, "Turistické postavy nemohou používat zásobníky!")
+		return
+	end
+	local custom_state = {
+		player_name = player_info.player_name,
+		pos = pos,
+	}
+	local formspec = get_formspec(custom_state)
+	ch_core.show_formspec(player, "drawers:drawer", formspec, formspec_callback, custom_state, {})
 end

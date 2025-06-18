@@ -168,15 +168,21 @@ core.register_entity("drawers:visual", {
 		if node == nil then
 			return
 		end
+		local player_info = ch_core.normalize_player(clicker)
+		if player_info.player_role == "new" then
+			core.chat_send_player(player_name, "*** Turistické postavy nemohou používat zásobníky!")
+			return
+		end
 		local meta = core.get_meta(self.drawer_pos)
+		local is_public = meta:get_int("public") ~= 0
 		local owner = meta:get_string("owner")
 		if owner == "" then
-			if core.is_protected(self.drawer_pos, clicker:get_player_name()) then
-				core.record_protection_violation(self.drawer_pos, clicker:get_player_name())
+			if core.is_protected(self.drawer_pos, player_info.player_name) then
+				core.record_protection_violation(self.drawer_pos, player_info.player_name)
 				return
 			end
-		else
-			local player_name = clicker:get_player_name()
+		elseif not is_public then
+			local player_name = player_info.player_name
 			if owner ~= player_name and not core.check_player_privs(player_name, "protection_bypass") then
 				core.chat_send_player(player_name, "*** Tento zásobník patří postavě: "..ch_core.prihlasovaci_na_zobrazovaci(owner))
 				return
@@ -240,7 +246,13 @@ core.register_entity("drawers:visual", {
 		if node == nil then
 			return
 		end
+		local player_info = ch_core.normalize_player(clicker)
+		if player_info.player_role == "new" then
+			core.chat_send_player(player_name, "*** Turistické postavy nemohou používat zásobníky!")
+			return
+		end
 		local meta = core.get_meta(self.drawer_pos)
+		local is_public = meta:get_int("public") ~= 0
 		local owner = meta:get_string("owner")
 		-- local node = minetest.get_node(self.object:get_pos())
 
@@ -254,7 +266,7 @@ core.register_entity("drawers:visual", {
 				core.record_protection_violation(self.drawer_pos, puncher:get_player_name())
 				return
 			end
-		else
+		elseif not is_public then
 			local player_name = puncher:get_player_name()
 			if owner ~= player_name and not core.check_player_privs(player_name, "protection_bypass") then
 				core.chat_send_player(player_name, "*** Tento zásobník patří postavě: "..ch_core.prihlasovaci_na_zobrazovaci(owner))
@@ -390,7 +402,8 @@ core.register_entity("drawers:visual", {
 		end
 
 		local infotext = drawers.gen_info_text(itemDescription,
-			self.count, self.stackMaxFactor, self.itemStackMax, self.meta:get_string("owner"))
+			self.count, self.stackMaxFactor, self.itemStackMax,
+			self.meta:get_string("owner"), self.meta:get_int("public") ~= 0)
 		self.meta:set_string("entity_infotext"..self.visualId, infotext)
 
 		self.object:set_properties({
