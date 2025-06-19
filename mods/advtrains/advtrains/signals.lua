@@ -27,7 +27,7 @@ return {
 end
 
 local main_aspects = {
-	{ name = "free", description = "Free" }
+	{ name = "free", description = "Volno" }
 }
 
 local function simple_apply_aspect(offname, onname)

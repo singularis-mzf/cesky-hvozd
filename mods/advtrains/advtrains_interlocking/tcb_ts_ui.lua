@@ -874,7 +874,7 @@ function advtrains.interlocking.show_signalling_form(sigd, pname, sel_rte, calle
 					local clr = ""
 					if not valid then
 						clr = "#FF5555"
-						rname = rname.." (invalid)"
+						rname = rname.." (neplatná)"
 					elseif route.ars then
 						clr = "#FFFF55"
 						if route.ars.default then
