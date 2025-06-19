@@ -60,11 +60,11 @@ local function get_invalid_locale_formspec(invalid_locale, protocol_version)
 	else
 		-- Minetest >= 5.8.0
 		krok1_cs = F("1. Odpojte se ze hry a klikněte na ozubené kolo v pravém horním rohu menu (Nastavení).\n\n")
-		krok1_sk = F("1. Odpojte sa zo hry a kliknite kliknite na ozubené koleso v pravom hornom rohu rozhrania (Nastavenia).\n\n")
+		krok1_sk = F("1. Odpojte sa zo hry a kliknite na ozubené koleso v pravom hornom rohu rozhrania (Nastavenia).\n\n")
 		krok1_en = F("1. Disconnect the client and click the gear in the top right corner of the interface (Settings).\n\n")
 
-		krok2_cs = F("2. Ve skupině „User Interfaces“ (Užívateľské rozhranie) nebo „Accessibility“ nastavite „Language“ („Jazyk“) na hodnotu „Česky [cs]“ nebo „Slovenčina [sk]“.\n\n")
-		krok2_sk = F("2. V skupine „User Interfaces“ (Uživatelská rozhraní) lebo „Accessibility“ nastavte „Language“ („Jazyk“) na hodnotu „Slovenčina [sk]“ lebo „Česky [cs]“.\n\n")
+		krok2_cs = F("2. Ve skupině „User Interfaces“ (Uživatelská rozhraní) nebo „Accessibility“ nastavte „Language“ („Jazyk“) na hodnotu „Česky [cs]“ nebo „Slovenčina [sk]“.\n\n")
+		krok2_sk = F("2. V skupine „User Interfaces“ (Užívateľské rozhranie) lebo „Accessibility“ nastavite „Language“ („Jazyk“) na hodnotu „Slovenčina [sk]“ lebo „Česky [cs]“.\n\n")
 		krok2_en = F("2. In the group \"User Interfaces\" or \"Accessibility\" set \"Language\" to one of the values \"Česky [cs]\" or \"Slovenčina [sk]\".\n\n")
 	end
 
@@ -76,18 +76,20 @@ local function get_invalid_locale_formspec(invalid_locale, protocol_version)
 		F("Připojili jste se na server Český hvozd. Server detekoval, že váš klient je nastaven na lokalizaci „"..invalid_locale.."“, která není na tomto serveru podporována. Abyste mohli pokračovat ve hře, musíte nastavit svého klienta na lokalizaci „cs“ nebo „sk“. Postup je následující:\n\n"),
 		krok1_cs,
 		krok2_cs,
-		F("3. Úplně restartujte klienta (vypněte ho a znovu zapněte).\n\n"),
-		F("4. Znovu se pokuste připojit na Český hvozd.\n\n"),
-		F("Pokud se vám tato zpráva zobrazuje, přestože máte uvedené nastavení správně, je to pravděpodobně chyba na straně serveru. Kontakt pro nahlášení takové chyby najdete na stránkách http://ceskyhvozd.svita.cz\n"),
+		F("3. Úplně zavřete klienta (nejste-li si jistí, restartujte svůj počítač).\n\n"),
+		F("4. Znovu spusťte klienta.\n\n"),
+		F("5. Pokuste se připojit na Český hvozd.\n\n"),
+		F("Pokud jste restartovali klienta a máte uvedené nastavení správně, a tato zpráva se vám přesto zobrazuje, je to pravděpodobně chyba na straně serveru. Kontakt pro nahlášení takové chyby najdete na stránkách http://ceskyhvozd.svita.cz\n"),
 		"]",
 		"label[0.375,5.0;slovensky:]",
 		"textarea[0.375,5.2;11,4;sk;;",
 		F("Pripojili ste sa na server Český hvozd. Server detekoval, že váš klient je nastavený na lokalizáciu „"..invalid_locale.."“, ktorá nie je na tomto serveri podporovaná. Aby ste mohli pokračovať v hre, musíte nastaviť svojho klienta na lokalizáciu „sk“ alebo „cs“. Postup je nasledujúci:\n\n"),
 		krok1_sk,
 		krok2_sk,
-		F("3. Úplne reštartujte klienta (vypnite ho a znovu zapnite).\n\n"),
-		F("4. Znova sa pokúste pripojiť na Český hvozd.\n\n"),
-		F("Ak sa vám táto správa zobrazuje, hoci máte uvedené nastavenie správne, je to pravdepodobne chyba na strane servera. Kontakt pre nahlásenie takejto chyby nájdete na stránkach http://ceskyhvozd.svita.cz\n"),
+		F("3. Úplne zatvorte klienta (ak si nie ste istí, reštartujte svoj počítač).\n\n"),
+		F("4. Znovu spustite klienta.\n\n"),
+		F("5. Pokúste sa pripojiť na Český hvozd.\n\n"),
+		F("Ak ste reštartovali klienta a máte uvedené nastavenie správne, a táto správa sa vám napriek tomu zobrazuje, je to pravdepodobne chyba na strane servera. Kontakt pre nahlásenie takejto chyby nájdete na stránkach http://ceskyhvozd.svita.cz\n"),
 		"]",
 		"label[0.375,9.5;English:]",
 		"textarea[0.375,9.7;11,3;en;;",
@@ -95,9 +97,10 @@ local function get_invalid_locale_formspec(invalid_locale, protocol_version)
 		F("The way to set up the client localization is as follows:\n\n"),
 		krok1_en,
 		krok2_en,
-		F("3. Completely restart your client (close it and start it again).\n\n"),
-		F("4. Try to connect to Český Hvozd again.\n\n"),
-		F("If you have the Language setting set correctly, but this message still appears, it is probably a server-side bug. The contact information needed to report such bug is available in Czech on the website https://ceskyhvozd.svita.cz\n"),
+		F("3. Completely close your client (if you're unsure, restart your computer).\n\n"),
+		F("4. Start your client.\n\n"),
+		F("5. Try to connect to Český Hvozd again.\n\n"),
+		F("If you restarted the client and the Language setting is set correctly, but this message still appears, it is probably a server-side bug. The contact information needed to report such bug is available in Czech on the website https://ceskyhvozd.svita.cz\n"),
 		"]",
 		"button_exit[1,13;10,0.75;zavrit;Odpojit / Odpojiť / Disconnect]",
 	}
