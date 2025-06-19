@@ -169,7 +169,7 @@ core.register_entity("drawers:visual", {
 			return
 		end
 		local player_info = ch_core.normalize_player(clicker)
-		if player_info.player_role == "new" then
+		if player_info.role == "new" then
 			core.chat_send_player(player_name, "*** Turistické postavy nemohou používat zásobníky!")
 			return
 		end
@@ -247,7 +247,7 @@ core.register_entity("drawers:visual", {
 			return
 		end
 		local player_info = ch_core.normalize_player(clicker)
-		if player_info.player_role == "new" then
+		if player_info.role == "new" then
 			core.chat_send_player(player_name, "*** Turistické postavy nemohou používat zásobníky!")
 			return
 		end

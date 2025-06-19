@@ -515,8 +515,8 @@ function drawers.register_drawer_upgrade(name, def)
 end
 
 core.register_lbm({
-	label = "Upgrade drawers 2",
-	name = "drawers:upgrade_drawers_ch_2",
+	label = "Upgrade drawers 3",
+	name = "drawers:upgrade_drawers_ch_3",
 	nodenames = {"group:drawer"},
 	action = function(pos, node, dtime_s)
 		local meta = core.get_meta(pos)
@@ -524,8 +524,10 @@ core.register_lbm({
 		local original_meta
 		if inv:get_size("upgrades") == 5 then
 			original_meta = meta:to_table()
-			inv:set_size("upgrades", 5)
-			inv:set_stack("upgrades", 1, "drawers:colorable1_0 3")
+			inv:set_size("upgrades", 1)
+			if inv:get_stack("upgrades", 1):is_empty() then
+				inv:set_stack("upgrades", 1, "drawers:colorable1_0 3")
+			end
 		end
 		if meta:get_string("formspec") ~= "" then
 			if original_meta == nil then

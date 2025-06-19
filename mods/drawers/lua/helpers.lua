@@ -362,7 +362,7 @@ end
 
 function drawers.show_formspec(player, pos, node, meta)
 	local player_info = ch_core.normalize_player(player)
-	if player_role == "new" then
+	if player_info.role == "new" then
 		ch_core.systemovy_kanal(player_info.player_name, "Turistické postavy nemohou používat zásobníky!")
 		return
 	end
