@@ -252,7 +252,7 @@ local function on_newplayer(player)
 	minetest.log("action", "[ch_core] New player '"..player_name.."'");
 	ch_data.delete_offline_charinfo(player_name)
 	ch_data.get_joining_online_charinfo(player)
-	local offline_charinfo = ch_data.get_offline_charinfo(player_name)
+	local offline_charinfo = ch_data.get_or_add_offline_charinfo(player_name)
 	offline_charinfo.pending_registration_type = "new"
 end
 

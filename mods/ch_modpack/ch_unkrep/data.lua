@@ -250,11 +250,6 @@ local function get_data(old_name)
                 error("Deserialization of "..filename.." failed!")
             end
             next_clean_dtime = acc_dtime + 30
-            if old_name == nil then
-                print("DEBUG: unkrep data loaded")
-            else
-                print("DEBUG: unkrep data loaded because of '"..old_name.."'")
-            end
         else
             error("Cannot open "..filename.."!")
         end
@@ -310,8 +305,16 @@ function ch_unkrep.repair_node(pos, node)
     end
 end
 
+--[[
 local function lbm_action(pos, node, dtime_s)
     ch_unkrep.repair_node(pos, node)
+end
+]]
+
+local function lbm_action_bulk(pos_list, dtime_s)
+    for _, pos in ipairs(pos_list) do
+        ch_unkrep.repair_node(pos, core.get_node(pos))
+    end
 end
 
 local function commit_aliases_and_lbms()
@@ -366,9 +369,10 @@ local function commit_aliases_and_lbms()
     for date, nodenames in pairs(lbm_nodenames) do
         core.register_lbm({
             label = "Upgrade unknown nodes: "..date,
-            name = "ch_unkrep:u_"..date,
+            name = "ch_unkrep:u_"..date.."_e1",
             nodenames = nodenames,
-            action = lbm_action,
+            bulk_action = lbm_action_bulk,
+            -- action = lbm_action,
         })
         lbm_count = lbm_count + 1
     end
@@ -928,7 +932,6 @@ local function globalstep(dtime)
     end
     if data ~= nil then
         data = nil
-        print("DEBUG: unkrep data cleared")
     end
     next_clean_dtime = acc_dtime + 30
 end
