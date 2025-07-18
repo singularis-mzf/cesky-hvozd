@@ -189,3 +189,73 @@ nameznik_regnoder1("hranicnik","","Border point marker of railway companies","na
 nameznik_regnoder05h("hranicnik","","Border point marker of railway companies","nameznik_05border1.png","","nameznik_05border1.png")
 
 nameznik_regnoder1h("hranicnik","","Border point marker of railway companies","nameznik_border1.png","","nameznik_border1.png")
+
+core.register_craft({
+	output = "nameznik:nameznik_1 3",
+	recipe = {
+		{"dye:black", "", "dye:black"},
+		{"bakedclay:panel_baked_clay_white_1", "bakedclay:panel_baked_clay_white_1", "bakedclay:panel_baked_clay_white_1"},
+		{"", "", ""},
+	},
+})
+
+--[[
+local temp = {}
+
+for i = 0, 63 do
+	table.insert(temp, {name = "nameznik:nameznik_konc_1", param2 = 0x0300 + 4 * i})
+end
+
+ch_core.register_shape_selector_group({
+	columns = 8,
+	rows = 8,
+	nodes = temp,
+})
+]]
+-- local e = {}
+
+ch_core.register_shape_selector_group({
+	columns = 4,
+	rows = 8,
+	nodes = {
+		"nameznik:nameznik_1",
+		"nameznik:r05_nameznik_1",
+		"nameznik:nameznik_konc_1",
+		"nameznik:r05_nameznik_konc_1",
+
+		"nameznik:nameznik_2",
+		"nameznik:r05_nameznik_2",
+		"nameznik:nameznik_konc_2",
+		"nameznik:r05_nameznik_konc_2",
+
+		"nameznik:nameznik_3",
+		"nameznik:r05_nameznik_3",
+		nil,
+		nil,
+
+		"nameznik:nameznik_4",
+		"nameznik:r05_nameznik_4",
+		nil,
+		nil,
+
+		"nameznik:nameznik_5",
+		"nameznik:r05_nameznik_5",
+		nil,
+		nil,
+		
+		"nameznik:koncovnik_1",
+		"nameznik:r05_koncovnik_1",
+		nil,
+		nil,
+
+		"nameznik:hranicnik",
+		"nameznik:r05_hranicnik",
+		"nameznik:r1_hranicnik",
+		nil,
+
+		nil,
+		"nameznik:r05h_hranicnik",
+		"nameznik:r1h_hranicnik",
+		nil,
+	}
+})
