@@ -841,6 +841,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPL 3.0 pro kód, CC-BY-SA 4.0 pro média
 * [ContentDB](https://content.minetest.net/packages/VanessaE/moretrees/)
 
+## Námezník (nameznik)
+
+* Zdroj: [https://github.com/Matyas-Pilz/nameznik](https://github.com/Matyas-Pilz/nameznik), revize 6691d7d3aad6de698c0bf62732dfebe981aeb753
+* Původní licence: MIT pro kód, CC0 pro média
+* Licence úprav: MIT pro kód, CC0 pro média
+* [ContentDB](https://content.luanti.org/packages/MatyasP/nameznik/)
+
 ## New Campfire (new\_campfire)
 
 * Zdroj: [https://github.com/mt-mods/new\_campfire](https://github.com/mt-mods/new\_campfire), revize 92578c3875730ce0cb79663e1a571e499e64175d
