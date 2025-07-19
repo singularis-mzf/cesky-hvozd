@@ -266,7 +266,7 @@ local function finishrpform(pname)
 		
 		if term_tcbs.signal then
 			form = form .. "label[0.5,1.5;Cesta končí na signalizaci:]"
-			form = form .. "label[0.5,2  ;"..term_tcbs.signal_name.."]"
+			form = form .. "label[0.5,2  ;"..(term_tcbs.signal_name or "???").."]"
 		else
 			form = form .. "label[0.5,1.5;VAROVÁNÍ: Cesta nekončí na signalizaci.]"
 			form = form .. "label[0.5,2  ;Cesty většinou končí na signlizacích.]"
