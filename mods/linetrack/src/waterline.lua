@@ -113,6 +113,7 @@ if linetrack.use_luaautomation then
                 advtrains = {
                     on_train_enter = lua_rail_def.advtrains.on_train_enter,
                     on_train_approach = lua_rail_def.advtrains.on_train_approach,
+                    on_train_leave = stn_rail_def.advtrains.on_train_leave,
                 },
                 luaautomation = lua_rail_def.luaautomation,
                 digiline = lua_rail_def.digiline,
@@ -151,6 +152,7 @@ if linetrack.use_line_automation then
                 advtrains = {
                     on_train_enter = stn_rail_def.advtrains.on_train_enter,
                     on_train_approach = stn_rail_def.advtrains.on_train_approach,
+                    on_train_leave = stn_rail_def.advtrains.on_train_leave,
                 },
 
                 groups = {
