@@ -52,7 +52,7 @@ function ilrs.set_route(signal, route, try)
 		c_tcbs = ildb.get_tcbs(c_sigd)
 		if not c_tcbs then
 			if not try then atwarn("Did not find TCBS",c_sigd,"while setting route",rtename,"of",signal) end
-			return false, "No TCB found at "..sigd_to_string(c_sigd)..". Please update or reconfigure route!"
+			return false, "Na "..sigd_to_string(c_sigd).." nenalezeno TCB. Prosím aktualizujte vlakovou cestu!"
 		end
 		if i == 1 then
 			nodst = c_tcbs.nodst
@@ -60,7 +60,7 @@ function ilrs.set_route(signal, route, try)
 		c_ts_id = c_tcbs.ts_id
 		if not c_ts_id then
 			if not try then atwarn("Encountered End-Of-Interlocking while setting route",rtename,"of",signal) end
-			return false, "No track section adjacent to "..sigd_to_string(c_sigd)..". Please reconfigure route!"
+			return false, "S "..sigd_to_string(c_sigd).." nesousedí žádná vlaková cesta. Přeprogramujte prosím vlakovou cestu!"
 		end
 		c_ts = ildb.get_ts(c_ts_id)
 		c_rseg = route[i]
@@ -68,17 +68,17 @@ function ilrs.set_route(signal, route, try)
 		
 		if not c_ts then
 			if not try then atwarn("Encountered ts missing during a real run of routesetting routine, at ts=",c_ts_id,"while setting route",rtename,"of",signal) end
-			return false, "Section '"..(c_ts_id).."' not found!", c_ts_id, nil
+			return false, "Úsek '"..(c_ts_id).."' nenalezen!", c_ts_id, nil
 		elseif c_ts.route then
 			if not try then atwarn("Encountered ts lock during a real run of routesetting routine, at ts=",c_ts_id,"while setting route",rtename,"of",signal) end
-			return false, "Section '"..(c_ts.name or c_ts_id).."' already has route set from "..sigd_to_string(c_ts.route.origin)..":\n"..c_ts.route.rsn, c_ts_id, nil
+			return false, "Úsek '"..(c_ts.name or c_ts_id).."' již má nastavenu vlakovou cestu z "..sigd_to_string(c_ts.route.origin)..":\n"..c_ts.route.rsn, c_ts_id, nil
 		end
 		if c_ts.trains and #c_ts.trains>0 then
 			if c_rseg.call_on then
 				--atdebug("Routesetting: Call-on situation in", c_ts_id)
 			else
 				if not try then atwarn("Encountered ts occupied during a real run of routesetting routine, at ts=",c_ts_id,"while setting route",rtename,"of",signal) end
-				return false, "Section '"..(c_ts.name or c_ts_id).."' is occupied!", c_ts_id, nil
+				return false, "Úsek '"..(c_ts.name or c_ts_id).."' je obsazen!", c_ts_id, nil
 			end
 		end
 		
@@ -113,7 +113,7 @@ function ilrs.set_route(signal, route, try)
 					local confl = ilrs.has_route_lock(lp)
 					if confl then
 						if not try then atwarn("Encountered route lock while a real run of routesetting routine, at position",pos,"while setting route",rtename,"of",signal) end
-						return false, "Lock conflict at "..minetest.pos_to_string(pos)..", Held locked by:\n"..confl, nil, lp
+						return false, "Konflikt zámků na "..minetest.pos_to_string(pos)..", Drženo v zamčeném stavu od:\n"..confl, nil, lp
 					elseif not try then
 						advtrains.setstate(pos, state)
 					end
@@ -124,7 +124,7 @@ function ilrs.set_route(signal, route, try)
 				end
 			else
 				if not try then atwarn("Encountered route lock misconfiguration (no passive component) while a real run of routesetting routine, at position",pts,"while setting route",rtename,"of",signal) end
-				return false, "No passive component at "..minetest.pos_to_string(pos)..". Please update track section or reconfigure route!"
+				return false, "Žádná pasivní komponenta na "..minetest.pos_to_string(pos)..". Přeprogramujte prosím úsek nebo vlakovou cestu!"
 			end
 		end
 		-- sanity check, is section at next the same as the current?
@@ -134,7 +134,7 @@ function ilrs.set_route(signal, route, try)
 			if (not re_tcbs or not re_tcbs.ts_id or re_tcbs.ts_id~=c_ts_id)
 					and route[i+1] then --FIX 2025-01-08: in old worlds the final TCB may be wrong (it didn't matter back then), don't error out here (route still shown invalid in UI)
 				if not try then atwarn("Encountered inconsistent ts (front~=back) while a real run of routesetting routine, at position",pts,"while setting route",rtename,"of",signal) end
-				return false, "TCB at "..minetest.pos_to_string(nvar.p).." has different section than previous TCB. Please update track section or reconfigure route!"
+				return false, "TCB na "..minetest.pos_to_string(nvar.p).." má jiný úsek než předchozí TCB. Přeprogramujte prosím úsek nebo vlakovou cestu!"
 			end
 		end
 		-- reserve ts and write locks

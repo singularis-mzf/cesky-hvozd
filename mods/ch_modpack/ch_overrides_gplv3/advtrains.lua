@@ -23,20 +23,26 @@ ch_core.register_event_type("player_overrun", {
     color = "#ff3333",
     chat_access = "public",
 })
-    
+
 local repeat_protection = {}
 local has_penalty = core.settings:get_bool("ch_player_overrun_penalty", false)
     
-local function player_overrun_step(player_name)
+local function player_overrun_step(player_name, overrun_id)
     local online_charinfo = ch_data.online_charinfo[player_name]
     local player = core.get_player_by_name(player_name)
-    if player ~= nil and online_charinfo ~= nil and online_charinfo.player_overrun_hud ~= nil then
+    if
+        player ~= nil
+        and online_charinfo ~= nil
+        and online_charinfo.player_overrun_hud ~= nil
+        and online_charinfo.player_overrun_id == overrun_id
+    then
         if player:get_hp() >= 10 then
             -- remove penalty
             player:hud_remove(online_charinfo.player_overrun_hud)
             online_charinfo.player_overrun_hud = nil
+            online_charinfo.player_overrun_id = nil
         else
-            core.after(1, player_overrun_step, player_name)
+            core.after(1, player_overrun_step, player_name, overrun_id)
         end
     end
 end
@@ -48,12 +54,16 @@ local function on_player_overrun(player, train_id, train_direction, train_veloci
     if protection ~= nil and now < protection then
         return
     end
+    local overrun_id = math.random(1, math.random(1, 2^30))
     ch_core.add_event("player_overrun", "{PLAYER} byl/a sražen/a vlakem č. "..train_id.." jedoucím "..math.ceil(train_velocity).." m/s!", player_name)
     core.sound_play("player_damage", {pos = player:get_pos(), max_hear_distance = 50}, true)
     repeat_protection[player_name] = now + 1000000
     if has_penalty then
         player:set_hp(1)
         local online_charinfo = ch_data.online_charinfo[player_name] or {}
+        if online_charinfo.player_overrun_hud ~= nil then
+            player:hud_remove(online_charinfo.player_overrun_hud)
+        end
         online_charinfo.player_overrun_hud = player:hud_add({
             type = "image",
             name = "player_overrun_hud",
@@ -62,7 +72,8 @@ local function on_player_overrun(player, train_id, train_direction, train_veloci
             scale = {x = -100, y = -100},
             text = "ch_core_white_pixel.png^[multiply:#ff0000^[opacity:50",
         })
-        core.after(1, player_overrun_step, player_name)
+        online_charinfo.player_overrun_id = overrun_id
+        core.after(1, player_overrun_step, player_name, overrun_id)
         -- TODO...
     end
     --[[
