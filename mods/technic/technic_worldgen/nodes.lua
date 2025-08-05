@@ -145,6 +145,7 @@ minetest.register_craft({
 minetest.register_alias("technic:diamond", "default:diamond")
 minetest.register_alias("technic:mineral_diamond", "default:stone_with_diamond")
 
+--[[
 local function for_each_registered_node(action)
 	local really_register_node = minetest.register_node
 	minetest.register_node = function(name, def)
@@ -185,4 +186,4 @@ for_each_registered_node(function(node_name, node_def)
 		end
 	end
 end)
-
+]]

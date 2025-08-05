@@ -294,6 +294,20 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 		def.tiles = override_tiles(def.tiles, overrides)
 	end
 
+	if info.manhole_overlay then
+		assert(type(def.tiles) == "table" and assert(#def.tiles > 0))
+		def.tiles = table.copy(def.tiles)
+		if #def.tiles == 1 then
+			def.tiles[2] = def.tiles[1]
+		end
+		if type(def.tiles[1]) == "table" then
+			def.tiles[1].name = def.tiles[1].name.."^streets_manhole.png"
+		else
+			assert(type(def.tiles[1]) == "string")
+			def.tiles[1] = def.tiles[1].."^streets_manhole.png"
+		end
+	end
+
 	-- drop another shape
 	if info.drop_shape ~= nil then
 		def.drop = {items = {{items = {modname..":"..info.drop_shape[1].."_"..subname..info.drop_shape[2]}, inherit_color = true}}}

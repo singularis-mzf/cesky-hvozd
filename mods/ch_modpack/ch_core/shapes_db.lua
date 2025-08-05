@@ -986,6 +986,10 @@ local rules = {
 	{materials_tombs, "tombs", alts_tombs, true},
 	{materials_for_manholes, "streets", set("manhole", "stormdrain"), true},
 	{materials_for_manholes_only, "streets", "manhole", true},
+
+	{materials_for_manholes, "stair", set("_manhole_open", "_manhole_closed"), true},
+	{materials_for_manholes_only, "stair", set("_manhole_open", "_manhole_closed"), true},
+
 	{materials_for_si_frames, "si_frames", alts_si_frames, true},
 	{materials_for_diagfillers, "slope", alts_diagfiller, true},
 	{set("default:gravel", "ch_extras:railway_gravel"), "slope", "_slab", true},
@@ -1053,6 +1057,8 @@ function ch_core.get_materials_from_shapes_db(key)
 		mset = materials_for_si_frames
 	elseif key == "streets" then
 		mset = union(materials_for_manholes, materials_for_manholes_only)
+	elseif key == "all" then
+		mset = materials_all
 	end
 	if mset == nil then
 		error("ch_core.get_materials_from_shapes_db(): unsupported key \""..key.."\"!")

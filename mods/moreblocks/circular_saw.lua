@@ -131,6 +131,8 @@ circular_saw.names = {
 	{"slope", "_diagfiller45", 1},
 	{"slope", "_valley", 8},
 
+	{"stair", "_manhole_closed", 8},
+	{"stair", "_manhole_open", 8},
 	-- {"slope", "_outer_cut_half_raised", 3},
 	-- {"slope", "_slab_half", 2},
 	-- {"slope", "_slab_half_raised", 6},

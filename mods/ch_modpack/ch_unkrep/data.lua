@@ -476,6 +476,23 @@ local tool_update_inv_signs = reg_upgrade_tool(function(type, ...)
     end
 end)
 
+local tool_manholes = reg_upgrade_tool(function(type, ...)
+    if type == "item" then
+        local itemstack, old_name, new_name = ...
+        itemstack:set_name(new_name)
+        return true
+    elseif type == "node" then
+        local pos, old_node, new_node = ...
+        core.set_node(pos, new_node)
+        local meta = core.get_meta(pos)
+        meta:set_int("is_manhole", 1)
+        meta:set_string("infotext", "průlez")
+        return true
+    else
+        return false
+    end
+end)
+
 reg_item("aloz:aluminum_ingot", "default:steel_ingot")
 reg_item("aloz:bauxite_lump", "default:iron_lump")
 
@@ -912,6 +929,7 @@ reg_node(20250315, "moreblocks:slope_iron_glass_half", "moreblocks:slope_glass_h
 reg_node(20250315, "moreblocks:slope_iron_glass_half_raised", "moreblocks:slope_glass_half_raised")
 reg_alias("advtrains_line_automation:stanicni_rozhlas_experimental", "advtrains_line_automation:stanicni_rozhlas")
 reg_node(20250413, "moreblocks:slab_iron_glass_2", "moreblocks:slab_glass_2")
+reg_node(20250805, "streets:gneiss_manhole", "darkage:stair_gneiss_wchimney", tool_manholes)
 
 -- END OF REGISTRATIONS
 commit_aliases_and_lbms()

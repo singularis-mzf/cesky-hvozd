@@ -169,6 +169,65 @@ local box_slope_outer = {
 	}
 }
 
+
+--==============================================================
+--[[
+	BEGIN OF CODE LICENSED UNDER MIT LICENSE TOO (zlib license applies to modification)
+	NODE BOXES TAKEN FROM STREETS MOD
+
+MIT License
+
+Copyright (c) 2016 webdesigner97
+Copyright (c) 2016 cheapie
+Copyright (c) 2016 Thomas-S
+Copyright (c) 2016 Hybrid Dog (for `streets_matrix_screen` submod)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+]]
+
+local closed_manhole_node_box = {
+	type = "fixed",
+	fixed = {
+		{ -0.5, -0.5, -0.5, 0.5, 0.5, -0.375 }, -- F
+		{ -0.5, -0.5, 0.375, 0.5, 0.5, 0.5 }, -- B
+		{ -0.5, -0.5, -0.4375, -0.375, 0.5, 0.4375 }, -- L
+		{ 0.375, -0.5, -0.4375, 0.5, 0.5, 0.4375 }, -- R
+		{ -0.25, 0.4375, -0.25, 0.25, 0.5, 0.25 }, -- CenterPlate
+		{ -0.5, 0.4375, -0.0625, 0.5, 0.5, 0.0625 }, -- CenterLR
+		{ -0.0625, 0.4375, -0.5, 0.0625, 0.5, 0.5 }, -- CenterFR
+	}
+}
+
+local open_manhole_node_box = {
+	type = "fixed",
+	fixed = {
+		{ -0.5, -0.5, -0.5, 0.5, 0.5, -0.375 }, -- F
+		{ -0.5, -0.5, 0.375, 0.5, 0.5, 0.5 }, -- B
+		{ -0.5, -0.5, -0.4375, -0.375, 0.5, 0.4375 }, -- L
+		{ 0.375, -0.5, -0.4375, 0.5, 0.5, 0.4375 }, -- R
+	}
+}
+-- END OF CODE LICENSED UNDER MIT LICENSE TOO
+
+--==============================================================
+
+
 local function f()
 	local result = {}
 
@@ -1249,7 +1308,7 @@ stairsplus.defs = {
 			},
 		},
 		["_wchimney"] = {
-			description = "široký komín",
+			description = "průlez široký komín",
 			node_box = {
 				type = "fixed",
 				fixed = {
@@ -1260,6 +1319,17 @@ stairsplus.defs = {
 				},
 			},
 			climbable = true,
+		},
+		["_manhole_open"] = {
+			description = "průlez",
+			node_box = open_manhole_node_box,
+			climbable = true,
+			manhole_overlay = true,
+		},
+		["_manhole_closed"] = {
+			description = "průlez (zavřený)",
+			node_box = closed_manhole_node_box,
+			manhole_overlay = true,
 		},
 	},
 }
