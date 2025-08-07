@@ -70,7 +70,7 @@ circular_saw.names = {
 	{"slope", "_inner_cut", 7},
 	{"slope", "_outer_cut", 2},
 	{"stair", "_chimney", 8},
-	{"stair", "_wchimney", 8},
+	separator, -- {"stair", "_wchimney", 8},
 
 	{"slope", "_half", 2},
 	{"slope", "_half_raised", 6},

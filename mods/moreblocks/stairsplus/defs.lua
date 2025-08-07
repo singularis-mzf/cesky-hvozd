@@ -1307,8 +1307,9 @@ stairsplus.defs = {
 				},
 			},
 		},
+		--[[
 		["_wchimney"] = {
-			description = "průlez široký komín",
+			description = "široký komín",
 			node_box = {
 				type = "fixed",
 				fixed = {
@@ -1320,6 +1321,7 @@ stairsplus.defs = {
 			},
 			climbable = true,
 		},
+		]]
 		["_manhole_open"] = {
 			description = "průlez",
 			node_box = open_manhole_node_box,

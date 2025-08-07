@@ -819,7 +819,7 @@ local alts_slope = set("", "_half", "_half_raised",
 local alts_stair = set("", "_inner", "_outer", "_alt", "_alt_1", "_alt_2", "_alt_4",
 	"_triple", -- schody (schod 1/3 m)
 	"_chimney", -- úzký komín
-	"_wchimney") -- široký komín/průlez
+	"_manhole_open") -- průlez
 
 local no_cnc = set(
 	-- vypnuté tvary soustruhu:
@@ -932,8 +932,12 @@ local rules = {
 	--	a) string (exact match)
 	--  b) table (query)
 	--  c) "*" (always match)
-	{materials_no_kp, set("micro", "panel", "slab", "slope", "stair"), "*", false},
-	{"*", "cnc", no_cnc, false}, -- vypnuté tvary (nesmí se generovat pro žádný materiál)
+	{materials_no_kp, set("micro", "panel", "slab", "slope", "stair"), "*", false}, -- materiály zakázané pro kotoučovou pilu
+	-- vypnuté tvary (nesmí se generovat pro žádný materiál):
+	{"*", {
+		cnc = {no_cnc, false},
+		streets = {"manhole", false},
+	}},
 	{materials_all, "slab", "_1", true}, -- "slab/_1 pro všechny materiály kromě zakázaných"
 	{"default:stone", "*", "*", true}, -- kámen je referenční materiál, musí podporovat všechny tvary
 
@@ -984,8 +988,9 @@ local rules = {
 	{materials_roof, "slope", roof_slopes, true}, -- roofs
 	{materials_pillars, "pillar", "*", true }, -- zatím bez omezení
 	{materials_tombs, "tombs", alts_tombs, true},
-	{materials_for_manholes, "streets", set("manhole", "stormdrain"), true},
-	{materials_for_manholes_only, "streets", "manhole", true},
+	{materials_for_manholes, "streets", "stormdrain", true},
+	-- {materials_for_manholes, "streets", set("manhole", "stormdrain"), true},
+	-- {materials_for_manholes_only, "streets", "manhole", true},
 
 	{materials_for_manholes, "stair", set("_manhole_open", "_manhole_closed"), true},
 	{materials_for_manholes_only, "stair", set("_manhole_open", "_manhole_closed"), true},

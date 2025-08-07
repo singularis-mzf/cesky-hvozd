@@ -91,7 +91,9 @@ local data = {
         {20241223, "stair", "_inner"},
         {20241223, "stair", "_outer"},
         {20241223, "stair", "_triple"},
-        {20241223, "stair", "_wchimney"},
+        -- {20241223, "stair", "_wchimney"}, -- already removed
+        {20250805, "stair", "_manhole_open"},
+        {20250805, "stair", "_manhole_closed"},
     },
 }
 local tools = {}
@@ -476,7 +478,7 @@ local tool_update_inv_signs = reg_upgrade_tool(function(type, ...)
     end
 end)
 
-local tool_manholes = reg_upgrade_tool(function(type, ...)
+local tool_manhole_open = reg_upgrade_tool(function(type, ...)
     if type == "item" then
         local itemstack, old_name, new_name = ...
         itemstack:set_name(new_name)
@@ -929,7 +931,20 @@ reg_node(20250315, "moreblocks:slope_iron_glass_half", "moreblocks:slope_glass_h
 reg_node(20250315, "moreblocks:slope_iron_glass_half_raised", "moreblocks:slope_glass_half_raised")
 reg_alias("advtrains_line_automation:stanicni_rozhlas_experimental", "advtrains_line_automation:stanicni_rozhlas")
 reg_node(20250413, "moreblocks:slab_iron_glass_2", "moreblocks:slab_glass_2")
-reg_node(20250805, "streets:gneiss_manhole", "darkage:stair_gneiss_wchimney", tool_manholes)
+reg_node(20250804, "streets:gneiss_manhole", "darkage:stair_gneiss_manhole_open")
+reg_node(20250804, "darkage:stair_basalt_brick_wchimney", "darkage:stair_basalt_brick_manhole_open")
+reg_node(20250804, "darkage:stair_gneiss_wchimney", "darkage:stair_gneiss_manhole_open")
+reg_node(20250804, "moreblocks:stair_stone_wchimney", "moreblocks:stair_stone_manhole_open")
+reg_node(20250804, "streets:Tar_manhole", "building_blocks:stair_Tar_manhole_closed")
+reg_node(20250804, "streets:Tar_manhole_open", "building_blocks:stair_Tar_manhole_open", tool_manhole_open)
+reg_node(20250804, "streets:gneiss_cobble_manhole", "darkage:stair_gneiss_cobble_manhole_closed")
+reg_node(20250804, "streets:gneiss_cobble_manhole_open", "darkage:stair_gneiss_cobble_manhole_open", tool_manhole_open)
+reg_node(20250804, "streets:gneiss_manhole", "darkage:stair_gneiss_manhole_closed")
+reg_node(20250804, "streets:gneiss_manhole_open", "darkage:stair_gneiss_manhole_open", tool_manhole_open)
+reg_node(20250804, "streets:stone_block_manhole", "moreblocks:stair_stone_block_manhole_closed")
+reg_node(20250804, "streets:stone_block_manhole_open", "moreblocks:stair_stone_block_manhole_open", tool_manhole_open)
+
+
 
 -- END OF REGISTRATIONS
 commit_aliases_and_lbms()

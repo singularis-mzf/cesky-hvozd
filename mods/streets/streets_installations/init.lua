@@ -140,6 +140,7 @@ function streets.register_manholes(material, allow_manhole, allow_stormdrain, ma
 	end
 
 	if allow_manhole then
+		error("not supported in this version")
 		local name_closed = "streets:"..get_name_base(material).."_manhole"
 		local name_open
 		if manhole_node_to_override == nil then
@@ -154,8 +155,6 @@ function streets.register_manholes(material, allow_manhole, allow_stormdrain, ma
 			error("Node already exists: "..name_closed.."!")
 		end
 		tiles[1] = tile_name .. "^streets_manhole.png"
-
-		-- print("DEBUG: "..dump2({name_open = name_open, name_closed = name_closed, material = material, manhole_node_to_override = manhole_node_to_override}))
 
 		-- register/override the closed manhole
 		local def = {
