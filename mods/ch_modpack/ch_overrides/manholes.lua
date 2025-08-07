@@ -57,3 +57,14 @@ for _, material in ipairs(ch_core.get_materials_from_shapes_db("all")) do
         })
     end
 end
+
+-- Stormdrains:
+
+if core.get_modpath("streets") then
+    for _, name in ipairs(ch_core.get_materials_from_shapes_db("all")) do
+        local allow_stormdrain = ch_core.is_shape_allowed(name, "streets", "stormdrain")
+        if allow_stormdrain then
+            streets.register_manholes(name, false, true, nil)
+        end
+    end
+end
