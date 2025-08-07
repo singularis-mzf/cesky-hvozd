@@ -308,7 +308,7 @@ minetest.register_craftitem("advtrains:trackworker",{
 			
 			local ndef = minetest.registered_nodes[node.name]
 			
-			if not ndef.advtrains or not ndef.advtrains.trackworker_next_var then
+			if not ndef or not ndef.advtrains or not ndef.advtrains.trackworker_next_var then
 				minetest.chat_send_player(name, attrans("This node can't be changed using the trackworker!"))
 				return
 			end
