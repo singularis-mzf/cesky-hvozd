@@ -41,7 +41,6 @@ for _, material in ipairs(ch_core.get_materials_from_shapes_db("all")) do
     local name_closed = stairsplus:get_shape(material, "stair", "_manhole_closed")
     local name_open = stairsplus:get_shape(material, "stair", "_manhole_open")
     if name_open ~= nil and name_closed ~= nil then
-        -- TODO
         core.override_item(name_closed, {
             on_construct = closed_manhole_on_construct,
             on_rightclick = manhole_on_rightclick,
@@ -64,6 +63,7 @@ if core.get_modpath("streets") then
     for _, name in ipairs(ch_core.get_materials_from_shapes_db("all")) do
         local allow_stormdrain = ch_core.is_shape_allowed(name, "streets", "stormdrain")
         if allow_stormdrain then
+            core.log("action", "DEBUG: will register stormdrain for "..name)
             streets.register_manholes(name, false, true, nil)
         end
     end
