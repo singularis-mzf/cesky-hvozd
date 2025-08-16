@@ -416,7 +416,8 @@ local function init_ann_data(stn, epos)
         fs_koleje = "",
         koleje = "",
         owner = "",
-        version = 3,
+        rmode = RMODE_DEP,
+        version = 4,
     }
     anns[epos] = result
     return result
@@ -1130,8 +1131,8 @@ local first_run = true
 local function first_globalstep()
     for stn, stdata in pairs(advtrains.lines.stations) do
         local anns = stdata.anns
-        if stdata.anns ~= nil then
-            for rozh_epos, ann in pairs(stdata.anns) do
+        if anns ~= nil then
+            for rozh_epos, ann in pairs(anns) do
                 if ann.version < 2 then
                     -- upgrade version 1 to version 2:
                     ann.rmode = RMODE_DEP
@@ -1142,8 +1143,15 @@ local function first_globalstep()
                     core.load_area(pos)
                     local meta = core.get_meta(pos)
                     ann.owner = meta:get_string("owner")
-                    core.log("action", "strozhlas at position "..core.pos_to_string(pos).." upgraded to metadata version 3 (owner "..ann.owner..")")
                     ann.version = 3
+                end
+                if ann.version < 4 then
+                    local pos = advtrains.decode_pos(rozh_epos)
+                    if ann.rmode == nil then
+                        ann.rmode = RMODE_DEP
+                    end
+                    ann.version = 4
+                    core.log("action", "strozhlas at position "..core.pos_to_string(pos).." (stn="..stn..") upgraded to metadata version 4")
                 end
             end
         end
