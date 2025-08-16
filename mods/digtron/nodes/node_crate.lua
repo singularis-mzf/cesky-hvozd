@@ -24,6 +24,7 @@ end
 
 local store_digtron = function(pos, clicker, loaded_node_name, protected)
 	local layout = DigtronLayout.create(pos, clicker)
+	local meta = minetest.get_meta(pos)
 	local protection_prefix = ""
 	local protection_suffix = ""
 	if protected then
@@ -32,7 +33,6 @@ local store_digtron = function(pos, clicker, loaded_node_name, protected)
 	end
 
 	if layout.contains_protected_node then
-		local meta = minetest.get_meta(pos)
 		minetest.sound_play("buzzer", {gain=0.5, pos=pos})
 		meta:set_string("infotext", protection_prefix .. "\n" .. S("Digtron can't be packaged, it contains protected blocks"))
 		-- no stealing other peoples' digtrons
@@ -40,7 +40,6 @@ local store_digtron = function(pos, clicker, loaded_node_name, protected)
 	end
 
 	if #layout.all == 1 then
-		local meta = minetest.get_meta(pos)
 		minetest.sound_play("buzzer", {gain=0.5, pos=pos})
 		meta:set_string("infotext", protection_prefix .. "\n" .. S("No Digtron components adjacent to package"))
 		return
@@ -49,6 +48,7 @@ local store_digtron = function(pos, clicker, loaded_node_name, protected)
 	digtron.award_crate(layout, clicker:get_player_name())
 
 	local layout_string = layout:serialize()
+	local title = meta:get_string("title")
 
 	-- destroy everything. Note that this includes the empty crate, which will be bundled up with the layout.
 	for _, node_image in pairs(layout.all) do
@@ -75,7 +75,7 @@ local store_digtron = function(pos, clicker, loaded_node_name, protected)
 	minetest.set_node(pos, {name=loaded_node_name})
 	minetest.sound_play("machine1", {gain=1.0, pos=pos})
 
-	local meta = minetest.get_meta(pos)
+	meta = minetest.get_meta(pos)
 	meta:set_string("crated_layout", layout_string)
 
 	if protected then
@@ -83,12 +83,28 @@ local store_digtron = function(pos, clicker, loaded_node_name, protected)
 		meta:set_string("owner", clicker:get_player_name() or "")
 	end
 
-	local titlestring = S("Crated @1-block Digtron", tostring(#layout.all-1))
-	meta:set_string("title", titlestring )
-	meta:set_string("infotext", titlestring .. "\n" .. protection_suffix)
+	if title == "" then
+		title = S("Crated @1-block Digtron", tostring(#layout.all-1))
+	end
+	meta:set_string("title", title )
+	meta:set_string("infotext", title .. "\n" .. protection_suffix)
 end
 
-local use_texture_alpha = minetest.features.use_texture_alpha_string_modes and "opaque" or nil
+-- local use_texture_alpha = minetest.features.use_texture_alpha_string_modes and "opaque" or nil
+local use_texture_alpha = "clip"
+
+local tile_n = {name = "digtron_crate.png", backface_culling = false}
+local tile_l = {name = "digtron_crate.png^digtron_lock.png", backface_culling = false}
+
+local function empty_preserve_metadata(pos, oldnode, oldmeta, drops)
+	assert(type(drops) == "table")
+	assert(#drops == 1)
+	if oldmeta.title ~= "" and oldmeta.title ~= nil and oldmeta.infotext ~= nil and oldmeta.infotext ~= "" then
+		local stack_meta = drops[1]:get_meta()
+		stack_meta:set_string("title", oldmeta.title)
+		stack_meta:set_string("description", oldmeta.infotext)
+	end
+end
 
 minetest.register_node("digtron:empty_crate", {
 	description = S("Digtron Crate (Empty)"),
@@ -96,7 +112,7 @@ minetest.register_node("digtron:empty_crate", {
     _doc_items_usagehelp = digtron.doc.empty_crate_usagehelp,
 	groups = {cracky = 3, oddly_breakable_by_hand=3},
 	sounds = default.node_sound_wood_defaults(),
-	tiles = {"digtron_crate.png"},
+	tiles = {tile_n},
 	use_texture_alpha = use_texture_alpha,
 	is_ground_content = false,
 	drawtype = "nodebox",
@@ -112,10 +128,26 @@ minetest.register_node("digtron:empty_crate", {
 		return player and not minetest.is_protected(pos, player:get_player_name())
 	end,
 
+	after_place_node = function(pos, placer, itemstack)
+		if itemstack ~= nil then
+			local stack_meta = itemstack:get_meta()
+			local description = stack_meta:get_string("description")
+			local title = stack_meta:get_string("title")
+			if description ~= "" and title ~= "" then
+				local meta = core.get_meta(pos)
+				meta:set_string("infotext", description)
+				meta:set_string("title", title)
+			end
+		end
+	end,
+
+	preserve_metadata = empty_preserve_metadata,
+
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		store_digtron(pos, clicker, "digtron:loaded_crate")
 	end
 })
+
 
 minetest.register_node("digtron:empty_locked_crate", {
 	description = S("Digtron Locked Crate (Empty)"),
@@ -123,7 +155,7 @@ minetest.register_node("digtron:empty_locked_crate", {
     _doc_items_usagehelp = digtron.doc.empty_locked_crate_usagehelp,
 	groups = {cracky = 3, oddly_breakable_by_hand=3},
 	sounds = default.node_sound_wood_defaults(),
-	tiles = {"digtron_crate.png","digtron_crate.png","digtron_crate.png^digtron_lock.png","digtron_crate.png^digtron_lock.png","digtron_crate.png^digtron_lock.png","digtron_crate.png^digtron_lock.png"},
+	tiles = {tile_n, tile_n, tile_l, tile_l, tile_l, tile_l},
 	use_texture_alpha = use_texture_alpha,
 	is_ground_content = false,
 	drawtype = "nodebox",
@@ -139,11 +171,21 @@ minetest.register_node("digtron:empty_locked_crate", {
 		meta:set_string("owner", "")
 		meta:set_string("infotext", "")
 	end,
-	after_place_node = function(pos, placer)
-		local meta = minetest.get_meta(pos)
+	after_place_node = function(pos, placer, itemstack)
+		local meta = core.get_meta(pos)
 		meta:set_string("owner", placer:get_player_name() or "")
+		if itemstack ~= nil then
+			local stack_meta = itemstack:get_meta()
+			local title = stack_meta:get_string("title")
+			if title ~= "" and stack_meta:get_string("description") ~= "" then
+				meta:set_string("title", title)
+				meta:set_string("infotext", title .. "\n" .. S("Owned by @1", placer:get_player_name() or ""))
+				return
+			end
+		end
 		meta:set_string("infotext", S("Digtron Crate") .. "\n" .. S("Owned by @1", placer:get_player_name() or ""))
 	end,
+	preserve_metadata = empty_preserve_metadata,
 	can_dig = function(pos,player)
 		return player and not minetest.is_protected(pos, player:get_player_name()) and player_permitted(pos, player)
 	end,
@@ -179,9 +221,9 @@ else
 	default.gui_slots ..
 	"field[0.3,0.5;4,0.5;title;" .. S("Digtron Name") .. ";${title}]" ..
 	"button_exit[0.5,1.2;1,0.1;save;" .. S("Save\nTitle") .. "]" ..
-	"tooltip[show;" .. S("Saves the title of this Digtron") .. "]" ..
+	"tooltip[save;" .. S("Saves the title of this Digtron") .. "]" ..
 	"button_exit[1.5,1.2;1,0.1;show;" .. S("Show\nBlocks") .. "]" ..
-	"tooltip[save;" .. S("Shows which blocks the packed Digtron will occupy if unpacked") .. "]" ..
+	"tooltip[show;" .. S("Shows which blocks the packed Digtron will occupy if unpacked") .. "]" ..
 	"button_exit[2.5,1.2;1,0.1;unpack;" .. S("Unpack") .. "]" ..
 	"tooltip[unpack;" .. S("Attempts to unpack the Digtron on this location") .. "]"
 end
@@ -263,6 +305,12 @@ local loaded_on_recieve = function(pos, fields, sender, protected)
 	-- build digtron. Since the empty crate was included in the layout, that will overwrite this loaded crate and destroy it.
 	minetest.sound_play("machine2", {gain=1.0, pos=pos})
 	layout:write_layout_image(sender)
+	local node_name = core.get_node(pos).name
+	if (node_name == "digtron:empty_crate" or node_name == "digtron:empty_locked_crate") and title ~= "" then
+		meta = core.get_meta(pos)
+		meta:set_string("title", title)
+		meta:set_string("infotext", title.." "..S("(Empty Crate)"))
+	end
 end
 
 local loaded_on_dig = function(pos, player, loaded_node_name)
@@ -285,9 +333,9 @@ end
 
 local loaded_after_place = function(pos, itemstack)
 
-	-- Older versions of Digtron used this deprecated method for saving layout data on items.
+	--[[ Older versions of Digtron used this deprecated method for saving layout data on items.
 	-- Maintain backward compatibility here.
-	local deprecated_metadata = itemstack:get_string("")
+	local deprecated_metadata = itemstack:get_string("") -- crashes this version of Luanti
 	if deprecated_metadata ~= "" then
 		deprecated_metadata = minetest.deserialize(deprecated_metadata)
 		local meta = minetest.get_meta(pos)
@@ -296,6 +344,7 @@ local loaded_after_place = function(pos, itemstack)
 		meta:set_string("infotext", deprecated_metadata.title)
 		return
 	end
+	]]
 
 	local stack_meta = itemstack:get_meta()
 	local layout = stack_meta:get_string("crated_layout")
