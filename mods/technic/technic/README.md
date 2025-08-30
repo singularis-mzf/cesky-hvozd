@@ -27,6 +27,9 @@ leftshift (CC BY-SA 3.0):
 RealBadAngel, modified by Singularis (WTFPL):
   * technic_hv_cable.png
 
+Smacker (LGPLv2):
+  * technic_prospector_mk2.png (source: https://github.com/h-v-smacker/technic )
+
 RealBadAngel: (WTFPL)
   * Everything else.
 

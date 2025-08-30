@@ -216,20 +216,27 @@ Single node.=Jednotlivý blok.
 Sonic Screwdriver (left-click rotates face, right-click rotates axis)=elektrický šroubovák@n(levý klik otáčí objekt, pravý osu otáčení)
 Tree Tap=kohoutek na stromy
 Prospector=detektor kovů a jiných materiálů
+Prospector Mk2=profesionální detektor kovů a jiných materiálů
 
 ## Prospector
 Right-click to set target block type=Klikněte pravým tlačítkem na blok pro nastavení hledaného materiálu
-Current target:=Nyní hledaný materiál:
+Current target:=Hledaný materiál:
 No target set=Materiál není nastaven
 May set new target:=Mohu nastavit nový materiál:
 Set target=Nastavit
 No new target available=Nový cíl není dostupný
-Region cross section:=Prohledávaný půdorys (souř. x, z)
+Region cross section:=Prohledávaný půdorys (XxZ)
 Set region cross section:=Nastavit rozměr půdorysu:
 Region depth:=Hloubka k prohledání
 Set region depth:=Nastavit hloubku:
 Accuracy:=Přesnost:
-
+Scan radius:=Dosah hledání:
+Set scan radius:=Nastavit dosah:
+@1 is literally everywhere within the scanned region=@1 je prakticky všude okolo
+@1 is present within @2 meters radius=@1 se v dosahu @2 metrů nachází
+@1 is absent within @2 meters radius=@1 se nenachází v dosahu @2 metrů
+@1 is present in @2 region=@1 se nachází v oblasti @2
+@1 is absent in @2 region=@1 se nenachází v oblasti @2
 
 ## Craft descriptions
 Alloy cooking=slévání
