@@ -47,6 +47,7 @@ minetest.register_node("digtron:battery_holder", {
     },
 	paramtype = "light",
 	is_ground_content = false,
+	climbable = true,
 	tiles = {
 		"digtron_plate.png^digtron_crossbrace.png^digtron_battery.png",
 		"digtron_plate.png^digtron_crossbrace.png^digtron_battery.png",

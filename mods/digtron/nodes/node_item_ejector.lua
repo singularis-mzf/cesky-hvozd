@@ -126,6 +126,7 @@ minetest.register_node("digtron:inventory_ejector", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	is_ground_content = false,
+	climbable = true,
 	node_box = {
 		type = "fixed",
 		fixed = {

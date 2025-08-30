@@ -12,6 +12,7 @@ minetest.register_node("digtron:axle", {
 	paramtype = "light",
 	paramtype2= "facedir",
 	is_ground_content = false,
+	climbable = true,
 	-- Aims in the +Z direction by default
 	tiles = {
 		"digtron_plate.png^digtron_axel_top.png",

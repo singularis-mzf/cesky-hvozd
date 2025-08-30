@@ -41,6 +41,7 @@ minetest.register_node("digtron:inventory", {
     },
 	paramtype = "light",
 	is_ground_content = false,
+	climbable = true,
 	tiles = {
 		"digtron_plate.png^digtron_crossbrace.png",
 		"digtron_plate.png^digtron_crossbrace.png",
@@ -122,6 +123,7 @@ minetest.register_node("digtron:fuelstore", {
     },
 	paramtype = "light",
 	is_ground_content = false,
+	climbable = true,
 	tiles = {
 		"digtron_plate.png^digtron_crossbrace.png^digtron_flammable.png",
 		"digtron_plate.png^digtron_crossbrace.png^digtron_flammable.png",
@@ -222,6 +224,7 @@ minetest.register_node("digtron:combined_storage", {
     },
 	paramtype = "light",
 	is_ground_content = false,
+	climbable = true,
 	tiles = {
 		"digtron_plate.png^digtron_crossbrace.png^digtron_flammable_small.png^[transformR180^digtron_flammable_small.png",
 		"digtron_plate.png^digtron_crossbrace.png^digtron_flammable_small.png^[transformR180^digtron_flammable_small.png",		"digtron_plate.png^digtron_crossbrace.png^digtron_flammable_small.png^digtron_storage.png",

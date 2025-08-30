@@ -12,7 +12,10 @@ local recipes = {
 	{"bucket:bucket_water", { "default:ice", "bucket:bucket_empty" } },
 	{"bucket:bucket_river_water", { "default:ice", "bucket:bucket_empty" } },
 	{"default:dirt", "default:dirt_with_snow" },
-	{"bucket:bucket_lava", { "default:obsidian", "bucket:bucket_empty" } }
+	{"bucket:bucket_lava", { "default:obsidian", "bucket:bucket_empty" } },
+	{"default:water_source", { "default:ice" } },
+	{"default:river_water_source", { "default:ice" } },
+	{"default:lava_source", { "default:obsidian" } },
 }
 
 for _, data in pairs(recipes) do

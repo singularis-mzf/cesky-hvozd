@@ -29,6 +29,9 @@ local recipes = {
 	-- "[Compounding a] pure gum vulcanizate … with 50% of its weight of carbon black improves its tensile strength and wear resistance …"
 	{"technic:raw_latex 4",           "technic:coal_dust 2",        "technic:rubber 6", 2},
 	{"default:ice", 		  "bucket:bucket_empty",        "bucket:bucket_water", 1 },
+	-- Extra recipes:
+	{"default:stone",                 "dye:red",                   "default:desert_stone", 1},
+	{"default:cobble",                "dye:red",                   "default:desert_stone", 1},
 }
 
 for _, data in pairs(recipes) do

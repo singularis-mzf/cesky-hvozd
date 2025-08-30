@@ -112,6 +112,7 @@ minetest.register_node("digtron:digger", {
 	paramtype = "light",
 	paramtype2= "facedir",
 	is_ground_content = false,	
+	climbable = true,
 	drawtype="nodebox",
 	node_box = {
 		type = "fixed",
@@ -166,6 +167,7 @@ minetest.register_node("digtron:intermittent_digger", {
 	paramtype = "light",
 	paramtype2= "facedir",
 	is_ground_content = false,	
+	climbable = true,
 	drawtype="nodebox",
 	node_box = {
 		type = "fixed",
@@ -237,6 +239,7 @@ minetest.register_node("digtron:soft_digger", {
 	paramtype = "light",
 	paramtype2= "facedir",
 	is_ground_content = false,
+	climbable = true,
 	drawtype="nodebox",
 	node_box = {
 		type = "fixed",
@@ -294,6 +297,7 @@ minetest.register_node("digtron:intermittent_soft_digger", {
 	paramtype = "light",
 	paramtype2= "facedir",
 	is_ground_content = false,
+	climbable = true,
 	drawtype="nodebox",
 	node_box = {
 		type = "fixed",
@@ -367,6 +371,7 @@ minetest.register_node("digtron:dual_digger", {
 	paramtype = "light",
 	paramtype2= "facedir",
 	is_ground_content = false,	
+	climbable = true,
 	drawtype="nodebox",
 	node_box = {
 		type = "fixed",
@@ -449,6 +454,7 @@ minetest.register_node("digtron:dual_soft_digger", {
 	paramtype = "light",
 	paramtype2= "facedir",
 	is_ground_content = false,	
+	climbable = true,
 	drawtype="nodebox",
 	node_box = {
 		type = "fixed",

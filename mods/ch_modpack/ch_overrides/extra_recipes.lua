@@ -366,3 +366,20 @@ for _, name in ipairs(plaster_source_items) do
 		})
 	end
 end
+
+core.register_craft({
+	output = "default:silver_sandstone 4",
+	recipe = {
+		{"default:stone", "", "default:stone"},
+		{"", "default:stone", ""},
+		{"default:stone", "", "default:stone"},
+	}
+})
+
+core.register_craft({
+	output = "default:dirt_with_grass",
+	recipe = {
+		{"default:grass_1", ""},
+		{"default:dirt", ""},
+	},
+})

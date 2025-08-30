@@ -30,6 +30,7 @@ minetest.register_node("digtron:controller", {
 	paramtype = "light",
 	paramtype2= "facedir",
 	is_ground_content = false,
+	climbable = true,
 	-- Aims in the +Z direction by default
 	tiles = {
 		"digtron_plate.png^[transformR90",
@@ -195,6 +196,7 @@ minetest.register_node("digtron:auto_controller", {
 	paramtype = "light",
 	paramtype2= "facedir",
 	is_ground_content = false,
+	climbable = true,
 	-- Aims in the +Z direction by default
 	tiles = {
 		"digtron_plate.png^[transformR90^[colorize:" .. digtron.auto_controller_colorize,
@@ -329,6 +331,7 @@ minetest.register_node("digtron:pusher", {
 	paramtype = "light",
 	paramtype2= "facedir",
 	is_ground_content = false,
+	climbable = true,
 	-- Aims in the +Z direction by default
 	tiles = {
 		"digtron_plate.png^[transformR90^[colorize:" .. digtron.pusher_controller_colorize,

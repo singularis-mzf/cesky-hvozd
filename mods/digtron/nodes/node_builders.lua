@@ -159,6 +159,7 @@ minetest.register_node("digtron:builder", {
 	paramtype = "light",
 	paramtype2= "facedir",
 	is_ground_content = false,
+	climbable = true,
 	tiles = {
 		"digtron_plate.png^[transformR90",
 		"digtron_plate.png^[transformR270",

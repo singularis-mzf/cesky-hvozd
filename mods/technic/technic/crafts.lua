@@ -177,6 +177,7 @@ minetest.register_craft({
 	},
 })
 
+--[[
 minetest.register_craft({
 	output = "default:dirt 2",
 	type = "shapeless",
@@ -186,6 +187,15 @@ minetest.register_craft({
 		"group:leaves",
 		"bucket:bucket_water",
 		"group:sand",
+	},
+})
+]]
+
+minetest.register_craft({
+	output = "default:dirt",
+	recipe = {
+		{"group:leaves", ""},
+		{"group:sand", ""},
 	},
 })
 

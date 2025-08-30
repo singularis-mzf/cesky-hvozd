@@ -38,6 +38,7 @@ minetest.register_node("digtron:power_connector", {
 	paramtype = "light",
 	paramtype2 = "facedir",
 	is_ground_content = false,
+	climbable = true,
 	
 	connects_to = {"group:technic_hv_cable"},
 	node_box = {

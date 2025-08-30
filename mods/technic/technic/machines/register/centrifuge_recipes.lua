@@ -16,6 +16,7 @@ local recipes = {
 	{ "technic:brass_dust 3",              "technic:copper_dust 2",       "technic:zinc_dust"     },
 	{ "technic:chernobylite_dust",         "default:sand",                "technic:uranium3_dust" },
 	{ "default:dirt 4",                    "default:sand",                "default:gravel",       "default:clay_lump 2"     },
+	{ "default:silver_sand 2",             "darkage:chalk",               "technic:stone_dust"    },
 }
 
 local function uranium_dust(p)

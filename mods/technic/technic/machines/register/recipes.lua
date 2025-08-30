@@ -102,6 +102,12 @@ end
 
 function technic.get_recipe(typename, items)
 	if typename == "cooking" then -- Already builtin in Minetest, so use that
+		local input_item_set = {}
+		for _, stack in ipairs(items) do
+			if not stack:is_empty() then
+				input_item_set[stack:get_name()] = true
+			end
+		end
 		local result, new_input = minetest.get_craft_result({
 			method = "cooking",
 			width = 1,
@@ -110,6 +116,26 @@ function technic.get_recipe(typename, items)
 		if not result or result.time == 0 then
 			return nil
 		else
+			-- If new_input contains a stack of item that was not originally on the input
+			-- (replacement item), move it to the output, so it can be ejected by injectors.
+			if type(new_input.items) == "table" then
+				local i = 1
+				while i <= #new_input.items do
+					local stack = new_input.items[i]
+					if not stack:is_empty() and not input_item_set[stack:get_name()] then
+						if result.item == "nil" then
+							result.item = {}
+						elseif type(result.item) ~= "table" then
+							result.item = {result.item}
+						end
+						assert(type(result.item) == "table")
+						table.insert(result.item, stack)
+						table.remove(new_input.items, i)
+					else
+						i = i + 1
+					end
+				end
+			end
 			return {time = result.time,
 			        new_input = new_input.items,
 			        output = result.item}
