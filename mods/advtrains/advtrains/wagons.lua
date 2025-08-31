@@ -726,7 +726,7 @@ function wagon:on_rightclick(clicker)
 										rsn=attrans("This wagon is full.")
 									end
 								else
-									rsn=attrans("Doors are closed! (Try holding sneak key!)")
+									rsn=attrans("Doors are closed! (try holding sneak key!)")
 								end
 							end
 						end
@@ -1279,7 +1279,7 @@ function wagon:seating_from_key_helper(pname, fields, no)
 		minetest.after(0.1, function(pn) self:show_bordcom(pn) end, pname)
 	end
 	if fields.dcwarn then
-		minetest.chat_send_player(pname, attrans("Doors are closed. Use Sneak+rightclick to ignore the closed doors and get off."))
+		minetest.chat_send_player(pname, attrans("Doors are closed! Use Sneak+rightclick to ignore the closed doors and get off!"))
 	end
 	if fields.off then
 		self:get_off(no)
