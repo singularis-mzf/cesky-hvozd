@@ -70,7 +70,7 @@ function atil.show_route_edit_form(pname, sigd, routeid, sel_rpartidx)
 				local pos = advtrains.decode_pos(pts)
 				itab(i, "Zámek "..core.pos_to_string(pos).." -> "..state, "lock", pos)
 				if not advtrains.is_passive(pos) then
-					itab("-!- Na "..core.pos_to_string(pos).." není žádná pasivní komponenta. Prosím, přenastavte cestu!")
+					itab(i, "-!- Na "..core.pos_to_string(pos).." není žádná pasivní komponenta. Prosím, přenastavte cestu!", "err", nil)
 					break
 				end
 			end
