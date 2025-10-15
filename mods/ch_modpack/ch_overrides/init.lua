@@ -16,6 +16,7 @@ local mods = {
 	"farming",
 	"homedecor_kitchen",
 	"homedecor_misc",
+	"homedecor_office",
 	"mail",
 	"moreblocks",
 	"moretrees",

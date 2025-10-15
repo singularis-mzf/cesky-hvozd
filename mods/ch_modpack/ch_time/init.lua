@@ -58,6 +58,11 @@ local dny_v_tydnu = {
 	"neděle",
 }
 
+local jmeniny_cr, jmeniny_sr = dofile(core.get_modpath(core.get_current_modname()).."/jmeniny.lua")
+
+assert(jmeniny_cr)
+assert(jmeniny_sr)
+
 local function ifthenelse(cond, t, f)
 	if cond then return t else return f end
 end
@@ -173,6 +178,16 @@ end
 
 function Cas:za_n_sekund(n)
 	return ch_time.na_strukturu(self.time + n)
+end
+
+function Cas:jmeniny(country)
+	local t
+	if country == "cz" then
+		t = jmeniny_cr[self.mesic]
+	elseif country == "sk" then
+		t = jmeniny_sr[self.mesic]
+	end
+	return t and t[self.den]
 end
 
 -- API

@@ -53,6 +53,11 @@ pad musí být 1, nebo 2. Vrací název měsíce v uvedeném pádě.
 
 Vrací den v roce (1 až 366)
 
+  Cas::jmeniny(country)
+
+Vrací textovou informaci o jmeninách v dané zemi příslušných k danému dni, nebo nil, pokud není k dispozici.
+Podporované hodnoty country jsou "cz" (Česká republika) a "sk" (Slovensko).
+
   Cas:posun_cislo() -> int
 
 Vrací posun místního času proti UTC v počtu hodin.
