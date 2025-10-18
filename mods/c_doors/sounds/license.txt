@@ -1,0 +1,4 @@
+c_doors_metal_open.ogg is retitled from: http://freesound.org/people/Olichite/sounds/238891/ under: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication: https://creativecommons.org/publicdomain/zero/1.0/
+
+c_doors_metal_close.ogg is retitled from: http://freesound.org/people/Johnnyfarmer/sounds/209772/ under: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication: https://creativecommons.org/publicdomain/zero/1.0/
+

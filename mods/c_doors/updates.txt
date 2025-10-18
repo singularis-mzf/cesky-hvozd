@@ -1,0 +1,24 @@
+==========================================
+  18 Jan. 2018 ver. 0.7
+==========================================
+* [Name]         [Task] 
+
+* [TumeniNodes] Completely remade models for doors to fix z-fighting (now uses 4 models) >reasons<
+
+* [TumeniNodes] Now using same doors textures as "doors" mod, but under the c_doors naming (doors_door_glass is not used due to glass detail being ugly)
+
+* [TumeniNodes] Added "backface_culling = true" to doors for steel and wood doors
+
+* [TumeniNodes] Increased gain for glass "open" / "close" .ogg files
+
+* [TumeniNodes] removed animated chest code and media files (animated chests are in MTG as of 0.4.16)
+
+* [TumeniNodes] Cleaned up the mess of textures/ added a new "glass detail" look/ added a folder for alt textures
+
+* [TumeniNodes] New screenshots / added "updates.txt" file
+
+* [TumeniNodes] Update everything and licenses and SHIP IT!
+
+==========================================
+
+==========================================

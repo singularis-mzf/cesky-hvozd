@@ -187,10 +187,13 @@ function doors.register(name, def)
 	local base_description = def.description or ""
 
 	local mesh_prefix, mesh_level
+	-- mesh_level -2: closed_node_box + closed_tiles, open_node_box + open_tiles; will register only _a and _c variants
 	-- mesh_level 1: single mesh (currently not supported)
 	-- mesh_level 2: _a, _b; (custom meshes)
 	-- mesh_level 4: _a, _a2, _b, _b2 (currently only "door")
-	if not def.mesh then
+	if def.closed_node_box ~= nil and def.open_node_box ~= nil then
+		mesh_level = -1
+	elseif not def.mesh then
 		mesh_prefix = "door"
 		mesh_level = def.mesh_level or 4
 	elseif string.sub(def.mesh, #def.mesh - 3, #def.mesh) == ".obj" then
@@ -204,42 +207,6 @@ function doors.register(name, def)
 	if mesh_level == 1 then
 		minetest.log("warning", "mesh level 1: " .. def.mesh .. "!")
 	end
-
-	--[[ replace old doors of this type automatically
-	minetest.register_lbm({
-		name = ":doors:replace_" .. name:gsub(":", "_"),
-		nodenames = {name.."_b_1", name.."_b_2"},
-		action = function(pos, node)
-			local l = tonumber(node.name:sub(-1))
-			local meta = minetest.get_meta(pos)
-			local h = meta:get_int("right") + 1
-			local p2 = node.param2
-			local replace = {
-				{{type = "a", state = 0}, {type = "a", state = 3}},
-				{{type = "b", state = 1}, {type = "b", state = 2}}
-			}
-			local new = replace[l][h]
-			-- retain infotext and doors_owner fields
-			minetest.swap_node(pos, {name = name .. "_" .. new.type, param2 = p2})
-			meta:set_int("state", new.state)
-			-- properly place doors:hidden at the right spot
-			local p3 = p2
-			if new.state >= 2 then
-				p3 = (p3 + 3) % 4
-			end
-			if new.state % 2 == 1 then
-				if new.state >= 2 then
-					p3 = (p3 + 1) % 4
-				else
-					p3 = (p3 + 3) % 4
-				end
-			end
-			-- wipe meta on top node as it's unused
-			minetest.set_node({x = pos.x, y = pos.y + 1, z = pos.z},
-				{name = "doors:hidden", param2 = p3})
-		end
-	})
-	]]
 
 	local craftitem_def = {
 		description = base_description,
@@ -338,7 +305,7 @@ function doors.register(name, def)
 	}
 	minetest.register_craftitem(":" .. name, table.copy(craftitem_def))
 -- 
-	if mesh_prefix == "door" then -- centering support
+	if mesh_level >= 0 and mesh_prefix == "door" then -- centering support
 		craftitem_def.description = base_description.." (vystředěné)"
 		minetest.register_craftitem(":" .. name .. "_cd", craftitem_def)
 
@@ -444,7 +411,11 @@ function doors.register(name, def)
 		minetest.remove_node({x = pos.x, y = pos.y + 1, z = pos.z})
 	end
 
-	def.drawtype = "mesh"
+	if mesh_level >= 0 then
+		def.drawtype = "mesh"
+	else
+		def.drawtype = "nodebox"
+	end
 	def.paramtype = "light"
 	if def.paramtype2 == nil then
 		def.paramtype2 = "4dir"
@@ -459,25 +430,59 @@ function doors.register(name, def)
 		def.use_texture_alpha = "clip"
 	end
 
-	def.mesh = mesh_prefix .. "_a.obj"
+	local closed_node_box, open_node_box, closed_tiles, open_tiles, closed_selection_box, open_selection_box, closed_collision_box, open_collision_box
+
+	if mesh_level == -1 then
+		closed_node_box = assert(def.closed_node_box)
+		closed_tiles = assert(def.closed_tiles)
+		closed_selection_box = def.closed_selection_box
+		closed_collision_box = def.closed_collision_box
+
+		open_node_box = assert(def.open_node_box)
+		open_tiles = assert(def.open_tiles)
+		open_selection_box = def.open_selection_box
+		open_collision_box = def.open_collision_box
+		def.closed_node_box, def.closed_tiles, def.closed_selection_box, def.closed_collision_box = nil
+		def.open_node_box, def.open_tiles, def.open_selection_box, def.open_collision_box = nil
+	end
+
+	if mesh_level >= 0 then
+		def.mesh = mesh_prefix .. "_a.obj"
+	else
+		def.tiles = closed_tiles
+		def.node_box = closed_node_box
+		def.selection_box = closed_selection_box
+		def.collision_box = closed_collision_box
+	end
 	def.description = base_description.." (klika vpravo)"
 	minetest.register_node(":" .. name .. "_a", table.copy(def))
 	screwdriver_rightclick_override_list[name.."_a"] = 1
 
-	def.mesh = mesh_prefix .. "_b.obj"
-	def.description = base_description.." (klika vlevo)"
-	minetest.register_node(":" .. name .. "_b", table.copy(def))
-	screwdriver_rightclick_override_list[name.."_b"] = 1
+	if mesh_level >= 0 then
+		def.mesh = mesh_prefix .. "_b.obj"
+		def.description = base_description.." (klika vlevo)"
+		minetest.register_node(":" .. name .. "_b", table.copy(def))
+		screwdriver_rightclick_override_list[name.."_b"] = 1
+	end
 
-	def.mesh = mesh_prefix .. (mesh_level > 2 and "_a2.obj" or "_b.obj")
+	if mesh_level >= 0 then
+		def.mesh = mesh_prefix .. (mesh_level > 2 and "_a2.obj" or "_b.obj")
+	else
+		def.tiles = open_tiles
+		def.node_box = open_node_box
+		def.selection_box = open_selection_box
+		def.collision_box = open_collision_box
+	end
 	def.description = base_description.." (klika vpravo)"
 	minetest.register_node(":" .. name .. "_c", table.copy(def))
 	screwdriver_rightclick_override_list[name.."_c"] = 1
 
-	def.mesh = mesh_prefix .. (mesh_level > 2 and "_b2.obj" or "_a.obj")
-	def.description = base_description.." (klika vlevo)"
-	minetest.register_node(":" .. name .. "_d", table.copy(def))
-	screwdriver_rightclick_override_list[name.."_d"] = 1
+	if mesh_level >= 0 then
+		def.mesh = mesh_prefix .. (mesh_level > 2 and "_b2.obj" or "_a.obj")
+		def.description = base_description.." (klika vlevo)"
+		minetest.register_node(":" .. name .. "_d", table.copy(def))
+		screwdriver_rightclick_override_list[name.."_d"] = 1
+	end
 
 	if mesh_prefix == "door" then
 		def = table.copy(def)
@@ -513,10 +518,10 @@ function doors.register(name, def)
 		screwdriver_rightclick_override_list[name.."_cd_d"] = 1
 	end
 
-	doors.registered_doors[name .. "_a"] = true
-	doors.registered_doors[name .. "_b"] = true
-	doors.registered_doors[name .. "_c"] = true
-	doors.registered_doors[name .. "_d"] = true
+	doors.registered_doors[name .. "_a"] = true -- klika vpravo, zavřené
+	doors.registered_doors[name .. "_b"] = true -- klika vlevo, zavřené
+	doors.registered_doors[name .. "_c"] = true -- klika vpravo, otevřené
+	doors.registered_doors[name .. "_d"] = true -- klika vlevo, otevřené
 	if mesh_prefix == "door" then
 		doors.registered_doors[name .. "_cd_a"] = true
 		doors.registered_doors[name .. "_cd_b"] = true

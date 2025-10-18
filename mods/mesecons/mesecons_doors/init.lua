@@ -67,10 +67,10 @@ local function meseconify_door(name)
 			}}
 		}
 		minetest.override_item(name .. "_a", override)
-		minetest.override_item(name .. "_b", override)
-		if minetest.registered_items[name .. "_c"] then
-			minetest.override_item(name .. "_c", override)
-			minetest.override_item(name .. "_d", override)
+		for _, suffix in ipairs({"_b", "_c", "_d", "_cd_a", "_cd_b", "_cd_c", "_cd_d"}) do
+			if minetest.registered_items[name .. suffix] then
+				minetest.override_item(name .. suffix, override)
+			end
 		end
 	end
 end
@@ -80,12 +80,6 @@ meseconify_door("doors:door_steel")
 meseconify_door("doors:door_glass")
 meseconify_door("doors:door_obsidian_glass")
 meseconify_door("xpanes:door_steel_bar")
-
-meseconify_door("doors:door_wood_cd")
-meseconify_door("doors:door_steel_cd")
-meseconify_door("doors:door_glass_cd")
-meseconify_door("doors:door_obsidian_glass_cd")
-meseconify_door("xpanes:door_steel_bar_cd")
 
 -- Trapdoor
 local function trapdoor_switch(pos, node)

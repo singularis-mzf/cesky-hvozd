@@ -336,7 +336,7 @@ function ch_core.overridable.is_cnc_shape(item_name, item_def)
 	return false
 end
 
-function ch_core.overridable.is_other_shape(item_name, groups)
+function ch_core.overridable.is_other_shape(item_name, groups) -- branky jsou vyloučeny
 	return
 		(groups.fence and item_name ~= "technic:insulator_clip_fencepost") or
 		groups.gravestone or
@@ -364,7 +364,7 @@ local categories = {
 				not o.is_clothing(name) and
 				not o.is_stairsplus_shape(name, def) and
 				not o.is_cnc_shape(name, def) and
-				not o.is_other_shape(name, groups) and
+				not (o.is_other_shape(name, groups) and name:sub(1, 6) ~= "doors:") and
 				not is_experimental(name, groups) and
 				not is_streets_signs(name, groups) and
 				(not groups.dye or groups.basic_dye) and

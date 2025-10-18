@@ -417,6 +417,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT pro kód, různé pro média
 * [ContentDB](https://content.minetest.net/packages/FaceDeer/bulletin\_boards/)
 
+## C Doors (c\_doors)
+
+* Zdroj: [https://github.com/TumeniNodes/c\_doors](https://github.com/TumeniNodes/c\_doors), revize 64d49a37538947658c59373e0a9c48f3756d4b4b
+* Původní licence: kód LGPLv2.1, média různě CC BY-SA 4.0, CC BY-SA-3.0 a CC BY 3.0.
+* Licence úprav: kód LGPLv2.1, média CC BY-SA 4.0
+* [ContentDB](https://content.luanti.org/packages/TumeniNodes/c\_doors/)
+
 ## Charcoal (charcoal)
 
 * Zdroj: [https://content.minetest.net/packages/X17/charcoal/](https://content.minetest.net/packages/X17/charcoal/), verze 0.2

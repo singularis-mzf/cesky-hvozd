@@ -56,9 +56,9 @@ local function get_material_description(node_name)
 end
 
 function doors.register_fencegate(name, def)
+	local is_nodebox = def.open_node_box ~= nil and def.closed_node_box ~= nil
 	local fence = {
 		description = def.description,
-		drawtype = "mesh",
 		tiles = {},
 		paramtype = "light",
 		paramtype2 = "facedir",
@@ -88,29 +88,53 @@ function doors.register_fencegate(name, def)
 			fixed = {-1/2, -1/2, -1/4, 1/2, 1/2, 1/4}
 		},
 	}
-
-	if type(def.texture) == "string" then
-		fence.tiles[1] = {name = def.texture, backface_culling = true}
-	elseif def.texture.backface_culling == nil then
-		fence.tiles[1] = table.copy(def.texture)
-		fence.tiles[1].backface_culling = true
+	if is_nodebox then
+		fence.drawtype = "nodebox"
+		if def.use_texture_alpha then
+			fence.use_texture_alpha = def.use_texture_alpha
+		end
 	else
-		fence.tiles[1] = def.texture
+		fence.drawtype = "mesh"
+		fence.tiles = {}
+		if type(def.texture) == "string" then
+			fence.tiles[1] = {name = def.texture, backface_culling = true}
+		elseif def.texture.backface_culling == nil then
+			fence.tiles[1] = table.copy(def.texture)
+			fence.tiles[1].backface_culling = true
+		else
+			fence.tiles[1] = def.texture
+		end
 	end
 
 	if not fence.sounds then
 		fence.sounds = default.node_sound_wood_defaults()
 	end
 
-	local base_description = get_material_description(def.material)
-	if base_description ~= nil then
-		fence.description = base_description..": branka"
+	local base_description
+	if def.use_custom_description then
+		fence.description = assert(def.description)
+	else
+		base_description = get_material_description(def.material)
+		if base_description ~= nil then
+			fence.description = base_description..": branka"
+		end
 	end
 
 	local fence_closed = table.copy(fence)
 	fence_closed.groups = table.copy(fence.groups)
 	fence_closed.groups.fence = 1
-	fence_closed.mesh = "doors_fencegate_closed.obj"
+	if is_nodebox then
+		fence_closed.node_box = assert(def.closed_node_box)
+		fence_closed.tiles = assert(def.closed_tiles)
+		if def.closed_selection_box then
+			fence_closed.selection_box = def.closed_selection_box
+		end
+		if def.closed_collision_box then
+			fence_closed.collision_box = def.closed_collision_box
+		end
+	else
+		fence_closed.mesh = "doors_fencegate_closed.obj"
+	end
 	fence_closed._gate = name .. "_open"
 	fence_closed._gate_sound = "doors_fencegate_open"
 	fence_closed.collision_box = {
@@ -119,7 +143,18 @@ function doors.register_fencegate(name, def)
 	}
 
 	local fence_open = table.copy(fence)
-	fence_open.mesh = "doors_fencegate_open.obj"
+	if is_nodebox then
+		fence_open.node_box = assert(def.open_node_box)
+		fence_open.tiles = assert(def.open_tiles)
+		if def.open_selection_box then
+			fence_open.selection_box = def.open_selection_box
+		end
+		if def.open_collision_box then
+			fence_open.collision_box = def.open_collision_box
+		end
+	else
+		fence_open.mesh = "doors_fencegate_open.obj"
+	end
 	fence_open._gate = name .. "_closed"
 	fence_open._gate_sound = "doors_fencegate_close"
 	fence_open.groups.not_in_creative_inventory = 1
@@ -136,13 +171,23 @@ function doors.register_fencegate(name, def)
 	doors.registered_fencegates[name.."_closed"] = true
 	doors.registered_fencegates[name.."_open"] = true
 
-	minetest.register_craft({
-		output = name .. "_closed",
-		recipe = {
-			{"group:stick", def.material, "group:stick"},
-			{"group:stick", def.material, "group:stick"}
-		}
-	})
+	if is_nodebox then
+		core.register_craft({
+			output = name .. "_closed",
+			recipe = {
+				{def.material, "default:glass", def.material},
+				{def.material, "default:glass", def.material},
+			}
+		})
+	else
+		minetest.register_craft({
+			output = name .. "_closed",
+			recipe = {
+				{"group:stick", def.material, "group:stick"},
+				{"group:stick", def.material, "group:stick"}
+			}
+		})
+	end
 end
 
 --[[
