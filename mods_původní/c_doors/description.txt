@@ -1,1 +1,0 @@
-Adds centered doors, and villa style windows to Minetest.

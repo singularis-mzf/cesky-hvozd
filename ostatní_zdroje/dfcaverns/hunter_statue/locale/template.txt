@@ -1,6 +1,0 @@
-# textdomain: hunter_statue
-
-
-### init.lua ###
-
-Hunter Statue=

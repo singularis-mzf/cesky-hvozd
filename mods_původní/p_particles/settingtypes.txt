@@ -1,3 +1,0 @@
-punch_particles (Show particles when a node is punched) bool true
-place_particles (Show particles when a node is placed) bool true
-dug_particles (Show particles of the surrounding nodes when a node is dug) bool true

@@ -1,8 +1,0 @@
-# all settings for client menu or in minetest.conf on servers
-
-# Distance in blocks (range 1 - 20) from which the sensitive block will sense a player's presense
-stoneblocks_check_player_within (check player within) int 2
-
-# Time the block will stay lit after the player is gone in seconds (0-600)
-stoneblocks_stay_lit_for (stay lit for) int 2
-

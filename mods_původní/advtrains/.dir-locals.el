@@ -1,5 +1,0 @@
-((nil (tab-width . 8))
- (lua-mode (indent-tabs-mode . t)
-	   (lua-indent-level . 8)
-	   (lua-indent-close-paren-align . nil)
-	   (lua-indent-nested-block-content-align . nil)))

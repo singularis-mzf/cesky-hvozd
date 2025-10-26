@@ -10,13 +10,22 @@ Každý zde umístěný mód či balík módů je *samostatným dílem s vlastn
 ve většině z nich se také liší licence a autorství některých souborů,
 konkrétní údaje jsou vždy uvedeny přímo v adresářích konkrétních módů.
 
-Drtivá většina módů je pod některou svobodnou licencí, některé módy
-mohou obsahovat soubory pod licencí zakazující komerční využití,
-všechny však musí umožňovat dílo upravovat a upravené dále šířit.
+Všechny soubory v adresářích minetest\_game, minetest\_game\_původní a mods
+jsou pod různými svobodnými licencemi. Některé z těchto módů a balíků módů
+mohly původně obsahovat soubory licencované se zákazem komerčního využití
+či úprav, tyto soubory z nich ale byly odstraněny a již v repozitáři nejsou.
 
-Po úpravy módů provedené v tomto repozitáři obecně platí,
-že podléhají téže licenci jako upravovaný obsah,
-resp. upravovaný mód; podrobněji je to rozepsáno níže.
+Pro úpravy módů provedené v tomto repozitáři obecně platí, že podléhají
+téže licenci jako upravovaný obsah, resp. upravovaný mód;
+podrobněji je to rozepsáno níže.
+
+Mnoho svobodných licencí vyžaduje rozlišit upravené dílo od neupraveného.
+Pro vyhovění tomuto požadavku obsahuje repozitář soubory kontrolních součtů
+v adresářích mods\_původní\_sha256 a ostatní\_zdroje\_sha256.
+Soubory v repozitáři, které těmto kontrolním součtům odpovídají,
+jsou použity neupravené. Soubory, jejichž kontrolní součty neodpovídají,
+jsou upravené. Pro adresář *minetest\_game* slouží stejným způsobem
+srovnání s obsahem adresáře *minetest\_game\_původní*.
 
 Veškerý kód je poskytován jako pravděpodobně užitečný, ale bez jakékoliv
 záruky z mé strany.
@@ -25,20 +34,17 @@ Význam adresářů je následující:
 
 * **minetest\_game\_původní** — Minetest Game ve verzi, z níž bylo vycházeno při úpravách.
 * **minetest\_game** — Minetest Game upravená pro Český hvozd; nové soubory podléhají licenci LGPLv2.1, úpravy v existujících souborech podléhají téže licenci jako původní soubory.
-* **mods\_původní** — Módy a balíky módů v původní (neupravené) podobě, jak byly získány ze zdroje. (Jen adresáře .git a .github byly ze všech módů odstraněny.)
+* **mods\_původní\_sha256** — Soubory kontrolních součtů módů a balíků módů v původní (neupravené) podobě, jak byly získány ze zdroje. (Jen adresáře .git a .github byly ze všech módů odstraněny.)
 * **mods** — Aktuální kód módů upravených pro Český hvozd. Některé módy (např. „ch\_core“) jsou zde zcela nové.
-* **ostatní\_zdroje** — Módy a sady textur, z nichž pochází některé úpravy a části v ostatních módech v adresáři „mods“. (Podrobnosti jsou uvedeny níže.)
-* **ostatní\_zdroje\_sha256** – Totéž, co ostatní\_zdroje, ale namísto souborů jsou uvedeny soupisy jejich SHA256 heší. Důvodem je, že tyto zdroje jsou obzvlášť objemné a byla z nich použita jen malá část.
+* **ostatní\_zdroje\_sha256** — Soubory kontrolních součtů módů a sad textur, z nichž pochází některé úpravy a části v ostatních módech v adresáři „mods“. (Podrobnosti jsou uvedeny níže.)
 
 Některé licence vyžadují uvést, zda bylo dílo upraveno.
-To poznáte srovnáním obsahu módu v adresáři *mods* (resp. *minetest\_game*)
-s neupravenou podobou v adresáři *mods\_původní*, *minetest\_game\_původní*,
-resp. *ostatní\_zdroje*.
+To poznáte srovnáním kontrolních součtů souborů z adresářů minetest\_game a mods s kontrolními součty ze souborů v adresářích mods\_původní\_sha256 a ostatní\_zdroje\_sha256, popř. obsahem módů v adresáři v adresáři *minetest\_game\_původní*.
 
 Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“ z tohoto repozitáře potřeba také:
 
 * herní svět
-* minetest.conf
+* minetest.conf (soubor „část-minetest.conf“ obsahuje podstatná nastavení)
 * Luanti Server 5.10.0 (verze se může v budoucnu změnit)
 
 # Hra

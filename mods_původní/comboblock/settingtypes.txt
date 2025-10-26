@@ -1,3 +1,0 @@
-#    Size to up or down scale textures to, normally done in multiples of 16. Default = 16 
-comboblock_scale (Scale Textures to) int 16
-

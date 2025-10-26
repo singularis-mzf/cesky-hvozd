@@ -1,7 +1,0 @@
-{
-    "type": "MOD",
-    "title": "builtin overrides",
-    "short_description": "minor QOL overrides for some builtin behaviors",
-    "license": "AGPL-3.0-or-later",
-    "media_license": "AGPL-3.0-or-later"
-}

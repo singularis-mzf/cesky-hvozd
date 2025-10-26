@@ -1,8 +1,0 @@
-# textdomain: bell
-
-
-### init.lua ###
-
-# ../bell/init.lua
-Bell=
-Small bell=

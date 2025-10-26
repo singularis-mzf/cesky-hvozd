@@ -1,9 +1,0 @@
-# SPDX-FileCopyrightText: 2021 David Hurka <doxydoxy@mailbox.org>
-#
-# SPDX-License-Identifier: CC0-1.0 OR MIT
-
-column_limit: 80
-indent_width: 4
-continuation_indent_width: 8
-extra_sep_at_table_end: true
-spaces_inside_table_braces: true

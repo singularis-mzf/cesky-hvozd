@@ -1,5 +1,0 @@
-# Ores-JIT makes the ores generate when they are exposed to a see-through block, reducing the size of map on disc. Before this option is used, all ore definitions registering ores in stone must be removed from all other mods manually. They would appear twice otherwise.
-underch_ores_jit (Use ores-JIT) bool false
-
-# Use legacy pressure formula (v. 1.0 - v. 1.2.1), which is interpreted wrongly on some computers. Not recommended.
-polynomial_pressure (Polynomial pressure) bool false

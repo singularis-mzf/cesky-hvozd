@@ -1,4 +1,0 @@
-default
-fire?
-playerplus?
-env_sounds?

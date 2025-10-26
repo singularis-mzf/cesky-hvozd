@@ -1,6 +1,0 @@
-## Eclipse project files & directories
-.project
-.settings
-luacov.*
-advtrains/locale/*.tr
-advtrains/po/*~

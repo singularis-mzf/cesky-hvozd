@@ -1,3 +1,0 @@
-Code: MIT
-Textures: CC-BY-SA 3.0 by Mjollna
-Model: MIT by KrupnovPavel
