@@ -205,6 +205,45 @@ if linetrack.use_interlocking then
     }, advtrains.trackpresets.t_30deg_straightonly)
 end
 
+advtrains.register_tracks("default", {
+	nodename_prefix="linetrack:watertrack_xing",
+	texture_prefix="advtrains_ltrack_xing",
+	models_prefix="advtrains_ltrack_xing",
+	models_suffix=".obj",
+    shared_texture = "linetrack_line.png",
+	description=attrans("Perpendicular Diamond Crossing Water Line Track"),
+	formats = {},
+    suitable_substrate = suitable_substrate,
+    get_additional_definiton = function(def, preset, suffix, rotation)
+        local ndef = core.registered_nodes["advtrains:dtrack_xing_st"..rotation]
+        local result = {
+                groups = {
+                    advtrains_track = 1,
+                    advtrains_track_waterline = 1,
+                    save_in_at_nodedb = 1,
+                    dig_immediate = 2,
+                    not_in_creative_inventory = 1,
+                    not_blocking_trains = 1,
+                },
+                use_texture_alpha = "blend",
+                _ch_map_color = _ch_map_color,
+        }
+        if ndef ~= nil and ndef.selection_box ~= nil then
+            result.selection_box = ndef.selection_box
+        end
+        return result
+    end
+}, advtrains.ap.t_perpcrossing)
+
+core.register_craft({
+	output = 'linetrack:watertrack_xing_placer 3',
+	recipe = {
+		{'', 'linetrack:watertrack_placer', ''},
+		{'linetrack:watertrack_placer', 'linetrack:watertrack_placer', 'linetrack:watertrack_placer'},
+		{'', 'linetrack:watertrack_placer', ''}
+	}
+})
+
 for _, name in ipairs({
     "linetrack:watertrack_placer",
     "linetrack:watertrack_slopeplacer",
@@ -212,6 +251,7 @@ for _, name in ipairs({
     "linetrack:watertrack_lua_placer",
     "linetrack:watertrack_stn_placer",
     "linetrack:watertrack_spd_placer",
+    "linetrack:watertrack_xing_placer",
 }) do
     if core.registered_items[name] ~= nil then
         core.override_item(name, {
