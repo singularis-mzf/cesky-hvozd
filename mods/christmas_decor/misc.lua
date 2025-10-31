@@ -168,9 +168,15 @@ minetest.register_node("christmas_decor:snowman", {
 	},
 	paramtype = "light",
 	sunlight_propagates = true,
-	paramtype2 = "4dir",
+	paramtype2 = "colordegrotate",
+	palette = "chistmas_decor_snowman_palette.png",
 	groups = {snappy = 3},
 	sounds = default_sounds("node_sound_leaves_defaults"),
+	on_place = function(itemstack, placer, pointed_thing)
+		local param2 = math.random(0, 7) * 32 + math.random(0, 23)
+		print("DEBUG: param2 = "..param2);
+		return core.item_place_node(itemstack, placer, pointed_thing, param2)
+	end,
 })
 
 if depends.default then

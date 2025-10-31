@@ -1,0 +1,13 @@
+(C) 2025 KomputerOverload, unless otherwise noted.
+
+code licence
+---------------------------
+LGPL 2.1. KomputerOverload.
+
+media licence
+------------------------------------------------
+CC-BY-SA 3.0 KomputerOverload, Gambit, BlockMen.
+
+acknowledgments
+----------------------------------
+TenPlus1 for helping with the code

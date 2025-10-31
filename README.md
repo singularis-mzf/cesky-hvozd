@@ -1014,6 +1014,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: AGPLv3 pro kód, CC BY-SA 3.0 pro ostatní
 * [ContentDB](https://content.minetest.net/packages/rheo/smartshop/)
 
+## Snowmen (snowmen)
+
+* Zdroj: [https://github.com/komputeroverload/snowmen](https://github.com/komputeroverload/snowmen), revize b7ac4c5f0273cb51634ddc56deb4eb5b3508b5ca
+* Původní licence: LGPLv2.1 pro kód, CC BY-SA 3.0 pro média
+* Licence úprav: LGPLv2.1 pro kód, CC BY-SA 3.0 pro média
+* [ContentDB](https://content.luanti.org/packages/KomputerOverload/snowmen/)
+
 ## Snow Song (snowsong)
 
 * Zdroj: [https://github.com/tacotexmex/snowsong](https://github.com/tacotexmex/snowsong), revize 62a8bfffb8c562f3d3b613c8a02a38c076ee9f97
