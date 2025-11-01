@@ -9,8 +9,14 @@ local shops = {
 }
 
 local shop_def = {
-	lists = {"main", "give1", "give2", "give3", "give4", "give5", "give6", "give7", "give8", "give9", "give10", "pay1", "pay2", "pay3", "pay4", "pay5", "pay6", "pay7", "pay8", "pay9", "pay10"},
+	lists = {
+		"main",
+		"give1", "give2", "give3", "give4", "give5", "give6", "give7", "give8", "give9", "give10",
+		"pay1", "pay2", "pay3", "pay4", "pay5", "pay6", "pay7", "pay8", "pay9", "pay10",
+	},
 	metas = {
+		autoprices = wrench.META_TYPE_INT,
+		constructed_at = wrench.META_TYPE_IGNORE,
 		freebies = wrench.META_TYPE_INT,
 		icons = wrench.META_TYPE_INT,
 		infotext = wrench.META_TYPE_STRING,

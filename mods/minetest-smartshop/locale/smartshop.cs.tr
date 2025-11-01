@@ -27,13 +27,17 @@ Smartshop external storage=vzdálené úložiště pro obchodní terminál
 icons?=zobrazit ikony a titulek?
 check this if you want to display item icons on the shop=Zaškrtněte toto pole, abyste umožnil/a@nzobrazení ikon zboží a titulku obchodního terminálu.
 allow returns?=umožnit vracení?
+auto prices?=automatické ceny?
 check this if you want to mark sold clothes, so they could be returned in a limited time period=Zaškrtnete-li toto pole, terminál bude označovat prodané oděvy a obuv tak,@nže je bude možno do deseti minut vrátit do příslušného specializovaného bloku.@nTo platí, pouze pokud je obchodní terminál neomezený a pouze při prodeji@njednoho kusu oděvu či obuvi (neuplatní se na větší dávky). Nedoporučuje se kombinovat s prodejem včetně metadat.
+check this if you want prices to be set automatically for this shop=Zaškrtnete-li toto pole, terminál bude nastavovat ceny pro zboží automaticky.
 save title=uložit titulek
 save the title of the shop; to remove the title, set the title to an empty string=Uloží titulek obchodního terminálu. Pro smazání titulku ho nastavte na prázdný řetězec.
 normal exchange=normální nákup
 external storage title=popisek vzdáleného úložiště
 save title=uložit popisek
 put 1-10000 and press Enter to get samples of given number of coins to be dragged to pay or give slots=Zadejte 1-10000 a stiskněte Enter, abyste získal/a vzorky zadaného počtu mincí@npro přesunutí do polí „na prodej“ nebo „cena“.
+creative mode?=kouzelnický režim?
+enables creative mode=zapne kouzelnický režim; v tomto režimu lze prodávat a vykupovat jen zboží s referenční cenou, cena se určuje automaticky a hráč/ka nedostává platbu; kouzelnické postavy nemohou tento režim vypnout
 
 # storage:
 @1@nExternal storage by:@n@2=@1@nvzdálené úložiště pro obchodní terminál@n(vlastník/ice: @2)

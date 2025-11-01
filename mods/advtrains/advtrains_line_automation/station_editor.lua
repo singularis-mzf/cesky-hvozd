@@ -321,20 +321,51 @@ local function formspec_callback(custom_state, player, formname, fields)
 		if change_stn then
 			advtrains.lines.stations[new_stn] = t
 			local stops = advtrains.lines.stops
-			local count = 0
+			local stop_track_count, linevar_count, stops_onlv_count = 0, 0, 0
 			for _, trackinfo in ipairs(st.tracks) do
 				local stop = stops[trackinfo.epos]
+				local pos = advtrains.decode_pos(trackinfo.epos)
 				if stop == nil then
-					minetest.log("error", "Expected track at position "..trackinfo.epos.." not found!")
+					minetest.log("error", "Expected track at position "..core.pos_to_string(pos).." not found!")
 				elseif stop.stn ~= st.stn then
-					minetest.log("error", "Track at position "..trackinfo.epos.." has unexpected stn '"..tostring(stop.stn).."' instead of '"..st.stn.."'!")
+					minetest.log("error", "Track at position "..core.pos_to_string(pos).." has unexpected stn '"..tostring(stop.stn).."' instead of '"..st.stn.."'!")
 				else
 					stop.stn = new_stn
-					count = count + 1
+					stop_track_count = stop_track_count + 1
 				end
 			end
+			-- move and rename linevars:
+			if t.linevars ~= nil then
+				local new_linevars = {}
+				for linevar, linevar_def in pairs(t.linevars) do
+					local lv_line, lv_stn, lv_rc = advtrains.lines.linevar_decompose(linevar)
+					assert(lv_line)
+					assert(lv_stn)
+					assert(lv_rc)
+					local nt, nt2, nt3
+					local new_linevar = lv_line.."/"..new_stn.."/"..lv_rc
+					new_linevars[new_linevar] = table.copy(linevar_def) -- nt = linevar_def
+					new_linevars[new_linevar].name = new_linevar
+					linevar_count = linevar_count + 1
+				end
+				t.linevars = new_linevars
+			end
+			-- rename stops in linevars:
+			local empty_table = {}
+			for stn, stdata in pairs(advtrains.lines.stations) do
+				for linevar, linevar_def in pairs(stdata.linevars or empty_table) do
+					for i, stop in ipairs(linevar_def.stops) do
+						if stop.stn == st.stn then
+							stop.stn = new_stn
+							stops_onlv_count = stops_onlv_count + 1
+						end
+					end
+				end
+			end
+			--
 			advtrains.lines.stations[st.stn] = nil
-			ch_core.systemovy_kanal(custom_state.player_name, "Kód zastávky změněn, "..count.." bloků kolejí aktualizováno.")
+			ch_core.systemovy_kanal(custom_state.player_name, "Kód zastávky změněn, "..stop_track_count.." bloků kolejí, "..linevar_count..
+				" variant linky a "..stops_onlv_count.." zastávek na linkách aktualizováno.")
 		end
 		custom_state.stations = nil
 		update_formspec = true

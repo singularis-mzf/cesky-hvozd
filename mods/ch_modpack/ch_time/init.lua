@@ -286,6 +286,15 @@ function ch_time.znamka32(time)
 	end
 end
 
+--[[
+	Převede časovou známku ve formátu vraceném funkcí ch_time.znamka32() zpět
+	na formát vracený funkcí ch_time.time(). Pro nil vrací nil.
+]]
+function ch_time.znamka32_to_time(tm32)
+	if tm32 ~= nil then
+		return tm32 + epoch
+	end
+end
 
 --[[
 Vrátí herní čas ve struktuře:

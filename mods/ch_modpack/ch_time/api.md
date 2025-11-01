@@ -141,6 +141,12 @@ Vrátí časovou známku v rozsahu typu 'int32_t' jako počet sekund od 1. 1. 20
 Rozsah je od 1951-12-13 20:45:53 UTC do 2088-01-19 03:14:07 UTC.
 Není-li zadaná časová známka (nil), použije aktuální čas.
 
+  ch_time.znamka32_to_time(tm32) -> int
+
+Je-li zadána časová známka ve formátu vraceném funkcí ch_time.znamka32(), vratí odpovídající hodnotu,
+kterou by vrátila funkce ch_time.time(), tzn. jde o inverzní operaci k ch_time.znamka32(time).
+Je-li zadáno nil, vrátí nil.
+
 ## Funkce pro práci s herním časem
 
   ch_time.herni_cas() -> table

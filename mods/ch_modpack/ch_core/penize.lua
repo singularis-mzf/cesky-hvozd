@@ -76,7 +76,9 @@ end
 
 --[[
 	Vrátí tabulku ItemStacků s penězi v dané výši. Částka musí být nezáporná.
-	Případné desetinné číslo se zaokrouhlí dolů. Pro nulu vrací prázdnou tabulku.
+	Případné desetinné číslo se zaokrouhlí dolů.
+	Platidla jsou seřazena od nejvyšší hodnoty po nejnižší.
+	Pro nulu vrací prázdnou tabulku.
 ]]
 function ch_core.hotovost(castka)
 	local debug = {"puvodni castka: "..castka}

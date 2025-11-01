@@ -97,6 +97,7 @@ function node_class:initialize_metadata(owner)
         player_name = owner:get_player_name()
     end
 
+	self.meta:set_int("constructed_at", assert(ch_time.znamka32()))
 	self:set_owner(player_name)
 	self:set_private(true)
 end

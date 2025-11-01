@@ -272,19 +272,40 @@ local function after_joinplayer(player_name, join_timestamp)
 		5.6.x => formspec_version = 6, protocol_version = 41
 		5.7.x => formspec_version = 6, protocol_version = 42
 		5.8.0 => formspec_version = 7, protocol_version = 43
-		5.9.0 => formspec_version = ?, protocol_version = ?
+		5.9.0 => formspec_version = ?, protocol_version = 44
 		5.10.0 => formspec_version = 8, protocol_version = 46
+
+_["5.0.0"] = 37
+_["5.1.0"] = 38
+_["5.2.0"] = 39
+_["5.3.0"] = 39
+_["5.4.0"] = 39
+_["5.5.0"] = 40
+_["5.6.0"] = 41
+_["5.7.0"] = 42
+_["5.8.0"] = 43
+_["5.9.0"] = 44
+_["5.9.1"] = 45
+_["5.10.0"] = 46
+_["5.11.0"] = 47
+_["5.12.0"] = 48
+_["5.13.0"] = 49
+_["5.14.0"] = 50
 	]]
-	if online_charinfo.protocol_version < 42 and online_charinfo.protocol_version ~= 0 then
-		local client_version
-		if online_charinfo.protocol_version == 40 then
-			client_version = "5.5.x"
-		elseif online_charinfo.protocol_version == 41 then
-			client_version = "5.6.x"
-		else
-			client_version = "?.?.?"
-		end
-		ch_core.systemovy_kanal(player_name, minetest.get_color_escape_sequence("#cc5257").."VAROVÁNÍ: Váš klient je zastaralý! Zdá se, že používáte klienta Minetest "..client_version..", který nepodporuje některé moderní vlastnosti hry využívané na Českém hvozdu. Hra vám bude fungovat, ale některé bloky se nemusejí zobrazit správně. Pro správné zobrazení doporučujeme přejít na Minetest 5.7.0 nebo novější, máte-li tu možnost.")
+	if online_charinfo.protocol_version < 46 and online_charinfo.protocol_version ~= 0 then
+		local protocol_to_version = {
+			[40] = "5.5.0",
+			[41] = "5.6.0",
+			[42] = "5.7.0",
+			[43] = "5.8.0",
+			[44] = "5.9.0",
+			[45] = "5.9.1",
+		}
+		local client_version = protocol_to_version[online_charinfo.protocol_version] or "?.?.?"
+		ch_core.systemovy_kanal(player_name, minetest.get_color_escape_sequence("#cc5257").."VAROVÁNÍ: Váš klient je zastaralý! "..
+			"Zdá se, že používáte klienta Minetest "..client_version..", který nepodporuje některé moderní vlastnosti hry využívané "..
+			"na Českém hvozdu. Hra vám bude fungovat, ale některé bloky se nemusejí zobrazit správně. "..
+			"Pro správné zobrazení doporučujeme přejít na Luanti 5.10.0 nebo novější, máte-li tu možnost.")
 	end
 
 	-- Vypsat posledních 5 přihlášených registrovaných postav:
@@ -396,8 +417,8 @@ local function on_joinplayer(player, last_login)
 
 	if news_role == "disconnect" then
 		minetest.disconnect_player(player_name, "Váš klient je příliš starý. "..
-			"Pro připojení k tomuto serveru prosím použijte Minetest/Luanti 5.9.0 nebo novější. "..
-			"Verze 5.7.x a 5.8.x budou fungovat, ale některé bloky nemusejí být zobrazeny správně.")
+			"Pro připojení k tomuto serveru prosím použijte Luanti 5.10.0 nebo novější. "..
+			"Verze 5.7.x, 5.8.x a 5.9.x budou fungovat, ale některé bloky nemusejí být zobrazeny správně.")
 		return true
 	elseif news_role == "invalid_name" then
 		minetest.disconnect_player(player_name, "Neplatné přihlašovací jméno '"..player_name.."'. Seznamte se, prosím, s pravidly serveru pro jména, nebo použijte jen písmena anglické abecedy.")

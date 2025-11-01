@@ -42,6 +42,7 @@ function shop_class:initialize_metadata(player)
     self:set_strict_meta(false)
     self:set_freebies(false)
     self:set_icons(false)
+    self:set_autoprices(false)
 end
 
 function shop_class:initialize_inventory()
@@ -65,6 +66,9 @@ end
 function shop_class:set_unlimited(value)
     self.meta:set_int("unlimited", value and 1 or 0)
     self.meta:mark_as_private("unlimited")
+    if not value then
+        self:set_creative_mode(false)
+    end
 end
 
 function shop_class:is_unlimited()
@@ -78,6 +82,27 @@ end
 
 function shop_class:allow_returns()
     return self.meta:get_int("allow_returns") == 1
+end
+
+function shop_class:set_creative_mode(value)
+    local meta = self.meta
+    if value then
+        if meta:get_int("creative_mode") ~= 1 then
+            meta:set_int("creative_mode", 1)
+            meta:set_int("unlimited", 1)
+            meta:set_int("freebies", 0)
+            meta:set_int("autoprices", 1)
+        end
+    else
+        if meta:get_int("creative_mode") ~= 0 then
+            meta:set_int("creative_mode", 0)
+        end
+    end
+    self.meta:mark_as_private("creative_mode")
+end
+
+function shop_class:creative_mode()
+    return self.meta:get_int("creative_mode") == 1
 end
 
 function shop_class:set_send_pos(send_pos)
@@ -177,6 +202,9 @@ end
 function shop_class:set_freebies(value)
     self.meta:set_int("freebies", value and 1 or 0)
     self.meta:mark_as_private("freebies")
+    if value then
+        self:set_creative_mode(false)
+    end
 end
 
 function shop_class:allow_freebies()
@@ -190,6 +218,18 @@ end
 
 function shop_class:allow_icons()
     return self.meta:get_int("icons") == 1
+end
+
+function shop_class:set_autoprices(value)
+    self.meta:set_int("autoprices", value and 1 or 0)
+    self.meta:mark_as_private("autoprices")
+    if not value then
+        self:set_creative_mode(false)
+    end
+end
+
+function shop_class:allow_autoprices()
+    return self.meta:get_int("autoprices") == 1
 end
 
 function shop_class:set_shop_title(text)
@@ -560,6 +600,7 @@ function shop_class:receive_fields(player, fields)
     local changed = false
 
 	local has_setup_right = minetest.check_player_privs(player, "ch_registered_player")
+    local player_is_creative = ch_core.get_player_role(player) == "creative"
 
     if fields.history then
         self:show_history(player)
@@ -640,6 +681,17 @@ function shop_class:receive_fields(player, fields)
 			self:set_allow_returns(fields.allow_returns == "true")
 			changed = true
 		end
+        if fields.autoprices and has_setup_right then
+            self:set_autoprices(fields.autoprices == "true")
+            changed = true
+        end
+        if fields.creative_mode and has_setup_right then
+            -- kouzelnické postavy nemohou vypnout kouzelnický režim
+            if fields.creative_mode == "true" or not player_is_creative then
+                self:set_creative_mode(fields.creative_mode == "true")
+            end
+            changed = true
+        end
 		if fields.save_title and has_setup_right then
 			self:set_shop_title(fields.title or "")
 			minetest.log("action", "Shop title set to: "..(fields.title or ""))
@@ -687,9 +739,102 @@ function shop_class:get_info_line(i)
     return ("(%i) %s"):format(give_count, description)
 end
 
+local has_ch_prices = core.get_modpath("ch_prices")
+
+if has_ch_prices then
+    local function adjust_auto_prices(pos, owner, shop_age, inv, i, give_stack, pay_stack, is_creative_mode)
+        local give_money, pay_money
+        if give_stack:is_empty() then
+            if pay_stack:is_empty() then
+                return -- nic za nic
+            end
+            give_money = -1
+            pay_money = ch_core.precist_hotovost(pay_stack)
+        else
+            give_money = ch_core.precist_hotovost(pay_stack)
+            if pay_stack:is_empty() then
+                pay_money = -1
+            else
+                pay_money = ch_core.precist_hotovost(pay_stack)
+            end
+        end
+        -- nil => zboží
+        if give_money == nil then
+            if pay_money == nil then
+                -- zboží (give) za zboží (pay)
+                if is_creative_mode then
+                    core.log("action", "Due to creative mode of a smart shop at "..core.pos_to_string(pos).." the goods/goods offer will be cleared.")
+                    local empty_stack = ItemStack()
+                    inv:set_stack(("give%i"):format(i), 1, empty_stack)
+                    inv:set_stack(("pay%i"):format(i), 1, empty_stack)
+                end
+            else
+                -- zboží (give) za peníze (pay)
+                local sell_price = ch_prices.get_sell_price(pos, give_stack, owner, shop_age)
+                if is_creative_mode and (sell_price == nil or sell_price <= 0) and pay_money ~= -1 then
+                    core.log("action", "Due to creative mode of a smart shop at "..core.pos_to_string(pos).." the price will be cleared.")
+                    inv:set_stack(("pay%i"):format(i), 1, ItemStack())
+                    return true
+                elseif sell_price ~= nil and sell_price ~= pay_money then
+                    local hotovost = ch_core.hotovost(sell_price)
+                    if hotovost[1] ~= nil then
+                        if hotovost[2] ~= nil then
+                            core.log("warning", "Cash overflow when computing sell_price for "..give_stack:get_name().." ("..sell_price..")!")
+                        end
+                        print("DEBUG: will set automatic price at "..core.pos_to_string(pos).."/"..i..": "..hotovost[1]:to_string())
+                        inv:set_stack(("pay%i"):format(i), 1, hotovost[1])
+                        return true
+                    else
+                        core.log("error", "Cannot convert sell_price "..tostring(sell_price).." to cash!")
+                    end
+                end
+            end
+        elseif pay_money == nil then
+            -- peníze (give) za zboží (pay)
+            local buy_price = ch_prices.get_buy_price(pos, pay_stack, owner, shop_age)
+            if is_creative_mode and (buy_price == nil or buy_price <= 0) and give_money ~= -1 then
+                core.log("action", "Due to creative mode of a smart shop at "..core.pos_to_string(pos).." the price will be cleared.")
+                inv:set_stack(("give%i"):format(i), 1, ItemStack())
+                return true
+            elseif buy_price ~= nil and buy_price ~= give_money then
+                local hotovost = ch_core.hotovost(buy_price)
+                if hotovost[1] ~= nil then
+                    if hotovost[2] ~= nil then
+                        core.log("warning", "Cash overflow when computing buy_price for "..pay_stack:get_name().." ("..buy_price..")!")
+                    end
+                    print("DEBUG: will set automatic price at "..core.pos_to_string(self.pos).."/"..i..": "..hotovost[1]:to_string())
+                    inv:set_stack(("give%i"):format(i), 1, hotovost[1])
+                else
+                    core.log("error", "Cannot convert buy_price "..tostring(buy_price).." to cash!")
+                end
+            end
+        else
+            -- peníze (give) za peníze (pay)
+            if is_creative_mode and give_money ~= -1 and pay_money ~= -1 and give_money ~= pay_money then
+                core.log("action", "Due to creative mode of a smart shop at "..core.pos_to_string(pos).." the money price will be cleared.")
+                local empty_stack = ItemStack()
+                inv:set_stack(("give%i"):format(i), 1, empty_stack)
+                inv:set_stack(("pay%i"):format(i), 1, empty_stack)
+            end
+        end
+    end
+    return false
+end
+
 function shop_class:update_info()
     local owner = self:get_owner()
     local lines = {S("(obchodní terminál, vlastník/ice: @1)", ch_core.prihlasovaci_na_zobrazovaci(owner))}
+
+    -- Compute/update automatic prices:
+    if has_ch_prices and self:allow_autoprices() then
+        local creative_mode = self:creative_mode()
+        print("DEBUG: will update autoprices")
+        local shop_age = ch_time.znamka32() - self.meta:get_int("constructed_at")
+        for i = 1, 10 do
+            adjust_auto_prices(self.pos, owner, shop_age, self.inv, i, self:get_give_stack(i), self:get_pay_stack(i), creative_mode)
+        end
+    end
+    --
 
     local info_lines = {}
     for i = 1, 10 do

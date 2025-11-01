@@ -4,6 +4,7 @@ local string_to_pos = minetest.string_to_pos
 
 local S = smartshop.S
 local api = smartshop.api
+local has_ch_prices = core.get_modpath("ch_prices")
 
 local function FS(text, ...)
 	return F(S(text, ...))
@@ -44,73 +45,69 @@ function api.build_owner_formspec(shop, player_name)
 	local allow_freebies = shop:allow_freebies()
 	local allow_icons = shop:allow_icons()
 	local allow_returns = shop:allow_returns()
+	local allow_autoprices = shop:allow_autoprices()
+	local creative_mode = shop:creative_mode()
 	local shop_title = shop:get_shop_title()
 	local owner = shop:get_owner()
+	local owner_role = ch_core.get_player_role(owner)
 
-	local fs_parts = {
-		"size[15,13]",
+	local fs_parts = {"size[15,13]", ("label[0,0.2;%s]"):format(FS("for sale:"))}
 
-		("label[0,0.2;%s]"):format(FS("for sale:")),
-		("list[nodemeta:%s;give1;1,0;1,1;]"):format(fpos),
-		("list[nodemeta:%s;give2;2,0;1,1;]"):format(fpos),
-		("list[nodemeta:%s;give3;3,0;1,1;]"):format(fpos),
-		("list[nodemeta:%s;give4;4,0;1,1;]"):format(fpos),
-		("list[nodemeta:%s;give5;5,0;1,1;]"):format(fpos),
-		("list[nodemeta:%s;give6;6,0;1,1;]"):format(fpos),
-		("list[nodemeta:%s;give7;7,0;1,1;]"):format(fpos),
-		("list[nodemeta:%s;give8;8,0;1,1;]"):format(fpos),
-		("list[nodemeta:%s;give9;9,0;1,1;]"):format(fpos),
-		("list[nodemeta:%s;give10;10,0;1,1;]"):format(fpos),
-		("label[0,1.2;%s]"):format(FS("price:")),
-		("list[nodemeta:%s;pay1;1,1;1,1;]"):format(fpos),
-		("list[nodemeta:%s;pay2;2,1;1,1;]"):format(fpos),
-		("list[nodemeta:%s;pay3;3,1;1,1;]"):format(fpos),
-		("list[nodemeta:%s;pay4;4,1;1,1;]"):format(fpos),
-		("list[nodemeta:%s;pay5;5,1;1,1;]"):format(fpos),
-		("list[nodemeta:%s;pay6;6,1;1,1;]"):format(fpos),
-		("list[nodemeta:%s;pay7;7,1;1,1;]"):format(fpos),
-		("list[nodemeta:%s;pay8;8,1;1,1;]"):format(fpos),
-		("list[nodemeta:%s;pay9;9,1;1,1;]"):format(fpos),
-		("list[nodemeta:%s;pay10;10,1;1,1;]"):format(fpos),
+	for i = 1, 10 do
+		table.insert(fs_parts, ("list[nodemeta:%s;give%d;%d,0;1,1;]"):format(fpos, i, i))
+	end
+	table.insert(fs_parts, ("label[0,1.2;%s]"):format(FS("price:")))
+	for i = 1, 10 do
+		table.insert(fs_parts, ("list[nodemeta:%s;pay%d;%d,1;1,1;]"):format(fpos, i, i))
+	end
+	table.insert(fs_parts,
+		("button[12,0;2,1;customer;%s]"):format(FS("customer view"))..
+		("tooltip[customer;%s]"):format(FS("view the shop as a customer")))
+	local y_base, y_step = 0.9, 0.3
+	local function add_checkbox(name, value, label, tooltip)
+		table.insert(fs_parts, ("checkbox[12,%f;%s;%s;%s]tooltip[%s;%s]"):format(y_base, name, FS(label), value, name, FS(tooltip)))
+		y_base = y_base + y_step
+	end
+	add_checkbox("strict_meta", tostring(is_strict_meta), "strict meta?",
+		"check this if you are buying or selling items with unique properties like written books or petz.")
+	add_checkbox("private", tostring(is_private), "private?",
+		"uncheck this if you want to share control of the shop with anyone in the protected area.")
+	if not creative_mode then
+		add_checkbox("freebies", tostring(allow_freebies), "freebies?",
+			"check this if you want to be able to give/receive items without an exchange")
+	end
+	add_checkbox("icons", tostring(allow_icons), "icons?",
+		"check this if you want to display item icons on the shop")
+	if has_ch_prices and not creative_mode then
+		add_checkbox("autoprices", tostring(allow_autoprices), "auto prices?",
+			"check this if you want prices to be set automatically for this shop")
+	end
 
-		("button[12,0;2,1;customer;%s]"):format(FS("customer view")),
-		("tooltip[customer;%s]"):format(FS("view the shop as a customer")),
+	table.insert(fs_parts, "field[0.5,2.0;7,1.8;title;;"..F(shop_title).."]")
+	table.insert(fs_parts, ("button[7,2;2,1;save_title;%s]"):format(FS("save title")))
+	table.insert(fs_parts, ("tooltip[save_title;%s]"):format(FS("save the title of the shop; to remove the title, set the title to an empty string")))
+	table.insert(fs_parts, "list[current_player;main;0,9.2;8,4;]")
 
-		("checkbox[12,0.9;strict_meta;%s;%s]"):format(FS("strict meta?"), tostring(is_strict_meta)),
-		("tooltip[strict_meta;%s]"):format(FS("check this if you are buying or selling items with unique properties " ..
-			"like written books or petz.")),
-		("checkbox[12,1.2;private;%s;%s]"):format(FS("private?"), tostring(is_private)),
-		("tooltip[private;%s]"):format(FS("uncheck this if you want to share control of the shop with anyone in the " ..
-			"protected area.")),
-		("checkbox[12,1.5;freebies;%s;%s]"):format(FS("freebies?"), tostring(allow_freebies)),
-		("tooltip[freebies;%s]"):format(FS("check this if you want to be able to give/receive items without " ..
-			"an exchange")),
-		("checkbox[12,1.8;icons;%s;%s]"):format(FS("icons?"), tostring(allow_icons)),
-		("tooltip[icons;%s]"):format(FS("check this if you want to display item icons on the shop")),
-
-		"field[0.5,2.0;7,1.8;title;;"..F(shop_title).."]",
-		("button[7,2;2,1;save_title;%s]"):format(FS("save title")),
-		("tooltip[save_title;%s]"):format(FS("save the title of the shop; to remove the title, set the title to an empty string")),
-
-		"list[current_player;main;0,9.2;8,4;]",
-		("listring[nodemeta:%s;main]"):format(fpos),
-		"listring[current_player;main]",
-
+	table.insert_all(fs_parts, {
 		"field[8.5,10.0;1.25,0.5;money;na cenu:;]",
 		"field_close_on_enter[money;false]",
 		("tooltip[money;%s]"):format(FS("put 1-10000 and press Enter to get samples of given number of coins to be dragged to pay or give slots")),
 		"button[9.4,9.7;1,0.5;money_set;>>]",
 		("list[nodemeta:%s;money;10.5,9.5;3,1;]"):format(fpos),
-	}
+	})
 
 	if player_is_admin(owner) then
-		table.insert_all(fs_parts, {
-			("checkbox[12,0.6;is_unlimited;%s;%s]"):format(FS("unlimited?"), tostring(is_unlimited)),
-			("tooltip[is_unlimited;%s]"):format(FS("check this allow exchanges ex nihilo. " ..
-				"shop contents will be ignored")),
-			("checkbox[12,2.1;allow_returns;%s;%s]"):format(FS("allow returns?"), tostring(allow_returns)),
-			("tooltip[allow_returns;%s]"):format(FS("check this if you want to mark sold clothes, so they could be returned in a limited time period")),
-		})
+		if not creative_mode then
+			add_checkbox("is_unlimited", tostring(is_unlimited), "unlimited?",
+				"check this allow exchanges ex nihilo. shop contents will be ignored")
+		end
+		add_checkbox("allow_returns", tostring(allow_returns), "allow returns?",
+			"check this if you want to mark sold clothes, so they could be returned in a limited time period")
+	end
+
+	if has_ch_prices then
+		add_checkbox("creative_mode", tostring(creative_mode), "creative mode?",
+			"enables creative mode")
 	end
 
 	if history_max ~= 0 then
@@ -128,6 +125,8 @@ function api.build_owner_formspec(shop, player_name)
 			("list[nodemeta:%s;main;0,3;15,6;]"):format(fpos),
 			("button_exit[11,0;1,1;trefill;%s]"):format(FS("refill")),
 			("button_exit[11,1;1,1;tsend;%s]"):format(FS("send")),
+			("listring[nodemeta:%s;main]"):format(fpos),
+			"listring[current_player;main]",
 		})
 
 		if send then
