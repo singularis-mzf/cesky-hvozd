@@ -75,11 +75,43 @@ local function check_attached_node(p, n)
 	return true
 end
 
+local paramtype2_to_max = {
+	facedir = 23,
+	wallmounted = 7,
+	["4dir"] = 3,
+	degrotate = 239,
+	color = 255,
+	colorfacedir = 255,
+	color4dir = 255,
+	colorwallmounted = 255,
+	colordegrotate = 255,
+}
+
 digtron.item_place_node = function(itemstack, placer, place_to, param2)
 	local item_name = itemstack:get_name()
+	-- local item_color = itemstack:get_meta():get_int("palette_index")
 	local def = itemstack:get_definition()
-	if (not def) or (param2 < 0) or (def.paramtype2 == "wallmounted" and param2 > 5) or (param2 > 23) then -- validate parameters
+	if not def then
 		return itemstack, false
+	end
+	-- validate parameters
+	local param2_max = paramtype2_to_max[def.paramtype2 or ""]
+	if param2_max == nil then
+		if param2 ~= 0 then
+			return itemstack, false
+		end
+	elseif param2 < 0 or param2 > param2_max then
+		return itemstack, false
+	end
+
+	-- extract and override color
+	local colored_itemstack = itemstack
+	if type(def.paramtype2) == "string" then
+		local color = core.strip_param2_color(param2, def.paramtype2)
+		if color ~= nil then
+			colored_itemstack = ItemStack(itemstack)
+			colored_itemstack:get_meta():set_int("palette_index", color)
+		end
 	end
 
 	local pointed_thing = {}
@@ -169,7 +201,7 @@ digtron.item_place_node = function(itemstack, placer, place_to, param2)
 		local newnode_copy = {name=newnode.name, param1=newnode.param1, param2=newnode.param2}
 		local oldnode_copy = {name=oldnode.name, param1=oldnode.param1, param2=oldnode.param2}
 		local pointed_thing_copy = copy_pointed_thing(pointed_thing)
-		if callback(place_to_copy, newnode_copy, digtron.fake_player, oldnode_copy, itemstack, pointed_thing_copy) then
+		if callback(place_to_copy, newnode_copy, digtron.fake_player, oldnode_copy, colored_itemstack, pointed_thing_copy) then
 			take_item = false
 		end
 	end
