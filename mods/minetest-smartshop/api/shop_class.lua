@@ -740,9 +740,10 @@ function shop_class:get_info_line(i)
 end
 
 local has_ch_prices = core.get_modpath("ch_prices")
+local adjust_auto_prices
 
 if has_ch_prices then
-    local function adjust_auto_prices(pos, owner, shop_age, inv, i, give_stack, pay_stack, is_creative_mode)
+    adjust_auto_prices = function(pos, owner, shop_age, inv, i, give_stack, pay_stack, is_creative_mode)
         local give_money, pay_money
         if give_stack:is_empty() then
             if pay_stack:is_empty() then
@@ -817,8 +818,8 @@ if has_ch_prices then
                 inv:set_stack(("pay%i"):format(i), 1, empty_stack)
             end
         end
+        return false
     end
-    return false
 end
 
 function shop_class:update_info()

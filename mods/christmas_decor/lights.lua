@@ -63,7 +63,7 @@ local function register_lights(desc, nodename, aspect, length)
 		description = S(desc .. " Christmas Lights"),
 		tiles = {
 			{
-				image = "christmas_decor_lights_" .. nodename .. "_inv.png",
+				name = "christmas_decor_lights_" .. nodename .. "_inv.png",
 				backface_culling = false,
 			}
 		},
@@ -199,7 +199,7 @@ minetest.register_node("christmas_decor:garland_lights", {
 	description = S("Garland with Lights"),
 	tiles = {
 		{
-			image = "christmas_decor_garland_lights.png",
+			name = "christmas_decor_garland_lights.png",
 			backface_culling = false,
 		}
 	},

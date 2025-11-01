@@ -1,5 +1,9 @@
 Licenses of media (sounds, textures)
 ------------------------------------
+colors.txt
+	Author: Singularis <singularis@volny.cz>
+	License: CC0 or public domain
+
 hsx.obj
 	Author: Ilya Kolbin (iskolbin@gmail.com)
 	Source: https://github.com/iskolbin/lhsx
@@ -17,6 +21,10 @@ palette_generator.lua
 perl
 	Author: Singularis
 	License: CC BY-SA-4.0 or GPLv2+
+
+snowman_model.pl
+	Author: Singularis
+	License: LGPLv2.1
 
 trashcan_model.pl
 	Author: Singularis

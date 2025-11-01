@@ -2,19 +2,33 @@ ch_base.open_mod(minetest.get_current_modname())
 -- snowman node
 
 local off = 0.25 -- Y offset so we can scale to 2x
+local box_scale = 1.75
+
+local snowman_box = {
+	type = "fixed",
+	fixed = {
+		box_scale*(-5/16), 2 * (off + -8/16), box_scale*(-5/16),
+		box_scale*(5/16), 2*(off + 8/16), box_scale*(5/16)
+	},
+}
 
 minetest.register_node("snowmen:snowman", {
 	description = "velký sněhulák",
-	drawtype = "nodebox",
+	drawtype = "mesh",
+	mesh = "snowmen.obj",
 	tiles = {
-		"snowmen_top.png", "snowmen_bottom.png", "snowmen_right.png",
-		"snowmen_left.png", "snowmen_back.png", "snowmen_front.png"
+		{name = "snowmen_top.png", backface_culling = true},
+		{name = "snowmen_bottom.png", backface_culling = true},
+		{name = "snowmen_right.png", backface_culling = true},
+		{name = "snowmen_left.png", backface_culling = true},
+		{name = "snowmen_back.png", backface_culling = true},
+		{name = "snowmen_front.png", backface_culling = true},
 	},
 	inventory_image = "snowmen_inv.png",
 	paramtype = "light",
-	paramtype2 = "4dir",
+	paramtype2 = "colordegrotate",
+	palette = "christmas_decor_snowman_palette.png",
 	use_texture_alpha = "clip",
-	visual_scale = 2.0,
 	is_ground_content = false,
 	drop = {
         items = {
@@ -25,6 +39,8 @@ minetest.register_node("snowmen:snowman", {
     },
 	groups = {crumbly = 3, cools_lava = 1, snowy = 1},
 	sounds = default.node_sound_snow_defaults(),
+	selection_box = snowman_box,
+	collision_box = snowman_box,
 
 	on_construct = function(pos)
 
@@ -34,19 +50,10 @@ minetest.register_node("snowmen:snowman", {
 			minetest.set_node(pos, {name = "default:dirt_with_snow"})
 		end
 	end,
-
-	node_box = {
-		type = "fixed",
-		fixed = {
-			{-4/16, off + -8/16, -4/16, 4/16, off + 2/16, 4/16}, -- bottom
-			{-3/16, off + 2/16, -3/16, 3/16, off + 8/16, 3/16}, -- head
-			{-8/16, off + -8/16, 0.0, 8/16, off + 3/16, 0.0} -- hands overlay
-		}
-	},
-
-	selection_box ={
-		{-5/16, off + -8/16, -5/16 , -5/16, off + 8/16, 5/16}
-	}
+	on_place = function(itemstack, placer, pointed_thing)
+		local param2 = math.random(0, 7) * 32 + math.random(0, 23)
+		return core.item_place_node(itemstack, placer, pointed_thing, param2)
+	end,
 })
 
 -- snowman recipe

@@ -5,7 +5,7 @@ minetest.register_node("christmas_decor:icicles_wall", {
 	description = S("Icicles (wall)"),
 	tiles = {
 		{
-			image = "christmas_decor_icicles.png",
+			name = "christmas_decor_icicles.png",
 			backface_culling = false,
 		}
 	},
@@ -45,7 +45,7 @@ if depends.homedecor_exterior then
 		mesh = "homedecor_cube.obj",
 		tiles = {
 			{
-				image = "christmas_decor_shrubbery.png",
+				name = "christmas_decor_shrubbery.png",
 				backface_culling = false,
 				animation = {
 					type = "vertical_frames",
@@ -68,7 +68,7 @@ if depends.homedecor_exterior then
 		mesh = "homedecor_shrubbery.obj",
 		tiles = {
 			{
-				image = "christmas_decor_shrubbery.png",
+				name = "christmas_decor_shrubbery.png",
 				backface_culling = false,
 				animation = {
 					type = "vertical_frames",
@@ -169,12 +169,11 @@ minetest.register_node("christmas_decor:snowman", {
 	paramtype = "light",
 	sunlight_propagates = true,
 	paramtype2 = "colordegrotate",
-	palette = "chistmas_decor_snowman_palette.png",
+	palette = "christmas_decor_snowman_palette.png",
 	groups = {snappy = 3},
 	sounds = default_sounds("node_sound_leaves_defaults"),
 	on_place = function(itemstack, placer, pointed_thing)
 		local param2 = math.random(0, 7) * 32 + math.random(0, 23)
-		print("DEBUG: param2 = "..param2);
 		return core.item_place_node(itemstack, placer, pointed_thing, param2)
 	end,
 })
