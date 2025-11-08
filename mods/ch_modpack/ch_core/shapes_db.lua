@@ -507,6 +507,7 @@ local materials_for_arcades = set(
 local materials_for_bank_slopes = set(
 	-- materiály podporující pobřežní svahy:
 	"basic_materials:cement_block",
+	"basic_materials:concrete_block",
 	"default:dirt",
 	"default:gravel",
 	"default:sand",
