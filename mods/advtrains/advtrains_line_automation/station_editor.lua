@@ -599,12 +599,8 @@ local function get_all_linevars()
 			local line, stn = advtrains.lines.linevar_decompose(linevar)
 			local target_fs = F(advtrains.lines.get_line_description(linevar_def, {line_number = false, last_stop = true, last_stop_prefix = "",
 				last_stop_uppercase = false, train_name = false}))
-			local status_fs
-			if trains_by_linevar[linevar] ~= nil then
-				status_fs = "#00ff00,v provozu"
-			else
-				status_fs = "#999999,neznámý"
-			end
+			local status_desc, status_color = advtrains.lines.get_line_status_description(linevar, trains_by_linevar)
+			local status_fs = F(status_color)..","..F(status_desc)
 			table.insert(result, {
 				stn = stn,
 				linevar = linevar,

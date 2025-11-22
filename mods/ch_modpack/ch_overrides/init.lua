@@ -22,6 +22,7 @@ local mods = {
 	"moretrees",
 	"sandwiches",
 	"smartshop",
+	"streets",
 	"technic",
 	"technic_cnc",
 	"ts_furniture", -- colored chairs and sitting
@@ -30,6 +31,8 @@ local mods = {
 for _, mod in ipairs(mods) do
 	if minetest.get_modpath(mod) then
 		dofile("mod_overrides/"..mod..".lua")
+	else
+		core.log("warning", "Mod "..mod.." not loaded, will not use mod_overrides for this mod.")
 	end
 end
 

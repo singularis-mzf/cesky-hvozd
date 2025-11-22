@@ -43,6 +43,9 @@ function shop_class:initialize_metadata(player)
     self:set_freebies(false)
     self:set_icons(false)
     self:set_autoprices(false)
+    if ch_core.get_player_role(player) == "creative" then
+        self:set_creative_mode(true)
+    end
 end
 
 function shop_class:initialize_inventory()
@@ -61,6 +64,10 @@ end
 
 function shop_class:is_admin()
     return player_is_admin(self:get_owner())
+end
+
+function shop_class:is_creative_owner()
+    return ch_core.get_player_role(self:get_owner()) == "creative"
 end
 
 function shop_class:set_unlimited(value)
@@ -87,18 +94,14 @@ end
 function shop_class:set_creative_mode(value)
     local meta = self.meta
     if value then
-        if meta:get_int("creative_mode") ~= 1 then
-            meta:set_int("creative_mode", 1)
-            meta:set_int("unlimited", 1)
-            meta:set_int("freebies", 0)
-            meta:set_int("autoprices", 1)
-        end
+        meta:set_int("creative_mode", 1)
+        meta:set_int("unlimited", 1)
+        meta:set_int("freebies", 0)
+        meta:set_int("autoprices", 1)
     else
-        if meta:get_int("creative_mode") ~= 0 then
-            meta:set_int("creative_mode", 0)
-        end
+        meta:set_int("creative_mode", 0)
     end
-    self.meta:mark_as_private("creative_mode")
+    meta:mark_as_private("creative_mode")
 end
 
 function shop_class:creative_mode()
@@ -553,7 +556,7 @@ end
 --------------------
 
 function shop_class:on_rightclick(node, player, itemstack, pointed_thing)
-    if not self:is_admin() then
+    if not self:is_admin() and not self:creative_mode() then
         -- if a shop is unlimited, but the owner no longer has admin privs, revert the shop
         self:set_unlimited(false)
     end
@@ -600,7 +603,9 @@ function shop_class:receive_fields(player, fields)
     local changed = false
 
 	local has_setup_right = minetest.check_player_privs(player, "ch_registered_player")
+    local player_role = ch_core.get_player_role(player)
     local player_is_creative = ch_core.get_player_role(player) == "creative"
+    local owner_is_creative = ch_core.get_player_role(self:get_owner()) == "creative"
 
     if fields.history then
         self:show_history(player)
@@ -666,7 +671,9 @@ function shop_class:receive_fields(player, fields)
             changed = true
         end
         if fields.private and has_setup_right then
-            self:set_private(fields.private == "true")
+            if player_role == "admin" or player:get_player_name() == self:get_owner() then
+                self:set_private(fields.private == "true")
+            end
             changed = true
         end
         if fields.freebies and has_setup_right then
@@ -687,8 +694,14 @@ function shop_class:receive_fields(player, fields)
         end
         if fields.creative_mode and has_setup_right then
             -- kouzelnické postavy nemohou vypnout kouzelnický režim
-            if fields.creative_mode == "true" or not player_is_creative then
-                self:set_creative_mode(fields.creative_mode == "true")
+            if fields.creative_mode == "true" then
+                self:set_creative_mode(true)
+            else
+                if player_role == "creative" or (player_role ~= "admin" and owner_is_creative) then
+                    ch_core.systemovy_kanal(player:get_player_name(), "*** Kouzelnické postavy smějí používat obchodní terminály pouze v kouzelnickém režimu!")
+                else
+                    self:set_creative_mode(false)
+                end
             end
             changed = true
         end
@@ -752,7 +765,7 @@ if has_ch_prices then
             give_money = -1
             pay_money = ch_core.precist_hotovost(pay_stack)
         else
-            give_money = ch_core.precist_hotovost(pay_stack)
+            give_money = ch_core.precist_hotovost(give_stack)
             if pay_stack:is_empty() then
                 pay_money = -1
             else
@@ -780,7 +793,15 @@ if has_ch_prices then
                     local hotovost = ch_core.hotovost(sell_price)
                     if hotovost[1] ~= nil then
                         if hotovost[2] ~= nil then
-                            core.log("warning", "Cash overflow when computing sell_price for "..give_stack:get_name().." ("..sell_price..")!")
+                            if hotovost[1]:get_name() == hotovost[2]:get_name() or hotovost[1]:get_free_space() == 0 then
+                                core.log("warning", "Cash overflow when computing sell_price for "..give_stack:get_name().." * "..
+                                    give_stack:get_count().." ("..sell_price..") at "..core.pos_to_string(pos).."!")
+                                hotovost = {ItemStack()}
+                            else
+                                -- round to +inf (=> to want more money to sell the product)
+                                hotovost[1]:set_count(hotovost[1]:get_count() + 1)
+                                hotovost = {hotovost[1]}
+                            end
                         end
                         print("DEBUG: will set automatic price at "..core.pos_to_string(pos).."/"..i..": "..hotovost[1]:to_string())
                         inv:set_stack(("pay%i"):format(i), 1, hotovost[1])
@@ -801,9 +822,16 @@ if has_ch_prices then
                 local hotovost = ch_core.hotovost(buy_price)
                 if hotovost[1] ~= nil then
                     if hotovost[2] ~= nil then
-                        core.log("warning", "Cash overflow when computing buy_price for "..pay_stack:get_name().." ("..buy_price..")!")
+                        if hotovost[1]:get_name() == hotovost[2]:get_name() or hotovost[1]:get_free_space() == 0 then
+                            core.log("warning", "Cash overflow when computing buy_price for "..pay_stack:get_name().." * "..
+                                pay_stack:get_count().." ("..buy_price..") at "..core.pos_to_string(pos).."!")
+                            hotovost = {ItemStack()}
+                        else
+                            -- round to 0 (=> to give less money when buying the product)
+                            hotovost = {hotovost[1]}
+                        end
                     end
-                    print("DEBUG: will set automatic price at "..core.pos_to_string(self.pos).."/"..i..": "..hotovost[1]:to_string())
+                    print("DEBUG: will set automatic price at "..core.pos_to_string(pos).."/"..i..": "..hotovost[1]:to_string())
                     inv:set_stack(("give%i"):format(i), 1, hotovost[1])
                 else
                     core.log("error", "Cannot convert buy_price "..tostring(buy_price).." to cash!")

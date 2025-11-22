@@ -1254,6 +1254,38 @@ function al.get_trains_by_linevar()
     return result
 end
 
+function al.get_line_status_description(linevar, trains_by_linevar)
+    assert(linevar)
+    if trains_by_linevar == nil then
+        trains_by_linevar = al.get_trains_by_linevar()
+    end
+    local linevar_def = al.try_get_linevar_def(linevar)
+    if linevar_def == nil then
+        return "neznámý", "#999999", trains_by_linevar
+    end
+    if linevar_def.disabled then
+        return "vypnutá", "#333333", trains_by_linevar
+    end
+    local trains = trains_by_linevar[linevar]
+    if trains ~= nil and trains[1] ~= nil then
+        return "v provozu", "#00ff00", trains_by_linevar
+    end
+    local lp = last_passages[linevar]
+    local rwtime = rwt.to_secs(rwt.get_time())
+    if lp ~= nil then
+        for i = 10, 1, -1 do
+            local lpi = lp[i]
+            if lpi ~= nil then
+                if lpi[1] ~= nil and rwtime - lpi[1] < 7200 then
+                    return "v provozu nedávno", "#cccc00", trains_by_linevar -- zaznamenána jízda během posledních 2 hodin
+                end
+            end
+        end
+    end
+    -- TODO: příležitostné linky (v seznamech řadit dolu), plánované výluky
+    return "mimo provoz", "#999999", trains_by_linevar
+end
+
 local function vlaky(param, past_trains_too)
     local result = {}
     if param:match("/") then

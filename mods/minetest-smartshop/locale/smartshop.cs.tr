@@ -37,7 +37,7 @@ external storage title=popisek vzdáleného úložiště
 save title=uložit popisek
 put 1-10000 and press Enter to get samples of given number of coins to be dragged to pay or give slots=Zadejte 1-10000 a stiskněte Enter, abyste získal/a vzorky zadaného počtu mincí@npro přesunutí do polí „na prodej“ nebo „cena“.
 creative mode?=kouzelnický režim?
-enables creative mode=zapne kouzelnický režim; v tomto režimu lze prodávat a vykupovat jen zboží s referenční cenou, cena se určuje automaticky a hráč/ka nedostává platbu; kouzelnické postavy nemohou tento režim vypnout
+enables creative mode=[EXPERIMENTÁLNÍ]@nzapne kouzelnický režim; v tomto režimu lze prodávat a vykupovat jen zboží s referenční cenou,@ncena se určuje automaticky a hráč/ka nedostává platbu;@nkouzelnické postavy nemohou tento režim vypnout
 
 # storage:
 @1@nExternal storage by:@n@2=@1@nvzdálené úložiště pro obchodní terminál@n(vlastník/ice: @2)

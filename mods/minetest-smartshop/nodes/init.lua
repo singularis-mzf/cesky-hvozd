@@ -25,9 +25,11 @@ smartshop.nodes = {
 				minetest.remove_node(pos)
 				return
 			end
+            --[[
 			if minetest.check_player_privs(placer, "give") then
 				ch_core.systemovy_kanal(placer:get_player_name(), "VAROVÁNÍ: Kouzelnické postavy se nesmějí účastnit obchodování! Výjimky jsou možné v odůvodněných případech po dohodě s Administrací. Pokud je obchodní terminál žádoucí součástí vaší stavby, doporučuji k jeho zřízení a plnění využít dělnickou postavu nebo o jeho zřízení požádat Administraci. Kouzelnickým postavám, jako je ta vaše, nebude umožněno do obchodního terminálu doplňovat zboží.")
 			end
+            ]]
 		end
 
         local obj = get_object(pos)

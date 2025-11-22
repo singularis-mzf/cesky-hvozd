@@ -51,6 +51,20 @@ function api.build_owner_formspec(shop, player_name)
 	local owner = shop:get_owner()
 	local owner_role = ch_core.get_player_role(owner)
 
+	print("DEBUG: "..dump2({
+		player_name = player_name,
+		is_unlimited = is_unlimited,
+		is_strict_meta = is_strict_meta,
+		is_private = is_private,
+		allow_freebies = allow_freebies,
+		allow_icons = allow_icons,
+		allow_returns = allow_returns,
+		creative_mode = creative_mode,
+		shop_title = shop_title,
+		owner = owner,
+		owner_role = owner_role,
+	}))
+
 	local fs_parts = {"size[15,13]", ("label[0,0.2;%s]"):format(FS("for sale:"))}
 
 	for i = 1, 10 do

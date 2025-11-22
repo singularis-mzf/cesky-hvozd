@@ -198,12 +198,99 @@ function ch_prices.get_sell_price(pos, stack, owner_name, shop_age)
 	end
 end
 
+local known_ui_recipe_types = {}
+
+local function recipe_to_mk(recipe)
+	assert(recipe.output)
+	assert(type(recipe.output) == "string")
+	if recipe.output == "" then
+		return nil, false
+	end
+	local output_stack = ItemStack(recipe.output)
+	local output_name = output_stack:get_name()
+	local output_count = output_stack:get_count()
+	-- print("DEBUG: recipe = "..dump2(recipe))
+	-- print("DEBUG: output_stack = "..recipe.output.." [type="..type(recipe.output).."]")
+	assert(output_count >= 1)
+	local items = {}
+	local item_to_index = {}
+	for j = 1, 9 do
+		if type(recipe.items[j]) ~= "nil" then
+			local input_name = recipe.items[j]
+			if item_to_index[input_name] ~= nil then
+				local record = items[item_to_index[input_name]]
+				record[2] = (record[2] or 1 / output_count) + 1 / output_count
+			else
+				table.insert(items, {input_name, 1 / output_count})
+				item_to_index[input_name] = #items
+			end
+		end
+	end
+	if #items > 0 then
+		local parts = {"mk(\"", output_name, "\", {"}
+		table.sort(items, function(a, b) return a[1] < b[1] end)
+		for i, record in ipairs(items) do
+			if i > 1 then
+				table.insert(parts, ", {\"")
+			else
+				table.insert(parts, "{\"")
+			end
+			table.insert(parts, record[1])
+			if record[2] ~= nil and record[2] ~= 1 then
+				table.insert(parts, "\", "..record[2].."}")
+			else
+				table.insert(parts, "\"}")
+			end
+		end
+		table.insert(parts, "})")
+		return table.concat(parts), true
+	else
+		return "-- fix(\"".. output_name.."\", )", false
+	end
+end
+
+local function combine_recipes(core_recipes, ui_recipes)
+	if core_recipes == nil then
+		return ui_recipes
+	elseif ui_recipes == nil then
+		return core_recipes
+	else
+		core_recipes = table.copy(core_recipes)
+		for _, recipe in ipairs(ui_recipes) do
+			assert(type(recipe.type) == "string")
+			known_ui_recipe_types[recipe.type] = true
+			if recipe.type ~= "digging" and recipe.type ~= "digging_chance" then
+				table.insert(core_recipes, recipe)
+			end
+		end
+		return core_recipes
+	end
+end
+
 local function generovat_ceny(name, params)
 	local mks = {}
-	for output_name, odef in pairs(core.registered_items) do
+	local item_names = {}
+	local full = params == "full"
+	for item_name, _ in pairs(core.registered_items) do
+		if item_name:find(":") and (full or sell_prices[item_name] == nil) then
+			table.insert(item_names, item_name)
+		end
+	end
+	table.sort(item_names)
+	for _, output_name in ipairs(item_names) do
 		local recipes = core.get_all_craft_recipes(output_name)
+		local ui_recipes = unified_inventory.get_recipe_list(output_name)
+		local mks_orig_length = #mks
+		local duplicity_protection = {}
+		recipes = combine_recipes(recipes, ui_recipes)
 		if recipes ~= nil then
 			for i, recipe in ipairs(recipes) do
+				local new_mk, success = recipe_to_mk(recipe)
+				if success and duplicity_protection[new_mk] == nil then
+					table.insert(mks, new_mk)
+					duplicity_protection[new_mk] = new_mk
+				end
+				--[[
 				if recipe.output ~= "" then
 					local output_stack = ItemStack(assert(recipe.output))
 					print("DEBUG: recipe = "..dump2(recipe))
@@ -216,7 +303,7 @@ local function generovat_ceny(name, params)
 						if type(recipe.items[j]) ~= "nil" then
 							local input_name = recipe.items[j]
 							if item_to_index[input_name] ~= nil then
-								local record = items[item_to_index[input_name]]
+								local record = items[item_to_index[input_name] ]
 								record[2] = (record[2] or 1 / output_count) + 1 / output_count
 							else
 								table.insert(items, {input_name, 1 / output_count})
@@ -226,23 +313,34 @@ local function generovat_ceny(name, params)
 					end
 					if #items > 0 then
 						local parts = {"mk(\"", output_name, "\", {"}
+						table.sort(items, function(a, b) return a[1] < b[1] end)
 						for i, record in ipairs(items) do
-							table.insert(parts, "{\"")
+							if i > 1 then
+								table.insert(parts, ", {\"")
+							else
+								table.insert(parts, "{\"")
+							end
 							table.insert(parts, record[1])
 							if record[2] ~= nil and record[2] ~= 1 then
-								table.insert(parts, "\", "..record[2].."}, ")
+								table.insert(parts, "\", "..record[2].."}")
 							else
-								table.insert(parts, "\"}, ")
+								table.insert(parts, "\"}")
 							end
 						end
-						table.insert(parts, "}")
+						table.insert(parts, "})")
 						table.insert(mks, table.concat(parts))
 					end
 				end
+				]]
 			end
+		end
+		if #mks == mks_orig_length then
+			-- no recipes for this item
+			mks[mks_orig_length + 1] = "-- fix(\"".. output_name.."\", )"
 		end
 	end
 	core.safe_file_write(worldpath.."/_ch_prices_generated.lua", table.concat(mks, "\n--\n"))
+	print("DEBUG: "..dump2({known_ui_recipe_types = known_ui_recipe_types}))
 	return true, "Vygenerováno."
 end
 

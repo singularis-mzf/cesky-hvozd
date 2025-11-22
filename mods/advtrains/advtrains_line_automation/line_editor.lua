@@ -18,6 +18,8 @@ local color_green = core.get_color_escape_sequence("#00ff00")
 local cancel_linevar = assert(advtrains.lines.cancel_linevar)
 local get_last_passages = assert(advtrains.lines.get_last_passages)
 local get_line_description = assert(advtrains.lines.get_line_description)
+local get_line_status_description = assert(advtrains.lines.get_line_status_description)
+local get_trains_by_linevar = assert(advtrains.lines.get_trains_by_linevar)
 local linevar_decompose = assert(advtrains.lines.linevar_decompose)
 local try_get_linevar_def = assert(advtrains.lines.try_get_linevar_def)
 
@@ -129,6 +131,7 @@ local function get_formspec(custom_state)
 
     local selection_index_raw = custom_state.selection_index
 	local selection_index = selection_index_raw or 1
+    local trains_by_linevar = get_trains_by_linevar()
     local formspec = {
         ch_core.formspec_header({formspec_version = 6, size = {20, 16}, auto_background = true}),
         "label[0.5,0.6;Editor variant linek]"..
@@ -145,14 +148,12 @@ local function get_formspec(custom_state)
     for _, linevar_def in ipairs(custom_state.linevars) do
         local lv_line, lv_stn, lv_rc = linevar_decompose(linevar_def.name)
         local color = ifthenelse(linevar_def.disabled, "#cccccc", "#ffffff")
+        local status_desc, status_color = get_line_status_description(linevar_def.name, trains_by_linevar)
         table.insert(formspec,
             ","..color..","..F(lv_line)..","..F(get_line_description(linevar_def, {first_stop = true, last_stop = true}))..
             ","..F(lv_rc)..","..ifthenelse(linevar_def.owner == pinfo.player_name, "#00ff00", color)..",")
         table.insert(formspec, F(ch_core.prihlasovaci_na_zobrazovaci(linevar_def.owner)))
-        table.insert(formspec, ","..color..",")
-        if linevar_def.disabled then
-            table.insert(formspec, "vypnutá")
-        end
+        table.insert(formspec, ","..F(status_color)..","..F(status_desc))
     end
     if selection_index_raw ~= nil then
         table.insert(formspec, ";"..selection_index.."]")
