@@ -644,6 +644,41 @@ local function record_skipped_stops(train_id, linevar_def, linevar_index, next_i
     end
 end
 
+--[[
+    rwtime — železniční čas (nil => použít aktuální)
+    min_wait — tonumber(stdata.wait) or 0
+    interval — number or nil (stdata.interval)
+    ioffset — stdata.ioffset
+    last_dep — stdata.last_dep
+    -> wait, secs_to_end_of_interval
+]]
+function al.compute_wait(rwtime, min_wait, interval, ioffset, last_dep)
+    assert(type(min_wait) == "number")
+    if interval == nil then
+        return min_wait, nil
+    end
+    if rwtime == nil then
+        rwtime = assert(rwt.to_secs(rwt.get_time()))
+    end
+    if last_dep == nil then
+        return min_wait, rwtime + (interval - (rwtime + (interval - ioffset)) % interval)
+    end
+    if last_dep > rwtime then
+        last_dep = rwtime
+    end
+    if ioffset == nil then
+        ioffset = 0
+    end
+    local normal_dep = rwtime + min_wait
+    local next_dep = last_dep + (interval - (last_dep + (interval - ioffset)) % interval)
+    local result = min_wait
+    if next_dep > normal_dep then
+        result = result + (next_dep - normal_dep)
+    end
+    local result2 = (last_dep - rwtime - (last_dep - ioffset + interval) % interval + interval) % interval
+    return result, result2
+end
+
 function al.on_train_enter(pos, train_id, train, index)
     if train.path_cn[index] ~= 1 then return end -- špatný směr
     local pe = advtrains.encode_pos(pos)
@@ -686,10 +721,9 @@ function al.on_train_enter(pos, train_id, train, index)
     end
 
     -- naplánovat čas odjezdu
-    local wait = tonumber(stdata.wait) or 0
-    local interval = stdata.interval
-    local last_dep = stdata.last_dep -- posl. odjezd z této zastávkové koleje
-
+    -- function al.compute_wait(rwtime, min_wait, interval, ioffset, last_dep)
+    local wait = al.compute_wait(rwtime, tonumber(stdata.wait) or 0, stdata.interval, stdata.ioffset, stdata.last_dep)
+    --[[
     if interval ~= nil and last_dep ~= nil then
         if last_dep > rwtime then
             last_dep = rwtime
@@ -703,6 +737,7 @@ function al.on_train_enter(pos, train_id, train, index)
         -- else -- will wait normal time
         end
     end
+    ]]
     local planned_departure = rwtime + wait
     debug_print("Vlak "..train_id.." zastavil na "..stn.." a odjede za "..wait.." sekund ("..planned_departure..").")
     stdata.last_dep = planned_departure -- naplánovaný čas odjezdu

@@ -73,7 +73,13 @@ local function show_stoprailform(pos, player)
 	if not stdata.speed then
 		stdata.speed = "M"
 	end
-	
+	-- function al.compute_wait(rwtime, min_wait, interval, ioffset, last_dep)
+	local expected_wait, secs_to_end_of_interval = advtrains.lines.compute_wait(nil, tonumber(stdata.wait) or 0, stdata.interval, stdata.ioffset, stdata.last_dep)
+	if secs_to_end_of_interval == nil or secs_to_end_of_interval == expected_wait then
+		secs_to_end_of_interval = ""
+	else
+		secs_to_end_of_interval = "\n("..secs_to_end_of_interval..")"
+	end
 	local item_name = (minetest.registered_items["advtrains_line_automation:dtrack_stop_placer"] or {}).description or ""
 	local pname_unless_admin
 	if not minetest.check_player_privs(pname, "train_admin") then
@@ -102,7 +108,10 @@ local function show_stoprailform(pos, player)
 		"field[2.5,6;2,0.75;line;Linka na odj.;"..minetest.formspec_escape(stdata.line or "").."]"..
 		"field[4.75,6;2,0.75;routingcode;Sm.kód na odj.;"..minetest.formspec_escape(stdata.routingcode or "").."]"..
 		"field[0.25,7.25;2,0.75;interval;Interval \\[s\\]:;"..minetest.formspec_escape(stdata.interval or "").."]"..
-		"field[2.5,7.25;2,0.75;ioffset;Jeho posun:;"..minetest.formspec_escape(stdata.ioffset or "0").."]"..
+		"label[2.5,7.1;Jeho posun:]"..
+		"field[2.5,7.25;0.9,0.75;ioffset;;"..minetest.formspec_escape(stdata.ioffset or "0").."]"..
+		"button[3.51,7.25;1,0.75;iinfo;"..expected_wait..secs_to_end_of_interval.."]"..
+		"tooltip[iinfo;Za kolik sekund bude předpokládaný čas odjezdu\\;\n(sekundy do konce nastaveného intervalu, pokud se liší od horního údaje).\nKliknutím se údaj aktualizuje.]"..
 		"button[4.75,7;3,1.0;ioffsetnow;Nastavit posun\nna odjezd teď + uložit]"..
 		"textarea[0.25,8.4;7.5,1.5;ars;"..attrans("Trains stopping here (ARS rules)")..";"..advtrains.interlocking.ars_to_text(stdata.ars).."]"..
 		"label[0.3,10.25;Platí jen pro vlaky s]"..
@@ -147,6 +156,11 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			return
 		end
 		
+		if fields.iinfo then
+			show_stoprailform(pos, player)
+			return true
+		end
+
 		local stdata = advtrains.lines.stops[pe]
 		if not tmp_checkboxes[pe] then
 			tmp_checkboxes[pe] = {}
