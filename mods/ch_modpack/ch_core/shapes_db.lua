@@ -735,7 +735,13 @@ local platform_materials_exceptions = set(
 local materials_for_diagfillers = set(
 	-- materiály podporující diagonální výplně:
 	"building_blocks:Tar",
+	"default:dirt_with_coniferous_litter",
+	"default:dirt_with_grass",
+	"default:dirt_with_rainforest_litter",
 	"default:dry_dirt",
+	"default:sand",
+	"default:silver_sand",
+	"default:snowblock",
 	"ch_extras:bright_gravel",
 	"ch_extras:railway_gravel",
 	"default:gravel",

@@ -1,7 +1,18 @@
 ch_base.open_mod(minetest.get_current_modname())
 
 local S = attrans
-local has_comboblock = core.get_modpath("comboblock")
+
+local attribute_to_gravel_node = {
+	asfalt = {"bulding_blocks:Tar"},
+	asfaltnabetonu = {"comboblock:slab_Tar_onc_slab_concrete", "bulding_blocks:Tar"},
+	cervenyasfalt = {"streets:asphalt_red", "bulding_blocks:Tar"},
+	cervenyasfaltnabetonu = {"comboblock:slab_asphalt_red_onc_slab_concrete", "streets:asphalt_red", "bulding_blocks:Tar"},
+	default = {"comboblock:slab_gravel_onc_slab_concrete", "default:gravel"},
+	modryasfalt = {"streets:asphalt_blue", "bulding_blocks:Tar"},
+	modryasfaltnabetonu = {"comboblock:slab_asphalt_blue_onc_slab_concrete", "streets:asphalt_blue", "bulding_blocks:Tar"},
+	zeleznicni = {"comboblock:slab_railway_gravel_onc_slab_concrete", "ch_core:railway_gravel"},
+	zlutyasfalt = {"streets:asphalt_yellow"},
+}
 
 function round_down(pos)
    return {x=math.floor(pos.x), y=math.floor(pos.y), z=math.floor(pos.z)}
@@ -22,13 +33,17 @@ function parse_attributes(s)
 	return result
 end
 
-local function first_registered_node(list)
-	for _, name in ipairs(list) do
-		if core.registered_nodes[name] ~= nil then
-			return name
+local function first_registered_node(list, alt_result)
+	if type(list) == "table" then
+		for _, name in ipairs(list) do
+			if core.registered_nodes[name] ~= nil then
+				return name
+			end
 		end
+	elseif type(list) == "string" and core.registered_nodes[list] ~= nil then
+		return list
 	end
-	return "air"
+	return alt_result or "air"
 end
 
 local function remove_node(pos)
@@ -153,18 +168,11 @@ advtrains.register_wagon("construction_train", {
 				end
 			end
 		end ]]
-		local gravel_node -- "železniční" => use railway_gravel
-		if attributes.zeleznicni then
-			gravel_node = {name = first_registered_node({
-				"comboblock:slab_railway_gravel_onc_slab_concrete",
-				"ch_core:railway_gravel",
-				"default:gravel"})}
-		else
-			gravel_node = {name = first_registered_node({
-				"comboblock:slab_gravel_onc_slab_concrete",
-				"default:gravel"}) }
+		local gravel_node = {name = "default:gravel"} -- "železniční" => use railway_gravel
+		for attr, _ in pairs(attributes) do
+			gravel_node.name = first_registered_node(attribute_to_gravel_node[attr], gravel_node.name)
 		end
-		local cobble_node = {name = "default:cobble"}
+		local cobble_node = {name = first_registered_node({"basic_materials:concrete_block", "default:cobble"})}
 		for x = -1,1 do
 			for z = -1,1 do
 				local ps = vector.offset(rpos, x, 0, z)

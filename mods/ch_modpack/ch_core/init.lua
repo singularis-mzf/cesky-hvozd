@@ -77,6 +77,7 @@ function ch_core.close_submod(submod)
 end
 
 dofile(modpath .. "/active_objects.lua")
+dofile(modpath .. "/watched_areas.lua")
 dofile(modpath .. "/markers.lua")
 dofile(modpath .. "/barvy_linek.lua")
 dofile(modpath .. "/nodes.lua")

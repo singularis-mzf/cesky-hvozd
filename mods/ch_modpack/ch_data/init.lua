@@ -230,6 +230,8 @@ function ch_data.get_joining_online_charinfo(player)
 		news_role = "new_player",
 		-- přihlašovací jméno
 		player_name = player_name,
+		-- PlayerRef
+		player = player,
 	}
 
 	-- news_role:
@@ -716,7 +718,7 @@ end
 function ch_data.get_player_characters(player_name)
 	local offline_charinfo = ch_data.offline_charinfo[player_name]
 	if offline_charinfo == nil then
-		return nil
+		return nil, nil
 	end
 	local main_name = offline_charinfo.player.name
 	local result = {}

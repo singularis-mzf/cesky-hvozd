@@ -596,21 +596,23 @@ local function get_all_linevars()
 	local trains_by_linevar = advtrains.lines.get_trains_by_linevar()
 	for stn, stdata in pairs(advtrains.lines.stations) do
 		for linevar, linevar_def in pairs(stdata.linevars or empty_table) do
-			local line, stn = advtrains.lines.linevar_decompose(linevar)
-			local target_fs = F(advtrains.lines.get_line_description(linevar_def, {line_number = false, last_stop = true, last_stop_prefix = "",
-				last_stop_uppercase = false, train_name = false}))
-			local status_desc, status_color = advtrains.lines.get_line_status_description(linevar, trains_by_linevar)
-			local status_fs = F(status_color)..","..F(status_desc)
-			table.insert(result, {
-				stn = stn,
-				linevar = linevar,
-				line_fs = F(line),
-				target_fs = target_fs,
-				track_fs = "",
-				status_fs = status_fs,
-				train_name_fs = F(linevar_def.train_name or ""),
-				linevar_index = 1,
-			})
+			if not linevar_def.disabled then -- skip disabled lines
+				local line, stn = advtrains.lines.linevar_decompose(linevar)
+				local target_fs = F(advtrains.lines.get_line_description(linevar_def, {line_number = false, last_stop = true, last_stop_prefix = "",
+					last_stop_uppercase = false, train_name = false}))
+				local status_desc, status_color = advtrains.lines.get_line_status_description(linevar, trains_by_linevar)
+				local status_fs = F(status_color)..","..F(status_desc)
+				table.insert(result, {
+					stn = stn,
+					linevar = linevar,
+					line_fs = F(line),
+					target_fs = target_fs,
+					track_fs = "",
+					status_fs = status_fs,
+					train_name_fs = F(linevar_def.train_name or ""),
+					linevar_index = 1,
+				})
+			end
 		end
 	end
 	table.sort(result, function(a, b) return a.linevar < b.linevar end)
@@ -632,44 +634,46 @@ local function get_linevars_by_filter(stn_filter, track_filter)
 	end
 	for stn, stdata in pairs(advtrains.lines.stations) do
 		for linevar, linevar_def in pairs(stdata.linevars or empty_table) do
-			local last_stop_index = advtrains.lines.get_last_stop(linevar_def, false)
-			if last_stop_index ~= nil then
-				for linevar_index = 1, last_stop_index - 1 do -- NOTE: the last visible station is intentionally ignored here!
-					local stop_data = linevar_def.stops[linevar_index]
-					local initialized = false
-					local line, stn, line_fs, target_fs, status_fs
-					if
-						stop_data.stn == stn_filter and
-						is_visible_mode(stop_data.mode) and
-						(track_filter == nil or track_filter == stop_data.track)
-					then
-						if not initialized then
-							initialized = true
-							line, stn = advtrains.lines.linevar_decompose(linevar)
-							line_fs = F(line)
-							target_fs = F(advtrains.lines.get_line_description(linevar_def, line_description_options))
-							if trains_by_linevar[linevar] ~= nil then
-								status_fs = "#00ff00,v provozu"
-							else
-								status_fs = "#999999,neznámý"
+			if not linevar_def.disabled then
+				local last_stop_index = advtrains.lines.get_last_stop(linevar_def, false)
+				if last_stop_index ~= nil then
+					for linevar_index = 1, last_stop_index - 1 do -- NOTE: the last visible station is intentionally ignored here!
+						local stop_data = linevar_def.stops[linevar_index]
+						local initialized = false
+						local line, stn, line_fs, target_fs, status_fs
+						if
+							stop_data.stn == stn_filter and
+							is_visible_mode(stop_data.mode) and
+							(track_filter == nil or track_filter == stop_data.track)
+						then
+							if not initialized then
+								initialized = true
+								line, stn = advtrains.lines.linevar_decompose(linevar)
+								line_fs = F(line)
+								target_fs = F(advtrains.lines.get_line_description(linevar_def, line_description_options))
+								if trains_by_linevar[linevar] ~= nil then
+									status_fs = "#00ff00,v provozu"
+								else
+									status_fs = "#999999,neznámý"
+								end
 							end
+							local track_fs = stop_data.track
+							if track_fs == nil or track_fs == "" then
+								track_fs = ""
+							else
+								track_fs = F("["..track_fs.."]")
+							end
+							table.insert(result, {
+								stn = stn,
+								linevar = linevar,
+								line_fs = line_fs,
+								target_fs = target_fs,
+								track_fs = track_fs,
+								status_fs = status_fs,
+								train_name_fs = F(linevar_def.train_name or ""),
+								linevar_index = assert(linevar_index),
+							})
 						end
-						local track_fs = stop_data.track
-						if track_fs == nil or track_fs == "" then
-							track_fs = ""
-						else
-							track_fs = F("["..track_fs.."]")
-						end
-						table.insert(result, {
-							stn = stn,
-							linevar = linevar,
-							line_fs = line_fs,
-							target_fs = target_fs,
-							track_fs = track_fs,
-							status_fs = status_fs,
-							train_name_fs = F(linevar_def.train_name or ""),
-							linevar_index = assert(linevar_index),
-						})
 					end
 				end
 			end

@@ -709,6 +709,15 @@ function advtrains.train_step_b(id, train, dtime)
 	end
 end
 
+local function is_bus(train)
+	local t = train.trainparts
+	assert(type(t) == "table")
+	local wagon_id = t[1]
+	assert(wagon_id ~= nil)
+	t = advtrains.wagons[wagon_id]
+	return type(t) == "table" and t.type == "advtrains:bus"
+end
+
 function advtrains.train_step_c(id, train, dtime)
 	if train.no_step or train.wait_for_path or not train.path then return end
 	
@@ -790,7 +799,7 @@ function advtrains.train_step_c(id, train, dtime)
 						end
 
 						--- 8b damage players ---
-						if is_loaded_area and train.velocity > 3 --[[ and (setting_overrun_mode=="drop" or setting_overrun_mode=="normal") ]] then
+						if is_loaded_area and train.velocity > 3 and not is_bus(train) --[[ and (setting_overrun_mode=="drop" or setting_overrun_mode=="normal") ]] then
 							local testpts = minetest.pos_to_string(testpos)
 							local player=advtrains.playersbypts[testpts]
 							if player and player:get_hp()>0 and advtrains.is_damage_enabled(player:get_player_name()) then

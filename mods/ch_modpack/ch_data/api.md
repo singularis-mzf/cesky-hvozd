@@ -10,6 +10,7 @@ Tabulka neperzistentních dat pro danou postavu, která je ve hře. Musí obsaho
 * join_timestamp : int : časová známka vytvoření online_charinfo (vstupu postavy do hry), z get_us_time()
 * lang_code : string : jazykový kód (obvykle "cs")
 * news_role : string : co udělat po připojení (významy jednotlivých řetězců se mění)
+* player : PlayerRef : objekt hráčské postavy
 * player_name : string : přihlašovací jméno
 
   ch_data.offline_charinfo[player_name]
@@ -81,6 +82,11 @@ z níž lze z položek description a _ch_help sestavit text k zobrazení. Jin
   ch_data.nastavit_shybani(player_name : string, shybat : bool) -> bool
 
 Pro danou postavu perzistentně nastaví shýbání. (Volá ch_data.save_offline_charinfo().)
+
+  ch_data.get_player_characters(player_name : string) -> (table, string) or nil, nil
+
+Vrátí seřazený seznam přihlašovacích jmen postav stejného hráče/ky a přihlašovací jméno hlavní postavy daného hráče/ky.
+Postava nemusí být ve hře. Pokud postava neexistuje, vrací nil, nil.
 
 # Příkazy v četu
 

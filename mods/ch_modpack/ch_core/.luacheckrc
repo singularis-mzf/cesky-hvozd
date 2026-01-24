@@ -30,6 +30,7 @@ globals = {
 		"delete_offline_charinfo",
 		"get_joining_online_charinfo",
 		"get_leaving_online_charinfo",
+		"get_player_characters",
 		"get_offline_charinfo",
 		"get_or_add_offline_charinfo",
 		"save_offline_charinfo",
@@ -148,7 +149,7 @@ read_globals = {
 	},
 	string = {fields = {"split", "sub"}},
 	table = {fields = {"copy", "indexof", "insert_all", "key_value_swap"}},
-	vector = {fields = {"angle", "copy", "distance", "equals", "multiply", "new", "offset", "rotate", "round", "subtract", "to_string", "zero"}},
+	vector = {fields = {"angle", "copy", "distance", "equals", "in_area", "multiply", "new", "offset", "rotate", "round", "subtract", "to_string", "zero"}},
 
 	"AreaStore", "dump2", "emote", "hb", "ItemStack", "player_api", "wielded_light"
 }
