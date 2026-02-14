@@ -3,13 +3,13 @@ ch_base.open_mod(minetest.get_current_modname())
 local S = attrans
 
 local attribute_to_gravel_node = {
-	asfalt = {"bulding_blocks:Tar"},
-	asfaltnabetonu = {"comboblock:slab_Tar_onc_slab_concrete", "bulding_blocks:Tar"},
-	cervenyasfalt = {"streets:asphalt_red", "bulding_blocks:Tar"},
-	cervenyasfaltnabetonu = {"comboblock:slab_asphalt_red_onc_slab_concrete", "streets:asphalt_red", "bulding_blocks:Tar"},
+	asfalt = {"building_blocks:Tar"},
+	asfaltnabetonu = {"comboblock:slab_Tar_onc_slab_concrete", "building_blocks:Tar"},
+	cervenyasfalt = {"streets:asphalt_red", "building_blocks:Tar"},
+	cervenyasfaltnabetonu = {"comboblock:slab_asphalt_red_onc_slab_concrete", "streets:asphalt_red", "building_blocks:Tar"},
 	default = {"comboblock:slab_gravel_onc_slab_concrete", "default:gravel"},
-	modryasfalt = {"streets:asphalt_blue", "bulding_blocks:Tar"},
-	modryasfaltnabetonu = {"comboblock:slab_asphalt_blue_onc_slab_concrete", "streets:asphalt_blue", "bulding_blocks:Tar"},
+	modryasfalt = {"streets:asphalt_blue", "building_blocks:Tar"},
+	modryasfaltnabetonu = {"comboblock:slab_asphalt_blue_onc_slab_concrete", "streets:asphalt_blue", "building_blocks:Tar"},
 	zeleznicni = {"comboblock:slab_railway_gravel_onc_slab_concrete", "ch_core:railway_gravel"},
 	zlutyasfalt = {"streets:asphalt_yellow"},
 }

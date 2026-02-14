@@ -236,14 +236,9 @@ function ch_data.get_joining_online_charinfo(player)
 
 	-- news_role:
 	--[[
-		5.5.x => formspec_version = 5, protocol_version = 40
-		5.6.x => formspec_version = 6, protocol_version = 41
-		5.7.x => formspec_version = 6, protocol_version = 42
-		5.8.0 => formspec_version = 7, protocol_version = 43
-		5.9.0 => formspec_version = ?, protocol_version = ?
 		5.10.0 => formspec_version = 8, protocol_version = 46
 	]]
-	if result.protocol_version < 42 then
+	if result.protocol_version < 46 then
 		result.news_role = "disconnect"
 	elseif not ch_data.supported_lang_codes[result.lang_code] and not core.check_player_privs(player, "server") then
 			result.news_role = "invalid_locale"

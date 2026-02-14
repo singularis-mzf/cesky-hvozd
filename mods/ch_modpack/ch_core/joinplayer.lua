@@ -417,8 +417,7 @@ local function on_joinplayer(player, last_login)
 
 	if news_role == "disconnect" then
 		minetest.disconnect_player(player_name, "Váš klient je příliš starý. "..
-			"Pro připojení k tomuto serveru prosím použijte Luanti 5.10.0 nebo novější. "..
-			"Verze 5.7.x, 5.8.x a 5.9.x budou fungovat, ale některé bloky nemusejí být zobrazeny správně.")
+			"Pro připojení k tomuto serveru prosím použijte Luanti 5.10.0 nebo novější.")
 		return true
 	elseif news_role == "invalid_name" then
 		minetest.disconnect_player(player_name, "Neplatné přihlašovací jméno '"..player_name.."'. Seznamte se, prosím, s pravidly serveru pro jména, nebo použijte jen písmena anglické abecedy.")
