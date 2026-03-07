@@ -40,10 +40,10 @@ train = {
 
         -- Následující pole jsou vyplněna jen u linkových vlaků:
         -- ===========================
-        -- varianta linky LINE/STCODE/RC
+        -- trasa linky LINE/STCODE/RC
         linevar = string,
 
-        -- prostřední díl z 'linevar' (kód stanice, kde jsou uložena data varianty linky)
+        -- prostřední díl z 'linevar' (kód stanice, kde jsou uložena data trasy linky)
         linevar_station = string,
 
         -- skutečný železniční čas odjezdu z *výchozí* zastávky spoje
@@ -72,7 +72,7 @@ station = {
             -- jméno vlaku pro zobrazení (volitelné)
             train_name = string or nil,
 
-            -- je-li true, nové vlaky nemohou dostat tuto variantu přidělenu
+            -- je-li true, nové vlaky nemohou dostat tuto trasu přidělenu
             disabled = bool or nil,
 
             -- je-li neprázdný řetězec, udává označení linky, na kterou bude vlak pravděpodobně pokračovat

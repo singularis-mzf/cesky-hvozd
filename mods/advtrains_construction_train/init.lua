@@ -193,7 +193,7 @@ advtrains.register_wagon("construction_train", {
 					for y = 0,2 do
 						local ps = vector.offset(rpos, x, y, z)
 						local node = minetest.get_node_or_nil(ps)
-						if node ~= nil and node.name ~= "air" then
+						if node ~= nil and node.name ~= "air" and core.get_item_group(node.name, "not_blocking_trains") == 0 then
 							local ndef = minetest.registered_nodes[node.name]
 							if ndef ~= nil and ndef.buildable_to then
 								remove_node(ps)

@@ -514,7 +514,7 @@ function al.is_visible_mode(stop_mode)
 end
 local is_visible_mode = al.is_visible_mode
 
--- Pokud zadaná varianta linky existuje, vrátí:
+-- Pokud zadaná trasa linky existuje, vrátí:
 --      linevar_def, linevar_station
 -- Jinak vrací:
 --      nil, nil
@@ -542,7 +542,7 @@ end
 
 --[[
     Vrací:
-    a) nil, nil, pokud daná kombinace line/stn/rc nemá definovanou variantu linky
+    a) nil, nil, pokud daná kombinace line/stn/rc nemá definovanou trasu linky
     b) linevar, linevar_def, pokud má
 ]]
 function al.try_get_linevar(line, stn, rc)
@@ -660,14 +660,14 @@ function al.compute_wait(rwtime, min_wait, interval, ioffset, last_dep)
     if rwtime == nil then
         rwtime = assert(rwt.to_secs(rwt.get_time()))
     end
+    if ioffset == nil then
+        ioffset = 0
+    end
     if last_dep == nil then
         return min_wait, rwtime + (interval - (rwtime + (interval - ioffset)) % interval)
     end
     if last_dep > rwtime then
         last_dep = rwtime
-    end
-    if ioffset == nil then
-        ioffset = 0
     end
     local normal_dep = rwtime + min_wait
     local next_dep = last_dep + (interval - (last_dep + (interval - ioffset)) % interval)
