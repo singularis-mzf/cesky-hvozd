@@ -24,6 +24,7 @@ Forum topic: https://forum.minetest.net/viewtopic.php?t=2984
   * `streets_rrgate_*.png` (partially modified)
   * `streets_rrxing_*.png` (partially modified)
   * `streets_lanuse_*.png` (partially modified)
+* Singularis (adaptations for Český hvozd server)
 
 ## Recommended Mods
 * [ltc4000e](https://github.com/inpos/ltc4000e) originally by [cheapie](https://github.com/cheapie)

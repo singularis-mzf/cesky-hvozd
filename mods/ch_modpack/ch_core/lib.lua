@@ -428,12 +428,12 @@ end
 
 --[[
 	Sestaví nové pole "groups" následujícím způsobem:
-	Vezme dvojice z "base"; přepíše je dvojicemi z "inherit" (případně pouze dvojicemi vybranými pomocí "inherit_list")
+	Vezme dvojice z "default"; přepíše je dvojicemi z "inherit" (případně pouze dvojicemi vybranými pomocí "inherit_list")
 	a nakonec výsledek přepíše dvojicemi z "override". Přitom dodržuje, že pokud nějaké dvojici vyjde hodnota 0,
-	tato dvojice se na výstupu vůbec neobjeví. Kterýkoliv parametr může být nil; u parametrů base, inherit a override
+	tato dvojice se na výstupu vůbec neobjeví. Kterýkoliv parametr může být nil; u parametrů default, inherit a override
 	se to interpretuje jako prázdná tabulka. Je-li inherit_list == nil, pak se z "inherit" vezmou všechny dvojice.
 
-	base = table or nil, -- základ, ze kterého se vychází (dvojice s nejnižší prioritou)
+	default = table or nil, -- základ, ze kterého se vychází (dvojice s nejnižší prioritou)
 	override = table or nil, -- dvojice s nejvyšší prioritou (přepíšou vše ostatní)
 	inherit = table or nil, -- přidat/přepsat tyto hodnoty do base
 	inherit_list = {string, ...} or nil -- je-li nastaveno, pak se z inherit budou brát pouze klíče z tohoto seznamu a v uvedeném pořadí, jinak všechny klíče

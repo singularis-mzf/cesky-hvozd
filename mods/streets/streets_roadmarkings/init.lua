@@ -449,3 +449,12 @@ streets.register_road_marking({
 	rotation = { r90 = 1 },
 })
 
+streets.register_road_marking({
+	name = "solid_{color}_bus_platform",
+	friendlyname = S("nástupiště pro autobus"),
+	tex = "streets_solid_bus_platform.png",
+	section = "other",
+	dye_needed = 4,
+	basic = true,
+	basic_rotation = { r180 = 1 },
+})

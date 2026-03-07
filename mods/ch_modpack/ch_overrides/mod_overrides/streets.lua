@@ -24,3 +24,21 @@ for asphalt_node_name, new_prefix in pairs(asphalt_nodes) do
         core.log("warning", "Expected item '"..asphalt_node_name.."' is not registered!")
     end
 end
+
+local rotations = {"", "_r180"}
+local variants = {"", "_slope_lower", "_slope_upper", "_slope_triple"}
+local groups_override = {platform = 1}
+
+for _, variant in ipairs(variants) do
+    for _i, rotation in ipairs(rotations) do
+        local name = "streets:mark_solid_white_bus_platform"..variant..rotation
+        local ndef = core.registered_nodes[name]
+        if ndef ~= nil then
+            core.override_item(name, {
+                groups = ch_core.assembly_groups(ndef.groups, groups_override)
+            })
+        else
+            core.log("warning", "[ch_overrides] Expected node "..name.." is not present!")
+        end
+    end
+end
