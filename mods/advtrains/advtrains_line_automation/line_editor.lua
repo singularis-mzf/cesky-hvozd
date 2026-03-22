@@ -175,11 +175,12 @@ local function get_formspec(custom_state)
         "field[2,7;1.5,0.75;rc;sm.kód:;"..F(custom_state.rc).."]"..
         "field[3.75,7;3,0.75;train_name;jméno vlaku:;"..F(custom_state.train_name).."]")
     if pinfo.role ~= "admin" then
-        table.insert(formspec, "label[7,6.75;spravuje:\n")
+        table.insert(formspec, "label[7,6.75;spravuje:\n"..F(custom_state.owner).."]")
     else
-        table.insert(formspec, "field[7,7;4,0.75;owner;spravuje:;")
+        table.insert(formspec, "field[7,7;4,0.75;owner;spravuje:;"..F(custom_state.owner).."]"..
+            "tooltip[owner;Postava spravující tuto trasu linky.]")
     end
-    table.insert(formspec, F(custom_state.owner).."]"..
+    table.insert(formspec,
         "checkbox[11.25,7.25;disable_linevar;vypnout;"..custom_state.disable_linevar.."]"..
         "field[13.5,7;3,0.75;continues;pokračování:;"..F(custom_state.continues).."]")
 
@@ -202,7 +203,9 @@ local function get_formspec(custom_state)
         "tooltip[train_name;Volitelný údaj. Je-li zadán\\, jízdní řády budou uvádět u spojů této\n"..
         "trasy zadané jméno.]"..
         "tooltip[disable_linevar;Zaškrtnutím trasu linky vypnete. Vypnutá trasa není používána\n"..
-        "na žádné další vlaky\\, stávající vlaky však mohou dojet do svých koncových zastávek.]")
+        "na žádné další vlaky\\, stávající vlaky však mohou dojet do svých koncových zastávek.]"..
+        "tooltip[continues;Pokud vlak z koncové stanice rovnou pokračuje\\,\nzadejte sem označení linky\\, "..
+        "lomeno\\, směrový kód\\,\nnapř. „101/ABC“ nebo „101/“.]")
 
     table.insert(formspec, "container[0,8.75]"..
         "label[0.5,0.25;odjezd]"..

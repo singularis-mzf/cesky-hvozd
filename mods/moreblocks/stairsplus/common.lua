@@ -295,23 +295,31 @@ stairsplus.register_single = function(category, alternate, info, modname, subnam
 	end
 
 	if info.manhole_overlay then
-		local t = def.tiles
-		assert(type(t) == "table" and #t > 0)
-		t = t[1]
+		local t
+		def = table.copy(def) -- make a defensive copy of "def"
+		t = def.tiles
+		assert(type(t) == "table" and #t > 0) -- tiles has to be a non-empty table
+		t = t[1] -- select the first 'tile'
 		if type(t) == "table" then
 			if #def.tiles == 1 then
+				-- 1st tile = table (the only element of 'tiles')
 				def.tiles = {table.copy(t), t}
 				t = def.tiles[1]
 				t.name = t.name.."^streets_manhole.png"
 			else
+				-- 1st tile = table ('tiles' has more elements)
+				def.tiles = table.copy(def.tiles)
 				def.tiles[1] = table.copy(t)
-				def.tiles[1].name = def.tiles[1].name.."^streets_manhole.png"
+				def.tiles[1].name = t.name.."^streets_manhole.png"
 			end
 		else
 			assert(type(t) == "string")
 			if #def.tiles == 1 then
+				-- 1st tile = plain string (the only element of 'tiles')
 				def.tiles = {t.."^streets_manhole.png", t}
 			else
+				-- 1st tile = plain string ('tiles' has more elements)
+				def.tiles = table.copy(def.tiles)
 				def.tiles[1] = t.."^streets_manhole.png"
 			end
 		end

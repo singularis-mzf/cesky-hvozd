@@ -67,7 +67,7 @@ local function register_sign_node(friendlyname, name, tiles, type, inventory_ima
 	def.tiles = tiles
 	def.use_texture_alpha = "clip"
 	def.light_source = light_source
-	def.groups = { cracky = 3, not_in_creative_inventory = 1, sign = 1 }
+	def.groups = { cracky = 3, not_in_creative_inventory = 1, sign = 1, not_blocking_trains = 1 }
 	def.drop = "streets:" .. name
 	if type == "minetest" then
 		def.drawtype = "nodebox"

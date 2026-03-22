@@ -15,7 +15,7 @@
 @=@= Main Signal @=@==@=@= Hlavní signál @=@=
 @=@= Shunting @=@==@=@= Posun @=@=
 A route is requested from this signal:=Vlaková cesta je požadována od tohoto signálu:
-ATC Reverse command warning: didn't reverse train, train moving!=Obrácení vlaku - Varování: Příkaz 'R' obrací směr jízdy, ne celý vlak!
+ATC Reverse command warning: didn't reverse train, train moving!=Obrácení vlaku - Varování: Vlak nebyl obrácen, protože se pohybuje!
 ATC command parse error: Unknown command: @1=Chyba v programu: Neznámý příkaz: @1
 ATC command syntax error: I statement not closed: @1=Chyba syntaxe: Příkaz není uzavřen: @1
 ATC controller, mode @1@nChannel: @2=Řídicí obvod ATC v režimu "@1"@nKanál: @2
@@ -339,3 +339,5 @@ prev FC=předch. NK
 transib=transsibiřská lokomotiva
 Stn. @1 (@2) T. @3=@1 (@2) kolej @3
 Free=Volno
+ATC Kick command warning: Doors closed=Varování ATC příkazu K: Dveře zavřeny
+ATC Kick command warning: Train moving=Varování ATC příkazu K: Vlak je v pohybu
