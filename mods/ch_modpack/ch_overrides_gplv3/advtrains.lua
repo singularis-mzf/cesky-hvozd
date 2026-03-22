@@ -300,3 +300,18 @@ for i = 2, 8 do
         end
     end
 end
+
+-- linetrack_line.png (override tiles to enable backface_culling)
+if core.get_modpath("linetrack") then
+    for name, ndef in pairs(core.registered_nodes) do
+        if
+            name:find("^linetrack:watertrack_") and
+            type(ndef.tiles) == "table" and
+            #ndef.tiles == 1 and
+            type(ndef.tiles[1]) == "string" and
+            ndef.tiles[1] == "linetrack_line.png"
+        then
+            core.override_item(name, {tiles = {{name = "linetrack_line.png", backface_culling = true}}})
+        end
+    end
+end

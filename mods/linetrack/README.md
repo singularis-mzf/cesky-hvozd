@@ -7,3 +7,5 @@
 This mod adds lines on both water and land that function like tracks. Current, boats on water and buses on land are supported.
 
 This mod was authored by Hume2, contributed by gpcf and Blockhead before refactored by 1F616EMO.
+
+Bus texture was subsequently modified by Singularis.
