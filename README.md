@@ -2,7 +2,7 @@
 
 Toto je kompletní repozitář módů a úprav pro server „Český hvozd“.
 Všechny módy jsou lokalizovány do češtiny a přizpůsobeny provozu
-na serveru Luanti 5.10.0; některé úpravy jsou ale specifické či
+na serveru Luanti 5.15.1; některé úpravy jsou ale specifické či
 destruktivní, takže pokud chcete upravený mód použít samostatně,
 budete muset projít změny v jeho kódu a vybrat jen ty, které potřebujete.
 
@@ -45,7 +45,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 * herní svět
 * minetest.conf (soubor „část-minetest.conf“ obsahuje podstatná nastavení)
-* Luanti Server 5.10.0 (verze se může v budoucnu změnit)
+* Luanti Server 5.15.1 (verze se může v budoucnu změnit)
 
 # Hra
 
@@ -786,10 +786,10 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 ## Mobkit (mobkit)
 
-* Zdroj: [https://github.com/TheTermos/mobkit](https://github.com/TheTermos/mobkit), revize ddea141b081e087900a6acc5a2a90e8d4e564295
+* Zdroj: [https://github.com/mt-mods/mobkit](https://github.com/mt-mods/mobkit), revize 33ec2d1762275e201090aca61b75e3c09bea94ee
 * Původní licence: MIT
 * Licence úprav: MIT
-* [ContentDB](https://content.minetest.net/packages/Termos/mobkit/)
+* [ContentDB](https://content.luanti.org/packages/mt-mods/mobkit/)
 
 ## Mobs Animal (mobs\_animal)
 

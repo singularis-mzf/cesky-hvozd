@@ -340,7 +340,7 @@ function mobkit.rot_to_dir(rot)
 
 function mobkit.is_alive(thing)
 	-- non essential, checks if thing exists in the world and is alive
-	-- makes an assumption that luaentities are considered dead when their hp < 100
+	-- makes an assumption that luaentities are considered dead when their hp <= 0
 	-- thing can be luaentity or objectref.
 	-- used for stored luaentities and objectrefs
 

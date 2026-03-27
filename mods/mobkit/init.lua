@@ -28,7 +28,7 @@ end
 mobkit.terminal_velocity = sqrt(2*-mobkit.gravity*20) -- 20 meter fall = dead
 mobkit.safe_velocity = sqrt(2*-mobkit.gravity*5) -- 5 m safe fall
 
-local abr = tonumber(minetest.get_mapgen_setting('active_block_range')) or 3
+local abr = tonumber(core.get_mapgen_setting('active_block_range')) or 3
 	
 -- UTILITY FUNCTIONS
 
@@ -50,7 +50,7 @@ function mobkit.pos_shift(pos,vec) -- vec components can be omitted e.g. vec={y=
 end
 
 function mobkit.pos_translate2d(pos,yaw,dist) -- translate pos dist distance in yaw direction
-	return vector.add(pos,vector.multiply(minetest.yaw_to_dir(yaw),dist))
+	return vector.add(pos,vector.multiply(core.yaw_to_dir(yaw),dist))
 end
 
 function mobkit.is_pos_in_box(pos,bpos,box)
@@ -96,12 +96,12 @@ function mobkit.set_acceleration(thing,vec,limit)
 end
 
 function mobkit.nodeatpos(pos)
-	local node = minetest.get_node_or_nil(pos)
-	if node then return minetest.registered_nodes[node.name] end
+	local node = core.get_node_or_nil(pos)
+	if node then return core.registered_nodes[node.name] end
 end
 
 function mobkit.get_nodename_off(pos,vec)
-	return minetest.get_node(mobkit.pos_shift(pos,vec)).name
+	return core.get_node(mobkit.pos_shift(pos,vec)).name
 end
 
 function mobkit.get_node_pos(pos)
@@ -147,7 +147,7 @@ function mobkit.get_nodes_in_area(pos1,pos2,full)
 			
 				cnt=cnt+1
 				if cnt > 125 then 
-					minetest.chat_send_all('get_nodes_in_area: area too big ')
+					core.chat_send_all('get_nodes_in_area: area too big ')
 					return result
 				end
 			
@@ -176,16 +176,17 @@ function mobkit.get_node_height(pos)
 	
 	if node.walkable then
 		if node.drawtype == 'nodebox' then
-			if node.node_box and node.node_box.type == 'fixed' then
-				if type(node.node_box.fixed[1]) == 'number' then
-					return npos.y + node.node_box.fixed[5] ,0, false
-				elseif type(node.node_box.fixed[1]) == 'table' then
-					return npos.y + node.node_box.fixed[1][5] ,0, false
+			local collision_box = node.collision_box or node.node_box
+			if collision_box and collision_box.type == 'fixed' then
+				if type(collision_box.fixed[1]) == 'number' then
+					return npos.y + collision_box.fixed[5], 0, false
+				elseif type(collision_box.fixed[1]) == 'table' then
+					return npos.y + collision_box.fixed[1][5], 0, false
 				else
 					return npos.y + 0.5,1, false			-- todo handle table of boxes
 				end		
-			elseif node.node_box and node.node_box.type == 'leveled' then
-				return minetest.get_node_level(pos)/64-0.5+mobkit.get_node_pos(pos).y, 0, false
+			elseif collision_box and collision_box.type == 'leveled' then
+				return core.get_node_level(pos)/64-0.5+mobkit.get_node_pos(pos).y, 0, false
 			else
 				return npos.y + 0.5,1, false	-- the unforeseen
 			end
@@ -226,30 +227,30 @@ end
 
 function mobkit.get_spawn_pos_abr(dtime,intrvl,radius,chance,reduction)
 	dtime = min(dtime,0.1)
-	local plyrs = minetest.get_connected_players()
+	local plyrs = core.get_connected_players()
 	intrvl=1/intrvl
 
 	if random()<dtime*(intrvl*#plyrs) then
 		local plyr = plyrs[random(#plyrs)]		-- choose random player
-		local vel = plyr:get_player_velocity()
+		local vel = core.features.object_step_has_moveresult and plyr:get_velocity() or plyr:get_player_velocity()
 		local spd = vector.length(vel)
 		chance = (1-chance) * 1/(spd*0.75+1)
 		
 		local yaw
 		if spd > 1 then
 			-- spawn in the front arc
-			yaw = minetest.dir_to_yaw(vel) + random()*0.35 - 0.75
+			yaw = core.dir_to_yaw(vel) + random()*0.35 - 0.75
 		else
 			-- random yaw
 			yaw = random()*pi*2 - pi
 		end
 		local pos = plyr:get_pos()
-		local dir = vector.multiply(minetest.yaw_to_dir(yaw),radius)
+		local dir = vector.multiply(core.yaw_to_dir(yaw),radius)
 		local pos2 = vector.add(pos,dir)
 		pos2.y=pos2.y-5
 		local height, liquidflag = mobkit.get_terrain_height(pos2,32)
 		if height then
-			local objs = minetest.get_objects_inside_radius(pos,radius*1.1)
+			local objs = core.get_objects_inside_radius(pos,radius*1.1)
 			for _,obj in ipairs(objs) do				-- count mobs in abrange
 				if not obj:is_player() then
 					local lua = obj:get_luaentity()
@@ -260,7 +261,7 @@ function mobkit.get_spawn_pos_abr(dtime,intrvl,radius,chance,reduction)
 			end
 			if chance < random() then
 				pos2.y = height
-				objs = minetest.get_objects_inside_radius(pos2,radius*0.95)
+				objs = core.get_objects_inside_radius(pos2,radius*0.95)
 				for _,obj in ipairs(objs) do				-- do not spawn if another player around
 					if obj:is_player() then return end
 				end
@@ -292,12 +293,12 @@ end
 function mobkit.dir_to_rot(v,rot)
 	rot = rot or {x=0,y=0,z=0}
 	return {x = (v.x==0 and v.y==0 and v.z==0) and rot.x or math.atan2(v.y,vector.length({x=v.x,y=0,z=v.z})),
-			y = (v.x==0 and v.z==0) and rot.y or minetest.dir_to_yaw(v),
+			y = (v.x==0 and v.z==0) and rot.y or core.dir_to_yaw(v),
 			z=rot.z}
 end
 
 function mobkit.rot_to_dir(rot) -- keep rot within <-pi/2,pi/2>
-	local dir = minetest.yaw_to_dir(rot.y)
+	local dir = core.yaw_to_dir(rot.y)
 	dir.y = dir.y+tan(rot.x)*vector.length(dir)
 	return vector.normalize(dir)
 end
@@ -341,7 +342,7 @@ function mobkit.get_box_intersect_cols(pos,box)
 	local pmin = {x=floor(pos.x+box[1]+0.5),z=floor(pos.z+box[3]+0.5)}
 	local pmax = {x=floor(pos.x+box[4]+0.5),z=floor(pos.z+box[6]+0.5)}
 	
-	result= {}
+	local result = {}
 	for x=pmin.x,pmax.x do
 		for z=pmin.z,pmax.z do
 			table.insert(result,{x=x,z=z})
@@ -423,11 +424,11 @@ end
 function mobkit.is_alive(thing)		-- thing can be luaentity or objectref.
 --	if not thing then return false end
 	if not mobkit.exists(thing) then return false end
-	if type(thing) == 'table' then return thing.hp > 0 end
+	if type(thing) == 'table' then return thing.hp > 0 or (thing.health and thing.health > 0) end	-- support for mobs redo
 	if thing:is_player() then return thing:get_hp() > 0
 	else 
 		local lua = thing:get_luaentity()
-		local hp = lua and lua.hp or nil
+		local hp = lua and (lua.hp or lua.health) or nil	-- support for mobs redo
 		return hp and hp > 0
 	end
 end
@@ -495,15 +496,15 @@ function mobkit.make_sound(self, sound)
 		param_table.gain = in_range(spec.gain)
 		param_table.fade = in_range(spec.fade)
 		param_table.pitch = in_range(spec.pitch)
-		return minetest.sound_play(spec.name, param_table)
+		return core.sound_play(spec.name, param_table)
 	end
-	return minetest.sound_play(spec, param_table)
+	return core.sound_play(spec, param_table)
 end
 
 function mobkit.go_forward_horizontal(self,speed)	-- sets velocity in yaw direction, y component unaffected
 	local y = self.object:get_velocity().y
 	local yaw = self.object:get_yaw()
-	local vel = vector.multiply(minetest.yaw_to_dir(yaw),speed)
+	local vel = vector.multiply(core.yaw_to_dir(yaw),speed)
 	vel.y = y
 	self.object:set_velocity(vel)
 end
@@ -512,7 +513,7 @@ function mobkit.drive_to_pos(self,tpos,speed,turn_rate,dist)
 	local pos=self.object:get_pos()
 	dist = dist or 0.2
 	if mobkit.isnear2d(pos,tpos,dist) then return true end
-	local tyaw = minetest.dir_to_yaw(vector.direction(pos,tpos))
+	local tyaw = core.dir_to_yaw(vector.direction(pos,tpos))
 	mobkit.turn2yaw(self,tyaw,turn_rate)
 	mobkit.go_forward_horizontal(self,speed)
 	return false
@@ -649,10 +650,9 @@ local function sensors()
 			end
 			
 			local pos = self.object:get_pos()
---local tim = minetest.get_us_time()
-			-- self.nearby_objects = minetest.get_objects_inside_radius(pos, range)
-			self.nearby_objects = ch_core.get_players_inside_radius(pos, range) -- mobkit will only sense players now (optimization)
---minetest.chat_send_all(minetest.get_us_time()-tim)
+--local tim = core.get_us_time()
+			self.nearby_objects = core.get_objects_inside_radius(pos, range)
+--core.chat_send_all(core.get_us_time()-tim)
 			for i,obj in ipairs(self.nearby_objects) do	
 				if obj == self.object then
 					table.remove(self.nearby_objects,i)
@@ -678,9 +678,9 @@ function mobkit.physics(self)
 		-- dumb friction
 		
 	if self.isonground and not self.isinliquid then
-		vnew = {x= vel.x> 0.2 and vel.x*mobkit.friction or 0,
-				y=vel.y,
-				z=vel.z > 0.2 and vel.z*mobkit.friction or 0}
+		vnew = vector.new(abs(vel.x) > 0.2 and vel.x*mobkit.friction or 0,
+				vel.y,
+				abs(vel.z) > 0.2 and vel.z*mobkit.friction or 0)
 	end
 	
 	-- bounciness
@@ -760,7 +760,7 @@ function mobkit.statfunc(self)
 	tmptab.memory = self.memory
 	tmptab.hp = self.hp
 	tmptab.texture_no = self.texture_no
-	return minetest.serialize(tmptab)
+	return core.serialize(tmptab)
 end
 
 function mobkit.actfunc(self, staticdata, dtime_s)
@@ -777,7 +777,7 @@ function mobkit.actfunc(self, staticdata, dtime_s)
 	self.time_total = 0
 	self.water_drag = self.water_drag or 1
 
-	local sdata = minetest.deserialize(staticdata)
+	local sdata = core.deserialize(staticdata)
 	if sdata then 
 		for k,v in pairs(sdata) do
 			self[k] = v
@@ -855,19 +855,5 @@ function mobkit.stepfunc(self,dtime,colinfo)	-- not intended to be modified
 end
 
 -- load example behaviors
-dofile(minetest.get_modpath("mobkit") .. "/example_behaviors.lua")
-
-minetest.register_on_mods_loaded(function()
-	local mbkfuns = ''
-	for n,f in pairs(mobkit) do
-		if type(f) == 'function' then
-			mbkfuns = mbkfuns .. n .. string.split(minetest.serialize(f),'.lua')[2] or ''
-		end
-	end
-	local crc = minetest.sha1(mbkfuns)
---  dbg(crc)
---	if crc ~= 'a061770008fe9ecf8e1042a227dc3beabd10e481' then
---		minetest.log("error","Mobkit namespace inconsistent, has been modified by other mods.")
---	end
-end)
+dofile(core.get_modpath("mobkit") .. "/example_behaviors.lua")
 ch_base.close_mod(minetest.get_current_modname())

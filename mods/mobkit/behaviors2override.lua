@@ -8,9 +8,9 @@ local max = math.max
 local min = math.min
 local tan = math.tan
 local pow = math.pow
-local dbg = minetest.chat_send_all
+local dbg = core.chat_send_all
 
-local abr = tonumber(minetest.get_mapgen_setting('active_block_range')) or 3
+local abr = tonumber(core.get_mapgen_setting('active_block_range')) or 3
 
 local neighbors ={
 	{x=1,z=0},
@@ -184,7 +184,7 @@ function [yournamespace].goto_next_waypoint(self,tpos)
 	
 	if height <= 0.01 then
 		local yaw = self.object:get_yaw()
-		local tyaw = minetest.dir_to_yaw(vector.direction(self.object:get_pos(),pos2))
+		local tyaw = core.dir_to_yaw(vector.direction(self.object:get_pos(),pos2))
 		if abs(tyaw-yaw) > 1 then
 			[yournamespace].lq_turn2pos(self,pos2) 
 		end
@@ -206,7 +206,7 @@ function [yournamespace].lq_turn2pos(self,tpos)
 	local func=function(self)
 		local pos = self.object:get_pos()
 		return mobkit.turn2yaw(self,
-			minetest.dir_to_yaw(vector.direction(pos,tpos)))
+			core.dir_to_yaw(vector.direction(pos,tpos)))
 	end
 	mobkit.queue_low(self,func)
 end
@@ -236,7 +236,7 @@ function [yournamespace].lq_dumbwalk(self,dest,speed_factor)
 		local pos = mobkit.get_stand_pos(self)
 		local y = self.object:get_velocity().y
 
-		if mobkit.is_there_yet2d(pos,minetest.yaw_to_dir(self.object:get_yaw()),dest) then
+		if mobkit.is_there_yet2d(pos,core.yaw_to_dir(self.object:get_yaw()),dest) then
 --		if mobkit.isnear2d(pos,dest,0.25) then
 			if not self.isonground or abs(dest.y-pos.y) > 0.1 then		-- prevent uncontrolled fall when velocity too high
 --			if abs(dest.y-pos.y) > 0.1 then	-- isonground too slow for speeds > 4
@@ -249,8 +249,8 @@ function [yournamespace].lq_dumbwalk(self,dest,speed_factor)
 			local dir = vector.normalize(vector.direction({x=pos.x,y=0,z=pos.z},
 														{x=dest.x,y=0,z=dest.z}))
 			dir = vector.multiply(dir,self.max_speed*speed_factor)
---			self.object:set_yaw(minetest.dir_to_yaw(dir))
-			mobkit.turn2yaw(self,minetest.dir_to_yaw(dir))
+--			self.object:set_yaw(core.dir_to_yaw(dir))
+			mobkit.turn2yaw(self,core.dir_to_yaw(dir))
 			dir.y = y
 			self.object:set_velocity(dir)
 		end
@@ -267,7 +267,7 @@ function [yournamespace].lq_dumbjump(self,height,anim)
 		if self.isonground then
 			if jump then
 				mobkit.animate(self,anim)
-				local dir = minetest.yaw_to_dir(yaw)
+				local dir = core.yaw_to_dir(yaw)
 				dir.y = -mobkit.gravity*sqrt((height+0.35)*2/-mobkit.gravity)
 				self.object:set_velocity(dir)
 				jump = false
@@ -275,7 +275,7 @@ function [yournamespace].lq_dumbjump(self,height,anim)
 				return true
 			end
 		else	
-			local dir = minetest.yaw_to_dir(yaw)
+			local dir = core.yaw_to_dir(yaw)
 			local vel = self.object:get_velocity()
 			if self.lastvelocity.y < 0.9 then
 				dir = vector.multiply(dir,3)
@@ -297,7 +297,7 @@ function [yournamespace].lq_jumpout(self)
 			phase = 2
 		else
 			if vel.y < 0 then return true end
-			local dir = minetest.yaw_to_dir(self.object:get_yaw())
+			local dir = core.yaw_to_dir(self.object:get_yaw())
 			dir.y=vel.y
 			self.object:set_velocity(dir)
 		end
@@ -315,7 +315,7 @@ function [yournamespace].lq_freejump(self)
 			phase = 2
 		else
 			if vel.y <= 0.01 then return true end
-			local dir = minetest.yaw_to_dir(self.object:get_yaw())
+			local dir = core.yaw_to_dir(self.object:get_yaw())
 			dir.y=vel.y
 			self.object:set_velocity(dir)
 		end
@@ -332,7 +332,7 @@ function [yournamespace].lq_jumpattack(self,height,target)
 		if self.isonground then
 			if init then	-- collision bug workaround
 				local vel = self.object:get_velocity()
-				local dir = minetest.yaw_to_dir(self.object:get_yaw())
+				local dir = core.yaw_to_dir(self.object:get_yaw())
 				dir=vector.multiply(dir,6)
 				dir.y = -mobkit.gravity*sqrt(height*2/-mobkit.gravity)
 				self.object:set_velocity(dir)
@@ -347,7 +347,7 @@ function [yournamespace].lq_jumpattack(self,height,target)
 			local pos = self.object:get_pos()
 			-- calculate attack spot
 			local yaw = self.object:get_yaw()
-			local dir = minetest.yaw_to_dir(yaw)
+			local dir = core.yaw_to_dir(yaw)
 			local apos = mobkit.pos_translate2d(pos,yaw,self.attack.range)
 
 			if mobkit.is_pos_in_box(apos,tgtpos,tgtbox) then	--bite
@@ -551,7 +551,7 @@ function [yournamespace].hq_warn(self,prty,tgtobj)
 			if timer > tgttime then
 				mobkit.make_sound(self,'warn')
 				-- if self.sounds and self.sounds.warn then
-					-- minetest.sound_play(self.sounds.warn, {object=self.object})
+					-- core.sound_play(self.sounds.warn, {object=self.object})
 				-- end
 				tgttime = timer + 1.1 + random()*1.5
 			end
@@ -605,7 +605,7 @@ function [yournamespace].hq_liquid_recovery(self,prty)	-- scan for nearest land
 	local func = function(self)
 		if not self.isinliquid then return true end
 		local pos=self.object:get_pos()
-		local vec = minetest.yaw_to_dir(yaw)
+		local vec = core.yaw_to_dir(yaw)
 		local pos2 = mobkit.pos_shift(pos,vector.multiply(vec,radius))
 		local height, liquidflag = mobkit.get_terrain_height(pos2)
 		if height and not liquidflag then
@@ -638,7 +638,7 @@ function [yournamespace].hq_swimto(self,prty,tpos)
 		local y=self.object:get_velocity().y
 		local pos2d = {x=pos.x,y=tpos.y,z=pos.z}
 		local dir=vector.normalize(vector.direction(pos2d,tpos))
-		local yaw = minetest.dir_to_yaw(dir)
+		local yaw = core.dir_to_yaw(dir)
 		
 		if mobkit.timer(self,1) then
 			cols = mobkit.get_box_displace_cols(pos,box,dir,1)
@@ -756,7 +756,7 @@ function [yournamespace].hq_aqua_roam(self,prty,speed)
 		end
 		if mobkit.timer(self,1) then
 			if vector.distance(pos,center) > abr*16*0.5 then
-				tyaw = minetest.dir_to_yaw(vector.direction(pos,{x=center.x+random()*10-5,y=center.y,z=center.z+random()*10-5}))
+				tyaw = core.dir_to_yaw(vector.direction(pos,{x=center.x+random()*10-5,y=center.y,z=center.z+random()*10-5}))
 			else
 				if random(10)>=9 then tyaw=tyaw+random()*pi - pi*0.5 end
 			end
@@ -810,7 +810,7 @@ function [yournamespace].hq_aqua_attack(self,prty,tgtobj,speed)
 		end
 
 		local tpos = tgtobj:get_pos()
-		local tyaw=minetest.dir_to_yaw(vector.direction(pos,tpos))	
+		local tyaw=core.dir_to_yaw(vector.direction(pos,tpos))	
 		mobkit.turn2yaw(self,tyaw,3)
 		local yaw = self.object:get_yaw()
 		if mobkit.timer(self,1) then
