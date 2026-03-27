@@ -180,7 +180,11 @@ function simple_dialogs.show_dialog_formspec(playername,npcself,topic)
 		if not topic then topic="START" end
 		contextdlg[playername]={}
 		contextdlg[playername].npcId=simple_dialogs.set_npc_id(npcself) --store the npc id in local context so we can use it when the form is returned.  (cant store self)
-		local formspec={
+		local formspec=simple_dialogs.dialog_to_formspec(playername,npcself,topic)
+		if formspec == "" then
+			return
+		end
+		formspec={
 			"formspec_version[4]",
 			"size[28,15]", 
 			"position[0.05,0.05]",
@@ -188,9 +192,9 @@ function simple_dialogs.show_dialog_formspec(playername,npcself,topic)
 			"no_prepend[]",        --must be present for below transparent setting to work
 			"bgcolor[;neither;]",  --make the formspec background transparent
 			get_background_box(0.370, 0.4, 10.5, 8.4), --draws a box background behind our text area
-			simple_dialogs.dialog_to_formspec(playername,npcself,topic)
+			formspec,
 		}
-		formspec=table.concat(formspec,"")
+		formspec=table.concat(formspec)
 		minetest.show_formspec(playername,"simple_dialogs:dialog",formspec)
 	end
 end --show_dialog_formspec

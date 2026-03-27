@@ -34,26 +34,12 @@ minetest.register_entity("itemframes:item",{
 		if self.nodename == "itemframes:pedestal" then
 			node_pos.y = node_pos.y - 1
 		end
-		local meta = minetest.get_meta(node_pos)
-		local handle = meta:get_int("entity_handle")
-		if handle == 0 then
-			handle = nil
-		end
-		local new_handle, errmsg = ch_core.register_entity(self, handle)
-		if new_handle == nil then
-			minetest.log("ERROR: itemframe entity registration failed: "..(errmsg or "nil"))
-			self.object:remove()
-			return
-		elseif handle == nil or handle ~= new_handle then
-			meta:set_int("entity_handle", new_handle)
-		end
 		if self.texture ~= nil then
 			self.object:set_properties({textures = {self.texture}})
 		end
 		if self.nodename == "itemframes:pedestal" then
 			self.object:set_properties({automatic_rotate = 1})
 		end
-		--[[
 		if self.texture ~= nil and self.nodename ~= nil then
 			local entity_pos = vector.round(self.object:get_pos())
 			local objs = minetest.get_objects_inside_radius(entity_pos, 0.5)
@@ -73,7 +59,6 @@ minetest.register_entity("itemframes:item",{
 				end
 			end
 		end
-		]]
 	end,
 	get_staticdata = function(self)
 		if self.nodename ~= nil and self.texture ~= nil then
@@ -81,7 +66,6 @@ minetest.register_entity("itemframes:item",{
 		end
 		return ""
 	end,
-	on_deactivate = ch_core.unregister_entity,
 })
 
 local upvectors = {
@@ -102,14 +86,18 @@ local function is_locked(meta, player_name)
 	return meta:get_int("locked") ~= 0 and player_name ~= meta:get_string("owner") and not minetest.check_player_privs(player_name, "protection_bypass")
 end
 
-local function remove_item(pos, node, meta)
+local remove_item = function(pos, node)
 	local objs = nil
-	local kind = minetest.get_item_group(node.name, "itemframe")
-	if minetest.get_item_group(node.name, "itemframe") ~= 0 then
-		local handle = meta:get_int("entity_handle")
-		local entity = handle ~= 0 and ch_core.get_entity_by_handle(handle)
-		if entity then
-			entity.object:remove()
+	if node.name == "itemframes:frame" then
+		objs = minetest.get_objects_inside_radius(pos, .5)
+	elseif node.name == "itemframes:pedestal" then
+		objs = minetest.get_objects_inside_radius({x=pos.x,y=pos.y+1,z=pos.z}, .5)
+	end
+	if objs then
+		for _, obj in ipairs(objs) do
+			if obj and obj:get_luaentity() and obj:get_luaentity().name == "itemframes:item" then
+				obj:remove()
+			end
 		end
 	end
 end
@@ -119,7 +107,7 @@ local function update_item(pos, node, meta)
 	if kind ~= 1 and kind ~= 2 then
 		return
 	end
-	remove_item(pos, node, meta)
+	remove_item(pos, node)
 	local inv = meta:get_inventory()
 	local stack = inv:get_stack("item", 1)
 	if not stack:is_empty() then
@@ -247,7 +235,7 @@ local function allow_metadata_inventory_take(pos, listname, index, stack, player
 	end
 	local inv = meta:get_inventory()
 	inv:set_stack(listname, index, ItemStack())
-	remove_item(pos, minetest.get_node(pos), meta)
+	remove_item(pos, minetest.get_node(pos))
 	return 0
 end
 
@@ -266,12 +254,12 @@ local function on_rotate(pos, node, user, mode, new_param2)
 	end
 	node.param2 = new_param2
 	minetest.swap_node(pos, node)
-	update_item(pos, node, minetest.get_meta(pos))
+	update_item(pos, node, core.get_meta(pos))
 	return true
 end
 
 local function on_destruct(pos)
-	remove_item(pos, minetest.get_node(pos), minetest.get_meta(pos))
+	remove_item(pos, minetest.get_node(pos))
 end
 
 local itemframe_node_box = {

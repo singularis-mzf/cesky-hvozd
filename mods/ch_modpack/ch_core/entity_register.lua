@@ -1,3 +1,7 @@
+--[[ K ODSTRANĚNÍ!!!!!!!!!!!!!!!!!!!!! ]]
+error("TO DELETE")
+
+
 ch_core.open_submod("entity_register", {lib = true})
 
 local ifthenelse = ch_core.ifthenelse
@@ -23,6 +27,9 @@ local function remove_registered_entity(handle)
     entities[handle] = nil
     entity._ch_entity_handle = nil
     count = count - 1
+    if name ~= "__builtin:item" then
+        -- print("DEBUG: registered entity "..handle.." ("..name..") removed (count => "..count..").")
+    end
     return true
 end
 
@@ -48,6 +55,7 @@ end
         remains_count (int) [počet zbylých (platných) registrovaných entit]
 ]]
 function ch_core.collect_invalid_entities()
+    core.log("error", "ch_core.collect_invalid_entities() called!")
     local result = {}
     local gc_count = 0
     for handle, entity in pairs(entities) do
@@ -70,6 +78,7 @@ end
     Vypne indexování entit zadaného jména
 ]]
 function ch_core.disable_entity_name_index(name)
+    core.log("error", "ch_core.disable_entity_name_index() called!")
     name_index[name] = nil
 end
 
@@ -77,6 +86,7 @@ end
     Zapne indexování entit zadaného jména
 ]]
 function ch_core.enable_entity_name_index(name)
+    core.log("error", "ch_core.enable_entity_name_index() called!")
     if name_index[name] == nil then
         local new_index = {}
         for handle, entity in pairs(entities) do
@@ -102,6 +112,7 @@ end
     b) nil (pokud není zapnuto indexování entit daného typu)
 ]]
 function ch_core.find_handles_in_radius(pos, radius, name, return_type, handle_to_ignore)
+    core.log("error", "ch_core.find_handles_in_radius() called!")
     local result = {}
     local index = name_index[name]
     if index == nil then
@@ -133,6 +144,7 @@ end
         count (int)
 ]]
 function ch_core.get_count_of_registered_entities()
+    core.log("error", "ch_core.get_count_of_registered_entities() called!")
     return count
 end
 
@@ -144,6 +156,7 @@ end
         handle (int32 or nil)
 ]]
 function ch_core.get_handle_of_entity(lua_entity)
+    core.log("error", "ch_core.get_handle_of_entity() called!")
     if lua_entity == nil then
         return nil
     elseif type(lua_entity) == "table" then
@@ -185,6 +198,7 @@ end
         c) nil, nil [parametr je nil nebo odkazovaná entita neexistuje nebo nemá platný objekt]
 ]]
 function ch_core.get_entity_by_handle(handle, required_name)
+    core.log("error", "ch_core.get_entity_by_handle() called!")
     if type(handle) == "number" then
         local result = entities[handle]
         if result ~= nil then
@@ -210,6 +224,7 @@ end
     Pro nil vrací nil, "nil".
 ]]
 function ch_core.is_valid_entity_handle(h)
+    core.log("error", "ch_core.is_valid_entity_handle() called!")
     if h == nil then
         return nil, "nil"
     elseif type(h) ~= "number" then
@@ -241,6 +256,7 @@ end
     b) nil, error_message (string)
 ]]
 function ch_core.register_entity(lua_entity, handle_to_use)
+    core.log("error", "ch_core.register_entity() called!")
     if lua_entity == nil then
         return nil, "nothing to register"
     end
@@ -285,6 +301,9 @@ function ch_core.register_entity(lua_entity, handle_to_use)
         handle_type = "new"
     end
     add_entity_to_register(handle, lua_entity)
+    if lua_entity.name ~= "__builtin:item" then
+        -- print("DEBUG: lua_entity "..handle.." ("..lua_entity.name..") registered")
+    end
     if count >= next_gc_count then
         ch_core.collect_invalid_entities()
         if entities[handle] == nil then
@@ -301,6 +320,7 @@ end
     on_deactivate = ch_core.unregister_entity
 ]]
 function ch_core.unregister_entity(lua_entity)
+    core.log("error", "ch_core.unregister_entity() called!")
     if lua_entity ~= nil then
         local handle = lua_entity._ch_entity_handle
         if type(handle) == "number" then
@@ -313,6 +333,7 @@ function ch_core.unregister_entity(lua_entity)
     end
 end
 
+--[[
 -- __builtin:item by se měla registrovat:
 local builtin_item = core.registered_entities["__builtin:item"]
 local function empty_function() end
@@ -330,5 +351,6 @@ local new_item = {
 }
 setmetatable(new_item, {__index = builtin_item})
 core.register_entity(":__builtin:item", new_item)
+]]
 
 ch_core.close_submod("entity_register")

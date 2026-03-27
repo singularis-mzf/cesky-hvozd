@@ -1,4 +1,4 @@
--- BUILTIN ITEM on_step override
+--[[ BUILTIN ITEM on_step override
 local orig_builtin_item_on_step = default.builtin_item_on_step
 default.builtin_item_on_step = function(self, dtime, ...)
 	local orig_itemstring = assert(self.itemstring)
@@ -30,3 +30,4 @@ default.builtin_item_on_step = function(self, dtime, ...)
 		end
 	end
 end
+]]

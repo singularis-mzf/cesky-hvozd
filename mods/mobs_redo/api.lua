@@ -3561,29 +3561,19 @@ function mobs:register_mob(name, def)
 
 		on_activate = function(self, staticdata, dtime)
 			self:mob_activate(staticdata, def, dtime)
-			ch_core.register_entity(self)
 		end,
 
 		get_staticdata = function(self)
 			return self:mob_staticdata(self)
 		end,
 
-		on_deactivate = ch_core.unregister_entity,
-
 	}, mob_class_meta))
-	ch_core.enable_entity_name_index(name)
 end
 
 -- count how many mobs of one type are inside an area
 -- will also return true for second value if player is inside area
 
 local function count_mobs(pos, type)
-	local mobs = ch_core.find_handles_in_radius(pos, aoc_range * 2, type)
-	local players = ch_core.get_players_inside_radius(pos, aoc_range * 2)
-
-	return #mobs, players[1] ~= nil
-
-	--[[
 	local total = 0
 	local objs = minetest.get_objects_inside_radius(pos, aoc_range * 2)
 	local ent, players
@@ -3602,7 +3592,6 @@ local function count_mobs(pos, type)
 	end
 
 	return total, players
-	]]
 end
 
 -- do we have enough space to spawn mob? (thanks wuzzy)
