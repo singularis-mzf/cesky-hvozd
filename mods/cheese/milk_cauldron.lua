@@ -698,7 +698,7 @@ minetest.register_node("cheese:milk_cauldron_active", {
   --mesh = "kettle_inuse.obj",
 	tiles = {
     {
-      image = "milk_cauldron_active_top.png",
+      name = "milk_cauldron_active_top.png",
 			backface_culling = false,
 			animation = {
 				type = "vertical_frames",

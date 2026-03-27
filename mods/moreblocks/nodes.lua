@@ -568,9 +568,15 @@ local nodes = {
 }
 
 for name, def in pairs(nodes) do
+	local furnace_burntime = def.furnace_burntime
+	def.furnace_burntime = nil
 	def.tiles = def.tiles or {"moreblocks_" ..name.. ".png"}
 	minetest.register_node("moreblocks:" ..name, def)
 	minetest.register_alias(name, "moreblocks:" ..name)
+
+	if furnace_burntime ~= nil then
+		core.register_craft({type = "fuel", recipe = "moreblocks:" ..name, burntime = furnace_burntime})
+	end
 
 	local stairs_tiles = def.tiles
 

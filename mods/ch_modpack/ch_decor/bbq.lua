@@ -16,7 +16,7 @@ local def = {
 	sunlight_propagates = true,
 	tiles = {
 		{
-			image = "bbq_chimney_smoke_animation.png",
+			name = "bbq_chimney_smoke_animation.png",
 			backface_culling = false,
 			animation = {
 				type = "vertical_frames",

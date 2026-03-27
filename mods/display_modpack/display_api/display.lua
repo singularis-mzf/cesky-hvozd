@@ -79,7 +79,7 @@ for i, r in pairs(wallmounted_rotations) do
 end
 
 -- Detect rotation restriction
-local rotation_restricted = nil
+local rotation_restricted = false
 minetest.register_entity('display_api:dummy_entity', {
 	initial_properties = {
 		collisionbox = { 0, 0, 0, 0, 0, 0 },
@@ -89,6 +89,8 @@ minetest.register_entity('display_api:dummy_entity', {
 })
 
 function display_api.is_rotation_restricted()
+	-- TODO: upgrade Display API to get rid of this
+	--[[
 	if rotation_restricted == nil then
 		local objref = minetest.add_entity(
 			{x=0, y=0, z=0}, 'display_api:dummy_entity')
@@ -97,6 +99,7 @@ function display_api.is_rotation_restricted()
 			objref:remove()
 		end
 	end
+	]]
 	return rotation_restricted
 end
 

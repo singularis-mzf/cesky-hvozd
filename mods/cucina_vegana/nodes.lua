@@ -262,7 +262,8 @@ minetest.register_node("cucina_vegana:popcorn", {
 	tiles = {"cucina_vegana_popcorn.png"},
 	inventory_image = "cucina_vegana_popcorn.png",
 	wield_image = "cucina_vegana_popcorn.png",
-	paramtype2 = 3, -- #
+	paramtype2 = "meshoptions",
+	place_param2 = 3,
 	on_use = ch_core.item_eat(),
 	paramtype = "light",
 	is_ground_content = false,
