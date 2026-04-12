@@ -50,3 +50,11 @@ Steel door sounds from minetest game:
 Steel door sounds open & close (CC-BY-3.0) by HazMatt
 
 * <http://www.freesound.org/people/HazMattt/sounds/187283/>
+
+### Bus sound
+
+Files: linetrack_bus.*.ogg
+
+Author: Singularis
+
+License: Creative Commons Attribution 3.0 Unported Licence (CC BY 3.0) <http://creativecommons.org/licenses/by/3.0/>

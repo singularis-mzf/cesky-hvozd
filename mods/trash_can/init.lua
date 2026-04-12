@@ -13,7 +13,13 @@ moditems.boxart = ""
 moditems.trashbin_groups = {snappy=1,choppy=2,oddly_breakable_by_hand=2,flammable=3}
 moditems.dumpster_groups = {cracky=3,oddly_breakable_by_hand=1}
 
-local has_homedecor = minetest.get_modpath("homedecor_trash_cans")
+local has_homedecor = core.get_modpath("homedecor_trash_cans")
+local has_unifieddyes = core.get_modpath("unifieddyes")
+
+if has_unifieddyes then
+	moditems.ctrashbin_groups = table.copy(moditems.trashbin_groups)
+	moditems.ctrashbin_groups.ud_param2_colorable = 1
+end
 
 --
 -- Functions
@@ -162,7 +168,7 @@ local box_normal = {type = "fixed", fixed = trash_can_nodebox}
 local box_smallc = {type = "fixed", fixed = translate(scale(trash_can_nodebox, 0.666666), 0, -0.166667, 0)}
 local box_small  = {type = "fixed", fixed = translate(scale(trash_can_nodebox, 0.666666), 0, -0.166667, 0.2)}
 
-ch_core.register_nodes(trash_can_def, {
+local defs = {
 	["trash_can:trash_can_wooden"] = {
 		description = "odpadkový koš",
 		mesh = "trash_can_normal.obj",
@@ -184,7 +190,41 @@ ch_core.register_nodes(trash_can_def, {
 		collision_box = box_small,
 		paramtype2 = "4dir",
 	},
-})
+}
+if has_unifieddyes then
+	local tiles = {
+			{name = "trash_can_wooden_top.png", backface_culling = true, color = "#999999"}, -- top
+			{name = "ch_core_white_pixel.png^[multiply:#eeeeee", backface_culling = true}, -- bottom
+			{name = "ch_core_white_pixel.png^[multiply:#eeeeee", backface_culling = true}, -- sides
+		}
+	defs["trash_can:trash_can_small_colorable"] = {
+		mesh = "trash_can_small.obj",
+		description = "odpadkový koš malý barevný",
+		tiles = tiles,
+		selection_box = box_small,
+		collision_box = box_small,
+		paramtype2 = "color4dir",
+		palette = "unifieddyes_palette_color4dir.png",
+		_ch_ud_palette = "unifieddyes_palette_color4dir.png",
+		groups = moditems.ctrashbin_groups,
+		on_dig = unifieddyes.on_dig,
+	}
+	defs["trash_can:trash_can_smallc_colorable"] = {
+		mesh = "trash_can_small_center.obj",
+		description = "odpadkový koš malý barevný (vystředěný)",
+		tiles = tiles,
+		selection_box = box_smallc,
+		collision_box = box_smallc,
+		paramtype2 = "color4dir",
+		palette = "unifieddyes_palette_color4dir.png",
+		_ch_ud_palette = "unifieddyes_palette_color4dir.png",
+		groups = moditems.ctrashbin_groups,
+		on_dig = unifieddyes.on_dig,
+	}
+end
+
+
+ch_core.register_nodes(trash_can_def, defs)
 
 if has_homedecor then
 	minetest.override_item("homedecor:trash_can", {
@@ -291,6 +331,15 @@ minetest.register_craft({
 	}
 })
 
+core.register_craft({
+	output = "trash_can:trash_can_small_colorable",
+	recipe = {
+		{"basic_materials:plastic_sheet", "", "basic_materials:plastic_sheet"},
+		{"basic_materials:plastic_sheet", "", "basic_materials:plastic_sheet"},
+		{"basic_materials:plastic_sheet", "basic_materials:plastic_sheet", "basic_materials:plastic_sheet"},
+	},
+})
+
 -- Dumpster
 minetest.register_craft({
 	output = 'trash_can:dumpster',
@@ -306,6 +355,13 @@ ch_core.register_shape_selector_group({
 		{name = "trash_can:trash_can_wooden", param2 = 0},
 		{name = "trash_can:trash_can_small", param2 = 0},
 		{name = "trash_can:trash_can_smallc", param2 = 0},
+	}
+})
+
+ch_core.register_shape_selector_group({
+	nodes = {
+		{name = "trash_can:trash_can_small_colorable", param2 = 0xff00},
+		{name = "trash_can:trash_can_smallc_colorable", param2 = 0xff00},
 	}
 })
 

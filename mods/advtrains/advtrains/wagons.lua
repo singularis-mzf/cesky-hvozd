@@ -739,6 +739,8 @@ function wagon:on_rightclick(clicker)
 		end
 end
 
+local pname_to_last_geton = {}
+
 function wagon:get_on(clicker, seatno)
 	
 	local data = advtrains.wagons[self.id]
@@ -759,6 +761,22 @@ function wagon:get_on(clicker, seatno)
 		self:get_off(seatno)
 	end
 	atprint("get_on: attaching",clicker:get_player_name())
+
+	local train=self:train()
+	local line_status = train.line_status or {}
+	local stop_status
+	if line_status.standing_at ~= nil then
+		if advtrains.lines ~= nil and advtrains.lines.stops ~= nil and advtrains.lines.stops[line_status.standing_at] ~= nil then
+			stop_status = tostring(advtrains.lines.stops[line_status.standing_at].stn).." "
+		end
+		stop_status = "at "..stop_status..core.pos_to_string(advtrains.decode_pos(line_status.standing_at))
+	else
+		stop_status = "out of station"
+	end
+	core.log("action", "Player "..clicker:get_player_name().." gets on train "..train.id.." (line "..(train.line or "nil")..
+		", RC "..(train.routingcode or "")..", velocity "..tostring(train.velocity)..") "..stop_status..".")
+	pname_to_last_geton[clicker:get_player_name()] = core.get_us_time()
+
 	data.seatp[seatno] = clicker:get_player_name()
 	self.seatpc[seatno] = clicker:get_player_control_bits()
 	advtrains.player_to_train_mapping[clicker:get_player_name()]=data.train_id
@@ -795,9 +813,27 @@ function wagon:get_off(seatno)
 	self.seatpc[seatno]=nil
 	if clicker then
 		atprint("get_off: detaching",clicker:get_player_name())
+		local train=self:train()
+		local line_status = train.line_status or {}
+		local stop_status, time_status
+		if line_status.standing_at ~= nil then
+			if advtrains.lines ~= nil and advtrains.lines.stops ~= nil and advtrains.lines.stops[line_status.standing_at] ~= nil then
+				stop_status = tostring(advtrains.lines.stops[line_status.standing_at].stn).." "
+			end
+			stop_status = "at "..stop_status..core.pos_to_string(advtrains.decode_pos(line_status.standing_at))
+		else
+			stop_status = "out of station"
+		end
+		if pname_to_last_geton[pname] ~= nil then
+			time_status = string.format(" after %d seconds", (core.get_us_time() - pname_to_last_geton[pname]) / 1000000)
+		else
+			time_status = ""
+		end
+		pname_to_last_geton[pname] = nil
+		core.log("action", "Player "..clicker:get_player_name().." got off train "..train.id.." (line "..(train.line or "nil")..
+			", RC "..(train.routingcode or "")..", velocity "..tostring(train.velocity)..") "..stop_status..time_status..".")
 		clicker:set_detach()
 		clicker:set_eye_offset({x=0,y=0,z=0}, {x=0,y=0,z=0})
-		local train=self:train()
 		--code as in step - automatic get on
 		if self.door_entry and train.door_open and train.door_open~=0 and train.velocity==0 and train.index and train.path then
 			local index = advtrains.path_get_index_by_offset(train, train.index, -data.pos_in_train)
