@@ -3,7 +3,7 @@
 Následující návod poskytuji v dobré víře, že bude většině uživatelů/ek fungovat, ale bez záruky.
 
 Ke zprovoznění vlastního serveru s použitím kódu z tohoto repozitáře
-budete potřebovat server Minetest verze 5.8.0 (dodává se s klientem
+budete potřebovat server Minetest verze 5.15.1 (dodává se s klientem
 odpovídající verze). Může to fungovat i s novější verzí,
 ale nemohu to zaručit. Dále budete potřebovat několik set megabajtů místa na disku
 (doporučuji vyhradit alespoň gigabajt). Musíte však použít dedikovanou
