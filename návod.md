@@ -29,3 +29,5 @@ Nové postavy přijmete na server následujícími příkazy:
 ``/registrovat survival Jmeno_postavy`` — pro dělnický styl hry
 
 Další správcovské příkazy objevíte pomocí příkazu /help.
+
+test
