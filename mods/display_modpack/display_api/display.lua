@@ -65,9 +65,7 @@ local function compute_values(r)
 	for _ = 1, r.x do d, w, h = rx(d), rx(w), rx(h) end
 	for _ = 1, r.y do d, w, h = ry(d), ry(w), ry(h) end
 
-	return {
-		rotation=r, depth=d, width=w, height=h,
-		restricted=(r.x==0 and r.z==0) }
+	return {rotation=r, depth=d, width=w, height=h}
 end
 
 for i, r in pairs(facedir_rotations) do
@@ -76,31 +74,6 @@ end
 
 for i, r in pairs(wallmounted_rotations) do
 	wallmounted_values[i] = compute_values(r)
-end
-
--- Detect rotation restriction
-local rotation_restricted = false
-minetest.register_entity('display_api:dummy_entity', {
-	initial_properties = {
-		collisionbox = { 0, 0, 0, 0, 0, 0 },
-		visual = "upright_sprite",
-		textures = {}
-	},
-})
-
-function display_api.is_rotation_restricted()
-	-- TODO: upgrade Display API to get rid of this
-	--[[
-	if rotation_restricted == nil then
-		local objref = minetest.add_entity(
-			{x=0, y=0, z=0}, 'display_api:dummy_entity')
-		if objref then
-			rotation_restricted = objref.set_rotation == nil
-			objref:remove()
-		end
-	end
-	]]
-	return rotation_restricted
 end
 
 -- Clip position property to maximum entity position
@@ -122,7 +95,7 @@ local function get_orientation_values(node)
 		local paramtype2 = ndef.paramtype2
 		if paramtype2 == "wallmounted" or paramtype2 == "colorwallmounted" then
 			return wallmounted_values[node.param2 % 8]
-		elseif paramtype2 == "facedir" or paramtype2 == "colorfacedir"  then
+		elseif paramtype2 == "facedir" or paramtype2 == "colorfacedir" then
 			return facedir_values[node.param2 % 32]
 		elseif paramtype2 == "4dir" or paramtype2 == "color4dir" then
 			return facedir_values[node.param2 % 4]
@@ -176,7 +149,8 @@ function display_api.update_entities(pos)
 	end
 
 	for _, objref in pairs(get_display_objrefs(pos, true)) do
-		local edef = ndef.display_entities[objref:get_luaentity().name]
+		local entity = objref:get_luaentity()
+		local edef = ndef.display_entities[entity.name]
 		local depth = clip_pos_prop(edef.depth)
 		local right = clip_pos_prop(edef.right)
 		local top = clip_pos_prop(edef.top)
@@ -189,14 +163,19 @@ function display_api.update_entities(pos)
 
 		if objref.set_rotation then
 			objref:set_rotation({
-				x = ov.rotation.x*math.pi/2 + (edef.pitch or 0),
-				y = ov.rotation.y*math.pi/2 + (edef.yaw or 0),
-				z = ov.rotation.z*math.pi/2,
+				x = ov.rotation.x * math.pi / 2 +
+					(entity.rotation and entity.rotation.x or 0),
+				y = ov.rotation.y * math.pi / 2 +
+					(entity.rotation and entity.rotation.y or 0) +
+					(edef.yaw or 0),
+				z = ov.rotation.z * math.pi / 2 +
+					(entity.rotation and entity.rotation.z or 0),
 			})
 		else
 			if ov.rotation.x ~=0 or ov.rotation.y ~= 0 then
 				minetest.log("warning", string.format(
-					"[display_api] unable to rotate correctly entity for node at %s without set_rotation method.",
+					"[display_api] unable to rotate correctly entity for " ..
+					"node at %s without set_rotation method.",
 					minetest.pos_to_string(pos)))
 			end
 			objref:set_yaw(ov.rotation.y*math.pi/2 + (edef.yaw or 0))
@@ -251,16 +230,6 @@ function display_api.on_place(itemstack, placer, pointed_thing, override_param2)
 		z = pointed_thing.under.z - pointed_thing.above.z,
 	}
 
-	local rotation_restriction = display_api.is_rotation_restricted()
-
-	if rotation_restriction then
-		-- If item is not placed on a wall, use the player's view direction instead
-		if dir.x == 0 and dir.z == 0 then
-			dir = placer:get_look_dir()
-		end
-		dir.y = 0
-	end
-
 	local param2 = 0
 	if ndef then
 		if ndef.paramtype2 == "wallmounted" or
@@ -268,8 +237,8 @@ function display_api.on_place(itemstack, placer, pointed_thing, override_param2)
 			param2 = minetest.dir_to_wallmounted(dir)
 
 		elseif ndef.paramtype2 == "facedir" or
-			ndef.paramtype2 == "colorfacedir"  then
-			param2 = minetest.dir_to_facedir(dir, not rotation_restriction)
+			ndef.paramtype2 == "colorfacedir" then
+			param2 = minetest.dir_to_facedir(dir, true)
 		end
 	end
 	return minetest.item_place(itemstack, placer, pointed_thing,
@@ -290,6 +259,15 @@ function display_api.on_destruct(pos)
 	end
 end
 
+function display_api.on_blast(pos, intensity)
+	if not minetest.is_protected(pos, "") then
+		local node = minetest.get_node(pos)
+		local drops = minetest.get_node_drops(node, "tnt:blast")
+		minetest.remove_node(pos)
+		return drops
+	end
+end
+
 -- On_rotate (screwdriver) callback for display_api items. Prevents invalid
 -- rotations and reorients entities.
 function display_api.on_rotate(pos, node, user, _, new_param2)
@@ -299,31 +277,33 @@ function display_api.on_rotate(pos, node, user, _, new_param2)
 		return
 	end
 
-	if ov.restricted or not display_api.is_rotation_restricted() then
-		minetest.swap_node(pos, node)
-		display_api.update_entities(pos)
-		return true
-	else
-		return false
-	end
+	minetest.swap_node(pos, node)
+	display_api.update_entities(pos)
+	return true
 end
 
 --- Creates display entity with some fields and the on_activate callback
 function display_api.register_display_entity(entity_name)
-	if not minetest.registered_entities[entity_name] then
-		minetest.register_entity(':'..entity_name, {
-			initial_properties = {
-				collisionbox = { 0, 0, 0, 0, 0, 0 },
-				visual = "upright_sprite",
-				textures = {},
-				pointable = false,
-			},
-			on_activate = display_api.on_activate,
-			get_staticdata = function(self)
-				return minetest.serialize({ nodepos = self.nodepos })
-			end,
-		})
+	if minetest.registered_entities[entity_name] then
+		return
 	end
+
+	minetest.register_entity(':'..entity_name, {
+			initial_properties = {
+			collisionbox = {0, 0, 0, 0, 0, 0},
+			visual = "upright_sprite",
+			textures = {},
+			collide_with_objects = false,
+			pointable = false,
+		},
+		on_activate = display_api.on_activate,
+		get_staticdata = function(self)
+			return minetest.serialize({ nodepos = self.nodepos })
+		end,
+		on_blast = function(self, damage)
+			return false, false, {}
+		end,
+	})
 end
 
 minetest.register_lbm({
@@ -331,6 +311,7 @@ minetest.register_lbm({
 	name = "display_api:update_entities",
 	run_at_every_load = true,
 	nodenames = {"group:display_api",
-		"group:display_modpack_node", "group:display_lib_node"}, -- See deprecated(1)
+		"group:display_modpack_node",
+		"group:display_lib_node"},  -- See deprecated(1)
 	action = function(pos, node) display_api.update_entities(pos) end,
 })

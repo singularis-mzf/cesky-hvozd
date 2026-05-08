@@ -2,16 +2,15 @@ ch_base.open_mod(minetest.get_current_modname())
 --[[
 
  Metro font for Font API
- 
- Original font Metro Sans 
- by Christian Munk (CMunk) 
+
+ Original font Metro Sans
+ by Christian Munk (CMunk)
  released under CC-BY-SA license
- 
+
  https://fontstruct.com/fontstructions/show/723864/metro_sans
 
  Derivative textures and code are under CC-BY-SA license
 --]]
-
 
 font_api.register_font(
 	'metro',

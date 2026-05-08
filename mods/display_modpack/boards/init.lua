@@ -24,21 +24,21 @@ boards = {}
 boards.name = minetest.get_current_modname()
 boards.path = minetest.get_modpath(boards.name)
 
--- Load support for intllib.
-local S, NS = dofile(boards.path.."/intllib.lua")
-boards.intllib = S
-local F = function(...) return minetest.formspec_escape(S(...)) end
+-- Translation support
+local S = minetest.get_translator(boards.name)
+local FS = function(...) return minetest.formspec_escape(S(...)) end
 
 -- Load font
 -- dofile(boards.path.."/font_tinycurs.lua")
 
 local function set_formspec(pos)
 	local meta = minetest.get_meta(pos)
+	local display_text = minetest.formspec_escape(meta:get_string("display_text"))
 	meta:set_string("formspec",
-		"size[6,4]"..default.gui_bg..default.gui_bg_img..default.gui_slots..
-		"textarea[0.5,0.7;5.5,3;display_text;"..F("Text")..";${display_text}]"..
-		"button_exit[3,3.5;2,1;ok;"..F("Write").."]"..
-		"button_exit[1,3.5;2,1;wipe;"..F("Wipe").."]")
+		"size[6,3.5]"..
+		"textarea[0.55,0.25;5.5,3;display_text;"..FS("Text")..";" .. display_text .. "]"..
+		"button_exit[1,2.75;2,1;ok;"..FS("Write").."]"..
+		"button[3,2.75;2,1;font;"..FS("Font").."]")
 end
 
 -- On boards, everyone is allowed to write and wipe
@@ -47,13 +47,16 @@ local function on_receive_fields(pos, formname, fields, player)
 		if fields.ok or fields.key_enter then
 			signs_api.set_display_text(pos, fields.display_text, fields.font)
 		end
-		if fields.wipe then
-			signs_api.set_display_text(pos, "", fields.font)
+		if fields.font then
+			signs_api.set_display_text(pos, fields.display_text)
+			font_api.show_font_list(player, pos)
 		end
 	end
 end
 
-models = {
+local wood_texture = xcompat.textures.wood.planks
+
+local models = {
 	black_board = {
 		depth = 1/16, width = 1, height = 1,
 		entity_fields = {
@@ -66,9 +69,10 @@ models = {
 		},
 		node_fields = {
 			description = S("Black board"),
-			tiles = { "default_wood.png", "default_wood.png",
-				"default_wood.png", "default_wood.png",
-				"default_wood.png", "board_black_front.png" },
+			tiles = {wood_texture, wood_texture,
+				wood_texture, wood_texture,
+				wood_texture, "board_black_front.png"},
+			_itemframe_texture = "board_black_front.png",
 			drawtype = "nodebox",
 			node_box = {
 				type = "fixed",
@@ -80,6 +84,13 @@ models = {
 			on_construct = function(pos)
 				set_formspec(pos)
 				display_api.on_construct(pos)
+			end,
+			on_punch = function(pos)
+				set_formspec(pos)
+				display_api.update_entities(pos)
+			end,
+			on_rightclick = function(pos)
+				set_formspec(pos)
 			end,
 			on_receive_fields = on_receive_fields,
 		},
@@ -96,10 +107,11 @@ models = {
 		},
 		node_fields = {
 			description = S("Green board"),
-			tiles = { "default_wood.png", "default_wood.png",
-				"default_wood.png", "default_wood.png",
-				"default_wood.png", "board_green_front.png" },
+			tiles = {wood_texture, wood_texture,
+				wood_texture, wood_texture,
+				wood_texture, "board_green_front.png"},
 			drawtype = "nodebox",
+			_itemframe_texture = "board_green_front.png",
 			node_box = {
 				type = "fixed",
 				fixed = {
@@ -110,6 +122,13 @@ models = {
 			on_construct = function(pos)
 				set_formspec(pos)
 				display_api.on_construct(pos)
+			end,
+			on_punch = function(pos)
+				set_formspec(pos)
+				display_api.update_entities(pos)
+			end,
+			on_rightclick = function(pos)
+				set_formspec(pos)
 			end,
 			on_receive_fields = on_receive_fields,
 		},
@@ -123,20 +142,22 @@ do
 end
 
 -- Recipes
+local mat = xcompat.materials
+
 minetest.register_craft(
 	{
 		output = "boards:black_board",
 		recipe = {
-			{"group:wood", "group:stone", "dye:black"},
-		}		
+			{"group:wood", "group:stone", mat.dye_black},
+		}
 	})
 
 minetest.register_craft(
 	{
 		output = "boards:green_board",
 		recipe = {
-			{"group:wood", "group:stone", "dye:dark_green"},
-		}		
+			{"group:wood", "group:stone", mat.dye_dark_green},
+		}
 	})
 
 ch_base.close_mod(minetest.get_current_modname())

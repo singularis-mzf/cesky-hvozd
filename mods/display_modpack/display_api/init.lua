@@ -1,4 +1,3 @@
-ch_base.open_mod(minetest.get_current_modname())
 --[[
 		display_api mod for Minetest - Library to add dynamic display
 		capabilities to nodes
@@ -17,6 +16,7 @@ ch_base.open_mod(minetest.get_current_modname())
 		You should have received a copy of the GNU General Public License
 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --]]
+
 -- Global variables
 -------------------
 
@@ -29,5 +29,3 @@ display_api.path = minetest.get_modpath(display_api.name)
 
 dofile(display_api.path.."/display.lua")
 dofile(display_api.path.."/deprecation.lua")
-
-ch_base.close_mod(minetest.get_current_modname())

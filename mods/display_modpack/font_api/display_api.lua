@@ -26,112 +26,46 @@ if minetest.get_modpath("display_api") then
 	font_api.on_display_update = function (pos, objref)
 		local meta = minetest.get_meta(pos)
 		local ndef = minetest.registered_nodes[minetest.get_node(pos).name]
-		-- if not ndef then return end
 		local entity = objref:get_luaentity()
-		if not entity then return end
-		local def = ndef.display_entities[entity.name]
-		if not def then return end
 
-		local font = meta:get_string("font")
-		if font ~= "" then
-			font = font_api.get_font(font)
-		else
-			font = font_api.get_font(def.font_name)
+		if not entity or not ndef.display_entities[entity.name] then
+			return
 		end
+
+		local def = ndef.display_entities[entity.name]
+		local font = font_api.get_font(meta:get_string("font") ~= ""
+			and meta:get_string("font") or def.font_name)
+
 		local text = meta:get_string(def.meta_text or "display_text")
 
 		-- Compute entity resolution accroding to given attributes
-		local columns, aspect_ratio = def.columns, def.aspect_ratio
+		local texturew, textureh
+		textureh = font:get_height(def.lines or def.maxlines or 1)
 
-		if def.meta_columns then
-			local new_columns = meta:get_int(def.meta_columns)
-			if new_columns > 0 then
-				columns = new_columns
-			end
-		end
-		if def.meta_aspect_ratio then
-			local new_aspect_ratio = meta:get_float(def.meta_aspect_ratio)
-			if new_aspect_ratio > 0.0 then
-				aspect_ratio = new_aspect_ratio
-			end
-		end
-
-		local render_style = {
-			lines = def.maxlines or def.lines,
-			halign = def.halign,
-			valign = def.valign,
-			color = def.color,
-		}
-		local texture_modifier
-		if def.meta_halign then
-			local new_halign = meta:get_int(def.meta_halign)
-			if new_halign == 2 then
-				render_style.halign = "left"
-			elseif new_halign == 3 then
-				render_style.halign = "right"
-			else
-				render_style.halign = "center"
-			end
-		end
-		if def.meta_valign then
-			local new_valign_value = meta:get_int(def.meta_valign)
-			if new_valign_value > 0 then
-				new_valign_value = new_valign_value - 1
-			end
-			local new_valign = new_valign_value % 3 -- 0, 1, 2
-			local texmod_variant = (new_valign_value - new_valign) / 3 -- 0, 1, 2, 3
-
-			if new_valign == 0 then
-				render_style.valign = "center"
-			elseif new_valign == 1 then
-				render_style.valign = "top"
-			elseif new_valign == 2 then
-				render_style.valign = "bottom"
-			end
-			if texmod_variant == 1 then
-				texture_modifier = "^[transformR180"
-			elseif texmod_variant == 2 then
-				texture_modifier = "^[transformFY"
-			elseif texmod_variant == 3 then
-				texture_modifier = "^[transformFX"
-			end
-		end
-		if def.meta_color then
-			local new_color = meta:get_string(def.meta_color)
-			if #new_color == 6 and not new_color:match("[^0123456789ABCDEFabcdef]") then
-				render_style.color = "#"..new_color
-			end
-		end
-		local textureh = font:get_height(def.lines or def.maxlines or 1)
-		if def.meta_lines then
-			local new_lines = meta:get_int(def.meta_lines)
-			if new_lines == 0 then
-				if def.meta_lines_default ~= nil and def.meta_lines_default > 0 then
-					new_lines = def.meta_lines_default
+		if def.columns then
+			if font.fixedwidth then
+				texturew = def.columns * font.fixedwidth
+				if def.aspect_ratio then
+					minetest.log('warning', "[font_api] 'aspect_ratio' ignored because 'columns' is specified")
 				end
-			end
-			if new_lines > 0 then
-				render_style.lines = new_lines
-				textureh = font:get_height(new_lines)
+			else
+				minetest.log('warning', "[font_api] 'columns' ignored because '"..font.name.."' is not a fixed width font.")
 			end
 		end
 
-		local texturew
-		if columns ~= nil then
-			texturew = columns * (font.fixedwidth or 1)
-		else
-			if not aspect_ratio then
+		if not texturew then
+			if not def.aspect_ratio then
 				minetest.log('warning', "[font_api] No 'aspect_ratio' specified, using default 1.")
-				aspect_ratio = 1
 			end
-			texturew = textureh * def.size.x / def.size.y / (aspect_ratio or 1)
+			texturew = textureh * def.size.x / def.size.y	/ (def.aspect_ratio or 1)
 		end
-		local texture = font:render(text, texturew, textureh, render_style)
-		if texture_modifier ~= nil then
-			texture = texture..texture_modifier
-		end
+
 		objref:set_properties({
-			textures = {texture},
+			textures={ font:render(text, texturew, textureh, {
+				lines = def.maxlines or def.lines,
+				halign = def.halign,
+				valign = def.valign,
+				color = def.color} ) },
 			visual_size = def.size,
 		})
 	end

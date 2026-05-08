@@ -18,7 +18,7 @@
     along with signs.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
-local S = signs.intllib
+local S = signs.S
 local F = function(...) return minetest.formspec_escape(S(...)) end
 
 -- Poster specific formspec

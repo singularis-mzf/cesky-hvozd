@@ -16,6 +16,9 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
+local S = font_api.S
+local FS = function(...) return minetest.formspec_escape(S(...)) end
+
 local modname = minetest.get_current_modname()
 
 local contexts = {}
@@ -51,15 +54,9 @@ local function show_node_formspec(playername, pos)
 	fs = fs:gsub("context", nodemeta)
 
 	-- Change all ${} to their corresponding metadata values
-	local s, e
-	repeat
-		s, e = fs:find('%${.*}')
-		if s and e then
-			fs = fs:sub(1, s-1)..
-				minetest.formspec_escape(meta:get_string(fs:sub(s+2,e-1)))..
-				fs:sub(e+1)
-		end
-	until s == nil
+	fs = fs:gsub("([^\\])${(.-)}", function(prefix, key)
+		return prefix .. minetest.formspec_escape(meta:get_string(key))
+	end)
 
 	local context = get_context(playername)
 	context.node_pos = pos
@@ -101,9 +98,8 @@ local function show_font_formspec(playername)
 	table.sort(fonts)
 
 	local fs = string.format(
-		"size[4,%s]%s%s%sbutton_exit[0,%s;4,1;cancel;Cancel]",
-		#fonts + 0.8, default.gui_bg, default.gui_bg_img, default.gui_slots,
-		#fonts)
+		"size[4,%s]button_exit[0,%s;4,1;cancel;%s]",
+		#fonts + 0.8, #fonts, FS("Cancel"))
 
 	for line = 1, #fonts do
 		local font = font_api.get_font(fonts[line])

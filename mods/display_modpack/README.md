@@ -1,22 +1,26 @@
 # Display Modpack
-Version 1.3.1
 
-This modpack provides mods with dynamic display. Mods are :
+![](https://github.com/mt-mods/display_modpack/workflows/luacheck/badge.svg)
+[![ContentDB](https://content.minetest.net/packages/mt-mods/display_modpack/shields/downloads/)](https://content.minetest.net/packages/mt-mods/display_modpack/)
 
-- **[display_api](https://github.com/pyrollo/display_modpack/tree/master/display_api)**: A library for adding display entities to nodes;
-- **[font_api](https://github.com/pyrollo/display_modpack/tree/master/font_api)**: A library for displaying fonts on entities;
-- **[signs_api](https://github.com/pyrollo/display_modpack/tree/master/signs_api)**: A library for the easy creation of signs;
-- **[font_metro](https://github.com/pyrollo/display_modpack/tree/master/font_metro)**: A font mod used as default font (includes uppercase, lowercase and accentuated latin letters, usual signs, cyrillic and greek letters)
+Requires Minetest 5.4+
 
-- **[boards](https://github.com/pyrollo/display_modpack/tree/master/boards)**: A mod providing school boards (includes *tiny cursive font*, a handwriting style font);
-- **[ontime_clocks](https://github.com/pyrollo/display_modpack/tree/master/ontime_clocks)**: A mod providing clocks which display the ingame time;
-- **[signs](https://github.com/pyrollo/display_modpack/tree/master/signs)**: A mod providing signs and direction signs displaying text;
-- **[signs_road](https://github.com/pyrollo/display_modpack/tree/master/signs_road)**: A mod providing road signs displaying text;
-- **[steles](https://github.com/pyrollo/display_modpack/tree/master/steles)**: A mod providing stone steles with text;
+This modpack provides mods with dynamic display. Mods are:
+
+- **[display_api](https://github.com/mt-mods/display_modpack/tree/master/display_api)**: A library for adding display entities to nodes;
+- **[font_api](https://github.com/mt-mods/display_modpack/tree/master/font_api)**: A library for displaying fonts on entities;
+- **[signs_api](https://github.com/mt-mods/display_modpack/tree/master/signs_api)**: A library for the easy creation of signs;
+- **[font_metro](https://github.com/mt-mods/display_modpack/tree/master/font_metro)**: A font mod used as default font (includes uppercase, lowercase and accentuated latin letters, usual signs, cyrillic and greek letters)
+
+- **[boards](https://github.com/mt-mods/display_modpack/tree/master/boards)**: A mod providing school boards (includes *tiny cursive font*, a handwriting style font);
+- **[ontime_clocks](https://github.com/mt-mods/display_modpack/tree/master/ontime_clocks)**: A mod providing clocks which display the ingame time;
+- **[signs](https://github.com/mt-mods/display_modpack/tree/master/signs)**: A mod providing signs and direction signs displaying text;
+- **[signs_road](https://github.com/mt-mods/display_modpack/tree/master/signs_road)**: A mod providing road signs displaying text;
+- **[steles](https://github.com/mt-mods/display_modpack/tree/master/steles)**: A mod providing stone steles with text;
 
 For more information, see the [forum topic](https://forum.minetest.net/viewtopic.php?t=19365) at the Minetest forums.
 
-![Presentation image of Display_Modpack](screenshot.png)
+![Presentation image of Display_Modpack](https://raw.githubusercontent.com/mt-mods/display_modpack/master/screenshot.png)
 
 ## Extra fonts
 

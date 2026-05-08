@@ -74,10 +74,9 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 ## Display (display\_modpack)
 
-* Zdroj: [https://github.com/pyrollo/display\_modpack](https://github.com/pyrollo/display\_modpack), revize f5bd6d1046ee81260a99940c201ece5a7630eeaa
+* Zdroj: [https://github.com/pyrollo/display\_modpack](https://github.com/pyrollo/display\_modpack), revize 47abe2b2efea0b7c7afe5c8c41f9d2dce23941dd
 * Původní licence: LGPL 3 pro kód, CC-BY-SA-3.0 pro média
 * Licence úprav: LGPL 3
-* [ContentDB](https://content.minetest.net/packages/Pyrollo/display\_modpack/)
 
 ## Home Decor (homedecor)
 
