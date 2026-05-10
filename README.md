@@ -376,7 +376,7 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 ## Birds (birds)
 
-* Zdroj: [https://gitgud.io/blut/birds](https://gitgud.io/blut/birds), revize dd90b4a0d03cf3f09b986e8993767141bfb719f5
+* Zdroj: [https://gitgud.io/blut/birds](https://gitgud.io/blut/birds), revize f841780f335fd3279b8c244a3d961ab7e5d02fdd
 * Původní licence: kód a model CC0, textury CC-BY 4.0
 * Licence úprav: CC0
 * [ContentDB](https://content.luanti.org/packages/shaft/birds/)

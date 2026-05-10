@@ -1,22 +1,22 @@
-ch_base.open_mod(minetest.get_current_modname())
+ch_base.open_mod(core.get_current_modname())
 local totalBirdCount = 0
 local radiusRemove = 150
 local radiusAdd = 100 --not used yet
 
-local minBirds = tonumber(minetest.settings:get("birds.minBirds")) or 80
-local maxSwarmSize = tonumber(minetest.settings:get("birds.maxSwarmSize")) or 9
+local minBirds = tonumber(core.settings:get("birds.minBirds")) or 80
+local maxSwarmSize = tonumber(core.settings:get("birds.maxSwarmSize")) or 9
 local spawn_y_variance = 30
-local spawn_y = tonumber(minetest.settings:get("birds.spawnAltitude")) or 60
+local spawn_y = tonumber(core.settings:get("birds.spawnAltitude")) or 60
 
 local birdNames = {"black","blue","brown1","brown2","cardinal","eagle","red","robin","sparrow","white"}
 local dropItem = nil
 
-if minetest.get_modpath("mobs_animal") then
+if core.get_modpath("mobs_animal") then
 	dropItem = "mobs:chicken_raw"
-elseif minetest.get_modpath("animalia") then
+elseif core.get_modpath("animalia") then
 	dropItem = "animalia:poultry_raw"
 else
-	local game = minetest.get_game_info().id
+	local game = core.get_game_info().id
 	if game == "mineclone2" or game == "mineclonia" then
 		dropItem = "mcl_mobitems:chicken"
 	end
@@ -31,11 +31,11 @@ local Bird = {
         collide_with_objects = false,
         collisionbox = {-0.3, -0.3, -0.3, 0.3, 0.3, 0.3},
         visual = "mesh",
-        mesh = "bird.b3d",
+        mesh = "bird.glb",
         visual_size = {x = 1, y = 1},		
 		textures = {
-			"birds_white_bottom.png",
 			"birds_white_top.png",
+			"birds_white_bottom.png",
 			"birds_white_top.png",
 			"birds_white_bottom.png",
 		},
@@ -97,6 +97,7 @@ function Bird:on_activate(staticdata, dtime_s)
 	--self.object:set_animation({x=40,y=40})
 	--local frame_range, frame_speed, frame_blend, frame_loop = self.object:get_animation()
 	--minetest.chat_send_player("singleplayer",#frame_range)
+	self.object:set_animation({x=0,y=80},2)
 	self:updateObjSpeed()
 end
 
@@ -115,7 +116,7 @@ function Bird:on_deactivate(removal)
 	end
 end
 
-function Bird:on_punch(hitter)
+function Bird:on_death()
     if dropItem then
 		minetest.add_item(self.object:get_pos(),dropItem)
     end
@@ -228,7 +229,7 @@ function Bird:on_step(dtime, moveresult)
 			local r = obj:get_rotation()
 			
 			local function raycastWithRotation(r,distance)
-				return minetest.raycast(pos, vector.add(pos,vector.rotate(vector.new(distance,0,0),r)) ,false,true)
+				return core.raycast(pos, vector.add(pos,vector.rotate(vector.new(distance,0,0),r)) ,false,true)
 			end
 			
 			if raycastWithRotation(rotation,15):next() then --check if raycast hit anything, objects excluded because birds fly in swarms
@@ -287,8 +288,8 @@ end
 for _,birdName in ipairs(birdNames) do
 	local b = copy(Bird)
 	b.initial_properties.textures = {
-			"birds_"..birdName.."_bottom.png",
 			"birds_"..birdName.."_top.png",
+			"birds_"..birdName.."_bottom.png",
 			"birds_"..birdName.."_top.png",
 			"birds_"..birdName.."_bottom.png",
 		}
@@ -412,10 +413,10 @@ local function get_players_for_birds()
 	return result
 end
 
-minetest.register_globalstep(function(dtime)
+core.register_globalstep(function(dtime)
 	timeout = timeout - dtime
 	if timeout <= 0 and totalBirdCount < minBirds then
-		-- local list = minetest.get_connected_players()
+		-- local list = core.get_connected_players()
 		local list = get_players_for_birds()
 		if #list == 0 then timeout = 3 return end
 		local p = list[math.ceil(math.random()*#list)]
@@ -433,4 +434,4 @@ minetest.register_globalstep(function(dtime)
 		end
 	end
 end)
-ch_base.close_mod(minetest.get_current_modname())
+ch_base.close_mod(core.get_current_modname())
