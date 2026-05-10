@@ -1,6 +1,7 @@
 unused_args = false
 max_line_length= 240
 redefined = false
+std = "minetest+max"
 
 globals = {
 	"pipeworks",
@@ -8,18 +9,12 @@ globals = {
 }
 
 read_globals = {
-	-- Stdlib
-	string = {fields = {"split"}},
-	table = {fields = {"copy", "getn"}},
-
-	-- Minetest
-	"vector", "ItemStack",
-	"dump", "minetest",
-	"VoxelManip", "VoxelArea",
-
+	-- remove after luacheck release: https://github.com/lunarmodules/luacheck/issues/121
+	"core",
 	-- mods
-	"default", "mesecon", "digiline",
+	"default", "mesecon", "digilines",
 	"screwdriver", "unified_inventory",
-	"i3",
-
+	"i3", "mcl_experience", "awards",
+	"xcompat", "fakelib", "vizlib",
+	"mcl_redstone",
 }

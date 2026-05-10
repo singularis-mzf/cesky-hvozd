@@ -1,6 +1,6 @@
-local S = minetest.get_translator("pipeworks")
-minetest.register_node("pipeworks:trashcan", {
-	description = S("Trash Can (priority @1)", 1),
+local S = core.get_translator("pipeworks")
+core.register_node("pipeworks:trashcan", {
+	description = S("Trash Can"),
 	drawtype = "normal",
 	tiles = {
 		"pipeworks_trashcan_bottom.png",
@@ -10,7 +10,9 @@ minetest.register_node("pipeworks:trashcan", {
 		"pipeworks_trashcan_side.png",
 		"pipeworks_trashcan_side.png",
 	},
-	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 4},
+	groups = {snappy = 3, tubedevice = 1, tubedevice_receiver = 1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
+	_mcl_hardness=0.8,
 	tube = {
 		insert_object = function(pos, node, stack, direction)
 			return ItemStack("")
@@ -19,10 +21,10 @@ minetest.register_node("pipeworks:trashcan", {
 		priority = 1, -- Lower than anything else
 	},
 	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		local size = "10.2,9"
 		local list_background = ""
-		if minetest.get_modpath("i3") then
+		if core.get_modpath("i3") or core.get_modpath("mcl_formspec") then
 			list_background = "style_type[box;colors=#666]box[4.5,2;1,1;]"
 		end
 		meta:set_string("formspec",
@@ -44,12 +46,7 @@ minetest.register_node("pipeworks:trashcan", {
 	after_place_node = pipeworks.after_place,
 	after_dig_node = pipeworks.after_dig,
 	on_metadata_inventory_put = function(pos, listname, index, stack, player)
-		if player and player:get_player_name() then
-			-- don't check privs here
-			ch_core.vyhodit_inventar(player and player:get_player_name(), minetest.get_meta(pos):get_inventory(), listname, "pipeworks:trashcan")
-		else
-			minetest.get_meta(pos):get_inventory():set_stack(listname, index, ItemStack(""))
-		end
+		core.get_meta(pos):get_inventory():set_stack(listname, index, ItemStack(""))
 	end,
 })
 pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:trashcan"

@@ -1,7 +1,7 @@
-local S = minetest.get_translator("pipeworks")
+local S = core.get_translator("pipeworks")
 local new_flow_logic_register = pipeworks.flowables.register
 
-local texture_alpha_mode = minetest.features.use_texture_alpha_string_modes
+local texture_alpha_mode = core.features.use_texture_alpha_string_modes
 
 local polys = ""
 if pipeworks.enable_lowpoly then polys = "_lowpoly" end
@@ -13,7 +13,7 @@ function pipeworks.fix_after_rotation(pos, node, user, mode, new_param2)
 	if string.find(node.name, "spigot") then new_param2 = new_param2 % 4 end
 
 	local newnode = string.gsub(node.name, "_on", "_off")
-	minetest.swap_node(pos, { name = newnode, param2 = new_param2 })
+	core.swap_node(pos, { name = newnode, param2 = new_param2 })
 	pipeworks.scan_for_pipe_objects(pos)
 
 	return true
@@ -22,24 +22,24 @@ end
 function pipeworks.rotate_on_place(itemstack, placer, pointed_thing)
 
 	local playername = placer:get_player_name()
-	if not minetest.is_protected(pointed_thing.under, playername)
-	   and not minetest.is_protected(pointed_thing.above, playername) then
+	if not core.is_protected(pointed_thing.under, playername)
+	   and not core.is_protected(pointed_thing.above, playername) then
 
-		local node = minetest.get_node(pointed_thing.under)
+		local node = core.get_node(pointed_thing.under)
 
 		if (not placer:get_player_control().sneak)
-		  and minetest.registered_nodes[node.name]
-		  and minetest.registered_nodes[node.name].on_rightclick then
-			minetest.registered_nodes[node.name].on_rightclick(pointed_thing.under,
+		  and core.registered_nodes[node.name]
+		  and core.registered_nodes[node.name].on_rightclick then
+			core.registered_nodes[node.name].on_rightclick(pointed_thing.under,
 				node, placer, itemstack, pointed_thing)
 
 		else
 
-			local pitch = placer:get_look_vertical()
+			local pitch = -placer:get_look_vertical()
 			local above = pointed_thing.above
 			local under = pointed_thing.under
-			local fdir = minetest.dir_to_facedir(placer:get_look_dir())
-			local undernode = minetest.get_node(under)
+			local fdir = core.dir_to_facedir(placer:get_look_dir())
+			local undernode = core.get_node(under)
 			local uname = undernode.name
 			local isabove = (above.x == under.x) and (above.z == under.z) and (pitch > 0)
 			local pos1 = above
@@ -58,27 +58,27 @@ function pipeworks.rotate_on_place(itemstack, placer, pointed_thing)
 						( string.find(uname, "pipeworks:valve")
 						  or string.find(uname, "pipeworks:entry_panel")
 						  or string.find(uname, "pipeworks:flow_sensor") )
-						and minetest.facedir_to_dir(undernode.param2).y ~= 0 )
+						and core.facedir_to_dir(undernode.param2).y ~= 0 )
 					)
 			then
 				fdir = 17
 			end
 
-			if minetest.registered_nodes[uname]
-			  and minetest.registered_nodes[uname]["buildable_to"] then
+			if core.registered_nodes[uname]
+			  and core.registered_nodes[uname]["buildable_to"] then
 				pos1 = under
 			end
 
-			if minetest.registered_nodes[minetest.get_node(pos1).name]
-			  and not minetest.registered_nodes[minetest.get_node(pos1).name]["buildable_to"] then return end
+			if core.registered_nodes[core.get_node(pos1).name]
+			  and not core.registered_nodes[core.get_node(pos1).name]["buildable_to"] then return end
 
 			local placednode = string.gsub(itemstack:get_name(), "_loaded", "_empty")
 			placednode = string.gsub(placednode, "_on", "_off")
 
-			minetest.swap_node(pos1, {name = placednode, param2 = fdir })
+			core.swap_node(pos1, {name = placednode, param2 = fdir })
 			pipeworks.scan_for_pipe_objects(pos1)
 
-			if not minetest.is_creative_enabled(playername) then
+			if not pipeworks.expect_infinite_stacks then
 				itemstack:take_item()
 			end
 		end
@@ -91,7 +91,7 @@ end
 local pipereceptor_on = nil
 local pipereceptor_off = nil
 
-if minetest.get_modpath("mesecons") then
+if core.get_modpath("mesecons") then
 	pipereceptor_on = {
 		receptor = {
 			state = mesecon.state.on,
@@ -133,13 +133,13 @@ for s in ipairs(states) do
 
 	local dgroups
 	if states[s] == "off" then
-		dgroups = {snappy=3, pipe=1, dig_generic = 4}
+		dgroups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1}
 	else
-		dgroups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4}
+		dgroups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1}
 	end
 
 	local pumpname = "pipeworks:pump_"..states[s]
-	minetest.register_node(pumpname, {
+	core.register_node(pumpname, {
 		description = S("Pump/Intake Module"),
 		drawtype = "mesh",
 		mesh = "pipeworks_pump"..polys..".obj",
@@ -148,7 +148,11 @@ for s in ipairs(states) do
 		paramtype = "light",
 		paramtype2 = "facedir",
 		groups = dgroups,
-		sounds = default.node_sound_metal_defaults(),
+		is_ground_content = false,
+		_mcl_hardness=0.8,
+		_sound_def = {
+			key = "node_sound_metal_defaults",
+		},
 		walkable = true,
 		pipe_connections = { top = 1 },
 		after_place_node = function(pos)
@@ -160,15 +164,15 @@ for s in ipairs(states) do
 		drop = "pipeworks:pump_off",
 		mesecons = {effector = {
 			action_on = function (pos, node)
-				minetest.swap_node(pos,{name="pipeworks:pump_on", param2 = node.param2})
+				core.swap_node(pos,{name="pipeworks:pump_on", param2 = node.param2})
 			end,
 			action_off = function (pos, node)
-				minetest.swap_node(pos,{name="pipeworks:pump_off", param2 = node.param2})
+				core.swap_node(pos,{name="pipeworks:pump_off", param2 = node.param2})
 			end
 		}},
 		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 			local fdir = node.param2
-			minetest.swap_node(pos, { name = "pipeworks:pump_"..states[3-s], param2 = fdir })
+			core.swap_node(pos, { name = "pipeworks:pump_"..states[3-s], param2 = fdir })
 		end,
 		on_rotate = screwdriver and screwdriver.rotate_simple or nil
 	})
@@ -183,7 +187,7 @@ for s in ipairs(states) do
 
 
 	local nodename_valve_empty = "pipeworks:valve_"..states[s].."_empty"
-	minetest.register_node(nodename_valve_empty, {
+	core.register_node(nodename_valve_empty, {
 		description = S("Valve"),
 		drawtype = "mesh",
 		mesh = "pipeworks_valve_"..states[s]..polys..".obj",
@@ -200,7 +204,11 @@ for s in ipairs(states) do
 			fixed = { -5/16, -4/16, -8/16, 5/16, 5/16, 8/16 }
 		},
 		groups = dgroups,
-		sounds = default.node_sound_metal_defaults(),
+		is_ground_content = false,
+		_mcl_hardness=0.8,
+		_sound_def = {
+			key = "node_sound_metal_defaults",
+		},
 		walkable = true,
 		on_place = pipeworks.rotate_on_place,
 		after_dig_node = function(pos)
@@ -209,15 +217,15 @@ for s in ipairs(states) do
 		drop = "pipeworks:valve_off_empty",
 		mesecons = {effector = {
 			action_on = function (pos, node)
-				minetest.swap_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2})
+				core.swap_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2})
 			end,
 			action_off = function (pos, node)
-				minetest.swap_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2})
+				core.swap_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2})
 			end
 		}},
 		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 			local fdir = node.param2
-			minetest.swap_node(pos, { name = "pipeworks:valve_"..states[3-s].."_empty", param2 = fdir })
+			core.swap_node(pos, { name = "pipeworks:valve_"..states[3-s].."_empty", param2 = fdir })
 		end,
 		on_rotate = pipeworks.fix_after_rotation
 	})
@@ -231,7 +239,7 @@ pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:pump_off"
 pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:valve_off_empty"
 
 local nodename_valve_loaded = "pipeworks:valve_on_loaded"
-minetest.register_node(nodename_valve_loaded, {
+core.register_node(nodename_valve_loaded, {
 	description = S("Valve"),
 	drawtype = "mesh",
 	mesh = "pipeworks_valve_on"..polys..".obj",
@@ -247,8 +255,12 @@ minetest.register_node(nodename_valve_loaded, {
 		type = "fixed",
 		fixed = { -5/16, -4/16, -8/16, 5/16, 5/16, 8/16 }
 	},
-	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4},
-	sounds = default.node_sound_metal_defaults(),
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
+	_mcl_hardness=0.8,
+	_sound_def = {
+		key = "node_sound_metal_defaults",
+	},
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
 	after_dig_node = function(pos)
@@ -257,15 +269,15 @@ minetest.register_node(nodename_valve_loaded, {
 	drop = "pipeworks:valve_off_empty",
 	mesecons = {effector = {
 		action_on = function (pos, node)
-			minetest.swap_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2})
+			core.swap_node(pos,{name="pipeworks:valve_on_empty", param2 = node.param2})
 		end,
 		action_off = function (pos, node)
-			minetest.swap_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2})
+			core.swap_node(pos,{name="pipeworks:valve_off_empty", param2 = node.param2})
 		end
 	}},
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		local fdir = node.param2
-		minetest.swap_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
+		core.swap_node(pos, { name = "pipeworks:valve_off_empty", param2 = fdir })
 	end,
 	on_rotate = pipeworks.fix_after_rotation
 })
@@ -279,7 +291,7 @@ new_flow_logic_register.directional_horizonal_rotate(nodename_valve_loaded, true
 -- grating
 
 -- FIXME: should this do anything useful in the new flow logic?
-minetest.register_node("pipeworks:grating", {
+core.register_node("pipeworks:grating", {
 	description = S("Decorative grating"),
 	tiles = {
 		"pipeworks_grating_top.png",
@@ -297,8 +309,12 @@ minetest.register_node("pipeworks:grating", {
 	},
 	sunlight_propagates = true,
 	paramtype = "light",
-	groups = {snappy=3, pipe=1, dig_generic = 4},
-	sounds = default.node_sound_metal_defaults(),
+	groups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
+	_mcl_hardness=0.8,
+	_sound_def = {
+		key = "node_sound_metal_defaults",
+	},
 	walkable = true,
 	pipe_connections = { top = 1 },
 	after_place_node = function(pos)
@@ -314,7 +330,7 @@ pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:grating"
 -- outlet spigot
 
 local nodename_spigot_empty = "pipeworks:spigot"
-minetest.register_node(nodename_spigot_empty, {
+core.register_node(nodename_spigot_empty, {
 	description = S("Spigot outlet"),
 	drawtype = "mesh",
 	mesh = "pipeworks_spigot"..polys..".obj",
@@ -322,8 +338,12 @@ minetest.register_node(nodename_spigot_empty, {
 	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1, dig_generic = 4},
-	sounds = default.node_sound_metal_defaults(),
+	groups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
+	_mcl_hardness=0.8,
+	_sound_def = {
+		key = "node_sound_metal_defaults",
+	},
 	walkable = true,
 	pipe_connections = { left=1, right=1, front=1, back=1,
 						 left_param2 = 3, right_param2 = 1, front_param2 = 2, back_param2 = 0 },
@@ -345,25 +365,29 @@ minetest.register_node(nodename_spigot_empty, {
 })
 
 local nodename_spigot_loaded = "pipeworks:spigot_pouring"
-minetest.register_node(nodename_spigot_loaded, {
+core.register_node(nodename_spigot_loaded, {
 	description = S("Spigot outlet"),
 	drawtype = "mesh",
 	mesh = "pipeworks_spigot_pouring"..polys..".obj",
 	tiles = {
-		minetest.registered_nodes[pipeworks.liquids.water.source].tiles[1],
+		core.registered_nodes[pipeworks.liquids.water.source].tiles[1],
 		{ name = "pipeworks_spigot.png" }
 	},
 	use_texture_alpha = texture_alpha_mode and "blend" or true,
 	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4},
-	sounds = default.node_sound_metal_defaults(),
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
+	_mcl_hardness=0.8,
+	_sound_def = {
+		key = "node_sound_metal_defaults",
+	},
 	walkable = true,
 	pipe_connections = { left=1, right=1, front=1, back=1,
 						 left_param2 = 3, right_param2 = 1, front_param2 = 2, back_param2 = 0 },
 	after_place_node = function(pos)
-		minetest.set_node(pos, { name = "pipeworks:spigot", param2 = minetest.get_node(pos).param2 })
+		core.set_node(pos, { name = "pipeworks:spigot", param2 = core.get_node(pos).param2 })
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	after_dig_node = function(pos)
@@ -406,15 +430,19 @@ local panel_cbox = {
 }
 
 local nodename_panel_empty = "pipeworks:entry_panel_empty"
-minetest.register_node(nodename_panel_empty, {
+core.register_node(nodename_panel_empty, {
 	description = S("Airtight Pipe entry/exit"),
 	drawtype = "mesh",
 	mesh = "pipeworks_entry_panel"..polys..".obj",
 	tiles = { "pipeworks_entry_panel.png" },
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1, dig_generic = 4},
-	sounds = default.node_sound_metal_defaults(),
+	groups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
+	_mcl_hardness=0.8,
+	_sound_def = {
+		key = "node_sound_metal_defaults",
+	},
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
 	after_dig_node = function(pos)
@@ -426,15 +454,19 @@ minetest.register_node(nodename_panel_empty, {
 })
 
 local nodename_panel_loaded = "pipeworks:entry_panel_loaded"
-minetest.register_node(nodename_panel_loaded, {
+core.register_node(nodename_panel_loaded, {
 	description = S("Airtight Pipe entry/exit"),
 	drawtype = "mesh",
 	mesh = "pipeworks_entry_panel"..polys..".obj",
 	tiles = { "pipeworks_entry_panel.png" },
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4},
-	sounds = default.node_sound_metal_defaults(),
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
+	_mcl_hardness=0.8,
+	_sound_def = {
+		key = "node_sound_metal_defaults",
+	},
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
 	after_dig_node = function(pos)
@@ -454,7 +486,7 @@ new_flow_logic_register.directional_horizonal_rotate(nodename_panel_loaded, true
 
 local nodename_block_empty = "pipeworks:entry_block_empty"
 
-minetest.register_node(nodename_block_empty, {
+core.register_node(nodename_block_empty, {
 	description = S("Airtight Pipe entry/exit Block"),
 	tiles = {
 		"default_steel_block.png", "default_steel_block.png",
@@ -476,7 +508,7 @@ minetest.register_node(nodename_block_empty, {
 })
 
 local nodename_block_loaded = "pipeworks:entry_block_loaded"
-minetest.register_node(nodename_block_loaded, {
+core.register_node(nodename_block_loaded, {
 	description = S("Airtight Pipe entry/exit Block"),
 	tiles = {
 		"default_steel_block.png", "default_steel_block.png",
@@ -506,7 +538,7 @@ new_flow_logic_register.directional_horizonal_rotate(nodename_block_loaded, true
 
 
 local nodename_sensor_empty = "pipeworks:flow_sensor_empty"
-minetest.register_node(nodename_sensor_empty, {
+core.register_node(nodename_sensor_empty, {
 	description = S("Flow Sensor"),
 	drawtype = "mesh",
 	mesh = "pipeworks_flow_sensor"..polys..".obj",
@@ -514,8 +546,12 @@ minetest.register_node(nodename_sensor_empty, {
 	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1, dig_generic = 4},
-	sounds = default.node_sound_metal_defaults(),
+	groups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
+	_mcl_hardness=0.8,
+	_sound_def = {
+		key = "node_sound_metal_defaults",
+	},
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
 	after_dig_node = function(pos)
@@ -545,7 +581,7 @@ minetest.register_node(nodename_sensor_empty, {
 })
 
 local nodename_sensor_loaded = "pipeworks:flow_sensor_loaded"
-minetest.register_node(nodename_sensor_loaded, {
+core.register_node(nodename_sensor_loaded, {
 	description = S("Flow sensor (on)"),
 	drawtype = "mesh",
 	mesh = "pipeworks_flow_sensor"..polys..".obj",
@@ -553,8 +589,12 @@ minetest.register_node(nodename_sensor_loaded, {
 	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4},
-	sounds = default.node_sound_metal_defaults(),
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
+	_mcl_hardness=0.8,
+	_sound_def = {
+		key = "node_sound_metal_defaults",
+	},
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
 	after_dig_node = function(pos)
@@ -598,16 +638,16 @@ new_flow_logic_register.transition_simple_set(sensor_pressure_set, { mesecons=pi
 -- TODO flow-logic-stub: these don't currently do anything under the new flow logic.
 for fill = 0, 10 do
 	local filldesc=S("empty")
-	local sgroups = {snappy=3, pipe=1, tankfill=fill+1, dig_generic = 4}
+	local sgroups = {snappy=3, pipe=1, tankfill=fill+1, dig_generic = 4, axey=1, handy=1, pickaxey=1}
 	local image = nil
 
 	if fill ~= 0 then
 		filldesc=S("@1% full", 10*fill)
-		sgroups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1, dig_generic = 4}
+		sgroups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1}
 		image = "pipeworks_storage_tank_fittings.png"
 	end
 
-	minetest.register_node("pipeworks:expansion_tank_"..fill, {
+	core.register_node("pipeworks:expansion_tank_"..fill, {
 		description = S("Expansion Tank (@1)", filldesc),
 		tiles = {
 			"pipeworks_storage_tank_fittings.png",
@@ -620,8 +660,12 @@ for fill = 0, 10 do
 		inventory_image = image,
 		paramtype = "light",
 		paramtype2 = "facedir",
-		groups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1, dig_generic = 4},
-		sounds = default.node_sound_metal_defaults(),
+		groups = {snappy=3, pipe=1, tankfill=fill+1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+		is_ground_content = false,
+		_mcl_hardness=0.8,
+		_sound_def = {
+			key = "node_sound_metal_defaults",
+		},
 		walkable = true,
 		drop = "pipeworks:storage_tank_0",
 		pipe_connections = { top = 1, bottom = 1},
@@ -635,7 +679,7 @@ for fill = 0, 10 do
 		on_rotate = false
 	})
 
-	minetest.register_node("pipeworks:storage_tank_"..fill, {
+	core.register_node("pipeworks:storage_tank_"..fill, {
 		description = S("Fluid Storage Tank (@1)", filldesc),
 		tiles = {
 			"pipeworks_storage_tank_fittings.png",
@@ -649,7 +693,11 @@ for fill = 0, 10 do
 		paramtype = "light",
 		paramtype2 = "facedir",
 		groups = sgroups,
-		sounds = default.node_sound_metal_defaults(),
+		is_ground_content = false,
+		_mcl_hardness=0.8,
+		_sound_def = {
+			key = "node_sound_metal_defaults",
+		},
 		walkable = true,
 		drop = "pipeworks:storage_tank_0",
 		pipe_connections = { top = 1, bottom = 1},
@@ -668,15 +716,19 @@ pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:storage_t
 -- fountainhead
 
 local nodename_fountain_empty = "pipeworks:fountainhead"
-minetest.register_node(nodename_fountain_empty, {
+core.register_node(nodename_fountain_empty, {
 	description = S("Fountainhead"),
 	drawtype = "mesh",
 	mesh = "pipeworks_fountainhead"..polys..".obj",
 	tiles = { "pipeworks_fountainhead.png" },
 	sunlight_propagates = true,
 	paramtype = "light",
-	groups = {snappy=3, pipe=1, dig_generic = 4},
-	sounds = default.node_sound_metal_defaults(),
+	groups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
+	_mcl_hardness=0.8,
+	_sound_def = {
+		key = "node_sound_metal_defaults",
+	},
 	walkable = true,
 	pipe_connections = { bottom = 1 },
 	after_place_node = function(pos)
@@ -703,19 +755,23 @@ minetest.register_node(nodename_fountain_empty, {
 pipeworks.ui_cat_tube_list[#pipeworks.ui_cat_tube_list+1] = "pipeworks:fountainhead"
 
 local nodename_fountain_loaded = "pipeworks:fountainhead_pouring"
-minetest.register_node(nodename_fountain_loaded, {
+core.register_node(nodename_fountain_loaded, {
 	description = S("Fountainhead"),
 	drawtype = "mesh",
 	mesh = "pipeworks_fountainhead"..polys..".obj",
 	tiles = { "pipeworks_fountainhead.png" },
 	sunlight_propagates = true,
 	paramtype = "light",
-	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4},
-	sounds = default.node_sound_metal_defaults(),
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
+	_mcl_hardness=0.8,
+	_sound_def = {
+		key = "node_sound_metal_defaults",
+	},
 	walkable = true,
 	pipe_connections = { bottom = 1 },
 	after_place_node = function(pos)
-		minetest.set_node(pos, { name = "pipeworks:fountainhead", param2 = minetest.get_node(pos).param2 })
+		core.set_node(pos, { name = "pipeworks:fountainhead", param2 = core.get_node(pos).param2 })
 		pipeworks.scan_for_pipe_objects(pos)
 	end,
 	after_dig_node = function(pos)
@@ -753,15 +809,19 @@ local sp_cbox = {
 }
 
 local nodename_sp_empty = "pipeworks:straight_pipe_empty"
-minetest.register_node(nodename_sp_empty, {
+core.register_node(nodename_sp_empty, {
 	description = S("Straight-only Pipe"),
 	drawtype = "mesh",
 	mesh = "pipeworks_straight_pipe"..polys..".obj",
 	tiles = { "pipeworks_straight_pipe_empty.png" },
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1, dig_generic = 4},
-	sounds = default.node_sound_metal_defaults(),
+	groups = {snappy=3, pipe=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
+	_mcl_hardness=0.8,
+	_sound_def = {
+		key = "node_sound_metal_defaults",
+	},
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
 	after_dig_node = function(pos)
@@ -775,15 +835,19 @@ minetest.register_node(nodename_sp_empty, {
 })
 
 local nodename_sp_loaded = "pipeworks:straight_pipe_loaded"
-minetest.register_node(nodename_sp_loaded, {
+core.register_node(nodename_sp_loaded, {
 	description = S("Straight-only Pipe"),
 	drawtype = "mesh",
 	mesh = "pipeworks_straight_pipe"..polys..".obj",
 	tiles = { "pipeworks_straight_pipe_loaded.png" },
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4},
-	sounds = default.node_sound_metal_defaults(),
+	groups = {snappy=3, pipe=1, not_in_creative_inventory=1, dig_generic = 4, axey=1, handy=1, pickaxey=1},
+	is_ground_content = false,
+	_mcl_hardness=0.8,
+	_sound_def = {
+		key = "node_sound_metal_defaults",
+	},
 	walkable = true,
 	on_place = pipeworks.rotate_on_place,
 	after_dig_node = function(pos)
@@ -803,6 +867,6 @@ new_flow_logic_register.directional_horizonal_rotate(nodename_sp_loaded, true)
 
 -- Other misc stuff
 
-minetest.register_alias("pipeworks:valve_off_loaded", "pipeworks:valve_off_empty")
-minetest.register_alias("pipeworks:entry_panel", "pipeworks:entry_panel_empty")
+core.register_alias("pipeworks:valve_off_loaded", "pipeworks:valve_off_empty")
+core.register_alias("pipeworks:entry_panel", "pipeworks:entry_panel_empty")
 

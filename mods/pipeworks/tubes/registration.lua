@@ -1,10 +1,10 @@
 -- This file supplies the various kinds of pneumatic tubes
-local S = minetest.get_translator("pipeworks")
+local S = core.get_translator("pipeworks")
 
 local tubenodes = {}
 pipeworks.tubenodes = tubenodes
 
-minetest.register_alias("pipeworks:tube", "pipeworks:tube_000000")
+core.register_alias("pipeworks:tube", "pipeworks:tube_000000")
 
 -- now, a function to define the tubes
 
@@ -27,8 +27,8 @@ local texture_mt = {
 }
 
 -- This will remove any semi-transparent pixels
--- because that is still buggy in Minetest, force this as default
-local texture_alpha_mode = minetest.features.use_texture_alpha_string_modes
+-- because that is still buggy in Luanti, force this as default
+local texture_alpha_mode = core.features.use_texture_alpha_string_modes
 	and "clip" or true
 
 local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, ends, short, inv, special, connects, style)
@@ -61,13 +61,13 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 		outimgs[vti[v]] = ends[v]
 	end
 
-	local tgroups = {snappy = 3, tube = 1, tubedevice = 1, not_in_creative_inventory = 1, dig_generic = 4}
+	local tgroups = {snappy = 3, tube = 1, tubedevice = 1, not_in_creative_inventory = 1, dig_generic = 4, axey=1, handy=1, pickaxey=1}
 	local tubedesc = string.format("%s %s", desc, dump(connects))
 	local iimg = type(plain[1]) == "table" and plain[1].name or plain[1]
 	local wscale = {x = 1, y = 1, z = 1}
 
 	if #connects == 0 then
-		tgroups = {snappy = 3, tube = 1, tubedevice = 1, dig_generic = 4}
+		tgroups = {snappy = 3, tube = 1, tubedevice = 1, dig_generic = 4, axey=1, handy=1, pickaxey=1}
 		tubedesc = desc
 		iimg=inv
 		outimgs = {
@@ -106,9 +106,12 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 			fixed = outboxes
 		},
 		groups = tgroups,
-		sounds = default.node_sound_wood_defaults(),
+		is_ground_content = false,
+		_mcl_hardness=0.8,
+		_sound_def = {
+			key = "node_sound_wood_defaults",
+		},
 		walkable = true,
-		-- stack_max = 99,
 		basename = name,
 		style = style,
 		drop = string.format("%s_%s", name, dropname),
@@ -119,25 +122,25 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 		},
 		on_punch = function(pos, node, player, pointed)
 			local playername = player:get_player_name()
-			if minetest.is_protected(pos, playername) and not minetest.check_player_privs(playername, {protection_bypass=true}) then
-				return minetest.node_punch(pos, node, player, pointed)
+			if core.is_protected(pos, playername) and not core.check_player_privs(playername, {protection_bypass=true}) then
+				return core.node_punch(pos, node, player, pointed)
 			end
 			if pipeworks.check_and_wear_hammer(player) then
 				local wieldname = player:get_wielded_item():get_name()
-				pipeworks.logger(string.format("%s struck a tube at %s with %s to break it.", playername, minetest.pos_to_string(pos), wieldname))
+				pipeworks.logger(string.format("%s struck a tube at %s with %s to break it.", playername, core.pos_to_string(pos), wieldname))
 				pipeworks.break_tube(pos)
 			end
-			return minetest.node_punch(pos, node, player, pointed)
+			return core.node_punch(pos, node, player, pointed)
 		end,
 		after_place_node = pipeworks.after_place,
 		after_dig_node = pipeworks.after_dig,
 		on_rotate = false,
 		on_blast = function(pos, intensity)
 			if not intensity or intensity > 1 + 3^0.5 then
-				minetest.remove_node(pos)
+				core.remove_node(pos)
 				return {string.format("%s_%s", name, dropname)}
 			end
-			minetest.swap_node(pos, {name = "pipeworks:broken_tube_1"})
+			core.swap_node(pos, {name = "pipeworks:broken_tube_1"})
 			pipeworks.scan_for_tube_objects(pos)
 		end,
 		check_for_pole = pipeworks.check_for_vert_tube,
@@ -166,7 +169,7 @@ local register_one_tube = function(name, tname, dropname, desc, plain, noctrs, e
 		end
 	end
 
-	minetest.register_node(rname, nodedef)
+	core.register_node(rname, nodedef)
 end
 
 local register_all_tubes = function(name, desc, plain, noctrs, ends, short, inv, special, old_registration)
@@ -213,7 +216,7 @@ local register_all_tubes = function(name, desc, plain, noctrs, ends, short, inv,
 		end
 		if REGISTER_COMPATIBILITY then
 			local cname = name.."_compatibility"
-			minetest.register_node(cname, {
+			core.register_node(cname, {
 				drawtype = "airlike",
 				style = "6d",
 				basename = name,
@@ -224,6 +227,7 @@ local register_all_tubes = function(name, desc, plain, noctrs, ends, short, inv,
 				description = S("Pneumatic tube segment (legacy)"),
 				after_place_node = pipeworks.after_place,
 				groups = {not_in_creative_inventory = 1, tube_to_update = 1, tube = 1},
+				is_ground_content = false,
 				tube = {connect_sides = {front = 1, back = 1, left = 1, right = 1, top = 1, bottom = 1}},
 				drop = name.."_1",
 			})
@@ -236,7 +240,7 @@ local register_all_tubes = function(name, desc, plain, noctrs, ends, short, inv,
 			for zm = 0, 1 do
 			for zp = 0, 1 do
 				local tname = xm..xp..ym..yp..zm..zp
-				minetest.register_alias(name.."_"..tname, cname)
+				core.register_alias(name.."_"..tname, cname)
 			end
 			end
 			end
@@ -262,14 +266,14 @@ end
 
 
 if REGISTER_COMPATIBILITY then
-	minetest.register_abm({
+	core.register_abm({
 		nodenames = {"group:tube_to_update"},
 		interval = 1,
 		chance = 1,
 		action = function(pos, node, active_object_count, active_object_count_wider)
 			local minp = vector.subtract(pos, 1)
 			local maxp = vector.add(pos, 1)
-			if table.getn(minetest.find_nodes_in_area(minp, maxp, "ignore")) == 0 then
+			if table.getn(core.find_nodes_in_area(minp, maxp, "ignore")) == 0 then
 				pipeworks.scan_for_tube_objects(pos)
 			end
 		end

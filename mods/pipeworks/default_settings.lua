@@ -4,6 +4,8 @@ local prefix = "pipeworks_"
 
 local settings = {
 	enable_pipes = true,
+	enable_item_tags = true,
+	enable_tag_tube = true,
 	enable_lowpoly = false,
 	enable_autocrafter = true,
 	enable_deployer = true,
@@ -29,6 +31,7 @@ local settings = {
 	delete_item_on_clearobject = true,
 	use_real_entities = true,
 	entity_update_interval = 0,
+	enable_vertical_digilines_connectivity = false,
 }
 
 pipeworks.toggles = {}
@@ -64,9 +67,9 @@ pipeworks.toggles.finite_water = nil
 for name, value in pairs(settings) do
 	local setting_type = type(value)
 	if setting_type == "boolean" then
-		pipeworks[name] = minetest.settings:get_bool(prefix..name, value)
+		pipeworks[name] = core.settings:get_bool(prefix..name, value)
 	elseif setting_type == "number" then
-		pipeworks[name] = tonumber(minetest.settings:get(prefix..name) or value)
+		pipeworks[name] = tonumber(core.settings:get(prefix..name) or value)
 	else
 		pipeworks[name] = value
 	end

@@ -595,6 +595,13 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: LGPL 2.1
 * [ContentDB](https://content.minetest.net/packages/narrnika/factory\_bridges/)
 
+## Fakelib (fakelib)
+
+* Zdroj: [https://github.com/OgelGames/fakelib](https://github.com/OgelGames/fakelib), revize 71d8234040e401e3d575721c48f09c64dc1c5527
+* Původní licence: MIT
+* Licence úprav: MIT
+* [ContentDB](https://content.luanti.org/packages/OgelGames/fakelib/)
+
 ## Farming Redo (farming)
 
 * Zdroj: [https://notabug.org/tenplus1/farming](https://notabug.org/tenplus1/farming), revize 0b06c7cd450c5ec9a76b3c22a9c57f06e4f8a7c2; některé soubory z revize 3992a40123e1fd0803c96dd235bdf477b619aa5d (viz ostatní_zdroje/farming\_202210)
@@ -889,10 +896,10 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 
 ## Pipeworks (pipeworks)
 
-* Zdroj: [https://github.com/mt-mods/pipeworks](https://github.com/mt-mods/pipeworks), revize 7b15bdbd1f46f4a804dfb0c5a3570081a70b8db0
+* Zdroj: [https://github.com/mt-mods/pipeworks](https://github.com/mt-mods/pipeworks), revize 96eefcc145829861c4c24be4a6c25af90f115785
 * Původní licence: LGPL 3 pro kód, CC-BY-SA-4.0 pro média
 * Licence úprav: LGPL 3 pro kód, CC-BY-SA 4.0 pro média
-* [ContentDB](https://content.minetest.net/packages/VanessaE/pipeworks/)
+* [ContentDB](https://content.luanti.org/packages/mt-mods/pipeworks/)
 
 ## Placeable Ingots (ingots)
 

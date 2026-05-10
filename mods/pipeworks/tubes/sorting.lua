@@ -1,4 +1,4 @@
-local S = minetest.get_translator("pipeworks")
+local S = core.get_translator("pipeworks")
 local fs_helpers = pipeworks.fs_helpers
 
 local lines = 6
@@ -16,13 +16,13 @@ if pipeworks.enable_mese_tube then
 	}
 
 	local function update_formspec(pos)
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		local old_formspec = meta:get_string("formspec")
 		if string.find(old_formspec, "button1") then -- Old version
 			local inv = meta:get_inventory()
-			for i = 1, lines do
+			for i = 1, 6 do
 				for _, stack in ipairs(inv:get_list("line"..i)) do
-					minetest.add_item(pos, stack)
+					core.add_item(pos, stack)
 				end
 			end
 		end
@@ -37,7 +37,7 @@ if pipeworks.enable_mese_tube then
 			)
 		end
 		local list_backgrounds = ""
-		if minetest.get_modpath("i3") then
+		if core.get_modpath("i3") or core.get_modpath("mcl_formspec") then
 			list_backgrounds = "style_type[box;colors=#666]"
 			for i=0, 5 do
 				for j=0, 5 do
@@ -106,17 +106,17 @@ if pipeworks.enable_mese_tube then
 			end
 		end
 		meta:set_string("infotext", table.concat(infotext))
-		meta:set_float("liut", minetest.get_us_time() / 1000000)
+		meta:set_float("liut", core.get_us_time() / 1000000)
 	end
 
 	local function update_infotext_after_second_inner(pos, node)
-		local current_node = minetest.get_node(pos)
+		local current_node = core.get_node(pos)
 		if current_node.name ~= node.name or current_node.param2 ~= node.param2 then
 			return
 		end
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		local liut = meta:get_float("liut")
-		local liut_new = minetest.get_us_time() / 1000000
+		local liut_new = core.get_us_time() / 1000000
 		if liut_new - 1.0 <= liut and liut <= liut_new then
 			return
 		end
@@ -124,7 +124,7 @@ if pipeworks.enable_mese_tube then
 	end
 
 	local function update_infotext_after_second(pos)
-		minetest.after(1, update_infotext_after_second_inner, pos, minetest.get_node(pos))
+		core.after(1, update_infotext_after_second_inner, pos, core.get_node(pos))
 	end
 
 	local function take_inv_item(meta, inv, list_index, stack_index)
@@ -175,7 +175,7 @@ if pipeworks.enable_mese_tube then
 		else
 			return
 		end
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		local count = meta:get_int("count"..i) + 1
 		meta:set_int("count"..i, count)
 		update_infotext_after_second(pos)
@@ -233,7 +233,7 @@ if pipeworks.enable_mese_tube then
 					can_go = tube_can_go,
 				},
 				on_construct = function(pos)
-					local meta = minetest.get_meta(pos)
+					local meta = core.get_meta(pos)
 					local inv = meta:get_inventory()
 					for i = 1, lines do
 						meta:set_int("l"..tostring(i).."s", 0)
@@ -247,7 +247,7 @@ if pipeworks.enable_mese_tube then
 				end,
 				after_place_node = function(pos, placer, itemstack, pointed_thing)
 					if placer and placer:is_player() and placer:get_player_control().aux1 then
-						local meta = minetest.get_meta(pos)
+						local meta = core.get_meta(pos)
 						for i = 1, lines do
 							meta:set_int("l"..tostring(i).."s", 0)
 						end

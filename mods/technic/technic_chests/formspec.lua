@@ -17,16 +17,16 @@ end
 
 local function get_pipeworks_fs(x, y, meta)
 	-- Use a container to reposition the pipeworks button.
-	return "container["..formspec_pos(x)..","..formspec_pos(y - 4.7).."]"..
+	return "container["..formspec_pos(x)..","..formspec_pos(y - 3.5).."]"..
 		pipeworks.fs_helpers.cycling_button(
 			meta,
-			pipeworks.button_base_4,
+			pipeworks.button_base,
 			"splitstacks",
 			{
 				pipeworks.button_off,
 				pipeworks.button_on
 			}
-		)..pipeworks.button_label_4.."container_end[]"
+		)..pipeworks.button_label.."container_end[]"
 end
 
 local function get_color_fs(x, y, meta)

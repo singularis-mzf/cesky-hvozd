@@ -12,7 +12,6 @@ Channel=Kanál
 
 ## init
 Allow splitting incoming stacks from tubes=Dovolit dělení dávek při vstupu z rour
-Automation components=Automatizace
 
 ## autocrafter
 Unknown item=Neznámá položka
@@ -64,6 +63,7 @@ Prefer item types:=Filtrovat:
 Itemwise=po kusech
 Stackwise=po dávkách
 Digiline=digilinka
+Item Tags=štítky
 
 ## legacy
 Auto-Tap=automatický kohoutek
@@ -132,9 +132,15 @@ Radius=Dosah
 Vacuuming Pneumatic Tube Segment (priority @1)=nasávací pneumatická roura (5x5x5 metrů) (priorita @1)
 Adjustable Vacuuming Tube=nastavitelná nasávací pneumatická roura
 Adjustable Vacuuming Pneumatic Tube Segment (priority @1)=nastavitelná nasávací pneumatická roura (priorita @1)
-Adjustable Vacuuming Pneumatic Tube Segment (@1m)=nastavitelná nasávací pneumatická roura (@1 m)
+Adjustable Vacuuming Tube (@1m)=nastavitelná nasávací pneumatická roura (@1 m)
 
 ## wielder
 Node Breaker=naběrač bloků
 Deployer=umísťovač bloků
 Dispenser=vyhazovač bloků
+
+This tube cannot be repaired.=Tuto rouru nelze opravit.
+Separate multiple tags using commas.=Štítky oddělujte čárkami.
+Use @"<bez>@" to match items without tags.=<bez> odpovídá předmětům bez štítku.
+Tag Sorting Pneumatic Tube Segment (priority @1)=pneumatická roura třídící podle štítků (priorita @1)
+Tag sorting pneumatic tube=pneumatická roura třídící podle štítků
