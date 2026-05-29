@@ -62,7 +62,7 @@ function advtrains.interlocking.show_ip_form(pos, pname, only_notset)
 		"size[8,2.25]",
 		ipform,
 	}
-	if not only_notset or not pts then
+	if not only_notset --[[ or not pts]] then
 		minetest.show_formspec(pname, "at_il_ipsaform_"..minetest.pos_to_string(pos), table.concat(form))
 	end
 end

@@ -831,10 +831,10 @@ function advtrains.interlocking.show_signalling_form(sigd, pname, sel_rte, calle
 	
 	if not tcbs.signal then return end
 	if not tcbs.routes then tcbs.routes = {} end
-	if not tcbs.signal_name then tcbs.signal_name = minetest.pos_to_string(sigd.p) end
+	-- if not tcbs.signal_name then tcbs.signal_name = minetest.pos_to_string(sigd.p) end
 
 	local form = "size[7,10]label[0.5,0.5;"..attrans("Signal at @1", minetest.pos_to_string(sigd.p)).."]"
-	form = form.."field[0.8,1.5;5.2,1;name;"..attrans("Signal name")..";"..minetest.formspec_escape(tcbs.signal_name).."]"
+	form = form.."field[0.8,1.5;5.2,1;name;"..attrans("Signal name")..";"..minetest.formspec_escape(tcbs.signal_name or minetest.pos_to_string(sigd.p)).."]"
 	form = form.."button[5.5,1.2;1,1;setname;"..attrans("Set").."]"
 	
 	if tcbs.routeset then

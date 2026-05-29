@@ -341,3 +341,5 @@ Stn. @1 (@2) T. @3=@1 (@2) kolej @3
 Free=Volno
 ATC Kick command warning: Doors closed=Varování ATC příkazu K: Dveře zavřeny
 ATC Kick command warning: Train moving=Varování ATC příkazu K: Vlak je v pohybu
+Wagon needs to be decoupled from other wagons in order to destroy it.=Pro zničení vagonu je nutné ho nejprve odpojit z vlaku.
+The wagon's inventory is not empty.=Inventář vagonu není prázdný.
