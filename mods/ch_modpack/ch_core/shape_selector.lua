@@ -57,15 +57,9 @@ end
                        -- prezentováno jako jednosměrná; rovněž se nepoužije při rozpoznávání
         tooltip = string, -- vlastní text pro tooltip[]
         label = string, -- vlastní text na tlačítko (musí být krátký, jinak nevypadá dobře)
+        color = string, -- vlastní barva pro položku na tlačítku (ColorSpec, např. "#ffffff"); potlačí použití palety
     }
     - nil (jen pokud má skupina uvedeny obě vlastnosti 'columns' a 'rows')
-
-    TODO:
-    [x] plná podpora pro param2 s maskou
-    [x] podpora pro 'tooltip' (je-li možná)
-    [x] podpora pro 'oneway'
-    [x] podpora pro barvené bloky (jako ch_extras:dice)
-    [x] rozpoznání současné varianty
 ]]
 
 function ch_core.register_shape_selector_group(def)
@@ -258,7 +252,9 @@ function ch_core.show_shape_selector(player, pos, node, wielded_item)
                 local stack = ItemStack(node_name)
                 local meta = stack:get_meta()
                 local new_param2 = process_param2(node.param2, nodespec.param2)
-                if node_def.palette ~= nil and type(node_def.paramtype2) == "string" then
+                if nodespec.color ~= nil then
+                    meta:set_string("color", nodespec.color)
+                elseif node_def.palette ~= nil and type(node_def.paramtype2) == "string" then
                     local palette_idx = core.strip_param2_color(new_param2, node_def.paramtype2)
                     if palette_idx ~= nil then
                         meta:set_int("palette_index", palette_idx)

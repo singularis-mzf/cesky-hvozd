@@ -25,7 +25,8 @@ local F = function(...) return minetest.formspec_escape(S(...)) end
 local function display_poster(pos, node, player)
 	local meta = minetest.get_meta(pos)
 
-	local def = minetest.registered_nodes[node.name].display_entities["signs:display_text"]
+	local ndef = core.registered_nodes[node.name]
+	local def = ndef.display_entities["signs:display_text"]
 	local font = font_api.get_font(meta:get_string("font") or def.font_name)
 
 	local fs
@@ -36,14 +37,19 @@ local function display_poster(pos, node, player)
 	local titletexture = font:render(meta:get_string("display_text"),
 		font:get_height()*8.4, font:get_height(), { lines = 1 })
 
+	-- Background texture
+	local bgtexture = core.formspec_escape("[combine:1x1:-"..math.floor((node.param2 or 0) / 32)..",0="..assert(ndef.palette).."^[opacity:63")
+
 	fs = string.format(
 		"formspec_version[6]"..
 		"size[8,11]"..
 		"bgcolor[#0000]"..
 		"background[0,0;8,10;signs_poster_formspec.png^[multiply:#f0f0f0]"..
+		"image[0,0;8,11;%s]".. -- background
 		"image[0,-0.2;8.4,2;%s]"..
 		"style_type[textarea;textcolor=#111;font_size=+4]"..
 		"textarea[0.3,1.75;7.5,8.1;;%s;]",
+		bgtexture,
 		titletexture,
 		minetest.formspec_escape(meta:get_string("text")))
 
@@ -254,6 +260,18 @@ local models = {
 	},
 }
 
+models.paper_poster.node_fields.paramtype2 = "colorfacedir"
+models.paper_poster.node_fields.palette = "signs_poster_palette1.png"
+
+models.paper_poster2 = table.copy(models.paper_poster)
+models.paper_poster2.node_fields = table.copy(models.paper_poster.node_fields)
+models.paper_poster2.node_fields.groups = table.copy(models.paper_poster.node_fields.groups)
+
+models.paper_poster2.node_fields.groups.not_in_creative_inventory = 1
+models.paper_poster2.node_fields.palette = "signs_poster_palette2.png"
+models.paper_poster2.node_fields.drop = "signs:paper_poster"
+-- models.paper_poster2.node_fields.drop = {items = {{items = {"signs:paper_poster"}, inherit_color = false}}}
+
 -- Node registration
 for name, model in pairs(models)
 do
@@ -269,4 +287,26 @@ ch_core.register_shape_selector_group({
 	after_change = function(pos, old_node, new_node, player, nodespec)
 		on_punch(pos)
 	end,
+})
+
+ch_core.register_shape_selector_group({
+    columns = 4, rows = 4, check_owner = true,
+    nodes = {
+        {name = "signs:paper_poster", param2 = 0x1F00,},
+        {name = "signs:paper_poster", param2 = 0x1F20,},
+        {name = "signs:paper_poster", param2 = 0x1F40,},
+        {name = "signs:paper_poster", param2 = 0x1F60,},
+        {name = "signs:paper_poster", param2 = 0x1F80,},
+        {name = "signs:paper_poster", param2 = 0x1FA0,},
+        {name = "signs:paper_poster", param2 = 0x1FC0,},
+        {name = "signs:paper_poster", param2 = 0x1FE0,},
+        {name = "signs:paper_poster2", param2 = 0x1F00, color = "#f6e7ae"},
+        {name = "signs:paper_poster2", param2 = 0x1F20, color = "#efc9c8"},
+        {name = "signs:paper_poster2", param2 = 0x1F40, color = "#73d9dc"},
+        {name = "signs:paper_poster2", param2 = 0x1F60, color = "#adf2b1"},
+        {name = "signs:paper_poster2", param2 = 0x1F80, color = "#e9e601"},
+        {name = "signs:paper_poster2", param2 = 0x1FA0, color = "#fe8a08"},
+        {name = "signs:paper_poster2", param2 = 0x1FC0, color = "#78db07"},
+        {name = "signs:paper_poster2", param2 = 0x1FE0, color = "#c9b3ff"},
+    },
 })
