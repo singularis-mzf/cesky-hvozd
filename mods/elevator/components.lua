@@ -71,9 +71,8 @@ elseif aurum_path then
     moditems.steel_block_image = "aurum_ore_white.png^[colorize:#cbcdcd:255^aurum_ore_bumps.png^aurum_ore_block.png"
 end
 
-moditems.elevator_groups_on = moditems.elevator_groups
-moditems.elevator_groups_off = table.copy(moditems.elevator_groups)
-moditems.elevator_groups_off.not_in_creative_inventory = 1
+moditems.elevator_groups_off = moditems.elevator_groups
+moditems.elevator_groups_on = ch_core.assembly_groups(moditems.elevator_groups, {not_in_creative_inventory = 1})
 
 if minetest.global_exists("screwdriver") then
     moditems.on_rotate_disallow = screwdriver.disallow
