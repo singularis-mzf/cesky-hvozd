@@ -70,6 +70,8 @@ function ch_base.mod_checkpoint(name)
     print("["..open_modname.."] checkpoint "..(name or "nil").." at "..math.ceil((get_us_time() - us_openned) / 1000.0).." ms")
 end
 
+ch_base.open_mod(core.get_current_modname())
+
 if enable_performance_logging then
 -- Performance watching:
 -- * globalstep
@@ -211,3 +213,9 @@ local def = {
 core.register_chatcommand("vykon", def)
 core.register_chatcommand("výkon", def)
 end -- if enable_performance_logging
+
+if INIT == "game" then
+    core.register_async_dofile(core.get_modpath(core.get_current_modname()).."/init.lua")
+end
+
+ch_base.close_mod(core.get_current_modname())

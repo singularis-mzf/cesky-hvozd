@@ -1,0 +1,14 @@
+b8012babc563fa30a4b2626bb79e7948 *./.cdb.json
+0fd2f907dac4c37f785b00461973f90b *./.check_date.sh
+a654b9827d0a7806635d7edf47e9edf9 *./.editorconfig
+dc7c11fd126fdb0d1049b0e3b5a77b26 *./.luacheckrc
+fe098ce7a691942960ff21f834c76a81 *./.pre-commit-config.yaml
+b97a949c7ce14f0e8c3df60654ab0d20 *./LICENSE.txt
+22449197f5884b3a25aac08965bd83a3 *./MEDIA_LICENSE.txt
+ad32eca65e50c28eb3c4023cb321fb3f *./README.md
+93870a07540c05e3d5cb7f125332fa0f *./build_has.lua
+aaa30f019097a79e1ab38433f2738e20 *./get_settings.lua
+b32f0b32f8a76e457bc58f8ac089515c *./init.lua
+f86079734677d7aa47d5afb8b17db174 *./mod.conf
+0542cde1ceacc9c3a7bfd342819d9754 *./parse_version.lua
+de6a5a6a7615c0104dd5d6896dd16bf9 *./screenshot.png

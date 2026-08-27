@@ -282,6 +282,15 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: MIT
 * [ContentDB](https://content.minetest.net/packages/GreenXenith/mesecons\_wireless/)
 
+# Doplňky k balíku WorldEdit
+
+## we\_maze (luanti-we\_maze)
+
+* Zdroj: [https://github.com/fluxionary/luanti-we\_maze](https://github.com/fluxionary/luanti-we\_maze), revize b62f0a7ddcf9a0e9ec5c5aa57597e2dd7c8867f0
+* Původní licence: LGPLv3 pro kód, CC BY-SA 4.0 pro média
+* Licence úprav: LGPLv3 pro kód, CC BY-SA 4.0 pro média
+* [ContentDB](https://content.luanti.org/packages/rheo/we\_maze/)
+
 # Samostatné módy
 
 ## 3D Armor Fly & Swim (3d\_armor\_flyswim)
@@ -631,12 +640,19 @@ Ke zprovoznění serveru je kromě adresářů „mods“ a „minetest\_game“
 * Licence úprav: GNU Affero GPLv3
 * [ContentDB](https://content.minetest.net/packages/x2048/shadows/)
 
-## futil (minetest-futil)
+## fmod (luanti-fmod)
 
-* Zdroj: [https://github.com/fluxionary/minetest-futil](https://github.com/fluxionary/minetest-futil), revize fed3091f0884e8c84472f5a26cb3998db69c6cce
-* Původní licence: GNU Affero GPLv3
-* Licence úprav: GNU Affero GPLv3
-* [ContentDB](https://content.minetest.net/packages/rheo/futil/)
+* Zdroj: [https://github.com/fluxionary/luanti-fmod](https://github.com/fluxionary/luanti-fmod), revize b414049bbb6356bc8d21740899225b3dfb328efe
+* Původní licence: LGPLv3 pro kód, CC BY-SA 4.0 pro média
+* Licence úprav: LGPLv3 pro kód, CC BY-SA 4.0 pro média
+* [ContentDB](https://content.luanti.org/packages/rheo/fmod/)
+
+## futil (luanti-futil)
+
+* Zdroj: [https://github.com/fluxionary/luanti-futil](https://github.com/fluxionary/luanti-futil), revize b7ed1ebbb7e5ab5bd77706479e905571855583b7
+* Původní licence: LGPLv3 pro kód, CC BY-SA 4.0 pro média
+* Licence úprav: LGPLv3 pro kód, CC BY-SA 4.0 pro média
+* [ContentDB](https://content.luanti.org/packages/rheo/futil/)
 
 ## Generic Inoffensive Flags (generic\_flags)
 

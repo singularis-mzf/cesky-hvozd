@@ -1,0 +1,11 @@
+{
+    "type": "MOD",
+    "name": "we_maze",
+    "title": "flux's worldedit maze generator",
+    "license": "LGPL-3.0-or-later",
+    "media_license": "CC-BY-SA-4.0",
+    "repo": "https://github.com/fluxionary/minetest-we_maze.git",
+    "website": "https://github.com/fluxionary/minetest-we_maze",
+    "issue_tracker": "https://github.com/fluxionary/minetest-we_maze/issues",
+    "short_description": "a command to create 2d mazes using worldedit."
+}

@@ -1,0 +1,1 @@
+we_maze.priv (maze generation privilege) string worldedit
