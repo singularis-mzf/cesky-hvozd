@@ -1,13 +1,18 @@
 ch_base.open_mod(core.get_current_modname())
 
 local modpath = assert(core.get_modpath(core.get_current_modname()))
-local smooth3x3, err_msg
+local smooth3x3, smooth5x5, err_msg
 
 smooth3x3, err_msg = loadfile(modpath.."/smooth3x3.lua")
 if smooth3x3 == nil then
 	error(err_msg)
 end
 smooth3x3 = smooth3x3()
+smooth5x5, err_msg = loadfile(modpath.."/smooth5x5.lua")
+if smooth5x5 == nil then
+	error(err_msg)
+end
+smooth5x5 = assert(smooth5x5())
 
 -- smooth3x3(x, z, input, options) => output
 
@@ -396,7 +401,59 @@ local function vyhladit(pos)
 	return true, "Vyhlazování: "..#output.." změn. Výsledná velikost zpětné databáze: "..rollback_log_count
 end
 
-local function on_use(itemstack, user, pointed_thing)
+local function vyhladit_5x5(pos)
+	local node_above = core.get_node(vector.offset(pos, 0, 1, 0))
+	local node_above_category = get_node_category(node_above.name)
+	if node_above_category ~= "air" and node_above_category ~= "water" then
+		return nil
+	end
+	local central_node = get_xz_node(pos)
+	if central_node == nil or central_node.fixed then
+		local node = core.get_node(pos)
+		return false, "Blok "..node.name.."/"..node.param2.." není vhodný pro vyhlazení."
+	end
+	local central_node_pos = lze_vyhladit(pos)
+	if central_node_pos ~= nil then
+		print("DEBUG: central_node_pos = "..core.pos_to_string(central_node_pos).." (pos = "..core.pos_to_string(pos)..")")
+	else
+		print("DEBUG: central_node_pos = nil (pos = "..core.pos_to_string(pos)..")")
+	end
+	local x, y, z = pos.x, pos.y, pos.z
+	local input = {}
+	pos = vector.copy(pos)
+	for zz = z - 2, z + 2, 1 do
+		pos.z = zz
+		for xx = x - 2, x + 2, 1 do
+			if input[xx] == nil then
+				input[xx] = {}
+			end
+			if zz ~= z or xx ~= x then
+				pos.x = xx
+				input[xx][zz] = get_xz_node(pos)
+			else
+				input[xx][zz] = central_node
+			end
+		end
+	end
+	print("DEBUG: smoothing started...")
+	local output = smooth5x5(x, z, input, {})
+	print("DEBUG: smoothing finished")
+	if output == nil then
+		return false, "Vyhlazování selhalo."
+	end
+	print("DEBUG: smoothing output = "..dump2(output))
+	if #output == 0 then
+		return true, "Vyhlazování neprovedlo žádné změny."
+	end
+	for _, change in ipairs(output) do
+		local x, z = change.x, change.z
+		apply_change((input[x] or {})[z], change)
+	end
+	return true, "Vyhlazování: "..#output.." změn. Výsledná velikost zpětné databáze: "..rollback_log_count
+end
+
+local on_use
+on_use = function(itemstack, user, pointed_thing)
 	local player_name = user and user:get_player_name()
 	if not player_name then
 		return
@@ -416,14 +473,43 @@ local function on_use(itemstack, user, pointed_thing)
 end
 
 local def = {
-	description = "hůlka vyhlazení [EXPERIMENTÁLNÍ]",
+	description = "hůlka vyhlazení 3x3 [EXPERIMENTÁLNÍ]",
 	inventory_image = "ch_extras_creative_inv.png",
 	wield_image = "ch_extras_creative_inv.png",
 	on_use = on_use,
-	groups = {tools = 1},
+	groups = {tools = 1, experimental = 1},
 }
 
 core.register_tool("ch_smooth:wand", def)
+
+on_use = function(itemstack, user, pointed_thing)
+	local player_name = user and user:get_player_name()
+	if not player_name then
+		return
+	end
+	if not core.check_player_privs(player_name, "server") then
+		ch_core.systemovy_kanal(player_name, "Chyba: tuto hůlku smí používat jen Administrace.")
+		return
+	end
+	if pointed_thing.type ~= "node" then
+		ch_core.systemovy_kanal(player_name, "Nutno kliknout na blok.")
+		return
+	end
+	local result, msg = vyhladit_5x5(pointed_thing.under)
+	if msg ~= nil then
+		ch_core.systemovy_kanal(player_name, msg)
+	end
+end
+
+def = {
+	description = "hůlka vyhlazení 5x5 [EXPERIMENTÁLNÍ]",
+	inventory_image = "ch_extras_creative_inv.png",
+	wield_image = "ch_extras_creative_inv.png",
+	on_use = on_use,
+	groups = {tools = 1, experimental = 1},
+}
+
+core.register_tool("ch_smooth:wand_5x5", def)
 
 def = {
 	params = "potvrdit|zpět",
@@ -442,7 +528,9 @@ def = {
 core.register_chatcommand("vyhladit", def)
 
 ch_smooth = {
+	lze_vyhladit = lze_vyhladit,
 	vyhladit = vyhladit,
+	vyhladit_5x5 = vyhladit_5x5,
 }
 
 ch_base.close_mod(core.get_current_modname())

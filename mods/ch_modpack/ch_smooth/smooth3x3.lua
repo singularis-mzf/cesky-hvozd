@@ -1,5 +1,6 @@
--- terrain_smooth.lua
+-- smooth3x3.lua
 -- 3x3 terrain smoothing library
+-- Generated with GLM 5.2
 --
 -- Public API:  smooth_3x3(x, z, input, options) -> output_table | nil, errmsg
 --
