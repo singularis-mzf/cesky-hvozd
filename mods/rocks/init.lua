@@ -40,7 +40,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5}, 
         },
         sounds = default.node_sound_stone_defaults(),
-        tiles = {image},
+        tiles = {{name = image, backface_culling = true}},
 
         groups = { cracky=2 },
 
@@ -76,7 +76,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
         },
         sounds = default.node_sound_stone_defaults(),
-        tiles = {image},
+        tiles = {{name = image, backface_culling = true}},
 
         groups = { cracky=2 },
 
@@ -114,7 +114,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
         },
         sounds = default.node_sound_stone_defaults(),
-        tiles = {image},
+        tiles = {{name = image, backface_culling = true}},
 
         groups = { cracky=2 },
 
@@ -152,7 +152,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
         },
         sounds = default.node_sound_stone_defaults(),
-        tiles = {image},
+        tiles = {{name = image, backface_culling = true}},
 
         groups = { cracky=2 },
 
@@ -188,7 +188,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
         },
         sounds = default.node_sound_stone_defaults(),
-        tiles = {image},
+        tiles = {{name = image, backface_culling = true}},
 
         groups = { cracky=2 },
 
@@ -226,7 +226,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
         },
         sounds = default.node_sound_stone_defaults(),
-        tiles = {image},
+        tiles = {{name = image, backface_culling = true}},
 
         groups = { cracky=2 },
 
@@ -265,7 +265,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
         },
         sounds = default.node_sound_stone_defaults(),
-        tiles = {image},
+        tiles = {{name = image, backface_culling = true}},
 
         groups = { cracky=2 },
 
@@ -301,7 +301,7 @@ function register_rockset(name, recipe_cobble, recipe_stone, image)
             fixed = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
         },
         sounds = default.node_sound_stone_defaults(),
-        tiles = {image},
+        tiles = {{name = image, backface_culling = true}},
 
         groups = { cracky=2 },
 
@@ -320,9 +320,9 @@ end --End register_rockset function
 
 --------------Default Rocks Registration -------
 
-register_rockset("stone", "default:cobble", "default:stone", "stone.png")
-register_rockset("desert_sand", "default:desert_sand", "default:desert_sandstone", "desert_sand.png")
-register_rockset("desert_stone", "default:desert_stone", "default:desert_cobble", "desert_stone.png")
-register_rockset("sand", "default:sand", "default:sandstone", "sand.png")
-register_rockset("silver_sand", "default:silver_sand", "default:silver_sandstone", "silver_sand.png")
+register_rockset("stone", "default:cobble", "default:stone", "default_stone.png")
+register_rockset("desert_sand", "default:desert_sand", "default:desert_sandstone", "default_desert_sandstone.png")
+register_rockset("desert_stone", "default:desert_stone", "default:desert_cobble", "default_desert_stone.png")
+register_rockset("sand", "default:sand", "default:sandstone", "default_sandstone.png")
+register_rockset("silver_sand", "default:silver_sand", "default:silver_sandstone", "default_silver_sandstone.png")
 ch_base.close_mod(minetest.get_current_modname())

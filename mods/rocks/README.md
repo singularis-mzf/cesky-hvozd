@@ -1,3 +1,4 @@
 # Rocks
 Minetest Rock Mod
-![Screenshot](screenshot.png)
+
+Modified for "Český hvozd" server.
