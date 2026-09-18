@@ -152,7 +152,7 @@ homedecor.register("pole_brass", {
 		type = "fixed",
 		fixed = { -0.125, -0.5, -0.125, 0.125, 0.5, 0.125 },
 	},
-	groups = {snappy=3},
+	groups = { snappy=3, not_blocking_trains = 1 },
 	sounds = default.node_sound_wood_defaults(),
 	check_for_pole = true
 })
@@ -170,7 +170,7 @@ homedecor.register("pole_wrought_iron", {
 		type = "fixed",
                 fixed = {-0.0625, -0.5, -0.0625, 0.0625, 0.5, 0.0625}
 	},
-    groups = {snappy=3},
+    groups = { snappy=3, not_blocking_trains = 1 },
     sounds = default.node_sound_wood_defaults(),
 	check_for_pole = true,
 })
@@ -465,7 +465,7 @@ for _, sideinfo in ipairs(banister_sides) do
 			inventory_image = "homedecor_banister_"..name.."_"..side.."_inv.png",
 			selection_box = cbox,
 			collision_box = cbox,
-			groups = { snappy = 3},
+			groups = { snappy = 3, not_blocking_trains = 1 },
 		}
 
 		if name == "wood" then
