@@ -1,12 +1,4 @@
 ch_base.open_mod(core.get_current_modname())
---[[
-TODO:
-[ ] vyladit chování se stromy, květinami apod.
-]]
-
-local ch_smooth = {
-	rollback_log = {},
-}
 
 local modpath = assert(core.get_modpath(core.get_current_modname()))
 local smooth3x3, err_msg
@@ -129,24 +121,34 @@ end
 --
 -- Pokusí se rozpoznat tvar a rotaci bloku na pozici pos; je-li to potřeba, načte ještě
 -- blok o 1 níže.
+local recognize_shape_cache = {}
+local recognize_shape_cache_empty_item = {}
 local function recognize_shape_inner(pos) -- => shape_id, rotation, y, material
 	local node = core.get_node(pos)
+	local cache_key = node.name.."/"..node.param2
+	local cache_value = recognize_shape_cache[cache_key]
+	if cache_value ~= nil then
+		return cache_value.shape, cache_value.rotation, pos.y, cache_value.material
+	end
 	if node.param2 == nil or node.param2 > 3 then
+		recognize_shape_cache[cache_key] = recognize_shape_cache_empty_item
 		return nil, nil, pos.y, nil -- no shape for param2 > 3
 	end
 	if is_recipeitem(node.name) then
 		-- plný blok (tvarovatelný materiál)
+		recognize_shape_cache[cache_key] = {shape = "", rotation = 0, material = node.name}
 		return "", 0, pos.y, node.name
 	end
 	local recipeitem, category, alternate = analyze_shape(node.name)
 	if recipeitem == nil then
 		-- netvarovatelný materiál
+		recognize_shape_cache[cache_key] = recognize_shape_cache_empty_item
 		return nil, nil, pos.y, nil
 	end
 	local is_bank_slope = category == "bank_slope"
 	local upper_shape = upper_shape_to_lower_shape[category.."/"..alternate]
 	if upper_shape ~= nil then
-		-- dvojitý blok; rozpoznat pouze, pokud má společný param2
+		-- dvojitý blok; rozpoznat pouze, pokud má společný param2; nepoužívat keš!
 		local node_under = core.get_node(vector.offset(pos, 0, -1, 0))
 		if node_under.param2 ~= node.param2 then
 			return nil, nil, pos.y, nil -- spodní tvar má odlišný param2; nerozpoznat
@@ -157,17 +159,24 @@ local function recognize_shape_inner(pos) -- => shape_id, rotation, y, material
 		end
 		-- hlavní tvar je ten spodní
 		assert(shape_ids[c_under.."/"..a_under])
-		return c_under.."/"..a_under, node.param2, pos.y - 1, ri_under
+		return c_under.."/"..a_under, node.param2, pos.y - 1, assert(ri_under)
 	end
 	if is_bank_slope then
 		category = "slope"
 	end
 	if shape_ids[category.."/"..alternate] == nil then
-		return nil -- nepodporovaný tvar
+		recognize_shape_cache[cache_key] = recognize_shape_cache_empty_item
+		return nil, nil, nil, nil -- nepodporovaný tvar
 	end
 	if is_bank_slope then
-		return "slope/"..alternate, node.param2, pos.y + 1, recipeitem -- pro bank_slopy je základní y o 1 výš
+		-- nepoužít keš pro pobřežní bloky (kvůli rozdílu v pos.y)
+		return "slope/"..alternate, node.param2, pos.y + 1, assert(recipeitem) -- pro bank_slopy je základní y o 1 výš
 	else
+		recognize_shape_cache[cache_key] = {
+			shape = category.."/"..alternate,
+			rotation = node.param2,
+			material = recipeitem,
+		}
 		return category.."/"..alternate, node.param2, pos.y, recipeitem
 	end
 end
@@ -175,11 +184,13 @@ local function recognize_shape(pos)
 	local orig_node = core.get_node(pos)
 	local shape_id, rotation, y, material = recognize_shape_inner(pos)
 	if shape_id == nil then
-		print("DEBUG: node at ("..pos.x..",*,"..pos.z..") ("..orig_node.name..") not recognized.")
+		print("DEBUG: node at ("..pos.x..",*,"..pos.z..") ("..orig_node.name.."/"..orig_node.param2..") NOT recognized.")
+	else
+		print("DEBUG: node at "..pos.x..","..y..","..pos.z..") ("..orig_node.name.."/"..orig_node.param2..") recognized as shape \""..shape_id.."\"/"..rotation.." of material "..(material or "nil")..".")
 	end
-	print("DEBUG: node at "..pos.x..","..y..","..pos.z..") ("..orig_node.name..") recognized as shape \""..shape_id.."\"/"..rotation.." of material "..material..".")
 	return shape_id, rotation, y, material
 end
+recognize_shape = recognize_shape_inner -- will disable debugging
 
 
 --
@@ -278,6 +289,10 @@ local function apply_change(orig_node, change)
 	local material = assert(orig_node.material)
 	assert(change.shape)
 	local shape_desc = assert(shape_ids[change.shape])
+	if change.y == orig_node.y - 1 then
+		-- nový tvar je pod původním; nutno původní nejdřív smazat
+		set_node_rollbackable(vector.new(change.x, orig_node.y, change.z), {name = "air", param2 = 0})
+	end
 	if shape_desc.full_node then
 		set_node_rollbackable(pos, {name = material, param2 = 0})
 		return true
@@ -314,23 +329,58 @@ local function apply_change(orig_node, change)
 	end
 end
 
-local function vyhladit(pos)
-	local input = {}
-	local y = pos.y
-	for x = pos.x - 1, pos.x + 1, 1 do
-		input[x] = {}
-		for z = pos.z - 1, pos.z + 1, 1 do
-			input[x][z] = get_xz_node(vector.new(x, y, z))
-		end
+local function lze_vyhladit(pos) -- => new_pos
+	local node_above = core.get_node(vector.offset(pos, 0, 1, 0))
+	local node_above_category = get_node_category(node_above.name)
+	if node_above_category ~= "air" and node_above_category ~= "water" then
+		return nil
 	end
-	print("DEBUG: Final smoothing input for "..core.pos_to_string(pos)..": "..dump2(input))
-	local central_node = input[pos.x][pos.z]
+	local central_node = get_xz_node(pos)
+	if central_node ~= nil and not central_node.fixed then
+		return vector.new(pos.x, central_node.y, pos.z)
+	else
+		return nil
+	end
+end
+
+local function vyhladit(pos)
+	local node_above = core.get_node(vector.offset(pos, 0, 1, 0))
+	local node_above_category = get_node_category(node_above.name)
+	if node_above_category ~= "air" and node_above_category ~= "water" then
+		return nil
+	end
+	local central_node = get_xz_node(pos)
 	if central_node == nil or central_node.fixed then
 		local node = core.get_node(pos)
 		return false, "Blok "..node.name.."/"..node.param2.." není vhodný pro vyhlazení."
 	end
+	local central_node_pos = lze_vyhladit(pos)
+	if central_node_pos ~= nil then
+		print("DEBUG: central_node_pos = "..core.pos_to_string(central_node_pos).." (pos = "..core.pos_to_string(pos)..")")
+	else
+		print("DEBUG: central_node_pos = nil (pos = "..core.pos_to_string(pos)..")")
+	end
+	local x, y, z = pos.x, pos.y, pos.z
+	local input = {
+		[x - 1] = {},
+		[x] = {[z] = central_node},
+		[x + 1] = {},
+	}
+	pos = vector.copy(pos)
+	pos.x = x - 1
+	input[x - 1][z] = get_xz_node(pos)
+	pos.x = x + 1
+	input[x + 1][z] = get_xz_node(pos)
+	-- the rest
+	for zz = z - 1, z + 1, 2 do
+		pos.z = zz
+		for xx = x - 1, x + 1, 1 do
+			pos.x = xx
+			input[xx][zz] = get_xz_node(pos)
+		end
+	end
 	print("DEBUG: smoothing started...")
-	local output = smooth3x3(pos.x, pos.z, input, {})
+	local output = smooth3x3(x, z, input, {})
 	print("DEBUG: smoothing finished")
 	if output == nil then
 		return false, "Vyhlazování selhalo."
@@ -390,5 +440,9 @@ def = {
 	end
 }
 core.register_chatcommand("vyhladit", def)
+
+ch_smooth = {
+	vyhladit = vyhladit,
+}
 
 ch_base.close_mod(core.get_current_modname())
