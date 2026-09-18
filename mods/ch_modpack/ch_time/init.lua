@@ -162,6 +162,11 @@ function Cas:YYYY_MM_DDTHH_MM_SSZZZ()
 		self.rok, self.mesic, self.den, self.hodina, self.minuta, self.sekunda, self:posun_text())
 end
 
+function Cas:YYYY_MM_DDTHH_MM_SS_ZZZ()
+	return string.format("%04d-%02d-%02dT%02d:%02d:%02d %s",
+		self.rok, self.mesic, self.den, self.hodina, self.minuta, self.sekunda, self:posun_text())
+end
+
 function Cas:HH_MM_SS()
 	return string.format("%02d:%02d:%02d", self.hodina, self.minuta, self.sekunda)
 end
