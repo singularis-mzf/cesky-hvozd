@@ -185,17 +185,19 @@ local function recognize_shape_inner(pos) -- => shape_id, rotation, y, material
 		return category.."/"..alternate, node.param2, pos.y, recipeitem
 	end
 end
+--[[
 local function recognize_shape(pos)
 	local orig_node = core.get_node(pos)
 	local shape_id, rotation, y, material = recognize_shape_inner(pos)
 	if shape_id == nil then
-		print("DEBUG: node at ("..pos.x..",*,"..pos.z..") ("..orig_node.name.."/"..orig_node.param2..") NOT recognized.")
+		print("D EBUG: node at ("..pos.x..",*,"..pos.z..") ("..orig_node.name.."/"..orig_node.param2..") NOT recognized.")
 	else
-		print("DEBUG: node at "..pos.x..","..y..","..pos.z..") ("..orig_node.name.."/"..orig_node.param2..") recognized as shape \""..shape_id.."\"/"..rotation.." of material "..(material or "nil")..".")
+		print("D EBUG: node at "..pos.x..","..y..","..pos.z..") ("..orig_node.name.."/"..orig_node.param2..") recognized as shape \""..shape_id.."\"/"..rotation.." of material "..(material or "nil")..".")
 	end
 	return shape_id, rotation, y, material
 end
-recognize_shape = recognize_shape_inner -- will disable debugging
+]]
+local recognize_shape = recognize_shape_inner -- will disable debugging
 
 
 --
@@ -359,12 +361,6 @@ local function vyhladit(pos)
 		local node = core.get_node(pos)
 		return false, "Blok "..node.name.."/"..node.param2.." není vhodný pro vyhlazení."
 	end
-	local central_node_pos = lze_vyhladit(pos)
-	if central_node_pos ~= nil then
-		print("DEBUG: central_node_pos = "..core.pos_to_string(central_node_pos).." (pos = "..core.pos_to_string(pos)..")")
-	else
-		print("DEBUG: central_node_pos = nil (pos = "..core.pos_to_string(pos)..")")
-	end
 	local x, y, z = pos.x, pos.y, pos.z
 	local input = {
 		[x - 1] = {},
@@ -384,13 +380,10 @@ local function vyhladit(pos)
 			input[xx][zz] = get_xz_node(pos)
 		end
 	end
-	print("DEBUG: smoothing started...")
 	local output = smooth3x3(x, z, input, {})
-	print("DEBUG: smoothing finished")
 	if output == nil then
 		return false, "Vyhlazování selhalo."
 	end
-	print("DEBUG: smoothing output = "..dump2(output))
 	if #output == 0 then
 		return true, "Vyhlazování neprovedlo žádné změny."
 	end
@@ -412,12 +405,6 @@ local function vyhladit_5x5(pos)
 		local node = core.get_node(pos)
 		return false, "Blok "..node.name.."/"..node.param2.." není vhodný pro vyhlazení."
 	end
-	local central_node_pos = lze_vyhladit(pos)
-	if central_node_pos ~= nil then
-		print("DEBUG: central_node_pos = "..core.pos_to_string(central_node_pos).." (pos = "..core.pos_to_string(pos)..")")
-	else
-		print("DEBUG: central_node_pos = nil (pos = "..core.pos_to_string(pos)..")")
-	end
 	local x, y, z = pos.x, pos.y, pos.z
 	local input = {}
 	pos = vector.copy(pos)
@@ -435,13 +422,10 @@ local function vyhladit_5x5(pos)
 			end
 		end
 	end
-	print("DEBUG: smoothing started...")
 	local output = smooth5x5(x, z, input, {})
-	print("DEBUG: smoothing finished")
 	if output == nil then
 		return false, "Vyhlazování selhalo."
 	end
-	print("DEBUG: smoothing output = "..dump2(output))
 	if #output == 0 then
 		return true, "Vyhlazování neprovedlo žádné změny."
 	end
