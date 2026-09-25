@@ -39,12 +39,14 @@ local terrain_materials = {
 	["default:dirt_with_coniferous_litter"] = true,
 	["default:dirt_with_grass"] = true,
 	["default:dirt_with_rainforest_litter"] = true,
-	-- {item = "default:dirt_with_snow"},
-	-- {item = "default:dry_dirt_with_dry_grass"},
+	["default:dirt_with_snow"] = true,
+	["default:dry_dirt_with_dry_grass"] = true,
 	["default:gravel"] = true,
 	["default:sand"] = true,
 	["default:silver_sand"] = true,
 	["default:snowblock"] = true,
+	["ch_extras:bright_gravel"] = true,
+	["ch_extras:railway_gravel"] = true,
 }
 
 -- seznam dovolených tvarů
@@ -351,6 +353,7 @@ local function lze_vyhladit(pos) -- => new_pos
 end
 
 local function vyhladit(pos)
+	local orig_pos = pos
 	local node_above = core.get_node(vector.offset(pos, 0, 1, 0))
 	local node_above_category = get_node_category(node_above.name)
 	if node_above_category ~= "air" and node_above_category ~= "water" then
@@ -367,7 +370,7 @@ local function vyhladit(pos)
 		[x] = {[z] = central_node},
 		[x + 1] = {},
 	}
-	pos = vector.copy(pos)
+	pos = vector.copy(orig_pos)
 	pos.x = x - 1
 	input[x - 1][z] = get_xz_node(pos)
 	pos.x = x + 1
@@ -381,6 +384,10 @@ local function vyhladit(pos)
 		end
 	end
 	local output = smooth3x3(x, z, input, {})
+	if ch_smooth.debug_counter > 0 then
+		ch_smooth.debug_counter = ch_smooth.debug_counter - 1
+		print("[ch_smooth] debug for "..core.pos_to_string(orig_pos)..": "..dump2({input = input, output = output or "nil"}))
+	end
 	if output == nil then
 		return false, "Vyhlazování selhalo."
 	end
@@ -395,6 +402,7 @@ local function vyhladit(pos)
 end
 
 local function vyhladit_5x5(pos)
+	local orig_pos = pos
 	local node_above = core.get_node(vector.offset(pos, 0, 1, 0))
 	local node_above_category = get_node_category(node_above.name)
 	if node_above_category ~= "air" and node_above_category ~= "water" then
@@ -407,7 +415,7 @@ local function vyhladit_5x5(pos)
 	end
 	local x, y, z = pos.x, pos.y, pos.z
 	local input = {}
-	pos = vector.copy(pos)
+	pos = vector.copy(orig_pos)
 	for zz = z - 2, z + 2, 1 do
 		pos.z = zz
 		for xx = x - 2, x + 2, 1 do
@@ -422,7 +430,11 @@ local function vyhladit_5x5(pos)
 			end
 		end
 	end
-	local output = smooth5x5(x, z, input, {})
+	local output = smooth5x5(x, z, input, {spike_bias = ch_smooth.spike_bias})
+	if ch_smooth.debug_counter > 0 then
+		ch_smooth.debug_counter = ch_smooth.debug_counter - 1
+		print("[ch_smooth] debug for "..core.pos_to_string(orig_pos)..": "..dump2({input = input, output = output or "nil"}))
+	end
 	if output == nil then
 		return false, "Vyhlazování selhalo."
 	end
@@ -496,11 +508,14 @@ def = {
 core.register_tool("ch_smooth:wand_5x5", def)
 
 def = {
-	params = "potvrdit|zpět",
+	params = "ladit|potvrdit|zpět",
 	privs = {server = true},
 	description = "potvrdí nebo vrátí změny provedené pomocí nástroje vyhlazení",
 	func = function(_name, param)
-		if param == "potvrdit" or param == "." then
+		if param == "ladit" then
+			ch_smooth.debug_counter = ch_smooth.debug_counter + 1
+			return true, "Počítadlo ladění zvýšeno na "..ch_smooth.debug_counter
+		elseif param == "potvrdit" or param == "." then
 			return true, vyhladit_potvrdit()
 		elseif param == "zpět" or param == "zpet" or param == "\\" then
 			return true, vyhladit_zpet()
@@ -512,9 +527,15 @@ def = {
 core.register_chatcommand("vyhladit", def)
 
 ch_smooth = {
+	debug_counter = 0,
+	spike_bias = 1,
 	lze_vyhladit = lze_vyhladit,
 	vyhladit = vyhladit,
 	vyhladit_5x5 = vyhladit_5x5,
 }
+
+function ch_smooth.is_base_material(name)
+	return ifthenelse(terrain_materials[name], true, false)
+end
 
 ch_base.close_mod(core.get_current_modname())

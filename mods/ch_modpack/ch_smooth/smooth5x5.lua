@@ -6,8 +6,6 @@
        smooth_5x5(x, z, input, options) -> changes_table | nil, err
 --]]
 
-print("DEBUG: A")
-
 local M = {}
 
 ----------------------------------------------------------------------------
@@ -228,6 +226,18 @@ local function validate(x, z, input, options)
     if options ~= nil and options.debug ~= nil and type(options.debug) ~= "boolean" then
         return nil, "options.debug must be a boolean"
     end
+    -- spike_bias: optional non-negative number (default 1) controlling how
+    -- strongly the optimizer prefers "ridges" (a single low outlier in a
+    -- border-point group) over "spikes" (a single high outlier) when the
+    -- total mismatch cannot be reduced.  0 disables the preference.
+    if options ~= nil and options.spike_bias ~= nil
+       and type(options.spike_bias) ~= "number" then
+        return nil, "options.spike_bias must be a number"
+    end
+    if options ~= nil and type(options.spike_bias) == "number"
+       and options.spike_bias < 0 then
+        return nil, "options.spike_bias must be >= 0"
+    end
 
     -- central node
     local row = input[x]
@@ -383,10 +393,15 @@ local function normalize(x, z, input)
     end)
 
     -- assign gid and link nodes
-    local group_stats = {}  -- [gid] = { n, sum_h, sum_h2 }
+    -- group_stats[gid] = { n, sum_h, sum_h2, sum_h3 }.
+    -- sum_h3 (sum of absq^3) is maintained so that the group's third central
+    -- moment ("skew") can be computed exactly and incrementally.  skew is used
+    -- as a tie-breaker preferring ridges (one low outlier) over spikes (one
+    -- high outlier) at equal mismatch.
+    local group_stats = {}
     for gid, g in ipairs(groups) do
         g.gid = gid
-        local n, sum_h, sum_h2 = 0, 0, 0
+        local n, sum_h, sum_h2, sum_h3 = 0, 0, 0, 0
         for _, e in ipairs(g.entries) do
             local node = e.node
             local p = e.p
@@ -395,8 +410,9 @@ local function normalize(x, z, input)
             n = n + 1
             sum_h = sum_h + absq
             sum_h2 = sum_h2 + absq * absq
+            sum_h3 = sum_h3 + absq * absq * absq
         end
-        group_stats[gid] = { n = n, sum_h = sum_h, sum_h2 = sum_h2 }
+        group_stats[gid] = { n = n, sum_h = sum_h, sum_h2 = sum_h2, sum_h3 = sum_h3 }
     end
     -- fill center points (p=5) for all nodes (no group)
     for _, node in ipairs(nodes) do
@@ -423,10 +439,30 @@ local function group_mismatch(stats)
     return stats.n * stats.sum_h2 - stats.sum_h * stats.sum_h
 end
 
+-- Group skew (third central moment, scaled by n^2 so it stays an integer):
+--   skew = n^2 * sum(h^3) - 3*n * sum(h^2) * sum(h) + 2 * sum(h)^3
+-- Positive => the group has a high "spike" outlier; negative => a low
+-- "ridge" outlier.  The optimizer minimizes total skew as a tie-breaker at
+-- equal mismatch, so ridges are preferred over spikes.
+local function group_skew(stats)
+    local n = stats.n
+    return n * n * stats.sum_h3
+           - 3 * n * stats.sum_h2 * stats.sum_h
+           + 2 * stats.sum_h * stats.sum_h * stats.sum_h
+end
+
 local function total_mismatch(state)
     local s = 0
     for gid = 1, #state.groups do
         s = s + group_mismatch(state.group_stats[gid])
+    end
+    return s
+end
+
+local function total_skew(state)
+    local s = 0
+    for gid = 1, #state.groups do
+        s = s + group_skew(state.group_stats[gid])
     end
     return s
 end
@@ -521,10 +557,19 @@ local function total_movement(state)
     return s
 end
 
--- full lexicographic energy tuple
+-- full lexicographic energy tuple.
+-- Component order (lexicographic, most significant first):
+--   1. total interior mismatch   (never make the terrain rougher)
+--   2. total skew * spike_bias    (prefer ridges over spikes at equal mismatch;
+--                                  spike_bias==0 disables this term entirely)
+--   3. change penalty            (stability / minimal node changes)
+--   4. total base-y movement
+--   5. center-point residual      (low-weight smoothness)
+-- spike_bias is stored on the state by optimize(); default is 1.
 local function energy_tuple(state)
     return {
         total_mismatch(state),
+        total_skew(state) * (state.spike_bias or 1),
         total_change_penalty(state),
         total_movement(state),
         total_center_residual(state),
@@ -586,12 +631,18 @@ end
 ----------------------------------------------------------------------------
 
 -- Compute the delta tuple (relative to current state) of switching `node`
--- to candidate (yq_new, geom_new). Returns { dM, dC, dMov, dCenter }.
+-- to candidate (yq_new, geom_new). Returns { dM, dSkew, dC, dMov, dCenter }.
+-- dSkew is the change in total skew (third central moment of group border
+-- point elevations) scaled by the spike bias.  At equal mismatch a move
+-- that lowers the total skew turns a high "spike" outlier into a low
+-- "ridge" outlier and is preferred; see group_skew / energy_tuple.
 local function eval_candidate(state, node, yq_new, geom_new)
     local rel_new = GEOM_RELQ[geom_new]
+    local bias = state.spike_bias or 1
 
-    -- 1. group mismatch delta
+    -- 1. group mismatch and skew delta
     local dM = 0
+    local dSkew = 0
     for _, p in ipairs(BORDER_POINTS) do
         local pt = node.pts[p]
         if pt and pt.group then
@@ -600,11 +651,18 @@ local function eval_candidate(state, node, yq_new, geom_new)
             local old_absq = pt.absq
             local new_absq = yq_new + rel_new[p]
             if old_absq ~= new_absq then
-                local old_m = st.n * st.sum_h2 - st.sum_h * st.sum_h
-                local ns = st.sum_h - old_absq + new_absq
-                local ns2 = st.sum_h2 - old_absq * old_absq + new_absq * new_absq
-                local new_m = st.n * ns2 - ns * ns
+                local n = st.n
+                local s, s2, s3 = st.sum_h, st.sum_h2, st.sum_h3
+                local old_m = n * s2 - s * s
+                local old_sk = n * n * s3 - 3 * n * s2 * s + 2 * s * s * s
+                local ns  = s  - old_absq + new_absq
+                local ns2 = s2 - old_absq * old_absq + new_absq * new_absq
+                local ns3 = s3 - old_absq * old_absq * old_absq
+                              + new_absq * new_absq * new_absq
+                local new_m  = n * ns2 - ns * ns
+                local new_sk = n * n * ns3 - 3 * n * ns2 * ns + 2 * ns * ns * ns
                 dM = dM + (new_m - old_m)
+                dSkew = dSkew + (new_sk - old_sk) * bias
             end
         end
     end
@@ -646,10 +704,11 @@ local function eval_candidate(state, node, yq_new, geom_new)
     node.pts[5].absq = saved
     local dCenter = new_res2 - old_res
 
-    return { dM, dC, dMov, dCenter }
+    return { dM, dSkew, dC, dMov, dCenter }
 end
 
--- Apply a candidate to the state (updates group stats and node fields).
+-- Apply a candidate to the state (updates group stats and node fields,
+-- including the sum_h3 used for the skew tie-breaker).
 local function apply_candidate(state, node, yq_new, geom_new)
     local rel_new = GEOM_RELQ[geom_new]
     for _, p in ipairs(BORDER_POINTS) do
@@ -661,6 +720,8 @@ local function apply_candidate(state, node, yq_new, geom_new)
                 local old_absq = pt.absq
                 st.sum_h = st.sum_h - old_absq + new_absq
                 st.sum_h2 = st.sum_h2 - old_absq * old_absq + new_absq * new_absq
+                st.sum_h3 = st.sum_h3 - old_absq * old_absq * old_absq
+                              + new_absq * new_absq * new_absq
             end
             pt.absq = new_absq
         end
@@ -701,12 +762,17 @@ end
 local MAX_PASSES = 8
 
 local function optimize(state, options)
+    -- spike_bias controls the ridge-over-spike tie-breaker (see energy_tuple).
+    -- nil -> 1 (default preference), 0 disables.  Stored on the state so that
+    -- energy_tuple and eval_candidate share one consistent value.
+    state.spike_bias = options and options.spike_bias or 1
     local init_energy = energy_tuple(state)
 
     dbg(options, "[smooth] defined=%d fixed=%d undef=%d groups=%d",
         state.n_defined, state.n_fixed, state.n_undef, #state.groups)
-    dbg(options, "[smooth] init energy M=%d C=%d Mov=%d Center=%d",
-        init_energy[1], init_energy[2], init_energy[3], init_energy[4])
+    dbg(options, "[smooth] init energy M=%d Skew=%d C=%d Mov=%d Center=%d",
+        init_energy[1], init_energy[2], init_energy[3], init_energy[4],
+        init_energy[5])
 
     for pass = 1, MAX_PASSES do
         local improved_in_pass = 0
@@ -724,7 +790,7 @@ local function optimize(state, options)
                     if c.yq ~= node.yq or c.geom ~= node.geom then
                         local d = eval_candidate(state, node, c.yq, c.geom)
                         -- strict improvement: delta must be lexicographically < 0
-                        if lex_less(d, {0, 0, 0, 0}) then
+                        if lex_less(d, {0, 0, 0, 0, 0}) then
                             if best_delta == nil or lex_less(d, best_delta) then
                                 best_delta = d
                                 best_cand = c
@@ -743,8 +809,9 @@ local function optimize(state, options)
     end
 
     local final_energy = energy_tuple(state)
-    dbg(options, "[smooth] final energy M=%d C=%d Mov=%d Center=%d",
-        final_energy[1], final_energy[2], final_energy[3], final_energy[4])
+    dbg(options, "[smooth] final energy M=%d Skew=%d C=%d Mov=%d Center=%d",
+        final_energy[1], final_energy[2], final_energy[3], final_energy[4],
+        final_energy[5])
 end
 
 ----------------------------------------------------------------------------
@@ -784,8 +851,6 @@ local function build_output(state)
     return out
 end
 
-print("DEBUG: C")
-
 ----------------------------------------------------------------------------
 -- 14. Public function
 ----------------------------------------------------------------------------
@@ -822,8 +887,6 @@ M._internal = {
     gen_candidates = gen_candidates,
 }
 ]]
-
-print("DEBUG: B")
 
 return assert(M.smooth_5x5)
 -- return M

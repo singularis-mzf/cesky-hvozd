@@ -13,7 +13,7 @@ if minetest.get_modpath("default") then
 		-- ["dirt_with_dry_grass"] = true,
 		["dirt_with_grass"] = true,
 		["dirt_with_rainforest_litter"] = true,
-		-- ["dirt_with_snow"] = true,
+		["dirt_with_snow"] = true,
 		["dry_dirt"] = true,
 		["dry_dirt_with_dry_grass"] = true,
 		["gravel"] = true,
