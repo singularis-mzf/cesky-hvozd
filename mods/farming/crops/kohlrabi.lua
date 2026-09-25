@@ -19,7 +19,7 @@ local def = {
 	tiles = {"cucina_vegana_kohlrabi_1.png"},
 	paramtype = "light",
 	paramtype2 = "meshoptions",
-	place_param2 = 3,
+	place_param2 = 1,
 	sunlight_propagates = true,
 	walkable = false,
 	buildable_to = true,
@@ -83,3 +83,15 @@ farming.registered_plants["farming:kohlrabi"] = {
 	maxlight = farming.max_light,
 	steps = 6
 }
+
+core.register_lbm({
+	label = "Upgrade kohlrabi's param2",
+	name = "farming:upgrade_kohlrabi_20260925",
+	nodenames = {"farming:kohlrabi_6"},
+	action = function(pos, node, dtime_s)
+		if node.param2 ~= 1 then
+			node.param2 = 1
+			core.swap_node(pos, node)
+		end
+	end,
+})
