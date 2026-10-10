@@ -262,7 +262,6 @@ routes = {
 		ars = { <ARS rule definition table> }
 		use_rscache = false -- if true, the track section's rs_cache will be used to set locks in addition to the locks table
 							-- this is disabled for legacy routes, but enabled for all new routes by default
-		default_autoworking = false -- if true, when route is set autoworking will be by default on. Used for Blocksignal mode
 	}
 }
 

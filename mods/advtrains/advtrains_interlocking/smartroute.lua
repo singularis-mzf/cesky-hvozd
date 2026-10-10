@@ -226,23 +226,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		if sel_rte == 1 and #tcbs.routes == 1 then
 			local route1 = tcbs.routes[1]
 			route1.ars = {default=true}
-			-- if that only route furthermore is a suitable block signal route (1 section with no locks), set it into block signal mode
-			if #route1 == 1 then
-				local ts = tcbs.ts_id and advtrains.interlocking.db.get_ts(tcbs.ts_id)
-				if ts and #ts.tc_breaks == 2 then
-					-- check for presence of any locks
-					local epos1 = advtrains.encode_pos(ts.tc_breaks[1].p)
-					local epos2 = advtrains.encode_pos(ts.tc_breaks[2].p)
-					local haslocks =
-							(route1[1].locks and next(route1[1].locks)) -- the route itself has no locks
-							or (ts.fixed_locks and next(ts.fixed_locks)) -- the section has no fixedlocks
-							or (ts.rs_cache and ts.rs_cache[epos1] and ts.rs_cache[epos1][epos2] and next(ts.rs_cache[epos1][epos2])) -- the section has no locks in rscache
-					if not haslocks then
-						-- yeah, blocksignal!
-						route1.default_autoworking = true
-					end
-				end
-			end
 		end
 		--atdebug("Smartroute done!")
 		advtrains.interlocking.show_signalling_form(sigd, pname, sel_rte)

@@ -266,6 +266,7 @@ Target:=Cíl:
 Temporary local speed restriction sign=dočasné omezení traťové rychlosti
 Text displayed inside train=Text zobrazený uvnitř (5 ř.)
 Text displayed outside on train=Text zobrazený venku (3 ř.)
+The clipboard couldn't access the metadata. Copy failed.=Přístup k metadatům byl odepřen. Duplikace selhala.
 The track you are trying to place the wagon on is not long enough!=Trať není dost dlouhá na umístění tohoto vagonu!
 The wagon's inventory is not empty!=Inventář tohoto vagonu není prázdný!
 There's a Signal Influence Point here.=Zde je bod účinku signalizace.
@@ -290,6 +291,7 @@ Track Worker Tool@n@nLeft-click: change rail type (straight/curve/switch)@nRight
 Track with Railway Gravel=kolej s železničním štěrkem
 Track=kolej
 Train copy/paste tool@n@nLeft-click: copy train@nRight-click: paste train=duplikátor vlakových souprav@n@nKlik levým: zkopírovat soupravu do schránky@nKlik pravým: umístit duplikát na trať
+Train copied.=Vlaková souprava zkopírována do schránky.
 Train ID=ID vlaku
 Train overview / coupling control is only shown when the train stands.=Ovládání spřáhel je možné jen u strojícího vlaku
 Train overview/coupling control:=Ovládání spřáhel:

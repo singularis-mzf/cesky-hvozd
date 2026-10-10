@@ -418,10 +418,6 @@ function ilrs.update_route(sigd, tcbs, newrte, cancel)
 			--atdebug("Committed Route:",tcbs.routeset)
 			-- set_route now sets the signal aspects
 			--has_changed_aspect = true
-			-- route success. apply default_autoworking flag if requested
-			if route.default_autoworking then
-				tcbs.route_auto = true --FIX 2025-01-08: never set it to false if it was true!
-			end
 		end
 	end
 	if has_changed_aspect then
