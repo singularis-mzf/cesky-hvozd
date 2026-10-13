@@ -2,7 +2,7 @@ ch_base.open_mod(minetest.get_current_modname())
 --[[ Helpers ]]--
 
 local S = minetest.get_translator("bike")
-
+local has_clothing = core.get_modpath("clothing")
 
 -- Skin mod detection
 local skin_mod
@@ -78,12 +78,8 @@ for _, mod in pairs(skin_mods) do
 end
 
 local function get_player_skin(player)
-	-- local name = player:get_player_name()
-	-- local armor_tex = ""
-	if skin_mod == "skinsdb" then
-		return "blank.png^[resize:64x32^[combine:56x32:0,0="..assert(skins.get_player_skin(player)["_texture"])..":0,16=bike_grey_overlay.png"
-	end
-	return "bike_replacement.png" --[[
+	local name = player:get_player_name()
+	local armor_tex = ""
 	if minetest.global_exists("armor") then
 		-- Filter out helmet (for bike helmet) and boots/shield (to not mess up UV mapping)
 		local function filter(str, find)
@@ -110,10 +106,51 @@ local function get_player_skin(player)
 		skin = armor:get_player_skin(name)
 	end
 	return skin..armor_tex
-	]]
 end
 
+-- returns player clothing texture if available, "blank.png" otherwise
+local function get_player_clothing(player)
+	if has_clothing then
+		local name = player:get_player_name()
+		local pt = ch_core.safe_get_3(clothing, "player_textures", name)
+		return (pt and pt.clothing) or "blank.png"
+	else
+		return "blank.png"
+	end
+end
 
+-- returns "^"..texture if cape is available; "" otherwise
+local function get_player_cape(player)
+	if has_clothing then
+		local name = player:get_player_name()
+		local pt = ch_core.safe_get_3(clothing, "player_textures", name)
+		if pt and pt.cape and pt.cape ~= "blank.png" then
+			return "^"..pt.cape
+		end
+	end
+	return ""
+end
+
+local function get_player_overlay(player)
+	local skin_tex = ""
+	if skin_mod == "skinsdb" then
+		local player_skin = skins.get_player_skin(player)
+		if player_skin:get_meta("format") == "1.8" then
+			skin_tex = player_skin:get_texture()
+		end
+	end
+	local clothing_tex = get_player_clothing(player)
+	if skin_tex == "" then
+		-- clothing only
+		return clothing_tex
+	elseif clothing_tex == "blank.png" then
+		-- skin only
+		return skin_tex
+	else
+		-- skin and clothing
+		return skin_tex.."^"..clothing_tex
+	end
+end
 
 -- Bike metal texture handling
 local function is_hex(color)
@@ -199,6 +236,7 @@ local function default_tex(metaltex, alpha)
 		"bike_metal_black.png",
 		"bike_metal_black.png",
 		"bike_blank.png",
+		"blank.png", -- new texture in the model for Clothing-compatibility
 		"bike_tread.png",
 		"bike_gear.png",
 		"bike_spokes.png",
@@ -214,6 +252,7 @@ local bike = {
 		-- Warning: Do not change the position of the collisionbox top surface,
 		-- lowering it causes the bike to fall through the world if underwater
 		collisionbox = {-0.5, -0.4, -0.5, 0.5, 0.8, 0.5},
+		selectionbox = {-0.4, -0.4, -0.25, 0.4, 0.8, 1.25, rotate = true},
 		visual = "mesh",
 		mesh = "bike.b3d",
 		collide_with_objects = false,
@@ -305,15 +344,15 @@ function bike.on_rightclick(self, clicker)
 				"bike_leather.png",
 				"bike_metal_black.png",
 				"bike_metal_black.png",
-				get_player_skin(clicker).."^bike_helmet.png",
+				get_player_skin(clicker)..get_player_cape(clicker).."^bike_helmet.png",
+				get_player_overlay(clicker), -- new overlay for Clothing compatibility
 				"bike_tread.png",
 				"bike_gear.png",
 				"bike_spokes.png",
 				"bike_tread.png",
 				"bike_spokes.png",
 			},
-		})
-		-- Save the player's properties that we need to change
+		})		-- Save the player's properties that we need to change
 		self.old_driver["vsize"] = clicker:get_properties().visual_size
 		local offset_first, offset_third = clicker:get_eye_offset()
 		self.old_driver.eye_offset = {
@@ -405,7 +444,6 @@ function bike.on_punch(self, puncher)
 	punch_cache = new_punch_cache
 
 	local itemstack = puncher:get_wielded_item()
-	-- print("LADĚNÍ: bike.on_punch() called with itemstack = "..dump2({itemstack = itemstack, name = itemstack:get_name(), count = itemstack:get_count()}))
 	-- Bike painting
 	if itemstack:get_name() == "bike:painter" then
 		-- No painting while someone is riding :P
@@ -428,6 +466,7 @@ function bike.on_punch(self, puncher)
 				"bike_metal_black.png",
 				"bike_metal_black.png",
 				"bike_blank.png",
+				"blank.png", -- new texture for Clothing compatibility
 				"bike_tread.png",
 				"bike_gear.png",
 				"bike_spokes.png",
