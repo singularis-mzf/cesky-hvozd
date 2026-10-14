@@ -1,10 +1,10 @@
 ch_core.open_submod("nodes")
 
-local def
+local box, def
 
 -- ch_core.light_{0..15}
 ---------------------------------------------------------------
-local box = {
+box = {
 	type = "fixed",
 	fixed = {{-1/16, -8/16, -1/16, 1/16, -7/16, 1/16}}
 }
@@ -53,25 +53,18 @@ end
 minetest.register_alias("ch_core:light_max", "ch_core:light_"..minetest.LIGHT_MAX)
 
 -- Glass overrides:
+---------------------------------------------------------------
 
-local tex_edge = "ch_core_white_pixel.png^[multiply:#bbbbbb"
+-- local tex_edge = "ch_core_white_pixel.png^[multiply:#bbbbbb"
 local tex_glass = "ch_core_white_pixel.png^[opacity:40"
 local tex_framedglass = tex_glass.."^[resize:32x32^(ch_core_white_frame32.png^[multiply:#bbbbbb)"
-local tile_edge = {name = tex_edge, backface_culling = true}
-local tile_framedglass = {name = tex_framedglass, backface_culling = true}
-
-
--- DEBUG test:
-tile_framedglass.name = tex_glass
-
-
+-- local tile_edge = {name = tex_edge, backface_culling = true}
+-- local tile_framedglass = {name = tex_framedglass, backface_culling = true}
 
 core.override_item("default:glass", {
 	tiles = {tex_framedglass, tex_glass},
 	use_texture_alpha = "blend",
 })
-
-
 local override = {use_texture_alpha = "blend"}
 for _, c in ipairs({"a", "b", "c", "d", "cd_a", "cd_b", "cd_c", "cd_d"}) do
 	local n = "doors:door_glass_"..c
@@ -79,7 +72,6 @@ for _, c in ipairs({"a", "b", "c", "d", "cd_a", "cd_b", "cd_c", "cd_d"}) do
 		core.override_item(n, override)
 	end
 end
-
 for _, n in ipairs({"xpanes:pane_flat", "xpanes:pane"}) do
 	local t = assert(core.registered_nodes[n].tiles)
 	for i, tile in ipairs(t) do

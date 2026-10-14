@@ -75,41 +75,10 @@ for k, t in pairs(global_data_data_types) do
 	end
 end
 
--- DATA O POSTAVÁCH
--- ===========================================================================
--- key => "int|float", unknown keys are deserialized as strings
-local offline_charinfo_data_types = {
-	ap_level = "int", -- > 0
-	ap_xp = "int", -- >= 0
-	ap_version = "int", -- >= 0
-	discard_drops = "int", -- 0 = nic, 1 = předměty házet do koše
-	domov = "string",
-	doslech = "int", -- >= 0
-	extended_inventory = "int", -- 0 = normální velikost, 1 = rozšířený inventář
-	last_ann_shown_date = "string", -- datum, kdy byla hráči/ce naposledy vypsána oznámení po přihlášení do hry (YYYY-MM-DD)
-	last_login = "int", -- >= 0, in seconds since 1. 1. 2000 UTC; 0 is invalid value
-	neshybat = "int", -- 0 = shýbat se při stisku Shift, 1 = neshýbat se
-	no_ch_sky = "int", -- 0 = krásná obloha ano, 1 = ne
-	past_ap_playtime = "float", -- in seconds
-	past_playtime = "float", -- in seconds
-	pending_registration_privs = "string",
-	pending_registration_type = "string",
-	rezim_plateb = "int", -- >= 0, význam podle módu ch_bank
-	skryt_body = "int", -- 0 => zobrazit, 1 => skrýt
-	skryt_hlad = "int", -- 0 => zobrazovat (výchozí), 1 => skrýt
-	skryt_zbyv = "int", -- 0 => zobrazovat (výchozí), 1 => skrýt
-	stavba = "string",
-	ui_event_filter = "string",
-	zacatek_kam = "int", -- 1 => Začátek, 2 => Masarykovo náměstí, 3 => Hlavní nádraží
-
-	trest = "int",
-}
-
 local storage = ch_core.storage
-
 ch_core.global_data = table.copy(initial_global_data)
 
-local function is_acceptable_name(player_name)
+ch_data.is_acceptable_name = function(player_name)
 	local types = {}
 	for i = 1, #player_name do
 		local b = string.byte(player_name, i)
@@ -139,41 +108,6 @@ local function is_acceptable_name(player_name)
 		end
 	end
 	return digits <= 4 and dashes <= 5 -- omezení počtu
-end
-ch_data.is_acceptable_name = is_acceptable_name
-
-local function is_invalid_player_name(player_name)
-	if type(player_name) == "number" then
-		player_name = tostring(player_name)
-	elseif type(player_name) ~= "string" then
-		return "Invalid player_name type "..type(player_name).."!"
-	end
-	if #player_name == 0 then
-		return "Empty player_name!"
-	end
-	if #player_name > 19 then
-		return "Player name "..player_name.." too long!"
-	end
-	if string.find(player_name, "[^_%w-]") then
-		return "Player name '"..player_name.."' contains an invalid character!"
-	end
-	return false
-end
-
---[[
-local function verify_valid_player_name(player_name)
-	local message = is_invalid_player_name(player_name)
-	if message then
-		error(message)
-	else
-		return tostring(player_name)
-	end
-end
-]]
-
-function ch_core.get_offline_charinfo(player_name)
-	core.log("warning", "Obsolete function ch_core.get_offline_charinfo() called!")
-	return ch_data.get_offline_charinfo(player_name)
 end
 
 function ch_core.save_global_data(keys)
@@ -205,12 +139,6 @@ function ch_core.save_global_data(keys)
 		storage:set_string(full_key, value or "")
 	end
 	return true
-end
-
--- datatype = "string"|"int"|"float"|"vector"|"nil"
-function ch_core.save_offline_charinfo(player_name, keys)
-	core.log("warning", "Obsolete function ch_core.save_offline_charinfo() called!")
-	return ch_data.save_offline_charinfo(player_name)
 end
 
 function ch_core.set_titul(player_name, titul)
@@ -271,7 +199,6 @@ end
 
 -- restore offline data from the storage
 local player_counter, player_field_counter, global_counter, delete_counter = 0, 0, 0, 0
-local player_set = {}
 local storage_table = (storage:to_table() or {}).fields or {}
 for full_key, value in pairs(storage_table) do
 	local player_name, key = full_key:match("^([^/]*)/(.+)$")
@@ -279,24 +206,6 @@ for full_key, value in pairs(storage_table) do
 		local data_type = global_data_data_types[key]
 		ch_core.global_data[key] = restore_value_by_type(data_type, value, "global property "..key)
 		global_counter = global_counter + 1
-	--[[elseif player_name and not is_invalid_player_name(player_name) and (player_set[player_name] or ch_data.offline_charinfo[player_name] == nil) then
-		local ch_data_offline_charinfo = ch_data.get_or_add_offline_charinfo(player_name)
-		local data_type = offline_charinfo_data_types[key]
-		if data_type == "int" then
-			ch_data_offline_charinfo[key] = math.round(tonumber(value))
-			core.log("warning", "Offline charinfo upgraded from storage: "..player_name.."/"..key.."=(int)"..tostring(ch_data_offline_charinfo[key]))
-		elseif data_type == "float" then
-			ch_data_offline_charinfo[key] = tonumber(value)
-			core.log("warning", "Offline charinfo upgraded from storage: "..player_name.."/"..key.."=(float)"..tostring(ch_data_offline_charinfo[key]))
-		else
-			ch_data_offline_charinfo[key] = value
-			core.log("warning", "Offline charinfo upgraded from storage: "..player_name.."/"..key.."=(string)\""..tostring(ch_data_offline_charinfo[key]).."\"")
-		end
-		player_field_counter = player_field_counter + 1
-		if player_set[player_name] == nil then
-			player_set[player_name] = true
-			player_counter = player_counter + 1
-		end]]
 	else
 		storage:set_string(full_key, "")
 		core.log("warning", "Invalid key '"..full_key.."' (value "..value..") removed from mod storage!")
@@ -304,10 +213,6 @@ for full_key, value in pairs(storage_table) do
 	end
 end
 print("[ch_core] Restored "..player_field_counter.." data pairs of "..player_counter.." players and "..global_counter.." global pairs from the mod storage. "..delete_counter.." was deleted.")
-
-for player_name, _ in pairs(player_set) do
-	ch_data.save_offline_charinfo(player_name)
-end
 
 -- Check and update keys
 for key, data_type in pairs(global_data_data_types) do

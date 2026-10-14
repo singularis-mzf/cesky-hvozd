@@ -430,6 +430,12 @@ local function get_formspec(player, perplayer_formspec)
 			fsgen:checkbox("extinv", "rozšířený hlavní inventář", toffline_charinfo.extended_inventory == 1, tooltip))
 	end
 
+	-- Automatické otevírání dveří? [all players]
+	tooltip =
+		"Je-li zapnuto, podporované dveře se samy otevřou, když se k nim přiblížíte."
+		table.insert(formspec,
+		fsgen:checkbox("doorautoopen", "automatické otevírání dveří", toffline_charinfo.otevirat_dvere == 1, tooltip))
+
 	if tplayer ~= nil then
 		-- Osobní osvětlení světa [all players in game]
 		tooltip =
@@ -781,6 +787,10 @@ local function on_player_receive_fields(player, formname, fields)
 		end
 	elseif fields.chs_extinv then
 		ch_core.extend_player_inventory(tplayer_name, fields.chs_extinv == "true")
+		update_formspec = true
+	elseif fields.chs_doorautoopen then
+		toffline_charinfo.otevirat_dvere = ifthenelse(fields.chs_doorautoopen == "true", 1, 0)
+		ch_data.save_offline_charinfo(tplayer_name)
 		update_formspec = true
 
 	-- 3. FIELDS WITH BUTTONS

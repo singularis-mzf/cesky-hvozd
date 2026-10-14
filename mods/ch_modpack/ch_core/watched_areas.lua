@@ -33,29 +33,77 @@ end
 -- ch_data online_charinfo:
 -- .wa_last_pos = vector (rounded vector of the last player position)
 
-local function remove_if_expired(os_time, area_id, area)
-    if os_time < area.expire_at then
-        return false -- not expired
-    else
+local function debug_watched_areas()
+    local os_time = os.time()
+    local result = {""}
+    local n = 0
+    for area_id, area in pairs(areas) do
+        local pos = core.get_position_from_hash(area_id)
+        local pos_str = core.pos_to_string(pos)
+        local ttl = area.expire_at - os_time
+        table.insert(result, pos_str.." ["..ttl.."]")
+        n = n + 1
+    end
+    result[1] = n.." watched areas exist"
+    return table.concat(result, " | ")
+end
+
+-- Vrací nil, pokud oblast již vypršela; jinak vrací area.
+local function get_valid_area(os_time, area_id)
+    local area = areas[area_id]
+    if area ~= nil and os_time >= area.expire_at then
+        -- Oblast vypršela
         core.log("action", "DEBUG: watched area at "..core.pos_to_string(core.get_position_from_hash(area_id)).." expired.")
         areas_for_writing()[area_id] = nil
-        return true
+        area.on_area_action(area.state, "destructed", {min = area.min, max = area.max})
+        -- Oblast mohla být znovu zaregistrována.
+        return areas[area_id]
     end
+    return area
+end
+
+local function do_nothing()
+    return nil
 end
 
 --[[
+    Pro blok na pozici `pos` zaregistruje dočasnou hlídanou oblast. Vstupy a odchody postav
+    budou hlášeny voláním callbacků. Po každou pozici může být v jednu chvíli jen jedna registrovaná
+    hlídaná oblast.
+
     args = {
         min = vector,
         max = vector,
-        on_enter, on_leave, on_joinplayer, on_leaveplayer, on_registered = function() or nil,
+        on_area_action = function(area_state, action_type, action_args) or nil,
+        -- on_enter, on_leave, on_joinplayer, on_leaveplayer, on_registered = function() or nil,
         state = any,
-        ttl = int > 0 or nil, -- default = 300
+        ttl = int > 0 or nil, -- nil => 300 -- za jak dlouho má oblast vypršet
     }
     -- on_registered({[player_name] = PlayerRef, ...}, state) -- may be called with an empty list
+
+    Podporované akce (action_type):
+    - "registered" — zavolá se po úspěšné registraci oblasti;
+      action_args = {[player_name] = PlayerRef, ...} (tabulka postav, které aktuálně uvnitř oblasti jsou)
+    - "destructed" — zavolá se poté, co oblast vypršela a byla smazána; může oblast znovu zaregistrovat
+      action_args = {min = vector, max = vector}
+    - "enter" — hráčská postava vstoupila do oblasti
+      action_args = PlayerRef
+    - "leave" — hráčská postava odešla z oblasti
+      action_args = PlayerRef
+    - "joinplayer" — hráčská postava se ocitla v oblasti po přihlášení do hry
+      action_args = PlayerRef
+    - "leaveplayer" — hráčská postava se odhlásila ze hry uvnitř oblasti
+      action_args = PlayerRef
+
+    Parametr args může být null, pokud na dané pozici leží blok, který ve své definici
+    definuje funkci get_watched_area_def(pos), která vrátí tabulku — ta se pak použije
+    namísto args.
 ]]
 function ch_core.register_watched_area(pos, args)
+    local os_time = os.time()
     local area_id = core.hash_node_position(pos)
-    if areas[area_id] ~= nil then
+    local area = get_valid_area(os_time, area_id)
+    if area ~= nil then
         error("Watched area at "..core.pos_to_string(pos).." is already registered!")
     end
     if args == nil then
@@ -65,6 +113,9 @@ function ch_core.register_watched_area(pos, args)
             error("ch_core.register_watched_area() called with null args, but the node at "..core.pos_to_string(pos).." ("..node.name..") has no get_watched_area_def() callback!")
         end
         args = assert(ndef.get_watched_area_def(pos))
+        if type(args) ~= "table" then
+            error("get_watched_area_def(pos) callback for "..node.name.." returned invalid type "..type(args).."!")
+        end
     end
     local min, max = vector.copy(args.min), vector.copy(args.max)
     if min.x > max.x then
@@ -76,64 +127,53 @@ function ch_core.register_watched_area(pos, args)
     if min.z > max.z then
         min.z, max.z = max.z, min.z
     end
-    local area = {min = min, max = max}
-    if type(args.on_registered) == "function" then
-        area.on_registered = args.on_registered
-    end
-    if type(args.on_enter) == "function" then
-        area.on_enter = args.on_enter
-    end
-    if type(args.on_leave) == "function" then
-        area.on_leave = args.on_leave
-    end
-    if type(args.on_joinplayer) == "function" then
-        area.on_joinplayer = args.on_joinplayer
-    end
-    if type(args.on_leaveplayer) == "function" then
-        area.on_leaveplayer = args.on_leaveplayer
-    end
-    area.state = args.state
-    if type(args.ttl) == "number" and args.ttl >= 1 then
-        area.expire_at = os.time() + math.floor(args.ttl)
-    else
-        area.expire_at = os.time() + 300
-    end
     local players_in_area = {}
-    area.players = players_in_area
+    area = {
+        min = min,
+        max = max,
+        on_area_action = ch_core.ifthenelse(type(args.on_area_action) == "function", args.on_area_action, do_nothing),
+        state = args.state,
+        players = players_in_area,
+    }
+    if type(args.ttl) == "number" and args.ttl >= 1 then
+        area.expire_at = os_time + math.floor(args.ttl)
+    else
+        area.expire_at = os_time + 300
+    end
     for player_name, online_charinfo in pairs(ch_data.online_charinfo) do
-        if vector.in_area(assert(online_charinfo.wa_last_pos), area.min, area.max) then
+        if vector.in_area(assert(online_charinfo.wa_last_pos), min, max) then
             players_in_area[player_name] = assert(online_charinfo.player)
         end
     end
     areas_for_writing()[area_id] = area
-    if area.on_registered ~= nil then
-        return area.on_registered(area.players, area.state)
-    end
     core.log("action", "DEBUG: new watched area "..core.pos_to_string(pos).." registered.")
+    return area.on_area_action(area.state, "registered", players_in_area)
 end
 
 function ch_core.get_players_in_watched_area(pos)
-    local area_id = core.hash_node_position(pos)
-    local area = areas[area_id]
     local os_time = os.time()
-    if area == nil or remove_if_expired(os_time, area_id, area) then
+    local area_id = core.hash_node_position(pos)
+    local area = get_valid_area(os_time, area_id)
+    if area == nil then
         return nil
     end
     return area.players
 end
 
 local function is_watched_area_registered(area_id)
-    local area = areas[area_id]
-    return area ~= nil and not remove_if_expired(os.time(), area_id, area)
+    return get_valid_area(os.time(), area_id) ~= nil
 end
 
 function ch_core.is_watched_area_registered(pos)
     return is_watched_area_registered(core.hash_node_position(pos))
 end
 
+--[[
+    Prodlouží životnost registrované oblasti na minimálně min_ttl sekund od tohoto okamžiku.
+]]
 function ch_core.extend_watched_area_expiration(pos, min_ttl)
     local area_id = core.hash_node_position(pos)
-    local t = areas[area_id]
+    local t = areas[area_id] -- zde nechceme způsobit vypršení oblasti, proto nevoláme get_valid_area()
     if t == nil or min_ttl < 1 then
         return false
     end
@@ -145,14 +185,28 @@ function ch_core.extend_watched_area_expiration(pos, min_ttl)
     return false
 end
 
+--[[
+    Zruší registrovanou oblast a zavolá callback pro událost "destructed".
+    Vrací:
+        - true :: pokud oblast existovala a byla zrušena
+        - false :: pokud oblast neexistovala (nebo už předtím vypršela)
+        - nil :: pokud oblast existovala, ale po zrušení ji callback obnovil
+]]
 function ch_core.unregister_watched_area(pos)
+    local os_time = os.time()
     local area_id = core.hash_node_position(pos)
-    if areas[area_id] == nil then
-        return false -- not registered
+    local area = get_valid_area(os_time, area_id)
+    if area == nil then
+        return false
     end
     areas_for_writing()[area_id] = nil
     core.log("action", "DEBUG: Watched area at "..core.pos_to_string(pos).." unregistered.")
-    return true
+    area.on_area_action(area.state, "destructed", {min = area.min, max = area.max})
+    if areas[area_id] == nil then
+        return true
+    else
+        return nil
+    end
 end
 
 local function on_joinplayer(player)
@@ -161,15 +215,13 @@ local function on_joinplayer(player)
     local pos = vector.round(player:get_pos())
     local os_time = os.time()
     online_charinfo.wa_last_pos = pos
-    lock_areas()
-    for area_id, area in pairs(areas) do
-        if not remove_if_expired(os_time, area_id, area) and vector.in_area(pos, area.min, area.max) then
-            area.players[player_name] = player
+    local areas_snapshot = lock_areas()
+    for area_id, _ in pairs(areas_snapshot) do
+        local area = get_valid_area(os_time, area_id)
+        if area ~= nil and vector.in_area(pos, area.min, area.max) then
             -- player joined to a watched area
-            local f = area.on_joinplayer or area.on_enter
-            if f ~= nil then
-                f(player, area.state)
-            end
+            area.players[player_name] = player
+            area.on_area_action(area.state, "joinplayer", player)
         end
     end
     unlock_areas()
@@ -177,15 +229,14 @@ end
 
 local function on_leaveplayer(player)
     local player_name = player:get_player_name()
+    local os_time = os.time()
     lock_areas()
-    for _, area in pairs(areas) do
-        if area.players[player_name] ~= nil then
+    for area_id, _ in pairs(areas) do
+        local area = get_valid_area(os_time, area_id)
+        if area ~= nil and area.players[player_name] ~= nil then
             area.players[player_name] = nil
             -- player leaved the game inside a watched area
-            local f = area.on_leaveplayer or area.on_leave
-            if f ~= nil then
-                f(player, area.state)
-            end
+            area.on_area_action(area.state, "leaveplayer", player)
         end
     end
     unlock_areas()
@@ -198,52 +249,44 @@ local function globalstep(dtime)
     if not skip_globalstep then
         return
     end
-    local first_move = true
-    local f
     for player_name, online_charinfo in pairs(ch_data.online_charinfo) do
-        local player_pos = vector.round(online_charinfo.player:get_pos())
+        local player = online_charinfo.player
+        local player_pos = vector.round(player:get_pos())
         local last_pos = online_charinfo.wa_last_pos
         if not vector.equals(player_pos, last_pos) then -- if the player moved...
-
-            if first_move then -- if it is the first player who moved in the step, we must check for expired areas
-                local os_time = os.time()
-                lock_areas()
-                for area_id, area in pairs(areas) do
-                    remove_if_expired(os_time, area_id, area)
-                end
-                unlock_areas()
-                first_move = false
-            end
-
-            lock_areas()
-            for _, area in pairs(areas) do
-                if vector.in_area(player_pos, area.min, area.max) then
-                    -- the player is in the area
-                    -- print("DEBUG: TEST: "..player_name.." is in the area")
-                    if area.players[player_name] ~= nil then
-                        -- the player is was and is in the area
-                        f = nil
+            local os_time = os.time()
+            local actions = {} -- {state, action_type, player, area_id}
+            local areas_snapshot = lock_areas()
+            local area_id = next(areas_snapshot)
+            while area_id ~= nil do
+                local area = get_valid_area(os_time, area_id)
+                if area ~= nil then
+                    if vector.in_area(player_pos, area.min, area.max) then
+                        -- the player is in the area
+                        if area.players[player_name] == nil then
+                            -- the player was not, but now is in the area (enter)
+                            area.players[player_name] = player
+                            table.insert(actions, {area.state, "enter", player, area_id})
+                        end
                     else
-                        -- the player was not, but now is in the area (enter)
-                        area.players[player_name] = online_charinfo.player
-                        f = area.on_enter
-                    end
-                else
-                    -- the player is not in the area
-                    -- print("DEBUG: TEST: "..player_name.." is NOT in the area")
-                    if area.players[player_name] ~= nil then
-                        -- the player was is the area, but not they're not (leave)
-                        area.players[player_name] = nil
-                        f = area.on_leave
-                    else
-                        f = nil
+                        if area.players[player_name] ~= nil then
+                            -- the player was is the area, but now they're not (leave)
+                            area.players[player_name] = nil
+                            table.insert(actions, {area.state, "leave", player, area_id})
+                        end
                     end
                 end
-                if f ~= nil then
-                    f(online_charinfo.player, area.state) -- call the callback
-                end
+                area_id = next(areas_snapshot, area_id)
             end
             unlock_areas()
+
+            -- call callbacks
+            for _, action in ipairs(actions) do
+                local area = areas[action[4]]
+                if area ~= nil then
+                    area.on_area_action(action[1], action[2], action[3])
+                end
+            end
 
             -- update wa_last_pos:
             online_charinfo.wa_last_pos = player_pos
@@ -257,6 +300,56 @@ core.register_on_leaveplayer(on_leaveplayer)
 
 local node_name = "ch_core:watched_areas_test"
 
+local watched_area_action, watched_area_test_get_watched_area_def
+
+watched_area_action = function(state, action_type, action_args)
+    local pos = state.pos
+    print("DEBUG: "..core.pos_to_string(pos).." action "..action_type)
+    if action_type == "registered" then
+        local s = "Sledovaná oblast okolo "..core.pos_to_string(pos).." zaregistrována s těmito hráči/kami:"
+        local players = action_args
+        for pname, _ in pairs(players) do
+            s = s.."\n- "..pname
+        end
+        core.chat_send_all(s)
+    elseif action_type == "enter" then
+        local player = action_args
+        core.chat_send_player(player:get_player_name(), "Vstoupil/a jste do sledované oblasti okolo "..core.pos_to_string(pos))
+    elseif action_type == "leave" then
+        local player = action_args
+        core.chat_send_player(player:get_player_name(), "Opustil/a jste sledovanou oblast okolo "..core.pos_to_string(pos))
+    elseif action_type == "joinplayer" then
+        local player = action_args
+        core.chat_send_all(player:get_player_name().." se připojil/a do sledované oblasti okolo "..core.pos_to_string(pos))
+    elseif action_type == "leaveplayer" then
+        local player = action_args
+        core.chat_send_all(player:get_player_name().." se odpojil/a ve sledované oblasti okolo "..core.pos_to_string(pos))
+    elseif action_type == "destructed" then
+        local meta = core.get_meta(pos)
+        local lives = meta:get_int("watched_area_lives")
+        local s
+        if lives > 0 then
+            meta:set_int("watched_area_lives", lives - 1)
+            ch_core.register_watched_area(pos)
+            s = "Sledovaná oblast okolo "..core.pos_to_string(pos).." vzkříšena (měla "..lives.." životů, má "..meta:get_int("watched_area_lives")..")."
+        else
+            s = "Sledovaná oblast okolo "..core.pos_to_string(pos).." zrušena."
+        end
+        core.chat_send_all(s)
+    end
+    print("DEBUG: AREAS: "..debug_watched_areas())
+end
+
+watched_area_test_get_watched_area_def = function(pos)
+    return {
+        min = vector.offset(pos, -1, -1, -1),
+        max = vector.offset(pos, 1, 1, 1),
+        on_area_action = watched_area_action,
+        state = {pos = pos},
+        ttl = 30,
+    }
+end
+
 core.register_node(node_name, {
     description = "Test sledované oblasti [EXPERIMENTÁLNÍ]",
     tiles = {{name = "ch_core_white_pixel.png^[opacity:40^[resize:32x32", backface_culling = false}},
@@ -268,39 +361,17 @@ core.register_node(node_name, {
     }},
     selection_box = {type = "regular"},
     walkable = false,
-    groups = {oddly_breakable_by_hand = 1, experimental = 1, has_watched_area = 1},
+    groups = {oddly_breakable_by_hand = 1, experimental = 1,
+        has_watched_area__ = 1 -- disable this temporarily
+    },
     on_construct = function(pos)
         ch_core.register_watched_area(pos)
+        core.get_meta(pos):set_int("watched_area_lives", 1)
     end,
     on_destruct = function(pos)
         ch_core.unregister_watched_area(pos)
     end,
-    get_watched_area_def = function(pos)
-        return {
-            min = vector.offset(pos, -1, -1, -1),
-            max = vector.offset(pos, 1, 1, 1),
-            on_registered = function(players, state)
-                local s = "Sledovaná oblast okolo "..core.pos_to_string(pos).." zaregistrována s těmito hráči/kami:"
-                for pname, _ in pairs(players) do
-                    s = s.."\n- "..pname
-                end
-                core.chat_send_all(s)
-            end,
-            on_enter = function(player, state)
-                core.chat_send_player(player:get_player_name(), "Vstoupil/a jste do sledované oblasti okolo "..core.pos_to_string(pos))
-            end,
-            on_leave = function(player, state)
-                core.chat_send_player(player:get_player_name(), "Opustil/a jste sledovanou oblast okolo "..core.pos_to_string(pos))
-            end,
-            on_joinplayer = function(player, state)
-                core.chat_send_all(player:get_player_name().." se připojil/a do sledované oblasti okolo "..core.pos_to_string(pos))
-            end,
-            on_leaveplayer = function(player, state)
-                core.chat_send_all(player:get_player_name().." se odpojil/a ve sledované oblasti okolo "..core.pos_to_string(pos))
-            end,
-            ttl = 30,
-        }
-    end,
+    get_watched_area_def = watched_area_test_get_watched_area_def,
 })
 
 core.register_lbm({
@@ -309,18 +380,17 @@ core.register_lbm({
     nodenames = {"group:has_watched_area"},
     run_at_every_load = true,
     action = function(pos, node, dtime_s)
-        if ch_core.is_watched_area_registered(pos) then
-            print("DEBUG: LBM called for already registered watched area "..core.pos_to_string(pos))
-        else
+        if not ch_core.is_watched_area_registered(pos) then
             local ndef = core.registered_nodes[node.name]
             if ndef and ndef.get_watched_area_def then
                 print("DEBUG: LBM will register a new watched area at "..core.pos_to_string(pos))
-                ch_core.register_watched_area(pos, ndef.get_watched_area_def(pos))
+                ch_core.register_watched_area(pos)
             end
         end
     end,
 })
 
+-- Automaticky prodlužovat/zřizovat sledování blokům se skupinou has_watched_area
 core.register_abm({
     label = "Watched areas",
     nodenames = {"group:has_watched_area"},
@@ -331,13 +401,6 @@ core.register_abm({
         print("DEBUG: watched area ABM at "..core.pos_to_string(pos))
         if ch_core.is_watched_area_registered(pos) then
             ch_core.extend_watched_area_expiration(pos, 30)
-            --[[
-            if ch_core.extend_watched_area_expiration(pos, 30) then
-                print("Watched area "..core.pos_to_string(pos).." expiration extended.")
-            else
-                print("Watched area "..core.pos_to_string(pos).." expiration not extended.")
-            end
-            ]]
         else
             local ndef = core.registered_nodes[node.name]
             if ndef and ndef.get_watched_area_def then

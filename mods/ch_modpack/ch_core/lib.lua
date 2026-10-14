@@ -1514,6 +1514,85 @@ function ch_core.prihlasovaci_na_zobrazovaci(prihlasovaci, s_barvami)
 end
 
 --[[
+Vrací true, pokud paprsek vycházející z bodu `ray_start` a procházející bodem `ray_2`
+má průnik s AABB definovaným parametrem `aabb`.
+]]
+function ch_core.ray_through_aabb(ray_start, ray_2, aabb)
+  local bx, by, bz = ray_start.x, ray_start.y, ray_start.z
+  local dx, dy, dz = ray_2.x - bx, ray_2.y - by, ray_2.z - bz
+  local min_x, min_y, min_z, max_x, max_y, max_z = aabb[1], aabb[2], aabb[3], aabb[4], aabb[5], aabb[6]
+
+  -- Speciální případ: paprsek je jen jeden bod.
+  if dx == 0 and dy == 0 and dz == 0 then
+    return min_x <= bx and bx <= max_x
+       and min_y <= by and by <= max_y
+       and min_z <= bz and bz <= max_z
+  end
+
+  -- Otestovat průnik po souřadnicích pomocí rozsahu parametrů (slab method)
+  local tmin = 0
+  local tmax = math.huge
+
+  -- X slab
+  if dx ~= 0 then
+    local t1 = (min_x - bx) / dx
+    local t2 = (max_x - bx) / dx
+    if t1 > t2 then
+		t1, t2 = t2, t1
+	end
+    if t1 > tmin then
+		tmin = t1
+	end
+    if t2 < tmax then
+		tmax = t2
+	end
+    if tmin > tmax then return false end
+  elseif bx < min_x or bx > max_x then
+    return false
+  end
+
+  -- Y slab
+  if dy ~= 0 then
+    local t1 = (min_y - by) / dy
+    local t2 = (max_y - by) / dy
+    if t1 > t2 then
+		t1, t2 = t2, t1
+	end
+    if t1 > tmin then
+		tmin = t1
+	end
+    if t2 < tmax then
+		tmax = t2
+	end
+    if tmin > tmax then
+		return false
+	end
+  elseif by < min_y or by > max_y then
+    return false
+  end
+
+  -- Z slab
+  if dz ~= 0 then
+    local t1 = (min_z - bz) / dz
+    local t2 = (max_z - bz) / dz
+    if t1 > t2 then
+		t1, t2 = t2, t1
+	end
+    if t1 > tmin then
+		tmin = t1
+	end
+    if t2 < tmax then
+		tmax = t2
+	end
+    if tmin > tmax then return false end
+  elseif bz < min_z or bz > max_z then
+    return false
+  end
+
+  return true
+end
+
+--[[
 Zaregistruje bloky, které mají něco společného.
 ]]
 function ch_core.register_nodes(common_def, nodes, crafts)

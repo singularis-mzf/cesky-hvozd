@@ -136,6 +136,7 @@ local hud_dtime_accumulated = 0.0
 local get_us_time = assert(core.get_us_time)
 local has_wielded_light = core.get_modpath("wielded_light")
 local custom_globalsteps = {}
+local custom_on_player_moved = {}
 local last_ap_timestamp = 0
 local use_forbidden_height = ifthenelse(core.settings:get_bool("ch_forbidden_height", false), true, false)
 local gs_task
@@ -166,6 +167,15 @@ function ch_core.register_player_globalstep(func, index)
 		error("Invalid call to ch_core.register_player_globalstep()!")
 	end
 	custom_globalsteps[index] = func
+	return index
+end
+
+function ch_core.register_on_player_moved(func)
+	local index = #custom_on_player_moved + 1
+	if not func then
+		error("Invalid call to ch_core.register_on_player_moved()!")
+	end
+	custom_on_player_moved[index] = func
 	return index
 end
 
@@ -229,6 +239,8 @@ local function globalstep(dtime)
 		if online_charinfo then
 			local previous_wield_item_name = online_charinfo.wielded_item_name or ""
 			online_charinfo.wielded_item_name = player_wielded_item_name
+			local previous_pos = online_charinfo.last_player_pos -- may be nil
+			online_charinfo.last_player_pos = player_pos
 
 			-- ÚHEL HLAVY:
 			local emote = emoting[player]
@@ -375,6 +387,15 @@ local function globalstep(dtime)
 			while custom_globalsteps[i] do
 				custom_globalsteps[i](player, player_name, online_charinfo, offline_charinfo, us_time)
 				i = i + 1
+			end
+
+			-- SPUSTIT registrované funkce obsluhující pohyb
+			if previous_pos ~= nil and not vector.equals(previous_pos, player_pos) then
+				i = 1
+				while custom_on_player_moved[i] do
+					custom_on_player_moved[i](player, player_name, previous_pos, player_pos)
+					i = i + 1
+				end
 			end
 
 			-- SLEDOVÁNÍ AKTIVITY

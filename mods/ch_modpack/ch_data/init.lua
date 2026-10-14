@@ -40,6 +40,8 @@ ch_data = {
 		neshybat = 0,
 		-- int {0, 1} -- 0 = krásná obloha ano, 1 ne
 		no_ch_sky = 0,
+		-- int {0, 1} -- 0 = neotevírat automaticky, 1 = otevírat automaticky
+		otevirat_dvere = 1,
 		-- float -- v sekundách
 		past_ap_playtime = 0.0,
 		-- float -- v sekundách
