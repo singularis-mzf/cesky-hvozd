@@ -149,6 +149,50 @@ local function line_start(train, stn, departure_rwtime)
     return true
 end
 
+local function get_track_direction_vector(pos)
+    local node = advtrains.ndb.get_node(pos)
+    local conns = advtrains.get_track_connections(node.name, node.param2)
+    if conns then
+        return advtrains.dirToCoord(conns[1].c)
+    else
+        return nil
+    end
+end
+
+local function is_player_at_station(pos)
+    local dir_vector = get_track_direction_vector(pos)
+    if dir_vector == nil then
+        core.log("warning", "[advtrains] is_player_at_station() called at "..core.pos_to_string(pos).." where no track is located!")
+        return nil
+    end
+
+    local nv = vector.normalize(dir_vector)
+    local below = 1
+    local above = 2
+    local left = 8
+    local right = 8
+
+    for _, player in ipairs(core.get_connected_players()) do
+        local player_name = player:get_player_name()
+        if advtrains.player_to_train_mapping[player_name] == nil then -- only if the player is not in a train
+            local player_pos = player:get_pos()
+            local dx, dy, dz = player_pos.x - pos.x, player_pos.y - pos.y, player_pos.z - pos.z
+
+            -- local axes
+            local lx = dx * nv.z - dz * nv.x
+            local ly = dy
+            local lz = dx * nv.x + dz * nv.z
+
+            local result = lx >= -left and lx <= right and ly >= -below and ly <= above and lz >= -80 and lz <= 8
+            if result then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+
 --[[
     Vrací:
     - "true", pokud má vlak zastavit
