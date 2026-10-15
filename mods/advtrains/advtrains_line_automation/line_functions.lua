@@ -458,7 +458,7 @@ function al.get_line_description(linevar_def, options)
     return s1..s2..s3..s4
 end
 
-function al.get_stop_description(stop_data, next_stop_data)
+function al.get_stop_description(stop_data, next_stop_data, stop_request)
     local s1, s2 = "", ""
     if stop_data ~= nil then
         local mode = stop_data.mode
@@ -478,7 +478,7 @@ function al.get_stop_description(stop_data, next_stop_data)
         local mode = next_stop_data.mode
         if mode ~= MODE_DISABLED and mode ~= MODE_HIDDEN and mode ~= MODE_FINAL_HIDDEN then
             s2 = "Příští zastávka/stanice: "..get_station_name(next_stop_data.stn)
-            if mode == MODE_REQUEST_STOP then
+            if not stop_request and mode == MODE_REQUEST_STOP then
                 s2 = s2.." (na znamení)"
             end
         end
@@ -490,6 +490,46 @@ function al.get_stop_description(stop_data, next_stop_data)
     else
         return s1..s2
     end
+end
+
+function al.is_going_to_request_stop(train)
+    local line_status = train.line_status
+    if line_status == nil then
+        return false, "train has no line_status"
+    end
+    local linevar_def = al.try_get_linevar_def(line_status.linevar, line_status.linevar_station)
+    if linevar_def == nil then
+        return false, "train has not linevar"
+    end
+    if line_status.standing_at ~= nil then
+        return false, "train is standing at a station"
+    end
+    local next_stop_index, next_stop_data = al.get_next_stop(linevar_def, line_status.linevar_index, false)
+    if next_stop_index == nil then
+        return false, "no more stops"
+    end
+    return next_stop_data.mode == MODE_REQUEST_STOP, "ok"
+end
+
+function al.set_stop_request(train)
+    local line_status = train.line_status
+    if line_status == nil then
+        return false, "train has no line_status"
+    end
+    local linevar_def = al.try_get_linevar_def(line_status.linevar, line_status.linevar_station)
+    if linevar_def == nil then
+        return false, "train has not linevar"
+    end
+    if line_status.stop_request ~= nil then
+        return false, "stop request already set"
+    end
+    local next_stop_index, next_stop_data = al.get_next_stop(linevar_def, line_status.linevar_index, false)
+    if next_stop_index == nil then
+        return false, "no more stops"
+    end
+    line_status.stop_request = 1
+    train.text_inside = al.get_stop_description(nil, next_stop_data, true)
+    return true, "ok"
 end
 
 --[[
@@ -743,25 +783,32 @@ function al.on_train_enter(pos, train_id, train, index)
         debug_print("Vlak "..train_id.." projel zastávkou "..stn)
         return
     elseif should_stop_result == "on_request" then
-        -- projetí zastávky na znamení
-        debug_print("Vlak "..train_id.." projel zastávkou na znamení "..stn)
-        if linevar_def ~= nil and next_index ~= nil then
-            local stop_def = assert(linevar_def.stops[next_index])
-            if stop_def.mode == nil or stop_def.mode ~= MODE_REQUEST_STOP then
-                error("Internal error: mode "..MODE_REQUEST_STOP.." expected, but the real mode is "..tostring(stop_def.mode).."!")
+        -- zastavit, nebo projet?
+        if ls.stop_request == nil and not is_player_at_station(pos) then
+            -- znamení nikdo nedal, můžeme projet
+            debug_print("Vlak "..train_id.." projel zastávkou na znamení "..stn)
+            if linevar_def ~= nil and next_index ~= nil then
+                local stop_def = assert(linevar_def.stops[next_index])
+                if stop_def.mode == nil or stop_def.mode ~= MODE_REQUEST_STOP then
+                    error("Internal error: mode "..MODE_REQUEST_STOP.." expected, but the real mode is "..tostring(stop_def.mode).."!")
+                end
+                assert(stn ~= "")
+                record_skipped_stops(train_id, linevar_def, ls.linevar_index, next_index)
+                ls.linevar_index = next_index
+                ls.linevar_last_dep = rwtime -- u zastávky na znamení se průjezd počítá jako odjezd
+                ls.linevar_last_stn = stn
+                local next_stop_index, next_stop_data = al.get_next_stop(linevar_def, next_index)
+                train.text_inside = al.get_stop_description(nil, linevar_def.stops[next_stop_index or 0])
+                -- ATC command:
+                local atc_command = "A1 S" ..(stdata.speed or "M")
+                advtrains.atc.train_set_command(train, atc_command, true)
             end
-            assert(stn ~= "")
-            record_skipped_stops(train_id, linevar_def, ls.linevar_index, next_index)
-            ls.linevar_index = next_index
-            ls.linevar_last_dep = rwtime -- u zastávky na znamení se průjezd počítá jako odjezd
-            ls.linevar_last_stn = stn
-            local next_stop_index, next_stop_data = al.get_next_stop(linevar_def, next_index)
-            train.text_inside = al.get_stop_description(nil, linevar_def.stops[next_stop_index or 0])
-            -- ATC command:
-            local atc_command = "A1 S" ..(stdata.speed or "M")
-            advtrains.atc.train_set_command(train, atc_command, true)
+            return
+        else
+            -- někdo dal znamení, musíme zastavit
+            debug_print("Vlak "..train_id.." zastavil na zastávce na znamení "..stn)
+            ls.stop_request = nil
         end
-        return
     end
 
     -- naplánovat čas odjezdu
@@ -864,12 +911,18 @@ function al.on_train_enter(pos, train_id, train, index)
         assert(ls.linevar)
         linevar_def = assert(al.try_get_linevar_def(ls.linevar))
         local next_stop_index, next_stop_data = al.get_next_stop(linevar_def, 1)
+        if next_stop_index == nil then
+            next_stop_data = nil
+        end
+        train.text_inside = al.get_stop_description(stdata, next_stop_data)
+        --[[
         if next_stop_index ~= nil then
             train.text_inside = train.text_inside.."\nPříští zastávka/stanice: "..get_station_name(next_stop_data.stn)
             if next_stop_data.mode ~= nil and next_stop_data.mode == MODE_REQUEST_STOP then
                 train.text_inside = train.text_inside.." (na znamení)"
             end
         end
+        ]]
     elseif not had_linevar and ls.linevar == nil then
         -- vlak, který nebyl a stále není linkový:
         train.text_inside = get_station_name(stn)

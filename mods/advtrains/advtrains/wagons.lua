@@ -677,6 +677,13 @@ function wagon:on_rightclick(clicker)
 				if data.owner==pname then
 					poss[#poss+1]={name=attrans("Wagon properties"), key="prop"}
 				end
+
+				-- line automation integration (for request stops)
+				local al = advtrains.lines
+				if al ~= nil and al.is_going_to_request_stop(self:train()) then
+					poss[#poss+1] = {name = "Dát znamení", key = "reqstop"}
+				end
+
 				if not self.seat_groups[sgr].require_doors_open or self:train().door_open~=0 then
 					poss[#poss+1]={name=attrans("Get off"), key="off"}
 				else
@@ -686,6 +693,7 @@ function wagon:on_rightclick(clicker)
 						poss[#poss+1]={name=attrans("(Doors closed)"), key="dcwarn"}
 					end
 				end
+
 				if #poss==0 then
 					--can't do anything.
 				elseif #poss==1 then
@@ -1316,6 +1324,15 @@ function wagon:seating_from_key_helper(pname, fields, no)
 	end
 	if fields.dcwarn then
 		minetest.chat_send_player(pname, attrans("Doors are closed! Use Sneak+rightclick to ignore the closed doors and get off!"))
+	end
+	local al = advtrains.lines
+	if al ~= nil and fields.reqstop then
+		local line_status = self:train().line_status
+		if line_status ~= nil and line_status.linevar ~= nil and line_status.standing_at == nil then
+			if al.set_stop_request(self:train()) then
+				minetest.chat_send_player(pname, "VLAK: Znamení zaregistrováno.")
+			end
+		end
 	end
 	if fields.off then
 		self:get_off(no)
