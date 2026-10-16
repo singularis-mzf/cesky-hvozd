@@ -339,25 +339,126 @@ minetest.register_craft({
 	},
 })
 
+-- Český hvozd addon
+function advtrains.trigger_crossing_sound(pos, iters_to_skip)
+	if core.compare_block_status(pos, "active") then
+		local meta = core.get_meta(pos)
+		local state = meta:get_int("crossing_state")
+		if state > 0 then
+			meta:set_int("crossing_state", state - 1)
+			return
+		end
+		core.sound_play("advtrains_crossing_bell", {
+			pos = pos,
+			gain = 1.0, -- default
+			max_hear_distance = 16, -- default, uses an euclidean metric
+		})
+		meta:set_int("crossing_state", iters_to_skip or 2)
+	end
+end
+
+-- czech version
+local czcross_box = {
+    type = "fixed",
+    fixed = {-0.5, -0.35, 0.8, 0.5, 0.75, 0.9},
+}
+local czcross_tile_off = {name = "advtrains_czcross_off.png", backface_culling = true}
+local czcross_tile_on = {
+	name = "advtrains_czcross_on.png",
+    backface_culling = true,
+    animation = {
+        type = "vertical_frames",
+        aspect_w = 64,
+        aspect_h = 72,
+        length = 2.0,
+    },
+}
+
+minetest.register_node("advtrains:czcross_off", {
+	drawtype = "mesh",
+	paramtype = "light",
+	paramtype2 = "facedir",
+	walkable = false,
+	selection_box = czcross_box,
+	mesh = "advtrains_czcross.obj",
+	tiles = {czcross_tile_off, czcross_tile_off},
+	use_texture_alpha = "clip",
+	inventory_image = "[combine:72x72:8,0=advtrains_czcross_off.png",
+	drop="advtrains:czcross_off",
+	description= "signalizace železničního přejezdu",
+	groups = {
+		cracky=3,
+		not_blocking_trains=1,
+		save_in_at_nodedb=1,
+	},
+    sounds = default.node_sound_metal_defaults(),
+	light_source = 1,
+	sunlight_propagates=true,
+	mesecons = {effector = {
+		rules = advtrains.meseconrules,
+		action_on = function (pos, node)
+			advtrains.ndb.swap_node(pos, {name = "advtrains:czcross_on", param2 = node.param2}, true)
+		end
+	}},
+	advtrains = {
+		node_state = "off",
+		node_state_map = { on = "advtrains:czcross_on", off = "advtrains:czcross_off" },
+	},
+	on_rightclick=function(pos, node, player)
+		if advtrains.check_turnout_signal_protection(pos, player:get_player_name()) then
+			advtrains.ndb.swap_node(pos, {name = "advtrains:czcross_on", param2 = node.param2}, true)
+		end
+	end,
+})
+minetest.register_node("advtrains:czcross_on", {
+	drawtype = "mesh",
+	paramtype="light",
+	paramtype2="facedir",
+	walkable = false,
+	selection_box = czcross_box,
+	mesh = "advtrains_czcross.obj",
+	tiles = {czcross_tile_on, czcross_tile_off},
+	use_texture_alpha = "clip",
+	drop="advtrains:czcross_off",
+	description= "signalizace železničního přejezdu",
+	groups = {
+		cracky=3,
+		not_blocking_trains=1,
+		save_in_at_nodedb=1,
+		not_in_creative_inventory=1,
+		across_on=1,
+	},
+    sounds = default.node_sound_metal_defaults(),
+	light_source = 7,
+	sunlight_propagates=true,
+	mesecons = {effector = {
+		rules = advtrains.meseconrules,
+		action_off = function (pos, node)
+			advtrains.ndb.swap_node(pos, {name = "advtrains:czcross_off", param2 = node.param2}, true)
+		end
+	}},
+	advtrains = {
+		node_state = "on",
+		node_state_map = { on = "advtrains:czcross_on", off = "advtrains:czcross_off" },
+		node_fallback_state = "off",
+	},
+	on_rightclick=function(pos, node, player)
+		if advtrains.check_turnout_signal_protection(pos, player:get_player_name()) then
+			advtrains.ndb.swap_node(pos, {name = "advtrains:czcross_off", param2 = node.param2}, true)
+		end
+	end,
+})
+
+
+
 minetest.register_abm(
 	{
         label = "Sound for Level Crossing",
-        nodenames = {"advtrains:across_on"},
-        interval = 3,
+        nodenames = {"advtrains:across_on", "group:across_on"},
+        interval = 1,
         chance = 1,
         action = function(pos, node, active_object_count, active_object_count_wider)
-			local meta = minetest.get_meta(pos)
-			local state = meta:get_int("crossing_state")
-			if state <= 0 then
-				minetest.sound_play("advtrains_crossing_bell", {
-					pos = pos,
-					gain = 1.0, -- default
-					max_hear_distance = 16, -- default, uses an euclidean metric
-				})
-				meta:set_int("crossing_state", 2)
-			else
-				meta:set_int("crossing_state", state - 1)
-			end
-        end,
+			advtrains.trigger_crossing_sound(pos, 2)
+		end,
     }
 )

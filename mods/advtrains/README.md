@@ -85,7 +85,7 @@ Small code contributions:
 * Node texture for LuaATC controller: Jeija (from Mesecons)
 * Mod Description             : hajo
 * 45 degree platforms design  : Och_Noe
-* advtrains_line_automation_jrad.png : Singularis
+* advtrains_czcross_*.png, advtrains_line_automation_jrad.png, advtrains_czcross.obj : Singularis
 
 #### Sounds:
 

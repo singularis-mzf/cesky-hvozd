@@ -315,3 +315,18 @@ if core.get_modpath("linetrack") then
         end
     end
 end
+
+-- czcross background
+if core.get_modpath("streets") and core.registered_nodes["advtrains:czcross_off"] ~= nil then
+    for _, name in ipairs({"advtrains:czcross_off", "advtrains:czcross_on"}) do
+        local ndef = core.registered_nodes[name]
+        if ndef ~= nil then
+            local tiles = table.copy(ndef.tiles)
+            tiles[2] = {
+                name = "advtrains_czcross_off.png^[colorize:#ffffff^[mask:(advtrains_czcross_off.png^streets_sign_back.png)^[transformFX",
+                backface_culling = true
+            }
+            core.override_item(name, {tiles = tiles})
+        end
+    end
+end
