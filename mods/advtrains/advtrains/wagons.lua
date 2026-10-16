@@ -576,7 +576,7 @@ function wagon:on_step(dtime)
                     -- Workaround until minetest engine deletes attached sounds
 					local sound_loop_handle_type = type(self.sound_loop_handle)
 					if sound_loop_handle_type == "table" then
-						for _, handle in ipairs(sound_loop_handle) do
+						for _, handle in ipairs(self.sound_loop_handle) do
 							minetest.sound_stop(handle)
 						end
 					elseif sound_loop_handle_type == "number" then
