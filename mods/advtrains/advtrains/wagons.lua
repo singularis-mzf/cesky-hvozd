@@ -574,9 +574,15 @@ function wagon:on_step(dtime)
 				if advtrains.wagon_outside_range(pos) then
 					--atdebug("wagon",self.id,"unloading (too far away)")
                     -- Workaround until minetest engine deletes attached sounds
-                    if self.sound_loop_handle then
+					local sound_loop_handle_type = type(self.sound_loop_handle)
+					if sound_loop_handle_type == "table" then
+						for _, handle in ipairs(sound_loop_handle) do
+							minetest.sound_stop(handle)
+						end
+					elseif sound_loop_handle_type == "number" then
                         minetest.sound_stop(self.sound_loop_handle)
                     end
+					self.sound_loop_handle = nil
 					self.object:remove()
 				end
 			end
