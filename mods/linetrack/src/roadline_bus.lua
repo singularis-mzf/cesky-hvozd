@@ -7,7 +7,20 @@
 local S = core.get_translator("linetrack")
 local function play_object_sound(name, gain, object)
     local s = {name = name, gain = gain}
+    local opos
+    if object == nil then
+        core.log("warning", "play_object_sound() called with nil object")
+        return nil
+    end
     local opos = object:get_pos()
+    if opos == nil then
+        core.log("warning", "object:get_pos() returned nil where vector was expected!")
+        return nil
+    end
+    if type(opos) ~= "table" then
+        core.log("warning", "unexpected type "..type(opos).." returned from object:get_pos()!")
+        return nil
+    end
     local result = {}
     for _, player in ipairs(core.get_connected_players()) do
         if vector.distance(player:get_pos(), opos) < 128 then
