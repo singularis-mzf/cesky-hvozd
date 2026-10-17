@@ -693,11 +693,17 @@ local function get_setup_formspec(custom_state)
             local s = tostring(i)
             a{  "container[0,", string.format("%f", 2.5 * (i - 1)),
                 "]label[0,0.3;cedule ", s, ":]"..
-                "field[0,0.9;9.75,0.75;fmt_cedule", s, "_row;formát řádky / prázdný řádek:;",
+                "field[0,0.9;9.75,0.75;fmt_cedule", s, "_row;formát řádky / prázdný řádek:"..
+                "        formát cedule (záhlaví\\, {1}\\, {2}\\, ...) -->;",
                 F(cedule.row),
+                "]tooltip[fmt_cedule", s, "_row;specifikace formátu řádky znamenající odjezd (viz wiki)"..
+                -- "]label[4,0.75;",
                 "]field[0,1.75;9.75,0.75;fmt_cedule", s, "_empty;;", F(cedule.empty),
+                "]tooltip[fmt_cedule", s, "_empty;text k zobrazení místo řádky v případě, že pro danou řádku\nnení žádný odjezd známý"..
                 "]textarea[10,0.5;4,2;fmt_cedule", s, ";;"..F(cedule.text),
+                "]tooltip[fmt_cedule", s, ";formátovací řetězec přiřazující řádky s odjezdy ({1}, {2}, ...)\nk této ceduli\\; typicky mívá záhlaví"..
                 "]field[2,0;4.5,0.5;pos_cedule", s, ";;", cedule.fs,
+                "]tooltip[pos_cedule", s, ";souřadnice cedule\\, na kterou budou vypisovány odjezdy/příjezdy"..
                 "]button_exit[10,0;3,0.5;zam_cedule", s,
                 ";zaměřit...]button[6.75,0;3,0.5;",
                 ifthenelse(cedule.fs ~= "", "odp_cedule"..s..";odpojit", "pri_cedule"..s..";připojit"),

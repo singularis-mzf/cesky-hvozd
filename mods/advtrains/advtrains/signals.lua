@@ -384,6 +384,7 @@ minetest.register_node("advtrains:czcross_off", {
 	tiles = {czcross_tile_off, czcross_tile_off},
 	use_texture_alpha = "clip",
 	inventory_image = "[combine:72x72:8,0=advtrains_czcross_off.png",
+	wield_image = "[combine:72x72:8,0=advtrains_czcross_off.png",
 	drop="advtrains:czcross_off",
 	description= "signalizace železničního přejezdu",
 	groups = {
