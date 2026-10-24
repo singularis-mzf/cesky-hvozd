@@ -51,6 +51,17 @@ local function getzs3v(msp)
 	return speed
 end
 
+local function getspeed(msp, main_aspect)
+	local n = tonumber(main_aspect and main_aspect.zs3) -- try to get speed from the aspect subsystem
+	if not n then
+		n = getzs3(msp) -- try to get speed from Zs3 node
+		if not n then
+			n = -1 -- no speed restriction
+		end
+	end
+	return n
+end
+
 local applyaspectf_main = function(rot)
  return function(pos, node, main_aspect, dst_aspect, dst_aspect_info)
 	if main_aspect.halt then
@@ -193,22 +204,22 @@ for _, rtab in ipairs({
 	for typ, prts in pairs({
 			danger   = {asp = advtrains.interlocking.signal.ASPI_HALT, n = "slow", ici=true},
 			slow     = {
-				asp = function(pos)
-					return { main = getzs3(pos) or -1, proceed_as_main = true, dst = 0 }
+				asp = function(pos, main_aspect)
+					return { main = getspeed(pos, main_aspect), proceed_as_main = true, dst = 0 }
 				end,
 				n = "nextslow"
 			},
 			nextslow = {
-				asp = function(pos)
-					return { main = getzs3(pos) or -1, proceed_as_main = true, dst = getzs3v(pos) or 6 }
+				asp = function(pos, main_aspect)
+					return { main = getspeed(pos, main_aspect), proceed_as_main = true, dst = getzs3v(pos) or 6 }
 				end,
 				n = "free"
 			},
 			free     = {
-				asp = function(pos)
-					return { main = getzs3(pos) or -1, proceed_as_main = true, dst = -1 }
+				asp = function(pos, main_aspect)
+					return { main = getspeed(pos, main_aspect), proceed_as_main = true, dst = -1 }
 				end,
-	                        n = "shunt"
+				n = "shunt"
 			},
 			shunt    = {asp = { main =  0, shunt = true} , n = "danger"},
 		}) do

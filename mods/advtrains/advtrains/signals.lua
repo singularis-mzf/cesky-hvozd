@@ -16,9 +16,13 @@ local function after_dig_func(pos, oldnode, oldmetadata, digger)
 	return true
 end
 
-local function aspect(b)
+local function ifthenelse(c, t, f)
+	if c then return t else return f end
+end
+
+local function aspect(b, speed)
 return {
-	main = b and -1 or 0,
+	main = ifthenelse(b, speed or -1, 0),
 	shunt = false,
 	proceed_as_main = true,
 	dst = false,
@@ -27,7 +31,12 @@ return {
 end
 
 local main_aspects = {
-	{ name = "free", description = "Volno" }
+	{ name = "free", description = "Volno" },
+	{ name = "free_16", description = "Volno (rychlost 16)", speed = 16 },
+	{ name = "free_12", description = "Volno (rychlost 12)", speed = 12 },
+	{ name = "free_8", description = "Volno (rychlost 8)", speed = 8 },
+	{ name = "free_6", description = "Volno (rychlost 6)", speed = 6 },
+	{ name = "free_4", description = "Volno (rychlost 4)", speed = 4 },
 }
 
 local function simple_apply_aspect(offname, onname)
@@ -105,7 +114,9 @@ for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", 
 			advtrains = {
 				main_aspects = main_aspects,
 				apply_aspect = simple_apply_aspect("advtrains:retrosignal_off"..rotation, "advtrains:retrosignal_on"..rotation),
-				get_aspect_info = function() return aspect(r=="on") end,
+				get_aspect_info = function(pos, main_aspect)
+					return aspect(r=="on", main_aspect and main_aspect.speed)
+				end,
 			},
 			can_dig = can_dig_func,
 			after_dig_node = after_dig_func,
@@ -157,7 +168,9 @@ for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", 
 			advtrains = {
 				main_aspects = main_aspects,
 				apply_aspect = simple_apply_aspect("advtrains:signal_off"..rotation, "advtrains:signal_on"..rotation),
-				get_aspect_info = function() return aspect(r=="on") end,
+				get_aspect_info = function(pos, main_aspect)
+					return aspect(r=="on", main_aspect and main_aspect.speed)
+				end,
 				node_state = f.ls,
 				node_state_map = { red = "advtrains:signal_off"..rotation, green = "advtrains:signal_on"..rotation},
 				node_on_switch_state = function(pos, new_node, old_state, new_state)
@@ -230,7 +243,9 @@ for r,f in pairs({on={as="off", ls="green", als="red"}, off={as="on", ls="red", 
 			advtrains = {
 				main_aspects = main_aspects,
 				apply_aspect = simple_apply_aspect("advtrains:signal_wall_"..loc.."_off", "advtrains:signal_wall_"..loc.."_on"),
-				get_aspect_info = function() return aspect(r=="on") end,
+				get_aspect_info = function(pos, main_aspect)
+					return aspect(r=="on", main_aspect and main_aspect.speed)
+				end,
 				node_state = f.ls,
 				node_state_map = { red = "advtrains:signal_wall_"..loc.."_off", green = "advtrains:signal_wall_"..loc.."_on" },
 				node_on_switch_state = function(pos, new_node, old_state, new_state)
