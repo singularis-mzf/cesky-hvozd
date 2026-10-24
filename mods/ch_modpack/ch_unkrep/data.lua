@@ -944,7 +944,8 @@ reg_node(20250804, "streets:gneiss_manhole_open", "darkage:stair_gneiss_manhole_
 reg_node(20250804, "streets:stone_block_manhole", "moreblocks:stair_stone_block_manhole_closed")
 reg_node(20250804, "streets:stone_block_manhole_open", "moreblocks:stair_stone_block_manhole_open", tool_manhole_open)
 reg_node(20260919, "moreblocks:glow_glass_technic_cnc_peek", "default:meselamp_technic_cnc_peek")
-
+reg_node(20261017, "moreblocks:panel_glass_15", "moreblocks:panel_glass_2")
+reg_node(20261017, "moreblocks:stair_glass_alt", "default:glass")
 
 -- END OF REGISTRATIONS
 commit_aliases_and_lbms()
