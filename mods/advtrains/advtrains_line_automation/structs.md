@@ -75,6 +75,9 @@ station = {
             -- je-li true, nové vlaky nemohou dostat tuto trasu přidělenu
             disabled = bool or nil,
 
+            -- je-li true, vlaky na této trase nebudou hlásit zastávky zvukově
+            no_voice = bool or nil,
+
             -- je-li neprázdný řetězec, udává označení linky, na kterou bude vlak pravděpodobně pokračovat
             -- ze zastávky v režimu MODE_FINAL_CONTINUE
             continue_line = string or nil,

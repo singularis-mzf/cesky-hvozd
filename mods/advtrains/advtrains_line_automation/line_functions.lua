@@ -1,5 +1,6 @@
 local al = advtrains.lines
 local rwt = assert(advtrains.lines.rwt)
+local has_ch_say = core.get_modpath("ch_say")
 
 local MODE_NORMAL = 0 -- normální zastávka (výchozí nebo mezilehlá)
 local MODE_REQUEST_STOP = 1 -- zastávka na znamení (mezilehlá)
@@ -192,6 +193,48 @@ local function is_player_at_station(pos)
     return false
 end
 
+--[[
+    Vrací:
+    - objrefs, names — pokud je ve vlaku alespoň jedna online hráčská postava
+    - nil, nil — žádná online postava ve vlaku
+]]
+local function get_players_in_train(train_id)
+    local objrefs, names
+    for player_name, player_train in pairs(advtrains.player_to_train_mapping)
+    do
+        if player_train == train_id then
+            local player = core.get_player_by_name(player_name)
+            if player ~= nil then
+                -- player found!
+                if objrefs == nil then
+                    objrefs = {player}
+                    names = {player_name}
+                else
+                    table.insert(objrefs, player)
+                    table.insert(names, player_name)
+                end
+            end
+        end
+    end
+    return objrefs, names
+end
+
+local function say_stop_description()
+end
+
+if has_ch_say then
+    say_stop_description = function(train_id, linevar_def, stop_data, next_stop_data, stop_request)
+        if linevar_def ~= nil and not linevar_def.no_voice then
+            local objrefs, player_names = get_players_in_train(train_id)
+            if objrefs ~= nil then
+                local to_say = al.get_stop_voice_description(stop_data, next_stop_data, stop_request)
+                if to_say ~= nil then
+                    ch_say.say("advtrains", player_names, to_say)
+                end
+            end
+        end
+    end
+end
 
 --[[
     Vrací:
@@ -458,8 +501,30 @@ function al.get_line_description(linevar_def, options)
     return s1..s2..s3..s4
 end
 
+function al.get_stop_voice_description(stop_data, next_stop_data, stop_request)
+    local to_say = {}
+    if stop_data ~= nil then
+        local mode = stop_data.mode
+        if mode ~= MODE_DISABLED and mode ~= MODE_HIDDEN and mode ~= MODE_FINAL_HIDDEN then
+            table.insert(to_say, get_station_name(stop_data.stn) or "")
+        end
+    elseif next_stop_data ~= nil then
+        local mode = next_stop_data.mode
+        if mode ~= MODE_DISABLED and mode ~= MODE_HIDDEN and mode ~= MODE_FINAL_HIDDEN then
+            table.insert(to_say, "Příští zastávka: "..(get_station_name(next_stop_data.stn) or ""))
+            if not stop_request and mode == MODE_REQUEST_STOP then
+                table.insert(to_say, "Zastávka je na znamení")
+            end
+        end
+    else
+        table.insert(to_say, "Koncová zastávka")
+    end
+    return to_say
+end
+
 function al.get_stop_description(stop_data, next_stop_data, stop_request)
     local s1, s2 = "", ""
+    local to_say
     if stop_data ~= nil then
         local mode = stop_data.mode
         if mode ~= MODE_DISABLED and mode ~= MODE_HIDDEN and mode ~= MODE_FINAL_HIDDEN then
@@ -860,12 +925,15 @@ function al.on_train_enter(pos, train_id, train, index)
             debug_print("Jde o mezilehlou zastávku.")
             local next_stop_index, next_stop_data = al.get_next_stop(linevar_def, next_index)
             train.text_inside = al.get_stop_description(linevar_def.stops[next_index], linevar_def.stops[next_stop_index or 0])
+            say_stop_description(train_id, linevar_def, linevar_def.stops[next_index], linevar_def.stops[next_stop_index or 0])
         else
             -- koncová zastávka
             can_start_line = stop_def.mode == MODE_FINAL_CONTINUE
             -- core.log("action", "Train "..train_id.." arrived at the final station "..stop_def.stn.." of linevar "..ls.linevar.." after "..(rwtime - ls.linevar_dep).." seconds.")
             debug_print("Vlak "..train_id.." skončil jízdu na lince "..ls.linevar..", může pokračovat na jinou linku: "..(can_start_line and "ihned" or "na příští zastávce"))
             train.text_inside = al.get_stop_description(linevar_def.stops[next_index])
+            say_stop_description(train_id, linevar_def, linevar_def.stops[next_index])
+
             local current_passage = current_passages[train_id]
             if current_passage ~= nil then
                 current_passage[next_index] = rwtime
@@ -915,6 +983,7 @@ function al.on_train_enter(pos, train_id, train, index)
             next_stop_data = nil
         end
         train.text_inside = al.get_stop_description(stdata, next_stop_data)
+        say_stop_description(train_id, linevar_def, stdata, next_stop_data)
         --[[
         if next_stop_index ~= nil then
             train.text_inside = train.text_inside.."\nPříští zastávka/stanice: "..get_station_name(next_stop_data.stn)
@@ -998,6 +1067,7 @@ function al.on_train_leave(pos, train_id, train, index)
             local next_stop_index, next_stop_data = al.get_next_stop(linevar_def, ls.linevar_index)
             if next_stop_index ~= nil then
                 train.text_inside = al.get_stop_description(nil, next_stop_data)
+                say_stop_description(train_id, linevar_def, nil, next_stop_data)
             end
         end
     -- else

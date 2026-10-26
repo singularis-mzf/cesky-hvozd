@@ -181,8 +181,9 @@ local function get_formspec(custom_state)
             "tooltip[owner;Postava spravující tuto trasu linky.]")
     end
     table.insert(formspec,
-        "checkbox[11.25,7.25;disable_linevar;vypnout;"..custom_state.disable_linevar.."]"..
-        "field[13.5,7;3,0.75;continues;pokračování:;"..F(custom_state.continues).."]")
+        "checkbox[11.25,6.75;disable_linevar;vypnout;"..custom_state.disable_linevar.."]"..
+        "checkbox[11.25,7.25;disable_voice;vyp.hlášení;"..custom_state.disable_voice.."]"..
+        "field[14,7;3,0.75;continues;pokračování:;"..F(custom_state.continues).."]")
 
     if custom_state.message ~= "" then
         table.insert(formspec, "label[0.5,8.25;"..F(custom_state.message).."]")
@@ -204,6 +205,8 @@ local function get_formspec(custom_state)
         "trasy zadané jméno.]"..
         "tooltip[disable_linevar;Zaškrtnutím trasu linky vypnete. Vypnutá trasa není používána\n"..
         "na žádné další vlaky\\, stávající vlaky však mohou dojet do svých koncových zastávek.]"..
+        "tooltip[disable_voice;Zaškrtnutím vypnete zvukové hlášení zastávek na této lince.\n"..
+        "Textové značení zastávek ve vlaku zůstane beze změny.]"..
         "tooltip[continues;Pokud vlak z koncové stanice rovnou pokračuje\\,\nzadejte sem označení linky\\, "..
         "lomeno\\, směrový kód\\,\nnapř. „101/ABC“ nebo „101/“.]")
 
@@ -352,6 +355,7 @@ local function custom_state_set_selection_index(custom_state, new_selection_inde
         custom_state.train_name = current_linevar.train_name or ""
         custom_state.owner = assert(current_linevar.owner)
         custom_state.disable_linevar = ifthenelse(current_linevar.disabled, "true", "false")
+        custom_state.disable_voice = ifthenelse(current_linevar.no_voice, "true", "false")
         custom_state.continues = current_linevar.continue_line or ""
         if custom_state.continues ~= "" then
             custom_state.continues = custom_state.continues.."/"..(current_linevar.continue_rc or "")
@@ -362,6 +366,7 @@ local function custom_state_set_selection_index(custom_state, new_selection_inde
         custom_state.train_name = ""
         custom_state.owner = custom_state.player_name
         custom_state.disable_linevar = "false"
+        custom_state.disable_voice = "false"
         custom_state.continues = ""
     end
     custom_state.owner = ch_core.prihlasovaci_na_zobrazovaci(custom_state.owner)
@@ -534,6 +539,9 @@ local function custom_state_compile_linevar(custom_state)
     if custom_state.disable_linevar == "true" then
         custom_state.compiled_linevar.disabled = true
     end
+    if custom_state.disable_voice == "true" then
+        custom_state.compiled_linevar.no_voice = true
+    end
     local continues_split = custom_state.continues:find("/")
     if continues_split == nil then
         custom_state.compiled_linevar.continue_line = custom_state.continues
@@ -561,6 +569,9 @@ local function formspec_callback(custom_state, player, formname, fields)
     -- checkbox:
     if fields.disable_linevar then
         custom_state.disable_linevar = fields.disable_linevar
+    end
+    if fields.disable_voice then
+        custom_state.disable_voice = fields.disable_voice
     end
     -- dropdowns:
     for i = 1, max_stations do
