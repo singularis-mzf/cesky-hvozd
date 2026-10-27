@@ -13,6 +13,7 @@ local allowed_parameters = {
     start_time = true,
 }
 local no_parameters = {}
+local unknown_texts = {}
 
 local function normalize_players(player_names)
     local player_name, player_data
@@ -40,38 +41,6 @@ local function normalize_players(player_names)
     end
 end
 
-local unknown_texts = {}
-
-local function normalize_texts(texts)
-    local t = type(texts)
-    local result = {}
-    if t == "string" then
-        if texts ~= "" then
-            local sound_parts = ch_say.sounds[texts]
-            if sound_parts ~= nil then
-                table.insert_all(result, sound_parts)
-            elseif unknown_texts[texts] == nil then
-                unknown_texts[texts] = true
-                core.log("action", "[ch_say] Unknown text put to say: \""..texts.."\"")
-            end
-        end
-    elseif t == "table" then
-        for _, text in ipairs(texts) do
-            if text ~= "" then
-                local sound_parts = ch_say.sounds[text]
-                if sound_parts ~= nil then
-                    table.insert_all(result, sound_parts)
-                elseif unknown_texts[text] == nil then
-                    unknown_texts[text] = true
-                    core.log("action", "[ch_say] Unknown text put to say: \""..text.."\"")
-                end
-            end
-        end
-    elseif t ~= "nil" then
-        error("[ch_say] Invalid 'texts' type: "..t)
-    end
-    return result, #result
-end
 
 local say_next
 say_next = function(args)
@@ -116,14 +85,15 @@ function ch_say.register_sound(text, parts)
         return false
     end
     assert(type(parts) == "table")
-    if parts[1] == nil and part.name ~= nil then
+    if parts[1] == nil and parts.name ~= nil then
         parts = {parts}
     end
     local new_sound = {}
     for i, part in ipairs(parts) do
         local parameters
-        assert(type(part.name) == "string")
-        assert(type(part.length) == "number")
+        local name, length = part.name, part.length
+        assert(type(name) == "string")
+        assert(type(length) == "number")
         for k, v in pairs(part) do
             if allowed_parameters[k] then
                 if parameters == nil then
@@ -136,11 +106,17 @@ function ch_say.register_sound(text, parts)
         if parameters == nil then
             parameters = no_parameters
         end
+        if part.substract_start_time ~= false and type(part.start_time) == "number" then
+            length = length - part.start_time
+        end
         new_sound[i] = {
             name = part.name, -- sound file or "" for no sound
-            length = part.length, -- length is seconds
+            length = part.length, -- length is seconds (with start_time substracted)
             parameters = parameters, -- sound parameters
         }
+        if part.replacement_from ~= nil then
+            new_sound[i].replacement = {from = part.replacement_from, to = part.replacement_to}
+        end
     end
     if new_sound[1] == nil then
         core.log("error", "[ch_say] registration of '"..text.."' failed!")
@@ -152,9 +128,47 @@ end
 
 
 function ch_say.say(channel, player_names, texts)
-    channel = "default" -- channel argument is ignored in this version
-    local sounds, n_sounds = normalize_texts(texts)
-    if n_sounds == 0 then
+    assert(type(channel) == "string")
+    local sounds = {}
+
+    -- texts => sounds
+    if texts ~= nil then
+        local t = type(texts)
+        local replacements = {}
+        if t == "string" then
+            texts = {texts}
+        elseif t ~= "table" then
+            error("[ch_say] Invalid 'texts' type: "..t) -- only nil|string|table are accepted
+        end
+        local replacements = {}
+        local text, sound_parts, replacement
+        for _, raw_text in ipairs(texts) do
+            if raw_text ~= "" then
+                text = replacements[raw_text] or raw_text -- apply replacement
+                sound_parts = ch_say.sounds[text]
+                if sound_parts ~= nil then
+                    local prev_result_length = #sounds
+                    for i, part in ipairs(sound_parts) do
+                        sounds[prev_result_length + i] = part
+                        replacement = part.replacement
+                        if replacement ~= nil then
+                            replacements[replacement.from] = replacement.to -- set replacement for next parts
+                        end
+                    end
+                elseif unknown_texts[text] == nil then
+                    -- new unknown text
+                    unknown_texts[text] = true
+                    if text == raw_text then
+                        core.log("action", "[ch_say] Unknown text put to say: \""..text.."\"")
+                    else
+                        core.log("action", "[ch_say] Unknown text put to say: \""..raw_text.."\" => \""..text.."\"")
+                    end
+                end
+            end
+        end
+    end
+
+    if #sounds == 0 then
         return true -- no known texts to say
     end
     local set_players, n_players = normalize_players(player_names)

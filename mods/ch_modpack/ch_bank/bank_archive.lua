@@ -253,7 +253,6 @@ local function save_bank_history(player_name, bank_month)
 end
 
 local function open_new_bank_day(player_name, bank_day, state_before)
-	minetest.log("action", "[ch_bank DEBUG] open_new_bank_day("..player_name..", "..bank_day..", "..state_before..")")
 	local player_key = player_name..#player_name
 	local result = {
 		bank_day = bank_day,
@@ -263,7 +262,6 @@ local function open_new_bank_day(player_name, bank_day, state_before)
 	local result_json = assert(minetest.write_json(result))
 	storage:set_string(player_key.."/transactions", result_json)
 	today_transactions[player_name] = result
-	minetest.log("action", "[ch_bank] Bank day "..bank_day.." openned for "..player_name..".")
 	return result
 end
 
@@ -283,7 +281,6 @@ local function get_today_transactions(player_name)
 	if result == nil then
 		-- načíst...
 		result_json = storage:get_string(player_key.."/transactions")
-		minetest.log("action", "[ch_bank DEBUG] get_today_transactions("..player_name..") on "..today..", will try to load them.")
 		if result_json == "" then
 			-- zatím nic, založit nový den
 			return open_new_bank_day(player_name, today, get_amount_from_storage(player_key.."/state"))

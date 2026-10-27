@@ -503,20 +503,29 @@ end
 
 function al.get_stop_voice_description(stop_data, next_stop_data, stop_request)
     local to_say = {}
+    if stop_data == nil and next_stop_data == nil then
+        return to_say -- žádná data => nic
+    end
+    local mode
     if stop_data ~= nil then
-        local mode = stop_data.mode
+        mode = stop_data.mode
         if mode ~= MODE_DISABLED and mode ~= MODE_HIDDEN and mode ~= MODE_FINAL_HIDDEN then
+            -- zastavení na běžné zastávce => {Jméno}
             table.insert(to_say, get_station_name(stop_data.stn) or "")
         end
     elseif next_stop_data ~= nil then
-        local mode = next_stop_data.mode
+        mode = next_stop_data.mode
         if mode ~= MODE_DISABLED and mode ~= MODE_HIDDEN and mode ~= MODE_FINAL_HIDDEN then
+            -- odjezd z běžné zastávky => Příští zastávka: {Jméno}
             table.insert(to_say, "Příští zastávka: "..(get_station_name(next_stop_data.stn) or ""))
             if not stop_request and mode == MODE_REQUEST_STOP then
+                -- zastávka na znamení => + "Zastávka je na znamení"
                 table.insert(to_say, "Zastávka je na znamení")
             end
         end
-    else
+    end
+    if mode == MODE_FINAL or mode == MODE_FINAL_CONTINUE then
+        -- tato/příští zastávka je/bude koncová => + "Koncová zastávka"
         table.insert(to_say, "Koncová zastávka")
     end
     return to_say
@@ -864,6 +873,7 @@ function al.on_train_enter(pos, train_id, train, index)
                 ls.linevar_last_stn = stn
                 local next_stop_index, next_stop_data = al.get_next_stop(linevar_def, next_index)
                 train.text_inside = al.get_stop_description(nil, linevar_def.stops[next_stop_index or 0])
+                say_stop_description(train_id, linevar_def, nil, linevar_def.stops[next_stop_index or 0])
                 -- ATC command:
                 local atc_command = "A1 S" ..(stdata.speed or "M")
                 advtrains.atc.train_set_command(train, atc_command, true)
