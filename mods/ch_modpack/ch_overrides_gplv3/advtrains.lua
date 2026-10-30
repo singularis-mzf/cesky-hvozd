@@ -330,3 +330,35 @@ if core.get_modpath("streets") and core.registered_nodes["advtrains:czcross_off"
         end
     end
 end
+
+local load_unload_nodes = {}
+
+for _, a in ipairs({"load", "unload"}) do
+    for _, b in ipairs({"", "_concrete"}) do
+        for _, c in ipairs({"", "_30", "_45", "_60"}) do
+            local name = "advtrains:dtrack_"..a..b.."_st"..c
+            if core.registered_nodes[name] ~= nil then
+                table.insert(load_unload_nodes, name)
+            end
+        end
+    end
+end
+
+if load_unload_nodes[1] ~= nil then
+    core.register_lbm({
+        label = "Trigger load/unload nodes",
+        name = "ch_overrides_gplv3:trigger_load_unload_nodes",
+        nodenames = load_unload_nodes,
+        run_at_every_load = true,
+        action = function(pos, node, dtime_s)
+            local train_id, train_idx = advtrains.get_train_at_pos(pos)
+            if train_id and train_id ~= "" then
+                if string.find(node.name, "unload") then
+                    advtrains.trigger_unload_track(pos, train_id)
+                else
+                    advtrains.trigger_load_track(pos, train_id)
+                end
+            end
+        end,
+    })
+end

@@ -747,8 +747,9 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 end)
 
+--[[
 local function load_wagon(wagon_id, node_inv, node_fc, unload)
-	local inv_modified = false
+	local inv_changes = 0
 	local w_inv=minetest.get_inventory({type="detached", name="advtrains_wgn_"..wagon_id})
 	if w_inv and w_inv:get_list("box") then
 	
@@ -760,91 +761,195 @@ local function load_wagon(wagon_id, node_inv, node_fc, unload)
 		end
 		
 		if node_fc == "" or wagon_fc == node_fc then
+			local node_list_size = node_inv:get_size("main")
+			local wagon_list_size = w_inv:get_size("box")
+			if node_list_size == 0 or wagon_list_size == 0 then
+				return false
+			end
 			if not unload then
-				for _, item in ipairs(node_inv:get_list("main")) do
-					if w_inv:get_list("box") and w_inv:room_for_item("box", item)  then
-						w_inv:add_item("box", item)
-						node_inv:remove_item("main", item)
-						if item.name ~= "" then inv_modified = true end
+				if not node_inv:is_empty("main") then
+					local node_list = node_inv:get_list("main")
+					for _, item in ipairs(node_list) do
+						if not item:is_empty() and w_inv:room_for_item("box", item) then
+							print("DEBUG: loading "..item:get_name().." (node -> train)...")
+							w_inv:add_item("box", item)
+							node_inv:remove_item("main", item)
+							inv_changes = inv_changes + 1
+							if inv_changes >= 4 then break end -- max. 4 stacks at a time
+						end
 					end
 				end
 			else
-				for _, item in ipairs(w_inv:get_list("box")) do
-					if node_inv:get_list("main") and node_inv:room_for_item("main", item)  then
-						w_inv:remove_item("box", item)
-						node_inv:add_item("main", item)
-						if item.name ~= "" then inv_modified = true end
-					end
-				end
-			end
-		end
-	end
-	return inv_modified
-end
-
-local function load_entire_train(pos, train_id, unload) -- flood load when not in an active area
-	if advtrains.is_node_loaded(pos) then -- leave the loading to the nodetimer if area is loaded
-		return 
-	end
-	local train=advtrains.trains[train_id]
-	local below = get_far_node({x=pos.x, y=pos.y-1, z=pos.z})
-	if not string.match(below.name, "chest") then
-		atprint("this is not a chest! at "..minetest.pos_to_string(pos))
-		return
-	end
-	
-	local node_fc = minetest.get_meta(pos):get_string("fc") or ""
-	if node_fc == "#" then
-		--track section is disabled
-		return
-	end
-	local node_inv = minetest.get_inventory({type="node", pos={x=pos.x, y=pos.y-1, z=pos.z}})
-	if node_inv and train.velocity <= 2 then
-		for _, wagon_id in ipairs(train.trainparts) do
-			load_wagon(wagon_id, node_inv, node_fc, unload)
-		end
-	end
-end
-
-local function load_wagon_on_timer(pos, unload) -- loading ramp when in an active area
-	if not advtrains.is_node_loaded(pos) then -- leave the loading for the flood load function. we're out of area
-		return true -- reset the nodetimer until the node is loaded again
-	end
-	local tid, tidx = advtrains.get_train_at_pos(pos)
-	if not tid or tid == "" then
-		return true
-	end -- no train to load.
-
-	local train = advtrains.trains[tid]
-	local below = get_far_node({x=pos.x, y=pos.y-1, z=pos.z})
-	if not string.match(below.name, "chest") then
-		atprint("this is not a chest! at "..minetest.pos_to_string(pos))
-		return true
-	end
-	local node_fc = minetest.get_meta(pos):get_string("fc") or ""
-	if node_fc == "#" then
-		--track section is disabled
-		return true
-	end
-	local node_inv = minetest.get_inventory({type="node", pos={x=pos.x, y=pos.y-1, z=pos.z}})
-	if node_inv and train.velocity <= 2 then
-		local _, wagon_id, wagon_data = advtrains.get_wagon_at_index(tid, tidx)
-		if wagon_id then
-			local inv_modified = load_wagon(wagon_id, node_inv, node_fc, unload)
-			if inv_modified then
-				if advtrains.wagon_prototypes[advtrains.get_wagon_prototype(wagon_data)].set_textures then
-					local wagon_object = advtrains.wagon_objects[wagon_id]
-					if wagon_object and wagon_data then
-						local ent = wagon_object:get_luaentity()
-						if ent and ent.set_textures then
-							ent:set_textures(wagon_data)
+				if not w_inv:is_empty("box") then
+					local wagon_list = w_inv:get_list("box")
+					for _, item in ipairs(wagon_list) do
+						if not item:is_empty() and node_inv:room_for_item("main", item)  then
+							print("DEBUG: unloading "..item:get_name().." (train -> node)...")
+							w_inv:remove_item("box", item)
+							node_inv:add_item("main", item)
+							inv_changes = inv_changes + 1
+							if inv_changes >= 4 then break end -- max. 4 stacks at a time
 						end
 					end
 				end
 			end
 		end
 	end
-	return true
+	print("DEBUG: inv_modified = "..inv_changes)
+	return inv_changes > 0
+end
+]]
+
+-- -> wagon_idx, wagon_id, wagon_data, w_inv || nil, nil, nil, nil
+local function find_wagon_for_load(trainparts, start_index, fc)
+	local wagon_id = trainparts[start_index]
+	local wagon_data, wagon_fc
+	while wagon_id ~= nil do
+		wagon_data = advtrains.wagons[wagon_id]
+		if wagon_data ~= nil then
+			if wagon_data.fc then
+				wagon_fc = tostring(wagon_data.fc[wagon_data.fcind or 1]) or ""
+			else
+				wagon_fc = ""
+			end
+			if fc == nil or fc == "" or fc == wagon_fc then -- odpovídá FC?
+				local w_inv = core.get_inventory({type="detached", name="advtrains_wgn_"..wagon_id})
+				if w_inv and w_inv:room_for_item("box", "advtrains:trackworker") then -- je v inventáři místo?
+					return start_index, wagon_id, wagon_data, w_inv
+				end
+			end
+		end
+		start_index = start_index + 1
+		wagon_id = trainparts[start_index]
+	end
+	return nil, nil, nil, nil
+end
+
+-- -> wagon_idx, wagon_id, wagon_data, w_inv || nil, nil, nil, nil
+local function find_wagon_for_unload(trainparts, start_index, fc)
+	local wagon_id = trainparts[start_index]
+	local wagon_data, wagon_fc
+	while wagon_id ~= nil do
+		wagon_data = advtrains.wagons[wagon_id]
+		if wagon_data ~= nil then
+			if wagon_data.fc then
+				wagon_fc = tostring(wagon_data.fc[wagon_data.fcind or 1]) or ""
+			else
+				wagon_fc = ""
+			end
+			if fc == nil or fc == "" or fc == wagon_fc then -- odpovídá FC?
+				local w_inv = core.get_inventory({type="detached", name="advtrains_wgn_"..wagon_id})
+				if w_inv and w_inv:get_size("box") > 0 and not w_inv:is_empty("box") then -- je v inventáři něco k vyložení?
+					return start_index, wagon_id, wagon_data, w_inv
+				end
+			end
+		end
+		start_index = start_index + 1
+		wagon_id = trainparts[start_index]
+	end
+	return nil, nil, nil, nil
+end
+
+local load_unload_jobs = {}
+
+local function load_train(pos, train_id, unload)
+	local pe = advtrains.encode_pos(pos)
+	local inv_changes = 0
+	-- 1. zkontrolovat, zda vlak je stále ještě nad kolejí
+	local tid, tidx = advtrains.get_train_at_pos(pos)
+	if not tid or tid == "" or tid ~= train_id then
+		load_unload_jobs[pe] = nil
+		return -- vlak již odjel (nejpravděpodobnější příčina ukončení cyklu)
+	end
+	-- 2. zkontrolovat přítomnost truhly a její inventář (main)
+	local pos_below = vector.offset(pos, 0, -1, 0)
+	core.load_area(pos_below, pos)
+	local node_below = core.get_node(pos_below)
+	if not string.match(node_below.name, "chest") then
+		atprint("this is not a chest! at "..minetest.pos_to_string(pos))
+		load_unload_jobs[pe] = nil
+		return -- truhla už není na místě
+	end
+	-- 3. zkontrolovat, zda není kolej vypnutá
+	local node_meta = core.get_meta(pos)
+	local node_fc = node_meta:get_string("fc")
+	if node_fc == "#" then
+		load_unload_jobs[pe] = nil
+		return -- kolej je vypnutá
+	end
+	-- 4. zkontrolovat přítomnost a velikost inventáře truhly
+	local node_inv = core.get_meta(pos_below):get_inventory()
+	local node_list_size = node_inv:get_size("main")
+	if node_list_size == 0 then
+		load_unload_jobs[pe] = nil
+		return -- truhla nemá inventář
+	end
+	-- 5. nakládat/vykládat, jen pokud vlak stojí
+	local train = assert(advtrains.trains[train_id])
+	if train.velocity == 0 then
+		local wagon_idx = 1
+		local wagon_id, wagon_data, w_inv
+		if not unload then
+			-- 6A. nakládat, jen pokud je co
+			if not node_inv:is_empty("main") then
+				-- 7A. najít první vagon, který má inventář a kde je místo
+				wagon_idx, wagon_id, wagon_data, w_inv = find_wagon_for_load(train.trainparts, wagon_idx, node_fc)
+				if wagon_idx ~= nil then
+					-- load: node => wagon
+					for i = 1, node_list_size do
+						local stack = node_inv:get_stack("main", i)
+						if not stack:is_empty() and w_inv:room_for_item("box", stack) then
+							print("DEBUG: loading "..stack:get_name().." (node -> train)...")
+							node_inv:set_stack("main", i, ItemStack())
+							w_inv:add_item("box", stack)
+							inv_changes = inv_changes + 1
+							if inv_changes >= 4 then break end -- max. 4 stacks at a time
+						end
+					end
+				end
+			end
+		else
+			-- 6B. najít první vagon, který má neprázdný inventář
+			wagon_idx, wagon_id, wagon_data, w_inv = find_wagon_for_unload(train.trainparts, wagon_idx, node_fc)
+			if wagon_idx ~= nil then
+				for i = 1, w_inv:get_size("box") do
+					local stack = w_inv:get_stack("box", i)
+					if not stack:is_empty() then
+						if node_inv:room_for_item("main", stack) then
+							print("DEBUG: unloading "..stack:get_name().." (train -> node)...")
+							w_inv:set_stack("box", i, ItemStack())
+							node_inv:add_item("main", stack)
+							inv_changes = inv_changes + 1
+							if inv_changes >= 4 then break end -- max. 4 stacks at a time
+						else
+							break -- truhla je plná!
+						end
+					end
+				end
+			end
+		end
+	end
+	load_unload_jobs[pe] = core.after(1, load_train, pos, train_id, unload)
+end
+
+function advtrains.trigger_load_track(pos, train_id)
+	local pe = advtrains.encode_pos(pos)
+	local old_job = load_unload_jobs[pe]
+	if old_job ~= nil then
+		old_job:cancel()
+		load_unload_jobs[pe] = nil
+	end
+	load_unload_jobs[pe] = core.after(1, load_train, pos, train_id, false)
+end
+
+function advtrains.trigger_unload_track(pos, train_id)
+	local pe = advtrains.encode_pos(pos)
+	local old_job = load_unload_jobs[pe]
+	if old_job ~= nil then
+		old_job:cancel()
+		load_unload_jobs[pe] = nil
+	end
+	load_unload_jobs[pe] = core.after(1, load_train, pos, train_id, true)
 end
 
 local nodetimer_interval = minetest.settings:get("advtrains_loading_track_timer") or 1
@@ -874,12 +979,13 @@ advtrains.register_tracks("default", {
 				advtrains.ndb.update(pos)
 				start_nodetimer(pos)
 			end,
+			--[[
 			on_timer = function(pos)
 				return load_wagon_on_timer(pos, true)
-			end,
+			end, ]]
 			advtrains = {
 				on_train_enter = function(pos, train_id)
-					load_entire_train(pos, train_id, true)
+					advtrains.trigger_unload_track(pos, train_id)
 				end,
 			},
 		}
@@ -906,12 +1012,12 @@ advtrains.register_tracks("default", {
 				advtrains.ndb.update(pos)
 				start_nodetimer(pos)
 			end,
-			on_timer = function(pos)
+			--[[ on_timer = function(pos)
 				return load_wagon_on_timer(pos, false)
-			end,
+			end, ]]
 			advtrains = {
 				on_train_enter = function(pos, train_id)
-					load_entire_train(pos, train_id, false)
+					advtrains.trigger_load_track(pos, train_id)
 				end,
 			},
 		}
