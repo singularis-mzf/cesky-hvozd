@@ -67,8 +67,7 @@ function doors.door_toggle(pos, node, clicker)
 	local timer = minetest.get_node_timer(pos)
 	local def = minetest.registered_nodes[node.name]
 	local name = def.door.name
-	local is_wc = meta:get_int("zachodove") > 0
-
+	local wc_mode = meta:get_int("zachodove")
 	local state = meta:get_string("state")
 	if state == "" then
 		-- fix up lvm-placed right-hinged doors, default closed
@@ -136,10 +135,10 @@ function doors.door_toggle(pos, node, clicker)
 			name = "doors:hidden",
 			param2 = new_node.param2,
 		}
-		if is_wc then
+		if wc_mode ~= 0 then
 			local encoded_pos = core.hash_node_position(pos)
 			local player_name = core.is_player(clicker) and clicker:get_player_name()
-			local will_lock = player_name and not will_open and doors.get_door_side(pos, new_node, assert(clicker:get_pos())) == "inside"
+			local will_lock = player_name and not will_open and doors.get_door_side(pos, new_node, assert(clicker:get_pos()), wc_mode) == "inside"
 			new_hidden_node.name = get_wc_hidden_name(new_node.name, will_lock)
 			if will_lock then
 				wc_players[encoded_pos] = player_name
@@ -629,12 +628,19 @@ core.register_abm({
 	catch_up = true,
 	action = function(pos, node, active_object_count, active_object_count_wider)
 		local pos_below = vector.offset(pos, 0, -1, 0)
-		local node_below = core.get_node(pos_below)
+		local node_below = core.get_node_or_nil(pos_below)
+		if node_below == nil then
+			return
+		end
+		local meta_below = core.get_meta(pos_below)
 		local epos_below = core.hash_node_position(pos_below)
 		local player_name = wc_players[epos_below]
 		local player = player_name and core.get_player_by_name(player_name)
-		if player ~= nil and doors.get_door_side(pos_below, node_below, assert(player:get_pos())) ~= "outside" then
-			return
+		if player ~= nil then
+			local door_side = doors.get_door_side(pos_below, node_below, assert(player:get_pos()), meta_below:get_int("zachodove"))
+			if door_side ~= "outside" then
+				return
+			end
 		end
 		node.name = get_wc_hidden_name(node_below.name, false)
 		core.set_node(pos, node)

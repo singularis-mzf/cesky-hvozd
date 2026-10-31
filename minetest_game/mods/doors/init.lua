@@ -21,6 +21,10 @@ function doors.viewname_to_login(viewname)
 	return viewname
 end
 
+local function ifthenelse(c, t, f)
+	if c then return t else return f end
+end
+
 if minetest.get_modpath("screwdriver") then
 	doors.screwdriver_rightclick_override_list = screwdriver.rightclick_override_list
 end
@@ -173,10 +177,13 @@ function doors.is_hidden(name)
 	return is_hidden_types[core.get_item_group(name, "doors_hidden")]
 end
 
-function doors.get_door_side(door_pos, door_node, pos) -- => "inside" or "outside" or nil
+function doors.get_door_side(door_pos, door_node, pos, wc_mode) -- => "inside" or "outside" or nil
 	assert(door_pos)
 	assert(door_node)
 	assert(pos)
+	if wc_mode == nil then
+		wc_mode = 1
+	end
 	local ndef = core.registered_nodes[door_node.name]
 	if ndef == nil or type(ndef.mesh) ~= "string" then
 		return nil
@@ -211,12 +218,18 @@ function doors.get_door_side(door_pos, door_node, pos) -- => "inside" or "outsid
 		end
 	end
 	if inside_mode == "a" or inside_mode == "ca" then
+		if wc_mode == 2 then
+			is_inside = not is_inside
+		end
 		if is_inside then
 			return "inside"
 		else
 			return "outside"
 		end
 	elseif inside_mode == "b" or inside_mode == "cb" then
+		if wc_mode == 2 then
+			is_inside = not is_inside
+		end
 		if not is_inside then
 			return "inside"
 		else

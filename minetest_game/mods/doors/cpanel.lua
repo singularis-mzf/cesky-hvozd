@@ -46,7 +46,7 @@ function doors.show_control_panel(player, door_pos)
 		vlastnik_ice = "není"
 	end
 	local is_open = obj:state()
-	local zachodove = meta:get_int("zachodove") > 0
+	local zachodove = meta:get_int("zachodove") -- 0 = ne, 1 = P, 2 = L
 	local zavirasamo = meta:get_int("zavirasamo") > 0
 	local zakotsam = meta:get_int("zakotsam") > 0
 	local bghighlight = "#666666"
@@ -58,7 +58,9 @@ function doors.show_control_panel(player, door_pos)
 		"item_image[0.25,0.25;1,1;", F(get_base_door_name(node.name)), "]"..
 		"label[1.5,0.8;Ovládací panel dveří]"..
 		"container[0,1.5]"..
-		"box[0,0;12,0.75;", bghighlight, "]",
+		"box[0,0;12,0.75;", bghighlight, "]", -- BOX A
+		"box[0,1.5;12,0.75;", bghighlight, "]", -- BOX B
+		"box[0,3;12,0.75;", bghighlight, "]", -- BOX C (Název dveří)
 	}
 	local function f(...)
 		table.insert_all(formspec, {...})
@@ -77,33 +79,37 @@ function doors.show_control_panel(player, door_pos)
 		"checkbox[2.5,1.125;zavirasamo;zavírá samo;", ifthenelse(zavirasamo, "true", "false"), "]"..
 		"tooltip[zavirasamo;Je-li zaškrtnuto\\, dveře se automaticky zavřou\\, když není žádná hráčská postav poblíž.]")
 	local wc_supported
-	if zachodove then
+	if zachodove ~= 0 then
 		wc_supported = true
 	else
 		local hidden_name = doors.get_wc_hidden_name(node.name, false)
 		wc_supported = hidden_name ~= "doors:hidden" and hidden_name ~= "air"
 	end
 	if wc_supported then
-		f(	"checkbox[5,1.125;zachodove;záchodové;", ifthenelse(zachodove, "true", "false"), "]"..
-			"tooltip[zachodove;Záchodové dveře mají automatický zámek s barevnou indikací. Ta se nastaví na červenou\\,\n"..
-			"jsou-li dveře zavřeny zevnitř. Je-li červená\\, jdou dveře otevřít jen zevnitř.]")
+		f(	"checkbox[5,1.125;zachodovep;záchodové P;", ifthenelse(zachodove == 1, "true", "false"), "]"..
+			"checkbox[5,1.9;zachodovel;záchodové L;", ifthenelse(zachodove == 2, "true", "false"), "]"..
+			"tooltip[zachodovep;Záchodové dveře mají automatický zámek s barevnou indikací.\n"..
+			"Ta se nastaví na červenou\\, jsou-li dveře zavřeny zevnitř.\nJe-li červená\\, jdou dveře otevřít jen zevnitř.\n"..
+			"Varianta P má stranu ZVENKU tam\\, kde je klika VPRAVO.\n"..
+			"Doporučuji nekombinovat s funkcí „zavírá samo“\\, protože při samozavření se nezamkne (neví\\, zda je postava uvnitř nebo venku).]"..
+			"tooltip[zachodovel;Záchodové dveře mají automatický zámek s barevnou indikací.\n"..
+			"Ta se nastaví na červenou\\, jsou-li dveře zavřeny zevnitř.\nJe-li červená\\, jdou dveře otevřít jen zevnitř.\n"..
+			"Varianta L má stranu ZVENKU tam\\, kde je klika VLEVO.\n"..
+			"Doporučuji nekombinovat s funkcí „zavírá samo“\\, protože při samozavření se nezamkne (neví\\, zda je postava uvnitř nebo venku).]")
 	end
 	f(	"checkbox[7.5,1.125;zakotsam;zakázat „otevírá samo“;", ifthenelse(zakotsam, "true", "false"), "]"..
-		"tooltip[zakotsam;Je-li zaškrtnuto\\, dveře se neotevřou samy postavám\\, které mají tuto funkci aktivovanou.]"..
-
-		"box[0,1.5;12,0.75;", bghighlight, "]")
+		"tooltip[zakotsam;Je-li zaškrtnuto\\, dveře se neotevřou samy postavám\\, které mají tuto funkci aktivovanou.]")
 	if hes ~= 0 then
-		f("checkbox[0.375,1.9;hotelove;hotelové (kód "..hes..");true]")
+		f("checkbox[0.375,1.9;hotelove;hotelové ("..hes..");true]")
 	else
-		f("checkbox[0.375,1.9;hotelove;hotelové (zapnutí vyžaduje: nenastavený klíč ke dveřím);false]")
+		f("checkbox[0.375,1.9;hotelove;hotelové*;false]")
 	end
 	f("tooltip[hotelove;Hotelové dveře může otevřít jen postava\\, která má v inventáři odpovídající klíč.\n"..
-		"Dále je může otevřít jejich vlastník/ice či Administrace.]"..
+		"Dále je může otevřít jejich vlastník/ice či Administrace.\nZapnutí této funkce vyžaduje: nenastavený klíč ke dveřím.]"..
 
 		"label[0.375,2.65;Stav: ", ifthenelse(is_open, "otevřeno", "zavřeno"), "]"..
 		"button[2.6,2.4;2,0.5;", ifthenelse(is_open, "closedoor", "opendoor"), ";", ifthenelse(is_open, "zavřít", "otevřít") ," dveře]"..
 
-		"box[0,3;12,0.75;", bghighlight, "]"..
 		"label[0.375,3.4;Název dveří:]"..
 		"field[2.2,3.15;5,0.5;nazevdveri;;", F(meta:get_string("nazev")), "]"..
 		"button[7.5,3.15;2,0.5;ulozitnazev;uložit]"..
@@ -189,35 +195,42 @@ local function on_player_receive_fields(player, formname, fields)
 			meta:set_int("zavirasamo", ifthenelse(fields.zavirasamo == "true", 5, 0))
 		end
 		-- zachodove:
-		expected = ifthenelse(meta:get_int("zachodove") > 0, "true", "false")
-		if fields.zachodove ~= nil and fields.zachodove ~= expected then
-			if fields.zachodove == "true" then
-				-- zapnout režim záchodových dveří (je-li to možné):
-				local pos_above = vector.offset(door_pos, 0, 1, 0)
-				local node_above = core.get_node(pos_above)
-				local hidden_variant = doors.is_hidden(node_above.name)
-				if hidden_variant then
-					node_above.name = doors.get_wc_hidden_name(door_node.name, hidden_variant == "red")
-					node_above.param2 = door_node.param2
-					if node_above.name ~= "doors:hidden" then
-						meta:set_int("zachodove", 1)
-						core.set_node(pos_above, node_above)
-					else
-						core.chat_send_player(player_name, "Tyto dveře nepodporují záchodový režim!")
-					end
+		local zachodove = meta:get_int("zachodove")
+		if
+			(fields.zachodovep ~= nil and fields.zachodovep == "false" and zachodove == 1) or
+			(fields.zachodovel ~= nil and fields.zachodovel == "false" and zachodove == 2)
+		then
+			-- vypnout režim záchodových dveří:
+			meta:set_int("zachodove", 0)
+			local pos_above = vector.offset(door_pos, 0, 1, 0)
+			local node_above = core.get_node(pos_above)
+			local hidden_type = doors.is_hidden(node_above.name)
+			if hidden_type ~= nil and hidden_type ~= "normal" then
+				node_above.name = "doors:hidden"
+				core.set_node(pos_above, node_above)
+				core.log("action", "WC mode disabled at "..core.pos_to_string(door_pos))
+			end
+		elseif
+			(fields.zachodovep ~= nil and fields.zachodovep == "true" and zachodove ~= 1) or
+			(fields.zachodovel ~= nil and fields.zachodovel == "true" and zachodove ~= 2)
+		then
+			-- zapnout režim záchodových dveří (P nebo L) (je-li to možné):
+			zachodove = ifthenelse(fields.zachodovep ~= nil and fields.zachodovep == "true" and zachodove ~= 1, 1, 2)
+			local pos_above = vector.offset(door_pos, 0, 1, 0)
+			local node_above = core.get_node(pos_above)
+			local hidden_variant = doors.is_hidden(node_above.name)
+			if hidden_variant then
+				node_above.name = doors.get_wc_hidden_name(door_node.name, hidden_variant == "red")
+				node_above.param2 = door_node.param2
+				if node_above.name ~= "doors:hidden" then
+					meta:set_int("zachodove", zachodove)
+					core.set_node(pos_above, node_above)
+					core.log("action", "WC mode "..zachodove.." set at "..core.pos_to_string(door_pos))
 				else
 					core.chat_send_player(player_name, "Tyto dveře nepodporují záchodový režim!")
 				end
 			else
-				-- vypnout režim záchodových dveří:
-				meta:set_int("zachodove", 0)
-				local pos_above = vector.offset(door_pos, 0, 1, 0)
-				local node_above = core.get_node(pos_above)
-				local hidden_type = doors.is_hidden(node_above.name)
-				if hidden_type ~= nil and hidden_type ~= "normal" then
-					node_above.name = "doors:hidden"
-					core.set_node(pos_above, node_above)
-				end
+				core.chat_send_player(player_name, "Tyto dveře nepodporují záchodový režim!")
 			end
 		end
 		-- zakotsam:
